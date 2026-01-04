@@ -635,89 +635,135 @@
     </section>
 
     <script>
-        // ========== SEARCH SUGGESTIONS SYSTEM ==========
-        // ALL barber-related terms map to ONE suggestion
-        const barberKeywords = [
-            // Direct terms
-            'barber', 'barber shop', 'barbershop', 'barbers', 'haircut', 'hair cut', 
-            'hairstyle', 'hair style', 'men\'s haircut', 'men\'s grooming', 'beard trim',
-            'shave', 'barber studio', 'gentleman\'s barber', 'classic barber', 'modern barber',
-            'traditional barber', 'hair salon', 'men\'s salon', 'grooming salon', 'trim & shave',
-            'cut & shave', 'barber & stylist', 'hair clipper', 'fade cut', 'buzz cut', 'short hair',
-            'men hair', 'men haircut', 'male haircut', 'male grooming', 'beard grooming',
-            'mustache trim', 'facial hair', 'hair design', 'styling', 'clipper cut',
-            
-            // Typos & misspellings
-            'barbar', 'barbor', 'barbur', 'barbar shop', 'barbor shop', 'barbur shop',
-            'barbarshop', 'barbarshope', 'barber shope', 'barbershoppe', 'hair cutt',
-            'haircutt', 'hair cuting', 'haircuting', 'hairstyling', 'hair styling',
-            'mens haircut', 'mens grooming', 'beardtrim', 'beard trimming', 'beardtrimming',
-            'haircutting', 'hair stylist', 'hairstylist', 'barbarstudio', 'barborstudio',
-            
-            // Variations with spaces/dashes
-            'barber-shop', 'hair-cut', 'hair-style', 'beard-trim', 'men-grooming',
-            'barber-studio', 'gentlemans-barber', 'barber&stylist', 'trim&shave'
-        ];
 
-        // Show search suggestions
-        function showSuggestions() {
-            const input = document.getElementById('businessInput');
-            const suggestionsContainer = document.getElementById('searchSuggestions');
-            const searchTerm = input.value.trim().toLowerCase();
-            
-            // Clear previous suggestions
-            suggestionsContainer.innerHTML = '';
-            suggestionsContainer.style.display = 'none';
-            
-            // Don't show anything if search is empty
-            if (!searchTerm) {
-                return;
-            }
-            
-            // Check if search term matches ANY barber keyword
-            const isBarberRelated = barberKeywords.some(keyword => {
-                // Check if search term contains keyword OR keyword contains search term
-                return searchTerm.includes(keyword) || keyword.includes(searchTerm);
-            });
-            
-            // Also check for partial matches (e.g., "hair" matches "haircut")
-            const hasBarberPartial = searchTerm.includes('hair') || 
-                                    searchTerm.includes('barber') || 
-                                    searchTerm.includes('barb') || 
-                                    searchTerm.includes('groom') || 
-                                    searchTerm.includes('beard') || 
-                                    searchTerm.includes('trim') || 
-                                    searchTerm.includes('shave') || 
-                                    searchTerm.includes('cut') || 
-                                    searchTerm.includes('style') || 
-                                    searchTerm.includes('salon') ||
-                                    searchTerm.includes('studio') ||
-                                    searchTerm.includes('men');
-            
-          if (isBarberRelated || hasBarberPartial) {
-    suggestionsContainer.innerHTML = `
-        <div class="suggestion-item" onclick="redirectToBarber()">
-            Barber
-        </div>
-    `;
-    suggestionsContainer.style.display = 'block';
+        // ========== IMPROVED SEARCH FUNCTIONALITY ==========
+// Barber suggestion only appears for specific barber-related keywords
+
+// Check if input contains barber-related keywords
+function isBarberRelated(searchTerm) {
+    const term = searchTerm.toLowerCase().trim();
+    
+    // Only trigger for these specific patterns
+    const barberPatterns = [
+        // Must start with these prefixes (3+ characters)
+        /^barb/i,      // barb, barbe, barber
+        /^hair/i,      // hair, hairc, haircu
+        /^cut/i,       // cut, cutt
+        /^trim/i,      // trim
+        /^shav/i,      // shav, shave
+        /^groom/i,     // groom
+        /^fade/i,      // fade
+        /^buzz/i,      // buzz
+        /^beard/i,     // beard
+        /^salon/i,     // salon
+        /^studio/i,    // studio
+        /^style/i,     // style
+        /^men/i,       // men, men'
+        /^male/i,      // male
+        
+        // Exact matches for short terms
+        /^bar$/i,      // bar
+        /^ba$/i,       // ba
+        /^ha$/i,       // ha
+        /^cu$/i,       // cu
+    ];
+    
+    // Check against patterns
+    for (const pattern of barberPatterns) {
+        if (pattern.test(term)) {
+            return true;
+        }
+    }
+    
+    return false;
 }
-                
-            // If not barber-related, show nothing or generic message
-            else if (searchTerm.length >= 2) {
-                suggestionsContainer.innerHTML = `
-                    <div class="suggestion-item info-item" onclick="this.style.display='none'">
-                        Type "barber" for barber websites, or select from categories below.
-                    </div>
-                `;
-                suggestionsContainer.style.display = 'block';
-            }
-        }
 
-        // Redirect to barber funnel
-        function redirectToBarber() {
-            window.location.href = 'https://www.vibz.co.uk/barber/';
+// Show search suggestions on homepage
+function showSearchSuggestions() {
+    const input = document.getElementById('homepageBusinessInput');
+    const suggestionsContainer = document.getElementById('homepageSearchSuggestions');
+    const searchTerm = input.value.trim();
+    
+    // Clear previous suggestions
+    suggestionsContainer.innerHTML = '';
+    suggestionsContainer.style.display = 'none';
+    
+    // Don't show anything if search is empty
+    if (!searchTerm) {
+        return;
+    }
+    
+    // Only show barber suggestion for barber-related searches
+    if (isBarberRelated(searchTerm)) {
+        suggestionsContainer.innerHTML = `
+            <div onclick="redirectToBarberFunnel()" style="padding: 1rem 1.5rem; cursor: pointer; border-bottom: 1px solid var(--border); transition: all 0.3s ease; font-weight: 500; color: var(--dark); text-align: left; display: flex; justify-content: space-between; align-items: center;">
+                <span>Barber Website</span>
+                <span style="background: rgba(255, 107, 0, 0.1); color: var(--accent); font-size: 0.8rem; padding: 0.2rem 0.6rem; border-radius: 4px; font-weight: 600;">Popular</span>
+            </div>
+        `;
+        suggestionsContainer.style.display = 'block';
+    }
+    // Show generic message for non-barber searches with 2+ characters
+    else if (searchTerm.length >= 2) {
+        suggestionsContainer.innerHTML = `
+            <div style="padding: 1rem 1.5rem; color: var(--text-gray); font-style: italic; cursor: default;">
+                Type a business type (e.g., "dentist", "plumber", "cafe")
+            </div>
+        `;
+        suggestionsContainer.style.display = 'block';
+    }
+}
+
+// Redirect to barber funnel from homepage
+function redirectToBarberFunnel() {
+    window.location.href = 'https://www.vibz.co.uk/barber/';
+}
+
+// Handle homepage search
+function handleHomepageSearch() {
+    const input = document.getElementById('homepageBusinessInput');
+    const value = input.value.trim();
+    const suggestionsContainer = document.getElementById('homepageSearchSuggestions');
+    
+    // Hide suggestions
+    if (suggestionsContainer) {
+        suggestionsContainer.style.display = 'none';
+    }
+    
+    if (!value) {
+        alert('Please enter your business type.');
+        return;
+    }
+    
+    // Check if it's barber-related
+    if (isBarberRelated(value)) {
+        window.location.href = 'https://www.vibz.co.uk/barber/';
+        return;
+    }
+    
+    // If no niche match, redirect to generic funnel
+    window.location.href = 'https://www.vibz.co.uk/funnel.html?business=' + encodeURIComponent(value);
+}
+
+// Hide suggestions when clicking outside (homepage)
+document.addEventListener('click', function(event) {
+    const suggestions = document.getElementById('homepageSearchSuggestions');
+    const input = document.getElementById('homepageBusinessInput');
+    
+    if (suggestions && input) {
+        if (!input.contains(event.target) && !suggestions.contains(event.target)) {
+            suggestions.style.display = 'none';
         }
+    }
+});
+
+// Allow Enter key to trigger search
+document.getElementById('homepageBusinessInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        handleHomepageSearch();
+    }
+});
+        
 
         // ========== FORM STATE MANAGEMENT ==========
         let currentStep = 1;
