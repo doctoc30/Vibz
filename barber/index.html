@@ -16,6 +16,8 @@
             --light-gray: #f9f9f9;
             --border: #eeeeee;
             --transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --standard-green: #4CAF50;
+            --premium-blue: #2196F3;
         }
 
         * { margin:0; padding:0; box-sizing:border-box; }
@@ -220,6 +222,73 @@
             letter-spacing: -1px;
         }
 
+        /* ========== Service Cards ========== */
+        .service-card {
+            background: rgba(76, 175, 80, 0.05);
+            border: 2px solid rgba(76, 175, 80, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .service-card.premium {
+            background: rgba(33, 150, 243, 0.05);
+            border: 2px solid rgba(33, 150, 243, 0.3);
+        }
+        
+        .service-card.selected {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .service-card.standard.selected {
+            background: rgba(76, 175, 80, 0.15);
+            border-color: #4CAF50;
+        }
+        
+        .service-card.premium.selected {
+            background: rgba(33, 150, 243, 0.15);
+            border-color: #2196F3;
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin: 2rem 0;
+            max-height: 500px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        
+        /* ========== Glow Effect ========== */
+        .recommended-glow {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .recommended-glow::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: linear-gradient(45deg, #FF6B00, #FF8B00, #FF6B00);
+            border-radius: 40px;
+            z-index: -1;
+            opacity: 0.3;
+            filter: blur(20px);
+            animation: glowPulse 3s infinite;
+        }
+        
+        @keyframes glowPulse {
+            0% { opacity: 0.3; }
+            50% { opacity: 0.5; }
+            100% { opacity: 0.3; }
+        }
+
         /* ========== Responsive ========== */
         @media(max-width:768px) {
             .nav-links { display:none; }
@@ -233,6 +302,7 @@
             .pricing-container { grid-template-columns:1fr; }
             .concept-display-image { height: 250px; }
             .concept-display-code .code-value { font-size: 2rem; }
+            .services-grid { grid-template-columns: 1fr; }
         }
         @media(max-width:480px) {
             .form-screen h2 { font-size:2rem; }
@@ -378,44 +448,8 @@
                 <button type="button" class="vibz-btn back-button" onclick="prev()">← Go Back</button>
             </div>
             
-            <!-- STEP 5: Features -->
+            <!-- STEP 5: Target Audience -->
             <div class="form-screen" id="step-5">
-                <h2 id="step5Title">Which features do you want?</h2>
-                <p id="step5Message">Select all that apply:</p>
-                
-                <!-- Show design reminder -->
-                <div id="step5DesignInfo" style="display: none; background: rgba(255, 107, 0, 0.05); padding: 1rem; border-radius: 10px; margin-bottom: 1.5rem; border: 1px dashed #FF6B00;">
-                    <p style="margin: 0; color: #4a4a4a; font-size: 0.9rem;">
-                        <i class="fas fa-info-circle" style="color: #FF6B00;"></i>
-                        Selected Design: <strong><span id="currentDesignCode"></span></strong>
-                    </p>
-                </div>
-                
-                <div class="options">
-                    <button type="button" class="vibz-btn feature-btn" data-feature="Online Booking" onclick="toggleFeature(this, 'Online Booking')">Online Booking</button>
-                    <button type="button" class="vibz-btn feature-btn" data-feature="Gallery/Portfolio" onclick="toggleFeature(this, 'Gallery/Portfolio')">Gallery/Portfolio</button>
-                    <button type="button" class="vibz-btn feature-btn" data-feature="Local SEO" onclick="toggleFeature(this, 'Local SEO')">Local SEO</button>
-                    <button type="button" class="vibz-btn feature-btn" data-feature="Reviews Section" onclick="toggleFeature(this, 'Reviews Section')">Reviews Section</button>
-                    <button type="button" class="vibz-btn feature-btn" data-feature="Social Media Integration" onclick="toggleFeature(this, 'Social Media Integration')">Social Media Integration</button>
-                    <button type="button" class="vibz-btn feature-btn" data-feature="Branding & Logo" onclick="toggleFeature(this, 'Branding & Logo')">Branding & Logo</button>
-                </div>
-                
-                <!-- Selected features counter -->
-                <div id="selectedCounter" style="margin-top: 1.5rem; text-align: center; display: none;">
-                    <p style="color: #FF6B00; font-weight: 600;">
-                        <span id="selectedCount">0</span> feature(s) selected
-                    </p>
-                </div>
-                
-                <button type="button" class="vibz-btn vibz-btn-primary" onclick="next()" style="margin-top: 1.5rem;">
-                    Next Step
-                </button>
-                
-                <button type="button" class="vibz-btn back-button" onclick="prev()">← Go Back</button>
-            </div>
-            
-            <!-- STEP 6: Target Audience -->
-            <div class="form-screen" id="step-6">
                 <h2>Who are your main clients?</h2>
                 <div class="options">
                     <button type="button" class="vibz-btn" onclick="setAudience('Men')">Men</button>
@@ -426,8 +460,8 @@
                 <button type="button" class="vibz-btn back-button" onclick="prev()">← Go Back</button>
             </div>
 
-            <!-- STEP 7: Website Style -->
-            <div class="form-screen" id="step-7">
+            <!-- STEP 6: Website Style -->
+            <div class="form-screen" id="step-6">
                 <h2>What style do you prefer for your website?</h2>
                 <div class="options">
                     <button type="button" class="vibz-btn" onclick="setStyle('Classic')">Classic</button>
@@ -438,8 +472,8 @@
                 <button type="button" class="vibz-btn back-button" onclick="prev()">← Go Back</button>
             </div>
 
-            <!-- STEP 8: Color Scheme -->
-            <div class="form-screen" id="step-8">
+            <!-- STEP 7: Color Scheme -->
+            <div class="form-screen" id="step-7">
                 <h2>Preferred color scheme?</h2>
                 <div class="options">
                     <button type="button" class="vibz-btn" onclick="setColor('Black & Gold')">Black & Gold</button>
@@ -450,8 +484,8 @@
                 <button type="button" class="vibz-btn back-button" onclick="prev()">← Go Back</button>
             </div>
 
-            <!-- STEP 9: Website Goal -->
-            <div class="form-screen" id="step-9">
+            <!-- STEP 8: Website Goal -->
+            <div class="form-screen" id="step-8">
                 <h2>What's the main goal of your website?</h2>
                 <div class="options">
                     <button type="button" class="vibz-btn" onclick="setGoal('Attract New Clients')">Attract New Clients</button>
@@ -461,8 +495,8 @@
                 <button type="button" class="vibz-btn back-button" onclick="prev()">← Go Back</button>
             </div>
 
-            <!-- STEP 10: Booking Method -->
-            <div class="form-screen" id="step-10">
+            <!-- STEP 9: Booking Method -->
+            <div class="form-screen" id="step-9">
                 <h2>Preferred booking method?</h2>
                 <div class="options">
                     <button type="button" class="vibz-btn" onclick="setBooking('Online Booking')">Online Booking</button>
@@ -472,14 +506,343 @@
                 <button type="button" class="vibz-btn back-button" onclick="prev()">← Go Back</button>
             </div>
 
-            <!-- STEP 11: Plan Type -->
-            <div class="form-screen" id="step-11">
-                <h2>Choose your plan type</h2>
-                <div class="options">
-                    <button type="button" class="vibz-btn" onclick="setPlan('Own Outright')">Own Outright</button>
-                    <button type="button" class="vibz-btn" onclick="setPlan('Monthly Support')">Monthly Support</button>
+            <!-- STEP 10: Services Selection (formerly Step 5) -->
+            <div class="form-screen" id="step-10">
+                <h2 id="step10Title">Select Your Website Services</h2>
+                <p id="step10Message">Choose the features you need for your barbershop website:</p>
+                
+                <!-- Tier Indicators -->
+                <div class="tier-indicators" style="display: flex; justify-content: center; gap: 30px; margin: 2rem 0; flex-wrap: wrap;">
+                    <div style="text-align: center; background: rgba(76, 175, 80, 0.1); padding: 10px 20px; border-radius: 10px; border: 2px solid #4CAF50;">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
+                            <div style="width: 16px; height: 16px; background: #4CAF50; border-radius: 50%;"></div>
+                            <span style="font-weight: 700; color: #4CAF50;">STANDARD PACKAGE</span>
+                        </div>
+                        <span style="font-size: 0.85rem; color: var(--gray);">Professional Web Presence</span>
+                    </div>
+                    <div style="text-align: center; background: rgba(33, 150, 243, 0.1); padding: 10px 20px; border-radius: 10px; border: 2px solid #2196F3;">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
+                            <div style="width: 16px; height: 16px; background: #2196F3; border-radius: 50%;"></div>
+                            <span style="font-weight: 700; color: #2196F3;">PREMIUM PACKAGE</span>
+                        </div>
+                        <span style="font-size: 0.85rem; color: var(--gray);">Revenue-Boosting Features</span>
+                    </div>
                 </div>
+                
+                <!-- Services Grid -->
+                <div class="services-grid">
+                    <!-- ===== STANDARD PACKAGE SERVICES ===== -->
+                    <div class="service-card standard" onclick="toggleService('Services & Pricing Display', this)">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 24px; height: 24px; background: #4CAF50; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">S</div>
+                            <h4 style="margin: 0; font-size: 1.1rem;">Services & Pricing Display</h4>
+                        </div>
+                        <p style="color: var(--gray); font-size: 0.9rem; margin: 0;">Clear display of all services and prices</p>
+                    </div>
+                    
+                    <div class="service-card standard" onclick="toggleService('Barber Profiles / Team Section', this)">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 24px; height: 24px; background: #4CAF50; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">S</div>
+                            <h4 style="margin: 0; font-size: 1.1rem;">Barber Profiles / Team Section</h4>
+                        </div>
+                        <p style="color: var(--gray); font-size: 0.9rem; margin: 0;">Introduce your team with bios and photos</p>
+                    </div>
+                    
+                    <div class="service-card standard" onclick="toggleService('Photo Gallery / Portfolio', this)">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 24px; height: 24px; background: #4CAF50; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">S</div>
+                            <h4 style="margin: 0; font-size: 1.1rem;">Photo Gallery / Portfolio</h4>
+                        </div>
+                        <p style="color: var(--gray); font-size: 0.9rem; margin: 0;">Showcase your work with high-quality images</p>
+                    </div>
+                    
+                    <div class="service-card standard" onclick="toggleService('Before & After Slider', this)">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 24px; height: 24px; background: #4CAF50; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">S</div>
+                            <h4 style="margin: 0; font-size: 1.1rem;">Before & After Slider</h4>
+                        </div>
+                        <p style="color: var(--gray); font-size: 0.9rem; margin: 0;">Interactive before/after image comparison</p>
+                    </div>
+                    
+                    <div class="service-card standard" onclick="toggleService('Special Offers / Promotions Section', this)">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 24px; height: 24px; background: #4CAF50; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">S</div>
+                            <h4 style="margin: 0; font-size: 1.1rem;">Special Offers / Promotions</h4>
+                        </div>
+                        <p style="color: var(--gray); font-size: 0.9rem; margin: 0;">Display current deals and promotions</p>
+                    </div>
+                    
+                    <div class="service-card standard" onclick="toggleService('Location & Directions', this)">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 24px; height: 24px; background: #4CAF50; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">S</div>
+                            <h4 style="margin: 0; font-size: 1.1rem;">Location & Directions</h4>
+                        </div>
+                        <p style="color: var(--gray); font-size: 0.9rem; margin: 0;">Google Maps integration with directions</p>
+                    </div>
+                    
+                    <div class="service-card standard" onclick="toggleService('Tap-to-Call & WhatsApp Buttons', this)">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 24px; height: 24px; background: #4CAF50; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">S</div>
+                            <h4 style="margin: 0; font-size: 1.1rem;">Tap-to-Call & WhatsApp</h4>
+                        </div>
+                        <p style="color: var(--gray); font-size: 0.9rem; margin: 0;">One-click calling and WhatsApp messaging</p>
+                    </div>
+                    
+                    <div class="service-card standard" onclick="toggleService('Opening Hours Display', this)">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 24px; height: 24px; background: #4CAF50; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">S</div>
+                            <h4 style="margin: 0; font-size: 1.1rem;">Opening Hours Display</h4>
+                        </div>
+                        <p style="color: var(--gray); font-size: 0.9rem; margin: 0;">Interactive hours with open/closed status</p>
+                    </div>
+                    
+                    <div class="service-card standard" onclick="toggleService('Membership / Loyalty Program Section', this)">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 24px; height: 24px; background: #4CAF50; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">S</div>
+                            <h4 style="margin: 0; font-size: 1.1rem;">Membership / Loyalty Program</h4>
+                        </div>
+                        <p style="color: var(--gray); font-size: 0.9rem; margin: 0;">Display your loyalty program details</p>
+                    </div>
+                    
+                    <div class="service-card standard" onclick="toggleService('FAQ Section', this)">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 24px; height: 24px; background: #4CAF50; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">S</div>
+                            <h4 style="margin: 0; font-size: 1.1rem;">FAQ Section</h4>
+                        </div>
+                        <p style="color: var(--gray); font-size: 0.9rem; margin: 0;">Answers to common client questions</p>
+                    </div>
+                    
+                    <!-- ===== PREMIUM PACKAGE SERVICES ===== -->
+                    <div class="service-card premium" onclick="toggleService('Online Booking System Embed', this)">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 24px; height: 24px; background: #2196F3; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">P</div>
+                            <h4 style="margin: 0; font-size: 1.1rem;">Online Booking System Embed</h4>
+                        </div>
+                        <p style="color: var(--gray); font-size: 0.9rem; margin: 0;">Calendly/Setmore integration for bookings</p>
+                    </div>
+                    
+                    <div class="service-card premium" onclick="toggleService('Stripe Payment / Deposit Integration', this)">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 24px; height: 24px; background: #2196F3; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">P</div>
+                            <h4 style="margin: 0; font-size: 1.1rem;">Stripe Payment Integration</h4>
+                        </div>
+                        <p style="color: var(--gray); font-size: 0.9rem; margin: 0;">Secure online payments and deposits</p>
+                    </div>
+                    
+                    <div class="service-card premium" onclick="toggleService('Automated Booking Reminders', this)">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 24px; height: 24px; background: #2196F3; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">P</div>
+                            <h4 style="margin: 0; font-size: 1.1rem;">Automated Booking Reminders</h4>
+                        </div>
+                        <p style="color: var(--gray); font-size: 0.9rem; margin: 0;">Email/SMS reminders via booking tool</p>
+                    </div>
+                    
+                    <div class="service-card premium" onclick="toggleService('Appointment Cancellation / Reschedule Info', this)">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 24px; height: 24px; background: #2196F3; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">P</div>
+                            <h4 style="margin: 0; font-size: 1.1rem;">Cancellation & Reschedule Info</h4>
+                        </div>
+                        <p style="color: var(--gray); font-size: 0.9rem; margin: 0;">Clear policies and rescheduling options</p>
+                    </div>
+                    
+                    <div class="service-card premium" onclick="toggleService('Gift Card / Voucher Section', this)">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 24px; height: 24px; background: #2196F3; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">P</div>
+                            <h4 style="margin: 0; font-size: 1.1rem;">Gift Card / Voucher Section</h4>
+                        </div>
+                        <p style="color: var(--gray); font-size: 0.9rem; margin: 0;">Sell and manage digital gift cards</p>
+                    </div>
+                    
+                    <div class="service-card premium" onclick="toggleService('Kids / Senior / Special Service Tags', this)">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 24px; height: 24px; background: #2196F3; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">P</div>
+                            <h4 style="margin: 0; font-size: 1.1rem;">Special Service Tags</h4>
+                        </div>
+                        <p style="color: var(--gray); font-size: 0.9rem; margin: 0;">Highlight kids, seniors, specialty services</p>
+                    </div>
+                    
+                    <div class="service-card premium" onclick="toggleService('Walk-In / Waitlist Info Section', this)">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 24px; height: 24px; background: #2196F3; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">P</div>
+                            <h4 style="margin: 0; font-size: 1.1rem;">Walk-In & Waitlist Info</h4>
+                        </div>
+                        <p style="color: var(--gray); font-size: 0.9rem; margin: 0;">Real-time waitlist and walk-in updates</p>
+                    </div>
+                    
+                    <div class="service-card premium" onclick="toggleService('Barber Specialties Tags', this)">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 24px; height: 24px; background: #2196F3; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">P</div>
+                            <h4 style="margin: 0; font-size: 1.1rem;">Barber Specialties Tags</h4>
+                        </div>
+                        <p style="color: var(--gray); font-size: 0.9rem; margin: 0;">Highlight specific skills and specialties</p>
+                    </div>
+                    
+                    <div class="service-card premium" onclick="toggleService('Prominent Call-to-Action Buttons', this)">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 24px; height: 24px; background: #2196F3; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">P</div>
+                            <h4 style="margin: 0; font-size: 1.1rem;">Prominent Call-to-Action Buttons</h4>
+                        </div>
+                        <p style="color: var(--gray); font-size: 0.9rem; margin: 0;">Strategic buttons to drive conversions</p>
+                    </div>
+                    
+                    <div class="service-card premium" onclick="toggleService('Enhanced Before & After Slider', this)">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 24px; height: 24px; background: #2196F3; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">P</div>
+                            <h4 style="margin: 0; font-size: 1.1rem;">Enhanced Before & After Slider</h4>
+                        </div>
+                        <p style="color: var(--gray); font-size: 0.9rem; margin: 0;">Interactive slider with filtering options</p>
+                    </div>
+                </div>
+                
+                <!-- Selection Summary -->
+                <div id="selectionSummary" style="background: var(--light-gray); padding: 1.5rem; border-radius: 15px; margin: 2rem 0; border: 2px solid var(--border);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                        <div>
+                            <h4 style="margin-bottom: 0.5rem;">Your Selections</h4>
+                            <div style="display: flex; gap: 2rem; flex-wrap: wrap;">
+                                <div>
+                                    <span style="font-size: 0.9rem; color: var(--gray);">Standard Services:</span>
+                                    <div style="font-weight: 700; color: #4CAF50; font-size: 1.5rem;" id="standardCount">0</div>
+                                </div>
+                                <div>
+                                    <span style="font-size: 0.9rem; color: var(--gray);">Premium Services:</span>
+                                    <div style="font-weight: 700; color: #2196F3; font-size: 1.5rem;" id="premiumCount">0</div>
+                                </div>
+                                <div>
+                                    <span style="font-size: 0.9rem; color: var(--gray);">Total Selected:</span>
+                                    <div style="font-weight: 700; color: var(--dark); font-size: 1.5rem;" id="totalCount">0</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div id="planRecommendationPreview" style="background: linear-gradient(90deg, #2196F3, #21CBF3); color: white; padding: 0.8rem 1.5rem; border-radius: 25px; font-weight: 700; display: none; box-shadow: 0 5px 15px rgba(33, 150, 243, 0.3);">
+                                <i class="fas fa-star"></i> Recommended: <span id="recommendedPlanPreview">Premium</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Plan Recommendation Logic -->
+                    <div id="planLogicInfo" style="margin-top: 1rem; padding: 1rem; background: rgba(33, 150, 243, 0.05); border-radius: 10px; display: none;">
+                        <p style="margin: 0; font-size: 0.9rem; color: var(--gray);">
+                            <i class="fas fa-info-circle" style="color: #2196F3;"></i>
+                            <strong>Selection Logic:</strong> 
+                            <span id="planLogicText">Select 3+ Premium services for Premium recommendation</span>
+                        </p>
+                    </div>
+                    
+                    <div id="selectedServicesList" style="margin-top: 1rem; display: none;">
+                        <p style="font-size: 0.9rem; color: var(--gray); margin-bottom: 0.5rem;">Selected Services:</p>
+                        <div id="servicesList" style="display: flex; flex-wrap: wrap; gap: 0.5rem;"></div>
+                    </div>
+                </div>
+                
+                <button type="button" class="vibz-btn vibz-btn-primary" onclick="nextFromServices()" style="margin-top: 1rem; padding: 1.2rem 3rem; font-size: 1.1rem;">
+                    <i class="fas fa-arrow-right"></i> Continue to Plan Selection
+                </button>
+                
                 <button type="button" class="vibz-btn back-button" onclick="prev()">← Go Back</button>
+            </div>
+
+            <!-- STEP 11: Plan Type Selection -->
+            <div class="form-screen" id="step-11">
+                <h2>Choose Your Plan Type</h2>
+                <p id="planSelectionMessage">Select how you'd like to proceed with your website:</p>
+                
+                <!-- Plan Recommendation Banner -->
+                <div id="planRecommendationBanner" style="display: none; background: linear-gradient(90deg, #2196F3, #21CBF3); color: white; padding: 1.5rem; border-radius: 15px; margin: 2rem 0; text-align: center; position: relative; overflow: hidden;">
+                    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><radialGradient id="glow" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="white" stop-opacity="0.3"/><stop offset="100%" stop-color="white" stop-opacity="0"/></radialGradient></defs><rect width="100" height="100" fill="url(%23glow)"/></svg>'); animation: glowPulse 2s infinite;"></div>
+                    <div style="position: relative; z-index: 1;">
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 0.5rem;">
+                            <i class="fas fa-crown" style="font-size: 1.5rem;"></i>
+                            <h3 style="margin: 0; font-size: 1.5rem;">Recommended Plan</h3>
+                        </div>
+                        <p style="margin: 0; font-size: 1.1rem;" id="recommendationText">Based on your service selections</p>
+                    </div>
+                </div>
+                
+                <div class="pricing-container" style="margin-top: 2rem;">
+                    <!-- Own Outright - Standard -->
+                    <div class="pricing-card" id="ownOutrightStandard" style="position: relative;">
+                        <div style="position: absolute; top: -10px; right: -10px; background: #4CAF50; color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; transform: rotate(5deg);">
+                            BEST VALUE
+                        </div>
+                        <h3>Own Outright - Standard</h3>
+                        <div class="price">£1,500<span class="price-period">one-time</span></div>
+                        <p style="color: var(--gray); margin-bottom: 1.5rem;">Pay once, own forever</p>
+                        <ul class="pricing-features">
+                            <li>All Standard Services You Selected</li>
+                            <li>Mobile Responsive Design</li>
+                            <li>Basic SEO Setup</li>
+                            <li>Google Business Setup</li>
+                            <li>3 Months Technical Support</li>
+                            <li>No Monthly Fees</li>
+                        </ul>
+                        <button type="button" class="vibz-btn vibz-btn-primary" onclick="selectPlan('Own Outright - Standard')" style="width: 100%;">
+                            Select Standard
+                        </button>
+                    </div>
+                    
+                    <!-- Own Outright - Premium -->
+                    <div class="pricing-card" id="ownOutrightPremium" style="position: relative;">
+                        <div style="position: absolute; top: -10px; right: -10px; background: #2196F3; color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; transform: rotate(5deg);">
+                            PREMIUM
+                        </div>
+                        <h3>Own Outright - Premium</h3>
+                        <div class="price">£3,000<span class="price-period">one-time</span></div>
+                        <p style="color: var(--gray); margin-bottom: 1.5rem;">Complete premium solution</p>
+                        <ul class="pricing-features">
+                            <li>All Standard & Premium Services</li>
+                            <li>Online Booking Integration</li>
+                            <li>Stripe Payment Processing</li>
+                            <li>Advanced SEO & Analytics</li>
+                            <li>6 Months Premium Support</li>
+                            <li>Priority Development</li>
+                            <li>No Monthly Fees</li>
+                        </ul>
+                        <button type="button" class="vibz-btn" onclick="selectPlan('Own Outright - Premium')" style="width: 100%; background: #2196F3; border-color: #2196F3; color: white;">
+                            Select Premium
+                        </button>
+                    </div>
+                    
+                    <!-- Monthly Support - Standard -->
+                    <div class="pricing-card" id="monthlyStandard">
+                        <h3>Monthly Support - Standard</h3>
+                        <div class="price">£100<span class="price-period">/month</span></div>
+                        <p style="color: var(--gray); margin-bottom: 1.5rem;">Flexible monthly plan</p>
+                        <ul class="pricing-features">
+                            <li>All Standard Services</li>
+                            <li>Monthly Hosting Included</li>
+                            <li>Weekly Backups</li>
+                            <li>Security Monitoring</li>
+                            <li>Basic Updates & Support</li>
+                            <li>Cancel Anytime</li>
+                        </ul>
+                        <button type="button" class="vibz-btn" onclick="selectPlan('Monthly Support - Standard')" style="width: 100%;">
+                            Select Standard
+                        </button>
+                    </div>
+                    
+                    <!-- Monthly Support - Premium -->
+                    <div class="pricing-card" id="monthlyPremium">
+                        <h3>Monthly Support - Premium</h3>
+                        <div class="price">£150<span class="price-period">/month</span></div>
+                        <p style="color: var(--gray); margin-bottom: 1.5rem;">Complete managed service</p>
+                        <ul class="pricing-features">
+                            <li>All Standard & Premium Services</li>
+                            <li>Premium Hosting</li>
+                            <li>Daily Backups</li>
+                            <li>Advanced Security</li>
+                            <li>Unlimited Edits & Support</li>
+                            <li>SEO & Analytics Management</li>
+                            <li>Cancel Anytime</li>
+                        </ul>
+                        <button type="button" class="vibz-btn" onclick="selectPlan('Monthly Support - Premium')" style="width: 100%; background: #2196F3; border-color: #2196F3; color: white;">
+                            Select Premium
+                        </button>
+                    </div>
+                </div>
+                
+                <button type="button" class="vibz-btn back-button" onclick="prev()" style="margin-top: 2rem;">← Go Back</button>
             </div>
 
             <!-- STEP 12: Recommended Plan -->
@@ -495,11 +858,7 @@
 
 <script>
 // ========== BARBER CONCEPTS DATABASE ==========
-// EASY TO EDIT: Add new concepts here when you create them
-// Format: { code: "barber-1", image: "image-url.jpg" }
-
 const barberConcepts = [
-    // Current concepts (1-9)
     { code: "barber-1", image: "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
     { code: "barber-2", image: "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
     { code: "barber-3", image: "https://images.unsplash.com/photo-1567894340315-735d7c361db0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
@@ -509,11 +868,33 @@ const barberConcepts = [
     { code: "barber-7", image: "https://images.unsplash.com/photo-1621605815972-f9e5c6c4a9c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
     { code: "barber-8", image: "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
     { code: "barber-9", image: "https://images.unsplash.com/photo-1580618864180-f6d7d39b8ff6?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" }
+];
+
+// ========== SERVICES DATABASE ==========
+const allServices = [
+    // ===== STANDARD TIER SERVICES =====
+    { name: 'Services & Pricing Display', tier: 'standard', description: 'Clear display of all services and prices' },
+    { name: 'Barber Profiles / Team Section', tier: 'standard', description: 'Introduce your team with bios and photos' },
+    { name: 'Photo Gallery / Portfolio', tier: 'standard', description: 'Showcase your work with high-quality images' },
+    { name: 'Before & After Slider', tier: 'standard', description: 'Interactive before/after image comparison' },
+    { name: 'Special Offers / Promotions Section', tier: 'standard', description: 'Display current deals and promotions' },
+    { name: 'Location & Directions', tier: 'standard', description: 'Google Maps integration with directions' },
+    { name: 'Tap-to-Call & WhatsApp Buttons', tier: 'standard', description: 'One-click calling and WhatsApp messaging' },
+    { name: 'Opening Hours Display', tier: 'standard', description: 'Interactive hours with open/closed status' },
+    { name: 'Membership / Loyalty Program Section', tier: 'standard', description: 'Display your loyalty program details' },
+    { name: 'FAQ Section', tier: 'standard', description: 'Answers to common client questions' },
     
-    // TO ADD NEW CONCEPTS: Copy and edit these lines:
-    // { code: "barber-10", image: "https://your-image-url-here.jpg" },
-    // { code: "barber-11", image: "https://your-image-url-here.jpg" },
-    // etc...
+    // ===== PREMIUM TIER SERVICES =====
+    { name: 'Online Booking System Embed', tier: 'premium', description: 'Calendly/Setmore integration for bookings' },
+    { name: 'Stripe Payment / Deposit Integration', tier: 'premium', description: 'Secure online payments and deposits' },
+    { name: 'Automated Booking Reminders', tier: 'premium', description: 'Email/SMS reminders via booking tool' },
+    { name: 'Appointment Cancellation / Reschedule Info', tier: 'premium', description: 'Clear policies and rescheduling options' },
+    { name: 'Gift Card / Voucher Section', tier: 'premium', description: 'Sell and manage digital gift cards' },
+    { name: 'Kids / Senior / Special Service Tags', tier: 'premium', description: 'Highlight kids, seniors, specialty services' },
+    { name: 'Walk-In / Waitlist Info Section', tier: 'premium', description: 'Real-time waitlist and walk-in updates' },
+    { name: 'Barber Specialties Tags', tier: 'premium', description: 'Highlight specific skills and specialties' },
+    { name: 'Prominent Call-to-Action Buttons', tier: 'premium', description: 'Strategic buttons to drive conversions' },
+    { name: 'Enhanced Before & After Slider', tier: 'premium', description: 'Interactive slider with filtering options' }
 ];
 
 // ========== FORM STATE MANAGEMENT ==========
@@ -529,8 +910,14 @@ const formData = {
     color: '',
     goal: '',
     booking: '',
-    planType: ''
+    planType: '',
+    planModel: ''
 };
+
+// Service selection tracking
+let premiumServiceCount = 0;
+let standardServiceCount = 0;
+let recommendedPlan = { type: '', glow: false };
 
 // DOM elements
 const screens = document.querySelectorAll('.form-screen');
@@ -550,21 +937,14 @@ const tryDifferentBtn = document.getElementById('tryDifferentBtn');
 function normalizeCode(input) {
     if (!input) return '';
     
-    // Convert to lowercase and trim
     let normalized = input.toString().toLowerCase().trim();
-    
-    // Remove "barber" prefix variations
     normalized = normalized.replace(/^barber[\s\-]*/i, '');
-    
-    // Remove any remaining non-numeric characters (except dash/hyphen)
     normalized = normalized.replace(/[^0-9\-]/g, '');
     
-    // If it's just a number, format as "barber-X"
     if (/^\d+$/.test(normalized)) {
         return `barber-${normalized}`;
     }
     
-    // If it already has a hyphen, ensure "barber-" prefix
     if (normalized.includes('-')) {
         const num = normalized.split('-').pop();
         if (/^\d+$/.test(num)) {
@@ -580,7 +960,6 @@ function findConceptByCode(input) {
     const normalizedCode = normalizeCode(input);
     if (!normalizedCode) return null;
     
-    // Find exact match
     return barberConcepts.find(concept => concept.code === normalizedCode);
 }
 
@@ -599,23 +978,15 @@ function validateAndDisplayConcept() {
     const concept = findConceptByCode(input);
     
     if (concept) {
-        // Show success and display concept
         codeStatus.textContent = `✓ Valid code: ${concept.code}`;
         codeStatus.className = 'code-status success';
-        
-        // Display the concept
         conceptDisplayImage.src = concept.image;
         conceptDisplayImage.alt = `Design ${concept.code}`;
         conceptDisplayCode.textContent = concept.code.toUpperCase();
         conceptDisplay.style.display = 'block';
-        
-        // Update continue button
         confirmDesignBtn.innerHTML = `<i class="fas fa-check"></i> Continue with ${concept.code.toUpperCase()}`;
-        
-        // Show try different button
         tryDifferentBtn.style.display = 'inline-block';
     } else {
-        // Show error
         codeStatus.textContent = `✗ Design not found. Try "barber-1" to "barber-${barberConcepts.length}"`;
         codeStatus.className = 'code-status error';
         conceptDisplay.style.display = 'none';
@@ -646,6 +1017,150 @@ function tryDifferentCode() {
     tryDifferentBtn.style.display = 'none';
 }
 
+// ========== SERVICE SELECTION FUNCTIONS ==========
+
+function toggleService(serviceName, element) {
+    const index = formData.features.indexOf(serviceName);
+    const service = allServices.find(s => s.name === serviceName);
+    
+    if (index === -1) {
+        // Add service
+        formData.features.push(serviceName);
+        element.classList.add('selected');
+    } else {
+        // Remove service
+        formData.features.splice(index, 1);
+        element.classList.remove('selected');
+    }
+    
+    updateServiceCounters();
+    calculateRecommendedPlan();
+    showPlanRecommendation();
+}
+
+function updateServiceCounters() {
+    // Reset counts
+    standardServiceCount = 0;
+    premiumServiceCount = 0;
+    
+    // Count services by tier
+    formData.features.forEach(feature => {
+        const service = allServices.find(s => s.name === feature);
+        if (service) {
+            if (service.tier === 'standard') {
+                standardServiceCount++;
+            } else {
+                premiumServiceCount++;
+            }
+        }
+    });
+    
+    // Update counters
+    document.getElementById('standardCount').textContent = standardServiceCount;
+    document.getElementById('premiumCount').textContent = premiumServiceCount;
+    document.getElementById('totalCount').textContent = formData.features.length;
+    
+    // Update services list
+    const servicesList = document.getElementById('servicesList');
+    servicesList.innerHTML = '';
+    
+    if (formData.features.length > 0) {
+        document.getElementById('selectedServicesList').style.display = 'block';
+        formData.features.forEach(service => {
+            const serviceData = allServices.find(s => s.name === service);
+            const badge = document.createElement('div');
+            badge.style.background = serviceData.tier === 'standard' ? '#4CAF50' : '#2196F3';
+            badge.style.color = 'white';
+            badge.style.padding = '0.3rem 0.8rem';
+            badge.style.borderRadius = '20px';
+            badge.style.fontSize = '0.8rem';
+            badge.style.display = 'flex';
+            badge.style.alignItems = 'center';
+            badge.style.gap = '5px';
+            badge.innerHTML = `<span>${service}</span> <i class="fas fa-times" style="cursor:pointer;" onclick="removeService('${service}')"></i>`;
+            servicesList.appendChild(badge);
+        });
+    } else {
+        document.getElementById('selectedServicesList').style.display = 'none';
+    }
+}
+
+function removeService(serviceName) {
+    const index = formData.features.indexOf(serviceName);
+    if (index !== -1) {
+        formData.features.splice(index, 1);
+        
+        // Update visual state of the card
+        const serviceCards = document.querySelectorAll('.service-card');
+        serviceCards.forEach(card => {
+            const h4 = card.querySelector('h4');
+            if (h4 && h4.textContent === serviceName) {
+                card.classList.remove('selected');
+            }
+        });
+        
+        updateServiceCounters();
+        calculateRecommendedPlan();
+        showPlanRecommendation();
+    }
+}
+
+function calculateRecommendedPlan() {
+    // Determine recommendation (Premium if 3+ premium services selected)
+    if (premiumServiceCount >= 3) {
+        recommendedPlan.type = 'Premium';
+        recommendedPlan.glow = true;
+    } else {
+        recommendedPlan.type = 'Standard';
+        recommendedPlan.glow = (formData.features.length > 0);
+    }
+    
+    return recommendedPlan;
+}
+
+function showPlanRecommendation() {
+    const recommendation = calculateRecommendedPlan();
+    const preview = document.getElementById('planRecommendationPreview');
+    const logicInfo = document.getElementById('planLogicInfo');
+    
+    if (formData.features.length > 0) {
+        logicInfo.style.display = 'block';
+        
+        if (recommendation.type === 'Premium') {
+            document.getElementById('planLogicText').textContent = 
+                `You selected ${premiumServiceCount} premium services (3+ triggers Premium recommendation)`;
+            preview.style.display = 'inline-block';
+            preview.style.background = 'linear-gradient(90deg, #2196F3, #21CBF3)';
+            document.getElementById('recommendedPlanPreview').textContent = 'Premium Plan';
+        } else {
+            document.getElementById('planLogicText').textContent = 
+                `You selected ${premiumServiceCount} premium services (Standard plan recommended)`;
+            
+            if (recommendation.glow) {
+                preview.style.display = 'inline-block';
+                preview.style.background = 'linear-gradient(90deg, #4CAF50, #66BB6A)';
+                document.getElementById('recommendedPlanPreview').textContent = 'Standard Plan';
+            } else {
+                preview.style.display = 'none';
+            }
+        }
+    } else {
+        preview.style.display = 'none';
+        logicInfo.style.display = 'none';
+    }
+}
+
+function nextFromServices() {
+    if (formData.features.length === 0) {
+        alert('Please select at least one service to continue.');
+        return;
+    }
+    
+    // Store recommended plan for later use
+    localStorage.setItem('recommendedPlan', JSON.stringify(recommendedPlan));
+    next();
+}
+
 // ========== FUNNEL FUNCTIONS ==========
 
 // Check URL parameters and jump to correct step
@@ -656,39 +1171,32 @@ function checkURLParams() {
     
     console.log('URL Params:', { step, concept });
     
-    // If step parameter exists, jump to that step
     if (step) {
         const stepNum = parseInt(step);
         if (!isNaN(stepNum) && stepNum >= 1 && stepNum <= 12) {
             currentStep = stepNum;
             console.log('Jumping to step:', currentStep);
             
-            // Store design data if coming from concepts page
             if (concept) {
                 const foundConcept = findConceptByCode(concept);
                 if (foundConcept) {
                     formData.designCode = foundConcept.code;
                     formData.designConcept = 'From Concepts';
-                    
-                    console.log('Design selected from concepts:', foundConcept.code);
-                    
-                    // Store in localStorage for persistence
                     localStorage.setItem('selectedDesignCode', foundConcept.code);
                 }
             }
             
-            return true; // Indicate we jumped from URL
+            return true;
         }
     }
     
-    // Check localStorage for saved design
     const savedDesignCode = localStorage.getItem('selectedDesignCode');
     if (savedDesignCode) {
         formData.designCode = savedDesignCode;
         formData.designConcept = 'From Concepts';
     }
     
-    return false; // No URL jump
+    return false;
 }
 
 // Show a specific screen
@@ -700,22 +1208,37 @@ function showScreen(screenId) {
         
         // Update UI for specific steps
         if (screenId === 'step-3' && formData.designCode) {
-            // Show design info in step 3
             document.getElementById('designInfo').style.display = 'block';
             document.getElementById('selectedDesignCode').textContent = formData.designCode.toUpperCase();
         }
         
-        if (screenId === 'step-5') {
-            // Update step 5 with design info
-            if (formData.designCode) {
-                document.getElementById('step5Title').innerHTML = `Select Features for <span style="color: #FF6B00;">${formData.designCode.toUpperCase()}</span>`;
-                document.getElementById('step5DesignInfo').style.display = 'block';
-                document.getElementById('currentDesignCode').textContent = formData.designCode.toUpperCase();
+        if (screenId === 'step-10') {
+            // Update title with business name if available
+            if (formData.businessName) {
+                document.getElementById('step10Title').innerHTML = 
+                    `Select Services for <span style="color: #FF6B00;">${formData.businessName}</span>`;
             }
             
-            // Update feature buttons based on selections
-            updateFeatureButtons();
-            updateFeatureCounter();
+            // Update service counters
+            updateServiceCounters();
+            showPlanRecommendation();
+        }
+        
+        if (screenId === 'step-11') {
+            // Apply glow effect to recommended plan
+            const recommendation = calculateRecommendedPlan();
+            const banner = document.getElementById('planRecommendationBanner');
+            
+            if (recommendation.type === 'Premium' && recommendation.glow) {
+                banner.style.display = 'block';
+                document.getElementById('recommendationText').textContent = 
+                    `You selected ${premiumServiceCount} premium features. Premium plan recommended for maximum revenue.`;
+            } else {
+                banner.style.display = 'none';
+            }
+            
+            document.getElementById('planSelectionMessage').innerHTML = 
+                `Based on your <strong>${formData.features.length} selected services</strong>, we recommend the <strong>${recommendation.type}</strong> plan.`;
         }
         
         // Auto-focus code input on step 4
@@ -723,7 +1246,6 @@ function showScreen(screenId) {
             setTimeout(() => {
                 designCodeInput.focus();
                 
-                // Pre-fill if we have a design code
                 if (formData.designCode) {
                     designCodeInput.value = formData.designCode;
                     validateAndDisplayConcept();
@@ -749,15 +1271,11 @@ function prev() {
 }
 
 function updateStepIndicator() {
-    // Update step dots
     stepDots.forEach((dot, index) => {
         dot.classList.toggle('active', index < currentStep);
     });
     
-    // Show current screen
     showScreen('step-' + currentStep);
-    
-    // Update hidden fields
     updateHiddenFields();
 }
 
@@ -790,59 +1308,14 @@ function setDesignConcept(option) {
     formData.designConcept = option;
     
     if (option === 'Code') {
-        next(); // Go to step 4 (code input)
+        next();
     } else if (option === 'Custom') {
         formData.designCode = 'CUSTOM';
-        next(); // Skip to step 5
+        next();
     }
 }
 
-// STEP 5: Feature selection
-function toggleFeature(button, feature) {
-    const index = formData.features.indexOf(feature);
-    
-    if (index === -1) {
-        // Add feature
-        formData.features.push(feature);
-        button.classList.add('selected');
-    } else {
-        // Remove feature
-        formData.features.splice(index, 1);
-        button.classList.remove('selected');
-    }
-    
-    updateFeatureCounter();
-}
-
-// Update feature buttons visual state
-function updateFeatureButtons() {
-    document.querySelectorAll('.feature-btn').forEach(button => {
-        const feature = button.getAttribute('data-feature');
-        if (formData.features.includes(feature)) {
-            button.classList.add('selected');
-        } else {
-            button.classList.remove('selected');
-        }
-    });
-}
-
-// Update feature counter
-function updateFeatureCounter() {
-    const count = formData.features.length;
-    const counter = document.getElementById('selectedCounter');
-    const countSpan = document.getElementById('selectedCount');
-    
-    if (count > 0) {
-        counter.style.display = 'block';
-        countSpan.textContent = count;
-        document.getElementById('step5Message').textContent = `Selected ${count} feature(s). Click Next when ready.`;
-    } else {
-        counter.style.display = 'none';
-        document.getElementById('step5Message').textContent = 'Select all that apply:';
-    }
-}
-
-// STEP 6-11: Simple selection functions
+// STEP 5-9: Simple selection functions
 function setAudience(audience) {
     formData.audience = audience;
     next();
@@ -868,96 +1341,200 @@ function setBooking(booking) {
     next();
 }
 
-// STEP 11: Plan type
-function setPlan(plan) {
+// STEP 11: Plan type selection with glow effect
+function selectPlan(plan) {
     formData.planType = plan;
-    showRecommendedPlan();
-    next();
+    
+    // Extract plan model from the plan string
+    if (plan.includes('Own Outright')) {
+        formData.planModel = 'Own Outright';
+    } else {
+        formData.planModel = 'Monthly Support';
+    }
+    
+    // Remove all glow effects first
+    document.querySelectorAll('.pricing-card').forEach(card => {
+        card.style.boxShadow = 'none';
+        card.style.border = '1px solid transparent';
+        card.style.transform = 'translateY(0)';
+    });
+    
+    // Add glow effect to selected plan
+    let selectedCard;
+    if (plan === 'Own Outright - Standard') {
+        selectedCard = document.getElementById('ownOutrightStandard');
+    } else if (plan === 'Own Outright - Premium') {
+        selectedCard = document.getElementById('ownOutrightPremium');
+    } else if (plan === 'Monthly Support - Standard') {
+        selectedCard = document.getElementById('monthlyStandard');
+    } else if (plan === 'Monthly Support - Premium') {
+        selectedCard = document.getElementById('monthlyPremium');
+    }
+    
+    if (selectedCard) {
+        selectedCard.style.boxShadow = '0 0 30px rgba(255, 107, 0, 0.5), 0 0 60px rgba(255, 107, 0, 0.3)';
+        selectedCard.style.border = '2px solid #FF6B00';
+        selectedCard.style.transform = 'translateY(-5px)';
+        selectedCard.style.transition = 'all 0.5s ease';
+    }
+    
+    // Show recommendation after a brief delay
+    setTimeout(() => {
+        showRecommendedPlan();
+        next();
+    }, 500);
 }
 
-// STEP 12: Show recommended plan dynamically
+// STEP 12: Show recommended plan with correct pricing
 function showRecommendedPlan() {
+    const recommendation = calculateRecommendedPlan();
     const container = document.getElementById('pricingCards');
-    let plan;
-
-    if (formData.planType === 'Own Outright') {
-        plan = {
-            name: 'Elite Package',
-            price: '£2,499',
-            period: 'one-time',
-            features: [
-                'Custom Website Design',
-                'Mobile Responsive',
-                'SEO Optimization',
-                'Google Analytics Setup',
-                'Contact Form Integration',
-                formData.features.includes('Online Booking') ? 'Booking System' : null,
-                formData.features.includes('Branding & Logo') ? 'Full Brand Identity' : null,
-                '3 Months Support',
-                'PageSpeed Optimization'
-            ].filter(Boolean)
-        };
-    } else {
-        plan = {
-            name: 'Premium Monthly',
-            price: '£199',
-            period: 'per month',
-            features: [
-                'Everything in Elite Package',
-                'Monthly Hosting',
-                'Weekly Backups',
-                'Security Monitoring',
-                'Content Updates',
-                'Performance Optimization',
-                '24/7 Support',
-                'Unlimited Edits',
-                'SEO Maintenance',
-                'Analytics Reporting'
-            ]
-        };
+    const planText = document.getElementById('planRecommendation');
+    
+    // Determine pricing based on plan model
+    const isOwnOutright = formData.planModel === 'Own Outright';
+    const standardPrice = isOwnOutright ? '£1,500' : '£100';
+    const premiumPrice = isOwnOutright ? '£3,000' : '£150';
+    const period = isOwnOutright ? 'one-time' : 'per month';
+    const planNameSuffix = isOwnOutright ? 'Own Outright' : 'Monthly Support';
+    
+    // Update plan recommendation text
+    planText.innerHTML = `Based on your <strong>${formData.features.length} selected services</strong>, we recommend the <strong>${recommendation.type}</strong> plan.`;
+    
+    // Create plan objects
+    const standardPlan = {
+        name: `${planNameSuffix} - Standard`,
+        price: standardPrice,
+        period: period,
+        features: [
+            'All Selected Standard Services',
+            'Professional Website Design',
+            'Mobile Responsive',
+            'Basic SEO Setup',
+            'Google Business Setup',
+            isOwnOutright ? '3 Months Support' : 'Monthly Hosting Included',
+            isOwnOutright ? 'No Monthly Fees' : 'Cancel Anytime'
+        ]
+    };
+    
+    const premiumPlan = {
+        name: `${planNameSuffix} - Premium`,
+        price: premiumPrice,
+        period: period,
+        features: [
+            'All Selected Standard & Premium Services',
+            'Online Booking System',
+            'Stripe Payment Integration',
+            'Advanced SEO Package',
+            isOwnOutright ? '6 Months Premium Support' : 'Premium Hosting',
+            isOwnOutright ? 'Priority Development' : 'Unlimited Edits & Support',
+            isOwnOutright ? 'No Monthly Fees' : 'Cancel Anytime'
+        ]
+    };
+    
+    // Add selected services to features
+    const standardServices = formData.features.filter(f => 
+        allServices.find(s => s.name === f && s.tier === 'standard')
+    ).slice(0, 3);
+    
+    const premiumServices = formData.features.filter(f => 
+        allServices.find(s => s.name === f && s.tier === 'premium')
+    ).slice(0, 3);
+    
+    if (standardServices.length > 0) {
+        standardPlan.features.unshift('<strong>Included Services:</strong>');
+        standardServices.forEach(service => {
+            standardPlan.features.push(`• ${service}`);
+        });
     }
-
-    // Add design info if coming from concepts
-    if (formData.designCode) {
-        if (formData.designCode === 'CUSTOM') {
-            plan.features.unshift('Custom Design (Tailored to your needs)');
-        } else {
-            plan.features.unshift(`Design: ${formData.designCode.toUpperCase()}`);
-        }
+    
+    if (premiumServices.length > 0) {
+        premiumPlan.features.unshift('<strong>Included Services:</strong>');
+        premiumServices.forEach(service => {
+            premiumPlan.features.push(`• ${service}`);
+        });
     }
-
-    const featuresHtml = plan.features.map(f => `<li>${f}</li>`).join('');
+    
+    // Create HTML for both plans
+    const featuresHtml1 = standardPlan.features.map(f => 
+        f.startsWith('•') ? `<li style="color: #4CAF50;">${f}</li>` : 
+        f.startsWith('<strong>') ? `<li><strong>${f.replace('<strong>', '').replace('</strong>', '')}</strong></li>` : 
+        `<li>${f}</li>`
+    ).join('');
+    
+    const featuresHtml2 = premiumPlan.features.map(f => 
+        f.startsWith('•') ? `<li style="color: #2196F3;">${f}</li>` : 
+        f.startsWith('<strong>') ? `<li><strong>${f.replace('<strong>', '').replace('</strong>', '')}</strong></li>` : 
+        `<li>${f}</li>`
+    ).join('');
+    
     container.innerHTML = `
-        <div class="pricing-card">
-            <h3>${plan.name}</h3>
-            <div class="price">${plan.price}<span class="price-period">/${plan.period}</span></div>
-            <ul class="pricing-features">${featuresHtml}</ul>
-            <button type="button" class="vibz-btn vibz-btn-primary" onclick="goToPayment()">
-                Start This Plan
+        <div class="pricing-card ${recommendation.type === 'Standard' && recommendation.glow ? 'recommended-glow' : ''}" 
+             id="recommendedStandard">
+            <h3>${standardPlan.name}</h3>
+            <div class="price">${standardPlan.price}<span class="price-period">/${standardPlan.period}</span></div>
+            <ul class="pricing-features">${featuresHtml1}</ul>
+            <button type="button" class="vibz-btn ${recommendation.type === 'Standard' ? 'vibz-btn-primary' : ''}" 
+                    onclick="goToPayment('${standardPlan.name}')">
+                ${recommendation.type === 'Standard' ? 'Choose Recommended Plan' : 'Choose Standard Plan'}
+            </button>
+        </div>
+        
+        <div class="pricing-card ${recommendation.type === 'Premium' && recommendation.glow ? 'recommended-glow' : ''}" 
+             id="recommendedPremium">
+            <h3>${premiumPlan.name}</h3>
+            <div class="price">${premiumPlan.price}<span class="price-period">/${premiumPlan.period}</span></div>
+            <ul class="pricing-features">${featuresHtml2}</ul>
+            <button type="button" class="vibz-btn ${recommendation.type === 'Premium' ? 'vibz-btn-primary' : ''}" 
+                    style="${recommendation.type === 'Premium' ? '' : 'background: #2196F3; border-color: #2196F3; color: white;'}"
+                    onclick="goToPayment('${premiumPlan.name}')">
+                ${recommendation.type === 'Premium' ? 'Choose Recommended Plan' : 'Choose Premium Plan'}
             </button>
         </div>
     `;
+    
+    // Add glow effect to recommended plan
+    if (recommendation.glow) {
+        const recommendedCard = document.getElementById(recommendation.type === 'Standard' ? 'recommendedStandard' : 'recommendedPremium');
+        if (recommendedCard) {
+            recommendedCard.style.boxShadow = '0 0 40px rgba(255, 107, 0, 0.6), 0 0 80px rgba(255, 107, 0, 0.3)';
+            recommendedCard.style.border = '3px solid #FF6B00';
+            recommendedCard.style.transform = 'translateY(-10px)';
+            recommendedCard.style.transition = 'all 0.5s ease';
+        }
+    }
 }
 
 // Redirect to payment page
-function goToPayment() {
+function goToPayment(planName) {
     // Store all form data before redirecting
     localStorage.setItem('funnelFormData', JSON.stringify(formData));
+    localStorage.setItem('selectedPlan', planName);
     
-    const link = formData.planType === 'Own Outright'
-        ? 'https://buy.stripe.com/test_00g9CBeBea4X6Gg28b'
-        : 'https://buy.stripe.com/test_28odSBdBCgVn7Z2fZ1';
-    window.location.href = link;
+    // Determine payment link based on plan
+    let paymentLink;
+    if (planName.includes('Own Outright')) {
+        if (planName.includes('Standard')) {
+            paymentLink = 'https://buy.stripe.com/test_00g9CBeBea4X6Gg28b'; // £1,500
+        } else {
+            paymentLink = 'https://buy.stripe.com/test_28odSBdBCgVn7Z2fZ1'; // £3,000
+        }
+    } else {
+        if (planName.includes('Standard')) {
+            paymentLink = 'https://buy.stripe.com/test_00g9CBeBea4X6Gg28b'; // £100/month
+        } else {
+            paymentLink = 'https://buy.stripe.com/test_28odSBdBCgVn7Z2fZ1'; // £150/month
+        }
+    }
+    
+    window.location.href = paymentLink;
 }
 
 // ========== INITIALIZATION ==========
 
 // Initialize page
 document.addEventListener('DOMContentLoaded', () => {
-    // First check URL parameters
     const jumpedFromURL = checkURLParams();
-    
-    // Update step indicator (this will show the correct screen)
     updateStepIndicator();
     
     // Mobile menu toggle
@@ -988,7 +1565,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    // Highlight step 5 dot if coming from concepts
+    // Highlight step dot if coming from concepts
     if (jumpedFromURL && currentStep === 5) {
         const step5Dot = document.querySelector('.step-dot[data-step="5"]');
         if (step5Dot) {
@@ -996,7 +1573,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // Log available concepts
     console.log('Available barber concepts:', barberConcepts.map(c => c.code));
 });
 </script>
