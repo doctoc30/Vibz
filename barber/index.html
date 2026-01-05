@@ -335,7 +335,7 @@
 
 <section class="funnel-section">
     <div class="container">
-        <!-- Step Indicators - Now 12 steps total -->
+        <!-- Step Indicators - 12 steps total -->
         <div class="step-indicator">
             <div class="step-dot active" data-step="1"></div>
             <div class="step-dot" data-step="2"></div>
@@ -358,18 +358,96 @@
             <input type="hidden" id="hiddenPaymentLink" name="Payment Link">
             <input type="hidden" id="hiddenDesignCode" name="Design Code">
 
-            <!-- STEP 1-8: Keep existing steps 1-8 as they are -->
             <!-- STEP 1: Barber Shop Name -->
-            <div class="form-screen active" id="step-1">...</div>
-            
+            <div class="form-screen active" id="step-1">
+                <h2>What's Your Barber Shop Name?</h2>
+                <p>Tell us your barber shop name so we can personalize your experience.</p>
+                <input type="text" id="businessInput" placeholder="e.g. The Gentlemen's Cut">
+                <button type="button" class="vibz-btn vibz-btn-primary" onclick="handleBusinessName()">Next</button>
+            </div>
+
             <!-- STEP 2: Project Type -->
-            <div class="form-screen" id="step-2">...</div>
-            
+            <div class="form-screen" id="step-2">
+                <h2>Which service do you need?</h2>
+                <div class="options">
+                    <button type="button" class="vibz-btn" onclick="setProjectType('New Website')">New Website</button>
+                    <button type="button" class="vibz-btn" onclick="setProjectType('Redesign Existing')">Redesign Existing</button>
+                    <button type="button" class="vibz-btn" onclick="setProjectType('Maintenance')">Maintenance</button>
+                </div>
+                <button type="button" class="vibz-btn back-button" onclick="prev()">← Go Back</button>
+            </div>
+
             <!-- STEP 3: Design Concept -->
-            <div class="form-screen" id="step-3">...</div>
-            
-            <!-- STEP 4: Code Input -->
-            <div class="form-screen" id="step-4">...</div>
+            <div class="form-screen" id="step-3">
+                <h2 id="step3Title">Do you have a design concept in mind?</h2>
+                <p id="step3Message">You can enter a code, choose from templates, or request custom design.</p>
+                
+                <!-- Show design info if coming from concepts page -->
+                <div id="designInfo" style="display: none; background: rgba(255, 107, 0, 0.1); padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem; border: 2px solid #FF6B00;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="font-size: 1.5rem; color: #FF6B00;">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div>
+                            <p style="margin: 0; color: #121212; font-weight: 700; font-size: 1.1rem;">
+                                Design Selected: <span id="selectedDesignCode" style="color: #FF6B00;"></span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="options">
+                    <button type="button" class="vibz-btn" onclick="setDesignConcept('Code')" id="codeBtn">Yes, I have a code</button>
+                    <a href="https://www.vibz.co.uk/barber/concepts.html" class="vibz-btn">Show me concepts</a>
+                    <button type="button" class="vibz-btn" onclick="setDesignConcept('Custom')">Custom design</button>
+                </div>
+                <button type="button" class="vibz-btn back-button" onclick="prev()">← Go Back</button>
+            </div>
+
+            <!-- STEP 4: Code Input & Concept Display -->
+            <div class="form-screen" id="step-4">
+                <h2>Enter Your Design Code</h2>
+                <p>Type the code for your chosen design (e.g., barber-1, barber-2, etc.)</p>
+                
+                <div class="code-input-container">
+                    <input type="text" 
+                           class="code-input-large" 
+                           id="designCodeInput" 
+                           placeholder="Enter code (e.g., barber-5)"
+                           autocomplete="off">
+                    
+                    <div id="codeStatus" class="code-status"></div>
+                    
+                    <div id="conceptDisplay" style="display: none;">
+                        <div class="concept-display-card">
+                            <div class="concept-display-image">
+                                <img id="conceptDisplayImage" src="" alt="Design Preview">
+                            </div>
+                            <div class="concept-display-code">
+                                <span class="code-label">Design Code</span>
+                                <div class="code-value" id="conceptDisplayCode"></div>
+                            </div>
+                        </div>
+                        
+                        <button type="button" class="vibz-btn vibz-btn-primary" onclick="confirmDesignSelection()" id="confirmDesignBtn">
+                            Continue with This Design
+                        </button>
+                    </div>
+                    
+                    <button type="button" class="vibz-btn" onclick="tryDifferentCode()" id="tryDifferentBtn" style="display: none; margin-top: 1rem;">
+                        Try Different Code
+                    </button>
+                </div>
+                
+                <div style="margin-top: 2rem;">
+                    <p style="color: var(--gray); font-size: 0.9rem;">
+                        <i class="fas fa-info-circle"></i> 
+                        Accepted formats: "barber-1", "barber 1", "BARBER-1", "B1", or just "1"
+                    </p>
+                </div>
+                
+                <button type="button" class="vibz-btn back-button" onclick="prev()">← Go Back</button>
+            </div>
             
             <!-- STEP 5: Target Audience -->
             <div class="form-screen" id="step-5">
@@ -434,7 +512,7 @@
                     </div>
                 </div>
                 
-                <!-- Rest of the services grid (Standard and Premium services) -->
+                <!-- Tier Indicators -->
                 <div class="tier-indicators" style="display: flex; justify-content: center; gap: 30px; margin: 2rem 0; flex-wrap: wrap;">
                     <div style="text-align: center; background: rgba(76, 175, 80, 0.1); padding: 10px 20px; border-radius: 10px; border: 2px solid #4CAF50;">
                         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
@@ -452,16 +530,214 @@
                     </div>
                 </div>
                 
-                <!-- Services Grid (Standard and Premium services) -->
+                <!-- Services Grid -->
                 <div class="services-grid">
-                    <!-- Standard Services (10) -->
-                    <!-- Premium Services (10) -->
+                    <!-- ===== STANDARD PACKAGE SERVICES ===== -->
+                    <div class="service-card standard" onclick="toggleService('Services & Pricing Display', this)">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 24px; height: 24px; background: #4CAF50; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">S</div>
+                            <h4 style="margin: 0; font-size: 1.1rem;">Services & Pricing Display</h4>
+                        </div>
+                        <p style="color: var(--gray); font-size: 0.9rem; margin: 0;">Clear display of all services and prices</p>
+                    </div>
+                    
+                    <div class="service-card standard" onclick="toggleService('Barber Profiles / Team Section', this)">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 24px; height: 24px; background: #4CAF50; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">S</div>
+                            <h4 style="margin: 0; font-size: 1.1rem;">Barber Profiles / Team Section</h4>
+                        </div>
+                        <p style="color: var(--gray); font-size: 0.9rem; margin: 0;">Introduce your team with bios and photos</p>
+                    </div>
+                    
+                    <div class="service-card standard" onclick="toggleService('Photo Gallery / Portfolio', this)">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 24px; height: 24px; background: #4CAF50; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">S</div>
+                            <h4 style="margin: 0; font-size: 1.1rem;">Photo Gallery / Portfolio</h4>
+                        </div>
+                        <p style="color: var(--gray); font-size: 0.9rem; margin: 0;">Showcase your work with high-quality images</p>
+                    </div>
+                    
+                    <div class="service-card standard" onclick="toggleService('Before & After Slider', this)">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 24px; height: 24px; background: #4CAF50; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">S</div>
+                            <h4 style="margin: 0; font-size: 1.1rem;">Before & After Slider</h4>
+                        </div>
+                        <p style="color: var(--gray); font-size: 0.9rem; margin: 0;">Interactive before/after image comparison</p>
+                    </div>
+                    
+                    <div class="service-card standard" onclick="toggleService('Special Offers / Promotions Section', this)">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 24px; height: 24px; background: #4CAF50; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">S</div>
+                            <h4 style="margin: 0; font-size: 1.1rem;">Special Offers / Promotions</h4>
+                        </div>
+                        <p style="color: var(--gray); font-size: 0.9rem; margin: 0;">Display current deals and promotions</p>
+                    </div>
+                    
+                    <div class="service-card standard" onclick="toggleService('Location & Directions', this)">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 24px; height: 24px; background: #4CAF50; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">S</div>
+                            <h4 style="margin: 0; font-size: 1.1rem;">Location & Directions</h4>
+                        </div>
+                        <p style="color: var(--gray); font-size: 0.9rem; margin: 0;">Google Maps integration with directions</p>
+                    </div>
+                    
+                    <div class="service-card standard" onclick="toggleService('Tap-to-Call & WhatsApp Buttons', this)">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 24px; height: 24px; background: #4CAF50; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">S</div>
+                            <h4 style="margin: 0; font-size: 1.1rem;">Tap-to-Call & WhatsApp</h4>
+                        </div>
+                        <p style="color: var(--gray); font-size: 0.9rem; margin: 0;">One-click calling and WhatsApp messaging</p>
+                    </div>
+                    
+                    <div class="service-card standard" onclick="toggleService('Opening Hours Display', this)">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 24px; height: 24px; background: #4CAF50; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">S</div>
+                            <h4 style="margin: 0; font-size: 1.1rem;">Opening Hours Display</h4>
+                        </div>
+                        <p style="color: var(--gray); font-size: 0.9rem; margin: 0;">Interactive hours with open/closed status</p>
+                    </div>
+                    
+                    <div class="service-card standard" onclick="toggleService('Membership / Loyalty Program Section', this)">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 24px; height: 24px; background: #4CAF50; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">S</div>
+                            <h4 style="margin: 0; font-size: 1.1rem;">Membership / Loyalty Program</h4>
+                        </div>
+                        <p style="color: var(--gray); font-size: 0.9rem; margin: 0;">Display your loyalty program details</p>
+                    </div>
+                    
+                    <div class="service-card standard" onclick="toggleService('FAQ Section', this)">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 24px; height: 24px; background: #4CAF50; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">S</div>
+                            <h4 style="margin: 0; font-size: 1.1rem;">FAQ Section</h4>
+                        </div>
+                        <p style="color: var(--gray); font-size: 0.9rem; margin: 0;">Answers to common client questions</p>
+                    </div>
+                    
+                    <!-- ===== PREMIUM PACKAGE SERVICES ===== -->
+                    <div class="service-card premium" onclick="toggleService('Online Booking System Embed', this)">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 24px; height: 24px; background: #2196F3; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">P</div>
+                            <h4 style="margin: 0; font-size: 1.1rem;">Online Booking System Embed</h4>
+                        </div>
+                        <p style="color: var(--gray); font-size: 0.9rem; margin: 0;">Calendly/Setmore integration for bookings</p>
+                    </div>
+                    
+                    <div class="service-card premium" onclick="toggleService('Stripe Payment / Deposit Integration', this)">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 24px; height: 24px; background: #2196F3; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">P</div>
+                            <h4 style="margin: 0; font-size: 1.1rem;">Stripe Payment Integration</h4>
+                        </div>
+                        <p style="color: var(--gray); font-size: 0.9rem; margin: 0;">Secure online payments and deposits</p>
+                    </div>
+                    
+                    <div class="service-card premium" onclick="toggleService('Automated Booking Reminders', this)">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 24px; height: 24px; background: #2196F3; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">P</div>
+                            <h4 style="margin: 0; font-size: 1.1rem;">Automated Booking Reminders</h4>
+                        </div>
+                        <p style="color: var(--gray); font-size: 0.9rem; margin: 0;">Email/SMS reminders via booking tool</p>
+                    </div>
+                    
+                    <div class="service-card premium" onclick="toggleService('Appointment Cancellation / Reschedule Info', this)">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 24px; height: 24px; background: #2196F3; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">P</div>
+                            <h4 style="margin: 0; font-size: 1.1rem;">Cancellation & Reschedule Info</h4>
+                        </div>
+                        <p style="color: var(--gray); font-size: 0.9rem; margin: 0;">Clear policies and rescheduling options</p>
+                    </div>
+                    
+                    <div class="service-card premium" onclick="toggleService('Gift Card / Voucher Section', this)">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 24px; height: 24px; background: #2196F3; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">P</div>
+                            <h4 style="margin: 0; font-size: 1.1rem;">Gift Card / Voucher Section</h4>
+                        </div>
+                        <p style="color: var(--gray); font-size: 0.9rem; margin: 0;">Sell and manage digital gift cards</p>
+                    </div>
+                    
+                    <div class="service-card premium" onclick="toggleService('Kids / Senior / Special Service Tags', this)">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 24px; height: 24px; background: #2196F3; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">P</div>
+                            <h4 style="margin: 0; font-size: 1.1rem;">Special Service Tags</h4>
+                        </div>
+                        <p style="color: var(--gray); font-size: 0.9rem; margin: 0;">Highlight kids, seniors, specialty services</p>
+                    </div>
+                    
+                    <div class="service-card premium" onclick="toggleService('Walk-In / Waitlist Info Section', this)">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 24px; height: 24px; background: #2196F3; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">P</div>
+                            <h4 style="margin: 0; font-size: 1.1rem;">Walk-In & Waitlist Info</h4>
+                        </div>
+                        <p style="color: var(--gray); font-size: 0.9rem; margin: 0;">Real-time waitlist and walk-in updates</p>
+                    </div>
+                    
+                    <div class="service-card premium" onclick="toggleService('Barber Specialties Tags', this)">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 24px; height: 24px; background: #2196F3; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">P</div>
+                            <h4 style="margin: 0; font-size: 1.1rem;">Barber Specialties Tags</h4>
+                        </div>
+                        <p style="color: var(--gray); font-size: 0.9rem; margin: 0;">Highlight specific skills and specialties</p>
+                    </div>
+                    
+                    <div class="service-card premium" onclick="toggleService('Prominent Call-to-Action Buttons', this)">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 24px; height: 24px; background: #2196F3; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">P</div>
+                            <h4 style="margin: 0; font-size: 1.1rem;">Prominent Call-to-Action Buttons</h4>
+                        </div>
+                        <p style="color: var(--gray); font-size: 0.9rem; margin: 0;">Strategic buttons to drive conversions</p>
+                    </div>
+                    
+                    <div class="service-card premium" onclick="toggleService('Enhanced Before & After Slider', this)">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 24px; height: 24px; background: #2196F3; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">P</div>
+                            <h4 style="margin: 0; font-size: 1.1rem;">Enhanced Before & After Slider</h4>
+                        </div>
+                        <p style="color: var(--gray); font-size: 0.9rem; margin: 0;">Interactive slider with filtering options</p>
+                    </div>
                 </div>
                 
                 <!-- Selection Summary -->
-                <div id="selectionSummary">...</div>
+                <div id="selectionSummary" style="background: var(--light-gray); padding: 1.5rem; border-radius: 15px; margin: 2rem 0; border: 2px solid var(--border);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                        <div>
+                            <h4 style="margin-bottom: 0.5rem;">Your Selections</h4>
+                            <div style="display: flex; gap: 2rem; flex-wrap: wrap;">
+                                <div>
+                                    <span style="font-size: 0.9rem; color: var(--gray);">Standard Services:</span>
+                                    <div style="font-weight: 700; color: #4CAF50; font-size: 1.5rem;" id="standardCount">0</div>
+                                </div>
+                                <div>
+                                    <span style="font-size: 0.9rem; color: var(--gray);">Premium Services:</span>
+                                    <div style="font-weight: 700; color: #2196F3; font-size: 1.5rem;" id="premiumCount">0</div>
+                                </div>
+                                <div>
+                                    <span style="font-size: 0.9rem; color: var(--gray);">Total Selected:</span>
+                                    <div style="font-weight: 700; color: var(--dark); font-size: 1.5rem;" id="totalCount">0</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div id="planRecommendationPreview" style="background: linear-gradient(90deg, #2196F3, #21CBF3); color: white; padding: 0.8rem 1.5rem; border-radius: 25px; font-weight: 700; display: none; box-shadow: 0 5px 15px rgba(33, 150, 243, 0.3);">
+                                <i class="fas fa-star"></i> Recommended: <span id="recommendedPlanPreview">Premium</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Plan Recommendation Logic -->
+                    <div id="planLogicInfo" style="margin-top: 1rem; padding: 1rem; background: rgba(33, 150, 243, 0.05); border-radius: 10px; display: none;">
+                        <p style="margin: 0; font-size: 0.9rem; color: var(--gray);">
+                            <i class="fas fa-info-circle" style="color: #2196F3;"></i>
+                            <strong>Selection Logic:</strong> 
+                            <span id="planLogicText">Select 3+ Premium services for Premium recommendation</span>
+                        </p>
+                    </div>
+                    
+                    <div id="selectedServicesList" style="margin-top: 1rem; display: none;">
+                        <p style="font-size: 0.9rem; color: var(--gray); margin-bottom: 0.5rem;">Selected Services:</p>
+                        <div id="servicesList" style="display: flex; flex-wrap: wrap; gap: 0.5rem;"></div>
+                    </div>
+                </div>
                 
-                <button type="button" class="vibz-btn vibz-btn-primary" onclick="nextFromServices()">
+                <button type="button" class="vibz-btn vibz-btn-primary" onclick="nextFromServices()" style="margin-top: 1rem; padding: 1.2rem 3rem; font-size: 1.1rem;">
                     <i class="fas fa-arrow-right"></i> Continue
                 </button>
                 
@@ -499,6 +775,7 @@
         </form>
     </div>
 </section>
+
 <script>
 // ========== BARBER CONCEPTS DATABASE ==========
 const barberConcepts = [
@@ -548,13 +825,14 @@ const formData = {
     designConcept: '',
     designCode: '',
     features: [],
+    bookingMethod: '', // Added for Step 9 booking method
     audience: '',
     style: '',
     color: '',
     goal: '',
-    booking: '',
-    planType: '',
-    planModel: ''
+    urgency: '', // Added for Step 10 urgency
+    planModel: '', // 'Own Outright' or 'Monthly Support'
+    planType: '' // 'Standard' or 'Premium' based on service selections
 };
 
 // Service selection tracking
@@ -661,6 +939,25 @@ function tryDifferentCode() {
 }
 
 // ========== SERVICE SELECTION FUNCTIONS ==========
+
+// Step 9: Booking Method Selection
+function selectBookingMethod(method, button) {
+    formData.bookingMethod = method;
+    
+    // Remove selected class from all booking method buttons
+    document.querySelectorAll('.booking-method-btn').forEach(btn => {
+        btn.classList.remove('selected');
+        btn.style.background = 'rgba(76, 175, 80, 0.05)';
+        btn.style.color = '#4CAF50';
+        btn.style.borderColor = '#4CAF50';
+    });
+    
+    // Add selected class to clicked button
+    button.classList.add('selected');
+    button.style.background = '#4CAF50';
+    button.style.color = 'white';
+    button.style.borderColor = '#4CAF50';
+}
 
 function toggleService(serviceName, element) {
     const index = formData.features.indexOf(serviceName);
@@ -794,12 +1091,20 @@ function showPlanRecommendation() {
 }
 
 function nextFromServices() {
+    // Check if booking method is selected (required)
+    if (!formData.bookingMethod) {
+        alert('Please select your preferred booking method before continuing.');
+        return;
+    }
+    
+    // Check if at least one service is selected
     if (formData.features.length === 0) {
         alert('Please select at least one service to continue.');
         return;
     }
     
     // Store recommended plan for later use
+    formData.planType = recommendedPlan.type;
     localStorage.setItem('recommendedPlan', JSON.stringify(recommendedPlan));
     next();
 }
@@ -816,7 +1121,7 @@ function checkURLParams() {
     
     if (step) {
         const stepNum = parseInt(step);
-        if (!isNaN(stepNum) && stepNum >= 1 && stepNum <= 12) {
+        if (!isNaN(stepNum) && stepNum >= 1 && stepNum <= 11) {
             currentStep = stepNum;
             console.log('Jumping to step:', currentStep);
             
@@ -855,10 +1160,10 @@ function showScreen(screenId) {
             document.getElementById('selectedDesignCode').textContent = formData.designCode.toUpperCase();
         }
         
-        if (screenId === 'step-10') {
+        if (screenId === 'step-9') {
             // Update title with business name if available
             if (formData.businessName) {
-                document.getElementById('step10Title').innerHTML = 
+                document.getElementById('step9Title').innerHTML = 
                     `Select Services for <span style="color: #FF6B00;">${formData.businessName}</span>`;
             }
             
@@ -868,20 +1173,8 @@ function showScreen(screenId) {
         }
         
         if (screenId === 'step-11') {
-            // Apply glow effect to recommended plan
-            const recommendation = calculateRecommendedPlan();
-            const banner = document.getElementById('planRecommendationBanner');
-            
-            if (recommendation.type === 'Premium' && recommendation.glow) {
-                banner.style.display = 'block';
-                document.getElementById('recommendationText').textContent = 
-                    `You selected ${premiumServiceCount} premium features. Premium plan recommended for maximum revenue.`;
-            } else {
-                banner.style.display = 'none';
-            }
-            
-            document.getElementById('planSelectionMessage').innerHTML = 
-                `Based on your <strong>${formData.features.length} selected services</strong>, we recommend the <strong>${recommendation.type}</strong> plan.`;
+            // Show plans based on selections
+            showFinalPlans();
         }
         
         // Auto-focus code input on step 4
@@ -900,7 +1193,7 @@ function showScreen(screenId) {
 
 // Step navigation
 function next() {
-    if (currentStep < 12) {
+    if (currentStep < 11) {
         currentStep++;
         updateStepIndicator();
     }
@@ -958,7 +1251,7 @@ function setDesignConcept(option) {
     }
 }
 
-// STEP 5-9: Simple selection functions
+// STEP 5-8: Simple selection functions
 function setAudience(audience) {
     formData.audience = audience;
     next();
@@ -979,58 +1272,19 @@ function setGoal(goal) {
     next();
 }
 
-function setBooking(booking) {
-    formData.booking = booking;
-    next();
+// STEP 10: Urgency & Plan Model
+function setUrgency(urgency) {
+    formData.urgency = urgency;
+    // Don't navigate yet, wait for plan model selection
 }
 
-// STEP 11: Plan type selection with glow effect
-function selectPlan(plan) {
-    formData.planType = plan;
-    
-    // Extract plan model from the plan string
-    if (plan.includes('Own Outright')) {
-        formData.planModel = 'Own Outright';
-    } else {
-        formData.planModel = 'Monthly Support';
-    }
-    
-    // Remove all glow effects first
-    document.querySelectorAll('.pricing-card').forEach(card => {
-        card.style.boxShadow = 'none';
-        card.style.border = '1px solid transparent';
-        card.style.transform = 'translateY(0)';
-    });
-    
-    // Add glow effect to selected plan
-    let selectedCard;
-    if (plan === 'Own Outright - Standard') {
-        selectedCard = document.getElementById('ownOutrightStandard');
-    } else if (plan === 'Own Outright - Premium') {
-        selectedCard = document.getElementById('ownOutrightPremium');
-    } else if (plan === 'Monthly Support - Standard') {
-        selectedCard = document.getElementById('monthlyStandard');
-    } else if (plan === 'Monthly Support - Premium') {
-        selectedCard = document.getElementById('monthlyPremium');
-    }
-    
-    if (selectedCard) {
-        selectedCard.style.boxShadow = '0 0 30px rgba(255, 107, 0, 0.5), 0 0 60px rgba(255, 107, 0, 0.3)';
-        selectedCard.style.border = '2px solid #FF6B00';
-        selectedCard.style.transform = 'translateY(-5px)';
-        selectedCard.style.transition = 'all 0.5s ease';
-    }
-    
-    // Show recommendation after a brief delay
-    setTimeout(() => {
-        showRecommendedPlan();
-        next();
-    }, 500);
+function setPlanModel(planModel) {
+    formData.planModel = planModel;
+    next(); // Go to Step 11 to show plans
 }
 
-// STEP 12: Show recommended plan with correct pricing
-function showRecommendedPlan() {
-    const recommendation = calculateRecommendedPlan();
+// STEP 11: Show final plans based on selections
+function showFinalPlans() {
     const container = document.getElementById('pricingCards');
     const planText = document.getElementById('planRecommendation');
     
@@ -1042,6 +1296,7 @@ function showRecommendedPlan() {
     const planNameSuffix = isOwnOutright ? 'Own Outright' : 'Monthly Support';
     
     // Update plan recommendation text
+    const recommendation = calculateRecommendedPlan();
     planText.innerHTML = `Based on your <strong>${formData.features.length} selected services</strong>, we recommend the <strong>${recommendation.type}</strong> plan.`;
     
     // Create plan objects
@@ -1051,6 +1306,7 @@ function showRecommendedPlan() {
         period: period,
         features: [
             'All Selected Standard Services',
+            `Booking Method: ${formData.bookingMethod}`,
             'Professional Website Design',
             'Mobile Responsive',
             'Basic SEO Setup',
@@ -1066,6 +1322,7 @@ function showRecommendedPlan() {
         period: period,
         features: [
             'All Selected Standard & Premium Services',
+            `Booking Method: ${formData.bookingMethod}`,
             'Online Booking System',
             'Stripe Payment Integration',
             'Advanced SEO Package',
@@ -1075,7 +1332,7 @@ function showRecommendedPlan() {
         ]
     };
     
-    // Add selected services to features
+    // Add selected services to features (show top 3 of each)
     const standardServices = formData.features.filter(f => 
         allServices.find(s => s.name === f && s.tier === 'standard')
     ).slice(0, 3);
@@ -1207,14 +1464,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
-    
-    // Highlight step dot if coming from concepts
-    if (jumpedFromURL && currentStep === 5) {
-        const step5Dot = document.querySelector('.step-dot[data-step="5"]');
-        if (step5Dot) {
-            step5Dot.classList.add('jump-point');
-        }
-    }
     
     console.log('Available barber concepts:', barberConcepts.map(c => c.code));
 });
