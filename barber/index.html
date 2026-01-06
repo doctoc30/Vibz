@@ -951,7 +951,6 @@
     </div>
 </section>
 
-<script>
 // ========== BARBER CONCEPTS DATABASE ==========
 const barberConcepts = [
     { code: "barber-1", image: "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
@@ -1026,7 +1025,117 @@ const conceptDisplayCode = document.getElementById('conceptDisplayCode');
 const confirmDesignBtn = document.getElementById('confirmDesignBtn');
 const tryDifferentBtn = document.getElementById('tryDifferentBtn');
 
-// ========== UPDATED FUNCTIONS ==========
+// ========== FIXED BARBER CODE FUNCTIONS ==========
+
+// Improved code normalization function
+function normalizeCode(input) {
+    if (!input || typeof input !== 'string') return '';
+    
+    let normalized = input.toString().toLowerCase().trim();
+    
+    // Debug logging
+    console.log('Original input:', input);
+    console.log('Normalized step 1:', normalized);
+    
+    // Extract numbers from input (allow any characters before/after numbers)
+    const numberMatch = normalized.match(/\d+/);
+    if (!numberMatch) return '';
+    
+    const number = numberMatch[0];
+    console.log('Extracted number:', number);
+    
+    // Validate number is between 1-9
+    const num = parseInt(number);
+    if (num < 1 || num > 9) return '';
+    
+    return `barber-${number}`;
+}
+
+// Find concept by code with improved matching
+function findConceptByCode(input) {
+    const normalizedCode = normalizeCode(input);
+    console.log('Searching for normalized code:', normalizedCode);
+    
+    if (!normalizedCode) return null;
+    
+    // Find exact match
+    const concept = barberConcepts.find(concept => concept.code === normalizedCode);
+    
+    console.log('Found concept:', concept);
+    return concept;
+}
+
+// Validate and display concept with better error messages
+function validateAndDisplayConcept() {
+    const input = designCodeInput.value.trim();
+    console.log('Validating input:', input);
+    
+    if (!input) {
+        codeStatus.textContent = '';
+        codeStatus.className = 'code-status';
+        conceptDisplay.style.display = 'none';
+        tryDifferentBtn.style.display = 'none';
+        return;
+    }
+    
+    const concept = findConceptByCode(input);
+    
+    if (concept) {
+        codeStatus.textContent = `✓ Valid code: ${concept.code}`;
+        codeStatus.className = 'code-status success';
+        conceptDisplayImage.src = concept.image;
+        conceptDisplayImage.alt = `Design ${concept.code}`;
+        conceptDisplayCode.textContent = concept.code.toUpperCase();
+        conceptDisplay.style.display = 'block';
+        confirmDesignBtn.innerHTML = `<i class="fas fa-check"></i> Continue with ${concept.code.toUpperCase()}`;
+        tryDifferentBtn.style.display = 'inline-block';
+    } else {
+        // Better error message
+        const extractedNumber = input.match(/\d+/);
+        let errorMessage = 'Design not found. ';
+        
+        if (extractedNumber) {
+            const num = parseInt(extractedNumber[0]);
+            if (num < 1 || num > 9) {
+                errorMessage = `Number ${num} is out of range. Please enter a number between 1-9.`;
+            } else {
+                errorMessage = `Try "barber-${num}" or just "${num}"`;
+            }
+        } else {
+            errorMessage = `Accepted formats: "barber-1" to "barber-9", "1" to "9", "B1" to "B9"`;
+        }
+        
+        codeStatus.textContent = `✗ ${errorMessage}`;
+        codeStatus.className = 'code-status error';
+        conceptDisplay.style.display = 'none';
+        tryDifferentBtn.style.display = 'none';
+    }
+}
+
+// Confirm design selection
+function confirmDesignSelection() {
+    const input = designCodeInput.value.trim();
+    const concept = findConceptByCode(input);
+    
+    if (concept) {
+        formData.designCode = concept.code;
+        formData.designConcept = 'From Code';
+        updateHiddenFields();
+        next();
+    }
+}
+
+// Try different code
+function tryDifferentCode() {
+    designCodeInput.value = '';
+    designCodeInput.focus();
+    codeStatus.textContent = '';
+    codeStatus.className = 'code-status';
+    conceptDisplay.style.display = 'none';
+    tryDifferentBtn.style.display = 'none';
+}
+
+// ========== EXISTING FUNCTIONS (UNCHANGED) ==========
 
 // Clear design selection when user wants to change it
 function clearDesignSelection() {
@@ -1143,7 +1252,7 @@ function showScreen(screenId) {
     }
 }
 
-// ========== UPDATED FUNNEL LOGIC ==========
+// ========== FUNNEL LOGIC ==========
 
 // STEP 10: Set urgency preference
 function setUrgency(urgency) {
@@ -1218,91 +1327,7 @@ function submitLeadForm(event) {
     // Example: fetch('/api/lead', { method: 'POST', body: JSON.stringify(leadData) })
 }
 
-// ========== EXISTING FUNCTIONS ==========
-
-// Normalize code input
-function normalizeCode(input) {
-    if (!input) return '';
-    
-    let normalized = input.toString().toLowerCase().trim();
-    normalized = normalized.replace(/^barber[\s\-]*/i, '');
-    normalized = normalized.replace(/[^0-9\-]/g, '');
-    
-    if (/^\d+$/.test(normalized)) {
-        return `barber-${normalized}`;
-    }
-    
-    if (normalized.includes('-')) {
-        const num = normalized.split('-').pop();
-        if (/^\d+$/.test(num)) {
-            return `barber-${num}`;
-        }
-    }
-    
-    return '';
-}
-
-// Find concept by code
-function findConceptByCode(input) {
-    const normalizedCode = normalizeCode(input);
-    if (!normalizedCode) return null;
-    
-    return barberConcepts.find(concept => concept.code === normalizedCode);
-}
-
-// Validate and display concept
-function validateAndDisplayConcept() {
-    const input = designCodeInput.value.trim();
-    
-    if (!input) {
-        codeStatus.textContent = '';
-        codeStatus.className = 'code-status';
-        conceptDisplay.style.display = 'none';
-        tryDifferentBtn.style.display = 'none';
-        return;
-    }
-    
-    const concept = findConceptByCode(input);
-    
-    if (concept) {
-        codeStatus.textContent = `✓ Valid code: ${concept.code}`;
-        codeStatus.className = 'code-status success';
-        conceptDisplayImage.src = concept.image;
-        conceptDisplayImage.alt = `Design ${concept.code}`;
-        conceptDisplayCode.textContent = concept.code.toUpperCase();
-        conceptDisplay.style.display = 'block';
-        confirmDesignBtn.innerHTML = `<i class="fas fa-check"></i> Continue with ${concept.code.toUpperCase()}`;
-        tryDifferentBtn.style.display = 'inline-block';
-    } else {
-        codeStatus.textContent = `✗ Design not found. Try "barber-1" to "barber-${barberConcepts.length}"`;
-        codeStatus.className = 'code-status error';
-        conceptDisplay.style.display = 'none';
-        tryDifferentBtn.style.display = 'none';
-    }
-}
-
-// Confirm design selection
-function confirmDesignSelection() {
-    const input = designCodeInput.value.trim();
-    const concept = findConceptByCode(input);
-    
-    if (concept) {
-        formData.designCode = concept.code;
-        formData.designConcept = 'From Code';
-        updateHiddenFields();
-        next();
-    }
-}
-
-// Try different code
-function tryDifferentCode() {
-    designCodeInput.value = '';
-    designCodeInput.focus();
-    codeStatus.textContent = '';
-    codeStatus.className = 'code-status';
-    conceptDisplay.style.display = 'none';
-    tryDifferentBtn.style.display = 'none';
-}
+// ========== SERVICE SELECTION FUNCTIONS ==========
 
 function toggleService(serviceName, element) {
     const index = formData.features.indexOf(serviceName);
@@ -1676,6 +1701,25 @@ function goToPayment(planName) {
     window.location.href = paymentLink;
 }
 
+// ========== TEST FUNCTION ==========
+function testBarberCodes() {
+    const testCases = [
+        'barber-1', 'barber-2', 'barber-3', 'barber-4', 'barber-5',
+        'barber-6', 'barber-7', 'barber-8', 'barber-9',
+        'B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B9',
+        '1', '2', '3', '4', '5', '6', '7', '8', '9',
+        'BARBER-1', 'BARBER 1', 'Barber 2', 'BARBER2',
+        'b1', 'b2', 'b3', 'barber1', 'barber2',
+        'test-1', 'design-3', 'code-5'  // Should all work
+    ];
+    
+    console.log('=== Testing Barber Code Recognition ===');
+    testCases.forEach(test => {
+        const result = findConceptByCode(test);
+        console.log(`Input: "${test}" => Found: ${result ? result.code : 'NOT FOUND'}`);
+    });
+}
+
 // ========== INITIALIZATION ==========
 
 // Initialize page
@@ -1712,8 +1756,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     console.log('Available barber concepts:', barberConcepts.map(c => c.code));
+    
+    // Run test function (optional - can remove in production)
+    // testBarberCodes();
 });
-</script>
 
 </body>
 </html>
