@@ -299,7 +299,9 @@
             transition: all 0.3s ease;
             position: relative;
             z-index: 1;
-            /* Remove any fixed/absolute positioning */
+            /* Ensure it's part of normal document flow */
+            display: block;
+            width: 100%;
         }
 
         /* Mobile Portrait View (max-width: 768px) */
@@ -317,39 +319,58 @@
             .concept-display-code .code-value { font-size: 2rem; }
             .services-grid { grid-template-columns: 1fr; }
             
-            /* Selection Summary Mobile Fix - SIMPLE FIX */
+            /* Selection Summary Mobile Fix - SIMPLE AND CLEAN */
             #selectionSummary {
-                /* Make it part of normal document flow */
+                /* Reset all positioning */
                 position: relative !important;
                 width: 100% !important;
-                max-width: 100% !important;
-                margin: 2rem auto !important;
+                margin: 2rem 0 !important;
                 padding: 1.5rem !important;
                 border: 2px solid var(--border) !important;
                 border-radius: 15px !important;
                 background: var(--light-gray) !important;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.05) !important;
                 
-                /* Remove any transform/opacity that might hide it */
+                /* Ensure it's visible and in flow */
                 opacity: 1 !important;
+                visibility: visible !important;
+                display: block !important;
                 transform: none !important;
                 max-height: none !important;
-                display: block !important;
-                visibility: visible !important;
                 
-                /* Remove any sticky/fixed positioning */
+                /* Remove any overlay properties */
                 top: auto !important;
                 bottom: auto !important;
                 left: auto !important;
                 right: auto !important;
+                z-index: 1 !important;
             }
             
-            /* Compact the content for mobile */
+            /* Ensure the form screen has enough bottom padding */
+            #step-10 {
+                padding-bottom: 40px;
+            }
+            
+            /* Make buttons full width on mobile */
+            #step-10 .vibz-btn {
+                width: 100%;
+                max-width: 100%;
+                margin-left: 0;
+                margin-right: 0;
+            }
+            
+            /* Compact layout for selection summary */
+            #selectionSummary .selection-summary-content {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
             #selectionSummary .selection-stats {
                 display: flex;
                 justify-content: space-between;
                 flex-wrap: wrap;
                 gap: 1rem;
-                margin-bottom: 1rem;
             }
             
             #selectionSummary .selection-stats > div {
@@ -361,52 +382,57 @@
             #planRecommendationPreview {
                 width: 100%;
                 text-align: center;
-                margin-top: 1rem;
+                margin: 1rem 0 0 0;
+                padding: 0.8rem;
             }
             
-            /* Make services list scrollable on mobile */
+            /* Services grid scrollable */
             .services-grid {
                 max-height: 400px;
                 overflow-y: auto;
-                margin-bottom: 1rem;
-            }
-            
-            /* Compact service cards on mobile */
-            .service-card {
-                padding: 1rem;
-            }
-            
-            .service-card h4 {
-                font-size: 1rem;
+                margin: 1rem 0;
+                padding: 10px;
+                border: 1px solid var(--border);
+                border-radius: 10px;
             }
         }
         
         @media(max-width:480px) {
             .form-screen h2 { font-size:2rem; }
-            .vibz-btn { width:100%; max-width:280px; }
+            .vibz-btn { width:100%; max-width:100%; }
             .categories-row button { flex:0 0 45%; max-width:45%; }
             .code-input-large { font-size: 1.1rem; padding: 1.2rem; }
             
             /* Further mobile optimization */
             #selectionSummary {
                 padding: 1rem !important;
+                margin: 1.5rem 0 !important;
             }
             
             #selectionSummary .selection-stats {
                 flex-direction: row;
                 justify-content: space-between;
+                gap: 0.5rem;
             }
             
             #selectionSummary .selection-stats > div {
                 min-width: 80px;
+                padding: 0.5rem;
             }
             
             #standardCount, #premiumCount, #totalCount {
                 font-size: 1.3rem;
             }
             
+            /* Service cards more compact */
             .service-card {
-                padding: 0.8rem;
+                padding: 1rem;
+                margin: 0.5rem 0;
+            }
+            
+            .service-card h4 {
+                font-size: 1rem;
+                margin-bottom: 0.5rem;
             }
         }
 
@@ -793,53 +819,54 @@
                     </div>
                 </div>
                 
-                <!-- Selection Summary - SIMPLIFIED -->
+                <!-- Selection Summary - SIMPLIFIED AND PROPERLY IN FLOW -->
                 <div id="selectionSummary">
-                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
-                        <div style="flex: 1; min-width: 200px;">
-                            <h4 style="margin-bottom: 0.5rem; font-size: 1.1rem;">Your Selections</h4>
-                            <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
-                                <div>
-                                    <span style="font-size: 0.85rem; color: var(--gray); display: block;">Standard:</span>
-                                    <div style="font-weight: 700; color: #4CAF50; font-size: 1.4rem;" id="standardCount">0</div>
+                    <div class="selection-summary-content">
+                        <div style="margin-bottom: 1rem;">
+                            <h4 style="margin-bottom: 0.5rem; font-size: 1.2rem;">Your Selections</h4>
+                            <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+                                <div style="text-align: center; flex: 1; min-width: 80px;">
+                                    <span style="font-size: 0.85rem; color: var(--gray); display: block;">Standard</span>
+                                    <div style="font-weight: 700; color: #4CAF50; font-size: 1.5rem; line-height: 1;" id="standardCount">0</div>
                                 </div>
-                                <div>
-                                    <span style="font-size: 0.85rem; color: var(--gray); display: block;">Premium:</span>
-                                    <div style="font-weight: 700; color: #2196F3; font-size: 1.4rem;" id="premiumCount">0</div>
+                                <div style="text-align: center; flex: 1; min-width: 80px;">
+                                    <span style="font-size: 0.85rem; color: var(--gray); display: block;">Premium</span>
+                                    <div style="font-weight: 700; color: #2196F3; font-size: 1.5rem; line-height: 1;" id="premiumCount">0</div>
                                 </div>
-                                <div>
-                                    <span style="font-size: 0.85rem; color: var(--gray); display: block;">Total:</span>
-                                    <div style="font-weight: 700; color: var(--dark); font-size: 1.4rem;" id="totalCount">0</div>
+                                <div style="text-align: center; flex: 1; min-width: 80px;">
+                                    <span style="font-size: 0.85rem; color: var(--gray); display: block;">Total</span>
+                                    <div style="font-weight: 700; color: var(--dark); font-size: 1.5rem; line-height: 1;" id="totalCount">0</div>
                                 </div>
                             </div>
                         </div>
-                        <div style="flex: 1; min-width: 200px;">
-                            <div id="planRecommendationPreview" style="background: linear-gradient(90deg, #2196F3, #21CBF3); color: white; padding: 0.8rem 1.2rem; border-radius: 25px; font-weight: 700; display: none; box-shadow: 0 5px 15px rgba(33, 150, 243, 0.3); text-align: center; margin-top: 0.5rem;">
-                                <i class="fas fa-star"></i> Recommended: <span id="recommendedPlanPreview">Premium</span>
-                            </div>
+                        
+                        <div id="planRecommendationPreview" style="background: linear-gradient(90deg, #2196F3, #21CBF3); color: white; padding: 0.8rem 1.2rem; border-radius: 25px; font-weight: 700; display: none; box-shadow: 0 5px 15px rgba(33, 150, 243, 0.3); text-align: center; margin: 0.5rem 0;">
+                            <i class="fas fa-star"></i> Recommended: <span id="recommendedPlanPreview">Premium</span>
                         </div>
-                    </div>
-                    
-                    <!-- Plan Recommendation Logic -->
-                    <div id="planLogicInfo" style="margin-top: 1rem; padding: 0.8rem; background: rgba(33, 150, 243, 0.05); border-radius: 10px; display: none;">
-                        <p style="margin: 0; font-size: 0.85rem; color: var(--gray);">
-                            <i class="fas fa-info-circle" style="color: #2196F3;"></i>
-                            <strong>Selection Logic:</strong> 
-                            <span id="planLogicText">Select 3+ Premium services for Premium recommendation</span>
-                        </p>
-                    </div>
-                    
-                    <div id="selectedServicesList" style="margin-top: 1rem; display: none;">
-                        <p style="font-size: 0.85rem; color: var(--gray); margin-bottom: 0.5rem;">Selected Services:</p>
-                        <div id="servicesList" style="display: flex; flex-wrap: wrap; gap: 0.5rem;"></div>
+                        
+                        <!-- Plan Recommendation Logic -->
+                        <div id="planLogicInfo" style="margin-top: 1rem; padding: 0.8rem; background: rgba(33, 150, 243, 0.05); border-radius: 10px; display: none;">
+                            <p style="margin: 0; font-size: 0.85rem; color: var(--gray);">
+                                <i class="fas fa-info-circle" style="color: #2196F3;"></i>
+                                <strong>Selection Logic:</strong> 
+                                <span id="planLogicText">Select 3+ Premium services for Premium recommendation</span>
+                            </p>
+                        </div>
+                        
+                        <div id="selectedServicesList" style="margin-top: 1rem; display: none;">
+                            <p style="font-size: 0.85rem; color: var(--gray); margin-bottom: 0.5rem;">Selected Services:</p>
+                            <div id="servicesList" style="display: flex; flex-wrap: wrap; gap: 0.5rem;"></div>
+                        </div>
                     </div>
                 </div>
                 
-                <button type="button" class="vibz-btn vibz-btn-primary" onclick="nextFromServices()" style="margin-top: 1rem; padding: 1.2rem 3rem; font-size: 1.1rem; width: 100%; max-width: 400px;">
-                    <i class="fas fa-arrow-right"></i> Continue to Plan Selection
-                </button>
-                
-                <button type="button" class="vibz-btn back-button" onclick="prev()" style="margin-top: 1rem; width: 100%; max-width: 400px;">← Go Back</button>
+                <div style="margin-top: 2rem; display: flex; flex-direction: column; gap: 1rem; align-items: center;">
+                    <button type="button" class="vibz-btn vibz-btn-primary" onclick="nextFromServices()" style="padding: 1.2rem 2rem; font-size: 1.1rem; width: 100%; max-width: 400px;">
+                        <i class="fas fa-arrow-right"></i> Continue to Plan Selection
+                    </button>
+                    
+                    <button type="button" class="vibz-btn back-button" onclick="prev()" style="padding: 1.2rem 2rem; width: 100%; max-width: 400px;">← Go Back</button>
+                </div>
             </div>
 
             <!-- STEP 11: Plan Type Selection -->
@@ -1030,92 +1057,6 @@ const conceptDisplayCode = document.getElementById('conceptDisplayCode');
 const confirmDesignBtn = document.getElementById('confirmDesignBtn');
 const tryDifferentBtn = document.getElementById('tryDifferentBtn');
 
-// ========== CODE VALIDATION & DISPLAY ==========
-
-// Normalize code input (accepts variations)
-function normalizeCode(input) {
-    if (!input) return '';
-    
-    let normalized = input.toString().toLowerCase().trim();
-    normalized = normalized.replace(/^barber[\s\-]*/i, '');
-    normalized = normalized.replace(/[^0-9\-]/g, '');
-    
-    if (/^\d+$/.test(normalized)) {
-        return `barber-${normalized}`;
-    }
-    
-    if (normalized.includes('-')) {
-        const num = normalized.split('-').pop();
-        if (/^\d+$/.test(num)) {
-            return `barber-${num}`;
-        }
-    }
-    
-    return '';
-}
-
-// Find concept by code (flexible matching)
-function findConceptByCode(input) {
-    const normalizedCode = normalizeCode(input);
-    if (!normalizedCode) return null;
-    
-    return barberConcepts.find(concept => concept.code === normalizedCode);
-}
-
-// Validate and display concept
-function validateAndDisplayConcept() {
-    const input = designCodeInput.value.trim();
-    
-    if (!input) {
-        codeStatus.textContent = '';
-        codeStatus.className = 'code-status';
-        conceptDisplay.style.display = 'none';
-        tryDifferentBtn.style.display = 'none';
-        return;
-    }
-    
-    const concept = findConceptByCode(input);
-    
-    if (concept) {
-        codeStatus.textContent = `✓ Valid code: ${concept.code}`;
-        codeStatus.className = 'code-status success';
-        conceptDisplayImage.src = concept.image;
-        conceptDisplayImage.alt = `Design ${concept.code}`;
-        conceptDisplayCode.textContent = concept.code.toUpperCase();
-        conceptDisplay.style.display = 'block';
-        confirmDesignBtn.innerHTML = `<i class="fas fa-check"></i> Continue with ${concept.code.toUpperCase()}`;
-        tryDifferentBtn.style.display = 'inline-block';
-    } else {
-        codeStatus.textContent = `✗ Design not found. Try "barber-1" to "barber-${barberConcepts.length}"`;
-        codeStatus.className = 'code-status error';
-        conceptDisplay.style.display = 'none';
-        tryDifferentBtn.style.display = 'none';
-    }
-}
-
-// Confirm design selection
-function confirmDesignSelection() {
-    const input = designCodeInput.value.trim();
-    const concept = findConceptByCode(input);
-    
-    if (concept) {
-        formData.designCode = concept.code;
-        formData.designConcept = 'From Code';
-        updateHiddenFields();
-        next();
-    }
-}
-
-// Try different code
-function tryDifferentCode() {
-    designCodeInput.value = '';
-    designCodeInput.focus();
-    codeStatus.textContent = '';
-    codeStatus.className = 'code-status';
-    conceptDisplay.style.display = 'none';
-    tryDifferentBtn.style.display = 'none';
-}
-
 // ========== SERVICE SELECTION FUNCTIONS ==========
 
 function toggleService(serviceName, element) {
@@ -1228,7 +1169,7 @@ function showPlanRecommendation() {
         if (recommendation.type === 'Premium') {
             document.getElementById('planLogicText').textContent = 
                 `You selected ${premiumServiceCount} premium services (3+ triggers Premium recommendation)`;
-            preview.style.display = 'inline-block';
+            preview.style.display = 'block';
             preview.style.background = 'linear-gradient(90deg, #2196F3, #21CBF3)';
             document.getElementById('recommendedPlanPreview').textContent = 'Premium Plan';
         } else {
@@ -1236,7 +1177,7 @@ function showPlanRecommendation() {
                 `You selected ${premiumServiceCount} premium services (Standard plan recommended)`;
             
             if (recommendation.glow) {
-                preview.style.display = 'inline-block';
+                preview.style.display = 'block';
                 preview.style.background = 'linear-gradient(90deg, #4CAF50, #66BB6A)';
                 document.getElementById('recommendedPlanPreview').textContent = 'Standard Plan';
             } else {
@@ -1298,6 +1239,90 @@ function checkURLParams() {
     return false;
 }
 
+// Normalize code input (accepts variations)
+function normalizeCode(input) {
+    if (!input) return '';
+    
+    let normalized = input.toString().toLowerCase().trim();
+    normalized = normalized.replace(/^barber[\s\-]*/i, '');
+    normalized = normalized.replace(/[^0-9\-]/g, '');
+    
+    if (/^\d+$/.test(normalized)) {
+        return `barber-${normalized}`;
+    }
+    
+    if (normalized.includes('-')) {
+        const num = normalized.split('-').pop();
+        if (/^\d+$/.test(num)) {
+            return `barber-${num}`;
+        }
+    }
+    
+    return '';
+}
+
+// Find concept by code (flexible matching)
+function findConceptByCode(input) {
+    const normalizedCode = normalizeCode(input);
+    if (!normalizedCode) return null;
+    
+    return barberConcepts.find(concept => concept.code === normalizedCode);
+}
+
+// Validate and display concept
+function validateAndDisplayConcept() {
+    const input = designCodeInput.value.trim();
+    
+    if (!input) {
+        codeStatus.textContent = '';
+        codeStatus.className = 'code-status';
+        conceptDisplay.style.display = 'none';
+        tryDifferentBtn.style.display = 'none';
+        return;
+    }
+    
+    const concept = findConceptByCode(input);
+    
+    if (concept) {
+        codeStatus.textContent = `✓ Valid code: ${concept.code}`;
+        codeStatus.className = 'code-status success';
+        conceptDisplayImage.src = concept.image;
+        conceptDisplayImage.alt = `Design ${concept.code}`;
+        conceptDisplayCode.textContent = concept.code.toUpperCase();
+        conceptDisplay.style.display = 'block';
+        confirmDesignBtn.innerHTML = `<i class="fas fa-check"></i> Continue with ${concept.code.toUpperCase()}`;
+        tryDifferentBtn.style.display = 'inline-block';
+    } else {
+        codeStatus.textContent = `✗ Design not found. Try "barber-1" to "barber-${barberConcepts.length}"`;
+        codeStatus.className = 'code-status error';
+        conceptDisplay.style.display = 'none';
+        tryDifferentBtn.style.display = 'none';
+    }
+}
+
+// Confirm design selection
+function confirmDesignSelection() {
+    const input = designCodeInput.value.trim();
+    const concept = findConceptByCode(input);
+    
+    if (concept) {
+        formData.designCode = concept.code;
+        formData.designConcept = 'From Code';
+        updateHiddenFields();
+        next();
+    }
+}
+
+// Try different code
+function tryDifferentCode() {
+    designCodeInput.value = '';
+    designCodeInput.focus();
+    codeStatus.textContent = '';
+    codeStatus.className = 'code-status';
+    conceptDisplay.style.display = 'none';
+    tryDifferentBtn.style.display = 'none';
+}
+
 // Show a specific screen
 function showScreen(screenId) {
     screens.forEach(screen => screen.classList.remove('active'));
@@ -1322,15 +1347,18 @@ function showScreen(screenId) {
             updateServiceCounters();
             showPlanRecommendation();
             
-            // Force the selection summary to be visible and in normal flow
+            // Ensure selection summary is properly in document flow
             const selectionSummary = document.getElementById('selectionSummary');
             if (selectionSummary) {
-                // Remove any problematic inline styles
-                selectionSummary.style.cssText = '';
-                // Ensure it's visible
-                selectionSummary.style.display = 'block';
-                selectionSummary.style.opacity = '1';
-                selectionSummary.style.visibility = 'visible';
+                // Remove any problematic inline styles that might make it an overlay
+                selectionSummary.style.position = 'relative';
+                selectionSummary.style.top = 'auto';
+                selectionSummary.style.bottom = 'auto';
+                selectionSummary.style.left = 'auto';
+                selectionSummary.style.right = 'auto';
+                selectionSummary.style.width = '100%';
+                selectionSummary.style.margin = '2rem 0';
+                selectionSummary.style.zIndex = '1';
             }
         }
         
@@ -1682,6 +1710,20 @@ document.addEventListener('DOMContentLoaded', () => {
             step5Dot.classList.add('jump-point');
         }
     }
+    
+    // Clean up any problematic styles on load
+    window.addEventListener('load', () => {
+        const selectionSummary = document.getElementById('selectionSummary');
+        if (selectionSummary) {
+            // Ensure it's not an overlay
+            selectionSummary.style.position = 'relative';
+            selectionSummary.style.top = 'auto';
+            selectionSummary.style.bottom = 'auto';
+            selectionSummary.style.left = 'auto';
+            selectionSummary.style.right = 'auto';
+            selectionSummary.style.zIndex = '1';
+        }
+    });
     
     console.log('Available barber concepts:', barberConcepts.map(c => c.code));
 });
