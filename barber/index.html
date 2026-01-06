@@ -289,7 +289,19 @@
             100% { opacity: 0.3; }
         }
 
-        /* ========== Responsive ========== */
+        /* ========== Selection Summary Styles ========== */
+        #selectionSummary {
+            background: var(--light-gray);
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin: 2rem 0;
+            border: 2px solid var(--border);
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Mobile Portrait View (max-width: 768px) */
         @media(max-width:768px) {
             .nav-links { display:none; }
             .mobile-menu-btn { display:block; }
@@ -303,12 +315,113 @@
             .concept-display-image { height: 250px; }
             .concept-display-code .code-value { font-size: 2rem; }
             .services-grid { grid-template-columns: 1fr; }
+            
+            /* Selection Summary Mobile Fix */
+            #selectionSummary {
+                position: relative;
+                margin: 2rem auto;
+                max-width: 95%;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+                
+                /* Initially hide it */
+                opacity: 0;
+                transform: translateY(20px);
+                max-height: 0;
+                padding: 0;
+                margin: 0 auto;
+                overflow: hidden;
+                border: none;
+            }
+            
+            /* Show only when user scrolls near bottom */
+            #selectionSummary.visible {
+                opacity: 1;
+                transform: translateY(0);
+                max-height: 500px;
+                padding: 1.5rem;
+                margin: 2rem auto;
+                border: 2px solid var(--border);
+                transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            }
+            
+            /* Make it sticky when visible */
+            #selectionSummary.sticky {
+                position: sticky;
+                bottom: 20px;
+                margin: 20px auto;
+                width: calc(100% - 40px);
+                z-index: 1000;
+                box-shadow: 0 -5px 25px rgba(0,0,0,0.15);
+            }
+            
+            /* Adjust content for mobile */
+            #selectionSummary .mobile-compact {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            #selectionSummary .selection-stats {
+                display: flex;
+                justify-content: space-between;
+                width: 100%;
+            }
+            
+            #selectionSummary .plan-recommendation {
+                text-align: center;
+                padding: 0.8rem;
+                border-radius: 25px;
+                margin: 0.5rem 0;
+            }
+            
+            /* Compact scroll indicator */
+            .scroll-indicator {
+                position: fixed;
+                bottom: 10px;
+                right: 10px;
+                background: var(--primary);
+                color: white;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.2rem;
+                z-index: 1001;
+                box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);
+                animation: bounce 2s infinite;
+                cursor: pointer;
+            }
+            
+            @keyframes bounce {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-10px); }
+            }
         }
+        
         @media(max-width:480px) {
             .form-screen h2 { font-size:2rem; }
             .vibz-btn { width:100%; max-width:280px; }
             .categories-row button { flex:0 0 45%; max-width:45%; }
             .code-input-large { font-size: 1.1rem; padding: 1.2rem; }
+            
+            /* Further mobile optimization */
+            #selectionSummary.visible {
+                padding: 1rem;
+                margin: 1rem auto;
+            }
+            
+            #selectionSummary .selection-stats {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            #selectionSummary .selection-stats > div {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
         }
 
         @keyframes fadeIn { 
@@ -695,7 +808,7 @@
                 </div>
                 
                 <!-- Selection Summary -->
-                <div id="selectionSummary" style="background: var(--light-gray); padding: 1.5rem; border-radius: 15px; margin: 2rem 0; border: 2px solid var(--border);">
+                <div id="selectionSummary">
                     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
                         <div>
                             <h4 style="margin-bottom: 0.5rem;">Your Selections</h4>
@@ -856,6 +969,11 @@
     </div>
 </section>
 
+<!-- Scroll indicator for mobile (hidden by default) -->
+<div id="scrollIndicator" class="scroll-indicator" style="display: none;">
+    <i class="fas fa-arrow-up"></i>
+</div>
+
 <script>
 // ========== BARBER CONCEPTS DATABASE ==========
 const barberConcepts = [
@@ -919,6 +1037,10 @@ let premiumServiceCount = 0;
 let standardServiceCount = 0;
 let recommendedPlan = { type: '', glow: false };
 
+// Scroll management for mobile
+let scrollPosition = 0;
+let isScrolling = false;
+
 // DOM elements
 const screens = document.querySelectorAll('.form-screen');
 const stepDots = document.querySelectorAll('.step-dot');
@@ -930,6 +1052,96 @@ const conceptDisplayImage = document.getElementById('conceptDisplayImage');
 const conceptDisplayCode = document.getElementById('conceptDisplayCode');
 const confirmDesignBtn = document.getElementById('confirmDesignBtn');
 const tryDifferentBtn = document.getElementById('tryDifferentBtn');
+const selectionSummary = document.getElementById('selectionSummary');
+const scrollIndicator = document.getElementById('scrollIndicator');
+
+// ========== MOBILE SCROLL MANAGEMENT ==========
+
+function initMobileScrollManagement() {
+    if (window.innerWidth <= 768) {
+        // Only apply mobile scroll management on mobile
+        const servicesGrid = document.querySelector('.services-grid');
+        if (servicesGrid) {
+            // Show scroll indicator
+            scrollIndicator.style.display = 'flex';
+            
+            // Add scroll event listener to services grid
+            servicesGrid.addEventListener('scroll', handleServicesScroll);
+            
+            // Add scroll indicator click event
+            scrollIndicator.addEventListener('click', scrollToTop);
+            
+            // Add global scroll listener for page
+            window.addEventListener('scroll', handlePageScroll);
+        }
+    }
+}
+
+function handleServicesScroll() {
+    const servicesGrid = document.querySelector('.services-grid');
+    if (!servicesGrid) return;
+    
+    const scrollTop = servicesGrid.scrollTop;
+    const scrollHeight = servicesGrid.scrollHeight;
+    const clientHeight = servicesGrid.clientHeight;
+    
+    // Show summary when scrolled near bottom (80%)
+    if (scrollTop + clientHeight >= scrollHeight * 0.8) {
+        showSelectionSummary();
+    } else {
+        hideSelectionSummary();
+    }
+}
+
+function handlePageScroll() {
+    if (window.innerWidth > 768) return; // Only on mobile
+    
+    const scrollY = window.scrollY;
+    const windowHeight = window.innerHeight;
+    const documentHeight = document.documentElement.scrollHeight;
+    
+    // Show summary when scrolled to bottom 20% of page
+    if (scrollY + windowHeight >= documentHeight * 0.8) {
+        showSelectionSummary();
+    } else {
+        hideSelectionSummary();
+    }
+    
+    // Update scroll indicator
+    if (scrollY > windowHeight * 0.3) {
+        scrollIndicator.style.display = 'flex';
+    } else {
+        scrollIndicator.style.display = 'none';
+    }
+}
+
+function showSelectionSummary() {
+    if (window.innerWidth <= 768 && selectionSummary) {
+        selectionSummary.classList.add('visible');
+        selectionSummary.classList.add('sticky');
+        
+        // Auto-scroll to make summary visible if needed
+        setTimeout(() => {
+            selectionSummary.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+    }
+}
+
+function hideSelectionSummary() {
+    if (window.innerWidth <= 768 && selectionSummary) {
+        selectionSummary.classList.remove('visible');
+        selectionSummary.classList.remove('sticky');
+    }
+}
+
+function scrollToTop() {
+    const servicesGrid = document.querySelector('.services-grid');
+    if (servicesGrid) {
+        servicesGrid.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+}
 
 // ========== CODE VALIDATION & DISPLAY ==========
 
@@ -1036,6 +1248,11 @@ function toggleService(serviceName, element) {
     updateServiceCounters();
     calculateRecommendedPlan();
     showPlanRecommendation();
+    
+    // Show summary on mobile when services are selected
+    if (window.innerWidth <= 768 && formData.features.length > 0) {
+        showSelectionSummary();
+    }
 }
 
 function updateServiceCounters() {
@@ -1102,6 +1319,11 @@ function removeService(serviceName) {
         updateServiceCounters();
         calculateRecommendedPlan();
         showPlanRecommendation();
+        
+        // Hide summary if no services selected
+        if (window.innerWidth <= 768 && formData.features.length === 0) {
+            hideSelectionSummary();
+        }
     }
 }
 
@@ -1222,6 +1444,9 @@ function showScreen(screenId) {
             // Update service counters
             updateServiceCounters();
             showPlanRecommendation();
+            
+            // Initialize mobile scroll management
+            initMobileScrollManagement();
         }
         
         if (screenId === 'step-11') {
@@ -1251,6 +1476,12 @@ function showScreen(screenId) {
                     validateAndDisplayConcept();
                 }
             }, 100);
+        }
+        
+        // Clean up scroll management when leaving step 10
+        if (screenId !== 'step-10') {
+            scrollIndicator.style.display = 'none';
+            hideSelectionSummary();
         }
     }
 }
@@ -1572,6 +1803,32 @@ document.addEventListener('DOMContentLoaded', () => {
             step5Dot.classList.add('jump-point');
         }
     }
+    
+    // Handle window resize
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 768) {
+            // On desktop, always show summary
+            if (selectionSummary) {
+                selectionSummary.classList.remove('visible');
+                selectionSummary.classList.remove('sticky');
+                selectionSummary.style.opacity = '1';
+                selectionSummary.style.transform = 'translateY(0)';
+                selectionSummary.style.maxHeight = 'none';
+                selectionSummary.style.padding = '1.5rem';
+                selectionSummary.style.border = '2px solid var(--border)';
+            }
+            scrollIndicator.style.display = 'none';
+        } else {
+            // On mobile, hide summary initially
+            if (selectionSummary && currentStep === 10) {
+                hideSelectionSummary();
+                if (formData.features.length > 0) {
+                    // Show scroll indicator
+                    scrollIndicator.style.display = 'flex';
+                }
+            }
+        }
+    });
     
     console.log('Available barber concepts:', barberConcepts.map(c => c.code));
 });
