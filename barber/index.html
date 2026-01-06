@@ -463,15 +463,22 @@
                 
                 <!-- Show design info if coming from concepts page -->
                 <div id="designInfo" style="display: none; background: rgba(255, 107, 0, 0.1); padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem; border: 2px solid #FF6B00;">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <div style="font-size: 1.5rem; color: #FF6B00;">
-                            <i class="fas fa-check-circle"></i>
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="font-size: 1.5rem; color: #FF6B00;">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div>
+                                <p style="margin: 0; color: #121212; font-weight: 700; font-size: 1.1rem;">
+                                    Design Selected: <span id="selectedDesignCode" style="color: #FF6B00;"></span>
+                                </p>
+                            </div>
                         </div>
-                        <div>
-                            <p style="margin: 0; color: #121212; font-weight: 700; font-size: 1.1rem;">
-                                Design Selected: <span id="selectedDesignCode" style="color: #FF6B00;"></span>
-                            </p>
-                        </div>
+                        <button type="button" 
+                                onclick="clearDesignSelection()" 
+                                style="background: none; border: none; color: #FF6B00; cursor: pointer; font-size: 0.9rem;">
+                            <i class="fas fa-times"></i> Change Design
+                        </button>
                     </div>
                 </div>
                 
@@ -480,7 +487,7 @@
                     <a href="https://www.vibz.co.uk/barber/concepts.html" class="vibz-btn">Show me concepts</a>
                     <button type="button" class="vibz-btn" onclick="setDesignConcept('Custom')">Custom design</button>
                 </div>
-                <button type="button" class="vibz-btn back-button" onclick="prev()">← Go Back</button>
+                <button type="button" class="vibz-btn back-button" onclick="clearDesignSelection(); prev();">← Go Back</button>
             </div>
 
             <!-- STEP 4: Code Input & Concept Display -->
@@ -1019,6 +1026,123 @@ const conceptDisplayCode = document.getElementById('conceptDisplayCode');
 const confirmDesignBtn = document.getElementById('confirmDesignBtn');
 const tryDifferentBtn = document.getElementById('tryDifferentBtn');
 
+// ========== UPDATED FUNCTIONS ==========
+
+// Clear design selection when user wants to change it
+function clearDesignSelection() {
+    formData.designCode = '';
+    formData.designConcept = '';
+    localStorage.removeItem('selectedDesignCode');
+    document.getElementById('designInfo').style.display = 'none';
+    
+    // Clear URL parameters if present
+    if (window.history.replaceState) {
+        const newUrl = window.location.pathname + '?step=3';
+        window.history.replaceState({}, document.title, newUrl);
+    }
+}
+
+// Check URL parameters and jump to correct step
+function checkURLParams() {
+    const params = new URLSearchParams(window.location.search);
+    const step = params.get('step');
+    const concept = params.get('concept');
+    
+    console.log('URL Params:', { step, concept });
+    
+    // Only set design if coming from concepts page (has concept param)
+    if (concept) {
+        const foundConcept = findConceptByCode(concept);
+        if (foundConcept) {
+            formData.designCode = foundConcept.code;
+            formData.designConcept = 'From Concepts';
+            localStorage.setItem('selectedDesignCode', foundConcept.code);
+            
+            // Also clear URL parameter to prevent re-triggering on refresh
+            if (window.history.replaceState) {
+                const newUrl = window.location.pathname + '?step=' + (step || '3');
+                window.history.replaceState({}, document.title, newUrl);
+            }
+        }
+    }
+    
+    // Check if we should jump to a specific step
+    if (step) {
+        const stepNum = parseInt(step);
+        if (!isNaN(stepNum) && stepNum >= 1 && stepNum <= 13) {
+            currentStep = stepNum;
+            console.log('Jumping to step:', currentStep);
+            return true;
+        }
+    }
+    
+    // Only load saved design if we're on step 3 or later
+    // AND we're not coming from a URL parameter
+    if (currentStep >= 3 && !concept) {
+        const savedDesignCode = localStorage.getItem('selectedDesignCode');
+        if (savedDesignCode) {
+            formData.designCode = savedDesignCode;
+            formData.designConcept = 'From Concepts';
+        }
+    }
+    
+    return false;
+}
+
+// Show a specific screen
+function showScreen(screenId) {
+    screens.forEach(screen => screen.classList.remove('active'));
+    const screen = document.getElementById(screenId);
+    if (screen) {
+        screen.classList.add('active');
+        
+        // Update UI for specific steps
+        if (screenId === 'step-3') {
+            // Only show design info if design code exists AND we're coming from concepts
+            if (formData.designCode && formData.designConcept === 'From Concepts') {
+                document.getElementById('designInfo').style.display = 'block';
+                document.getElementById('selectedDesignCode').textContent = formData.designCode.toUpperCase();
+            } else {
+                document.getElementById('designInfo').style.display = 'none';
+                // Reset design data if user manually navigates back to step 3
+                if (formData.designConcept !== 'From Code' && formData.designConcept !== 'Custom') {
+                    formData.designCode = '';
+                    formData.designConcept = '';
+                }
+            }
+        }
+        
+        if (screenId === 'step-9') {
+            // Update title with business name if available
+            if (formData.businessName) {
+                document.getElementById('step9Title').innerHTML = 
+                    `Select Services for <span style="color: #FF6B00;">${formData.businessName}</span>`;
+            }
+            
+            // Update service counters
+            updateServiceCounters();
+            showPlanRecommendation();
+        }
+        
+        if (screenId === 'step-13') {
+            // Show plans based on selections
+            showFinalPlans();
+        }
+        
+        // Auto-focus code input on step 4
+        if (screenId === 'step-4') {
+            setTimeout(() => {
+                designCodeInput.focus();
+                
+                if (formData.designCode) {
+                    designCodeInput.value = formData.designCode;
+                    validateAndDisplayConcept();
+                }
+            }, 100);
+        }
+    }
+}
+
 // ========== UPDATED FUNNEL LOGIC ==========
 
 // STEP 10: Set urgency preference
@@ -1094,7 +1218,7 @@ function submitLeadForm(event) {
     // Example: fetch('/api/lead', { method: 'POST', body: JSON.stringify(leadData) })
 }
 
-// ========== EXISTING FUNCTIONS (unchanged) ==========
+// ========== EXISTING FUNCTIONS ==========
 
 // Normalize code input
 function normalizeCode(input) {
@@ -1325,86 +1449,6 @@ function nextFromServices() {
 }
 
 // ========== FUNNEL NAVIGATION ==========
-
-// Check URL parameters and jump to correct step
-function checkURLParams() {
-    const params = new URLSearchParams(window.location.search);
-    const step = params.get('step');
-    const concept = params.get('concept');
-    
-    console.log('URL Params:', { step, concept });
-    
-    if (step) {
-        const stepNum = parseInt(step);
-        if (!isNaN(stepNum) && stepNum >= 1 && stepNum <= 13) {
-            currentStep = stepNum;
-            console.log('Jumping to step:', currentStep);
-            
-            if (concept) {
-                const foundConcept = findConceptByCode(concept);
-                if (foundConcept) {
-                    formData.designCode = foundConcept.code;
-                    formData.designConcept = 'From Concepts';
-                    localStorage.setItem('selectedDesignCode', foundConcept.code);
-                }
-            }
-            
-            return true;
-        }
-    }
-    
-    const savedDesignCode = localStorage.getItem('selectedDesignCode');
-    if (savedDesignCode) {
-        formData.designCode = savedDesignCode;
-        formData.designConcept = 'From Concepts';
-    }
-    
-    return false;
-}
-
-// Show a specific screen
-function showScreen(screenId) {
-    screens.forEach(screen => screen.classList.remove('active'));
-    const screen = document.getElementById(screenId);
-    if (screen) {
-        screen.classList.add('active');
-        
-        // Update UI for specific steps
-        if (screenId === 'step-3' && formData.designCode) {
-            document.getElementById('designInfo').style.display = 'block';
-            document.getElementById('selectedDesignCode').textContent = formData.designCode.toUpperCase();
-        }
-        
-        if (screenId === 'step-9') {
-            // Update title with business name if available
-            if (formData.businessName) {
-                document.getElementById('step9Title').innerHTML = 
-                    `Select Services for <span style="color: #FF6B00;">${formData.businessName}</span>`;
-            }
-            
-            // Update service counters
-            updateServiceCounters();
-            showPlanRecommendation();
-        }
-        
-        if (screenId === 'step-13') {
-            // Show plans based on selections
-            showFinalPlans();
-        }
-        
-        // Auto-focus code input on step 4
-        if (screenId === 'step-4') {
-            setTimeout(() => {
-                designCodeInput.focus();
-                
-                if (formData.designCode) {
-                    designCodeInput.value = formData.designCode;
-                    validateAndDisplayConcept();
-                }
-            }, 100);
-        }
-    }
-}
 
 // Step navigation
 function next() {
