@@ -299,12 +299,13 @@
             transition: all 0.3s ease;
             position: relative;
             z-index: 1;
-            /* Ensure it's part of normal document flow */
+            /* Normal document flow properties */
             display: block;
             width: 100%;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
         }
 
-        /* Mobile Portrait View (max-width: 768px) */
+        /* Mobile Portrait View (max-width: 768px) - FIXED VERSION */
         @media(max-width:768px) {
             .nav-links { display:none; }
             .mobile-menu-btn { display:block; }
@@ -319,10 +320,17 @@
             .concept-display-code .code-value { font-size: 2rem; }
             .services-grid { grid-template-columns: 1fr; }
             
-            /* Selection Summary Mobile Fix - SIMPLE AND CLEAN */
+            /* FIXED: Selection Summary for Mobile Portrait */
             #selectionSummary {
-                /* Reset all positioning */
+                /* Reset ALL positioning and overlay properties */
                 position: relative !important;
+                top: auto !important;
+                bottom: auto !important;
+                left: auto !important;
+                right: auto !important;
+                transform: none !important;
+                
+                /* Normal flow properties */
                 width: 100% !important;
                 margin: 2rem 0 !important;
                 padding: 1.5rem !important;
@@ -331,93 +339,102 @@
                 background: var(--light-gray) !important;
                 box-shadow: 0 5px 15px rgba(0,0,0,0.05) !important;
                 
-                /* Ensure it's visible and in flow */
+                /* Ensure visibility */
                 opacity: 1 !important;
                 visibility: visible !important;
                 display: block !important;
-                transform: none !important;
                 max-height: none !important;
+                overflow: visible !important;
                 
-                /* Remove any overlay properties */
-                top: auto !important;
-                bottom: auto !important;
-                left: auto !important;
-                right: auto !important;
+                /* Normal z-index for document flow */
                 z-index: 1 !important;
             }
             
-            /* Ensure the form screen has enough bottom padding */
+            /* Ensure the step-10 screen has proper layout */
             #step-10 {
-                padding-bottom: 40px;
+                display: flex;
+                flex-direction: column;
+                padding-bottom: 30px;
             }
             
-            /* Make buttons full width on mobile */
-            #step-10 .vibz-btn {
-                width: 100%;
-                max-width: 100%;
-                margin-left: 0;
-                margin-right: 0;
+            /* Services grid adjustments */
+            .services-grid {
+                max-height: 400px;
+                overflow-y: auto;
+                margin: 1rem 0;
+                order: 1; /* Ensure it comes before summary */
+            }
+            
+            /* Selection summary styling */
+            #selectionSummary {
+                order: 2; /* Comes after services grid */
+                margin: 1.5rem 0;
+            }
+            
+            /* Buttons container */
+            #step-10 > div:last-child {
+                order: 3; /* Comes last */
+                margin-top: 1rem;
             }
             
             /* Compact layout for selection summary */
-            #selectionSummary .selection-summary-content {
+            .selection-summary-content {
                 display: flex;
                 flex-direction: column;
                 gap: 1rem;
             }
             
-            #selectionSummary .selection-stats {
+            .selection-stats {
                 display: flex;
                 justify-content: space-between;
                 flex-wrap: wrap;
                 gap: 1rem;
             }
             
-            #selectionSummary .selection-stats > div {
+            .selection-stats > div {
                 flex: 1;
                 min-width: 100px;
                 text-align: center;
+                padding: 0.5rem;
             }
             
             #planRecommendationPreview {
                 width: 100%;
                 text-align: center;
-                margin: 1rem 0 0 0;
+                margin: 0.5rem 0;
                 padding: 0.8rem;
             }
             
-            /* Services grid scrollable */
-            .services-grid {
-                max-height: 400px;
-                overflow-y: auto;
-                margin: 1rem 0;
-                padding: 10px;
-                border: 1px solid var(--border);
-                border-radius: 10px;
+            /* Make buttons full width */
+            .vibz-btn {
+                width: 100%;
+                max-width: 100%;
+                margin-left: 0;
+                margin-right: 0;
             }
         }
         
         @media(max-width:480px) {
             .form-screen h2 { font-size:2rem; }
-            .vibz-btn { width:100%; max-width:100%; }
+            .vibz-btn { width:100%; max-width:100%; padding: 1rem; }
             .categories-row button { flex:0 0 45%; max-width:45%; }
             .code-input-large { font-size: 1.1rem; padding: 1.2rem; }
             
             /* Further mobile optimization */
             #selectionSummary {
                 padding: 1rem !important;
-                margin: 1.5rem 0 !important;
+                margin: 1rem 0 !important;
             }
             
-            #selectionSummary .selection-stats {
+            .selection-stats {
                 flex-direction: row;
                 justify-content: space-between;
                 gap: 0.5rem;
             }
             
-            #selectionSummary .selection-stats > div {
-                min-width: 80px;
-                padding: 0.5rem;
+            .selection-stats > div {
+                min-width: 70px;
+                padding: 0.3rem;
             }
             
             #standardCount, #premiumCount, #totalCount {
@@ -427,12 +444,12 @@
             /* Service cards more compact */
             .service-card {
                 padding: 1rem;
-                margin: 0.5rem 0;
+                margin: 0.3rem 0;
             }
             
             .service-card h4 {
                 font-size: 1rem;
-                margin-bottom: 0.5rem;
+                margin-bottom: 0.3rem;
             }
         }
 
@@ -819,21 +836,21 @@
                     </div>
                 </div>
                 
-                <!-- Selection Summary - SIMPLIFIED AND PROPERLY IN FLOW -->
+                <!-- Selection Summary - PROPERLY IN DOCUMENT FLOW -->
                 <div id="selectionSummary">
                     <div class="selection-summary-content">
                         <div style="margin-bottom: 1rem;">
                             <h4 style="margin-bottom: 0.5rem; font-size: 1.2rem;">Your Selections</h4>
-                            <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
-                                <div style="text-align: center; flex: 1; min-width: 80px;">
+                            <div class="selection-stats">
+                                <div style="text-align: center;">
                                     <span style="font-size: 0.85rem; color: var(--gray); display: block;">Standard</span>
                                     <div style="font-weight: 700; color: #4CAF50; font-size: 1.5rem; line-height: 1;" id="standardCount">0</div>
                                 </div>
-                                <div style="text-align: center; flex: 1; min-width: 80px;">
+                                <div style="text-align: center;">
                                     <span style="font-size: 0.85rem; color: var(--gray); display: block;">Premium</span>
                                     <div style="font-weight: 700; color: #2196F3; font-size: 1.5rem; line-height: 1;" id="premiumCount">0</div>
                                 </div>
-                                <div style="text-align: center; flex: 1; min-width: 80px;">
+                                <div style="text-align: center;">
                                     <span style="font-size: 0.85rem; color: var(--gray); display: block;">Total</span>
                                     <div style="font-weight: 700; color: var(--dark); font-size: 1.5rem; line-height: 1;" id="totalCount">0</div>
                                 </div>
@@ -1044,18 +1061,6 @@ const formData = {
 let premiumServiceCount = 0;
 let standardServiceCount = 0;
 let recommendedPlan = { type: '', glow: false };
-
-// DOM elements
-const screens = document.querySelectorAll('.form-screen');
-const stepDots = document.querySelectorAll('.step-dot');
-const businessInput = document.getElementById('businessInput');
-const designCodeInput = document.getElementById('designCodeInput');
-const codeStatus = document.getElementById('codeStatus');
-const conceptDisplay = document.getElementById('conceptDisplay');
-const conceptDisplayImage = document.getElementById('conceptDisplayImage');
-const conceptDisplayCode = document.getElementById('conceptDisplayCode');
-const confirmDesignBtn = document.getElementById('confirmDesignBtn');
-const tryDifferentBtn = document.getElementById('tryDifferentBtn');
 
 // ========== SERVICE SELECTION FUNCTIONS ==========
 
@@ -1347,18 +1352,21 @@ function showScreen(screenId) {
             updateServiceCounters();
             showPlanRecommendation();
             
-            // Ensure selection summary is properly in document flow
-            const selectionSummary = document.getElementById('selectionSummary');
-            if (selectionSummary) {
-                // Remove any problematic inline styles that might make it an overlay
-                selectionSummary.style.position = 'relative';
-                selectionSummary.style.top = 'auto';
-                selectionSummary.style.bottom = 'auto';
-                selectionSummary.style.left = 'auto';
-                selectionSummary.style.right = 'auto';
-                selectionSummary.style.width = '100%';
-                selectionSummary.style.margin = '2rem 0';
-                selectionSummary.style.zIndex = '1';
+            // Clean up any problematic inline styles on mobile
+            if (window.innerWidth <= 768) {
+                const selectionSummary = document.getElementById('selectionSummary');
+                if (selectionSummary) {
+                    // Reset all positioning to ensure it's in document flow
+                    selectionSummary.style.position = 'relative';
+                    selectionSummary.style.top = 'auto';
+                    selectionSummary.style.bottom = 'auto';
+                    selectionSummary.style.left = 'auto';
+                    selectionSummary.style.right = 'auto';
+                    selectionSummary.style.transform = 'none';
+                    selectionSummary.style.width = '100%';
+                    selectionSummary.style.margin = '2rem 0';
+                    selectionSummary.style.zIndex = '1';
+                }
             }
         }
         
@@ -1711,19 +1719,40 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // Clean up any problematic styles on load
-    window.addEventListener('load', () => {
-        const selectionSummary = document.getElementById('selectionSummary');
-        if (selectionSummary) {
-            // Ensure it's not an overlay
-            selectionSummary.style.position = 'relative';
-            selectionSummary.style.top = 'auto';
-            selectionSummary.style.bottom = 'auto';
-            selectionSummary.style.left = 'auto';
-            selectionSummary.style.right = 'auto';
-            selectionSummary.style.zIndex = '1';
+    // Fix for mobile portrait on load
+    function fixMobileLayout() {
+        if (window.innerWidth <= 768) {
+            const selectionSummary = document.getElementById('selectionSummary');
+            if (selectionSummary) {
+                // Force reset all problematic styles
+                selectionSummary.style.cssText = `
+                    position: relative !important;
+                    top: auto !important;
+                    bottom: auto !important;
+                    left: auto !important;
+                    right: auto !important;
+                    transform: none !important;
+                    width: 100% !important;
+                    margin: 2rem 0 !important;
+                    padding: 1.5rem !important;
+                    border: 2px solid var(--border) !important;
+                    border-radius: 15px !important;
+                    background: var(--light-gray) !important;
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.05) !important;
+                    opacity: 1 !important;
+                    visibility: visible !important;
+                    display: block !important;
+                    max-height: none !important;
+                    overflow: visible !important;
+                    z-index: 1 !important;
+                `;
+            }
         }
-    });
+    }
+    
+    // Run on load and on resize
+    fixMobileLayout();
+    window.addEventListener('resize', fixMobileLayout);
     
     console.log('Available barber concepts:', barberConcepts.map(c => c.code));
 });
