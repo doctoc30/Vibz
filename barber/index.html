@@ -1296,7 +1296,6 @@ const barberConcepts = [
 
 // ========== SERVICES DATABASE ==========
 const allServices = [
-    // ===== STANDARD TIER SERVICES =====
     { name: 'Services & Pricing Display', tier: 'standard', description: 'Clear layout of all offered services and prices' },
     { name: 'Team / Barber Profiles', tier: 'standard', description: 'Photos, bios, and specialties' },
     { name: 'Photo Gallery / Portfolio', tier: 'standard', description: 'Image grid showcasing barber work' },
@@ -1309,8 +1308,6 @@ const allServices = [
     { name: 'Loyalty / Membership Info', tier: 'standard', description: 'Show loyalty program details' },
     { name: 'Contact Form', tier: 'standard', description: 'Simple enquiry form to collect messages' },
     { name: 'On-Page SEO Basics', tier: 'standard', description: 'Page titles, headers, meta tags, and image alt text' },
-    
-    // ===== PREMIUM TIER SERVICES =====
     { name: 'Online Booking System Integration', tier: 'premium', description: 'Calendly, Setmore, etc.' },
     { name: 'Stripe Payments / Deposits', tier: 'premium', description: 'Accept payments online' },
     { name: 'Automated Booking Reminders', tier: 'premium', description: 'Email/SMS via booking platform' },
@@ -1333,26 +1330,14 @@ const allServices = [
     { name: 'Premium On-Page SEO', tier: 'premium', description: 'Schema, technical setup, optimized indexing' }
 ];
 
-// ========== FORM STATE MANAGEMENT ==========
+// ========== FORM STATE ==========
 let currentStep = 1;
 const formData = {
-    businessName: '',
-    projectType: '',
-    designConcept: '',
-    designCode: '',
-    features: [],
-    audience: '',
-    style: '',
-    color: '',
-    goal: '',
-    urgency: '', // 'Start ASAP' or 'More Info'
-    planModel: '', // 'Own Outright' or 'Monthly Support'
-    planType: '' // 'Standard' or 'Premium' based on service selections
+    businessName: '', projectType: '', designConcept: '', designCode: '',
+    features: [], audience: '', style: '', color: '', goal: '',
+    urgency: '', planModel: '', planType: ''
 };
-
-// Service selection tracking
-let premiumServiceCount = 0;
-let standardServiceCount = 0;
+let premiumServiceCount = 0, standardServiceCount = 0;
 let recommendedPlan = { type: '', glow: false };
 
 // DOM elements
@@ -1367,43 +1352,24 @@ const conceptDisplayCode = document.getElementById('conceptDisplayCode');
 const confirmDesignBtn = document.getElementById('confirmDesignBtn');
 const tryDifferentBtn = document.getElementById('tryDifferentBtn');
 
-// ========== UPDATED FUNNEL LOGIC ==========
+// ========== FUNNEL LOGIC ==========
 
-// STEP 10: Set urgency preference
 function setUrgency(urgency) {
     formData.urgency = urgency;
-    
-    if (urgency === 'Start ASAP') {
-        // If user wants to start ASAP, go to step 11 (ownership model question)
-        currentStep = 11;
-        updateStepIndicator();
-    } else if (urgency === 'More Info') {
-        // If user needs more info, go to lead capture form (step 12)
-        currentStep = 12; // Step 12 is lead capture form
-        updateStepIndicator();
-    }
+    currentStep = urgency === 'Start ASAP' ? 11 : 12;
+    updateStepIndicator();
 }
 
-// STEP 11: Set plan model (ownership question)
 function setPlanModel(planModel) {
     formData.planModel = planModel;
-    
-    // After selecting plan model, go to final plan selection (step 13)
     currentStep = 13;
     updateStepIndicator();
 }
 
-// Go back from lead capture form to step 10
-function goBackToStep10() {
-    currentStep = 10;
-    updateStepIndicator();
-}
+function goBackToStep10() { currentStep = 10; updateStepIndicator(); }
 
-// Submit lead capture form
 function submitLeadForm(event) {
     event.preventDefault();
-    
-    // Get form data
     const leadData = {
         name: document.getElementById('leadName').value,
         email: document.getElementById('leadEmail').value,
@@ -1413,605 +1379,298 @@ function submitLeadForm(event) {
         timeline: document.getElementById('leadTimeline').value,
         budget: document.getElementById('leadBudget').value,
         questions: document.getElementById('leadQuestions').value,
-        // Include all previous funnel data
         ...formData
     };
-    
-    // In a real implementation, you would send this data to your server
-    console.log('Lead data submitted:', leadData);
-    
-    // Show success message
-    const formContainer = document.querySelector('.lead-form-container');
-    formContainer.innerHTML = `
+    console.log('Lead submitted:', leadData);
+    document.querySelector('.lead-form-container').innerHTML = `
         <div class="success-message">
-            <div style="font-size: 4rem; color: #FF6B00; margin-bottom: 1rem;">
-                <i class="fas fa-check-circle"></i>
-            </div>
+            <div style="font-size:4rem;color:#FF6B00;margin-bottom:1rem;"><i class="fas fa-check-circle"></i></div>
             <h3>Thank You!</h3>
-            <p>Your information has been received. We'll contact you within 24 hours to discuss your project.</p>
-            <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--gray);">
-                You'll also receive a copy of this information via email.
-            </p>
-            <button type="button" class="vibz-btn vibz-btn-primary" onclick="goBackToStep10()" style="margin-top: 2rem;">
-                Return to Funnel
-            </button>
+            <p>Your information has been received. We'll contact you within 24 hours.</p>
+            <button class="vibz-btn vibz-btn-primary" onclick="goBackToStep10()" style="margin-top:2rem;">Return to Funnel</button>
         </div>
     `;
-    
-    // Here you would typically send the data to your backend
-    // Example: fetch('/api/lead', { method: 'POST', body: JSON.stringify(leadData) })
 }
 
-// ========== EXISTING FUNCTIONS (unchanged) ==========
-
-// Normalize code input
+// ========== DESIGN CODE FUNCTIONS ==========
 function normalizeCode(input) {
     if (!input) return '';
-    
-    let normalized = input.toString().toLowerCase().trim();
-    normalized = normalized.replace(/^barber[\s\-]*/i, '');
-    normalized = normalized.replace(/[^0-9\-]/g, '');
-    
-    if (/^\d+$/.test(normalized)) {
-        return `barber-${normalized}`;
+    let code = input.toLowerCase().trim().replace(/^barber[\s\-]*/i,'').replace(/[^0-9\-]/g,'');
+    if (/^\d+$/.test(code)) return `barber-${code}`;
+    if (code.includes('-')) {
+        const num = code.split('-').pop();
+        if (/^\d+$/.test(num)) return `barber-${num}`;
     }
-    
-    if (normalized.includes('-')) {
-        const num = normalized.split('-').pop();
-        if (/^\d+$/.test(num)) {
-            return `barber-${num}`;
-        }
-    }
-    
     return '';
 }
 
-// Find concept by code
 function findConceptByCode(input) {
-    const normalizedCode = normalizeCode(input);
-    if (!normalizedCode) return null;
-    
-    return barberConcepts.find(concept => concept.code === normalizedCode);
+    const normalized = normalizeCode(input);
+    return normalized ? barberConcepts.find(c => c.code === normalized) : null;
 }
 
-// Validate and display concept
 function validateAndDisplayConcept() {
     const input = designCodeInput.value.trim();
-    
-    if (!input) {
-        codeStatus.textContent = '';
-        codeStatus.className = 'code-status';
-        conceptDisplay.style.display = 'none';
-        tryDifferentBtn.style.display = 'none';
-        return;
-    }
-    
+    if (!input) { codeStatus.textContent=''; codeStatus.className='code-status'; conceptDisplay.style.display='none'; tryDifferentBtn.style.display='none'; return; }
     const concept = findConceptByCode(input);
-    
     if (concept) {
         codeStatus.textContent = `✓ Valid code: ${concept.code}`;
         codeStatus.className = 'code-status success';
         conceptDisplayImage.src = concept.image;
         conceptDisplayImage.alt = `Design ${concept.code}`;
         conceptDisplayCode.textContent = concept.code.toUpperCase();
-        conceptDisplay.style.display = 'block';
-        confirmDesignBtn.innerHTML = `<i class="fas fa-check"></i> Continue with ${concept.code.toUpperCase()}`;
-        tryDifferentBtn.style.display = 'inline-block';
+        conceptDisplay.style.display='block';
+        confirmDesignBtn.innerHTML=`<i class="fas fa-check"></i> Continue with ${concept.code.toUpperCase()}`;
+        tryDifferentBtn.style.display='inline-block';
     } else {
-        codeStatus.textContent = `✗ Design not found. Try "barber-1" to "barber-${barberConcepts.length}"`;
-        codeStatus.className = 'code-status error';
-        conceptDisplay.style.display = 'none';
-        tryDifferentBtn.style.display = 'none';
+        codeStatus.textContent=`✗ Design not found. Try "barber-1" to "barber-${barberConcepts.length}"`;
+        codeStatus.className='code-status error';
+        conceptDisplay.style.display='none';
+        tryDifferentBtn.style.display='none';
     }
 }
 
-// Confirm design selection
 function confirmDesignSelection() {
-    const input = designCodeInput.value.trim();
-    const concept = findConceptByCode(input);
-    
-    if (concept) {
-        formData.designCode = concept.code;
-        formData.designConcept = 'From Code';
-        updateHiddenFields();
-        next();
-    }
+    const concept = findConceptByCode(designCodeInput.value.trim());
+    if (concept) { formData.designCode = concept.code; formData.designConcept='From Code'; updateHiddenFields(); next(); }
 }
 
-// Try different code
 function tryDifferentCode() {
-    designCodeInput.value = '';
-    designCodeInput.focus();
-    codeStatus.textContent = '';
-    codeStatus.className = 'code-status';
-    conceptDisplay.style.display = 'none';
-    tryDifferentBtn.style.display = 'none';
+    designCodeInput.value=''; designCodeInput.focus();
+    codeStatus.textContent=''; codeStatus.className='code-status';
+    conceptDisplay.style.display='none'; tryDifferentBtn.style.display='none';
 }
 
+// ========== SERVICE SELECTION ==========
 function toggleService(serviceName, element) {
     const index = formData.features.indexOf(serviceName);
-    const service = allServices.find(s => s.name === serviceName);
-    
-    if (index === -1) {
-        // Add service
-        formData.features.push(serviceName);
-        element.classList.add('selected');
-    } else {
-        // Remove service
-        formData.features.splice(index, 1);
-        element.classList.remove('selected');
-    }
-    
-    updateServiceCounters();
-    calculateRecommendedPlan();
-    showPlanRecommendation();
+    const service = allServices.find(s=>s.name===serviceName);
+    if(index===-1){ formData.features.push(serviceName); element.classList.add('selected'); }
+    else { formData.features.splice(index,1); element.classList.remove('selected'); }
+    updateServiceCounters(); calculateRecommendedPlan(); showPlanRecommendation();
 }
 
 function updateServiceCounters() {
-    // Reset counts
-    standardServiceCount = 0;
-    premiumServiceCount = 0;
-    
-    // Count services by tier
-    formData.features.forEach(feature => {
-        const service = allServices.find(s => s.name === feature);
-        if (service) {
-            if (service.tier === 'standard') {
-                standardServiceCount++;
-            } else {
-                premiumServiceCount++;
-            }
-        }
+    standardServiceCount=0; premiumServiceCount=0;
+    formData.features.forEach(f=>{
+        const s=allServices.find(s=>s.name===f);
+        if(s) s.tier==='standard'?standardServiceCount++:premiumServiceCount++;
     });
+    document.getElementById('standardCount').textContent=standardServiceCount;
+    document.getElementById('premiumCount').textContent=premiumServiceCount;
+    document.getElementById('totalCount').textContent=formData.features.length;
     
-    // Update counters
-    document.getElementById('standardCount').textContent = standardServiceCount;
-    document.getElementById('premiumCount').textContent = premiumServiceCount;
-    document.getElementById('totalCount').textContent = formData.features.length;
-    
-    // Update services list
-    const servicesList = document.getElementById('servicesList');
-    servicesList.innerHTML = '';
-    
-    if (formData.features.length > 0) {
-        document.getElementById('selectedServicesList').style.display = 'block';
-        formData.features.forEach(service => {
-            const serviceData = allServices.find(s => s.name === service);
-            const badge = document.createElement('div');
-            badge.style.background = serviceData.tier === 'standard' ? '#4CAF50' : '#2196F3';
-            badge.style.color = 'white';
-            badge.style.padding = '0.3rem 0.8rem';
-            badge.style.borderRadius = '20px';
-            badge.style.fontSize = '0.8rem';
-            badge.style.display = 'flex';
-            badge.style.alignItems = 'center';
-            badge.style.gap = '5px';
-            badge.innerHTML = `<span>${service}</span> <i class="fas fa-times" style="cursor:pointer;" onclick="removeService('${service}')"></i>`;
+    const servicesList=document.getElementById('servicesList');
+    servicesList.innerHTML='';
+    if(formData.features.length>0){
+        document.getElementById('selectedServicesList').style.display='block';
+        formData.features.forEach(f=>{
+            const s=allServices.find(s=>s.name===f);
+            const badge=document.createElement('div');
+            badge.style.background=s.tier==='standard'?'#4CAF50':'#2196F3';
+            badge.style.color='white'; badge.style.padding='0.3rem 0.8rem';
+            badge.style.borderRadius='20px'; badge.style.fontSize='0.8rem';
+            badge.style.display='flex'; badge.style.alignItems='center'; badge.style.gap='5px';
+            badge.innerHTML=`<span>${f}</span> <i class="fas fa-times" style="cursor:pointer;" onclick="removeService('${f}')"></i>`;
             servicesList.appendChild(badge);
         });
-    } else {
-        document.getElementById('selectedServicesList').style.display = 'none';
-    }
+    } else { document.getElementById('selectedServicesList').style.display='none'; }
 }
 
-function removeService(serviceName) {
-    const index = formData.features.indexOf(serviceName);
-    if (index !== -1) {
-        formData.features.splice(index, 1);
-        
-        // Update visual state of the card
-        const serviceCards = document.querySelectorAll('.service-card');
-        serviceCards.forEach(card => {
-            const h4 = card.querySelector('h4');
-            if (h4 && h4.textContent === serviceName) {
-                card.classList.remove('selected');
-            }
+function removeService(serviceName){
+    const idx=formData.features.indexOf(serviceName);
+    if(idx!==-1){ formData.features.splice(idx,1);
+        document.querySelectorAll('.service-card').forEach(card=>{
+            const h4=card.querySelector('h4');
+            if(h4 && h4.textContent===serviceName) card.classList.remove('selected');
         });
-        
-        updateServiceCounters();
-        calculateRecommendedPlan();
-        showPlanRecommendation();
+        updateServiceCounters(); calculateRecommendedPlan(); showPlanRecommendation();
     }
 }
 
-function calculateRecommendedPlan() {
-    // Determine recommendation (Premium if 1+ premium services selected)
-    if (premiumServiceCount >= 1) {
-        recommendedPlan.type = 'Premium';
-        recommendedPlan.glow = true;
-    } else {
-        recommendedPlan.type = 'Standard';
-        recommendedPlan.glow = (formData.features.length > 0);
-    }
-    
+function calculateRecommendedPlan(){
+    recommendedPlan.type = premiumServiceCount>=1?'Premium':'Standard';
+    recommendedPlan.glow = recommendedPlan.type==='Premium'||formData.features.length>0;
     return recommendedPlan;
 }
 
-function showPlanRecommendation() {
-    const recommendation = calculateRecommendedPlan();
-    const preview = document.getElementById('planRecommendationPreview');
-    const logicInfo = document.getElementById('planLogicInfo');
-    
-    if (formData.features.length > 0) {
-        logicInfo.style.display = 'block';
-        
-        if (recommendation.type === 'Premium') {
-            document.getElementById('planLogicText').textContent = 
-                `You selected ${premiumServiceCount} premium service(s) (1+ triggers Premium recommendation)`;
-            preview.style.display = 'inline-block';
-            preview.style.background = 'linear-gradient(90deg, #2196F3, #21CBF3)';
-            document.getElementById('recommendedPlanPreview').textContent = 'Premium Plan';
+function showPlanRecommendation(){
+    const rec = calculateRecommendedPlan();
+    const preview=document.getElementById('planRecommendationPreview');
+    const logicInfo=document.getElementById('planLogicInfo');
+    if(formData.features.length>0){
+        logicInfo.style.display='block';
+        if(rec.type==='Premium'){
+            document.getElementById('planLogicText').textContent=`You selected ${premiumServiceCount} premium service(s) (1+ triggers Premium)`;
+            preview.style.display='inline-block';
+            preview.style.background='linear-gradient(90deg,#2196F3,#21CBF3)';
+            document.getElementById('recommendedPlanPreview').textContent='Premium Plan';
         } else {
-            document.getElementById('planLogicText').textContent = 
-                `You selected ${standardServiceCount} standard service(s) (Standard plan recommended)`;
-            
-            if (recommendation.glow) {
-                preview.style.display = 'inline-block';
-                preview.style.background = 'linear-gradient(90deg, #4CAF50, #66BB6A)';
-                document.getElementById('recommendedPlanPreview').textContent = 'Standard Plan';
-            } else {
-                preview.style.display = 'none';
-            }
+            document.getElementById('planLogicText').textContent=`You selected ${standardServiceCount} standard service(s) (Standard recommended)`;
+            if(rec.glow){ preview.style.display='inline-block'; preview.style.background='linear-gradient(90deg,#4CAF50,#66BB6A)'; document.getElementById('recommendedPlanPreview').textContent='Standard Plan'; }
+            else preview.style.display='none';
         }
-    } else {
-        preview.style.display = 'none';
-        logicInfo.style.display = 'none';
-    }
+    } else { preview.style.display='none'; logicInfo.style.display='none'; }
 }
 
-function nextFromServices() {
-    // Check if at least one service is selected
-    if (formData.features.length === 0) {
-        alert('Please select at least one service to continue.');
-        return;
-    }
-    
-    // Store recommended plan for later use
-    formData.planType = recommendedPlan.type;
-    localStorage.setItem('recommendedPlan', JSON.stringify(recommendedPlan));
+function nextFromServices(){
+    if(formData.features.length===0){ alert('Please select at least one service to continue.'); return; }
+    formData.planType=recommendedPlan.type; localStorage.setItem('recommendedPlan',JSON.stringify(recommendedPlan));
     next();
 }
 
-// ========== FUNNEL NAVIGATION ==========
-
-// Check URL parameters and jump to correct step
-function checkURLParams() {
-    const params = new URLSearchParams(window.location.search);
-    const step = params.get('step');
-    const concept = params.get('concept');
-    
-    console.log('URL Params:', { step, concept });
-    
-    if (step) {
-        const stepNum = parseInt(step);
-        if (!isNaN(stepNum) && stepNum >= 1 && stepNum <= 13) {
-            currentStep = stepNum;
-            console.log('Jumping to step:', currentStep);
-            
-            if (concept) {
-                const foundConcept = findConceptByCode(concept);
-                if (foundConcept) {
-                    formData.designCode = foundConcept.code;
-                    formData.designConcept = 'From Concepts';
-                    localStorage.setItem('selectedDesignCode', foundConcept.code);
-                }
-            }
-            
-            return true;
-        }
-    }
-    
-    const savedDesignCode = localStorage.getItem('selectedDesignCode');
-    if (savedDesignCode) {
-        formData.designCode = savedDesignCode;
-        formData.designConcept = 'From Concepts';
-    }
-    
-    return false;
-}
-
-// Show a specific screen
-function showScreen(screenId) {
-    screens.forEach(screen => screen.classList.remove('active'));
-    const screen = document.getElementById(screenId);
-    if (screen) {
-        screen.classList.add('active');
-        
-        // Update UI for specific steps
-        if (screenId === 'step-3' && formData.designCode) {
-            document.getElementById('designInfo').style.display = 'block';
-            document.getElementById('selectedDesignCode').textContent = formData.designCode.toUpperCase();
-        }
-        
-        if (screenId === 'step-9') {
-            // Update title with business name if available
-            if (formData.businessName) {
-                document.getElementById('step9Title').innerHTML = 
-                    `Select Services for <span style="color: #FF6B00;">${formData.businessName}</span>`;
-            }
-            
-            // Update service counters
-            updateServiceCounters();
-            showPlanRecommendation();
-        }
-        
-        if (screenId === 'step-13') {
-            // Show plans based on selections
-            showFinalPlans();
-        }
-        
-        // Auto-focus code input on step 4
-        if (screenId === 'step-4') {
-            setTimeout(() => {
-                designCodeInput.focus();
-                
-                if (formData.designCode) {
-                    designCodeInput.value = formData.designCode;
-                    validateAndDisplayConcept();
-                }
-            }, 100);
-        }
+// ========== NAVIGATION ==========
+function showScreen(screenId){
+    screens.forEach(s=>s.classList.remove('active'));
+    const screen=document.getElementById(screenId);
+    if(screen){ screen.classList.add('active');
+        if(screenId==='step-3' && formData.designCode){ document.getElementById('designInfo').style.display='block'; document.getElementById('selectedDesignCode').textContent=formData.designCode.toUpperCase(); }
+        if(screenId==='step-9'){ if(formData.businessName) document.getElementById('step9Title').innerHTML=`Select Services for <span style="color:#FF6B00;">${formData.businessName}</span>`; updateServiceCounters(); showPlanRecommendation(); }
+        if(screenId==='step-13'){ showFinalPlans(); }
+        if(screenId==='step-4'){ setTimeout(()=>{ designCodeInput.focus(); if(formData.designCode){ designCodeInput.value=formData.designCode; validateAndDisplayConcept(); } },100); }
     }
 }
 
-// Step navigation
-function next() {
-    if (currentStep < 13) {
-        currentStep++;
-        updateStepIndicator();
-    }
+function next(){ if(currentStep<13){ currentStep++; updateStepIndicator(); } }
+function prev(){ if(currentStep>1){ currentStep--; updateStepIndicator(); } }
+function updateStepIndicator(){
+    stepDots.forEach((dot,i)=>dot.classList.toggle('active',i<currentStep));
+    showScreen('step-'+currentStep); updateHiddenFields();
 }
 
-function prev() {
-    if (currentStep > 1) {
-        currentStep--;
-        updateStepIndicator();
-    }
+function updateHiddenFields(){
+    document.getElementById('hiddenDesignCode').value=formData.designCode||'';
+    document.getElementById('hiddenFeatures').value=formData.features.join(', ');
 }
 
-function updateStepIndicator() {
-    stepDots.forEach((dot, index) => {
-        dot.classList.toggle('active', index < currentStep);
-    });
-    
-    showScreen('step-' + currentStep);
-    updateHiddenFields();
-}
+// STEP 1-8: Inputs & selections
+function handleBusinessName(){ const val=businessInput.value.trim(); if(val){ formData.businessName=val; next(); } else { alert('Please enter your barber shop name'); businessInput.focus(); } }
+function setProjectType(type){ formData.projectType=type; next(); }
+function setDesignConcept(option){ formData.designConcept=option; option==='Code'?next():(formData.designCode='CUSTOM',next()); }
+function setAudience(a){ formData.audience=a; next(); }
+function setStyle(s){ formData.style=s; next(); }
+function setColor(c){ formData.color=c; next(); }
+function setGoal(g){ formData.goal=g; next(); }
 
-// Update hidden form fields
-function updateHiddenFields() {
-    document.getElementById('hiddenDesignCode').value = formData.designCode || '';
-    document.getElementById('hiddenFeatures').value = formData.features.join(', ');
-}
+// STEP 13: Show final plans
+function showFinalPlans(){
+    const container=document.getElementById('pricingCards');
+    const planText=document.getElementById('planRecommendation');
+    const isOwnOutright=formData.planModel==='Own Outright';
+    const standardPrice=isOwnOutright?'£1,500':'£100';
+    const premiumPrice=isOwnOutright?'£3,000':'£150';
+    const period=isOwnOutright?'one-time':'per month';
+    const planNameSuffix=isOwnOutright?'Own Outright':'Monthly Support';
 
-// STEP 1: Handle business name input
-function handleBusinessName() {
-    const value = businessInput.value.trim();
-    if (value) {
-        formData.businessName = value;
-        next();
-    } else {
-        alert('Please enter your barber shop name');
-        businessInput.focus();
-    }
-}
-
-// STEP 2: Project type selection
-function setProjectType(type) {
-    formData.projectType = type;
-    next();
-}
-
-// STEP 3: Design Concept
-function setDesignConcept(option) {
-    formData.designConcept = option;
-    
-    if (option === 'Code') {
-        next();
-    } else if (option === 'Custom') {
-        formData.designCode = 'CUSTOM';
-        next();
-    }
-}
-
-// STEP 5-8: Simple selection functions
-function setAudience(audience) {
-    formData.audience = audience;
-    next();
-}
-
-function setStyle(style) {
-    formData.style = style;
-    next();
-}
-
-function setColor(color) {
-    formData.color = color;
-    next();
-}
-
-function setGoal(goal) {
-    formData.goal = goal;
-    next();
-}
-
-// STEP 13: Show final plans based on selections
-function showFinalPlans() {
-    const container = document.getElementById('pricingCards');
-    const planText = document.getElementById('planRecommendation');
-    
-    // Determine pricing based on plan model
-    const isOwnOutright = formData.planModel === 'Own Outright';
-    const standardPrice = isOwnOutright ? '£1,500' : '£100';
-    const premiumPrice = isOwnOutright ? '£3,000' : '£150';
-    const period = isOwnOutright ? 'one-time' : 'per month';
-    const planNameSuffix = isOwnOutright ? 'Own Outright' : 'Monthly Support';
-    
-    // Update plan recommendation text
+    // Update recommendation text
     const recommendation = calculateRecommendedPlan();
     planText.innerHTML = `Based on your <strong>${formData.features.length} selected services</strong>, we recommend the <strong>${recommendation.type}</strong> plan.`;
-    
-    // Get selected services
-    const selectedStandardServices = formData.features.filter(f => 
+
+    // Filter selected services by tier
+    const selectedStandardServices = formData.features.filter(f =>
         allServices.find(s => s.name === f && s.tier === 'standard')
     );
-    
-    const selectedPremiumServices = formData.features.filter(f => 
+
+    const selectedPremiumServices = formData.features.filter(f =>
         allServices.find(s => s.name === f && s.tier === 'premium')
     );
-    
-    // Create plan objects with static features (NO ICONS)
+
+    // Static features for each plan
     const staticStandardFeatures = [
-        'Upto 5 Pages',
-        'Upto 5 Revisions Per Page',
+        'Up to 5 Pages',
+        'Up to 5 Revisions Per Page',
         'Delivery 10 - 15 days',
         '3 months support',
         'Mobile responsive'
     ];
-    
+
     const staticPremiumFeatures = [
-        'Upto 15 Pages',
-        'Upto 10 Revisions Per Page',
+        'Up to 15 Pages',
+        'Up to 10 Revisions Per Page',
         'Delivery 25 - 30 days',
         '6 months support',
         'Mobile responsive'
     ];
-    
-    // Create HTML for Standard plan - ONLY shows standard services
-    let standardFeaturesHtml = '';
-    staticStandardFeatures.forEach(feature => {
-        standardFeaturesHtml += `<li class="standard-feature">${feature}</li>`;
-    });
-    
-    // Add selected standard services ONLY to Standard plan
+
+    // Build HTML for Standard Plan
+    let standardFeaturesHtml = staticStandardFeatures.map(f => `<li class="standard-feature">${f}</li>`).join('');
     if (selectedStandardServices.length > 0) {
         standardFeaturesHtml += '<li><strong>Selected Standard Services:</strong></li>';
-        selectedStandardServices.forEach(service => {
-            standardFeaturesHtml += `<li class="standard-feature">• ${service}</li>`;
-        });
+        standardFeaturesHtml += selectedStandardServices.map(f => `<li class="standard-feature">• ${f}</li>`).join('');
     }
-    
-    // Create HTML for Premium plan - ONLY shows premium services
-    let premiumFeaturesHtml = '';
-    staticPremiumFeatures.forEach(feature => {
-        premiumFeaturesHtml += `<li class="premium-feature">${feature}</li>`;
-    });
-    
-    // Add selected premium services ONLY to Premium plan
+
+    // Build HTML for Premium Plan
+    let premiumFeaturesHtml = staticPremiumFeatures.map(f => `<li class="premium-feature">${f}</li>`).join('');
     if (selectedPremiumServices.length > 0) {
         premiumFeaturesHtml += '<li><strong>Selected Premium Services:</strong></li>';
-        selectedPremiumServices.forEach(service => {
-            premiumFeaturesHtml += `<li class="premium-feature">• ${service}</li>`;
-        });
+        premiumFeaturesHtml += selectedPremiumServices.map(f => `<li class="premium-feature">• ${f}</li>`).join('');
     }
-    
-    // Add selected features section (shows all selected features)
+
+    // Display selected features as badges
     let selectedFeaturesSection = '';
     if (formData.features.length > 0) {
         selectedFeaturesSection = `
             <div class="selected-features-section">
                 <h4><i class="fas fa-check-circle" style="color: #FF6B00;"></i> Your Selected Features (${formData.features.length})</h4>
                 <div class="selected-features-list">
-                    ${formData.features.map(feature => {
-                        const service = allServices.find(s => s.name === feature);
+                    ${formData.features.map(f => {
+                        const service = allServices.find(s => s.name === f);
                         const tierClass = service.tier === 'standard' ? 'standard' : 'premium';
-                        return `<div class="selected-feature-badge ${tierClass}">${feature}</div>`;
+                        return `<div class="selected-feature-badge ${tierClass}">${f}</div>`;
                     }).join('')}
                 </div>
             </div>
         `;
     }
-    
+
+    // Render the plan cards
     container.innerHTML = `
-        <div class="pricing-card ${recommendation.type === 'Standard' && recommendation.glow ? 'recommended-glow' : ''}" 
-             id="recommendedStandard">
+        <div class="pricing-card ${recommendation.type === 'Standard' && recommendation.glow ? 'recommended-glow' : ''}" id="recommendedStandard">
             <h3>${planNameSuffix} - Standard</h3>
             <div class="price">${standardPrice}<span class="price-period">/${period}</span></div>
             <ul class="pricing-features">${standardFeaturesHtml}</ul>
             ${selectedFeaturesSection}
             <button type="button" class="vibz-btn ${recommendation.type === 'Standard' ? 'vibz-btn-primary' : ''}" 
-                    onclick="goToPayment('${planNameSuffix} - Standard')">
+                onclick="goToPayment('${planNameSuffix} - Standard')">
                 ${recommendation.type === 'Standard' ? 'Choose Recommended Plan' : 'Choose Standard Plan'}
             </button>
         </div>
-        
-        <div class="pricing-card ${recommendation.type === 'Premium' && recommendation.glow ? 'recommended-glow' : ''}" 
-             id="recommendedPremium">
+
+        <div class="pricing-card ${recommendation.type === 'Premium' && recommendation.glow ? 'recommended-glow' : ''}" id="recommendedPremium">
             <h3>${planNameSuffix} - Premium</h3>
             <div class="price">${premiumPrice}<span class="price-period">/${period}</span></div>
             <ul class="pricing-features">${premiumFeaturesHtml}</ul>
             ${selectedFeaturesSection}
             <button type="button" class="vibz-btn ${recommendation.type === 'Premium' ? 'vibz-btn-primary' : ''}" 
-                    style="${recommendation.type === 'Premium' ? '' : 'background: #2196F3; border-color: #2196F3; color: white;'}"
-                    onclick="goToPayment('${planNameSuffix} - Premium')">
+                style="${recommendation.type === 'Premium' ? '' : 'background:#2196F3; border-color:#2196F3; color:white;'}"
+                onclick="goToPayment('${planNameSuffix} - Premium')">
                 ${recommendation.type === 'Premium' ? 'Choose Recommended Plan' : 'Choose Premium Plan'}
             </button>
         </div>
     `;
 }
 
-// Redirect to payment page
+// ========== PAYMENT REDIRECT ==========
 function goToPayment(planName) {
-    // Store all form data before redirecting
+    // Save all funnel data
     localStorage.setItem('funnelFormData', JSON.stringify(formData));
     localStorage.setItem('selectedPlan', planName);
-    
-    // Determine payment link based on plan
-    let paymentLink;
+
+    // Define Stripe links
+    let paymentLink = '';
     if (planName.includes('Own Outright')) {
-        if (planName.includes('Standard')) {
-            paymentLink = 'https://buy.stripe.com/test_00g9CBeBea4X6Gg28b'; // £1,500
-        } else {
-            paymentLink = 'https://buy.stripe.com/test_28odSBdBCgVn7Z2fZ1'; // £3,000
-        }
+        paymentLink = planName.includes('Standard')
+            ? 'https://buy.stripe.com/test_00g9CBeBea4X6Gg28b' // £1,500
+            : 'https://buy.stripe.com/test_28odSBdBCgVn7Z2fZ1'; // £3,000
     } else {
-        if (planName.includes('Standard')) {
-            paymentLink = 'https://buy.stripe.com/test_00g9CBeBea4X6Gg28b'; // £100/month
-        } else {
-            paymentLink = 'https://buy.stripe.com/test_28odSBdBCgVn7Z2fZ1'; // £150/month
-        }
+        paymentLink = planName.includes('Standard')
+            ? 'https://buy.stripe.com/test_00g9CBeBea4X6Gg28b' // £100/month
+            : 'https://buy.stripe.com/test_28odSBdBCgVn7Z2fZ1'; // £150/month
     }
-    
+
+    // Redirect to Stripe
     window.location.href = paymentLink;
 }
-
-// ========== INITIALIZATION ==========
-
-// Initialize page
-document.addEventListener('DOMContentLoaded', () => {
-    const jumpedFromURL = checkURLParams();
-    updateStepIndicator();
-    
-    // Mobile menu toggle
-    const mobileBtn = document.getElementById('mobileMenuBtn');
-    if (mobileBtn) {
-        mobileBtn.addEventListener('click', () => {
-            const navLinks = document.querySelector('.nav-links');
-            navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
-        });
-    }
-    
-    // Auto-focus business input if on step 1
-    if (currentStep === 1 && businessInput) {
-        businessInput.focus();
-    }
-    
-    // Code input validation on typing
-    designCodeInput.addEventListener('input', validateAndDisplayConcept);
-    
-    // Allow Enter key to confirm design
-    designCodeInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            const input = designCodeInput.value.trim();
-            const concept = findConceptByCode(input);
-            if (concept) {
-                confirmDesignSelection();
-            }
-        }
-    });
-    
-    console.log('Available barber concepts:', barberConcepts.map(c => c.code));
-});
 </script>
 
 </body>
