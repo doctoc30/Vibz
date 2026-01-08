@@ -950,291 +950,283 @@
     </div>
 </section>
 
-<script>
-// ========== BARBER CONCEPTS DATABASE ==========
-const barberConcepts = [
-    { code: "barber-1", image: "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
-    { code: "barber-2", image: "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
-    { code: "barber-3", image: "https://images.unsplash.com/photo-1567894340315-735d7c361db0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
-    { code: "barber-4", image: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
-    { code: "barber-5", image: "https://images.unsplash.com/photo-1562157873-818bc0726f68?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
-    { code: "barber-6", image: "https://images.unsplash.com/photo-1580618864180-f6d7d39b8ff6?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
-    { code: "barber-7", image: "https://images.unsplash.com/photo-1621605815972-f9e5c6c4a9c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
-    { code: "barber-8", image: "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
-    { code: "barber-9", image: "https://images.unsplash.com/photo-1580618864180-f6d7d39b8ff6?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" }
-];
 
-// ========== SERVICES DATABASE ==========
-const allServices = [
-    // STANDARD SERVICES
-    { name: 'Services & Pricing Display', tier: 'standard', description: 'Clear display of all services and prices' },
-    { name: 'Barber Profiles / Team Section', tier: 'standard', description: 'Introduce your team with bios and photos' },
-    { name: 'Photo Gallery / Portfolio', tier: 'standard', description: 'Showcase your work with high-quality images' },
-    { name: 'Before & After Slider', tier: 'standard', description: 'Interactive before/after image comparison' },
-    { name: 'Special Offers / Promotions Section', tier: 'standard', description: 'Display current deals and promotions' },
-    { name: 'Location & Directions', tier: 'standard', description: 'Google Maps integration with directions' },
-    { name: 'Tap-to-Call & WhatsApp Buttons', tier: 'standard', description: 'One-click calling and WhatsApp messaging' },
-    { name: 'Opening Hours Display', tier: 'standard', description: 'Interactive hours with open/closed status' },
-    { name: 'Membership / Loyalty Program Section', tier: 'standard', description: 'Display your loyalty program details' },
-    { name: 'FAQ Section', tier: 'standard', description: 'Answers to common client questions' },
-    // PREMIUM SERVICES
-    { name: 'Online Booking System Embed', tier: 'premium', description: 'Calendly/Setmore integration for bookings' },
-    { name: 'Stripe Payment / Deposit Integration', tier: 'premium', description: 'Secure online payments and deposits' },
-    { name: 'Automated Booking Reminders', tier: 'premium', description: 'Email/SMS reminders via booking tool' },
-    { name: 'Appointment Cancellation / Reschedule Info', tier: 'premium', description: 'Clear policies and rescheduling options' },
-    { name: 'Gift Card / Voucher Section', tier: 'premium', description: 'Sell and manage digital gift cards' },
-    { name: 'Kids / Senior / Special Service Tags', tier: 'premium', description: 'Highlight kids, seniors, specialty services' },
-    { name: 'Walk-In / Waitlist Info Section', tier: 'premium', description: 'Real-time waitlist and walk-in updates' },
-    { name: 'Barber Specialties Tags', tier: 'premium', description: 'Highlight specific skills and specialties' },
-    { name: 'Prominent Call-to-Action Buttons', tier: 'premium', description: 'Strategic buttons to drive conversions' },
-    { name: 'Enhanced Before & After Slider', tier: 'premium', description: 'Interactive slider with filtering options' }
-];
 
-// ========== FORM STATE ==========
+    <script>
+// ==============================
+// BARBER SHOP FUNNEL JS - FULL
+// ==============================
+
+const formWrapper = document.getElementById("formWrapper");
+const steps = document.querySelectorAll(".form-screen");
+const stepDots = document.querySelectorAll(".step-dot");
+
+// Track current step
 let currentStep = 1;
+
+// Store form data
 const formData = {
-    businessName: '',
-    projectType: '',
-    designConcept: '',
-    designCode: '',
-    features: [],
-    audience: '',
-    style: '',
-    color: '',
-    goal: '',
-    urgency: '',
-    planModel: '',
-    planType: ''
+    businessName: "",
+    projectType: "",
+    designConcept: "",
+    designCode: "",
+    audience: "",
+    style: "",
+    color: "",
+    goal: "",
+    selectedServices: { standard: [], premium: [] },
+    urgency: "",
+    planModel: "",
 };
 
-let premiumServiceCount = 0;
-let standardServiceCount = 0;
-let recommendedPlan = { type: '', glow: false };
+// ==============================
+// STEP NAVIGATION
+// ==============================
+function showStep(step) {
+    steps.forEach(s => s.classList.remove("active"));
+    const current = document.getElementById(`step-${step}`);
+    if (current) current.classList.add("active");
 
-// DOM Elements
-const screens = document.querySelectorAll('.form-screen');
-const stepDots = document.querySelectorAll('.step-dot');
-const businessInput = document.getElementById('businessInput');
-const designCodeInput = document.getElementById('designCodeInput');
-const codeStatus = document.getElementById('codeStatus');
-const conceptDisplay = document.getElementById('conceptDisplay');
-const conceptDisplayImage = document.getElementById('conceptDisplayImage');
-const conceptDisplayCode = document.getElementById('conceptDisplayCode');
-const confirmDesignBtn = document.getElementById('confirmDesignBtn');
-const tryDifferentBtn = document.getElementById('tryDifferentBtn');
+    stepDots.forEach(dot => dot.classList.remove("active"));
+    const activeDot = document.querySelector(`.step-dot[data-step="${step}"]`);
+    if (activeDot) activeDot.classList.add("active");
 
-// ========== DESIGN CODE FUNCTIONS ==========
-function normalizeCode(input) {
-    if (!input) return '';
-    let normalized = input.toLowerCase().trim().replace(/^barber[\s\-]*/i,'').replace(/[^0-9\-]/g,'');
-    if (/^\d+$/.test(normalized)) return `barber-${normalized}`;
-    if (normalized.includes('-')) {
-        const num = normalized.split('-').pop();
-        if (/^\d+$/.test(num)) return `barber-${num}`;
-    }
-    return '';
+    currentStep = step;
+
+    // If STEP 13, render pricing
+    if (step === 13) showPricing();
 }
 
-function findConceptByCode(input) {
-    const normalizedCode = normalizeCode(input);
-    if (!normalizedCode) return null;
-    return barberConcepts.find(c => c.code === normalizedCode);
+function next() { if (currentStep < steps.length) showStep(currentStep + 1); }
+function prev() { if (currentStep > 1) showStep(currentStep - 1); }
+function goBackToStep10() { showStep(10); }
+
+// ==============================
+// STEP 1: Business Name
+// ==============================
+function handleBusinessName() {
+    const input = document.getElementById("businessInput").value.trim();
+    if (!input) return alert("Please enter your barber shop name.");
+    formData.businessName = input;
+    document.getElementById("leadBusiness").value = input;
+    next();
 }
 
-function validateAndDisplayConcept() {
-    const input = designCodeInput.value.trim();
-    if (!input) {
-        codeStatus.textContent = '';
-        codeStatus.className = 'code-status';
-        conceptDisplay.style.display = 'none';
-        tryDifferentBtn.style.display = 'none';
-        return;
-    }
-    const concept = findConceptByCode(input);
-    if (concept) {
-        codeStatus.textContent = `✓ Valid code: ${concept.code}`;
-        codeStatus.className = 'code-status success';
-        conceptDisplayImage.src = concept.image;
-        conceptDisplayImage.alt = `Design ${concept.code}`;
-        conceptDisplayCode.textContent = concept.code.toUpperCase();
-        conceptDisplay.style.display = 'block';
-        confirmDesignBtn.innerHTML = `<i class="fas fa-check"></i> Continue with ${concept.code.toUpperCase()}`;
-        tryDifferentBtn.style.display = 'inline-block';
+// ==============================
+// STEP 2: Project Type
+// ==============================
+function setProjectType(type) {
+    formData.projectType = type;
+    next();
+}
+
+// ==============================
+// STEP 3: Design Concept
+// ==============================
+function setDesignConcept(option) {
+    formData.designConcept = option;
+    if (option === "Code") showStep(4);
+    else next();
+}
+
+// ==============================
+// STEP 4: Design Code Input & Preview
+// ==============================
+const designCodeMap = {
+    "barber-1": "images/barber-1.jpg",
+    "barber-2": "images/barber-2.jpg",
+    "barber-3": "images/barber-3.jpg",
+    "barber-4": "images/barber-4.jpg",
+    "barber-5": "images/barber-5.jpg"
+};
+
+function checkDesignCode() {
+    let input = document.getElementById("designCodeInput").value.trim().toLowerCase();
+    if (!input) return;
+
+    // Normalize codes
+    if (input === "b1") input = "barber-1";
+    if (input === "b2") input = "barber-2";
+    if (input === "b3") input = "barber-3";
+    if (input === "b4") input = "barber-4";
+    if (input === "b5") input = "barber-5";
+    if (!input.startsWith("barber-")) input = `barber-${input}`;
+
+    const imgSrc = designCodeMap[input];
+    const codeStatus = document.getElementById("codeStatus");
+
+    if (imgSrc) {
+        codeStatus.textContent = "Design code valid!";
+        codeStatus.style.color = "#4CAF50";
+
+        const conceptDisplay = document.getElementById("conceptDisplay");
+        document.getElementById("conceptDisplayImage").src = imgSrc;
+        document.getElementById("conceptDisplayCode").textContent = input;
+        conceptDisplay.style.display = "block";
+        document.getElementById("tryDifferentBtn").style.display = "inline-block";
     } else {
-        codeStatus.textContent = `✗ Design not found. Try "barber-1" to "barber-${barberConcepts.length}"`;
-        codeStatus.className = 'code-status error';
-        conceptDisplay.style.display = 'none';
-        tryDifferentBtn.style.display = 'none';
+        codeStatus.textContent = "Invalid code. Try again.";
+        codeStatus.style.color = "#F44336";
+        document.getElementById("conceptDisplay").style.display = "none";
+        document.getElementById("tryDifferentBtn").style.display = "none";
     }
 }
 
 function confirmDesignSelection() {
-    const concept = findConceptByCode(designCodeInput.value.trim());
-    if (concept) {
-        formData.designCode = concept.code;
-        formData.designConcept = 'From Code';
-        updateHiddenFields();
-        next();
-    }
-}
-
-function tryDifferentCode() {
-    designCodeInput.value = '';
-    designCodeInput.focus();
-    codeStatus.textContent = '';
-    codeStatus.className = 'code-status';
-    conceptDisplay.style.display = 'none';
-    tryDifferentBtn.style.display = 'none';
-}
-
-// ========== SERVICE SELECTION ==========
-function toggleService(serviceName, element) {
-    const index = formData.features.indexOf(serviceName);
-    if (index === -1) {
-        formData.features.push(serviceName);
-        element.classList.add('selected');
-    } else {
-        formData.features.splice(index,1);
-        element.classList.remove('selected');
-    }
-    updateServiceCounters();
-    calculateRecommendedPlan();
-    showPlanRecommendation();
-}
-
-function updateServiceCounters() {
-    standardServiceCount = 0;
-    premiumServiceCount = 0;
-    formData.features.forEach(f => {
-        const s = allServices.find(s => s.name === f);
-        if (!s) return;
-        if (s.tier === 'standard') standardServiceCount++;
-        if (s.tier === 'premium') premiumServiceCount++;
-    });
-    document.getElementById('standardCount').textContent = standardServiceCount;
-    document.getElementById('premiumCount').textContent = premiumServiceCount;
-    document.getElementById('totalCount').textContent = formData.features.length;
-
-    const servicesList = document.getElementById('servicesList');
-    servicesList.innerHTML = '';
-    if (formData.features.length > 0) {
-        document.getElementById('selectedServicesList').style.display = 'block';
-        formData.features.forEach(f => {
-            const serviceData = allServices.find(s => s.name === f);
-            const badge = document.createElement('div');
-            badge.style = `background:${serviceData.tier==='standard'?'#4CAF50':'#2196F3'};color:white;padding:0.3rem 0.8rem;border-radius:20px;font-size:0.8rem;display:flex;align-items:center;gap:5px;`;
-            badge.innerHTML = `<span>${f}</span> <i class="fas fa-times" style="cursor:pointer;" onclick="removeService('${f}')"></i>`;
-            servicesList.appendChild(badge);
-        });
-    } else {
-        document.getElementById('selectedServicesList').style.display = 'none';
-    }
-}
-
-function removeService(serviceName) {
-    const index = formData.features.indexOf(serviceName);
-    if (index !== -1) {
-        formData.features.splice(index,1);
-        document.querySelectorAll('.service-card').forEach(card => {
-            const h4 = card.querySelector('h4');
-            if(h4 && h4.textContent === serviceName) card.classList.remove('selected');
-        });
-        updateServiceCounters();
-        calculateRecommendedPlan();
-        showPlanRecommendation();
-    }
-}
-
-function calculateRecommendedPlan() {
-    if (premiumServiceCount >= 1) {
-        recommendedPlan.type = 'Premium';
-        recommendedPlan.glow = true;
-    } else {
-        recommendedPlan.type = 'Standard';
-        recommendedPlan.glow = formData.features.length > 0;
-    }
-    return recommendedPlan;
-}
-
-function showPlanRecommendation() {
-    const recommendation = calculateRecommendedPlan();
-    const preview = document.getElementById('planRecommendationPreview');
-    const logicInfo = document.getElementById('planLogicInfo');
-
-    if (formData.features.length > 0) {
-        logicInfo.style.display = 'block';
-        if (recommendation.type==='Premium') {
-            document.getElementById('planLogicText').textContent = `You selected ${premiumServiceCount} premium service(s) → Premium recommended`;
-            preview.style.display='inline-block';
-            preview.style.background='linear-gradient(90deg,#2196F3,#21CBF3)';
-            document.getElementById('recommendedPlanPreview').textContent='Premium Plan';
-        } else {
-            document.getElementById('planLogicText').textContent = `No premium services selected → Standard recommended`;
-            if (recommendation.glow) {
-                preview.style.display='inline-block';
-                preview.style.background='linear-gradient(90deg,#4CAF50,#66BB6A)';
-                document.getElementById('recommendedPlanPreview').textContent='Standard Plan';
-            } else preview.style.display='none';
-        }
-    } else {
-        preview.style.display='none';
-        logicInfo.style.display='none';
-    }
-}
-
-function nextFromServices() {
-    if (formData.features.length===0) return alert('Please select at least one service to continue.');
-    formData.planType = recommendedPlan.type;
-    localStorage.setItem('recommendedPlan', JSON.stringify(recommendedPlan));
+    const codeInput = document.getElementById("designCodeInput").value.trim();
+    if (!codeInput) return alert("Please enter a valid design code.");
+    formData.designCode = codeInput;
+    document.getElementById("hiddenDesignCode").value = codeInput;
     next();
 }
 
-// ========== FUNNEL NAVIGATION ==========
-function showScreen(screenId) {
-    screens.forEach(s=>s.classList.remove('active'));
-    const screen = document.getElementById(screenId);
-    if(screen){
-        screen.classList.add('active');
-        if(screenId==='step-9'){
-            if(formData.businessName) document.getElementById('step9Title').innerHTML=`Select Services for <span style="color:#FF6B00;">${formData.businessName}</span>`;
-            updateServiceCounters();
-            showPlanRecommendation();
-        }
-        if(screenId==='step-13') showFinalPlans();
-        if(screenId==='step-4'){
-            setTimeout(()=>{
-                designCodeInput.focus();
-                if(formData.designCode){ designCodeInput.value=formData.designCode; validateAndDisplayConcept(); }
-            },100);
-        }
+function tryDifferentCode() {
+    document.getElementById("designCodeInput").value = "";
+    document.getElementById("conceptDisplay").style.display = "none";
+    document.getElementById("tryDifferentBtn").style.display = "none";
+    document.getElementById("codeStatus").textContent = "";
+}
+
+// Listen for input change
+document.getElementById("designCodeInput").addEventListener("input", checkDesignCode);
+
+// ==============================
+// STEP 5-8: Audience, Style, Color, Goal
+// ==============================
+function setAudience(aud) { formData.audience = aud; next(); }
+function setStyle(style) { formData.style = style; next(); }
+function setColor(color) { formData.color = color; next(); }
+function setGoal(goal) { formData.goal = goal; next(); }
+
+// ==============================
+// STEP 9: Services Selection
+// ==============================
+function toggleService(serviceName, el) {
+    const isStandard = el.classList.contains("standard");
+    const type = isStandard ? "standard" : "premium";
+    const list = formData.selectedServices[type];
+
+    if (list.includes(serviceName)) {
+        const index = list.indexOf(serviceName);
+        list.splice(index, 1);
+        el.classList.remove("selected");
+    } else {
+        list.push(serviceName);
+        el.classList.add("selected");
     }
+
+    updateServiceSummary();
 }
 
-function next(){ if(currentStep<13){ currentStep++; updateStepIndicator(); } }
-function prev(){ if(currentStep>1){ currentStep--; updateStepIndicator(); } }
+function updateServiceSummary() {
+    const standardCount = formData.selectedServices.standard.length;
+    const premiumCount = formData.selectedServices.premium.length;
+    const totalCount = standardCount + premiumCount;
 
-function updateStepIndicator(){
-    stepDots.forEach((dot,i)=>dot.classList.toggle('active',i<currentStep));
-    showScreen('step-'+currentStep);
-    updateHiddenFields();
+    document.getElementById("standardCount").textContent = standardCount;
+    document.getElementById("premiumCount").textContent = premiumCount;
+    document.getElementById("totalCount").textContent = totalCount;
+
+    // Update services list
+    const servicesListDiv = document.getElementById("servicesList");
+    if (totalCount > 0) {
+        document.getElementById("selectedServicesList").style.display = "flex";
+        servicesListDiv.innerHTML = "";
+        [...formData.selectedServices.standard, ...formData.selectedServices.premium].forEach(s => {
+            const span = document.createElement("span");
+            span.style.background = "#eee";
+            span.style.padding = "5px 10px";
+            span.style.borderRadius = "10px";
+            span.textContent = s;
+            servicesListDiv.appendChild(span);
+        });
+    } else {
+        document.getElementById("selectedServicesList").style.display = "none";
+    }
+
+    // Recommend plan
+    const recommendedPlan = formData.selectedServices.premium.length >= 3 ? "Premium" : "Standard";
+    const planPreview = document.getElementById("planRecommendationPreview");
+    planPreview.style.display = "flex";
+    document.getElementById("recommendedPlanPreview").textContent = recommendedPlan;
+
+    // Update hidden fields
+    document.getElementById("hiddenFeatures").value = [...formData.selectedServices.standard, ...formData.selectedServices.premium].join(", ");
+    document.getElementById("hiddenPlan").value = recommendedPlan;
 }
 
-function updateHiddenFields(){
-    document.getElementById('hiddenDesignCode').value=formData.designCode||'';
-    document.getElementById('hiddenFeatures').value=formData.features.join(', ');
+function nextFromServices() {
+    if (formData.selectedServices.standard.length + formData.selectedServices.premium.length === 0)
+        return alert("Please select at least one service.");
+    next();
 }
 
-// ========== INITIALIZATION ==========
-document.addEventListener('DOMContentLoaded',()=>{
-    updateStepIndicator();
-    if(currentStep===1 && businessInput) businessInput.focus();
-    designCodeInput.addEventListener('input',validateAndDisplayConcept);
-    designCodeInput.addEventListener('keypress',e=>{
-        if(e.key==='Enter'){ const concept=findConceptByCode(designCodeInput.value.trim()); if(concept) confirmDesignSelection(); }
+// ==============================
+// STEP 10: Urgency
+// ==============================
+function setUrgency(option) { formData.urgency = option; next(); }
+
+// ==============================
+// STEP 11: Plan Model
+// ==============================
+function setPlanModel(option) {
+    formData.planModel = option;
+    document.getElementById("hiddenPaymentLink").value = option;
+    next();
+}
+
+// ==============================
+// STEP 12: Lead Capture Form
+// ==============================
+function submitLeadForm(e) {
+    e.preventDefault();
+    alert("Thank you! We'll contact you soon.");
+    document.getElementById("leadCaptureForm").reset();
+    showStep(1);
+}
+
+// ==============================
+// STEP 13: Pricing Display
+// ==============================
+function showPricing() {
+    const container = document.getElementById("pricingCards");
+    container.innerHTML = "";
+
+    const plans = formData.planModel === "Monthly Support"
+        ? [{ title: "Monthly Support", price: "£99/mo", features: ["Hosting & Maintenance", "Updates & Backups", "Support"] }]
+        : [
+            { title: "Standard", price: "£1,499", features: ["All Standard Services", "Responsive Design", "Contact Form"] },
+            { title: "Premium", price: "£2,499", features: ["All Premium Services", "Online Booking", "Payment Integration"] }
+        ];
+
+    plans.forEach(plan => {
+        const card = document.createElement("div");
+        card.classList.add("pricing-card");
+        card.style.border = "2px solid #ccc";
+        card.style.borderRadius = "15px";
+        card.style.padding = "1.5rem";
+        card.style.margin = "1rem 0";
+        card.style.background = "#fff";
+        card.innerHTML = `
+            <h3>${plan.title}</h3>
+            <p style="font-weight: 700; font-size: 1.5rem;">${plan.price}</p>
+            <ul style="padding-left: 1.2rem;">
+                ${plan.features.map(f => `<li>${f}</li>`).join("")}
+            </ul>
+            <button class="vibz-btn vibz-btn-primary" onclick="selectPlan('${plan.title}')">Select Plan</button>
+        `;
+        container.appendChild(card);
     });
-    const mobileBtn=document.getElementById('mobileMenuBtn');
-    if(mobileBtn) mobileBtn.addEventListener('click',()=>{ const nav=document.querySelector('.nav-links'); nav.style.display=(nav.style.display==='flex'?'none':'flex'); });
-});
+}
+
+function selectPlan(planTitle) {
+    alert(`You selected the ${planTitle} plan. Thank you!`);
+}
+
+// ==============================
+// INITIALIZATION
+// ==============================
+showStep(1);
 </script>
 
 </body>
