@@ -1324,54 +1324,42 @@
                 <button type="button" class="vibz-btn back-button" onclick="goBackToStep10()">← Go Back</button>
             </div>
 
-            
-       <!-- STEP 13: Show Plans (for "Start ASAP" users) -->
+
+
+            <!-- STEP 13: Show Plans & Stripe Buttons -->
 <div class="form-screen" id="step-13">
-
     <h2>Your Recommended Plan</h2>
-    <p id="planRecommendation">
-        Based on your selections, here's what we recommend:
-    </p>
-
+    <p id="planRecommendation">Based on your selections, here's what we recommend:</p>
+    
     <div class="pricing-container" id="pricingCards">
-
-        <!-- STANDARD / PREMIUM PLAN CARD -->
-        <div class="pricing-card featured">
-
-            <h3 id="finalPlanName">Barber Website – Standard</h3>
-
-            <div class="price">
-                £<span id="finalPrice">1,500</span>
-            </div>
-
-            <ul class="features">
-                <li>Custom-designed barber website</li>
-                <li>Mobile responsive</li>
-                <li>SEO-ready structure</li>
-                <li>Fast turnaround</li>
-            </ul>
-
-            <!-- Stripe Buy Button -->
-            <script async src="https://js.stripe.com/v3/buy-button.js"></script>
-
-            <div class="stripe-wrapper" style="margin-top: 1.5rem;">
-                <stripe-buy-button
-                    buy-button-id="buy_btn_1SnRnLLBGmGftzSkBVu6VPdy"
-                    publishable-key="pk_test_51Mzr8ILBGmGftzSkeZTljvbvcmNWGkkYtLhNoZ7VEerI56LNrGbzgkfWVOZpKJOahHd5wDfboHZkybdoR168rjKh00dGiXBpYd">
-                </stripe-buy-button>
-            </div>
-
-            <p style="margin-top: 1rem; font-size: 0.85rem; color: var(--gray);">
-                Secure checkout powered by Stripe
-            </p>
-
+        <!-- Standard Plan -->
+        <div class="pricing-card" id="standardPlanCard" style="border: 2px solid var(--border); border-radius: 15px; padding: 1rem; margin-bottom: 1rem;">
+            <h3>Standard Plan</h3>
+            <p id="standardDetails">Details based on your selection</p>
+            <p style="font-weight: 700; color: #4CAF50; font-size: 1.3rem;" id="standardPrice">£0</p>
+            
+            <!-- Stripe Buy Button placeholder -->
+            <div id="standardStripeButton"></div>
         </div>
-
-
-
+        
+        <!-- Premium Plan -->
+        <div class="pricing-card" id="premiumPlanCard" style="border: 2px solid var(--border); border-radius: 15px; padding: 1rem;">
+            <h3>Premium Plan</h3>
+            <p id="premiumDetails">Details based on your selection</p>
+            <p style="font-weight: 700; color: #2196F3; font-size: 1.3rem;" id="premiumPrice">£0</p>
+            
+            <!-- Stripe Buy Button placeholder -->
+            <div id="premiumStripeButton"></div>
+        </div>
+    </div>
+    
+    <div id="planLogicNote" style="margin-top: 1rem; font-size: 0.9rem; color: var(--gray);">
+        <i class="fas fa-info-circle"></i> Recommended plan auto-updates based on your previous selections.
+    </div>
+    
     <button type="button" class="vibz-btn back-button" onclick="prev()">← Go Back</button>
 </div>
-    
+     
 
     <script>
 // ========== BARBER CONCEPTS DATABASE ==========
@@ -2241,6 +2229,59 @@ document.addEventListener('DOMContentLoaded', () => {
     
     console.log('Available barber concepts:', barberConcepts.map(c => c.code));
 });
+
+
+
+        function loadStripeButtons() {
+    const planModel = window.selectedPlanModel; // set in Step 11: "Own Outright" or "Monthly Support"
+    const standardDiv = document.getElementById('standardStripeButton');
+    const premiumDiv = document.getElementById('premiumStripeButton');
+    
+    // Clear previous buttons if any
+    standardDiv.innerHTML = '';
+    premiumDiv.innerHTML = '';
+    
+    if (planModel === 'Own Outright') {
+        // Standard Outright
+        standardDiv.innerHTML = `<stripe-buy-button
+            buy-button-id="buy_btn_1SnRnLLBGmGftzSkBVu6VPdy"
+            publishable-key="pk_test_51Mzr8ILBGmGftzSkeZTljvbvcmNWGkkYtLhNoZ7VEerI56LNrGbzgkfWVOZpKJOahHd5wDfboHZkybdoR168rjKh00dGiXBpYd"
+        ></stripe-buy-button>`;
+        
+        // Premium Outright
+        premiumDiv.innerHTML = `<stripe-buy-button
+            buy-button-id="buy_btn_1SnSZ0LBGmGftzSkdaDYC1zL"
+            publishable-key="pk_test_51Mzr8ILBGmGftzSkeZTljvbvcmNWGkkYtLhNoZ7VEerI56LNrGbzgkfWVOZpKJOahHd5wDfboHZkybdoR168rjKh00dGiXBpYd"
+        ></stripe-buy-button>`;
+    } else if (planModel === 'Monthly Support') {
+        // Standard Monthly
+        standardDiv.innerHTML = `<stripe-buy-button
+            buy-button-id="buy_btn_1SnSiFLBGmGftzSkNQlDoKnD"
+            publishable-key="pk_test_51Mzr8ILBGmGftzSkeZTljvbvcmNWGkkYtLhNoZ7VEerI56LNrGbzgkfWVOZpKJOahHd5wDfboHZkybdoR168rjKh00dGiXBpYd"
+        ></stripe-buy-button>`;
+        
+        // Premium Monthly
+        premiumDiv.innerHTML = `<stripe-buy-button
+            buy-button-id="buy_btn_1SnSkGLBGmGftzSkariSLtTX"
+            publishable-key="pk_test_51Mzr8ILBGmGftzSkeZTljvbvcmNWGkkYtLhNoZ7VEerI56LNrGbzgkfWVOZpKJOahHd5wDfboHZkybdoR168rjKh00dGiXBpYd"
+        ></stripe-buy-button>`;
+    }
+
+    // Load Stripe JS if not already loaded
+    if (!window.stripeScriptLoaded) {
+        const script = document.createElement('script');
+        script.src = 'https://js.stripe.com/v3/buy-button.js';
+        script.async = true;
+        document.body.appendChild(script);
+        window.stripeScriptLoaded = true;
+    }
+}
+
+// Call this function whenever Step 13 is shown
+document.getElementById('step-13').addEventListener('show', loadStripeButtons);
+
+// Example: trigger loading manually after showing Step 13
+// loadStripeButtons();
 </script>
 
 </body>
