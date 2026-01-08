@@ -356,16 +356,25 @@
             border-radius: 20px;
             padding: 2rem;
             margin: 2rem 0;
-            border: 2px solid var(--border);
+            border: 3px solid var(--border);
             text-align: left;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: var(--transition);
+        }
+        
+        .plan-summary-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
         }
         
         .plan-summary-card.standard {
             border-color: #4CAF50;
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.05), white);
         }
         
         .plan-summary-card.premium {
             border-color: #2196F3;
+            background: linear-gradient(135deg, rgba(33, 150, 243, 0.05), white);
         }
         
         .plan-header {
@@ -412,21 +421,37 @@
         }
         
         .plan-detail-item {
-            padding: 0.8rem;
-            background: var(--light-gray);
-            border-radius: 10px;
+            padding: 0.8rem 1rem;
+            background: white;
+            border-radius: 12px;
             font-size: 0.9rem;
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+        
+        .plan-detail-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .plan-detail-item.standard {
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .plan-detail-item.premium {
+            border-left: 4px solid #2196F3;
         }
         
         .plan-detail-item strong {
             display: block;
             margin-bottom: 0.3rem;
             color: var(--dark);
+            font-size: 1rem;
         }
         
         .divider {
             height: 2px;
-            background: var(--border);
+            background: linear-gradient(90deg, transparent, var(--border), transparent);
             margin: 2rem 0;
             position: relative;
         }
@@ -441,6 +466,8 @@
             font-size: 0.9rem;
             color: var(--gray);
             font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         
         /* ========== Pricing Cards ========== */
@@ -450,9 +477,52 @@
         .pricing-card h3 { font-size:1.8rem; margin-bottom:1rem; color:var(--dark); }
         .price { font-size:3rem; font-weight:900; color:var(--primary); margin:1.5rem 0; display:block; }
         .price-period { font-size:1rem; color:var(--gray); font-weight:normal; }
-        .pricing-features { list-style:none; text-align:left; margin:2rem 0; }
+        .pricing-features { list-style:none; text-align:left; margin:2rem 0; max-height: 400px; overflow-y: auto; padding-right: 10px; }
         .pricing-features li { margin-bottom:1rem; padding-left:30px; position:relative; }
         .pricing-features li:before { content:"✓"; position:absolute; left:0; color:var(--primary); font-weight:bold; }
+        .pricing-features li.standard-feature:before { color: #4CAF50; }
+        .pricing-features li.premium-feature:before { color: #2196F3; }
+        
+        .selected-features-section {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(255, 107, 0, 0.05);
+            border-radius: 15px;
+            border: 2px solid rgba(255, 107, 0, 0.2);
+        }
+        
+        .selected-features-section h4 {
+            color: #FF6B00;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        .selected-features-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .selected-feature-badge {
+            background: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .selected-feature-badge.standard {
+            border-color: #4CAF50;
+            color: #4CAF50;
+        }
+        
+        .selected-feature-badge.premium {
+            border-color: #2196F3;
+            color: #2196F3;
+        }
 
         /* Success message */
         .success-message { background:var(--light-gray); padding:3rem; border-radius:32px; margin-top:2rem; border:1px solid var(--border); }
@@ -473,6 +543,8 @@
             .form-row { grid-template-columns: 1fr; }
             .lead-form-container { padding: 2rem; }
             .plan-details { grid-template-columns: 1fr; }
+            .plan-title { font-size: 1.5rem; }
+            .plan-price { font-size: 2rem; }
         }
         @media(max-width:480px) {
             .form-screen h2 { font-size:2rem; }
@@ -480,8 +552,6 @@
             .code-input-large { font-size: 1.1rem; padding: 1.2rem; }
             .lead-form-container { padding: 1.5rem; }
             .step-options-large .vibz-btn { min-width: 100%; max-width: 300px; }
-            .plan-price { font-size: 2rem; }
-            .plan-title { font-size: 1.5rem; }
         }
 
         @keyframes fadeIn { 
@@ -684,24 +754,24 @@
                     </div>
                     
                     <div class="plan-details">
-                        <div class="plan-detail-item">
-                            <strong>Upto 5 Pages</strong>
+                        <div class="plan-detail-item standard">
+                            <strong><i class="fas fa-file-alt"></i> Upto 5 Pages</strong>
                             Perfect for basic barbershop websites
                         </div>
-                        <div class="plan-detail-item">
-                            <strong>Upto 5 Revisions Per Page</strong>
+                        <div class="plan-detail-item standard">
+                            <strong><i class="fas fa-sync-alt"></i> Upto 5 Revisions Per Page</strong>
                             Fine-tune each page to perfection
                         </div>
-                        <div class="plan-detail-item">
-                            <strong>Delivery 10 - 15 days</strong>
+                        <div class="plan-detail-item standard">
+                            <strong><i class="fas fa-rocket"></i> Delivery 10 - 15 days</strong>
                             Fast turnaround for standard sites
                         </div>
-                        <div class="plan-detail-item">
-                            <strong>3 months support</strong>
+                        <div class="plan-detail-item standard">
+                            <strong><i class="fas fa-headset"></i> 3 months support</strong>
                             Post-launch assistance included
                         </div>
-                        <div class="plan-detail-item">
-                            <strong>Mobile responsive</strong>
+                        <div class="plan-detail-item standard">
+                            <strong><i class="fas fa-mobile-alt"></i> Mobile responsive</strong>
                             Works perfectly on all devices
                         </div>
                     </div>
@@ -718,24 +788,24 @@
                     </div>
                     
                     <div class="plan-details">
-                        <div class="plan-detail-item">
-                            <strong>Upto 15 Pages</strong>
+                        <div class="plan-detail-item premium">
+                            <strong><i class="fas fa-file-alt"></i> Upto 15 Pages</strong>
                             Comprehensive multi-page websites
                         </div>
-                        <div class="plan-detail-item">
-                            <strong>Upto 10 Revisions Per Page</strong>
+                        <div class="plan-detail-item premium">
+                            <strong><i class="fas fa-sync-alt"></i> Upto 10 Revisions Per Page</strong>
                             Extensive customization options
                         </div>
-                        <div class="plan-detail-item">
-                            <strong>Delivery 25 - 30 days</strong>
+                        <div class="plan-detail-item premium">
+                            <strong><i class="fas fa-rocket"></i> Delivery 25 - 30 days</strong>
                             More time for advanced features
                         </div>
-                        <div class="plan-detail-item">
-                            <strong>6 months support</strong>
+                        <div class="plan-detail-item premium">
+                            <strong><i class="fas fa-headset"></i> 6 months support</strong>
                             Extended post-launch assistance
                         </div>
-                        <div class="plan-detail-item">
-                            <strong>Mobile responsive</strong>
+                        <div class="plan-detail-item premium">
+                            <strong><i class="fas fa-mobile-alt"></i> Mobile responsive</strong>
                             Optimized for all mobile devices
                         </div>
                     </div>
@@ -1774,91 +1844,99 @@ function showFinalPlans() {
     const recommendation = calculateRecommendedPlan();
     planText.innerHTML = `Based on your <strong>${formData.features.length} selected services</strong>, we recommend the <strong>${recommendation.type}</strong> plan.`;
     
-    // Create plan objects
-    const standardPlan = {
-        name: `${planNameSuffix} - Standard`,
-        price: standardPrice,
-        period: period,
-        features: [
-            'Upto 5 Pages',
-            'Upto 5 Revisions Per Page',
-            'Delivery 10 - 15 days',
-            '3 months support',
-            'Mobile responsive',
-            'All Selected Standard Services'
-        ]
-    };
-    
-    const premiumPlan = {
-        name: `${planNameSuffix} - Premium`,
-        price: premiumPrice,
-        period: period,
-        features: [
-            'Upto 15 Pages',
-            'Upto 10 Revisions Per Page',
-            'Delivery 25 - 30 days',
-            '6 months support',
-            'Mobile responsive',
-            'All Selected Premium Services'
-        ]
-    };
-    
-    // Add selected services to features (show top 3 of each)
-    const standardServices = formData.features.filter(f => 
+    // Get selected services
+    const selectedStandardServices = formData.features.filter(f => 
         allServices.find(s => s.name === f && s.tier === 'standard')
-    ).slice(0, 3);
+    );
     
-    const premiumServices = formData.features.filter(f => 
+    const selectedPremiumServices = formData.features.filter(f => 
         allServices.find(s => s.name === f && s.tier === 'premium')
-    ).slice(0, 3);
+    );
     
-    if (standardServices.length > 0) {
-        standardPlan.features.push('<strong>Included Standard Services:</strong>');
-        standardServices.forEach(service => {
-            standardPlan.features.push(`• ${service}`);
+    // Create plan objects with static features
+    const staticStandardFeatures = [
+        '<strong><i class="fas fa-file-alt"></i> Upto 5 Pages</strong>',
+        '<strong><i class="fas fa-sync-alt"></i> Upto 5 Revisions Per Page</strong>',
+        '<strong><i class="fas fa-rocket"></i> Delivery 10 - 15 days</strong>',
+        '<strong><i class="fas fa-headset"></i> 3 months support</strong>',
+        '<strong><i class="fas fa-mobile-alt"></i> Mobile responsive</strong>'
+    ];
+    
+    const staticPremiumFeatures = [
+        '<strong><i class="fas fa-file-alt"></i> Upto 15 Pages</strong>',
+        '<strong><i class="fas fa-sync-alt"></i> Upto 10 Revisions Per Page</strong>',
+        '<strong><i class="fas fa-rocket"></i> Delivery 25 - 30 days</strong>',
+        '<strong><i class="fas fa-headset"></i> 6 months support</strong>',
+        '<strong><i class="fas fa-mobile-alt"></i> Mobile responsive</strong>'
+    ];
+    
+    // Create HTML for Standard plan
+    let standardFeaturesHtml = '';
+    staticStandardFeatures.forEach(feature => {
+        standardFeaturesHtml += `<li class="standard-feature">${feature}</li>`;
+    });
+    
+    // Add selected standard services
+    if (selectedStandardServices.length > 0) {
+        standardFeaturesHtml += '<li><strong><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Selected Standard Services:</strong></li>';
+        selectedStandardServices.forEach(service => {
+            standardFeaturesHtml += `<li class="standard-feature">• ${service}</li>`;
         });
     }
     
-    if (premiumServices.length > 0) {
-        premiumPlan.features.push('<strong>Included Premium Services:</strong>');
-        premiumServices.forEach(service => {
-            premiumPlan.features.push(`• ${service}`);
+    // Create HTML for Premium plan
+    let premiumFeaturesHtml = '';
+    staticPremiumFeatures.forEach(feature => {
+        premiumFeaturesHtml += `<li class="premium-feature">${feature}</li>`;
+    });
+    
+    // Add selected premium services
+    if (selectedPremiumServices.length > 0) {
+        premiumFeaturesHtml += '<li><strong><i class="fas fa-check-circle" style="color: #2196F3;"></i> Selected Premium Services:</strong></li>';
+        selectedPremiumServices.forEach(service => {
+            premiumFeaturesHtml += `<li class="premium-feature">• ${service}</li>`;
         });
     }
     
-    // Create HTML for both plans
-    const featuresHtml1 = standardPlan.features.map(f => 
-        f.startsWith('•') ? `<li style="color: #4CAF50;">${f}</li>` : 
-        f.startsWith('<strong>') ? `<li><strong>${f.replace('<strong>', '').replace('</strong>', '')}</strong></li>` : 
-        `<li>${f}</li>`
-    ).join('');
-    
-    const featuresHtml2 = premiumPlan.features.map(f => 
-        f.startsWith('•') ? `<li style="color: #2196F3;">${f}</li>` : 
-        f.startsWith('<strong>') ? `<li><strong>${f.replace('<strong>', '').replace('</strong>', '')}</strong></li>` : 
-        `<li>${f}</li>`
-    ).join('');
+    // Add all selected features section
+    let selectedFeaturesSection = '';
+    if (formData.features.length > 0) {
+        selectedFeaturesSection = `
+            <div class="selected-features-section">
+                <h4><i class="fas fa-check-circle" style="color: #FF6B00;"></i> Your Selected Features (${formData.features.length})</h4>
+                <div class="selected-features-list">
+                    ${formData.features.map(feature => {
+                        const service = allServices.find(s => s.name === feature);
+                        const tierClass = service.tier === 'standard' ? 'standard' : 'premium';
+                        return `<div class="selected-feature-badge ${tierClass}">${feature}</div>`;
+                    }).join('')}
+                </div>
+            </div>
+        `;
+    }
     
     container.innerHTML = `
         <div class="pricing-card ${recommendation.type === 'Standard' && recommendation.glow ? 'recommended-glow' : ''}" 
              id="recommendedStandard">
-            <h3>${standardPlan.name}</h3>
-            <div class="price">${standardPlan.price}<span class="price-period">/${standardPlan.period}</span></div>
-            <ul class="pricing-features">${featuresHtml1}</ul>
+            <h3>${planNameSuffix} - Standard</h3>
+            <div class="price">${standardPrice}<span class="price-period">/${period}</span></div>
+            <ul class="pricing-features">${standardFeaturesHtml}</ul>
+            ${selectedFeaturesSection}
             <button type="button" class="vibz-btn ${recommendation.type === 'Standard' ? 'vibz-btn-primary' : ''}" 
-                    onclick="goToPayment('${standardPlan.name}')">
+                    onclick="goToPayment('${planNameSuffix} - Standard')">
                 ${recommendation.type === 'Standard' ? 'Choose Recommended Plan' : 'Choose Standard Plan'}
             </button>
         </div>
         
         <div class="pricing-card ${recommendation.type === 'Premium' && recommendation.glow ? 'recommended-glow' : ''}" 
              id="recommendedPremium">
-            <h3>${premiumPlan.name}</h3>
-            <div class="price">${premiumPlan.price}<span class="price-period">/${premiumPlan.period}</span></div>
-            <ul class="pricing-features">${featuresHtml2}</ul>
+            <h3>${planNameSuffix} - Premium</h3>
+            <div class="price">${premiumPrice}<span class="price-period">/${period}</span></div>
+            <ul class="pricing-features">${premiumFeaturesHtml}</ul>
+            ${selectedFeaturesSection}
             <button type="button" class="vibz-btn ${recommendation.type === 'Premium' ? 'vibz-btn-primary' : ''}" 
                     style="${recommendation.type === 'Premium' ? '' : 'background: #2196F3; border-color: #2196F3; color: white;'}"
-                    onclick="goToPayment('${premiumPlan.name}')">
+                    onclick="goToPayment('${planNameSuffix} - Premium')">
                 ${recommendation.type === 'Premium' ? 'Choose Recommended Plan' : 'Choose Premium Plan'}
             </button>
         </div>
