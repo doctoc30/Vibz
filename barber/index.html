@@ -1266,9 +1266,10 @@ function removeService(serviceName) {
     }
 }
 
-function calculateRecommendedPlan() {
-    // Determine recommendation (Premium if 3+ premium services selected)
-    if (premiumServiceCount >= 3) {
+
+    function calculateRecommendedPlan() {
+    // NEW LOGIC: If ANY premium service is selected, recommend Premium
+    if (premiumServiceCount >= 1) {  // Changed from 3 to 1
         recommendedPlan.type = 'Premium';
         recommendedPlan.glow = true;
     } else {
@@ -1289,13 +1290,13 @@ function showPlanRecommendation() {
         
         if (recommendation.type === 'Premium') {
             document.getElementById('planLogicText').textContent = 
-                `You selected ${premiumServiceCount} premium services (3+ triggers Premium recommendation)`;
+                `You selected ${premiumServiceCount} premium service(s) (Any premium service triggers Premium recommendation)`;
             preview.style.display = 'inline-block';
             preview.style.background = 'linear-gradient(90deg, #2196F3, #21CBF3)';
             document.getElementById('recommendedPlanPreview').textContent = 'Premium Plan';
         } else {
             document.getElementById('planLogicText').textContent = 
-                `You selected ${premiumServiceCount} premium services (Standard plan recommended)`;
+                `You selected ${premiumServiceCount} premium services (Standard plan recommended - no premium services selected)`;
             
             if (recommendation.glow) {
                 preview.style.display = 'inline-block';
@@ -1307,7 +1308,7 @@ function showPlanRecommendation() {
         }
     } else {
         preview.style.display = 'none';
-        logicInfo.style.display = 'none';
+        logicInfo.display = 'none';
     }
 }
 
@@ -1323,6 +1324,11 @@ function nextFromServices() {
     localStorage.setItem('recommendedPlan', JSON.stringify(recommendedPlan));
     next();
 }
+
+
+    
+
+
 
 // ========== FUNNEL NAVIGATION ==========
 
