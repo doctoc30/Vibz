@@ -558,7 +558,67 @@
             from { opacity:0; transform:translateY(20px); } 
             to { opacity:1; transform:translateY(0); } 
         }
+
+
+
+/* Add these styles to your existing CSS */
+
+/* Required plan badge */
+.required-badge {
+    position: absolute;
+    top: -12px;
+    right: 20px;
+    background: #2196F3;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    box-shadow: 0 4px 10px rgba(33, 150, 243, 0.4);
+    z-index: 2;
+}
+
+/* Required glow effect */
+.required-glow {
+    animation: required-pulse 2s infinite;
+    position: relative;
+}
+
+@keyframes required-pulse {
+    0% { box-shadow: 0 0 20px rgba(33, 150, 243, 0.6); }
+    50% { box-shadow: 0 0 40px rgba(33, 150, 243, 0.8); }
+    100% { box-shadow: 0 0 20px rgba(33, 150, 243, 0.6); }
+}
+
+/* Disabled state for Standard cards when premium selected */
+.service-card.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: not-allowed;
+}
+
+/* Visual indicator for required premium */
+.premium-required-notice {
+    background: rgba(33, 150, 243, 0.1);
+    border: 2px solid #2196F3;
+    border-radius: 10px;
+    padding: 1rem;
+    margin: 1rem 0;
+    text-align: center;
+}
+
+.premium-required-notice i {
+    color: #2196F3;
+    margin-right: 10px;
+}
+        
     </style>
+
+
+
+
+
+    
 </head>
 <body>
 
@@ -1273,7 +1333,8 @@
     </div>
 </section>
 
-<script>
+
+    <script>
 // ========== BARBER CONCEPTS DATABASE ==========
 const barberConcepts = [
     { code: "barber-1", image: "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
@@ -1340,13 +1401,14 @@ const formData = {
     goal: '',
     urgency: '', // 'Start ASAP' or 'More Info'
     planModel: '', // 'Own Outright' or 'Monthly Support'
-    planType: '' // 'Standard' or 'Premium' based on service selections
+    planType: '', // 'Standard' or 'Premium' based on service selections
+    forcePremiumPlan: false // NEW: Force Premium if premium services selected
 };
 
 // Service selection tracking
 let premiumServiceCount = 0;
 let standardServiceCount = 0;
-let recommendedPlan = { type: '', glow: false };
+let recommendedPlan = { type: '', glow: false, forcePremium: false };
 
 // DOM elements
 const screens = document.querySelectorAll('.form-screen');
@@ -1435,7 +1497,7 @@ function submitLeadForm(event) {
     // Example: fetch('/api/lead', { method: 'POST', body: JSON.stringify(leadData) })
 }
 
-// ========== EXISTING FUNCTIONS (unchanged) ==========
+// ========== ENHANCED SERVICE SELECTION LOGIC ==========
 
 // Normalize code input
 function normalizeCode(input) {
@@ -1521,9 +1583,33 @@ function tryDifferentCode() {
     tryDifferentBtn.style.display = 'none';
 }
 
+// REVISED: Service selection with premium enforcement
 function toggleService(serviceName, element) {
-    const index = formData.features.indexOf(serviceName);
     const service = allServices.find(s => s.name === serviceName);
+    const index = formData.features.indexOf(serviceName);
+    
+    // If trying to SELECT a premium service
+    if (index === -1 && service.tier === 'premium') {
+        // Check if we have any selected premium services already
+        const hasPremiumServices = formData.features.some(f => {
+            const s = allServices.find(s => s.name === f);
+            return s.tier === 'premium';
+        });
+        
+        // If no premium services yet, confirm with user
+        if (!hasPremiumServices) {
+            const confirmPremium = confirm(
+                "⚠️ Premium Service Selected\n\n" +
+                "Premium services are ONLY available with the Premium Plan (£3,000).\n\n" +
+                "Selecting any premium service will REQUIRE the Premium Plan.\n\n" +
+                "Do you want to proceed with premium services?"
+            );
+            
+            if (!confirmPremium) {
+                return; // User canceled
+            }
+        }
+    }
     
     if (index === -1) {
         // Add service
@@ -1533,6 +1619,22 @@ function toggleService(serviceName, element) {
         // Remove service
         formData.features.splice(index, 1);
         element.classList.remove('selected');
+        
+        // If removing a premium service, check if we still have any premium services
+        if (service.tier === 'premium') {
+            const stillHasPremium = formData.features.some(f => {
+                const s = allServices.find(s => s.name === f);
+                return s.tier === 'premium';
+            });
+            
+            // If no more premium services, re-enable Standard plan
+            if (!stillHasPremium) {
+                document.querySelectorAll('.service-card.standard').forEach(card => {
+                    card.style.opacity = '1';
+                    card.style.pointerEvents = 'auto';
+                });
+            }
+        }
     }
     
     updateServiceCounters();
@@ -1607,19 +1709,35 @@ function removeService(serviceName) {
     }
 }
 
+// REVISED: Calculate recommended plan with premium enforcement
 function calculateRecommendedPlan() {
-    // Determine recommendation (Premium if 1+ premium services selected)
-    if (premiumServiceCount >= 1) {
+    // Check if ANY premium services are selected
+    const hasPremiumServices = formData.features.some(f => {
+        const service = allServices.find(s => s.name === f);
+        return service.tier === 'premium';
+    });
+    
+    if (hasPremiumServices) {
+        // If ANY premium services selected, MUST be Premium plan
         recommendedPlan.type = 'Premium';
         recommendedPlan.glow = true;
-    } else {
+        recommendedPlan.forcePremium = true; // Force premium flag
+    } else if (formData.features.length > 0) {
+        // Only standard services selected
         recommendedPlan.type = 'Standard';
-        recommendedPlan.glow = (formData.features.length > 0);
+        recommendedPlan.glow = true;
+        recommendedPlan.forcePremium = false;
+    } else {
+        // No services selected
+        recommendedPlan.type = 'Standard';
+        recommendedPlan.glow = false;
+        recommendedPlan.forcePremium = false;
     }
     
     return recommendedPlan;
 }
 
+// REVISED: Show plan recommendation with premium enforcement
 function showPlanRecommendation() {
     const recommendation = calculateRecommendedPlan();
     const preview = document.getElementById('planRecommendationPreview');
@@ -1628,15 +1746,22 @@ function showPlanRecommendation() {
     if (formData.features.length > 0) {
         logicInfo.style.display = 'block';
         
-        if (recommendation.type === 'Premium') {
+        if (recommendation.forcePremium) {
+            // Force Premium plan due to premium services
             document.getElementById('planLogicText').textContent = 
-                `You selected ${premiumServiceCount} premium service(s) (1+ triggers Premium recommendation)`;
+                `You selected ${premiumServiceCount} premium service(s). Premium services REQUIRE the Premium Plan.`;
             preview.style.display = 'inline-block';
             preview.style.background = 'linear-gradient(90deg, #2196F3, #21CBF3)';
-            document.getElementById('recommendedPlanPreview').textContent = 'Premium Plan';
+            document.getElementById('recommendedPlanPreview').textContent = 'Premium Plan REQUIRED';
+            
+            // Disable Standard service cards when premium is selected
+            document.querySelectorAll('.service-card.standard').forEach(card => {
+                card.style.opacity = '0.6';
+                card.style.pointerEvents = 'none';
+            });
         } else {
             document.getElementById('planLogicText').textContent = 
-                `You selected ${standardServiceCount} standard service(s) (Standard plan recommended)`;
+                `You selected ${standardServiceCount} standard service(s) (Standard plan available)`;
             
             if (recommendation.glow) {
                 preview.style.display = 'inline-block';
@@ -1645,10 +1770,22 @@ function showPlanRecommendation() {
             } else {
                 preview.style.display = 'none';
             }
+            
+            // Re-enable Standard plan cards when no premium services
+            document.querySelectorAll('.service-card.standard').forEach(card => {
+                card.style.opacity = '1';
+                card.style.pointerEvents = 'auto';
+            });
         }
     } else {
         preview.style.display = 'none';
         logicInfo.style.display = 'none';
+        
+        // Re-enable all cards when nothing selected
+        document.querySelectorAll('.service-card').forEach(card => {
+            card.style.opacity = '1';
+            card.style.pointerEvents = 'auto';
+        });
     }
 }
 
@@ -1659,8 +1796,23 @@ function nextFromServices() {
         return;
     }
     
-    // Store recommended plan for later use
-    formData.planType = recommendedPlan.type;
+    // Check if premium services are selected
+    const hasPremiumServices = formData.features.some(f => {
+        const service = allServices.find(s => s.name === f);
+        return service.tier === 'premium';
+    });
+    
+    if (hasPremiumServices) {
+        // Force Premium plan
+        formData.planType = 'Premium';
+        formData.forcePremiumPlan = true;
+        localStorage.setItem('forcePremiumPlan', 'true');
+    } else {
+        formData.planType = 'Standard';
+        formData.forcePremiumPlan = false;
+        localStorage.setItem('forcePremiumPlan', 'false');
+    }
+    
     localStorage.setItem('recommendedPlan', JSON.stringify(recommendedPlan));
     next();
 }
@@ -1828,10 +1980,17 @@ function setGoal(goal) {
     next();
 }
 
-// STEP 13: Show final plans based on selections
+// REVISED: Show final plans with premium enforcement
 function showFinalPlans() {
     const container = document.getElementById('pricingCards');
     const planText = document.getElementById('planRecommendation');
+    
+    // Check if premium services force premium plan
+    const forcePremium = formData.forcePremiumPlan || 
+                        formData.features.some(f => {
+                            const service = allServices.find(s => s.name === f);
+                            return service.tier === 'premium';
+                        });
     
     // Determine pricing based on plan model
     const isOwnOutright = formData.planModel === 'Own Outright';
@@ -1840,18 +1999,25 @@ function showFinalPlans() {
     const period = isOwnOutright ? 'one-time' : 'per month';
     const planNameSuffix = isOwnOutright ? 'Own Outright' : 'Monthly Support';
     
+    // Separate services by tier
+    const selectedStandardServices = formData.features.filter(f => {
+        const service = allServices.find(s => s.name === f);
+        return service.tier === 'standard';
+    });
+    
+    const selectedPremiumServices = formData.features.filter(f => {
+        const service = allServices.find(s => s.name === f);
+        return service.tier === 'premium';
+    });
+    
     // Update plan recommendation text
-    const recommendation = calculateRecommendedPlan();
-    planText.innerHTML = `Based on your <strong>${formData.features.length} selected services</strong>, we recommend the <strong>${recommendation.type}</strong> plan.`;
-    
-    // Get selected services
-    const selectedStandardServices = formData.features.filter(f => 
-        allServices.find(s => s.name === f && s.tier === 'standard')
-    );
-    
-    const selectedPremiumServices = formData.features.filter(f => 
-        allServices.find(s => s.name === f && s.tier === 'premium')
-    );
+    let recommendationText;
+    if (forcePremium) {
+        recommendationText = `You selected <strong>${selectedPremiumServices.length} premium service(s)</strong>. Premium services REQUIRE the <strong>Premium Plan</strong>.`;
+    } else {
+        recommendationText = `Based on your <strong>${formData.features.length} selected services</strong>, we recommend the <strong>Standard</strong> plan.`;
+    }
+    planText.innerHTML = recommendationText;
     
     // Create plan objects with static features
     const staticStandardFeatures = [
@@ -1870,18 +2036,34 @@ function showFinalPlans() {
         '<strong><i class="fas fa-mobile-alt"></i> Mobile responsive</strong>'
     ];
     
-    // Create HTML for Standard plan
-    let standardFeaturesHtml = '';
-    staticStandardFeatures.forEach(feature => {
-        standardFeaturesHtml += `<li class="standard-feature">${feature}</li>`;
-    });
-    
-    // Add selected standard services
-    if (selectedStandardServices.length > 0) {
-        standardFeaturesHtml += '<li><strong><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Selected Standard Services:</strong></li>';
-        selectedStandardServices.forEach(service => {
-            standardFeaturesHtml += `<li class="standard-feature">• ${service}</li>`;
+    // Create HTML for Standard plan (ONLY if no premium services)
+    let standardPlanHtml = '';
+    if (!forcePremium) {
+        let standardFeaturesHtml = '';
+        staticStandardFeatures.forEach(feature => {
+            standardFeaturesHtml += `<li class="standard-feature">${feature}</li>`;
         });
+        
+        // Add selected standard services
+        if (selectedStandardServices.length > 0) {
+            standardFeaturesHtml += '<li><strong><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Selected Standard Services:</strong></li>';
+            selectedStandardServices.forEach(service => {
+                standardFeaturesHtml += `<li class="standard-feature">• ${service}</li>`;
+            });
+        }
+        
+        standardPlanHtml = `
+            <div class="pricing-card ${!forcePremium ? 'recommended-glow' : ''}" 
+                 id="recommendedStandard">
+                <h3>${planNameSuffix} - Standard</h3>
+                <div class="price">${standardPrice}<span class="price-period">/${period}</span></div>
+                <ul class="pricing-features">${standardFeaturesHtml}</ul>
+                <button type="button" class="vibz-btn vibz-btn-primary" 
+                        onclick="goToPayment('${planNameSuffix} - Standard')">
+                    Choose Standard Plan
+                </button>
+            </div>
+        `;
     }
     
     // Create HTML for Premium plan
@@ -1890,77 +2072,81 @@ function showFinalPlans() {
         premiumFeaturesHtml += `<li class="premium-feature">${feature}</li>`;
     });
     
-    // Add selected premium services
-    if (selectedPremiumServices.length > 0) {
-        premiumFeaturesHtml += '<li><strong><i class="fas fa-check-circle" style="color: #2196F3;"></i> Selected Premium Services:</strong></li>';
+    // Add selected services to premium plan (BOTH standard and premium)
+    if (formData.features.length > 0) {
+        premiumFeaturesHtml += '<li><strong><i class="fas fa-check-circle" style="color: #2196F3;"></i> Your Selected Services:</strong></li>';
+        
+        // Add standard services first
+        selectedStandardServices.forEach(service => {
+            premiumFeaturesHtml += `<li class="standard-feature">• ${service} (Standard)</li>`;
+        });
+        
+        // Add premium services
         selectedPremiumServices.forEach(service => {
-            premiumFeaturesHtml += `<li class="premium-feature">• ${service}</li>`;
+            premiumFeaturesHtml += `<li class="premium-feature">• ${service} (Premium)</li>`;
         });
     }
     
-    // Add all selected features section
-    let selectedFeaturesSection = '';
-    if (formData.features.length > 0) {
-        selectedFeaturesSection = `
-            <div class="selected-features-section">
-                <h4><i class="fas fa-check-circle" style="color: #FF6B00;"></i> Your Selected Features (${formData.features.length})</h4>
-                <div class="selected-features-list">
-                    ${formData.features.map(feature => {
-                        const service = allServices.find(s => s.name === feature);
-                        const tierClass = service.tier === 'standard' ? 'standard' : 'premium';
-                        return `<div class="selected-feature-badge ${tierClass}">${feature}</div>`;
-                    }).join('')}
-                </div>
-            </div>
-        `;
-    }
-    
-    container.innerHTML = `
-        <div class="pricing-card ${recommendation.type === 'Standard' && recommendation.glow ? 'recommended-glow' : ''}" 
-             id="recommendedStandard">
-            <h3>${planNameSuffix} - Standard</h3>
-            <div class="price">${standardPrice}<span class="price-period">/${period}</span></div>
-            <ul class="pricing-features">${standardFeaturesHtml}</ul>
-            ${selectedFeaturesSection}
-            <button type="button" class="vibz-btn ${recommendation.type === 'Standard' ? 'vibz-btn-primary' : ''}" 
-                    onclick="goToPayment('${planNameSuffix} - Standard')">
-                ${recommendation.type === 'Standard' ? 'Choose Recommended Plan' : 'Choose Standard Plan'}
-            </button>
-        </div>
-        
-        <div class="pricing-card ${recommendation.type === 'Premium' && recommendation.glow ? 'recommended-glow' : ''}" 
+    let premiumPlanHtml = `
+        <div class="pricing-card ${forcePremium ? 'required-glow' : ''}" 
              id="recommendedPremium">
             <h3>${planNameSuffix} - Premium</h3>
+            ${forcePremium ? '<div class="required-badge">REQUIRED</div>' : ''}
             <div class="price">${premiumPrice}<span class="price-period">/${period}</span></div>
             <ul class="pricing-features">${premiumFeaturesHtml}</ul>
-            ${selectedFeaturesSection}
-            <button type="button" class="vibz-btn ${recommendation.type === 'Premium' ? 'vibz-btn-primary' : ''}" 
-                    style="${recommendation.type === 'Premium' ? '' : 'background: #2196F3; border-color: #2196F3; color: white;'}"
+            <button type="button" class="vibz-btn" 
+                    style="${forcePremium ? 'background: #2196F3; border-color: #2196F3; color: white; font-weight: 700; padding: 1rem 2rem;' : ''}"
                     onclick="goToPayment('${planNameSuffix} - Premium')">
-                ${recommendation.type === 'Premium' ? 'Choose Recommended Plan' : 'Choose Premium Plan'}
+                ${forcePremium ? 'Continue with Required Premium Plan' : 'Choose Premium Plan'}
             </button>
         </div>
     `;
     
-    // Add glow effect to recommended plan
-    if (recommendation.glow) {
-        const recommendedCard = document.getElementById(recommendation.type === 'Standard' ? 'recommendedStandard' : 'recommendedPremium');
-        if (recommendedCard) {
-            recommendedCard.style.boxShadow = '0 0 40px rgba(255, 107, 0, 0.6), 0 0 80px rgba(255, 107, 0, 0.3)';
-            recommendedCard.style.border = '3px solid #FF6B00';
-            recommendedCard.style.transform = 'translateY(-10px)';
-            recommendedCard.style.transition = 'all 0.5s ease';
+    // Combine plans - ONLY show Standard if no premium services
+    if (forcePremium) {
+        container.innerHTML = premiumPlanHtml;
+    } else {
+        container.innerHTML = standardPlanHtml + premiumPlanHtml;
+    }
+    
+    // Add visual effects
+    if (forcePremium) {
+        const premiumCard = document.getElementById('recommendedPremium');
+        if (premiumCard) {
+            premiumCard.style.boxShadow = '0 0 40px rgba(33, 150, 243, 0.6), 0 0 80px rgba(33, 150, 243, 0.3)';
+            premiumCard.style.border = '3px solid #2196F3';
+            premiumCard.style.transform = 'translateY(-10px)';
+            premiumCard.style.transition = 'all 0.5s ease';
+        }
+    } else {
+        const standardCard = document.getElementById('recommendedStandard');
+        if (standardCard) {
+            standardCard.style.boxShadow = '0 0 40px rgba(76, 175, 80, 0.6), 0 0 80px rgba(76, 175, 80, 0.3)';
+            standardCard.style.border = '3px solid #4CAF50';
+            standardCard.style.transform = 'translateY(-10px)';
+            standardCard.style.transition = 'all 0.5s ease';
         }
     }
 }
 
-// Redirect to payment page
+// REVISED: Go to payment with validation
 function goToPayment(planName) {
+    // Validate premium services aren't trying to go with Standard plan
+    const hasPremiumServices = formData.features.some(f => {
+        const service = allServices.find(s => s.name === f);
+        return service.tier === 'premium';
+    });
+    
+    if (hasPremiumServices && planName.includes('Standard')) {
+        alert('❌ ERROR: Premium services require the Premium Plan.\n\nPlease select the Premium Plan to proceed.');
+        return;
+    }
+    
     // Store all form data before redirecting
     localStorage.setItem('funnelFormData', JSON.stringify(formData));
     localStorage.setItem('selectedPlan', planName);
     
-    // Determine payment link based on plan
+    // Determine payment link
     let paymentLink;
     if (planName.includes('Own Outright')) {
         if (planName.includes('Standard')) {
