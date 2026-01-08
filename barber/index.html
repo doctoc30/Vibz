@@ -323,7 +323,7 @@
             padding: 10px;
         }
         
-        /* ========== Glow Effect ========== */
+        /* ========== Glow Effect - FIXED ========== */
         .recommended-glow {
             position: relative;
             z-index: 1;
@@ -332,21 +332,21 @@
         .recommended-glow::before {
             content: '';
             position: absolute;
-            top: -10px;
-            left: -10px;
-            right: -10px;
-            bottom: -10px;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
             background: linear-gradient(45deg, #FF6B00, #FF8B00, #FF6B00);
-            border-radius: 40px;
+            border-radius: 35px;
             z-index: -1;
-            opacity: 0.3;
-            filter: blur(20px);
+            opacity: 0.5;
+            filter: blur(8px);
             animation: glowPulse 3s infinite;
         }
         
         @keyframes glowPulse {
             0% { opacity: 0.3; }
-            50% { opacity: 0.5; }
+            50% { opacity: 0.7; }
             100% { opacity: 0.3; }
         }
 
@@ -472,8 +472,8 @@
         
         /* ========== Pricing Cards ========== */
         .pricing-container { display:grid; grid-template-columns:repeat(auto-fit, minmax(280px,1fr)); gap:30px; margin-top:40px; }
-        .pricing-card { padding:3rem 2.5rem; background:var(--light-gray); border-radius:32px; position:relative; overflow:hidden; transition:var(--transition); border:1px solid transparent; }
-        .pricing-card:hover { background:white; border-color:var(--primary); transform:translateY(-10px); box-shadow:0 30px 60px rgba(0,0,0,0.05); }
+        .pricing-card { padding:3rem 2.5rem; background:var(--light-gray); border-radius:32px; position:relative; overflow:hidden; transition:var(--transition); border:3px solid transparent; }
+        .pricing-card:hover { background:white; border-color:var(--border); transform:translateY(-10px); box-shadow:0 30px 60px rgba(0,0,0,0.05); }
         .pricing-card h3 { font-size:1.8rem; margin-bottom:1rem; color:var(--dark); }
         .price { font-size:3rem; font-weight:900; color:var(--primary); margin:1.5rem 0; display:block; }
         .price-period { font-size:1rem; color:var(--gray); font-weight:normal; }
@@ -1853,21 +1853,21 @@ function showFinalPlans() {
         allServices.find(s => s.name === f && s.tier === 'premium')
     );
     
-    // Create plan objects with static features
+    // Create plan objects with static features (NO ICONS)
     const staticStandardFeatures = [
-        '<strong><i class="fas fa-file-alt"></i> Upto 5 Pages</strong>',
-        '<strong><i class="fas fa-sync-alt"></i> Upto 5 Revisions Per Page</strong>',
-        '<strong><i class="fas fa-rocket"></i> Delivery 10 - 15 days</strong>',
-        '<strong><i class="fas fa-headset"></i> 3 months support</strong>',
-        '<strong><i class="fas fa-mobile-alt"></i> Mobile responsive</strong>'
+        'Upto 5 Pages',
+        'Upto 5 Revisions Per Page',
+        'Delivery 10 - 15 days',
+        '3 months support',
+        'Mobile responsive'
     ];
     
     const staticPremiumFeatures = [
-        '<strong><i class="fas fa-file-alt"></i> Upto 15 Pages</strong>',
-        '<strong><i class="fas fa-sync-alt"></i> Upto 10 Revisions Per Page</strong>',
-        '<strong><i class="fas fa-rocket"></i> Delivery 25 - 30 days</strong>',
-        '<strong><i class="fas fa-headset"></i> 6 months support</strong>',
-        '<strong><i class="fas fa-mobile-alt"></i> Mobile responsive</strong>'
+        'Upto 15 Pages',
+        'Upto 10 Revisions Per Page',
+        'Delivery 25 - 30 days',
+        '6 months support',
+        'Mobile responsive'
     ];
     
     // Create HTML for Standard plan
@@ -1876,9 +1876,9 @@ function showFinalPlans() {
         standardFeaturesHtml += `<li class="standard-feature">${feature}</li>`;
     });
     
-    // Add selected standard services
-    if (selectedStandardServices.length > 0) {
-        standardFeaturesHtml += '<li><strong><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Selected Standard Services:</strong></li>';
+    // Add selected standard services (ONLY if Standard plan is recommended)
+    if (recommendation.type === 'Standard' && selectedStandardServices.length > 0) {
+        standardFeaturesHtml += '<li><strong>Selected Standard Services:</strong></li>';
         selectedStandardServices.forEach(service => {
             standardFeaturesHtml += `<li class="standard-feature">• ${service}</li>`;
         });
@@ -1890,15 +1890,15 @@ function showFinalPlans() {
         premiumFeaturesHtml += `<li class="premium-feature">${feature}</li>`;
     });
     
-    // Add selected premium services
-    if (selectedPremiumServices.length > 0) {
-        premiumFeaturesHtml += '<li><strong><i class="fas fa-check-circle" style="color: #2196F3;"></i> Selected Premium Services:</strong></li>';
+    // Add selected premium services (ONLY if Premium plan is recommended)
+    if (recommendation.type === 'Premium' && selectedPremiumServices.length > 0) {
+        premiumFeaturesHtml += '<li><strong>Selected Premium Services:</strong></li>';
         selectedPremiumServices.forEach(service => {
             premiumFeaturesHtml += `<li class="premium-feature">• ${service}</li>`;
         });
     }
     
-    // Add all selected features section
+    // Add selected features section (shows all selected features)
     let selectedFeaturesSection = '';
     if (formData.features.length > 0) {
         selectedFeaturesSection = `
@@ -1941,17 +1941,6 @@ function showFinalPlans() {
             </button>
         </div>
     `;
-    
-    // Add glow effect to recommended plan
-    if (recommendation.glow) {
-        const recommendedCard = document.getElementById(recommendation.type === 'Standard' ? 'recommendedStandard' : 'recommendedPremium');
-        if (recommendedCard) {
-            recommendedCard.style.boxShadow = '0 0 40px rgba(255, 107, 0, 0.6), 0 0 80px rgba(255, 107, 0, 0.3)';
-            recommendedCard.style.border = '3px solid #FF6B00';
-            recommendedCard.style.transform = 'translateY(-10px)';
-            recommendedCard.style.transition = 'all 0.5s ease';
-        }
-    }
 }
 
 // Redirect to payment page
