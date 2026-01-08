@@ -323,31 +323,31 @@
             padding: 10px;
         }
         
-        /* ========== Glow Effect - FIXED ========== */
-        .recommended-glow {
+        /* ========== Glow Effect - FIXED BORDER GLOW ========== */
+        .pricing-card.recommended-glow {
             position: relative;
             z-index: 1;
         }
         
-        .recommended-glow::before {
+        .pricing-card.recommended-glow::before {
             content: '';
             position: absolute;
-            top: -3px;
-            left: -3px;
-            right: -3px;
-            bottom: -3px;
-            background: linear-gradient(45deg, #FF6B00, #FF8B00, #FF6B00);
-            border-radius: 35px;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            background: linear-gradient(45deg, #FF6B00, #FF8B00, #FF6B00, #FF8B00, #FF6B00);
+            border-radius: 36px; /* Slightly larger than card border radius */
             z-index: -1;
-            opacity: 0.5;
-            filter: blur(8px);
+            opacity: 0.6;
+            filter: blur(6px);
             animation: glowPulse 3s infinite;
         }
         
         @keyframes glowPulse {
-            0% { opacity: 0.3; }
-            50% { opacity: 0.7; }
-            100% { opacity: 0.3; }
+            0% { opacity: 0.4; }
+            50% { opacity: 0.8; }
+            100% { opacity: 0.4; }
         }
 
         /* ========== Step 9: Plan Summary Cards ========== */
@@ -545,6 +545,13 @@
             .plan-details { grid-template-columns: 1fr; }
             .plan-title { font-size: 1.5rem; }
             .plan-price { font-size: 2rem; }
+            .pricing-card.recommended-glow::before {
+                top: -3px;
+                left: -3px;
+                right: -3px;
+                bottom: -3px;
+                border-radius: 35px;
+            }
         }
         @media(max-width:480px) {
             .form-screen h2 { font-size:2rem; }
@@ -1870,28 +1877,28 @@ function showFinalPlans() {
         'Mobile responsive'
     ];
     
-    // Create HTML for Standard plan
+    // Create HTML for Standard plan - ONLY shows standard services
     let standardFeaturesHtml = '';
     staticStandardFeatures.forEach(feature => {
         standardFeaturesHtml += `<li class="standard-feature">${feature}</li>`;
     });
     
-    // Add selected standard services (ONLY if Standard plan is recommended)
-    if (recommendation.type === 'Standard' && selectedStandardServices.length > 0) {
+    // Add selected standard services ONLY to Standard plan
+    if (selectedStandardServices.length > 0) {
         standardFeaturesHtml += '<li><strong>Selected Standard Services:</strong></li>';
         selectedStandardServices.forEach(service => {
             standardFeaturesHtml += `<li class="standard-feature">• ${service}</li>`;
         });
     }
     
-    // Create HTML for Premium plan
+    // Create HTML for Premium plan - ONLY shows premium services
     let premiumFeaturesHtml = '';
     staticPremiumFeatures.forEach(feature => {
         premiumFeaturesHtml += `<li class="premium-feature">${feature}</li>`;
     });
     
-    // Add selected premium services (ONLY if Premium plan is recommended)
-    if (recommendation.type === 'Premium' && selectedPremiumServices.length > 0) {
+    // Add selected premium services ONLY to Premium plan
+    if (selectedPremiumServices.length > 0) {
         premiumFeaturesHtml += '<li><strong>Selected Premium Services:</strong></li>';
         selectedPremiumServices.forEach(service => {
             premiumFeaturesHtml += `<li class="premium-feature">• ${service}</li>`;
