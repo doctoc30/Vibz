@@ -1522,7 +1522,7 @@
 </section>
 
 
-    <script>
+<script>
 // ========== BARBER CONCEPTS DATABASE ==========
 const barberConcepts = [
     { code: "barber-1", image: "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
@@ -2317,7 +2317,7 @@ function showFinalPlans() {
     }
 }
 
-// REVISED: Go to payment with validation
+// FIXED: Go to payment with CORRECT Stripe links
 function goToPayment(planName) {
     // Validate premium services aren't trying to go with Standard plan
     const hasPremiumServices = formData.features.some(f => {
@@ -2334,22 +2334,34 @@ function goToPayment(planName) {
     localStorage.setItem('funnelFormData', JSON.stringify(formData));
     localStorage.setItem('selectedPlan', planName);
     
-    // Determine payment link
+    // DETERMINE CORRECT PAYMENT LINK BASED ON PLAN SELECTION
     let paymentLink;
+    
     if (planName.includes('Own Outright')) {
         if (planName.includes('Standard')) {
-            paymentLink = 'https://buy.stripe.com/test_00g9CBeBea4X6Gg28b'; // £1,500
+            // Barber Website (Standard) - £1,500
+            paymentLink = 'https://buy.stripe.com/test_00wdRa2Lc7093305LxgMw01';
         } else {
-            paymentLink = 'https://buy.stripe.com/test_28odSBdBCgVn7Z2fZ1'; // £3,000
+            // Barber Website (Premium) - £3,000
+            paymentLink = 'https://buy.stripe.com/test_dRmaEYbhI84d1YW8XJgMw02';
         }
     } else {
+        // Monthly Support plans
         if (planName.includes('Standard')) {
-            paymentLink = 'https://buy.stripe.com/test_00g9CBeBea4X6Gg28b'; // £100/month
+            // Monthly Standard - £100/month
+            paymentLink = 'https://buy.stripe.com/test_9B614oetUckt6fc7TFgMw04';
         } else {
-            paymentLink = 'https://buy.stripe.com/test_28odSBdBCgVn7Z2fZ1'; // £150/month
+            // Monthly Premium - £150/month
+            paymentLink = 'https://buy.stripe.com/test_6oU5kE3Pgdox6fc6PBgMw03';
         }
     }
     
+    console.log(`Redirecting to ${planName}: ${paymentLink}`);
+    
+    // Update hidden payment link field
+    document.getElementById('hiddenPaymentLink').value = paymentLink;
+    
+    // Redirect to Stripe
     window.location.href = paymentLink;
 }
 
