@@ -1345,31 +1345,31 @@ function attachEventListeners() {
         });
     });
 
+
     // View Demo buttons
-    document.querySelectorAll('.view-demo').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            const conceptId = this.dataset.concept;
-            const concept = barberConcepts.find(c => c.code === `barber-${conceptId}`);
+document.querySelectorAll('.view-demo').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const conceptId = this.dataset.concept;
+        const concept = barberConcepts.find(c => c.code === `barber-${conceptId}`);
+        
+        if (!concept) return;
+        
+        // Show loading state
+        const originalText = this.textContent;
+        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+        this.disabled = true;
+        
+        setTimeout(() => {
+            this.textContent = originalText;
+            this.disabled = false;
             
-            if (!concept) return;
-            
-            // Show loading state
-            const originalText = this.textContent;
-            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
-            this.disabled = true;
-            
-            // Simulate loading
-            setTimeout(() => {
-                this.textContent = originalText;
-                this.disabled = false;
-                
-                // Open demo in new tab
-                alert(`Opening live demo of ${concept.code.toUpperCase()}...\n\nDemo would show the full working website with all features.`);
-            }, 800);
-        });
+            // ✅ OPEN REAL LIVE DEMO
+            const demoUrl = `https://www.vibz.co.uk/barber/pages/${concept.code}.html`;
+            window.open(demoUrl, '_blank');
+        }, 800);
     });
-}
+});
 
 // Update selected button state
 function updateSelectedButton(conceptId) {
