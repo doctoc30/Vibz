@@ -1215,14 +1215,10 @@
         </div>
     </div>
 
-<script>
-// ========== BARBER CONCEPTS DATABASE ==========
-// DUPLICATED FROM FUNNEL PAGE - MUST MATCH EXACTLY
-// EASY TO EDIT: Add new concepts here when you create them
-// Format: { code: "barber-1", image: "image-url.jpg" }
 
+    <script>
+// ========== BARBER CONCEPTS DATABASE ==========
 const barberConcepts = [
-    // Current concepts (1-9)
     { code: "barber-1", image: "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
     { code: "barber-2", image: "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
     { code: "barber-3", image: "https://images.unsplash.com/photo-1567894340315-735d7c361db0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
@@ -1232,34 +1228,28 @@ const barberConcepts = [
     { code: "barber-7", image: "https://images.unsplash.com/photo-1621605815972-f9e5c6c4a9c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
     { code: "barber-8", image: "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
     { code: "barber-9", image: "https://images.unsplash.com/photo-1580618864180-f6d7d39b8ff6?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" }
-    
-    // TO ADD NEW CONCEPTS: Copy and edit these lines:
-    // { code: "barber-10", image: "https://your-image-url-here.jpg" },
-    // { code: "barber-11", image: "https://your-image-url-here.jpg" },
-    // etc...
 ];
 
-// ========== MENU FUNCTIONALITY ==========
+// ========== MENU ==========
 const menuOverlay = document.getElementById('menuOverlay');
 const hamburgerBtn = document.getElementById('hamburgerBtn');
 const closeMenuBtn = document.getElementById('closeMenu');
 const menuLinks = document.querySelectorAll('.menu-link');
 
-function openMenu() {
+hamburgerBtn.addEventListener('click', () => {
     menuOverlay.classList.add('active');
     document.body.style.overflow = 'hidden';
-}
+});
 
-function closeMenu() {
+closeMenuBtn.addEventListener('click', () => {
     menuOverlay.classList.remove('active');
     document.body.style.overflow = '';
-}
-
-hamburgerBtn.addEventListener('click', openMenu);
-closeMenuBtn.addEventListener('click', closeMenu);
-menuLinks.forEach(link => {
-    link.addEventListener('click', closeMenu);
 });
+
+menuLinks.forEach(link => link.addEventListener('click', () => {
+    menuOverlay.classList.remove('active');
+    document.body.style.overflow = '';
+}));
 
 // ========== CONCEPT DISPLAY ==========
 let selectedDesign = null;
@@ -1267,192 +1257,107 @@ const selectionModal = document.getElementById('selectionModal');
 const modalTitle = document.getElementById('modalTitle');
 const modalText = document.getElementById('modalText');
 
-// Generate concept cards dynamically
 function generateConceptCards() {
     const conceptsGrid = document.getElementById('conceptsGrid');
     conceptsGrid.innerHTML = '';
-    
+
     barberConcepts.forEach((concept, index) => {
-        const number = (index + 1).toString().padStart(2, '0');
-        const conceptId = concept.code.split('-')[1]; // Extract number from "barber-1"
-        
-        const conceptCard = document.createElement('div');
-        conceptCard.className = 'concept-card';
-        conceptCard.setAttribute('data-concept', conceptId);
-        
-        conceptCard.innerHTML = `
-            <div class="concept-image">
-                <div class="concept-number">${number}</div>
-                <img src="${concept.image}" alt="${concept.code}">
-                <!-- NO TITLES OR SUBTITLES - REMOVED OVERLAY -->
-            </div>
-            <div class="concept-buttons">
-                <button class="btn btn-fill select-design" data-concept="${conceptId}" data-code="${concept.code}">
-                    Select This Design
-                </button>
-                <button class="btn btn-outline view-demo" data-concept="${conceptId}">
-                    View Live Demo
-                </button>
-                <div class="concept-code">CODE: ${concept.code.toUpperCase()}</div>
+        const conceptId = concept.code.split('-')[1];
+
+        conceptsGrid.innerHTML += `
+            <div class="concept-card">
+                <div class="concept-image">
+                    <div class="concept-number">${String(index + 1).padStart(2, '0')}</div>
+                    <img src="${concept.image}" alt="${concept.code}">
+                </div>
+                <div class="concept-buttons">
+                    <button class="btn btn-fill select-design" data-code="${concept.code}" data-concept="${conceptId}">
+                        Select This Design
+                    </button>
+                    <button class="btn btn-outline view-demo" data-concept="${conceptId}">
+                        View Live Demo
+                    </button>
+                    <div class="concept-code">CODE: ${concept.code.toUpperCase()}</div>
+                </div>
             </div>
         `;
-        
-        conceptsGrid.appendChild(conceptCard);
     });
-    
-    // Update concept count in stats
+
     document.getElementById('conceptCount').textContent = barberConcepts.length;
-    
-    // Re-attach event listeners for new buttons
     attachEventListeners();
 }
 
-// Attach event listeners to buttons
+// ========== EVENTS ==========
 function attachEventListeners() {
-    // Select Design buttons
+
+    // Select design
     document.querySelectorAll('.select-design').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            const conceptId = this.dataset.concept;
-            const conceptCode = this.dataset.code;
-            const concept = barberConcepts.find(c => c.code === conceptCode);
-            
-            if (!concept) return;
-            
-            // Store selection
-            selectedDesign = {
-                id: conceptId,
-                code: concept.code
-            };
-            
-            // Store in localStorage for funnel continuation
-            localStorage.setItem('selectedDesignCode', concept.code);
-            
-            // Update modal content
-            modalTitle.textContent = `Design Code Selected!`;
+        btn.onclick = () => {
+            const code = btn.dataset.code;
+            const id = btn.dataset.concept;
+
+            selectedDesign = { code, id };
+            localStorage.setItem('selectedDesignCode', code);
+
+            modalTitle.textContent = 'Design Code Selected!';
             modalText.innerHTML = `
-                You've selected <strong style="color: var(--accent);">${concept.code.toUpperCase()}</strong><br><br>
-                <span style="font-size: 0.9rem; color: var(--text-gray);">
-                    Enter this code in the funnel to see your chosen design.
-                </span>
+                You've selected <strong>${code.toUpperCase()}</strong><br><br>
+                Enter this code in the funnel.
             `;
-            
-            // Show modal
+
             selectionModal.style.display = 'flex';
-            
-            // Update button state
-            updateSelectedButton(conceptId);
-        });
+            updateSelectedButton(id);
+        };
     });
 
+    // ✅ VIEW LIVE DEMO (REAL LINK)
+    document.querySelectorAll('.view-demo').forEach(btn => {
+        btn.onclick = () => {
+            const id = btn.dataset.concept;
+            const concept = barberConcepts.find(c => c.code === `barber-${id}`);
+            if (!concept) return;
 
-    // View Demo buttons
-document.querySelectorAll('.view-demo').forEach(btn => {
-    btn.addEventListener('click', function(e) {
-        e.preventDefault();
-        const conceptId = this.dataset.concept;
-        const concept = barberConcepts.find(c => c.code === `barber-${conceptId}`);
-        
-        if (!concept) return;
-        
-        // Show loading state
-        const originalText = this.textContent;
-        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
-        this.disabled = true;
-        
-        setTimeout(() => {
-            this.textContent = originalText;
-            this.disabled = false;
-            
-            // ✅ OPEN REAL LIVE DEMO
-            const demoUrl = `https://www.vibz.co.uk/barber/pages/${concept.code}.html`;
-            window.open(demoUrl, '_blank');
-        }, 800);
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                btn.innerHTML = 'View Live Demo';
+                btn.disabled = false;
+                window.open(`https://www.vibz.co.uk/barber/pages/${concept.code}.html`, '_blank');
+            }, 600);
+        };
     });
-});
+}
 
-// Update selected button state
+// ========== UI HELPERS ==========
 function updateSelectedButton(conceptId) {
-    // Reset all select buttons
     document.querySelectorAll('.select-design').forEach(btn => {
-        btn.classList.remove('selected');
         btn.innerHTML = 'Select This Design';
+        btn.classList.remove('selected');
     });
-    
-    // Mark selected button
-    const selectedBtn = document.querySelector(`.select-design[data-concept="${conceptId}"]`);
-    if (selectedBtn) {
-        selectedBtn.classList.add('selected');
-        selectedBtn.innerHTML = '<i class="fas fa-check"></i> Selected';
+
+    const selected = document.querySelector(`.select-design[data-concept="${conceptId}"]`);
+    if (selected) {
+        selected.innerHTML = '✓ Selected';
+        selected.classList.add('selected');
     }
 }
 
-// ========== MODAL FUNCTIONS ==========
 function closeModal() {
     selectionModal.style.display = 'none';
 }
 
 function continueToFunnel() {
-    if (selectedDesign) {
-        // Redirect to Step 4 of the funnel with the design code
-        const funnelUrl = `https://www.vibz.co.uk/barber/?step=4&concept=${selectedDesign.code}`;
-        
-        // Store in localStorage for backup
-        localStorage.setItem('selectedDesignCode', selectedDesign.code);
-        
-        // Show loading
-        const continueBtn = selectionModal.querySelector('.btn-fill');
-        const originalText = continueBtn.textContent;
-        continueBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Redirecting...';
-        continueBtn.disabled = true;
-        
-        // Redirect
-        setTimeout(() => {
-            window.location.href = funnelUrl;
-        }, 800);
-    } else {
-        alert('Please select a design first');
-    }
+    if (!selectedDesign) return;
+    window.location.href = `https://www.vibz.co.uk/barber/?step=4&concept=${selectedDesign.code}`;
 }
 
-// Close modal on outside click
-selectionModal.addEventListener('click', function(e) {
-    if (e.target === this) {
-        closeModal();
-    }
+selectionModal.addEventListener('click', e => {
+    if (e.target === selectionModal) closeModal();
 });
 
-// ========== INITIALIZATION ==========
-document.addEventListener('DOMContentLoaded', function() {
-    // Generate concept cards
-    generateConceptCards();
-    
-    // Check for previously selected design on page load
-    const savedSelection = localStorage.getItem('selectedDesignCode');
-    if (savedSelection) {
-        try {
-            const conceptId = savedSelection.split('-')[1];
-            updateSelectedButton(conceptId);
-        } catch (e) {
-            console.log('No previous selection found');
-        }
-    }
-    
-    // Log available concepts for debugging
-    console.log('Concepts page loaded with', barberConcepts.length, 'design codes');
-    console.log('Available codes:', barberConcepts.map(c => c.code));
-});
-
-// Debug function to check orientation
-function logOrientation() {
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-    const orientation = width > height ? 'Landscape' : 'Portrait';
-    console.log(`Screen: ${width}x${height} (${orientation})`);
-}
-
-window.addEventListener('resize', logOrientation);
-window.addEventListener('load', logOrientation);
+// ========== INIT ==========
+document.addEventListener('DOMContentLoaded', generateConceptCards);
 </script>
 </body>
 </html>
