@@ -1216,10 +1216,12 @@
     </div>
 
 
+
+
     <script>
 // ========== BARBER CONCEPTS DATABASE ==========
 const barberConcepts = [
-    { code: "barber-1", image: "https://github.com/doctoc30/Vibz/blob/main/images/IMG_9858.jpeg?raw=true" },
+    { code: "barber-1", image: "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
     { code: "barber-2", image: "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
     { code: "barber-3", image: "https://images.unsplash.com/photo-1567894340315-735d7c361db0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
     { code: "barber-4", image: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
@@ -1230,134 +1232,874 @@ const barberConcepts = [
     { code: "barber-9", image: "https://images.unsplash.com/photo-1580618864180-f6d7d39b8ff6?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" }
 ];
 
-// ========== MENU ==========
-const menuOverlay = document.getElementById('menuOverlay');
-const hamburgerBtn = document.getElementById('hamburgerBtn');
-const closeMenuBtn = document.getElementById('closeMenu');
-const menuLinks = document.querySelectorAll('.menu-link');
+// ========== SERVICES DATABASE ==========
+const allServices = [
+    // ===== STANDARD TIER SERVICES =====
+    { name: 'Services & Pricing Display', tier: 'standard', description: 'Clear layout of all offered services and prices' },
+    { name: 'Team / Barber Profiles', tier: 'standard', description: 'Photos, bios, and specialties' },
+    { name: 'Photo Gallery / Portfolio', tier: 'standard', description: 'Image grid showcasing barber work' },
+    { name: 'Basic Before & After Slider', tier: 'standard', description: 'Compare hairstyles side-by-side' },
+    { name: 'Special Offers / Promotions Section', tier: 'standard', description: 'Display deals or discounts' },
+    { name: 'Opening Hours Display', tier: 'standard', description: 'Business hours and open/closed status' },
+    { name: 'Location & Directions', tier: 'standard', description: 'Google Maps embed with directions button' },
+    { name: 'Tap-to-Call & WhatsApp Buttons', tier: 'standard', description: 'One-click mobile contact' },
+    { name: 'FAQ Section', tier: 'standard', description: 'Collapsible questions to answer common client queries' },
+    { name: 'Loyalty / Membership Info', tier: 'standard', description: 'Show loyalty program details' },
+    { name: 'Contact Form', tier: 'standard', description: 'Simple enquiry form to collect messages' },
+    { name: 'On-Page SEO Basics', tier: 'standard', description: 'Page titles, headers, meta tags, and image alt text' },
+    
+    // ===== PREMIUM TIER SERVICES =====
+    { name: 'Online Booking System Integration', tier: 'premium', description: 'Calendly, Setmore, etc.' },
+    { name: 'Stripe Payments / Deposits', tier: 'premium', description: 'Accept payments online' },
+    { name: 'Automated Booking Reminders', tier: 'premium', description: 'Email/SMS via booking platform' },
+    { name: 'Reschedule & Cancellation Management', tier: 'premium', description: 'Client-managed bookings' },
+    { name: 'Gift Cards / Vouchers', tier: 'premium', description: 'Sell digital gift cards' },
+    { name: 'Walk-In / Waitlist System', tier: 'premium', description: 'Real-time updates for walk-ins' },
+    { name: 'Enhanced Before & After Gallery', tier: 'premium', description: 'Filter by barber, style, or service' },
+    { name: 'Barber Specialties & Service Tags', tier: 'premium', description: 'Highlight skills and services' },
+    { name: 'Advanced Call-to-Action Buttons', tier: 'premium', description: 'Sticky buttons, strategic placement' },
+    { name: 'Analytics & Conversion Tracking Setup', tier: 'premium', description: 'Tracks Book Now, Call, WhatsApp, and form submissions' },
+    { name: 'Priority Build Queue', tier: 'premium', description: 'Premium builds scheduled first' },
+    { name: 'Enhanced Video & Image Gallery', tier: 'premium', description: 'Interactive gallery for client-provided media' },
+    { name: 'Social Proof / Reviews Section', tier: 'premium', description: 'Display client testimonials' },
+    { name: 'Prominent Sticky Header / Banner', tier: 'premium', description: 'Highlight bookings, offers, or CTAs' },
+    { name: 'Multi-Location / Branch Info', tier: 'premium', description: 'Optional for shops with multiple locations' },
+    { name: 'Full Branding Package', tier: 'premium', description: 'Logo, colors, typography' },
+    { name: 'Custom Graphics & Icons', tier: 'premium', description: 'Personalized visuals for website sections' },
+    { name: 'Branded Email Newsletter Setup', tier: 'premium', description: 'Template ready to connect' },
+    { name: 'Favicon & Browser Branding', tier: 'premium', description: 'Polished appearance in tabs/bookmarks' },
+    { name: 'Premium On-Page SEO', tier: 'premium', description: 'Schema, technical setup, optimized indexing' }
+];
 
-hamburgerBtn.addEventListener('click', () => {
-    menuOverlay.classList.add('active');
-    document.body.style.overflow = 'hidden';
-});
+// ========== FORM STATE MANAGEMENT ==========
+let currentStep = 1;
+const formData = {
+    businessName: '',
+    projectType: '',
+    designConcept: '',
+    designCode: '',
+    features: [],
+    audience: '',
+    style: '',
+    color: '',
+    goal: '',
+    urgency: '', // 'Start ASAP' or 'More Info'
+    planModel: '', // 'Own Outright' or 'Monthly Support'
+    planType: '', // 'Standard' or 'Premium' based on service selections
+    forcePremiumPlan: false // NEW: Force Premium if premium services selected
+};
 
-closeMenuBtn.addEventListener('click', () => {
-    menuOverlay.classList.remove('active');
-    document.body.style.overflow = '';
-});
+// Service selection tracking
+let premiumServiceCount = 0;
+let standardServiceCount = 0;
+let recommendedPlan = { type: '', glow: false, forcePremium: false };
 
-menuLinks.forEach(link => link.addEventListener('click', () => {
-    menuOverlay.classList.remove('active');
-    document.body.style.overflow = '';
-}));
+// DOM elements
+const screens = document.querySelectorAll('.form-screen');
+const stepDots = document.querySelectorAll('.step-dot');
+const businessInput = document.getElementById('businessInput');
+const designCodeInput = document.getElementById('designCodeInput');
+const codeStatus = document.getElementById('codeStatus');
+const conceptDisplay = document.getElementById('conceptDisplay');
+const conceptDisplayImage = document.getElementById('conceptDisplayImage');
+const conceptDisplayCode = document.getElementById('conceptDisplayCode');
+const confirmDesignBtn = document.getElementById('confirmDesignBtn');
+const tryDifferentBtn = document.getElementById('tryDifferentBtn');
 
-// ========== CONCEPT DISPLAY ==========
-let selectedDesign = null;
-const selectionModal = document.getElementById('selectionModal');
-const modalTitle = document.getElementById('modalTitle');
-const modalText = document.getElementById('modalText');
+// ========== UPDATED FUNNEL LOGIC ==========
 
-function generateConceptCards() {
-    const conceptsGrid = document.getElementById('conceptsGrid');
-    conceptsGrid.innerHTML = '';
-
-    barberConcepts.forEach((concept, index) => {
-        const conceptId = concept.code.split('-')[1];
-
-        conceptsGrid.innerHTML += `
-            <div class="concept-card">
-                <div class="concept-image">
-                    <div class="concept-number">${String(index + 1).padStart(2, '0')}</div>
-                    <img src="${concept.image}" alt="${concept.code}">
-                </div>
-                <div class="concept-buttons">
-                    <button class="btn btn-fill select-design" data-code="${concept.code}" data-concept="${conceptId}">
-                        Select This Design
-                    </button>
-                    <button class="btn btn-outline view-demo" data-concept="${conceptId}">
-                        View Live Demo
-                    </button>
-                    <div class="concept-code">CODE: ${concept.code.toUpperCase()}</div>
-                </div>
-            </div>
-        `;
-    });
-
-    document.getElementById('conceptCount').textContent = barberConcepts.length;
-    attachEventListeners();
-}
-
-// ========== EVENTS ==========
-function attachEventListeners() {
-
-    // Select design
-    document.querySelectorAll('.select-design').forEach(btn => {
-        btn.onclick = () => {
-            const code = btn.dataset.code;
-            const id = btn.dataset.concept;
-
-            selectedDesign = { code, id };
-            localStorage.setItem('selectedDesignCode', code);
-
-            modalTitle.textContent = 'Design Code Selected!';
-            modalText.innerHTML = `
-                You've selected <strong>${code.toUpperCase()}</strong><br><br>
-                Enter this code in the funnel.
-            `;
-
-            selectionModal.style.display = 'flex';
-            updateSelectedButton(id);
-        };
-    });
-
-    // ✅ VIEW LIVE DEMO (REAL LINK)
-    document.querySelectorAll('.view-demo').forEach(btn => {
-        btn.onclick = () => {
-            const id = btn.dataset.concept;
-            const concept = barberConcepts.find(c => c.code === `barber-${id}`);
-            if (!concept) return;
-
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
-            btn.disabled = true;
-
-            setTimeout(() => {
-                btn.innerHTML = 'View Live Demo';
-                btn.disabled = false;
-                window.open(`https://www.vibz.co.uk/barber/pages/${concept.code}.html`, '_blank');
-            }, 600);
-        };
-    });
-}
-
-// ========== UI HELPERS ==========
-function updateSelectedButton(conceptId) {
-    document.querySelectorAll('.select-design').forEach(btn => {
-        btn.innerHTML = 'Select This Design';
-        btn.classList.remove('selected');
-    });
-
-    const selected = document.querySelector(`.select-design[data-concept="${conceptId}"]`);
-    if (selected) {
-        selected.innerHTML = '✓ Selected';
-        selected.classList.add('selected');
+// STEP 10: Set urgency preference
+function setUrgency(urgency) {
+    formData.urgency = urgency;
+    
+    if (urgency === 'Start ASAP') {
+        // If user wants to start ASAP, go to step 11 (ownership model question)
+        currentStep = 11;
+        updateStepIndicator();
+    } else if (urgency === 'More Info') {
+        // If user needs more info, go to lead capture form (step 12)
+        currentStep = 12; // Step 12 is lead capture form
+        updateStepIndicator();
     }
 }
 
-function closeModal() {
-    selectionModal.style.display = 'none';
+// STEP 11: Set plan model (ownership question)
+function setPlanModel(planModel) {
+    formData.planModel = planModel;
+    
+    // After selecting plan model, go to final plan selection (step 13)
+    currentStep = 13;
+    updateStepIndicator();
 }
 
-function continueToFunnel() {
-    if (!selectedDesign) return;
-    window.location.href = `https://www.vibz.co.uk/barber/?step=4&concept=${selectedDesign.code}`;
+// Go back from lead capture form to step 10
+function goBackToStep10() {
+    currentStep = 10;
+    updateStepIndicator();
 }
 
-selectionModal.addEventListener('click', e => {
-    if (e.target === selectionModal) closeModal();
+// Submit lead capture form
+function submitLeadForm(event) {
+    event.preventDefault();
+    
+    // Get form data
+    const leadData = {
+        name: document.getElementById('leadName').value,
+        email: document.getElementById('leadEmail').value,
+        phone: document.getElementById('leadPhone').value,
+        business: document.getElementById('leadBusiness').value || formData.businessName,
+        location: document.getElementById('leadLocation').value,
+        timeline: document.getElementById('leadTimeline').value,
+        budget: document.getElementById('leadBudget').value,
+        questions: document.getElementById('leadQuestions').value,
+        // Include all previous funnel data
+        ...formData
+    };
+    
+    // In a real implementation, you would send this data to your server
+    console.log('Lead data submitted:', leadData);
+    
+    // Show success message
+    const formContainer = document.querySelector('.lead-form-container');
+    formContainer.innerHTML = `
+        <div class="success-message">
+            <div style="font-size: 4rem; color: #FF6B00; margin-bottom: 1rem;">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h3>Thank You!</h3>
+            <p>Your information has been received. We'll contact you within 24 hours to discuss your project.</p>
+            <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--gray);">
+                You'll also receive a copy of this information via email.
+            </p>
+            <button type="button" class="vibz-btn vibz-btn-primary" onclick="goBackToStep10()" style="margin-top: 2rem;">
+                Return to Funnel
+            </button>
+        </div>
+    `;
+    
+    // Here you would typically send the data to your backend
+    // Example: fetch('/api/lead', { method: 'POST', body: JSON.stringify(leadData) })
+}
+
+// ========== ENHANCED SERVICE SELECTION LOGIC ==========
+
+// Normalize code input
+function normalizeCode(input) {
+    if (!input) return '';
+    
+    let normalized = input.toString().toLowerCase().trim();
+    normalized = normalized.replace(/^barber[\s\-]*/i, '');
+    normalized = normalized.replace(/[^0-9\-]/g, '');
+    
+    if (/^\d+$/.test(normalized)) {
+        return `barber-${normalized}`;
+    }
+    
+    if (normalized.includes('-')) {
+        const num = normalized.split('-').pop();
+        if (/^\d+$/.test(num)) {
+            return `barber-${num}`;
+        }
+    }
+    
+    return '';
+}
+
+// Find concept by code
+function findConceptByCode(input) {
+    const normalizedCode = normalizeCode(input);
+    if (!normalizedCode) return null;
+    
+    return barberConcepts.find(concept => concept.code === normalizedCode);
+}
+
+// Validate and display concept
+function validateAndDisplayConcept() {
+    const input = designCodeInput.value.trim();
+    
+    if (!input) {
+        codeStatus.textContent = '';
+        codeStatus.className = 'code-status';
+        conceptDisplay.style.display = 'none';
+        tryDifferentBtn.style.display = 'none';
+        return;
+    }
+    
+    const concept = findConceptByCode(input);
+    
+    if (concept) {
+        codeStatus.textContent = `✓ Valid code: ${concept.code}`;
+        codeStatus.className = 'code-status success';
+        conceptDisplayImage.src = concept.image;
+        conceptDisplayImage.alt = `Design ${concept.code}`;
+        conceptDisplayCode.textContent = concept.code.toUpperCase();
+        conceptDisplay.style.display = 'block';
+        confirmDesignBtn.innerHTML = `<i class="fas fa-check"></i> Continue with ${concept.code.toUpperCase()}`;
+        tryDifferentBtn.style.display = 'inline-block';
+    } else {
+        codeStatus.textContent = `✗ Design not found. Try "barber-1" to "barber-${barberConcepts.length}"`;
+        codeStatus.className = 'code-status error';
+        conceptDisplay.style.display = 'none';
+        tryDifferentBtn.style.display = 'none';
+    }
+}
+
+// Confirm design selection
+function confirmDesignSelection() {
+    const input = designCodeInput.value.trim();
+    const concept = findConceptByCode(input);
+    
+    if (concept) {
+        formData.designCode = concept.code;
+        formData.designConcept = 'From Code';
+        updateHiddenFields();
+        next();
+    }
+}
+
+// Try different code
+function tryDifferentCode() {
+    designCodeInput.value = '';
+    designCodeInput.focus();
+    codeStatus.textContent = '';
+    codeStatus.className = 'code-status';
+    conceptDisplay.style.display = 'none';
+    tryDifferentBtn.style.display = 'none';
+}
+
+// REVISED: Service selection with premium enforcement
+function toggleService(serviceName, element) {
+    const service = allServices.find(s => s.name === serviceName);
+    const index = formData.features.indexOf(serviceName);
+    
+    // If trying to SELECT a premium service
+    if (index === -1 && service.tier === 'premium') {
+        // Check if we have any selected premium services already
+        const hasPremiumServices = formData.features.some(f => {
+            const s = allServices.find(s => s.name === f);
+            return s.tier === 'premium';
+        });
+        
+        // If no premium services yet, confirm with user
+        if (!hasPremiumServices) {
+            const confirmPremium = confirm(
+                "⚠️ Premium Service Selected\n\n" +
+                "Premium services are ONLY available with the Premium Plan (£3,000).\n\n" +
+                "Selecting any premium service will REQUIRE the Premium Plan.\n\n" +
+                "Do you want to proceed with premium services?"
+            );
+            
+            if (!confirmPremium) {
+                return; // User canceled
+            }
+        }
+    }
+    
+    if (index === -1) {
+        // Add service
+        formData.features.push(serviceName);
+        element.classList.add('selected');
+    } else {
+        // Remove service
+        formData.features.splice(index, 1);
+        element.classList.remove('selected');
+        
+        // If removing a premium service, check if we still have any premium services
+        if (service.tier === 'premium') {
+            const stillHasPremium = formData.features.some(f => {
+                const s = allServices.find(s => s.name === f);
+                return s.tier === 'premium';
+            });
+            
+            // If no more premium services, re-enable Standard plan
+            if (!stillHasPremium) {
+                document.querySelectorAll('.service-card.standard').forEach(card => {
+                    card.style.opacity = '1';
+                    card.style.pointerEvents = 'auto';
+                });
+            }
+        }
+    }
+    
+    updateServiceCounters();
+    calculateRecommendedPlan();
+    showPlanRecommendation();
+}
+
+function updateServiceCounters() {
+    // Reset counts
+    standardServiceCount = 0;
+    premiumServiceCount = 0;
+    
+    // Count services by tier
+    formData.features.forEach(feature => {
+        const service = allServices.find(s => s.name === feature);
+        if (service) {
+            if (service.tier === 'standard') {
+                standardServiceCount++;
+            } else {
+                premiumServiceCount++;
+            }
+        }
+    });
+    
+    // Update counters
+    document.getElementById('standardCount').textContent = standardServiceCount;
+    document.getElementById('premiumCount').textContent = premiumServiceCount;
+    document.getElementById('totalCount').textContent = formData.features.length;
+    
+    // Update services list
+    const servicesList = document.getElementById('servicesList');
+    servicesList.innerHTML = '';
+    
+    if (formData.features.length > 0) {
+        document.getElementById('selectedServicesList').style.display = 'block';
+        formData.features.forEach(service => {
+            const serviceData = allServices.find(s => s.name === service);
+            const badge = document.createElement('div');
+            badge.style.background = serviceData.tier === 'standard' ? '#4CAF50' : '#2196F3';
+            badge.style.color = 'white';
+            badge.style.padding = '0.3rem 0.8rem';
+            badge.style.borderRadius = '20px';
+            badge.style.fontSize = '0.8rem';
+            badge.style.display = 'flex';
+            badge.style.alignItems = 'center';
+            badge.style.gap = '5px';
+            badge.innerHTML = `<span>${service}</span> <i class="fas fa-times" style="cursor:pointer;" onclick="removeService('${service}')"></i>`;
+            servicesList.appendChild(badge);
+        });
+    } else {
+        document.getElementById('selectedServicesList').style.display = 'none';
+    }
+}
+
+function removeService(serviceName) {
+    const index = formData.features.indexOf(serviceName);
+    if (index !== -1) {
+        formData.features.splice(index, 1);
+        
+        // Update visual state of the card
+        const serviceCards = document.querySelectorAll('.service-card');
+        serviceCards.forEach(card => {
+            const h4 = card.querySelector('h4');
+            if (h4 && h4.textContent === serviceName) {
+                card.classList.remove('selected');
+            }
+        });
+        
+        updateServiceCounters();
+        calculateRecommendedPlan();
+        showPlanRecommendation();
+    }
+}
+
+// REVISED: Calculate recommended plan with premium enforcement
+function calculateRecommendedPlan() {
+    // Check if ANY premium services are selected
+    const hasPremiumServices = formData.features.some(f => {
+        const service = allServices.find(s => s.name === f);
+        return service.tier === 'premium';
+    });
+    
+    if (hasPremiumServices) {
+        // If ANY premium services selected, MUST be Premium plan
+        recommendedPlan.type = 'Premium';
+        recommendedPlan.glow = true;
+        recommendedPlan.forcePremium = true; // Force premium flag
+    } else if (formData.features.length > 0) {
+        // Only standard services selected
+        recommendedPlan.type = 'Standard';
+        recommendedPlan.glow = true;
+        recommendedPlan.forcePremium = false;
+    } else {
+        // No services selected
+        recommendedPlan.type = 'Standard';
+        recommendedPlan.glow = false;
+        recommendedPlan.forcePremium = false;
+    }
+    
+    return recommendedPlan;
+}
+
+// REVISED: Show plan recommendation with premium enforcement
+function showPlanRecommendation() {
+    const recommendation = calculateRecommendedPlan();
+    const preview = document.getElementById('planRecommendationPreview');
+    const logicInfo = document.getElementById('planLogicInfo');
+    
+    if (formData.features.length > 0) {
+        logicInfo.style.display = 'block';
+        
+        if (recommendation.forcePremium) {
+            // Force Premium plan due to premium services
+            document.getElementById('planLogicText').textContent = 
+                `You selected ${premiumServiceCount} premium service(s). Premium services REQUIRE the Premium Plan.`;
+            preview.style.display = 'inline-block';
+            preview.style.background = 'linear-gradient(90deg, #2196F3, #21CBF3)';
+            document.getElementById('recommendedPlanPreview').textContent = 'Premium Plan REQUIRED';
+            
+            // Disable Standard service cards when premium is selected
+            document.querySelectorAll('.service-card.standard').forEach(card => {
+                card.style.opacity = '0.6';
+                card.style.pointerEvents = 'none';
+            });
+        } else {
+            document.getElementById('planLogicText').textContent = 
+                `You selected ${standardServiceCount} standard service(s) (Standard plan available)`;
+            
+            if (recommendation.glow) {
+                preview.style.display = 'inline-block';
+                preview.style.background = 'linear-gradient(90deg, #4CAF50, #66BB6A)';
+                document.getElementById('recommendedPlanPreview').textContent = 'Standard Plan';
+            } else {
+                preview.style.display = 'none';
+            }
+            
+            // Re-enable Standard plan cards when no premium services
+            document.querySelectorAll('.service-card.standard').forEach(card => {
+                card.style.opacity = '1';
+                card.style.pointerEvents = 'auto';
+            });
+        }
+    } else {
+        preview.style.display = 'none';
+        logicInfo.style.display = 'none';
+        
+        // Re-enable all cards when nothing selected
+        document.querySelectorAll('.service-card').forEach(card => {
+            card.style.opacity = '1';
+            card.style.pointerEvents = 'auto';
+        });
+    }
+}
+
+function nextFromServices() {
+    // Check if at least one service is selected
+    if (formData.features.length === 0) {
+        alert('Please select at least one service to continue.');
+        return;
+    }
+    
+    // Check if premium services are selected
+    const hasPremiumServices = formData.features.some(f => {
+        const service = allServices.find(s => s.name === f);
+        return service.tier === 'premium';
+    });
+    
+    if (hasPremiumServices) {
+        // Force Premium plan
+        formData.planType = 'Premium';
+        formData.forcePremiumPlan = true;
+        localStorage.setItem('forcePremiumPlan', 'true');
+    } else {
+        formData.planType = 'Standard';
+        formData.forcePremiumPlan = false;
+        localStorage.setItem('forcePremiumPlan', 'false');
+    }
+    
+    localStorage.setItem('recommendedPlan', JSON.stringify(recommendedPlan));
+    next();
+}
+
+// ========== FUNNEL NAVIGATION ==========
+
+// Check URL parameters and jump to correct step
+function checkURLParams() {
+    const params = new URLSearchParams(window.location.search);
+    const step = params.get('step');
+    const concept = params.get('concept');
+    
+    console.log('URL Params:', { step, concept });
+    
+    if (step) {
+        const stepNum = parseInt(step);
+        if (!isNaN(stepNum) && stepNum >= 1 && stepNum <= 13) {
+            currentStep = stepNum;
+            console.log('Jumping to step:', currentStep);
+            
+            if (concept) {
+                const foundConcept = findConceptByCode(concept);
+                if (foundConcept) {
+                    formData.designCode = foundConcept.code;
+                    formData.designConcept = 'From Concepts';
+                    localStorage.setItem('selectedDesignCode', foundConcept.code);
+                }
+            }
+            
+            return true;
+        }
+    }
+    
+    const savedDesignCode = localStorage.getItem('selectedDesignCode');
+    if (savedDesignCode) {
+        formData.designCode = savedDesignCode;
+        formData.designConcept = 'From Concepts';
+    }
+    
+    return false;
+}
+
+// Show a specific screen
+function showScreen(screenId) {
+    screens.forEach(screen => screen.classList.remove('active'));
+    const screen = document.getElementById(screenId);
+    if (screen) {
+        screen.classList.add('active');
+        
+        // Update UI for specific steps
+        if (screenId === 'step-3' && formData.designCode) {
+            document.getElementById('designInfo').style.display = 'block';
+            document.getElementById('selectedDesignCode').textContent = formData.designCode.toUpperCase();
+        }
+        
+        if (screenId === 'step-9') {
+            // Update title with business name if available
+            if (formData.businessName) {
+                document.getElementById('step9Title').innerHTML = 
+                    `Select Services for <span style="color: #FF6B00;">${formData.businessName}</span>`;
+            }
+            
+            // Update service counters
+            updateServiceCounters();
+            showPlanRecommendation();
+        }
+        
+        if (screenId === 'step-13') {
+            // Show plans based on selections
+            showFinalPlans();
+        }
+        
+        // Auto-focus code input on step 4
+        if (screenId === 'step-4') {
+            setTimeout(() => {
+                designCodeInput.focus();
+                
+                if (formData.designCode) {
+                    designCodeInput.value = formData.designCode;
+                    validateAndDisplayConcept();
+                }
+            }, 100);
+        }
+    }
+}
+
+// Step navigation
+function next() {
+    if (currentStep < 13) {
+        currentStep++;
+        updateStepIndicator();
+    }
+}
+
+function prev() {
+    if (currentStep > 1) {
+        currentStep--;
+        updateStepIndicator();
+    }
+}
+
+function updateStepIndicator() {
+    stepDots.forEach((dot, index) => {
+        dot.classList.toggle('active', index < currentStep);
+    });
+    
+    showScreen('step-' + currentStep);
+    updateHiddenFields();
+}
+
+// Update hidden form fields
+function updateHiddenFields() {
+    document.getElementById('hiddenDesignCode').value = formData.designCode || '';
+    document.getElementById('hiddenFeatures').value = formData.features.join(', ');
+}
+
+// STEP 1: Handle business name input
+function handleBusinessName() {
+    const value = businessInput.value.trim();
+    if (value) {
+        formData.businessName = value;
+        next();
+    } else {
+        alert('Please enter your barber shop name');
+        businessInput.focus();
+    }
+}
+
+// STEP 2: Project type selection
+function setProjectType(type) {
+    formData.projectType = type;
+    next();
+}
+
+// STEP 3: Design Concept
+function setDesignConcept(option) {
+    formData.designConcept = option;
+    
+    if (option === 'Code') {
+        next();
+    } else if (option === 'Custom') {
+        formData.designCode = 'CUSTOM';
+        next();
+    }
+}
+
+// STEP 5-8: Simple selection functions
+function setAudience(audience) {
+    formData.audience = audience;
+    next();
+}
+
+function setStyle(style) {
+    formData.style = style;
+    next();
+}
+
+function setColor(color) {
+    formData.color = color;
+    next();
+}
+
+function setGoal(goal) {
+    formData.goal = goal;
+    next();
+}
+
+// REVISED: Show final plans with premium enforcement
+function showFinalPlans() {
+    const container = document.getElementById('pricingCards');
+    const planText = document.getElementById('planRecommendation');
+    
+    // Check if premium services force premium plan
+    const forcePremium = formData.forcePremiumPlan || 
+                        formData.features.some(f => {
+                            const service = allServices.find(s => s.name === f);
+                            return service.tier === 'premium';
+                        });
+    
+    // Determine pricing based on plan model
+    const isOwnOutright = formData.planModel === 'Own Outright';
+    const standardPrice = isOwnOutright ? '£1,500' : '£100';
+    const premiumPrice = isOwnOutright ? '£3,000' : '£150';
+    const period = isOwnOutright ? 'one-time' : 'per month';
+    const planNameSuffix = isOwnOutright ? 'Own Outright' : 'Monthly Support';
+    
+    // Separate services by tier
+    const selectedStandardServices = formData.features.filter(f => {
+        const service = allServices.find(s => s.name === f);
+        return service.tier === 'standard';
+    });
+    
+    const selectedPremiumServices = formData.features.filter(f => {
+        const service = allServices.find(s => s.name === f);
+        return service.tier === 'premium';
+    });
+    
+    // Update plan recommendation text
+    let recommendationText;
+    if (forcePremium) {
+        recommendationText = `You selected <strong>${selectedPremiumServices.length} premium service(s)</strong>. Premium services REQUIRE the <strong>Premium Plan</strong>.`;
+    } else {
+        recommendationText = `Based on your <strong>${formData.features.length} selected services</strong>, we recommend the <strong>Standard</strong> plan.`;
+    }
+    planText.innerHTML = recommendationText;
+    
+    // Create plan objects with static features
+    const staticStandardFeatures = [
+        '<strong><i class="fas fa-file-alt"></i> Upto 5 Pages</strong>',
+        '<strong><i class="fas fa-sync-alt"></i> Upto 5 Revisions Per Page</strong>',
+        '<strong><i class="fas fa-rocket"></i> Delivery 10 - 15 days</strong>',
+        '<strong><i class="fas fa-headset"></i> 3 months support</strong>',
+        '<strong><i class="fas fa-mobile-alt"></i> Mobile responsive</strong>'
+    ];
+    
+    const staticPremiumFeatures = [
+        '<strong><i class="fas fa-file-alt"></i> Upto 15 Pages</strong>',
+        '<strong><i class="fas fa-sync-alt"></i> Upto 10 Revisions Per Page</strong>',
+        '<strong><i class="fas fa-rocket"></i> Delivery 25 - 30 days</strong>',
+        '<strong><i class="fas fa-headset"></i> 6 months support</strong>',
+        '<strong><i class="fas fa-mobile-alt"></i> Mobile responsive</strong>'
+    ];
+    
+    // Create HTML for Standard plan (ONLY if no premium services)
+    let standardPlanHtml = '';
+    if (!forcePremium) {
+        let standardFeaturesHtml = '';
+        staticStandardFeatures.forEach(feature => {
+            standardFeaturesHtml += `<li class="standard-feature">${feature}</li>`;
+        });
+        
+        // Add selected standard services
+        if (selectedStandardServices.length > 0) {
+            standardFeaturesHtml += '<li><strong><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Selected Standard Services:</strong></li>';
+            selectedStandardServices.forEach(service => {
+                standardFeaturesHtml += `<li class="standard-feature">• ${service}</li>`;
+            });
+        }
+        
+        standardPlanHtml = `
+            <div class="pricing-card ${!forcePremium ? 'recommended-glow' : ''}" 
+                 id="recommendedStandard">
+                <h3>${planNameSuffix} - Standard</h3>
+                <div class="price">${standardPrice}<span class="price-period">/${period}</span></div>
+                <ul class="pricing-features">${standardFeaturesHtml}</ul>
+                <button type="button" class="vibz-btn vibz-btn-primary" 
+                        onclick="goToPayment('${planNameSuffix} - Standard')">
+                    Choose Standard Plan
+                </button>
+            </div>
+        `;
+    }
+    
+    // Create HTML for Premium plan
+    let premiumFeaturesHtml = '';
+    staticPremiumFeatures.forEach(feature => {
+        premiumFeaturesHtml += `<li class="premium-feature">${feature}</li>`;
+    });
+    
+    // Add selected services to premium plan (BOTH standard and premium)
+    if (formData.features.length > 0) {
+        premiumFeaturesHtml += '<li><strong><i class="fas fa-check-circle" style="color: #2196F3;"></i> Your Selected Services:</strong></li>';
+        
+        // Add standard services first
+        selectedStandardServices.forEach(service => {
+            premiumFeaturesHtml += `<li class="standard-feature">• ${service} (Standard)</li>`;
+        });
+        
+        // Add premium services
+        selectedPremiumServices.forEach(service => {
+            premiumFeaturesHtml += `<li class="premium-feature">• ${service} (Premium)</li>`;
+        });
+    }
+    
+    let premiumPlanHtml = `
+        <div class="pricing-card ${forcePremium ? 'required-glow' : ''}" 
+             id="recommendedPremium">
+            <h3>${planNameSuffix} - Premium</h3>
+            ${forcePremium ? '<div class="required-badge">REQUIRED</div>' : ''}
+            <div class="price">${premiumPrice}<span class="price-period">/${period}</span></div>
+            <ul class="pricing-features">${premiumFeaturesHtml}</ul>
+            <button type="button" class="vibz-btn" 
+                    style="${forcePremium ? 'background: #2196F3; border-color: #2196F3; color: white; font-weight: 700; padding: 1rem 2rem;' : ''}"
+                    onclick="goToPayment('${planNameSuffix} - Premium')">
+                ${forcePremium ? 'Continue with Required Premium Plan' : 'Choose Premium Plan'}
+            </button>
+        </div>
+    `;
+    
+    // Combine plans - ONLY show Standard if no premium services
+    if (forcePremium) {
+        container.innerHTML = premiumPlanHtml;
+    } else {
+        container.innerHTML = standardPlanHtml + premiumPlanHtml;
+    }
+    
+    // Add visual effects
+    if (forcePremium) {
+        const premiumCard = document.getElementById('recommendedPremium');
+        if (premiumCard) {
+            premiumCard.style.boxShadow = '0 0 40px rgba(33, 150, 243, 0.6), 0 0 80px rgba(33, 150, 243, 0.3)';
+            premiumCard.style.border = '3px solid #2196F3';
+            premiumCard.style.transform = 'translateY(-10px)';
+            premiumCard.style.transition = 'all 0.5s ease';
+        }
+    } else {
+        const standardCard = document.getElementById('recommendedStandard');
+        if (standardCard) {
+            standardCard.style.boxShadow = '0 0 40px rgba(76, 175, 80, 0.6), 0 0 80px rgba(76, 175, 80, 0.3)';
+            standardCard.style.border = '3px solid #4CAF50';
+            standardCard.style.transform = 'translateY(-10px)';
+            standardCard.style.transition = 'all 0.5s ease';
+        }
+    }
+}
+
+// FIXED: Go to payment with CORRECT Stripe links
+function goToPayment(planName) {
+    // Validate premium services aren't trying to go with Standard plan
+    const hasPremiumServices = formData.features.some(f => {
+        const service = allServices.find(s => s.name === f);
+        return service.tier === 'premium';
+    });
+    
+    if (hasPremiumServices && planName.includes('Standard')) {
+        alert('❌ ERROR: Premium services require the Premium Plan.\n\nPlease select the Premium Plan to proceed.');
+        return;
+    }
+    
+    // Store all form data before redirecting
+    localStorage.setItem('funnelFormData', JSON.stringify(formData));
+    localStorage.setItem('selectedPlan', planName);
+    
+    // DETERMINE CORRECT PAYMENT LINK BASED ON PLAN SELECTION
+    let paymentLink;
+    
+    if (planName.includes('Own Outright')) {
+        if (planName.includes('Standard')) {
+            // Barber Website (Standard) - £1,500
+            paymentLink = 'https://buy.stripe.com/test_00wdRa2Lc7093305LxgMw01';
+        } else {
+            // Barber Website (Premium) - £3,000
+            paymentLink = 'https://buy.stripe.com/test_dRmaEYbhI84d1YW8XJgMw02';
+        }
+    } else {
+        // Monthly Support plans
+        if (planName.includes('Standard')) {
+            // Monthly Standard - £100/month
+            paymentLink = 'https://buy.stripe.com/test_9B614oetUckt6fc7TFgMw04';
+        } else {
+            // Monthly Premium - £150/month
+            paymentLink = 'https://buy.stripe.com/test_6oU5kE3Pgdox6fc6PBgMw03';
+        }
+    }
+    
+    console.log(`Redirecting to ${planName}: ${paymentLink}`);
+    
+    // Update hidden payment link field
+    document.getElementById('hiddenPaymentLink').value = paymentLink;
+    
+    // Redirect to Stripe
+    window.location.href = paymentLink;
+}
+
+// ========== INITIALIZATION ==========
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', () => {
+    const jumpedFromURL = checkURLParams();
+    updateStepIndicator();
+    
+    // Mobile menu toggle
+    const mobileBtn = document.getElementById('mobileMenuBtn');
+    if (mobileBtn) {
+        mobileBtn.addEventListener('click', () => {
+            const navLinks = document.querySelector('.nav-links');
+            navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
+        });
+    }
+    
+    // Auto-focus business input if on step 1
+    if (currentStep === 1 && businessInput) {
+        businessInput.focus();
+    }
+    
+    // Code input validation on typing
+    designCodeInput.addEventListener('input', validateAndDisplayConcept);
+    
+    // Allow Enter key to confirm design
+    designCodeInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const input = designCodeInput.value.trim();
+            const concept = findConceptByCode(input);
+            if (concept) {
+                confirmDesignSelection();
+            }
+        }
+    });
+    
+    console.log('Available barber concepts:', barberConcepts.map(c => c.code));
 });
-
-// ========== INIT ==========
-document.addEventListener('DOMContentLoaded', generateConceptCards);
 </script>
+
+
 </body>
 </html>
