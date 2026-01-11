@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="style.css">
 <style>
 body { font-family: Arial, sans-serif; background: #f9f9f9; margin:0; padding:0;}
-.container { max-width: 800px; margin: 50px auto; background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);}
+.container { max-width: 900px; margin: 50px auto; background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);}
 h2 { text-align: center; margin-bottom: 20px; }
 .step { display: none; }
 .step.active { display: block; }
@@ -20,45 +20,21 @@ input, select, textarea { width: 100%; padding: 8px; margin: 5px 0 15px 0; borde
 <body>
 
 <div class="container">
-  <h2 id="formTitle">Website Order Form</h2>
+  <h2>Website Order Form</h2>
+
   <form id="orderForm">
 
-    <!-- Step 1: Plan Selection -->
+    <!-- Step 1: Plan Overview -->
     <div class="step active" id="step-1">
-      <h3>Step 1: Choose Your Plan</h3>
-      <label>
-        <input type="radio" name="plan" value="standard" checked>
-        Standard Plan - Up to 5 Pages
-      </label>
-      <div class="readonly">
-        <ul>
-          <li>5 Pages</li>
-          <li>5 Revisions per Page</li>
-          <li>Delivery 10-15 days</li>
-          <li>3 months support</li>
-          <li>Mobile responsive</li>
-        </ul>
-      </div>
-      <label>
-        <input type="radio" name="plan" value="premium">
-        Premium Plan - Up to 15 Pages
-      </label>
-      <div class="readonly">
-        <ul>
-          <li>15 Pages</li>
-          <li>10 Revisions per Page</li>
-          <li>Delivery 25-30 days</li>
-          <li>6 months support</li>
-          <li>Mobile responsive</li>
-        </ul>
-      </div>
+      <h3>Your Plan: <span id="planName"></span></h3>
+      <div class="readonly" id="planFeatures"></div>
       <button type="button" onclick="nextStep()">Next</button>
     </div>
 
     <!-- Step 2: Page Details -->
     <div class="step" id="step-2">
       <h3>Step 2: Page Details</h3>
-      <p>Enter page names and a little description for each page. If unsure, you can select “I need help with this page”.</p>
+      <p>Enter the page names and a little description for each page. If unsure, select “I need help with this page”.</p>
       <div id="pageFields"></div>
       <button type="button" onclick="prevStep()">Previous</button>
       <button type="button" onclick="nextStep()">Next</button>
@@ -66,15 +42,8 @@ input, select, textarea { width: 100%; padding: 8px; margin: 5px 0 15px 0; borde
 
     <!-- Step 3: Custom Features -->
     <div class="step" id="step-3">
-      <h3>Step 3: Choose Custom Features</h3>
-      <p>Some features are only available for Premium plan.</p>
-      <div id="featureList">
-        <label><input type="checkbox" name="feature" value="booking"> Online Appointment Booking</label>
-        <label><input type="checkbox" name="feature" value="gallery"> Image Gallery / Portfolio</label>
-        <label><input type="checkbox" name="feature" value="contact"> Contact Form</label>
-        <label><input type="checkbox" name="feature" value="promo"> Promotions Section</label>
-        <label><input type="checkbox" name="feature" value="blog"> Blog / News Section</label>
-      </div>
+      <h3>Step 3: Custom Features</h3>
+      <div id="featureContainer"></div>
       <button type="button" onclick="prevStep()">Previous</button>
       <button type="button" onclick="nextStep()">Next</button>
     </div>
@@ -82,7 +51,7 @@ input, select, textarea { width: 100%; padding: 8px; margin: 5px 0 15px 0; borde
     <!-- Step 4: Assets Upload -->
     <div class="step" id="step-4">
       <h3>Step 4: Upload Assets</h3>
-      <label>Logo (if you don’t have one, we can create for you later):
+      <label>Logo (if you don’t have one, we can create it later):
         <input type="file" name="logo" accept=".png,.jpg,.svg">
       </label>
       <label>Images / Brand Files:
@@ -95,7 +64,7 @@ input, select, textarea { width: 100%; padding: 8px; margin: 5px 0 15px 0; borde
       <button type="button" onclick="nextStep()">Next</button>
     </div>
 
-    <!-- Step 5: Final Review -->
+    <!-- Step 5: Review & Submit -->
     <div class="step" id="step-5">
       <h3>Step 5: Review & Submit</h3>
       <div id="review"></div>
@@ -107,7 +76,7 @@ input, select, textarea { width: 100%; padding: 8px; margin: 5px 0 15px 0; borde
 </div>
 
 <script>
-// ===== Universal Multi-step Form Logic =====
+// ----- Multi-step form logic -----
 let currentStep = 1;
 const totalSteps = 5;
 
@@ -122,6 +91,7 @@ function nextStep() {
   if (currentStep < totalSteps) {
     currentStep++;
     if(currentStep === 2) generatePageFields();
+    if(currentStep === 3) generateFeatures();
     if(currentStep === 5) generateReview();
     showStep(currentStep);
   }
@@ -134,9 +104,44 @@ function prevStep() {
   }
 }
 
-// ===== Step 2: Dynamic Page Fields Based on Plan =====
+// ----- Load plan and niche from URL -----
+let plan = 'standard'; // default
+let niche = 'general';
+window.addEventListener('DOMContentLoaded', () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  plan = urlParams.get('plan') || plan;
+  niche = urlParams.get('niche') || niche;
+
+  const planName = document.getElementById('planName');
+  const planFeatures = document.getElementById('planFeatures');
+
+  if(plan === 'standard') {
+    planName.textContent = "Standard Plan";
+    planFeatures.innerHTML = `
+      <ul>
+        <li>Up to 5 Pages</li>
+        <li>Up to 5 Revisions per Page</li>
+        <li>Delivery 10-15 days</li>
+        <li>3 months support</li>
+        <li>Mobile responsive</li>
+      </ul>
+    `;
+  } else if(plan === 'premium') {
+    planName.textContent = "Premium Plan";
+    planFeatures.innerHTML = `
+      <ul>
+        <li>Up to 15 Pages</li>
+        <li>Up to 10 Revisions per Page</li>
+        <li>Delivery 25-30 days</li>
+        <li>6 months support</li>
+        <li>Mobile responsive</li>
+      </ul>
+    `;
+  }
+});
+
+// ----- Generate page fields dynamically -----
 function generatePageFields() {
-  const plan = document.querySelector('input[name="plan"]:checked').value;
   const maxPages = plan === 'standard' ? 5 : 15;
   const container = document.getElementById('pageFields');
   container.innerHTML = '';
@@ -155,7 +160,26 @@ function generatePageFields() {
   }
 }
 
-// ===== Step 5: Review =====
+// ----- Generate feature checkboxes based on plan -----
+function generateFeatures() {
+  const container = document.getElementById('featureContainer');
+  container.innerHTML = '';
+
+  const allFeatures = [
+    {name: 'Online Appointment Booking', premium: true},
+    {name: 'Image Gallery / Portfolio', premium: false},
+    {name: 'Contact Form', premium: false},
+    {name: 'Promotions Section', premium: true},
+    {name: 'Blog / News Section', premium: true}
+  ];
+
+  allFeatures.forEach(f => {
+    if(f.premium && plan === 'standard') return; // skip premium features if plan is standard
+    container.innerHTML += `<label><input type="checkbox" name="feature" value="${f.name}"> ${f.name}</label>`;
+  });
+}
+
+// ----- Generate final review -----
 function generateReview() {
   const form = document.getElementById('orderForm');
   const review = document.getElementById('review');
@@ -168,27 +192,11 @@ function generateReview() {
   review.innerHTML = html;
 }
 
-// ===== Universal Niche & Plan Customization =====
-const params = new URLSearchParams(window.location.search);
-const niche = params.get('niche') || "Website";
-const plan = params.get('plan') || "standard";
-
-// Update form title dynamically
-document.getElementById('formTitle').textContent = `${niche} Website Order Form`;
-
-// Pre-select plan dynamically
-const planInput = document.querySelector(`input[name="plan"][value="${plan}"]`);
-if(planInput) planInput.checked = true;
-
-// Generate pages dynamically for pre-selected plan
-generatePageFields();
-
-// ===== Handle form submission =====
+// ----- Form submission -----
 document.getElementById('orderForm').addEventListener('submit', function(e){
   e.preventDefault();
   alert('Order submitted successfully!');
-  // Optional: redirect to a universal thank you page
-  window.location.href = `thank-you.html?niche=${niche}&plan=${plan}`;
+  // Redirect to universal thank-you page or handle backend submission
 });
 </script>
 
