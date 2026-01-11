@@ -90,6 +90,71 @@ label {
   display: block;
   margin-top: 10px;
 }
+
+/* Review Step Styling */
+.review-section {
+  margin-bottom: 25px;
+  padding: 20px;
+  background: var(--light-gray);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+.review-section h4 {
+  color: var(--accent);
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+  border-bottom: 2px solid rgba(255, 107, 0, 0.1);
+  padding-bottom: 8px;
+}
+
+.review-item {
+  display: flex;
+  margin-bottom: 12px;
+  align-items: flex-start;
+}
+
+.review-label {
+  font-weight: 600;
+  min-width: 140px;
+  color: var(--dark);
+}
+
+.review-value {
+  flex: 1;
+  color: var(--text-gray);
+}
+
+.review-value.empty {
+  color: #999;
+  font-style: italic;
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  margin-bottom: 5px;
+}
+
+.file-info i {
+  color: var(--accent);
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  background: rgba(255, 107, 0, 0.1);
+  color: var(--accent);
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-left: 8px;
+}
 </style>
 </head>
 <body>
@@ -132,13 +197,13 @@ label {
     <div class="step" id="step-4">
       <h3>Step 4: Upload Assets</h3>
       <label>Logo (we can create if you don't have one):
-        <input type="file" name="logo" accept=".png,.jpg,.svg">
+        <input type="file" name="logo" accept=".png,.jpg,.svg" id="logoUpload">
       </label>
       <label>Images / Brand Files:
-        <input type="file" name="images" multiple accept=".jpg,.png,.svg,.pdf">
+        <input type="file" name="images" multiple accept=".jpg,.png,.svg,.pdf" id="imagesUpload">
       </label>
       <label>Other content files:
-        <input type="file" name="otherFiles" multiple>
+        <input type="file" name="otherFiles" multiple id="otherFilesUpload">
       </label>
       <button type="button" onclick="prevStep()">Previous</button>
       <button type="button" onclick="nextStep()">Next</button>
@@ -197,15 +262,19 @@ function generatePageFields(){
   container.innerHTML='';
   for(let i=1;i<=planData.pages;i++){
     container.innerHTML+=`
-      <label>Page ${i} Name:
-        <input type="text" name="pageName${i}" placeholder="About, Services, Contact etc.">
-      </label>
-      <label>Brief description / content:
-        <textarea name="pageContent${i}" placeholder="Write a little info..."></textarea>
-      </label>
-      <label>
-        <input type="checkbox" name="helpPage${i}" value="help"> I need help with this page
-      </label>
+      <div style="margin-bottom: 25px; padding: 20px; background: var(--light-gray); border-radius: 12px;">
+        <h4 style="color: var(--accent); margin-bottom: 15px;">Page ${i}</h4>
+        <label>Page Name:
+          <input type="text" name="pageName${i}" placeholder="About, Services, Contact etc.">
+        </label>
+        <label>Brief description / content:
+          <textarea name="pageContent${i}" placeholder="Write a little info..." rows="3"></textarea>
+        </label>
+        <label style="display: flex; align-items: center; gap: 8px; margin-top: 10px;">
+          <input type="checkbox" name="helpPage${i}" value="help">
+          <span>I need help with this page</span>
+        </label>
+      </div>
     `;
   }
 }
@@ -217,34 +286,196 @@ function generateFeatures(){
   customFeatures.forEach(f=>{
     const included = planData.features.includes(f);
     container.innerHTML+=`
-      <label>
+      <label style="display: flex; align-items: center; gap: 10px; padding: 12px; background: var(--light-gray); border-radius: 8px; margin-bottom: 10px;">
         <input type="checkbox" name="feature" value="${f}" ${included?'checked disabled':''}>
-        ${f} ${included?'(Included in plan)':''}
+        <span style="flex: 1;">
+          ${f} ${included?'<span class="badge">Included</span>':''}
+        </span>
       </label>
     `;
   });
 }
 
-// Step 5: review
+// Step 5: review - FIXED to show clean, organized review
 function generateReview(){
-  const form = document.getElementById('orderForm');
   const review = document.getElementById('review');
-  const data = new FormData(form);
-  let html = `<ul><li><strong>Niche:</strong> ${niche}</li><li><strong>Plan:</strong> ${planData.name}</li>`;
-  for(let [key,value] of data.entries()){
-    html+=`<li><strong>${key}:</strong> ${value}</li>`;
+  let html = '';
+  
+  // 1. Plan Summary
+  html += `
+    <div class="review-section">
+      <h4><i class="fas fa-box" style="margin-right: 8px;"></i>Your Plan</h4>
+      <div class="review-item">
+        <div class="review-label">Niche:</div>
+        <div class="review-value">${niche}</div>
+      </div>
+      <div class="review-item">
+        <div class="review-label">Plan:</div>
+        <div class="review-value">${planData.name} (${planData.pages} pages)</div>
+      </div>
+      <div class="review-item">
+        <div class="review-label">Delivery:</div>
+        <div class="review-value">${planData.delivery}</div>
+      </div>
+    </div>
+  `;
+  
+  // 2. Page Details
+  html += `<div class="review-section">
+    <h4><i class="fas fa-file" style="margin-right: 8px;"></i>Page Details</h4>`;
+  
+  for(let i=1;i<=planData.pages;i++){
+    const pageName = document.querySelector(`[name="pageName${i}"]`)?.value;
+    const pageContent = document.querySelector(`[name="pageContent${i}"]`)?.value;
+    const needsHelp = document.querySelector(`[name="helpPage${i}"]`)?.checked;
+    
+    html += `
+      <div class="review-item">
+        <div class="review-label">Page ${i}:</div>
+        <div class="review-value">
+          ${pageName ? `<strong>${pageName}</strong>` : '<span class="empty">Not specified</span>'}
+          ${needsHelp ? '<span class="badge">Needs help</span>' : ''}
+        </div>
+      </div>
+    `;
   }
-  html+='</ul>';
+  html += `</div>`;
+  
+  // 3. Selected Features
+  html += `<div class="review-section">
+    <h4><i class="fas fa-star" style="margin-right: 8px;"></i>Selected Features</h4>`;
+  
+  const selectedFeatures = [];
+  document.querySelectorAll('[name="feature"]:checked').forEach(cb => {
+    selectedFeatures.push(cb.value);
+  });
+  
+  if(selectedFeatures.length > 0){
+    selectedFeatures.forEach(feature => {
+      html += `
+        <div class="review-item">
+          <div class="review-value">✓ ${feature}</div>
+        </div>
+      `;
+    });
+  } else {
+    html += `<div class="review-item"><div class="review-value empty">No additional features selected</div></div>`;
+  }
+  html += `</div>`;
+  
+  // 4. Uploaded Files
+  html += `<div class="review-section">
+    <h4><i class="fas fa-paperclip" style="margin-right: 8px;"></i>Uploaded Assets</h4>`;
+  
+  // Logo
+  const logoFile = document.getElementById('logoUpload')?.files[0];
+  if(logoFile){
+    html += `
+      <div class="review-item">
+        <div class="review-label">Logo:</div>
+        <div class="review-value">
+          <div class="file-info">
+            <i class="fas fa-file-image"></i>
+            <span>${logoFile.name} (${Math.round(logoFile.size/1024)} KB)</span>
+          </div>
+        </div>
+      </div>
+    `;
+  } else {
+    html += `<div class="review-item">
+      <div class="review-label">Logo:</div>
+      <div class="review-value empty">No logo uploaded (we'll create one for you)</div>
+    </div>`;
+  }
+  
+  // Images
+  const imageFiles = document.getElementById('imagesUpload')?.files;
+  if(imageFiles && imageFiles.length > 0){
+    html += `
+      <div class="review-item">
+        <div class="review-label">Images:</div>
+        <div class="review-value">
+          <div class="file-info">
+            <i class="fas fa-images"></i>
+            <span>${imageFiles.length} file(s) uploaded</span>
+          </div>
+        </div>
+      </div>
+    `;
+  } else {
+    html += `<div class="review-item">
+      <div class="review-label">Images:</div>
+      <div class="review-value empty">No images uploaded</div>
+    </div>`;
+  }
+  
+  // Other Files
+  const otherFiles = document.getElementById('otherFilesUpload')?.files;
+  if(otherFiles && otherFiles.length > 0){
+    html += `
+      <div class="review-item">
+        <div class="review-label">Other Files:</div>
+        <div class="review-value">
+          <div class="file-info">
+            <i class="fas fa-folder"></i>
+            <span>${otherFiles.length} file(s) uploaded</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  
+  html += `</div>`;
+  
+  // 5. Summary
+  html += `
+    <div class="review-section" style="background: rgba(255, 107, 0, 0.05); border: 2px solid var(--accent);">
+      <h4><i class="fas fa-check-circle" style="margin-right: 8px; color: var(--accent);"></i>Ready to Submit</h4>
+      <p style="color: var(--text-gray); line-height: 1.6;">
+        Review your order details above. Once submitted, our team will contact you within 24 hours to begin your ${planData.name.toLowerCase()} website project.
+      </p>
+      <div class="review-item" style="margin-top: 15px;">
+        <div class="review-label">Next Steps:</div>
+        <div class="review-value">
+          1. Project confirmation email<br>
+          2. Initial consultation call<br>
+          3. Design mockups (2-3 days)<br>
+          4. Development begins
+        </div>
+      </div>
+    </div>
+  `;
+  
   review.innerHTML = html;
 }
 
 // Form submission
 document.getElementById('orderForm').addEventListener('submit', function(e){
   e.preventDefault();
-  alert('Order submitted successfully!');
-  // Redirect to thank-you page or send to server
-  window.location.href = `thank-you.html?niche=${niche}&plan=${planParam}`;
+  
+  // Show success message
+  const submitBtn = this.querySelector('button[type="submit"]');
+  const originalText = submitBtn.innerHTML;
+  
+  submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+  submitBtn.disabled = true;
+  
+  // Simulate processing
+  setTimeout(() => {
+    alert('Order submitted successfully! Our team will contact you within 24 hours.');
+    
+    // Redirect to thank-you page or send to server
+    window.location.href = `thank-you.html?niche=${encodeURIComponent(niche)}&plan=${planParam}`;
+  }, 1500);
 });
+
+// Add Font Awesome for icons
+if (!document.querySelector('link[href*="font-awesome"]')) {
+  const faLink = document.createElement('link');
+  faLink.rel = 'stylesheet';
+  faLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css';
+  document.head.appendChild(faLink);
+}
 
 // Show first step
 showStep(currentStep);
