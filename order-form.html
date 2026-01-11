@@ -6,36 +6,72 @@
 <title>Website Order Form</title>
 <link rel="stylesheet" href="style.css">
 <style>
-body { font-family: Arial, sans-serif; background: #f9f9f9; margin:0; padding:0;}
-.container { max-width: 900px; margin: 50px auto; background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);}
-h2 { text-align: center; margin-bottom: 20px; }
+/* Branding & basic layout */
+body { font-family: Arial, sans-serif; background: #f2f2f2; margin:0; padding:0;}
+.container { max-width: 800px; margin: 50px auto; background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);}
+h2, h3 { text-align: center; }
 .step { display: none; }
 .step.active { display: block; }
 button { padding: 10px 20px; margin: 10px 5px; border: none; background: #000; color: #fff; border-radius: 5px; cursor: pointer; }
 button:hover { background: #333; }
 input, select, textarea { width: 100%; padding: 8px; margin: 5px 0 15px 0; border-radius: 5px; border: 1px solid #ccc; }
-.readonly { background: #f4f4f4; padding: 10px; border-radius: 5px; }
+.readonly { background: #f4f4f4; padding: 10px; border-radius:5px; }
+
+/* Help modal */
+.help-modal {
+  display: none;
+  position: fixed;
+  z-index: 100;
+  left: 0; top: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+}
+.help-modal .content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 500px;
+  text-align: left;
+}
+.help-modal button { background: #000; margin-top: 10px; }
+.help-link { font-size: 0.9em; color: #555; cursor: pointer; display: block; margin-top: -10px; text-align: right; }
 </style>
 </head>
 <body>
 
 <div class="container">
-  <h2>Website Order Form</h2>
+  <!-- Header Branding -->
+  <div style="text-align:center;margin-bottom:20px;">
+    <img src="logo.png" alt="Vibz Logo" style="height:50px;">
+    <h2>Your Website Order Form</h2>
+  </div>
 
   <form id="orderForm">
 
-    <!-- Step 1: Plan Overview -->
+    <!-- Step 1: Plan Display -->
     <div class="step active" id="step-1">
-      <h3>Your Plan: <span id="planName"></span></h3>
-      <div class="readonly" id="planFeatures"></div>
+      <h3>Step 1: Your Selected Plan</h3>
+      <div class="readonly">
+        <strong>Plan:</strong> Standard Plan (example)
+        <ul>
+          <li>5 Pages</li>
+          <li>5 Revisions per Page</li>
+          <li>Delivery 10-15 days</li>
+          <li>3 months support</li>
+          <li>Mobile responsive</li>
+        </ul>
+      </div>
+      <span class="help-link" onclick="openHelp('step1')">Need help understanding this plan?</span>
       <button type="button" onclick="nextStep()">Next</button>
     </div>
 
     <!-- Step 2: Page Details -->
     <div class="step" id="step-2">
       <h3>Step 2: Page Details</h3>
-      <p>Enter the page names and a little description for each page. If unsure, select “I need help with this page”.</p>
+      <p>Enter page names and brief info for each page. If unsure, select “I need help”.</p>
       <div id="pageFields"></div>
+      <span class="help-link" onclick="openHelp('step2')">Need help with pages?</span>
       <button type="button" onclick="prevStep()">Previous</button>
       <button type="button" onclick="nextStep()">Next</button>
     </div>
@@ -43,12 +79,14 @@ input, select, textarea { width: 100%; padding: 8px; margin: 5px 0 15px 0; borde
     <!-- Step 3: Custom Features -->
     <div class="step" id="step-3">
       <h3>Step 3: Custom Features</h3>
-      <div id="featureContainer"></div>
+      <p>Only features in your plan appear here.</p>
+      <div id="featureFields"></div>
+      <span class="help-link" onclick="openHelp('step3')">Need help with features?</span>
       <button type="button" onclick="prevStep()">Previous</button>
       <button type="button" onclick="nextStep()">Next</button>
     </div>
 
-    <!-- Step 4: Assets Upload -->
+    <!-- Step 4: Asset Uploads -->
     <div class="step" id="step-4">
       <h3>Step 4: Upload Assets</h3>
       <label>Logo (if you don’t have one, we can create it later):
@@ -60,11 +98,12 @@ input, select, textarea { width: 100%; padding: 8px; margin: 5px 0 15px 0; borde
       <label>Other content files:
         <input type="file" name="otherFiles" multiple>
       </label>
+      <span class="help-link" onclick="openHelp('step4')">Need help with uploads?</span>
       <button type="button" onclick="prevStep()">Previous</button>
       <button type="button" onclick="nextStep()">Next</button>
     </div>
 
-    <!-- Step 5: Review & Submit -->
+    <!-- Step 5: Review -->
     <div class="step" id="step-5">
       <h3>Step 5: Review & Submit</h3>
       <div id="review"></div>
@@ -75,77 +114,44 @@ input, select, textarea { width: 100%; padding: 8px; margin: 5px 0 15px 0; borde
   </form>
 </div>
 
+<!-- Help Modal -->
+<div class="help-modal" id="helpModal">
+  <div class="content">
+    <h4>Help</h4>
+    <p id="helpText"></p>
+    <button onclick="closeHelp()">Close</button>
+  </div>
+</div>
+
 <script>
-// ----- Multi-step form logic -----
+// Steps logic
 let currentStep = 1;
 const totalSteps = 5;
 
-function showStep(n) {
-  document.querySelectorAll('.step').forEach((el, i) => {
+function showStep(n){
+  document.querySelectorAll('.step').forEach((el,i)=>{
     el.classList.remove('active');
-    if (i === n - 1) el.classList.add('active');
+    if(i===n-1) el.classList.add('active');
   });
 }
 
-function nextStep() {
-  if (currentStep < totalSteps) {
+function nextStep(){
+  if(currentStep<totalSteps){
     currentStep++;
-    if(currentStep === 2) generatePageFields();
-    if(currentStep === 3) generateFeatures();
-    if(currentStep === 5) generateReview();
+    if(currentStep===2) generatePageFields();
+    if(currentStep===3) generateFeatureFields();
+    if(currentStep===5) generateReview();
     showStep(currentStep);
   }
 }
+function prevStep(){ if(currentStep>1){ currentStep--; showStep(currentStep); } }
 
-function prevStep() {
-  if (currentStep > 1) {
-    currentStep--;
-    showStep(currentStep);
-  }
-}
-
-// ----- Load plan and niche from URL -----
-let plan = 'standard'; // default
-let niche = 'general';
-window.addEventListener('DOMContentLoaded', () => {
-  const urlParams = new URLSearchParams(window.location.search);
-  plan = urlParams.get('plan') || plan;
-  niche = urlParams.get('niche') || niche;
-
-  const planName = document.getElementById('planName');
-  const planFeatures = document.getElementById('planFeatures');
-
-  if(plan === 'standard') {
-    planName.textContent = "Standard Plan";
-    planFeatures.innerHTML = `
-      <ul>
-        <li>Up to 5 Pages</li>
-        <li>Up to 5 Revisions per Page</li>
-        <li>Delivery 10-15 days</li>
-        <li>3 months support</li>
-        <li>Mobile responsive</li>
-      </ul>
-    `;
-  } else if(plan === 'premium') {
-    planName.textContent = "Premium Plan";
-    planFeatures.innerHTML = `
-      <ul>
-        <li>Up to 15 Pages</li>
-        <li>Up to 10 Revisions per Page</li>
-        <li>Delivery 25-30 days</li>
-        <li>6 months support</li>
-        <li>Mobile responsive</li>
-      </ul>
-    `;
-  }
-});
-
-// ----- Generate page fields dynamically -----
-function generatePageFields() {
-  const maxPages = plan === 'standard' ? 5 : 15;
+// Step 2: Pages
+function generatePageFields(){
+  const maxPages = 5; // Example: can change dynamically if needed
   const container = document.getElementById('pageFields');
-  container.innerHTML = '';
-  for(let i=1; i<=maxPages; i++){
+  container.innerHTML='';
+  for(let i=1;i<=maxPages;i++){
     container.innerHTML += `
       <label>Page ${i} Name:
         <input type="text" name="pageName${i}" placeholder="About, Services, Contact etc.">
@@ -154,50 +160,54 @@ function generatePageFields() {
         <textarea name="pageContent${i}" placeholder="Write a little info..."></textarea>
       </label>
       <label>
-        <input type="checkbox" name="helpPage${i}" value="help"> I need help with this page
+        <input type="checkbox" name="helpPage${i}" value="yes"> I need help with this page
       </label>
     `;
   }
 }
 
-// ----- Generate feature checkboxes based on plan -----
-function generateFeatures() {
-  const container = document.getElementById('featureContainer');
-  container.innerHTML = '';
-
-  const allFeatures = [
-    {name: 'Online Appointment Booking', premium: true},
-    {name: 'Image Gallery / Portfolio', premium: false},
-    {name: 'Contact Form', premium: false},
-    {name: 'Promotions Section', premium: true},
-    {name: 'Blog / News Section', premium: true}
-  ];
-
-  allFeatures.forEach(f => {
-    if(f.premium && plan === 'standard') return; // skip premium features if plan is standard
-    container.innerHTML += `<label><input type="checkbox" name="feature" value="${f.name}"> ${f.name}</label>`;
+// Step 3: Features
+function generateFeatureFields(){
+  const features = ['Online Appointment Booking','Image Gallery / Portfolio','Contact Form','Promotions Section','Blog / News Section'];
+  const container = document.getElementById('featureFields');
+  container.innerHTML='';
+  features.forEach(f=>{
+    container.innerHTML += `<label><input type="checkbox" name="feature_${f}" value="yes"> ${f}</label>`;
   });
 }
 
-// ----- Generate final review -----
-function generateReview() {
-  const form = document.getElementById('orderForm');
-  const review = document.getElementById('review');
-  const data = new FormData(form);
-  let html = '<ul>';
-  for (let [key, value] of data.entries()) {
-    html += `<li><strong>${key}:</strong> ${value}</li>`;
+// Step 5: Review
+function generateReview(){
+  const form=document.getElementById('orderForm');
+  const review=document.getElementById('review');
+  const data=new FormData(form);
+  let html='<ul>';
+  for(let [key,value] of data.entries()){
+    html+=`<li><strong>${key}:</strong> ${value}</li>`;
   }
-  html += '</ul>';
-  review.innerHTML = html;
+  html+='</ul>';
+  review.innerHTML=html;
 }
 
-// ----- Form submission -----
-document.getElementById('orderForm').addEventListener('submit', function(e){
+// Form submit
+document.getElementById('orderForm').addEventListener('submit',function(e){
   e.preventDefault();
   alert('Order submitted successfully!');
-  // Redirect to universal thank-you page or handle backend submission
+  // redirect to thank you page if needed
 });
+
+// Help modal
+function openHelp(step){
+  const helpText = {
+    'step1':'This shows your selected plan and features. You cannot change it here.',
+    'step2':'Enter names and descriptions for each page. If unsure, select "I need help".',
+    'step3':'Select features your plan allows. Check "I need help" if unsure.',
+    'step4':'Upload your logo and brand files. If you don’t have them, we can create later.'
+  };
+  document.getElementById('helpText').innerText=helpText[step];
+  document.getElementById('helpModal').style.display='flex';
+}
+function closeHelp(){ document.getElementById('helpModal').style.display='none'; }
 </script>
 
 </body>
