@@ -176,12 +176,12 @@
       color: var(--gray);
     }
 
-    /* ================= BUTTONS (VIBZ Style) ================= */
-    .action-button {
+    /* ================= BUTTONS (Both Same Style) ================= */
+    .option-button {
       width: 100%;
-      background: var(--primary);
-      color: white;
-      border: none;
+      background: transparent;
+      color: var(--primary);
+      border: 2px solid var(--primary);
       border-radius: 12px;
       font-weight: 700;
       padding: 1.2rem;
@@ -196,21 +196,11 @@
       margin-top: 1rem;
     }
 
-    .action-button:hover {
-      background: #e55a00;
-      transform: scale(1.02);
-      box-shadow: 0 15px 30px rgba(255,107,0,0.2);
-    }
-
-    .send-later-btn {
-      background: transparent;
-      color: var(--primary);
-      border: 2px solid var(--primary);
-    }
-
-    .send-later-btn:hover {
+    .option-button:hover {
       background: var(--primary);
       color: white;
+      transform: scale(1.02);
+      box-shadow: 0 15px 30px rgba(255,107,0,0.2);
     }
 
     /* ================= ANIMATIONS ================= */
@@ -296,7 +286,7 @@
         margin: 1.5rem 0;
       }
       
-      .action-button {
+      .option-button {
         padding: 1rem;
         font-size: 1.1rem;
       }
@@ -334,7 +324,7 @@
           <h4>Complete Now</h4>
           <div class="time-badge">10 MINUTES</div>
           <p>Fill out our detailed project form to give us everything we need to start immediately.</p>
-          <a href="order-form.html" class="action-button">
+          <a href="order-form.html" class="option-button">
             <i class="fas fa-bolt"></i> Complete Now
           </a>
         </div>
@@ -343,7 +333,7 @@
           <h4>Complete Later</h4>
           <div class="time-badge">WITHIN 48 HOURS</div>
           <p>We'll send you a detailed questionnaire via email. Complete it when convenient.</p>
-          <button class="action-button send-later-btn" id="sendLaterBtn">
+          <button class="option-button" id="sendLaterBtn">
             <i class="fas fa-envelope"></i> Send Within 48 Hours
           </button>
         </div>
@@ -434,7 +424,6 @@
     document.getElementById('sendLaterBtn').addEventListener('click', function() {
       const btn = this;
       const originalText = btn.innerHTML;
-      const originalClass = btn.className;
       
       // Show loading state
       btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
@@ -444,8 +433,9 @@
       setTimeout(() => {
         // Show success
         btn.innerHTML = '<i class="fas fa-check"></i> Questionnaire Sent!';
-        btn.className = 'action-button';
         btn.style.background = '#10B981';
+        btn.style.borderColor = '#10B981';
+        btn.style.color = 'white';
         
         // Show success message
         const successMsg = document.createElement('div');
@@ -461,7 +451,9 @@
         // Reset button after 5 seconds
         setTimeout(() => {
           btn.innerHTML = originalText;
-          btn.className = originalClass;
+          btn.style.background = '';
+          btn.style.borderColor = '';
+          btn.style.color = '';
           btn.disabled = false;
           updateButtonColors(nicheColor); // Re-apply color updates
           successMsg.remove();
@@ -471,17 +463,24 @@
 
     // Helper function to update button colors
     function updateButtonColors(color) {
-      // Update action buttons
-      document.querySelectorAll('.action-button').forEach(btn => {
-        if (!btn.classList.contains('send-later-btn')) {
-          btn.style.backgroundColor = color;
-        }
-      });
-      
-      // Update send-later button
-      document.querySelectorAll('.send-later-btn').forEach(btn => {
+      // Update all option buttons
+      document.querySelectorAll('.option-button').forEach(btn => {
         btn.style.color = color;
         btn.style.borderColor = color;
+        
+        // Update hover effect
+        btn.addEventListener('mouseenter', function() {
+          if (!this.disabled) {
+            this.style.backgroundColor = color;
+            this.style.color = 'white';
+          }
+        });
+        btn.addEventListener('mouseleave', function() {
+          if (!this.disabled && !this.style.background.includes('10B981')) {
+            this.style.backgroundColor = 'transparent';
+            this.style.color = color;
+          }
+        });
       });
       
       // Update time badge
