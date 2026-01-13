@@ -345,13 +345,40 @@
     </div>
   </div>
 
-  <script>
-    // Get niche and plan from URL parameters
-    const urlParams = new URLSearchParams(window.location.search);
-    const niche = urlParams.get('niche') || 'project';
-    const plan = urlParams.get('plan') || '';
-    const business = urlParams.get('business') || '';
 
+
+  <script>
+    // Get data from URL parameters AND localStorage
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    // Try to get from URL first
+    let niche = urlParams.get('niche');
+    let plan = urlParams.get('plan');
+    let business = urlParams.get('business');
+    
+    // If not in URL, try localStorage (from barber funnel)
+    if (!niche || !plan || !business) {
+        try {
+            const funnelData = JSON.parse(localStorage.getItem('barberFunnelData') || '{}');
+            const storedPlan = localStorage.getItem('selectedPlan') || '';
+            
+            if (funnelData.businessName || storedPlan) {
+                niche = niche || 'barber';
+                plan = plan || (storedPlan.includes('Premium') ? 'Premium' : 'Standard');
+                business = business || funnelData.businessName || 'Your Barber Shop';
+                
+                console.log('Loaded from localStorage:', { niche, plan, business, funnelData });
+            }
+        } catch (e) {
+            console.error('Error loading localStorage:', e);
+        }
+    }
+    
+    // Default values if still empty
+    niche = niche || 'barber';
+    plan = plan || 'Custom Package';
+    business = business || 'Your Business';
+    
     const titleEl = document.getElementById('thankYouTitle');
     const textEl = document.getElementById('thankYouText');
     const projectNameEl = document.getElementById('projectName');
@@ -361,36 +388,36 @@
 
     // Niche-specific messages
     const nicheMessages = {
-      barber: {
-        title: "Thank You!",
-        message: "Your barber shop website order has been confirmed!",
-        projectName: "Barber Shop Website",
-        description: "Perfect for showcasing your cuts, booking appointments, and growing your clientele"
-      },
-      plumber: {
-        title: "Thank You!",
-        message: "Your plumbing service website order has been confirmed!",
-        projectName: "Plumbing Service Website",
-        description: "Ideal for emergency calls, service listings, and building local trust"
-      },
-      dentist: {
-        title: "Thank You!",
-        message: "Your dental clinic website order has been confirmed!",
-        projectName: "Dental Clinic Website",
-        description: "Perfect for patient education, appointment booking, and practice growth"
-      },
-      gym: {
-        title: "Thank You!",
-        message: "Your gym & fitness website order has been confirmed!",
-        projectName: "Gym & Fitness Website",
-        description: "Ideal for class schedules, membership signups, and member engagement"
-      },
-      default: {
-        title: "Thank You!",
-        message: `Your ${niche} website order has been confirmed!`,
-        projectName: `${business || niche.charAt(0).toUpperCase() + niche.slice(1)} Website`,
-        description: "We'll create a high-converting website tailored to your specific business needs"
-      }
+        barber: {
+            title: "Thank You!",
+            message: `Your ${business} website order has been confirmed!`,
+            projectName: `${business} Barber Website`,
+            description: "Perfect for showcasing your cuts, booking appointments, and growing your clientele"
+        },
+        plumber: {
+            title: "Thank You!",
+            message: "Your plumbing service website order has been confirmed!",
+            projectName: "Plumbing Service Website",
+            description: "Ideal for emergency calls, service listings, and building local trust"
+        },
+        dentist: {
+            title: "Thank You!",
+            message: "Your dental clinic website order has been confirmed!",
+            projectName: "Dental Clinic Website",
+            description: "Perfect for patient education, appointment booking, and practice growth"
+        },
+        gym: {
+            title: "Thank You!",
+            message: "Your gym & fitness website order has been confirmed!",
+            projectName: "Gym & Fitness Website",
+            description: "Ideal for class schedules, membership signups, and member engagement"
+        },
+        default: {
+            title: "Thank You!",
+            message: `Your ${business} website order has been confirmed!`,
+            projectName: `${business} Website`,
+            description: "We'll create a high-converting website tailored to your specific business needs"
+        }
     };
 
     // Get the appropriate message
@@ -400,16 +427,37 @@
     titleEl.textContent = nicheData.title;
     textEl.textContent = nicheData.message;
     projectNameEl.textContent = nicheData.projectName;
-    planTypeEl.textContent = plan ? plan + ' Plan' : 'Custom Package';
+    planTypeEl.textContent = plan + ' Plan';
     orderStatusEl.textContent = 'Received & Processing';
     projectDescEl.textContent = nicheData.description;
 
+    // Load selected services if available
+    try {
+        const selectedServices = JSON.parse(localStorage.getItem('selectedServices') || '[]');
+        const serviceCounts = JSON.parse(localStorage.getItem('serviceCounts') || '{}');
+        
+        if (selectedServices.length > 0 || serviceCounts.total > 0) {
+            const detailsContainer = document.querySelector('.thank-you-details');
+            
+            // Add services summary
+            const servicesHTML = `
+                <p><strong>Selected Services:</strong> ${serviceCounts.total || selectedServices.length} total</p>
+                ${serviceCounts.standard > 0 ? `<p><strong style="color: #4CAF50;">Standard Services:</strong> ${serviceCounts.standard}</p>` : ''}
+                ${serviceCounts.premium > 0 ? `<p><strong style="color: #2196F3;">Premium Services:</strong> ${serviceCounts.premium}</p>` : ''}
+            `;
+            
+            detailsContainer.innerHTML += servicesHTML;
+        }
+    } catch (e) {
+        console.log('No services data available');
+    }
+
     // Add some dynamic styling based on niche
     const nicheColors = {
-      barber: '#FF6B00',
-      plumber: '#0066CC',
-      dentist: '#00A86B',
-      gym: '#FF3366'
+        barber: '#FF6B00',
+        plumber: '#0066CC',
+        dentist: '#00A86B',
+        gym: '#FF3366'
     };
     
     const nicheColor = nicheColors[niche] || '#FF6B00';
@@ -420,112 +468,131 @@
     // Update button styling
     updateButtonColors(nicheColor);
     
+    // Update order form link to pass data
+    const orderFormLink = document.querySelector('a[href="order-form.html"]');
+    if (orderFormLink) {
+        orderFormLink.href = `order-form.html?niche=${niche}&plan=${encodeURIComponent(plan)}&business=${encodeURIComponent(business)}`;
+    }
+
     // Handle "Send Within 48 Hours" button click
     document.getElementById('sendLaterBtn').addEventListener('click', function() {
-      const btn = this;
-      const originalText = btn.innerHTML;
-      
-      // Show loading state
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-      btn.disabled = true;
-      
-      // Simulate API call
-      setTimeout(() => {
-        // Show success
-        btn.innerHTML = '<i class="fas fa-check"></i> Questionnaire Sent!';
-        btn.style.background = '#10B981';
-        btn.style.borderColor = '#10B981';
-        btn.style.color = 'white';
+        const btn = this;
+        const originalText = btn.innerHTML;
         
-        // Show success message
-        const successMsg = document.createElement('div');
-        successMsg.style.cssText = 'background: rgba(16, 185, 129, 0.1); border: 1px solid #10B981; color: #065F46; padding: 1rem; border-radius: 12px; margin-top: 1rem; text-align: center;';
-        successMsg.innerHTML = `
-          <h4 style="margin-bottom: 0.5rem; color: #065F46;"><i class="fas fa-check-circle"></i> Success!</h4>
-          <p>We've sent a detailed questionnaire to your email. Please complete it within 48 hours to start your project.</p>
-          <p style="font-size: 0.9rem; margin-top: 0.5rem;">Check your inbox and spam folder.</p>
-        `;
+        // Get business details for email
+        const funnelData = JSON.parse(localStorage.getItem('barberFunnelData') || '{}');
+        const businessDetails = {
+            name: funnelData.businessName || business,
+            plan: plan,
+            services: JSON.parse(localStorage.getItem('selectedServices') || '[]'),
+            timestamp: new Date().toISOString()
+        };
         
-        btn.parentNode.parentNode.insertBefore(successMsg, btn.parentNode.nextSibling);
+        // Show loading state
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+        btn.disabled = true;
         
-        // Reset button after 5 seconds
+        // Simulate API call (in production, send to your backend)
         setTimeout(() => {
-          btn.innerHTML = originalText;
-          btn.style.background = '';
-          btn.style.borderColor = '';
-          btn.style.color = '';
-          btn.disabled = false;
-          updateButtonColors(nicheColor); // Re-apply color updates
-          successMsg.remove();
-        }, 5000);
-      }, 1500);
+            // Show success
+            btn.innerHTML = '<i class="fas fa-check"></i> Questionnaire Sent!';
+            btn.style.background = '#10B981';
+            btn.style.borderColor = '#10B981';
+            btn.style.color = 'white';
+            
+            // Store that questionnaire was sent
+            localStorage.setItem('questionnaireSent', 'true');
+            localStorage.setItem('questionnaireTime', new Date().toISOString());
+            
+            // Show success message
+            const successMsg = document.createElement('div');
+            successMsg.style.cssText = 'background: rgba(16, 185, 129, 0.1); border: 1px solid #10B981; color: #065F46; padding: 1rem; border-radius: 12px; margin-top: 1rem; text-align: center;';
+            successMsg.innerHTML = `
+                <h4 style="margin-bottom: 0.5rem; color: #065F46;"><i class="fas fa-check-circle"></i> Success!</h4>
+                <p>We've sent a detailed questionnaire to your email. Please complete it within 48 hours to start your project.</p>
+                <p style="font-size: 0.9rem; margin-top: 0.5rem;">Check your inbox and spam folder.</p>
+            `;
+            
+            btn.parentNode.parentNode.insertBefore(successMsg, btn.parentNode.nextSibling);
+            
+            // Reset button after 5 seconds
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.style.background = '';
+                btn.style.borderColor = '';
+                btn.style.color = '';
+                btn.disabled = false;
+                updateButtonColors(nicheColor); // Re-apply color updates
+                successMsg.remove();
+            }, 5000);
+        }, 1500);
     });
 
     // Helper function to update button colors
     function updateButtonColors(color) {
-      // Update all option buttons
-      document.querySelectorAll('.option-button').forEach(btn => {
-        btn.style.color = color;
-        btn.style.borderColor = color;
+        // Update all option buttons
+        document.querySelectorAll('.option-button').forEach(btn => {
+            btn.style.color = color;
+            btn.style.borderColor = color;
+            
+            // Update hover effect
+            btn.addEventListener('mouseenter', function() {
+                if (!this.disabled) {
+                    this.style.backgroundColor = color;
+                    this.style.color = 'white';
+                }
+            });
+            btn.addEventListener('mouseleave', function() {
+                if (!this.disabled && !this.style.background.includes('10B981')) {
+                    this.style.backgroundColor = 'transparent';
+                    this.style.color = color;
+                }
+            });
+        });
         
-        // Update hover effect
-        btn.addEventListener('mouseenter', function() {
-          if (!this.disabled) {
-            this.style.backgroundColor = color;
-            this.style.color = 'white';
-          }
+        // Update time badge
+        document.querySelectorAll('.time-badge').forEach(badge => {
+            badge.style.backgroundColor = color;
         });
-        btn.addEventListener('mouseleave', function() {
-          if (!this.disabled && !this.style.background.includes('10B981')) {
-            this.style.backgroundColor = 'transparent';
-            this.style.color = color;
-          }
-        });
-      });
-      
-      // Update time badge
-      document.querySelectorAll('.time-badge').forEach(badge => {
-        badge.style.backgroundColor = color;
-      });
-      
-      // Update completion options background
-      document.querySelector('.completion-options').style.background = `${color}08`;
+        
+        // Update completion options background
+        document.querySelector('.completion-options').style.background = `${color}08`;
     }
 
     // Add celebratory confetti on page load
     setTimeout(() => {
-      createConfetti(nicheColor);
+        createConfetti(nicheColor);
     }, 500);
 
     function createConfetti(color) {
-      const colors = [color, '#FF6B00', '#121212', '#4a4a4a'];
-      const container = document.querySelector('.thank-you-container');
-      
-      for (let i = 0; i < 20; i++) {
-        const confetti = document.createElement('div');
-        confetti.style.position = 'absolute';
-        confetti.style.width = '8px';
-        confetti.style.height = '8px';
-        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-        confetti.style.borderRadius = '50%';
-        confetti.style.left = Math.random() * 100 + '%';
-        confetti.style.top = '-20px';
-        confetti.style.opacity = '0.7';
-        confetti.style.zIndex = '-1';
-        container.appendChild(confetti);
+        const colors = [color, '#FF6B00', '#121212', '#4a4a4a'];
+        const container = document.querySelector('.thank-you-container');
         
-        // Animate confetti
-        const animation = confetti.animate([
-          { transform: 'translateY(0) rotate(0deg)', opacity: 0.7 },
-          { transform: `translateY(${window.innerHeight}px) rotate(${Math.random() * 360}deg)`, opacity: 0 }
-        ], {
-          duration: Math.random() * 2000 + 1000,
-          easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)'
-        });
-        
-        animation.onfinish = () => confetti.remove();
-      }
+        for (let i = 0; i < 20; i++) {
+            const confetti = document.createElement('div');
+            confetti.style.position = 'absolute';
+            confetti.style.width = '8px';
+            confetti.style.height = '8px';
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.borderRadius = '50%';
+            confetti.style.left = Math.random() * 100 + '%';
+            confetti.style.top = '-20px';
+            confetti.style.opacity = '0.7';
+            confetti.style.zIndex = '-1';
+            container.appendChild(confetti);
+            
+            // Animate confetti
+            const animation = confetti.animate([
+                { transform: 'translateY(0) rotate(0deg)', opacity: 0.7 },
+                { transform: `translateY(${window.innerHeight}px) rotate(${Math.random() * 360}deg)`, opacity: 0 }
+            ], {
+                duration: Math.random() * 2000 + 1000,
+                easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)'
+            });
+            
+            animation.onfinish = () => confetti.remove();
+        }
     }
-  </script>
+</script>
 </body>
 </html>
