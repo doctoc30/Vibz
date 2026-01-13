@@ -348,26 +348,29 @@
 
 
   <script>
-    // Get data from URL parameters AND localStorage
+// Get data from URL parameters AND localStorage
     const urlParams = new URLSearchParams(window.location.search);
     
     // Try to get from URL first
     let niche = urlParams.get('niche');
     let plan = urlParams.get('plan');
     let business = urlParams.get('business');
+    let paymentModel = urlParams.get('paymentModel'); // NEW: Get payment model
     
     // If not in URL, try localStorage (from barber funnel)
     if (!niche || !plan || !business) {
         try {
             const funnelData = JSON.parse(localStorage.getItem('barberFunnelData') || '{}');
             const storedPlan = localStorage.getItem('selectedPlan') || '';
+            const storedModel = localStorage.getItem('paymentModel') || ''; // NEW
             
             if (funnelData.businessName || storedPlan) {
                 niche = niche || 'barber';
                 plan = plan || (storedPlan.includes('Premium') ? 'Premium' : 'Standard');
                 business = business || funnelData.businessName || 'Your Barber Shop';
+                paymentModel = paymentModel || storedModel || funnelData.planModel || ''; // NEW
                 
-                console.log('Loaded from localStorage:', { niche, plan, business, funnelData });
+                console.log('Loaded from localStorage:', { niche, plan, business, paymentModel, funnelData });
             }
         } catch (e) {
             console.error('Error loading localStorage:', e);
@@ -376,8 +379,9 @@
     
     // Default values if still empty
     niche = niche || 'barber';
-    plan = plan || 'Custom Package';
-    business = business || 'Your Business';
+    plan = plan || 'Standard';
+    business = business || 'Your Barber Shop';
+    paymentModel = paymentModel || ''; // NEW
     
     const titleEl = document.getElementById('thankYouTitle');
     const textEl = document.getElementById('thankYouText');
@@ -386,12 +390,12 @@
     const orderStatusEl = document.getElementById('orderStatus');
     const projectDescEl = document.getElementById('projectDescription');
 
-    // Niche-specific messages
+    // Niche-specific messages - UPDATED
     const nicheMessages = {
         barber: {
             title: "Thank You!",
-            message: `Your ${business} website order has been confirmed!`,
-            projectName: `${business} Barber Website`,
+            message: `Your barber shop website order has been confirmed!`,
+            projectName: "Barber Shop Website", // FIXED: Remove business name duplication
             description: "Perfect for showcasing your cuts, booking appointments, and growing your clientele"
         },
         plumber: {
@@ -414,8 +418,8 @@
         },
         default: {
             title: "Thank You!",
-            message: `Your ${business} website order has been confirmed!`,
-            projectName: `${business} Website`,
+            message: `Your website order has been confirmed!`,
+            projectName: `${niche.charAt(0).toUpperCase() + niche.slice(1)} Website`,
             description: "We'll create a high-converting website tailored to your specific business needs"
         }
     };
@@ -423,11 +427,25 @@
     // Get the appropriate message
     const nicheData = nicheMessages[niche] || nicheMessages.default;
     
+    // Format plan name - FIXED: Add payment model
+    let formattedPlan = plan;
+    if (paymentModel) {
+        if (paymentModel === 'Monthly Support') {
+            formattedPlan = `${plan} Plan - Monthly Support`;
+        } else if (paymentModel === 'Own Outright') {
+            formattedPlan = `${plan} Plan - Own Outright`;
+        } else {
+            formattedPlan = `${plan} Plan`;
+        }
+    } else {
+        formattedPlan = `${plan} Plan`;
+    }
+    
     // Update all elements
     titleEl.textContent = nicheData.title;
     textEl.textContent = nicheData.message;
-    projectNameEl.textContent = nicheData.projectName;
-    planTypeEl.textContent = plan + ' Plan';
+    projectNameEl.textContent = nicheData.projectName; // FIXED: Use the clean project name
+    planTypeEl.textContent = formattedPlan; // FIXED: Use formatted plan with payment model
     orderStatusEl.textContent = 'Received & Processing';
     projectDescEl.textContent = nicheData.description;
 
