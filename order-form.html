@@ -895,7 +895,7 @@
 
 
 
-    <script>
+<script>
     // ===================== CONFIGURATION =====================
     const PLANS = {
         standard: {
@@ -904,7 +904,8 @@
             revisions: 5,
             delivery: "10-15 days",
             support: "3 months",
-            price: "£1,500",
+            ownOutrightPrice: "£1,500",
+            monthlyPrice: "£100/month",
             features: ["Mobile Responsive Design", "Basic SEO Setup", "Contact Form", "Social Media Integration", "Speed Optimization"]
         },
         premium: {
@@ -913,7 +914,8 @@
             revisions: 10,
             delivery: "25-30 days",
             support: "6 months",
-            price: "£3,000",
+            ownOutrightPrice: "£3,000",
+            monthlyPrice: "£150/month",
             features: [
                 "Mobile Responsive Design",
                 "Advanced SEO Optimization",
@@ -1036,11 +1038,6 @@
             console.log('Selected services:', selectedServices);
             console.log('Service counts:', serviceCounts);
             
-            // Clear localStorage after loading (optional)
-            // localStorage.removeItem('barberFunnelData');
-            // localStorage.removeItem('selectedServices');
-            // localStorage.removeItem('serviceCounts');
-            
         } catch (e) {
             console.error('Error loading funnel data:', e);
         }
@@ -1107,7 +1104,7 @@
         }
     }
 
-// ===================== PLAN INITIALIZATION =====================
+    // ===================== PLAN INITIALIZATION =====================
     function initializePlan() {
         const planData = PLANS[plan];
         
@@ -1133,8 +1130,14 @@
             displayPlanName = `${planData.name} - ${paymentModel}`;
         }
         
+        // Determine correct price based on payment model
+        let displayPrice = planData.ownOutrightPrice; // Default to own outright
+        if (paymentModel === 'Monthly Support') {
+            displayPrice = planData.monthlyPrice;
+        }
+        
         // Update plan summary
-        document.getElementById('planName').textContent = displayPlanName; // FIXED: Include payment model
+        document.getElementById('planName').textContent = displayPlanName;
         document.getElementById('planBadge').textContent = plan.toUpperCase();
         
         // Add payment model info if available
@@ -1165,7 +1168,7 @@
             </div>
             <div class="plan-item">
                 <i class="fas fa-pound-sign"></i>
-                <span>Price: ${planData.price}</span>
+                <span>Price: ${displayPrice}</span>
             </div>
             ${paymentInfo}
         `;
@@ -1526,8 +1529,7 @@
         }
     }
 
-
-        // ===================== REVIEW GENERATION =====================
+    // ===================== REVIEW GENERATION =====================
     function generateReview() {
         const reviewContent = document.getElementById('reviewContent');
         const planData = PLANS[plan];
@@ -1551,6 +1553,12 @@
         let displayPlanName = planData.name;
         if (paymentModel) {
             displayPlanName = `${planData.name} - ${paymentModel}`;
+        }
+        
+        // Determine correct price for review
+        let displayPrice = planData.ownOutrightPrice;
+        if (paymentModel === 'Monthly Support') {
+            displayPrice = planData.monthlyPrice;
         }
         
         // Collect page data
@@ -1614,11 +1622,11 @@
                 </div>
                 <div class="review-item">
                     <div class="review-label">Plan Type:</div>
-                    <div class="review-value">${displayPlanName}</div> <!-- FIXED: Use displayPlanName -->
+                    <div class="review-value">${displayPlanName}</div>
                 </div>
                 <div class="review-item">
                     <div class="review-label">Price:</div>
-                    <div class="review-value">${planData.price}</div>
+                    <div class="review-value">${displayPrice}</div>
                 </div>
                 <div class="review-item">
                     <div class="review-label">Pages:</div>
@@ -1784,9 +1792,6 @@
                 document.getElementById('successMessage').style.display = 'block';
                 
                 console.log('Form submitted with complete data:', finalData);
-                
-                // In production, you would send this data to your server
-                // fetch('/api/orders', { method: 'POST', body: JSON.stringify(finalData) })
                 
             }, 1500);
         });
