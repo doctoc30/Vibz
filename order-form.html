@@ -1107,13 +1107,43 @@
         }
     }
 
-    // ===================== PLAN INITIALIZATION =====================
+// ===================== PLAN INITIALIZATION =====================
     function initializePlan() {
         const planData = PLANS[plan];
         
+        // Get payment model from localStorage
+        let paymentModel = '';
+        try {
+            paymentModel = localStorage.getItem('paymentModel') || '';
+            const storedPlan = localStorage.getItem('selectedPlan') || '';
+            
+            // Extract payment model from stored plan if available
+            if (storedPlan.includes('Monthly Support')) {
+                paymentModel = 'Monthly Support';
+            } else if (storedPlan.includes('Own Outright')) {
+                paymentModel = 'Own Outright';
+            }
+        } catch (e) {
+            console.error('Error loading payment model:', e);
+        }
+        
+        // Format plan name
+        let displayPlanName = planData.name;
+        if (paymentModel) {
+            displayPlanName = `${planData.name} - ${paymentModel}`;
+        }
+        
         // Update plan summary
-        document.getElementById('planName').textContent = planData.name;
+        document.getElementById('planName').textContent = displayPlanName; // FIXED: Include payment model
         document.getElementById('planBadge').textContent = plan.toUpperCase();
+        
+        // Add payment model info if available
+        let paymentInfo = '';
+        if (paymentModel === 'Monthly Support') {
+            paymentInfo = '<div class="plan-item"><i class="fas fa-calendar-alt"></i><span>Monthly Subscription</span></div>';
+        } else if (paymentModel === 'Own Outright') {
+            paymentInfo = '<div class="plan-item"><i class="fas fa-crown"></i><span>One-time Payment</span></div>';
+        }
         
         const planDetails = document.getElementById('planDetails');
         planDetails.innerHTML = `
@@ -1137,6 +1167,7 @@
                 <i class="fas fa-pound-sign"></i>
                 <span>Price: ${planData.price}</span>
             </div>
+            ${paymentInfo}
         `;
         
         // Update features list
@@ -1147,6 +1178,25 @@
                 <span>${feature}</span>
             </div>
         `).join('');
+        
+        // Add selected services section if available
+        if (selectedServices.length > 0) {
+            const servicesSection = `
+                <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border);">
+                    <h4 style="color: var(--accent); margin-bottom: 10px;">Your Selected Services:</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px;">
+                        ${selectedServices.map(service => `
+                            <div class="plan-item" style="background: var(--accent-light);">
+                                <i class="fas fa-check-circle" style="color: var(--accent);"></i>
+                                <span>${service}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            
+            featuresList.insertAdjacentHTML('beforeend', servicesSection);
+        }
         
         // Initialize pages
         initializePages();
