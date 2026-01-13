@@ -1537,7 +1537,11 @@ const STATIC_PLAN_DETAILS = {
         legalTemplates: true,
         hosting: 'not included',
         hostingNote: 'Client provides their own hosting',
-        pageLimitNote: 'All published pages count toward the page limit'
+        pageLimitNote: 'All published pages count toward the page limit',
+        builtWith: 'Custom HTML, CSS & JavaScript',
+        sourceFiles: 'All source code files to own forever',
+        domain: 'You provide your own domain name',
+        assistedSetup: 'We can handle domain & hosting setup for a £150 one-time assisted setup fee'
     },
     'Premium Own Outright': {
         price: '£3,000',
@@ -1552,34 +1556,48 @@ const STATIC_PLAN_DETAILS = {
         legalTemplates: true,
         hosting: 'not included',
         hostingNote: 'Client provides their own hosting',
-        pageLimitNote: 'All published pages count toward the page limit'
+        pageLimitNote: 'All published pages count toward the page limit',
+        builtWith: 'Custom HTML, CSS & JavaScript',
+        sourceFiles: 'All source code files to own forever',
+        domain: 'You provide your own domain name',
+        assistedSetup: 'We can handle domain & hosting setup for a £150 one-time assisted setup fee'
     },
-    // Monthly plans
-    'Standard Monthly Support': {
-        price: '£100/month',
-        type: 'monthly',
-        hosting: 'Website hosting included',
-        mobileResponsive: true,
-        sslCertificate: 'included',
-        maintenance: 'Monthly maintenance',
-        securityUpdates: true,
+    // Monthly/Annual plans
+    'Standard Annual Support': {
+        price: '£1,200/year',
+        type: 'annual',
+        pages: 'Up to 5 Pages',
+        revisions: 'Up to 5 Revisions Per Page (build phase only)',
+        delivery: '10-15 days',
+        hosting: 'Website hosting included for 1 year',
+        maintenance: 'Monthly maintenance & security updates',
         emailSupport: true,
+        mobileResponsive: true,
+        sslCertificate: 'included and managed by us',
         legalTemplates: true,
         backups: false,
-        performanceMonitoring: false
+        performanceMonitoring: false,
+        builtWith: 'Custom HTML, CSS & JavaScript',
+        domain: 'You provide your own domain name',
+        assistedSetup: 'We can purchase and configure your domain for a £150 one-time assisted setup fee'
     },
-    'Premium Monthly Support': {
-        price: '£150/month',
-        type: 'monthly',
-        hosting: 'Advanced hosting',
+    'Premium Annual Support': {
+        price: '£1,800/year',
+        type: 'annual',
+        pages: 'Up to 15 Pages',
+        revisions: 'Up to 10 Revisions Per Page (build phase only)',
+        delivery: '25-30 days',
+        hosting: 'Advanced hosting for 1 year',
+        maintenance: 'Monthly maintenance, security updates & backups',
+        emailSupport: 'Priority email support',
         mobileResponsive: true,
-        sslCertificate: 'included',
-        maintenance: 'Monthly maintenance',
-        securityUpdates: true,
+        sslCertificate: 'included and managed by us',
+        legalTemplates: true,
         backups: 'Regular backups',
         performanceMonitoring: true,
-        emailSupport: true,
-        legalTemplates: true
+        builtWith: 'Custom HTML, CSS & JavaScript',
+        domain: 'You provide your own domain name',
+        assistedSetup: 'We can purchase and configure your domain for a £150 one-time assisted setup fee'
     }
 };
 
@@ -1635,9 +1653,9 @@ const formData = {
     color: '',
     goal: '',
     urgency: '', // 'Start ASAP' or 'More Info'
-    planModel: '', // 'Own Outright' or 'Monthly Support'
+    planModel: '', // 'Own Outright' or 'Annual Support'
     planType: '', // 'Standard' or 'Premium' based on service selections
-    forcePremiumPlan: false // NEW: Force Premium if premium services selected
+    forcePremiumPlan: false // Force Premium if premium services selected
 };
 
 // Service selection tracking
@@ -1659,8 +1677,8 @@ const tryDifferentBtn = document.getElementById('tryDifferentBtn');
 
 // Helper function to get plan name
 function getPlanName(planType, paymentModel) {
-    if (paymentModel === 'Monthly Support') {
-        return planType + ' Monthly Support';
+    if (paymentModel === 'Annual Support') {
+        return planType + ' Annual Support';
     } else if (paymentModel === 'Own Outright') {
         return planType + ' Own Outright';
     }
@@ -1674,12 +1692,10 @@ function setUrgency(urgency) {
     formData.urgency = urgency;
     
     if (urgency === 'Start ASAP') {
-        // If user wants to start ASAP, go to step 11 (ownership model question)
         currentStep = 11;
         updateStepIndicator();
     } else if (urgency === 'More Info') {
-        // If user needs more info, go to lead capture form (step 12)
-        currentStep = 12; // Step 12 is lead capture form
+        currentStep = 12;
         updateStepIndicator();
     }
 }
@@ -1688,7 +1704,6 @@ function setUrgency(urgency) {
 function setPlanModel(planModel) {
     formData.planModel = planModel;
     
-    // After selecting plan model, go to final plan selection (step 13)
     currentStep = 13;
     updateStepIndicator();
 }
@@ -1703,7 +1718,6 @@ function goBackToStep10() {
 function submitLeadForm(event) {
     event.preventDefault();
     
-    // Get form data
     const leadData = {
         name: document.getElementById('leadName').value,
         email: document.getElementById('leadEmail').value,
@@ -1713,19 +1727,16 @@ function submitLeadForm(event) {
         timeline: document.getElementById('leadTimeline').value,
         budget: document.getElementById('leadBudget').value,
         questions: document.getElementById('leadQuestions').value,
-        // Include all previous funnel data
         ...formData
     };
     
-    // In a real implementation, you would send this data to your server
     console.log('Lead data submitted:', leadData);
     
-    // Show success message
     const formContainer = document.querySelector('.lead-form-container');
     formContainer.innerHTML = `
         <div class="success-message">
             <div style="font-size: 4rem; color: #FF6B00; margin-bottom: 1rem;">
-                <i class="fas fa-check-circle"></i>
+                ✓
             </div>
             <h3>Thank You!</h3>
             <p>Your information has been received. We'll contact you within 24 hours to discuss your project.</p>
@@ -1737,9 +1748,6 @@ function submitLeadForm(event) {
             </button>
         </div>
     `;
-    
-    // Here you would typically send the data to your backend
-    // Example: fetch('/api/lead', { method: 'POST', body: JSON.stringify(leadData) })
 }
 
 // ========== ENHANCED SERVICE SELECTION LOGIC ==========
@@ -1795,7 +1803,7 @@ function validateAndDisplayConcept() {
         conceptDisplayImage.alt = `Design ${concept.code}`;
         conceptDisplayCode.textContent = concept.code.toUpperCase();
         conceptDisplay.style.display = 'block';
-        confirmDesignBtn.innerHTML = `<i class="fas fa-check"></i> Continue with ${concept.code.toUpperCase()}`;
+        confirmDesignBtn.innerHTML = `Continue with ${concept.code.toUpperCase()}`;
         tryDifferentBtn.style.display = 'inline-block';
     } else {
         codeStatus.textContent = `✗ Design not found. Try "barber-1" to "barber-${barberConcepts.length}"`;
@@ -1833,46 +1841,39 @@ function toggleService(serviceName, element) {
     const service = allServices.find(s => s.name === serviceName);
     const index = formData.features.indexOf(serviceName);
     
-    // If trying to SELECT a premium service
     if (index === -1 && service.tier === 'premium') {
-        // Check if we have any selected premium services already
         const hasPremiumServices = formData.features.some(f => {
             const s = allServices.find(s => s.name === f);
             return s.tier === 'premium';
         });
         
-        // If no premium services yet, confirm with user
         if (!hasPremiumServices) {
             const confirmPremium = confirm(
                 "⚠️ Premium Service Selected\n\n" +
-                "Premium services are ONLY available with the Premium Plan (£3,000).\n\n" +
+                "Premium services are ONLY available with the Premium Plan (£3,000/£1,800 year).\n\n" +
                 "Selecting any premium service will REQUIRE the Premium Plan.\n\n" +
                 "Do you want to proceed with premium services?"
             );
             
             if (!confirmPremium) {
-                return; // User canceled
+                return;
             }
         }
     }
     
     if (index === -1) {
-        // Add service
         formData.features.push(serviceName);
         element.classList.add('selected');
     } else {
-        // Remove service
         formData.features.splice(index, 1);
         element.classList.remove('selected');
         
-        // If removing a premium service, check if we still have any premium services
         if (service.tier === 'premium') {
             const stillHasPremium = formData.features.some(f => {
                 const s = allServices.find(s => s.name === f);
                 return s.tier === 'premium';
             });
             
-            // If no more premium services, re-enable Standard plan
             if (!stillHasPremium) {
                 document.querySelectorAll('.service-card.standard').forEach(card => {
                     card.style.opacity = '1';
@@ -1888,11 +1889,9 @@ function toggleService(serviceName, element) {
 }
 
 function updateServiceCounters() {
-    // Reset counts
     standardServiceCount = 0;
     premiumServiceCount = 0;
     
-    // Count services by tier
     formData.features.forEach(feature => {
         const service = allServices.find(s => s.name === feature);
         if (service) {
@@ -1904,12 +1903,10 @@ function updateServiceCounters() {
         }
     });
     
-    // Update counters
     document.getElementById('standardCount').textContent = standardServiceCount;
     document.getElementById('premiumCount').textContent = premiumServiceCount;
     document.getElementById('totalCount').textContent = formData.features.length;
     
-    // Update services list
     const servicesList = document.getElementById('servicesList');
     servicesList.innerHTML = '';
     
@@ -1926,7 +1923,7 @@ function updateServiceCounters() {
             badge.style.display = 'flex';
             badge.style.alignItems = 'center';
             badge.style.gap = '5px';
-            badge.innerHTML = `<span>${service}</span> <i class="fas fa-times" style="cursor:pointer;" onclick="removeService('${service}')"></i>`;
+            badge.innerHTML = `<span>${service}</span> <span style="cursor:pointer;" onclick="removeService('${service}')">×</span>`;
             servicesList.appendChild(badge);
         });
     } else {
@@ -1939,7 +1936,6 @@ function removeService(serviceName) {
     if (index !== -1) {
         formData.features.splice(index, 1);
         
-        // Update visual state of the card
         const serviceCards = document.querySelectorAll('.service-card');
         serviceCards.forEach(card => {
             const h4 = card.querySelector('h4');
@@ -1956,24 +1952,20 @@ function removeService(serviceName) {
 
 // REVISED: Calculate recommended plan with premium enforcement
 function calculateRecommendedPlan() {
-    // Check if ANY premium services are selected
     const hasPremiumServices = formData.features.some(f => {
         const service = allServices.find(s => s.name === f);
         return service.tier === 'premium';
     });
     
     if (hasPremiumServices) {
-        // If ANY premium services selected, MUST be Premium plan
         recommendedPlan.type = 'Premium';
         recommendedPlan.glow = true;
-        recommendedPlan.forcePremium = true; // Force premium flag
+        recommendedPlan.forcePremium = true;
     } else if (formData.features.length > 0) {
-        // Only standard services selected
         recommendedPlan.type = 'Standard';
         recommendedPlan.glow = true;
         recommendedPlan.forcePremium = false;
     } else {
-        // No services selected
         recommendedPlan.type = 'Standard';
         recommendedPlan.glow = false;
         recommendedPlan.forcePremium = false;
@@ -1992,14 +1984,12 @@ function showPlanRecommendation() {
         logicInfo.style.display = 'block';
         
         if (recommendation.forcePremium) {
-            // Force Premium plan due to premium services
             document.getElementById('planLogicText').textContent = 
                 `You selected ${premiumServiceCount} premium service(s). Premium services REQUIRE the Premium Plan.`;
             preview.style.display = 'inline-block';
             preview.style.background = 'linear-gradient(90deg, #2196F3, #21CBF3)';
             document.getElementById('recommendedPlanPreview').textContent = 'Premium Plan REQUIRED';
             
-            // Disable Standard service cards when premium is selected
             document.querySelectorAll('.service-card.standard').forEach(card => {
                 card.style.opacity = '0.6';
                 card.style.pointerEvents = 'none';
@@ -2016,7 +2006,6 @@ function showPlanRecommendation() {
                 preview.style.display = 'none';
             }
             
-            // Re-enable Standard plan cards when no premium services
             document.querySelectorAll('.service-card.standard').forEach(card => {
                 card.style.opacity = '1';
                 card.style.pointerEvents = 'auto';
@@ -2026,7 +2015,6 @@ function showPlanRecommendation() {
         preview.style.display = 'none';
         logicInfo.style.display = 'none';
         
-        // Re-enable all cards when nothing selected
         document.querySelectorAll('.service-card').forEach(card => {
             card.style.opacity = '1';
             card.style.pointerEvents = 'auto';
@@ -2035,20 +2023,17 @@ function showPlanRecommendation() {
 }
 
 function nextFromServices() {
-    // Check if at least one service is selected
     if (formData.features.length === 0) {
         alert('Please select at least one service to continue.');
         return;
     }
     
-    // Check if premium services are selected
     const hasPremiumServices = formData.features.some(f => {
         const service = allServices.find(s => s.name === f);
         return service.tier === 'premium';
     });
     
     if (hasPremiumServices) {
-        // Force Premium plan
         formData.planType = 'Premium';
         formData.forcePremiumPlan = true;
         localStorage.setItem('forcePremiumPlan', 'true');
@@ -2107,30 +2092,25 @@ function showScreen(screenId) {
     if (screen) {
         screen.classList.add('active');
         
-        // Update UI for specific steps
         if (screenId === 'step-3' && formData.designCode) {
             document.getElementById('designInfo').style.display = 'block';
             document.getElementById('selectedDesignCode').textContent = formData.designCode.toUpperCase();
         }
         
         if (screenId === 'step-9') {
-            // Update title with business name if available
             if (formData.businessName) {
                 document.getElementById('step9Title').innerHTML = 
                     `Select Services for <span style="color: #FF6B00;">${formData.businessName}</span>`;
             }
             
-            // Update service counters
             updateServiceCounters();
             showPlanRecommendation();
         }
         
         if (screenId === 'step-13') {
-            // Show plans based on selections
             showFinalPlans();
         }
         
-        // Auto-focus code input on step 4
         if (screenId === 'step-4') {
             setTimeout(() => {
                 designCodeInput.focus();
@@ -2229,7 +2209,6 @@ function setGoal(goal) {
 
 // UPDATED: Go to payment with ALL data passed including static plan details
 function redirectToPayment(planName, stripeLink) {
-    // Validate premium services aren't trying to go with Standard plan
     const hasPremiumServices = formData.features.some(f => {
         const service = allServices.find(s => s.name === f);
         return service.tier === 'premium';
@@ -2240,16 +2219,13 @@ function redirectToPayment(planName, stripeLink) {
         return;
     }
     
-    // Get complete plan name
     const completePlanName = getPlanName(
         planName.includes('Premium') ? 'Premium' : 'Standard',
         formData.planModel
     );
     
-    // Get static plan details
     const staticPlanDetails = STATIC_PLAN_DETAILS[completePlanName];
     
-    // Store all form data with static plan details
     const funnelData = {
         businessName: formData.businessName,
         projectType: formData.projectType,
@@ -2267,13 +2243,12 @@ function redirectToPayment(planName, stripeLink) {
         standardServices: standardServiceCount,
         premiumServices: premiumServiceCount,
         totalServices: formData.features.length,
-        staticPlanDetails: staticPlanDetails, // ADDED: Static plan details
+        staticPlanDetails: staticPlanDetails,
         timestamp: new Date().toISOString()
     };
     
-    // Store in localStorage for thank you and order form
     localStorage.setItem('barberFunnelData', JSON.stringify(funnelData));
-    localStorage.setItem('selectedPlan', completePlanName); // Store complete name
+    localStorage.setItem('selectedPlan', completePlanName);
     localStorage.setItem('selectedServices', JSON.stringify(formData.features));
     localStorage.setItem('serviceCounts', JSON.stringify({
         standard: standardServiceCount,
@@ -2281,9 +2256,8 @@ function redirectToPayment(planName, stripeLink) {
         total: formData.features.length
     }));
     localStorage.setItem('paymentModel', formData.planModel);
-    localStorage.setItem('staticPlanDetails', JSON.stringify(staticPlanDetails)); // Store separately
+    localStorage.setItem('staticPlanDetails', JSON.stringify(staticPlanDetails));
     
-    // Build return URL with parameters for thank you page
     const returnParams = new URLSearchParams();
     returnParams.append('niche', 'barber');
     returnParams.append('business', encodeURIComponent(formData.businessName || 'Barber Shop'));
@@ -2291,46 +2265,35 @@ function redirectToPayment(planName, stripeLink) {
     returnParams.append('paymentModel', formData.planModel);
     returnParams.append('services', formData.features.length);
     
-    // Store thank you params
     localStorage.setItem('thankYouParams', returnParams.toString());
     
     console.log('Redirecting to payment with data:', funnelData);
     console.log('Static Plan Details:', staticPlanDetails);
     console.log('Stripe Link:', stripeLink);
     
-    // Update hidden payment link field
     document.getElementById('hiddenPaymentLink').value = stripeLink;
     
-    // Redirect to Stripe
     window.location.href = stripeLink;
 }
 
-// FIXED REVISED: Show final plans with data passing
+// COMPLETELY REVISED: Show final plans with ALL static features clearly
 function showFinalPlans() {
     const container = document.getElementById('pricingCards');
     const planText = document.getElementById('planRecommendation');
     
-    // Determine pricing based on plan model
-    const isOwnOutright = formData.planModel === 'Own Outright';
-    const standardPrice = isOwnOutright ? '£1,500' : '£100/month';
-    const premiumPrice = isOwnOutright ? '£3,000' : '£150/month';
-    const period = isOwnOutright ? 'one-time' : 'monthly';
-    const planNameSuffix = isOwnOutright ? 'Own Outright' : 'Monthly Support';
+    const isAnnual = formData.planModel === 'Annual Support';
+    const planNameSuffix = isAnnual ? 'Annual Support' : 'Own Outright';
     
-    // Check if premium services force premium plan
     const forcePremium = formData.forcePremiumPlan || 
                         formData.features.some(f => {
                             const service = allServices.find(s => s.name === f);
                             return service.tier === 'premium';
                         });
     
-    // Get static plan details
-    const planKey = forcePremium ? 
-        `Premium ${planNameSuffix}` : 
-        `Standard ${planNameSuffix}`;
+    const planType = forcePremium ? 'Premium' : 'Standard';
+    const planKey = planType + ' ' + planNameSuffix;
     const staticDetails = STATIC_PLAN_DETAILS[planKey];
     
-    // Update plan recommendation text
     let recommendationText;
     if (forcePremium) {
         recommendationText = `You selected <strong>${premiumServiceCount} premium service(s)</strong>. Premium services REQUIRE the <strong>Premium Plan</strong>.`;
@@ -2339,71 +2302,75 @@ function showFinalPlans() {
     }
     planText.innerHTML = recommendationText;
     
-    // Show appropriate plans based on plan model
     const planHTML = `
-        <div class="pricing-card ${forcePremium ? '' : 'recommended-glow'}" 
-             id="${forcePremium ? 'premiumPlan' : 'standardPlan'}"
+        <div class="pricing-card ${!forcePremium ? 'recommended-glow' : ''}" 
+             id="${planType.toLowerCase()}Plan"
              style="${forcePremium ? 'border: 3px solid #2196F3;' : 'border: 3px solid #4CAF50;'}">
             <h3>${planKey}</h3>
             ${forcePremium ? '<div class="required-badge">REQUIRED</div>' : ''}
-            <div class="price">${staticDetails.price}<span class="price-period">/${staticDetails.type === 'one-time' ? 'one-time' : 'month'}</span></div>
+            <div class="price">${staticDetails.price}</div>
             
             <div class="pricing-details" style="text-align: left; margin: 1.5rem 0; font-size: 0.95rem;">
-                ${staticDetails.type === 'one-time' ? `
-                    <p><strong>📄 Pages:</strong> ${staticDetails.pages}</p>
-                    <p><strong>✏️ Revisions:</strong> ${staticDetails.revisions}</p>
-                    <p><strong>🚀 Delivery:</strong> ${staticDetails.delivery}</p>
-                    <p><strong>🛠️ Support:</strong> ${staticDetails.support} (${staticDetails.supportType})</p>
+                <p><strong>Pages:</strong> ${staticDetails.pages}</p>
+                <p><strong>Revisions:</strong> ${staticDetails.revisions}</p>
+                <p><strong>Delivery:</strong> ${staticDetails.delivery}</p>
+                ${isAnnual ? `
+                    <p><strong>Hosting:</strong> ${staticDetails.hosting}</p>
+                    <p><strong>Maintenance:</strong> ${staticDetails.maintenance}</p>
+                    ${staticDetails.backups ? `<p><strong>Backups:</strong> ${staticDetails.backups}</p>` : ''}
                 ` : `
-                    <p><strong>🌐 Hosting:</strong> ${staticDetails.hosting}</p>
-                    <p><strong>🔧 Maintenance:</strong> ${staticDetails.maintenance}</p>
-                    ${staticDetails.backups ? `<p><strong>💾 Backups:</strong> ${staticDetails.backups}</p>` : ''}
-                    ${staticDetails.performanceMonitoring ? `<p><strong>📊 Performance:</strong> ${staticDetails.performanceMonitoring}</p>` : ''}
+                    <p><strong>Support:</strong> ${staticDetails.support}</p>
                 `}
-                <p><strong>📱 Mobile:</strong> ${staticDetails.mobileResponsive ? 'Responsive Design ✓' : ''}</p>
-                <p><strong>🔒 SSL:</strong> ${staticDetails.sslCertificate}</p>
-                <p><strong>⚖️ Legal:</strong> Templates Included ✓</p>
+                <p><strong>Mobile Responsive:</strong> Yes</p>
+                <p><strong>SSL Certificate:</strong> ${staticDetails.sslCertificate}</p>
+                <p><strong>Legal Templates:</strong> Included</p>
+                <p><strong>Built With:</strong> ${staticDetails.builtWith}</p>
+                <p><strong>Domain:</strong> ${staticDetails.domain}</p>
+                ${!isAnnual ? `<p><strong>Source Files:</strong> ${staticDetails.sourceFiles}</p>` : ''}
+                <p><strong>Assisted Setup:</strong> ${staticDetails.assistedSetup}</p>
+                
                 ${staticDetails.hosting === 'not included' ? `
-                    <p style="color: #FF6B00; background: rgba(255, 107, 0, 0.1); padding: 0.5rem; border-radius: 8px; margin-top: 0.5rem;">
+                    <div style="color: #FF6B00; background: rgba(255, 107, 0, 0.1); padding: 0.5rem; border-radius: 8px; margin-top: 0.5rem;">
                         <strong>Note:</strong> ${staticDetails.hostingNote}
-                    </p>
+                    </div>
                 ` : ''}
             </div>
             
-            <div style="margin: 1.5rem 0; padding: 1rem; background: rgba(0,0,0,0.05); border-radius: 8px;">
-                <p style="margin: 0; font-weight: 600;">🎯 Selected Services (${formData.features.length}):</p>
-                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem;">
-                    ${formData.features.slice(0, 5).map(feature => `
-                        <span style="background: ${allServices.find(s => s.name === feature).tier === 'standard' ? '#4CAF50' : '#2196F3'}; 
-                               color: white; padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.8rem;">
-                            ${feature}
-                        </span>
-                    `).join('')}
-                    ${formData.features.length > 5 ? `
-                        <span style="color: #666; font-size: 0.8rem;">
-                            + ${formData.features.length - 5} more
-                        </span>
-                    ` : ''}
+            ${formData.features.length > 0 ? `
+                <div style="margin: 1.5rem 0; padding: 1rem; background: rgba(0,0,0,0.05); border-radius: 8px;">
+                    <p style="margin: 0; font-weight: 600;">Selected Services (${formData.features.length}):</p>
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem;">
+                        ${formData.features.slice(0, 5).map(feature => `
+                            <span style="background: ${allServices.find(s => s.name === feature).tier === 'standard' ? '#4CAF50' : '#2196F3'}; 
+                                   color: white; padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.8rem;">
+                                ${feature}
+                            </span>
+                        `).join('')}
+                        ${formData.features.length > 5 ? `
+                            <span style="color: #666; font-size: 0.8rem;">
+                                + ${formData.features.length - 5} more
+                            </span>
+                        ` : ''}
+                    </div>
                 </div>
-            </div>
+            ` : ''}
             
             <button type="button" class="vibz-btn ${forcePremium ? '' : 'vibz-btn-primary'}" 
                     onclick="redirectToPayment('${planKey}', '${getStripeLink(planKey)}')"
                     style="${forcePremium ? 'background: #2196F3; border-color: #2196F3; color: white; font-weight: 700; padding: 1rem 2rem;' : ''}">
                 ${forcePremium ? 'Continue with Required Premium Plan' : 
-                  isOwnOutright ? 'Choose Standard Plan' : 'Subscribe to Standard Plan'}
+                  isAnnual ? 'Choose Annual Plan' : 'Choose One-Time Plan'}
             </button>
         </div>
     `;
     
     container.innerHTML = planHTML;
     
-    // Add visual effects
-    const planCard = document.getElementById(forcePremium ? 'premiumPlan' : 'standardPlan');
+    const planCard = document.getElementById(planType.toLowerCase() + 'Plan');
     if (planCard) {
         const color = forcePremium ? '#2196F3' : '#4CAF50';
         planCard.style.boxShadow = `0 0 40px ${color}66, 0 0 80px ${color}33`;
-        planCard.style.transform = 'translateY(-10px)';
+        planCard.style.transform = 'translateY(-5px)';
         planCard.style.transition = 'all 0.5s ease';
     }
 }
@@ -2413,8 +2380,8 @@ function getStripeLink(planKey) {
     const stripeLinks = {
         'Standard Own Outright': 'https://buy.stripe.com/test_00wdRa2Lc7093305LxgMw01',
         'Premium Own Outright': 'https://buy.stripe.com/test_dRmaEYbhI84d1YW8XJgMw02',
-        'Standard Monthly Support': 'https://buy.stripe.com/test_9B614oetUckt6fc7TFgMw04',
-        'Premium Monthly Support': 'https://buy.stripe.com/test_6oU5kE3Pgdox6fc6PBgMw03'
+        'Standard Annual Support': 'https://buy.stripe.com/test_9B614oetUckt6fc7TFgMw04',
+        'Premium Annual Support': 'https://buy.stripe.com/test_6oU5kE3Pgdox6fc6PBgMw03'
     };
     return stripeLinks[planKey] || 'https://buy.stripe.com/test_00wdRa2Lc7093305LxgMw01';
 }
@@ -2426,7 +2393,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const jumpedFromURL = checkURLParams();
     updateStepIndicator();
     
-    // Mobile menu toggle
     const mobileBtn = document.getElementById('mobileMenuBtn');
     if (mobileBtn) {
         mobileBtn.addEventListener('click', () => {
@@ -2435,15 +2401,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // Auto-focus business input if on step 1
     if (currentStep === 1 && businessInput) {
         businessInput.focus();
     }
     
-    // Code input validation on typing
     designCodeInput.addEventListener('input', validateAndDisplayConcept);
     
-    // Allow Enter key to confirm design
     designCodeInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
             const input = designCodeInput.value.trim();
