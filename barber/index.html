@@ -559,66 +559,52 @@
             to { opacity:1; transform:translateY(0); } 
         }
 
+        /* Add these styles to your existing CSS */
+        .required-badge {
+            position: absolute;
+            top: -12px;
+            right: 20px;
+            background: #2196F3;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            box-shadow: 0 4px 10px rgba(33, 150, 243, 0.4);
+            z-index: 2;
+        }
 
+        .required-glow {
+            animation: required-pulse 2s infinite;
+            position: relative;
+        }
 
-/* Add these styles to your existing CSS */
+        @keyframes required-pulse {
+            0% { box-shadow: 0 0 20px rgba(33, 150, 243, 0.6); }
+            50% { box-shadow: 0 0 40px rgba(33, 150, 243, 0.8); }
+            100% { box-shadow: 0 0 20px rgba(33, 150, 243, 0.6); }
+        }
 
-/* Required plan badge */
-.required-badge {
-    position: absolute;
-    top: -12px;
-    right: 20px;
-    background: #2196F3;
-    color: white;
-    padding: 5px 15px;
-    border-radius: 20px;
-    font-weight: 700;
-    font-size: 0.8rem;
-    box-shadow: 0 4px 10px rgba(33, 150, 243, 0.4);
-    z-index: 2;
-}
+        .service-card.disabled {
+            opacity: 0.5;
+            pointer-events: none;
+            cursor: not-allowed;
+        }
 
-/* Required glow effect */
-.required-glow {
-    animation: required-pulse 2s infinite;
-    position: relative;
-}
+        .premium-required-notice {
+            background: rgba(33, 150, 243, 0.1);
+            border: 2px solid #2196F3;
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 1rem 0;
+            text-align: center;
+        }
 
-@keyframes required-pulse {
-    0% { box-shadow: 0 0 20px rgba(33, 150, 243, 0.6); }
-    50% { box-shadow: 0 0 40px rgba(33, 150, 243, 0.8); }
-    100% { box-shadow: 0 0 20px rgba(33, 150, 243, 0.6); }
-}
-
-/* Disabled state for Standard cards when premium selected */
-.service-card.disabled {
-    opacity: 0.5;
-    pointer-events: none;
-    cursor: not-allowed;
-}
-
-/* Visual indicator for required premium */
-.premium-required-notice {
-    background: rgba(33, 150, 243, 0.1);
-    border: 2px solid #2196F3;
-    border-radius: 10px;
-    padding: 1rem;
-    margin: 1rem 0;
-    text-align: center;
-}
-
-.premium-required-notice i {
-    color: #2196F3;
-    margin-right: 10px;
-}
-        
+        .premium-required-notice i {
+            color: #2196F3;
+            margin-right: 10px;
+        }
     </style>
-
-
-
-
-
-    
 </head>
 <body>
 
@@ -2168,157 +2154,10 @@ function setGoal(goal) {
     next();
 }
 
-// REVISED: Show final plans with premium enforcement
-function showFinalPlans() {
-    const container = document.getElementById('pricingCards');
-    const planText = document.getElementById('planRecommendation');
-    
-    // Check if premium services force premium plan
-    const forcePremium = formData.forcePremiumPlan || 
-                        formData.features.some(f => {
-                            const service = allServices.find(s => s.name === f);
-                            return service.tier === 'premium';
-                        });
-    
-    // Determine pricing based on plan model
-    const isOwnOutright = formData.planModel === 'Own Outright';
-    const standardPrice = isOwnOutright ? '£1,500' : '£100';
-    const premiumPrice = isOwnOutright ? '£3,000' : '£150';
-    const period = isOwnOutright ? 'one-time' : 'per month';
-    const planNameSuffix = isOwnOutright ? 'Own Outright' : 'Monthly Support';
-    
-    // Separate services by tier
-    const selectedStandardServices = formData.features.filter(f => {
-        const service = allServices.find(s => s.name === f);
-        return service.tier === 'standard';
-    });
-    
-    const selectedPremiumServices = formData.features.filter(f => {
-        const service = allServices.find(s => s.name === f);
-        return service.tier === 'premium';
-    });
-    
-    // Update plan recommendation text
-    let recommendationText;
-    if (forcePremium) {
-        recommendationText = `You selected <strong>${selectedPremiumServices.length} premium service(s)</strong>. Premium services REQUIRE the <strong>Premium Plan</strong>.`;
-    } else {
-        recommendationText = `Based on your <strong>${formData.features.length} selected services</strong>, we recommend the <strong>Standard</strong> plan.`;
-    }
-    planText.innerHTML = recommendationText;
-    
-    // Create plan objects with static features
-    const staticStandardFeatures = [
-        '<strong><i class="fas fa-file-alt"></i> Upto 5 Pages</strong>',
-        '<strong><i class="fas fa-sync-alt"></i> Upto 5 Revisions Per Page</strong>',
-        '<strong><i class="fas fa-rocket"></i> Delivery 10 - 15 days</strong>',
-        '<strong><i class="fas fa-headset"></i> 3 months support</strong>',
-        '<strong><i class="fas fa-mobile-alt"></i> Mobile responsive</strong>'
-    ];
-    
-    const staticPremiumFeatures = [
-        '<strong><i class="fas fa-file-alt"></i> Upto 15 Pages</strong>',
-        '<strong><i class="fas fa-sync-alt"></i> Upto 10 Revisions Per Page</strong>',
-        '<strong><i class="fas fa-rocket"></i> Delivery 25 - 30 days</strong>',
-        '<strong><i class="fas fa-headset"></i> 6 months support</strong>',
-        '<strong><i class="fas fa-mobile-alt"></i> Mobile responsive</strong>'
-    ];
-    
-    // Create HTML for Standard plan (ONLY if no premium services)
-    let standardPlanHtml = '';
-    if (!forcePremium) {
-        let standardFeaturesHtml = '';
-        staticStandardFeatures.forEach(feature => {
-            standardFeaturesHtml += `<li class="standard-feature">${feature}</li>`;
-        });
-        
-        // Add selected standard services
-        if (selectedStandardServices.length > 0) {
-            standardFeaturesHtml += '<li><strong><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Selected Standard Services:</strong></li>';
-            selectedStandardServices.forEach(service => {
-                standardFeaturesHtml += `<li class="standard-feature">• ${service}</li>`;
-            });
-        }
-        
-        standardPlanHtml = `
-            <div class="pricing-card ${!forcePremium ? 'recommended-glow' : ''}" 
-                 id="recommendedStandard">
-                <h3>${planNameSuffix} - Standard</h3>
-                <div class="price">${standardPrice}<span class="price-period">/${period}</span></div>
-                <ul class="pricing-features">${standardFeaturesHtml}</ul>
-                <button type="button" class="vibz-btn vibz-btn-primary" 
-                        onclick="goToPayment('${planNameSuffix} - Standard')">
-                    Choose Standard Plan
-                </button>
-            </div>
-        `;
-    }
-    
-    // Create HTML for Premium plan
-    let premiumFeaturesHtml = '';
-    staticPremiumFeatures.forEach(feature => {
-        premiumFeaturesHtml += `<li class="premium-feature">${feature}</li>`;
-    });
-    
-    // Add selected services to premium plan (BOTH standard and premium)
-    if (formData.features.length > 0) {
-        premiumFeaturesHtml += '<li><strong><i class="fas fa-check-circle" style="color: #2196F3;"></i> Your Selected Services:</strong></li>';
-        
-        // Add standard services first
-        selectedStandardServices.forEach(service => {
-            premiumFeaturesHtml += `<li class="standard-feature">• ${service} (Standard)</li>`;
-        });
-        
-        // Add premium services
-        selectedPremiumServices.forEach(service => {
-            premiumFeaturesHtml += `<li class="premium-feature">• ${service} (Premium)</li>`;
-        });
-    }
-    
-    let premiumPlanHtml = `
-        <div class="pricing-card ${forcePremium ? 'required-glow' : ''}" 
-             id="recommendedPremium">
-            <h3>${planNameSuffix} - Premium</h3>
-            ${forcePremium ? '<div class="required-badge">REQUIRED</div>' : ''}
-            <div class="price">${premiumPrice}<span class="price-period">/${period}</span></div>
-            <ul class="pricing-features">${premiumFeaturesHtml}</ul>
-            <button type="button" class="vibz-btn" 
-                    style="${forcePremium ? 'background: #2196F3; border-color: #2196F3; color: white; font-weight: 700; padding: 1rem 2rem;' : ''}"
-                    onclick="goToPayment('${planNameSuffix} - Premium')">
-                ${forcePremium ? 'Continue with Required Premium Plan' : 'Choose Premium Plan'}
-            </button>
-        </div>
-    `;
-    
-    // Combine plans - ONLY show Standard if no premium services
-    if (forcePremium) {
-        container.innerHTML = premiumPlanHtml;
-    } else {
-        container.innerHTML = standardPlanHtml + premiumPlanHtml;
-    }
-    
-    // Add visual effects
-    if (forcePremium) {
-        const premiumCard = document.getElementById('recommendedPremium');
-        if (premiumCard) {
-            premiumCard.style.boxShadow = '0 0 40px rgba(33, 150, 243, 0.6), 0 0 80px rgba(33, 150, 243, 0.3)';
-            premiumCard.style.border = '3px solid #2196F3';
-            premiumCard.style.transform = 'translateY(-10px)';
-            premiumCard.style.transition = 'all 0.5s ease';
-        }
-    } else {
-        const standardCard = document.getElementById('recommendedStandard');
-        if (standardCard) {
-            standardCard.style.boxShadow = '0 0 40px rgba(76, 175, 80, 0.6), 0 0 80px rgba(76, 175, 80, 0.3)';
-            standardCard.style.border = '3px solid #4CAF50';
-            standardCard.style.transform = 'translateY(-10px)';
-            standardCard.style.transition = 'all 0.5s ease';
-        }
-    }
-}
+// ========== PAYMENT REDIRECTION WITH DATA PASSING ==========
 
-// FIXED: Go to payment with CORRECT Stripe links
-function goToPayment(planName) {
+// UPDATED: Go to payment with ALL data passed
+function redirectToPayment(planName, stripeLink) {
     // Validate premium services aren't trying to go with Standard plan
     const hasPremiumServices = formData.features.some(f => {
         const service = allServices.find(s => s.name === f);
@@ -2330,39 +2169,164 @@ function goToPayment(planName) {
         return;
     }
     
-    // Store all form data before redirecting
-    localStorage.setItem('funnelFormData', JSON.stringify(formData));
+    // Store all form data
+    const funnelData = {
+        businessName: formData.businessName,
+        projectType: formData.projectType,
+        designConcept: formData.designConcept,
+        designCode: formData.designCode,
+        features: formData.features,
+        audience: formData.audience,
+        style: formData.style,
+        color: formData.color,
+        goal: formData.goal,
+        urgency: formData.urgency,
+        planModel: formData.planModel,
+        planType: planName.includes('Premium') ? 'Premium' : 'Standard',
+        standardServices: standardServiceCount,
+        premiumServices: premiumServiceCount,
+        totalServices: formData.features.length,
+        timestamp: new Date().toISOString()
+    };
+    
+    // Store in localStorage for order form
+    localStorage.setItem('barberFunnelData', JSON.stringify(funnelData));
     localStorage.setItem('selectedPlan', planName);
+    localStorage.setItem('selectedServices', JSON.stringify(formData.features));
+    localStorage.setItem('serviceCounts', JSON.stringify({
+        standard: standardServiceCount,
+        premium: premiumServiceCount,
+        total: formData.features.length
+    }));
     
-    // DETERMINE CORRECT PAYMENT LINK BASED ON PLAN SELECTION
-    let paymentLink;
+    // Build return URL with parameters for thank you page
+    const returnParams = new URLSearchParams();
+    returnParams.append('niche', 'barber');
+    returnParams.append('business', encodeURIComponent(formData.businessName || 'Barber Shop'));
+    returnParams.append('plan', planName.includes('Premium') ? 'Premium' : 'Standard');
+    returnParams.append('paymentModel', formData.planModel);
+    returnParams.append('services', formData.features.length);
     
-    if (planName.includes('Own Outright')) {
-        if (planName.includes('Standard')) {
-            // Barber Website (Standard) - £1,500
-            paymentLink = 'https://buy.stripe.com/test_00wdRa2Lc7093305LxgMw01';
-        } else {
-            // Barber Website (Premium) - £3,000
-            paymentLink = 'https://buy.stripe.com/test_dRmaEYbhI84d1YW8XJgMw02';
-        }
-    } else {
-        // Monthly Support plans
-        if (planName.includes('Standard')) {
-            // Monthly Standard - £100/month
-            paymentLink = 'https://buy.stripe.com/test_9B614oetUckt6fc7TFgMw04';
-        } else {
-            // Monthly Premium - £150/month
-            paymentLink = 'https://buy.stripe.com/test_6oU5kE3Pgdox6fc6PBgMw03';
-        }
-    }
+    // In Stripe Checkout, you would set the success_url with these parameters
+    // For now, we'll store them and redirect to Stripe
+    localStorage.setItem('thankYouParams', returnParams.toString());
     
-    console.log(`Redirecting to ${planName}: ${paymentLink}`);
+    console.log('Redirecting to payment with data:', funnelData);
+    console.log('Stripe Link:', stripeLink);
     
     // Update hidden payment link field
-    document.getElementById('hiddenPaymentLink').value = paymentLink;
+    document.getElementById('hiddenPaymentLink').value = stripeLink;
     
     // Redirect to Stripe
-    window.location.href = paymentLink;
+    window.location.href = stripeLink;
+}
+
+// FIXED REVISED: Show final plans with data passing
+function showFinalPlans() {
+    const container = document.getElementById('pricingCards');
+    const planText = document.getElementById('planRecommendation');
+    
+    // Determine pricing based on plan model
+    const isOwnOutright = formData.planModel === 'Own Outright';
+    const standardPrice = isOwnOutright ? '£1,500' : '£100/month';
+    const premiumPrice = isOwnOutright ? '£3,000' : '£150/month';
+    const period = isOwnOutright ? 'one-time' : 'monthly';
+    const planNameSuffix = isOwnOutright ? 'Own Outright' : 'Monthly Support';
+    
+    // Check if premium services force premium plan
+    const forcePremium = formData.forcePremiumPlan || 
+                        formData.features.some(f => {
+                            const service = allServices.find(s => s.name === f);
+                            return service.tier === 'premium';
+                        });
+    
+    // Update plan recommendation text
+    let recommendationText;
+    if (forcePremium) {
+        recommendationText = `You selected <strong>${premiumServiceCount} premium service(s)</strong>. Premium services REQUIRE the <strong>Premium Plan</strong>.`;
+    } else {
+        recommendationText = `Based on your <strong>${formData.features.length} selected services</strong>, we recommend the <strong>Standard</strong> plan.`;
+    }
+    planText.innerHTML = recommendationText;
+    
+    // Show appropriate plans based on plan model
+    if (isOwnOutright) {
+        // Show Own Outright plans
+        container.innerHTML = `
+            <div class="pricing-card ${forcePremium ? '' : 'recommended-glow'}" 
+                 id="${forcePremium ? 'premiumPlan' : 'standardPlan'}">
+                <h3>${planNameSuffix} - ${forcePremium ? 'Premium' : 'Standard'}</h3>
+                ${forcePremium ? '<div class="required-badge">REQUIRED</div>' : ''}
+                <div class="price">${forcePremium ? premiumPrice : standardPrice}<span class="price-period">/${period}</span></div>
+                <ul class="pricing-features">
+                    ${(forcePremium ? [
+                        'Upto 15 Pages',
+                        'Upto 10 Revisions Per Page',
+                        'Delivery 25-30 days',
+                        '6 months support',
+                        'All Premium Features'
+                    ] : [
+                        'Upto 5 Pages',
+                        'Upto 5 Revisions Per Page',
+                        'Delivery 10-15 days',
+                        '3 months support',
+                        'Mobile responsive'
+                    ]).map(item => `<li>✓ ${item}</li>`).join('')}
+                    ${formData.features.length > 0 ? `<li><strong>Selected Services (${formData.features.length}):</strong></li>` : ''}
+                    ${formData.features.slice(0, 5).map(feature => `<li>• ${feature}</li>`).join('')}
+                    ${formData.features.length > 5 ? `<li>... and ${formData.features.length - 5} more</li>` : ''}
+                </ul>
+                <button type="button" class="vibz-btn ${forcePremium ? '' : 'vibz-btn-primary'}" 
+                        onclick="redirectToPayment('${planNameSuffix} - ${forcePremium ? 'Premium' : 'Standard'}', '${forcePremium ? 'https://buy.stripe.com/test_dRmaEYbhI84d1YW8XJgMw02' : 'https://buy.stripe.com/test_00wdRa2Lc7093305LxgMw01'}')"
+                        style="${forcePremium ? 'background: #2196F3; border-color: #2196F3; color: white; font-weight: 700; padding: 1rem 2rem;' : ''}">
+                    ${forcePremium ? 'Continue with Required Premium Plan' : 'Choose Standard Plan'}
+                </button>
+            </div>
+        `;
+    } else {
+        // Show Monthly Support plans
+        container.innerHTML = `
+            <div class="pricing-card ${forcePremium ? '' : 'recommended-glow'}" 
+                 id="${forcePremium ? 'premiumPlan' : 'standardPlan'}">
+                <h3>${planNameSuffix} - ${forcePremium ? 'Premium' : 'Standard'}</h3>
+                ${forcePremium ? '<div class="required-badge">REQUIRED</div>' : ''}
+                <div class="price">${forcePremium ? premiumPrice : standardPrice}<span class="price-period">/${period}</span></div>
+                <ul class="pricing-features">
+                    ${(forcePremium ? [
+                        'All Premium Features',
+                        'Advanced Hosting',
+                        '24/7 Priority Support',
+                        'Regular Updates & Backups',
+                        'Performance Monitoring'
+                    ] : [
+                        'Standard Website Features',
+                        'Hosting Included',
+                        'Monthly Maintenance',
+                        'Security Updates',
+                        'Priority Support'
+                    ]).map(item => `<li>✓ ${item}</li>`).join('')}
+                    ${formData.features.length > 0 ? `<li><strong>Selected Services (${formData.features.length}):</strong></li>` : ''}
+                    ${formData.features.slice(0, 5).map(feature => `<li>• ${feature}</li>`).join('')}
+                    ${formData.features.length > 5 ? `<li>... and ${formData.features.length - 5} more</li>` : ''}
+                </ul>
+                <button type="button" class="vibz-btn ${forcePremium ? '' : 'vibz-btn-primary'}" 
+                        onclick="redirectToPayment('${planNameSuffix} - ${forcePremium ? 'Premium' : 'Standard'}', '${forcePremium ? 'https://buy.stripe.com/test_6oU5kE3Pgdox6fc6PBgMw03' : 'https://buy.stripe.com/test_9B614oetUckt6fc7TFgMw04'}')"
+                        style="${forcePremium ? 'background: #2196F3; border-color: #2196F3; color: white; font-weight: 700; padding: 1rem 2rem;' : ''}">
+                    ${forcePremium ? 'Subscribe to Required Premium Plan' : 'Subscribe to Standard Plan'}
+                </button>
+            </div>
+        `;
+    }
+    
+    // Add visual effects
+    const planCard = document.getElementById(forcePremium ? 'premiumPlan' : 'standardPlan');
+    if (planCard) {
+        const color = forcePremium ? '#2196F3' : '#4CAF50';
+        planCard.style.boxShadow = `0 0 40px ${color}66, 0 0 80px ${color}33`;
+        planCard.style.border = `3px solid ${color}`;
+        planCard.style.transform = 'translateY(-10px)';
+        planCard.style.transition = 'all 0.5s ease';
+    }
 }
 
 // ========== INITIALIZATION ==========
