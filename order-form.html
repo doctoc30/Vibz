@@ -1476,10 +1476,32 @@
         }
     }
 
-    // ===================== REVIEW GENERATION =====================
+
+        // ===================== REVIEW GENERATION =====================
     function generateReview() {
         const reviewContent = document.getElementById('reviewContent');
         const planData = PLANS[plan];
+        
+        // Get payment model
+        let paymentModel = '';
+        try {
+            paymentModel = localStorage.getItem('paymentModel') || '';
+            const storedPlan = localStorage.getItem('selectedPlan') || '';
+            
+            if (storedPlan.includes('Monthly Support')) {
+                paymentModel = 'Monthly Support';
+            } else if (storedPlan.includes('Own Outright')) {
+                paymentModel = 'Own Outright';
+            }
+        } catch (e) {
+            console.error('Error loading payment model:', e);
+        }
+        
+        // Format plan display name
+        let displayPlanName = planData.name;
+        if (paymentModel) {
+            displayPlanName = `${planData.name} - ${paymentModel}`;
+        }
         
         // Collect page data
         const pages = [];
@@ -1542,7 +1564,7 @@
                 </div>
                 <div class="review-item">
                     <div class="review-label">Plan Type:</div>
-                    <div class="review-value">${planData.name}</div>
+                    <div class="review-value">${displayPlanName}</div> <!-- FIXED: Use displayPlanName -->
                 </div>
                 <div class="review-item">
                     <div class="review-label">Price:</div>
@@ -1556,6 +1578,12 @@
                     <div class="review-label">Delivery:</div>
                     <div class="review-value">${planData.delivery}</div>
                 </div>
+                ${paymentModel ? `
+                <div class="review-item">
+                    <div class="review-label">Payment Model:</div>
+                    <div class="review-value">${paymentModel}</div>
+                </div>
+                ` : ''}
                 ${selectedServices.length > 0 ? `
                 <div class="review-item">
                     <div class="review-label">Included Services:</div>
