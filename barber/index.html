@@ -1562,7 +1562,7 @@ const STATIC_PLAN_DETAILS = {
         domain: 'You provide your own domain name',
         assistedSetup: 'We can handle domain & hosting setup for a £150 one-time assisted setup fee'
     },
-    // Monthly/Annual plans
+    // Annual plans
     'Standard Annual Support': {
         price: '£1,200/year',
         type: 'annual',
@@ -1700,10 +1700,16 @@ function setUrgency(urgency) {
     }
 }
 
-// STEP 11: Set plan model (ownership question)
+// STEP 11: Set plan model (ownership question) - FIXED
 function setPlanModel(planModel) {
+    console.log('Setting plan model to:', planModel);
     formData.planModel = planModel;
     
+    // CRITICAL: Store payment model in localStorage
+    localStorage.setItem('paymentModel', planModel);
+    console.log('Payment model stored in localStorage:', planModel);
+    
+    // After selecting plan model, go to final plan selection (step 13)
     currentStep = 13;
     updateStepIndicator();
 }
@@ -2207,8 +2213,13 @@ function setGoal(goal) {
 
 // ========== PAYMENT REDIRECTION WITH DATA PASSING ==========
 
-// UPDATED: Go to payment with ALL data passed including static plan details
+// UPDATED: Go to payment with correct payment model handling
 function redirectToPayment(planName, stripeLink) {
+    console.log('=== redirectToPayment called ===');
+    console.log('Plan name parameter:', planName);
+    console.log('formData.planModel:', formData.planModel);
+    console.log('localStorage paymentModel:', localStorage.getItem('paymentModel'));
+    
     const hasPremiumServices = formData.features.some(f => {
         const service = allServices.find(s => s.name === f);
         return service.tier === 'premium';
@@ -2219,12 +2230,27 @@ function redirectToPayment(planName, stripeLink) {
         return;
     }
     
+    // Get payment model from multiple sources to ensure it's correct
+    const paymentModel = formData.planModel || 
+                        localStorage.getItem('paymentModel') || 
+                        'Own Outright'; // Default fallback
+    
+    console.log('Using payment model:', paymentModel);
+    
     const completePlanName = getPlanName(
         planName.includes('Premium') ? 'Premium' : 'Standard',
-        formData.planModel
+        paymentModel
     );
     
+    console.log('Complete plan name:', completePlanName);
+    
     const staticPlanDetails = STATIC_PLAN_DETAILS[completePlanName];
+    
+    if (!staticPlanDetails) {
+        console.error('❌ No static plan details found for:', completePlanName);
+        alert('Error: Could not find plan details. Please try again.');
+        return;
+    }
     
     const funnelData = {
         businessName: formData.businessName,
@@ -2237,7 +2263,7 @@ function redirectToPayment(planName, stripeLink) {
         color: formData.color,
         goal: formData.goal,
         urgency: formData.urgency,
-        planModel: formData.planModel,
+        planModel: paymentModel,
         planType: planName.includes('Premium') ? 'Premium' : 'Standard',
         planName: completePlanName,
         standardServices: standardServiceCount,
@@ -2255,34 +2281,47 @@ function redirectToPayment(planName, stripeLink) {
         premium: premiumServiceCount,
         total: formData.features.length
     }));
-    localStorage.setItem('paymentModel', formData.planModel);
+    localStorage.setItem('paymentModel', paymentModel);
     localStorage.setItem('staticPlanDetails', JSON.stringify(staticPlanDetails));
+    
+    console.log('Stored in localStorage - paymentModel:', localStorage.getItem('paymentModel'));
+    console.log('Stored in localStorage - selectedPlan:', localStorage.getItem('selectedPlan'));
     
     const returnParams = new URLSearchParams();
     returnParams.append('niche', 'barber');
     returnParams.append('business', encodeURIComponent(formData.businessName || 'Barber Shop'));
     returnParams.append('plan', planName.includes('Premium') ? 'Premium' : 'Standard');
-    returnParams.append('paymentModel', formData.planModel);
+    returnParams.append('paymentModel', paymentModel);
     returnParams.append('services', formData.features.length);
     
     localStorage.setItem('thankYouParams', returnParams.toString());
     
-    console.log('Redirecting to payment with data:', funnelData);
-    console.log('Static Plan Details:', staticPlanDetails);
-    console.log('Stripe Link:', stripeLink);
+    console.log('Redirecting to Stripe with link:', stripeLink);
     
     document.getElementById('hiddenPaymentLink').value = stripeLink;
     
     window.location.href = stripeLink;
 }
 
-// COMPLETELY REVISED: Show final plans with ALL static features clearly
+// UPDATED: Show final plans with debug logging
 function showFinalPlans() {
+    console.log('=== showFinalPlans() called ===');
+    console.log('formData.planModel:', formData.planModel);
+    console.log('localStorage paymentModel:', localStorage.getItem('paymentModel'));
+    console.log('Selected services:', formData.features);
+    console.log('Force premium plan:', formData.forcePremiumPlan);
+    
     const container = document.getElementById('pricingCards');
     const planText = document.getElementById('planRecommendation');
     
-    const isAnnual = formData.planModel === 'Annual Support';
+    // Get payment model - check multiple sources
+    const paymentModel = formData.planModel || localStorage.getItem('paymentModel') || 'Own Outright';
+    const isAnnual = paymentModel === 'Annual Support';
     const planNameSuffix = isAnnual ? 'Annual Support' : 'Own Outright';
+    
+    console.log('Payment model determined:', paymentModel);
+    console.log('Is annual?', isAnnual);
+    console.log('Plan name suffix:', planNameSuffix);
     
     const forcePremium = formData.forcePremiumPlan || 
                         formData.features.some(f => {
@@ -2294,6 +2333,15 @@ function showFinalPlans() {
     const planKey = planType + ' ' + planNameSuffix;
     const staticDetails = STATIC_PLAN_DETAILS[planKey];
     
+    console.log('Plan type:', planType);
+    console.log('Plan key:', planKey);
+    console.log('Static details found:', !!staticDetails);
+    
+    if (!staticDetails) {
+        console.error('❌ No static details found for plan key:', planKey);
+        console.log('Available plan keys:', Object.keys(STATIC_PLAN_DETAILS));
+    }
+    
     let recommendationText;
     if (forcePremium) {
         recommendationText = `You selected <strong>${premiumServiceCount} premium service(s)</strong>. Premium services REQUIRE the <strong>Premium Plan</strong>.`;
@@ -2302,38 +2350,43 @@ function showFinalPlans() {
     }
     planText.innerHTML = recommendationText;
     
+    const stripeLink = getStripeLink(planKey);
+    console.log('Stripe link for', planKey, ':', stripeLink);
+    
     const planHTML = `
         <div class="pricing-card ${!forcePremium ? 'recommended-glow' : ''}" 
              id="${planType.toLowerCase()}Plan"
              style="${forcePremium ? 'border: 3px solid #2196F3;' : 'border: 3px solid #4CAF50;'}">
             <h3>${planKey}</h3>
             ${forcePremium ? '<div class="required-badge">REQUIRED</div>' : ''}
-            <div class="price">${staticDetails.price}</div>
+            <div class="price">${staticDetails ? staticDetails.price : 'Price not found'}</div>
             
             <div class="pricing-details" style="text-align: left; margin: 1.5rem 0; font-size: 0.95rem;">
-                <p><strong>Pages:</strong> ${staticDetails.pages}</p>
-                <p><strong>Revisions:</strong> ${staticDetails.revisions}</p>
-                <p><strong>Delivery:</strong> ${staticDetails.delivery}</p>
-                ${isAnnual ? `
-                    <p><strong>Hosting:</strong> ${staticDetails.hosting}</p>
-                    <p><strong>Maintenance:</strong> ${staticDetails.maintenance}</p>
-                    ${staticDetails.backups ? `<p><strong>Backups:</strong> ${staticDetails.backups}</p>` : ''}
-                ` : `
-                    <p><strong>Support:</strong> ${staticDetails.support}</p>
-                `}
-                <p><strong>Mobile Responsive:</strong> Yes</p>
-                <p><strong>SSL Certificate:</strong> ${staticDetails.sslCertificate}</p>
-                <p><strong>Legal Templates:</strong> Included</p>
-                <p><strong>Built With:</strong> ${staticDetails.builtWith}</p>
-                <p><strong>Domain:</strong> ${staticDetails.domain}</p>
-                ${!isAnnual ? `<p><strong>Source Files:</strong> ${staticDetails.sourceFiles}</p>` : ''}
-                <p><strong>Assisted Setup:</strong> ${staticDetails.assistedSetup}</p>
-                
-                ${staticDetails.hosting === 'not included' ? `
-                    <div style="color: #FF6B00; background: rgba(255, 107, 0, 0.1); padding: 0.5rem; border-radius: 8px; margin-top: 0.5rem;">
-                        <strong>Note:</strong> ${staticDetails.hostingNote}
-                    </div>
-                ` : ''}
+                ${staticDetails ? `
+                    <p><strong>Pages:</strong> ${staticDetails.pages}</p>
+                    <p><strong>Revisions:</strong> ${staticDetails.revisions}</p>
+                    <p><strong>Delivery:</strong> ${staticDetails.delivery}</p>
+                    ${isAnnual ? `
+                        <p><strong>Hosting:</strong> ${staticDetails.hosting}</p>
+                        <p><strong>Maintenance:</strong> ${staticDetails.maintenance}</p>
+                        ${staticDetails.backups ? `<p><strong>Backups:</strong> ${staticDetails.backups}</p>` : ''}
+                    ` : `
+                        <p><strong>Support:</strong> ${staticDetails.support}</p>
+                    `}
+                    <p><strong>Mobile Responsive:</strong> Yes</p>
+                    <p><strong>SSL Certificate:</strong> ${staticDetails.sslCertificate}</p>
+                    <p><strong>Legal Templates:</strong> Included</p>
+                    <p><strong>Built With:</strong> ${staticDetails.builtWith}</p>
+                    <p><strong>Domain:</strong> ${staticDetails.domain}</p>
+                    ${!isAnnual ? `<p><strong>Source Files:</strong> ${staticDetails.sourceFiles}</p>` : ''}
+                    <p><strong>Assisted Setup:</strong> ${staticDetails.assistedSetup}</p>
+                    
+                    ${staticDetails.hosting === 'not included' ? `
+                        <div style="color: #FF6B00; background: rgba(255, 107, 0, 0.1); padding: 0.5rem; border-radius: 8px; margin-top: 0.5rem;">
+                            <strong>Note:</strong> ${staticDetails.hostingNote}
+                        </div>
+                    ` : ''}
+                ` : '<p style="color: red;">Error loading plan details</p>'}
             </div>
             
             ${formData.features.length > 0 ? `
@@ -2356,7 +2409,7 @@ function showFinalPlans() {
             ` : ''}
             
             <button type="button" class="vibz-btn ${forcePremium ? '' : 'vibz-btn-primary'}" 
-                    onclick="redirectToPayment('${planKey}', '${getStripeLink(planKey)}')"
+                    onclick="redirectToPayment('${planKey}', '${stripeLink}')"
                     style="${forcePremium ? 'background: #2196F3; border-color: #2196F3; color: white; font-weight: 700; padding: 1rem 2rem;' : ''}">
                 ${forcePremium ? 'Continue with Required Premium Plan' : 
                   isAnnual ? 'Choose Annual Plan' : 'Choose One-Time Plan'}
@@ -2373,23 +2426,47 @@ function showFinalPlans() {
         planCard.style.transform = 'translateY(-5px)';
         planCard.style.transition = 'all 0.5s ease';
     }
+    
+    console.log('=== showFinalPlans() completed ===');
 }
 
-// Helper function to get Stripe link based on plan
+// UPDATED: Helper function to get Stripe link based on plan
 function getStripeLink(planKey) {
+    console.log('Getting Stripe link for:', planKey);
+    
     const stripeLinks = {
         'Standard Own Outright': 'https://buy.stripe.com/test_00wdRa2Lc7093305LxgMw01',
         'Premium Own Outright': 'https://buy.stripe.com/test_dRmaEYbhI84d1YW8XJgMw02',
         'Standard Annual Support': 'https://buy.stripe.com/test_9B614oetUckt6fc7TFgMw04',
         'Premium Annual Support': 'https://buy.stripe.com/test_6oU5kE3Pgdox6fc6PBgMw03'
     };
-    return stripeLinks[planKey] || 'https://buy.stripe.com/test_00wdRa2Lc7093305LxgMw01';
+    
+    console.log('Available Stripe links:', Object.keys(stripeLinks));
+    
+    const link = stripeLinks[planKey];
+    
+    if (!link) {
+        console.error('❌ No Stripe link found for plan:', planKey);
+        console.log('Available plans:', Object.keys(stripeLinks));
+        
+        // Fallback logic
+        if (planKey.includes('Annual Support')) {
+            return planKey.includes('Premium') ? stripeLinks['Premium Annual Support'] : stripeLinks['Standard Annual Support'];
+        } else {
+            return planKey.includes('Premium') ? stripeLinks['Premium Own Outright'] : stripeLinks['Standard Own Outright'];
+        }
+    }
+    
+    console.log('Found Stripe link:', link);
+    return link;
 }
 
 // ========== INITIALIZATION ==========
 
 // Initialize page
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('=== barber.index.html Initialization ===');
+    
     const jumpedFromURL = checkURLParams();
     updateStepIndicator();
     
@@ -2418,7 +2495,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     console.log('Available barber concepts:', barberConcepts.map(c => c.code));
-    console.log('Static plan details loaded:', STATIC_PLAN_DETAILS);
+    console.log('Static plan details loaded:', Object.keys(STATIC_PLAN_DETAILS));
+    console.log('=== Initialization complete ===');
 });
 </script>
 
