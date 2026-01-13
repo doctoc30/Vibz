@@ -1507,7 +1507,6 @@
 
 </section>
 
-
 <script>
 // ========== BARBER CONCEPTS DATABASE ==========
 const barberConcepts = [
@@ -1521,6 +1520,68 @@ const barberConcepts = [
     { code: "barber-8", image: "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
     { code: "barber-9", image: "https://images.unsplash.com/photo-1580618864180-f6d7d39b8ff6?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" }
 ];
+
+// ========== STATIC PLAN DETAILS DATABASE ==========
+const STATIC_PLAN_DETAILS = {
+    // One-time payment plans
+    'Standard Own Outright': {
+        price: '£1,500',
+        type: 'one-time',
+        pages: 'Up to 5 Pages',
+        revisions: 'Up to 5 Revisions Per Page (build phase only)',
+        delivery: '10-15 days',
+        support: '3 Months Post-Launch Support',
+        supportType: 'email only – bug fixes & minor content updates',
+        mobileResponsive: true,
+        sslCertificate: 'via client hosting',
+        legalTemplates: true,
+        hosting: 'not included',
+        hostingNote: 'Client provides their own hosting',
+        pageLimitNote: 'All published pages count toward the page limit'
+    },
+    'Premium Own Outright': {
+        price: '£3,000',
+        type: 'one-time',
+        pages: 'Up to 15 Pages',
+        revisions: 'Up to 10 Revisions Per Page (build phase only)',
+        delivery: '25-30 days',
+        support: '6 Months Post-Launch Support',
+        supportType: 'email only – bug fixes & minor content updates',
+        mobileResponsive: true,
+        sslCertificate: 'via client hosting',
+        legalTemplates: true,
+        hosting: 'not included',
+        hostingNote: 'Client provides their own hosting',
+        pageLimitNote: 'All published pages count toward the page limit'
+    },
+    // Monthly plans
+    'Standard Monthly Support': {
+        price: '£100/month',
+        type: 'monthly',
+        hosting: 'Website hosting included',
+        mobileResponsive: true,
+        sslCertificate: 'included',
+        maintenance: 'Monthly maintenance',
+        securityUpdates: true,
+        emailSupport: true,
+        legalTemplates: true,
+        backups: false,
+        performanceMonitoring: false
+    },
+    'Premium Monthly Support': {
+        price: '£150/month',
+        type: 'monthly',
+        hosting: 'Advanced hosting',
+        mobileResponsive: true,
+        sslCertificate: 'included',
+        maintenance: 'Monthly maintenance',
+        securityUpdates: true,
+        backups: 'Regular backups',
+        performanceMonitoring: true,
+        emailSupport: true,
+        legalTemplates: true
+    }
+};
 
 // ========== SERVICES DATABASE ==========
 const allServices = [
@@ -1595,6 +1656,16 @@ const conceptDisplayImage = document.getElementById('conceptDisplayImage');
 const conceptDisplayCode = document.getElementById('conceptDisplayCode');
 const confirmDesignBtn = document.getElementById('confirmDesignBtn');
 const tryDifferentBtn = document.getElementById('tryDifferentBtn');
+
+// Helper function to get plan name
+function getPlanName(planType, paymentModel) {
+    if (paymentModel === 'Monthly Support') {
+        return planType + ' Monthly Support';
+    } else if (paymentModel === 'Own Outright') {
+        return planType + ' Own Outright';
+    }
+    return planType + ' Plan';
+}
 
 // ========== UPDATED FUNNEL LOGIC ==========
 
@@ -2156,7 +2227,7 @@ function setGoal(goal) {
 
 // ========== PAYMENT REDIRECTION WITH DATA PASSING ==========
 
-// UPDATED: Go to payment with ALL data passed
+// UPDATED: Go to payment with ALL data passed including static plan details
 function redirectToPayment(planName, stripeLink) {
     // Validate premium services aren't trying to go with Standard plan
     const hasPremiumServices = formData.features.some(f => {
@@ -2169,7 +2240,16 @@ function redirectToPayment(planName, stripeLink) {
         return;
     }
     
-    // Store all form data
+    // Get complete plan name
+    const completePlanName = getPlanName(
+        planName.includes('Premium') ? 'Premium' : 'Standard',
+        formData.planModel
+    );
+    
+    // Get static plan details
+    const staticPlanDetails = STATIC_PLAN_DETAILS[completePlanName];
+    
+    // Store all form data with static plan details
     const funnelData = {
         businessName: formData.businessName,
         projectType: formData.projectType,
@@ -2183,21 +2263,25 @@ function redirectToPayment(planName, stripeLink) {
         urgency: formData.urgency,
         planModel: formData.planModel,
         planType: planName.includes('Premium') ? 'Premium' : 'Standard',
+        planName: completePlanName,
         standardServices: standardServiceCount,
         premiumServices: premiumServiceCount,
         totalServices: formData.features.length,
+        staticPlanDetails: staticPlanDetails, // ADDED: Static plan details
         timestamp: new Date().toISOString()
     };
     
-    // Store in localStorage for order form
+    // Store in localStorage for thank you and order form
     localStorage.setItem('barberFunnelData', JSON.stringify(funnelData));
-    localStorage.setItem('selectedPlan', planName);
+    localStorage.setItem('selectedPlan', completePlanName); // Store complete name
     localStorage.setItem('selectedServices', JSON.stringify(formData.features));
     localStorage.setItem('serviceCounts', JSON.stringify({
         standard: standardServiceCount,
         premium: premiumServiceCount,
         total: formData.features.length
     }));
+    localStorage.setItem('paymentModel', formData.planModel);
+    localStorage.setItem('staticPlanDetails', JSON.stringify(staticPlanDetails)); // Store separately
     
     // Build return URL with parameters for thank you page
     const returnParams = new URLSearchParams();
@@ -2207,11 +2291,11 @@ function redirectToPayment(planName, stripeLink) {
     returnParams.append('paymentModel', formData.planModel);
     returnParams.append('services', formData.features.length);
     
-    // In Stripe Checkout, you would set the success_url with these parameters
-    // For now, we'll store them and redirect to Stripe
+    // Store thank you params
     localStorage.setItem('thankYouParams', returnParams.toString());
     
     console.log('Redirecting to payment with data:', funnelData);
+    console.log('Static Plan Details:', staticPlanDetails);
     console.log('Stripe Link:', stripeLink);
     
     // Update hidden payment link field
@@ -2240,6 +2324,12 @@ function showFinalPlans() {
                             return service.tier === 'premium';
                         });
     
+    // Get static plan details
+    const planKey = forcePremium ? 
+        `Premium ${planNameSuffix}` : 
+        `Standard ${planNameSuffix}`;
+    const staticDetails = STATIC_PLAN_DETAILS[planKey];
+    
     // Update plan recommendation text
     let recommendationText;
     if (forcePremium) {
@@ -2250,83 +2340,83 @@ function showFinalPlans() {
     planText.innerHTML = recommendationText;
     
     // Show appropriate plans based on plan model
-    if (isOwnOutright) {
-        // Show Own Outright plans
-        container.innerHTML = `
-            <div class="pricing-card ${forcePremium ? '' : 'recommended-glow'}" 
-                 id="${forcePremium ? 'premiumPlan' : 'standardPlan'}">
-                <h3>${planNameSuffix} - ${forcePremium ? 'Premium' : 'Standard'}</h3>
-                ${forcePremium ? '<div class="required-badge">REQUIRED</div>' : ''}
-                <div class="price">${forcePremium ? premiumPrice : standardPrice}<span class="price-period">/${period}</span></div>
-                <ul class="pricing-features">
-                    ${(forcePremium ? [
-                        'Upto 15 Pages',
-                        'Upto 10 Revisions Per Page',
-                        'Delivery 25-30 days',
-                        '6 months support',
-                        'All Premium Features'
-                    ] : [
-                        'Upto 5 Pages',
-                        'Upto 5 Revisions Per Page',
-                        'Delivery 10-15 days',
-                        '3 months support',
-                        'Mobile responsive'
-                    ]).map(item => `<li>✓ ${item}</li>`).join('')}
-                    ${formData.features.length > 0 ? `<li><strong>Selected Services (${formData.features.length}):</strong></li>` : ''}
-                    ${formData.features.slice(0, 5).map(feature => `<li>• ${feature}</li>`).join('')}
-                    ${formData.features.length > 5 ? `<li>... and ${formData.features.length - 5} more</li>` : ''}
-                </ul>
-                <button type="button" class="vibz-btn ${forcePremium ? '' : 'vibz-btn-primary'}" 
-                        onclick="redirectToPayment('${planNameSuffix} - ${forcePremium ? 'Premium' : 'Standard'}', '${forcePremium ? 'https://buy.stripe.com/test_dRmaEYbhI84d1YW8XJgMw02' : 'https://buy.stripe.com/test_00wdRa2Lc7093305LxgMw01'}')"
-                        style="${forcePremium ? 'background: #2196F3; border-color: #2196F3; color: white; font-weight: 700; padding: 1rem 2rem;' : ''}">
-                    ${forcePremium ? 'Continue with Required Premium Plan' : 'Choose Standard Plan'}
-                </button>
+    const planHTML = `
+        <div class="pricing-card ${forcePremium ? '' : 'recommended-glow'}" 
+             id="${forcePremium ? 'premiumPlan' : 'standardPlan'}"
+             style="${forcePremium ? 'border: 3px solid #2196F3;' : 'border: 3px solid #4CAF50;'}">
+            <h3>${planKey}</h3>
+            ${forcePremium ? '<div class="required-badge">REQUIRED</div>' : ''}
+            <div class="price">${staticDetails.price}<span class="price-period">/${staticDetails.type === 'one-time' ? 'one-time' : 'month'}</span></div>
+            
+            <div class="pricing-details" style="text-align: left; margin: 1.5rem 0; font-size: 0.95rem;">
+                ${staticDetails.type === 'one-time' ? `
+                    <p><strong>📄 Pages:</strong> ${staticDetails.pages}</p>
+                    <p><strong>✏️ Revisions:</strong> ${staticDetails.revisions}</p>
+                    <p><strong>🚀 Delivery:</strong> ${staticDetails.delivery}</p>
+                    <p><strong>🛠️ Support:</strong> ${staticDetails.support} (${staticDetails.supportType})</p>
+                ` : `
+                    <p><strong>🌐 Hosting:</strong> ${staticDetails.hosting}</p>
+                    <p><strong>🔧 Maintenance:</strong> ${staticDetails.maintenance}</p>
+                    ${staticDetails.backups ? `<p><strong>💾 Backups:</strong> ${staticDetails.backups}</p>` : ''}
+                    ${staticDetails.performanceMonitoring ? `<p><strong>📊 Performance:</strong> ${staticDetails.performanceMonitoring}</p>` : ''}
+                `}
+                <p><strong>📱 Mobile:</strong> ${staticDetails.mobileResponsive ? 'Responsive Design ✓' : ''}</p>
+                <p><strong>🔒 SSL:</strong> ${staticDetails.sslCertificate}</p>
+                <p><strong>⚖️ Legal:</strong> Templates Included ✓</p>
+                ${staticDetails.hosting === 'not included' ? `
+                    <p style="color: #FF6B00; background: rgba(255, 107, 0, 0.1); padding: 0.5rem; border-radius: 8px; margin-top: 0.5rem;">
+                        <strong>Note:</strong> ${staticDetails.hostingNote}
+                    </p>
+                ` : ''}
             </div>
-        `;
-    } else {
-        // Show Monthly Support plans
-        container.innerHTML = `
-            <div class="pricing-card ${forcePremium ? '' : 'recommended-glow'}" 
-                 id="${forcePremium ? 'premiumPlan' : 'standardPlan'}">
-                <h3>${planNameSuffix} - ${forcePremium ? 'Premium' : 'Standard'}</h3>
-                ${forcePremium ? '<div class="required-badge">REQUIRED</div>' : ''}
-                <div class="price">${forcePremium ? premiumPrice : standardPrice}<span class="price-period">/${period}</span></div>
-                <ul class="pricing-features">
-                    ${(forcePremium ? [
-                        'All Premium Features',
-                        'Advanced Hosting',
-                        '24/7 Priority Support',
-                        'Regular Updates & Backups',
-                        'Performance Monitoring'
-                    ] : [
-                        'Standard Website Features',
-                        'Hosting Included',
-                        'Monthly Maintenance',
-                        'Security Updates',
-                        'Priority Support'
-                    ]).map(item => `<li>✓ ${item}</li>`).join('')}
-                    ${formData.features.length > 0 ? `<li><strong>Selected Services (${formData.features.length}):</strong></li>` : ''}
-                    ${formData.features.slice(0, 5).map(feature => `<li>• ${feature}</li>`).join('')}
-                    ${formData.features.length > 5 ? `<li>... and ${formData.features.length - 5} more</li>` : ''}
-                </ul>
-                <button type="button" class="vibz-btn ${forcePremium ? '' : 'vibz-btn-primary'}" 
-                        onclick="redirectToPayment('${planNameSuffix} - ${forcePremium ? 'Premium' : 'Standard'}', '${forcePremium ? 'https://buy.stripe.com/test_6oU5kE3Pgdox6fc6PBgMw03' : 'https://buy.stripe.com/test_9B614oetUckt6fc7TFgMw04'}')"
-                        style="${forcePremium ? 'background: #2196F3; border-color: #2196F3; color: white; font-weight: 700; padding: 1rem 2rem;' : ''}">
-                    ${forcePremium ? 'Subscribe to Required Premium Plan' : 'Subscribe to Standard Plan'}
-                </button>
+            
+            <div style="margin: 1.5rem 0; padding: 1rem; background: rgba(0,0,0,0.05); border-radius: 8px;">
+                <p style="margin: 0; font-weight: 600;">🎯 Selected Services (${formData.features.length}):</p>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem;">
+                    ${formData.features.slice(0, 5).map(feature => `
+                        <span style="background: ${allServices.find(s => s.name === feature).tier === 'standard' ? '#4CAF50' : '#2196F3'}; 
+                               color: white; padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.8rem;">
+                            ${feature}
+                        </span>
+                    `).join('')}
+                    ${formData.features.length > 5 ? `
+                        <span style="color: #666; font-size: 0.8rem;">
+                            + ${formData.features.length - 5} more
+                        </span>
+                    ` : ''}
+                </div>
             </div>
-        `;
-    }
+            
+            <button type="button" class="vibz-btn ${forcePremium ? '' : 'vibz-btn-primary'}" 
+                    onclick="redirectToPayment('${planKey}', '${getStripeLink(planKey)}')"
+                    style="${forcePremium ? 'background: #2196F3; border-color: #2196F3; color: white; font-weight: 700; padding: 1rem 2rem;' : ''}">
+                ${forcePremium ? 'Continue with Required Premium Plan' : 
+                  isOwnOutright ? 'Choose Standard Plan' : 'Subscribe to Standard Plan'}
+            </button>
+        </div>
+    `;
+    
+    container.innerHTML = planHTML;
     
     // Add visual effects
     const planCard = document.getElementById(forcePremium ? 'premiumPlan' : 'standardPlan');
     if (planCard) {
         const color = forcePremium ? '#2196F3' : '#4CAF50';
         planCard.style.boxShadow = `0 0 40px ${color}66, 0 0 80px ${color}33`;
-        planCard.style.border = `3px solid ${color}`;
         planCard.style.transform = 'translateY(-10px)';
         planCard.style.transition = 'all 0.5s ease';
     }
+}
+
+// Helper function to get Stripe link based on plan
+function getStripeLink(planKey) {
+    const stripeLinks = {
+        'Standard Own Outright': 'https://buy.stripe.com/test_00wdRa2Lc7093305LxgMw01',
+        'Premium Own Outright': 'https://buy.stripe.com/test_dRmaEYbhI84d1YW8XJgMw02',
+        'Standard Monthly Support': 'https://buy.stripe.com/test_9B614oetUckt6fc7TFgMw04',
+        'Premium Monthly Support': 'https://buy.stripe.com/test_6oU5kE3Pgdox6fc6PBgMw03'
+    };
+    return stripeLinks[planKey] || 'https://buy.stripe.com/test_00wdRa2Lc7093305LxgMw01';
 }
 
 // ========== INITIALIZATION ==========
@@ -2365,6 +2455,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     console.log('Available barber concepts:', barberConcepts.map(c => c.code));
+    console.log('Static plan details loaded:', STATIC_PLAN_DETAILS);
 });
 </script>
 
