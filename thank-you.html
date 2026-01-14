@@ -430,39 +430,44 @@
     <div class="vibz-logo">VIBZ</div>
   </div>
 
+
+
   <!-- ================= THANK YOU CONTENT ================= -->
-  <div class="thank-you-wrapper">
-    <div class="thank-you-container">
-      <div class="thank-you-icon">
-        <i class="fas fa-check-circle"></i>
+<div class="thank-you-wrapper">
+  <div class="thank-you-container">
+    <div class="thank-you-icon">
+      <i class="fas fa-check-circle"></i>
+    </div>
+    
+    <h1 id="thankYouTitle">Thank You!</h1>
+    <p id="thankYouText">Your barber shop website order has been confirmed!</p>
+    
+    <!-- ================= ORDER SUMMARY ================= -->
+    <div class="order-summary">
+      <div class="summary-header">
+        <div class="summary-title" id="projectTitle">Order Summary</div>
+        <div class="plan-badge" id="planBadge">STANDARD</div>
       </div>
       
-      <h1 id="thankYouTitle">Thank You!</h1>
-      <p id="thankYouText">Your barber shop website order has been confirmed!</p>
-      
-      <!-- ================= ORDER SUMMARY ================= -->
-      <div class="order-summary">
-        <div class="summary-header">
-          <div class="summary-title" id="projectTitle">Order Summary</div>
-          <div class="plan-badge" id="planBadge">STANDARD</div>
+      <div class="summary-details">
+        <div class="detail-item">
+          <div class="detail-label">Business Name</div>
+          <div class="detail-value" id="businessName"></div>
         </div>
         
-       <div class="detail-value" id="businessName"></div>
-          
-          <div class="detail-item">
-            <div class="detail-label">Plan Type</div>
-            <div class="detail-value" id="planType">Standard Plan</div>
-          </div>
-          
-          <div class="detail-item">
-            <div class="detail-label">Payment Model</div>
-            <div class="detail-value" id="paymentModel">Own Outright</div>
-          </div>
-          
-          <div class="detail-item">
-            <div class="detail-label">Total Services</div>
-            <div class="detail-value" id="totalServices">0</div>
-          </div>
+        <div class="detail-item">
+          <div class="detail-label">Plan Type</div>
+          <div class="detail-value" id="planType">Standard Plan</div>
+        </div>
+        
+        <div class="detail-item">
+          <div class="detail-label">Payment Model</div>
+          <div class="detail-value" id="paymentModel">Own Outright</div>
+        </div>
+        
+        <div class="detail-item">
+          <div class="detail-label">Total Services</div>
+          <div class="detail-value" id="totalServices">0</div>
         </div>
         
         <div class="detail-item">
@@ -470,19 +475,21 @@
           <div class="detail-value" id="designConcept">Custom Design</div>
         </div>
       </div>
-      
-      <!-- ================= SELECTED FEATURES ================= -->
-      <div class="selected-features" id="selectedFeaturesSection" style="display: none;">
-        <h3 class="features-title">Your Selected Features</h3>
-        <div class="features-grid" id="featuresGrid">
-          <!-- Features will be populated by JavaScript -->
-        </div>
+    </div>
+    
+    <!-- ================= SELECTED FEATURES ================= -->
+    <div class="selected-features" id="selectedFeaturesSection" style="display: none;">
+      <h3 class="features-title">Your Selected Features</h3>
+      <div class="features-grid" id="featuresGrid">
+        <!-- Features will be populated by JavaScript -->
       </div>
+    </div>
+    
+    <!-- ================= COMPLETION OPTIONS ================= -->
+    <div class="completion-options">
+      <h3>Complete Your Project Details</h3>
       
-      <!-- ================= COMPLETION OPTIONS ================= -->
-      <div class="completion-options">
-        <h3>Complete Your Project Details</h3>
-        
+      <div class="options-grid">
         <div class="option-card">
           <h4>Complete Now</h4>
           <div class="time-badge">10 MINUTES</div>
@@ -501,13 +508,13 @@
           </button>
         </div>
       </div>
-      
-      <div class="terms-note">
-        <p><i class="fas fa-exclamation-circle"></i> By proceeding, you agree to our Terms of Service. Project will begin once all details are received.</p>
-      </div>
+    </div>
+    
+    <div class="terms-note">
+      <p><i class="fas fa-exclamation-circle"></i> By proceeding, you agree to our Terms of Service. Project will begin once all details are received.</p>
     </div>
   </div>
-
+</div>
 
 
 <script>
@@ -554,80 +561,76 @@
     document.addEventListener('DOMContentLoaded', function() {
       console.log('=== Thank You Page Initialization ===');
       
-      // DEBUG: Show all localStorage data
-      console.log('=== LOCALSTORAGE DEBUG ===');
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        console.log(`${key}:`, localStorage.getItem(key));
-      }
+      // Get data from localStorage
+      const data = getOrderData();
       
-      // Collect all data from localStorage
-      const data = collectDataFromStorage();
+      // Update page with data
+      updatePage(data);
       
-      console.log('Collected data for display:', data);
-      
-      // Update page content
-      updatePageContent(data);
-      
-      // Set up button click handlers
+      // Set up event handlers
       setupEventHandlers();
       
-      // Add celebratory confetti
-      setTimeout(() => {
-        createConfetti();
-      }, 500);
+      // Add confetti
+      setTimeout(createConfetti, 500);
     });
 
-    // ========== COLLECT DATA FROM STORAGE ==========
-    function collectDataFromStorage() {
-      let businessName = '';
-      let designCode = '';
+    // ========== GET ORDER DATA ==========
+    function getOrderData() {
+      let businessName = 'Barber Shop';
+      let designCode = 'CUSTOM';
       let plan = 'Standard';
       let paymentModel = 'Own Outright';
       let totalServices = 0;
       let selectedFeatures = [];
       
-      // METHOD 1: Get from orderData object
+      // Try to get data from multiple sources
+      
+      // 1. Check localStorage for businessName
+      const storedBusinessName = localStorage.getItem('businessName');
+      if (storedBusinessName && storedBusinessName !== 'Barber Shop') {
+        businessName = storedBusinessName;
+      }
+      
+      // 2. Check orderData object
       const orderDataStr = localStorage.getItem('orderData');
       if (orderDataStr) {
         try {
           const orderData = JSON.parse(orderDataStr);
-          businessName = orderData.businessName || '';
+          if (orderData.businessName && orderData.businessName !== 'Barber Shop') {
+            businessName = orderData.businessName;
+          }
           designCode = orderData.designCode || 'CUSTOM';
           plan = orderData.planType || 'Standard';
           paymentModel = orderData.paymentModel || 'Own Outright';
           totalServices = orderData.totalServices || 0;
           selectedFeatures = orderData.features || [];
-          console.log('Got data from orderData:', businessName);
         } catch (e) {
           console.error('Error parsing orderData:', e);
         }
       }
       
-      // METHOD 2: If businessName is still empty, try direct localStorage
-      if (!businessName || businessName === 'Barber Shop') {
-        businessName = localStorage.getItem('businessName') || 'Barber Shop';
-        console.log('Got businessName from localStorage:', businessName);
+      // 3. If still default, try other localStorage items
+      if (businessName === 'Barber Shop') {
+        // Try userBusinessName as fallback
+        const userBusinessName = localStorage.getItem('userBusinessName');
+        if (userBusinessName) {
+          businessName = userBusinessName;
+        }
       }
       
-      // METHOD 3: Get design code
-      if (!designCode || designCode === 'CUSTOM') {
-        designCode = localStorage.getItem('selectedDesignCode') || 'CUSTOM';
+      // 4. Get design code
+      const storedDesignCode = localStorage.getItem('selectedDesignCode');
+      if (storedDesignCode && designCode === 'CUSTOM') {
+        designCode = storedDesignCode;
       }
       
-      // METHOD 4: Get plan
+      // 5. Get plan
       const storedPlan = localStorage.getItem('selectedPlan');
-      if (storedPlan && !plan) {
+      if (storedPlan && plan === 'Standard') {
         plan = storedPlan.includes('Premium') ? 'Premium' : 'Standard';
       }
       
-      // METHOD 5: Get payment model
-      const storedPaymentModel = localStorage.getItem('paymentModel');
-      if (storedPaymentModel && !paymentModel) {
-        paymentModel = storedPaymentModel;
-      }
-      
-      // METHOD 6: Get service counts
+      // 6. Get service counts
       const serviceCountsStr = localStorage.getItem('serviceCounts');
       if (serviceCountsStr && totalServices === 0) {
         try {
@@ -638,7 +641,7 @@
         }
       }
       
-      // METHOD 7: Get selected features
+      // 7. Get selected features
       const selectedServicesStr = localStorage.getItem('selectedServices');
       if (selectedServicesStr && selectedFeatures.length === 0) {
         try {
@@ -648,55 +651,52 @@
         }
       }
       
-      return {
-        business: businessName,
-        designCode: designCode,
-        plan: plan,
-        paymentModel: paymentModel,
-        totalServices: totalServices,
-        selectedFeatures: selectedFeatures,
-        niche: 'barber'
-      };
-    }
-
-    // ========== UPDATE PAGE CONTENT ==========
-    function updatePageContent(data) {
-      const {
-        business,
+      console.log('Loaded data:', {
+        businessName,
         designCode,
         plan,
         paymentModel,
         totalServices,
-        selectedFeatures,
-        niche
-      } = data;
-      
-      console.log('Updating page with:', {
-        business: business,
-        plan: plan,
-        designCode: designCode,
-        totalServices: totalServices
+        featuresCount: selectedFeatures.length
       });
       
-      // CRITICAL FIX: Update business name element
+      return {
+        businessName,
+        designCode,
+        plan,
+        paymentModel,
+        totalServices,
+        selectedFeatures
+      };
+    }
+
+    // ========== UPDATE PAGE ==========
+    function updatePage(data) {
+      const {
+        businessName,
+        designCode,
+        plan,
+        paymentModel,
+        totalServices,
+        selectedFeatures
+      } = data;
+      
+      // Update business name
       const businessNameElement = document.getElementById('businessName');
       if (businessNameElement) {
-        businessNameElement.textContent = business;
-        console.log('Updated businessName element with:', business);
-      } else {
-        console.error('ERROR: Element with id="businessName" not found!');
+        businessNameElement.textContent = businessName;
       }
       
       // Update thank you text
       const thankYouText = document.getElementById('thankYouText');
       if (thankYouText) {
-        thankYouText.textContent = `Your ${business} website order has been confirmed!`;
+        thankYouText.textContent = `Your ${businessName} website order has been confirmed!`;
       }
       
       // Update project title
       const projectTitle = document.getElementById('projectTitle');
       if (projectTitle) {
-        projectTitle.textContent = `${business} - ${plan} Plan`;
+        projectTitle.textContent = `${businessName} - ${plan} Plan`;
       }
       
       // Update plan type
@@ -720,11 +720,8 @@
       // Update design concept
       const designConceptElement = document.getElementById('designConcept');
       if (designConceptElement) {
-        if (designCode === 'CUSTOM') {
-          designConceptElement.textContent = 'Custom Design';
-        } else {
-          designConceptElement.textContent = `Design Code: ${designCode.toUpperCase()}`;
-        }
+        designConceptElement.textContent = designCode === 'CUSTOM' ? 
+          'Custom Design' : `Design Code: ${designCode.toUpperCase()}`;
       }
       
       // Update plan badge
@@ -734,80 +731,87 @@
         planBadge.className = `plan-badge ${plan.toLowerCase()}`;
       }
       
-      // Update Complete Now button with data
+      // Update Complete Now button
       const completeNowBtn = document.getElementById('completeNowBtn');
       if (completeNowBtn) {
-        const orderFormParams = new URLSearchParams();
-        orderFormParams.append('plan', plan.toLowerCase());
-        orderFormParams.append('business', encodeURIComponent(business));
-        orderFormParams.append('designCode', designCode);
-        orderFormParams.append('services', totalServices);
-        orderFormParams.append('paymentModel', paymentModel);
-        completeNowBtn.href = `order-form.html?${orderFormParams.toString()}`;
+        const params = new URLSearchParams();
+        params.append('plan', plan.toLowerCase());
+        params.append('business', encodeURIComponent(businessName));
+        params.append('designCode', designCode);
+        params.append('services', totalServices);
+        params.append('paymentModel', paymentModel);
+        completeNowBtn.href = `order-form.html?${params.toString()}`;
       }
       
-      // Show selected features if any
+      // Show selected features if available
       if (selectedFeatures.length > 0) {
-        const featuresSection = document.getElementById('selectedFeaturesSection');
-        const featuresGrid = document.getElementById('featuresGrid');
-        
-        if (featuresSection && featuresGrid) {
-          featuresSection.style.display = 'block';
-          featuresGrid.innerHTML = '';
-          
-          selectedFeatures.forEach(featureName => {
-            const serviceData = servicesDatabase[featureName];
-            if (serviceData) {
-              const featureCard = document.createElement('div');
-              featureCard.className = `feature-card ${serviceData.tier}`;
-              featureCard.innerHTML = `
-                <div class="feature-tier ${serviceData.tier}">${serviceData.tier.toUpperCase()}</div>
-                <div class="feature-name">${featureName}</div>
-                <div class="feature-desc">${serviceData.desc}</div>
-              `;
-              featuresGrid.appendChild(featureCard);
-            }
-          });
-          
-          console.log('Displayed', selectedFeatures.length, 'selected features');
-        }
-      } else if (totalServices > 0) {
-        // Show summary if we have counts but no features list
-        const featuresSection = document.getElementById('selectedFeaturesSection');
-        const featuresGrid = document.getElementById('featuresGrid');
-        
-        if (featuresSection && featuresGrid) {
-          featuresSection.style.display = 'block';
-          featuresGrid.innerHTML = `
-            <div class="feature-card standard">
-              <div class="feature-tier standard">SUMMARY</div>
-              <div class="feature-name">Service Selection Summary</div>
-              <div class="feature-desc">
-                <strong>${totalServices} Total Services Selected</strong>
-              </div>
-            </div>
-          `;
-        }
+        showSelectedFeatures(selectedFeatures);
       }
       
-      // Update niche color
-      const nicheColors = {
-        barber: '#FF6B00',
-        plumber: '#0066CC',
-        dentist: '#00A86B',
-        gym: '#FF3366'
-      };
+      // Update colors
+      updateColors();
+    }
+
+    // ========== SHOW SELECTED FEATURES ==========
+    function showSelectedFeatures(features) {
+      const featuresSection = document.getElementById('selectedFeaturesSection');
+      const featuresGrid = document.getElementById('featuresGrid');
       
-      const nicheColor = nicheColors[niche] || '#FF6B00';
-      document.documentElement.style.setProperty('--primary', nicheColor);
-      updateButtonColors(nicheColor);
+      if (!featuresSection || !featuresGrid) return;
       
-      console.log('Page updated successfully!');
+      featuresSection.style.display = 'block';
+      featuresGrid.innerHTML = '';
+      
+      features.forEach(featureName => {
+        const serviceData = servicesDatabase[featureName];
+        if (serviceData) {
+          const featureCard = document.createElement('div');
+          featureCard.className = `feature-card ${serviceData.tier}`;
+          featureCard.innerHTML = `
+            <div class="feature-tier ${serviceData.tier}">${serviceData.tier.toUpperCase()}</div>
+            <div class="feature-name">${featureName}</div>
+            <div class="feature-desc">${serviceData.desc}</div>
+          `;
+          featuresGrid.appendChild(featureCard);
+        }
+      });
+    }
+
+    // ========== UPDATE COLORS ==========
+    function updateColors() {
+      const primaryColor = '#FF6B00'; // Barber niche color
+      
+      // Update CSS variable
+      document.documentElement.style.setProperty('--primary', primaryColor);
+      
+      // Update buttons
+      document.querySelectorAll('.option-button').forEach(btn => {
+        btn.style.color = primaryColor;
+        btn.style.borderColor = primaryColor;
+        
+        btn.addEventListener('mouseenter', function() {
+          if (!this.disabled) {
+            this.style.backgroundColor = primaryColor;
+            this.style.color = 'white';
+          }
+        });
+        
+        btn.addEventListener('mouseleave', function() {
+          if (!this.disabled && !this.style.background.includes('10B981')) {
+            this.style.backgroundColor = 'transparent';
+            this.style.color = primaryColor;
+          }
+        });
+      });
+      
+      // Update time badges
+      document.querySelectorAll('.time-badge').forEach(badge => {
+        badge.style.backgroundColor = primaryColor;
+      });
     }
 
     // ========== SETUP EVENT HANDLERS ==========
     function setupEventHandlers() {
-      // Handle "Send Within 48 Hours" button click
       const sendLaterBtn = document.getElementById('sendLaterBtn');
       if (sendLaterBtn) {
         sendLaterBtn.addEventListener('click', function() {
@@ -828,11 +832,23 @@
             
             // Show success message
             const successMsg = document.createElement('div');
-            successMsg.style.cssText = 'background: rgba(16, 185, 129, 0.1); border: 1px solid #10B981; color: #065F46; padding: 1rem; border-radius: 12px; margin-top: 1rem; text-align: center;';
+            successMsg.style.cssText = `
+              background: rgba(16, 185, 129, 0.1);
+              border: 1px solid #10B981;
+              color: #065F46;
+              padding: 1rem;
+              border-radius: 12px;
+              margin-top: 1rem;
+              text-align: center;
+            `;
             successMsg.innerHTML = `
-              <h4 style="margin-bottom: 0.5rem; color: #065F46;"><i class="fas fa-check-circle"></i> Success!</h4>
-              <p>We've sent a detailed questionnaire to your email. Please complete it within 48 hours to start your project.</p>
-              <p style="font-size: 0.9rem; margin-top: 0.5rem;">Check your inbox and spam folder.</p>
+              <h4 style="margin-bottom: 0.5rem; color: #065F46;">
+                <i class="fas fa-check-circle"></i> Success!
+              </h4>
+              <p>We've sent a detailed questionnaire to your email.</p>
+              <p style="font-size: 0.9rem; margin-top: 0.5rem;">
+                Check your inbox and spam folder.
+              </p>
             `;
             
             btn.parentNode.parentNode.insertBefore(successMsg, btn.parentNode.nextSibling);
@@ -844,7 +860,6 @@
               btn.style.borderColor = '';
               btn.style.color = '';
               btn.disabled = false;
-              updateButtonColors(getComputedStyle(document.documentElement).getPropertyValue('--primary').trim());
               successMsg.remove();
             }, 5000);
           }, 1500);
@@ -852,64 +867,27 @@
       }
     }
 
-    // ========== HELPER FUNCTIONS ==========
-    function updateButtonColors(color) {
-      // Update all option buttons
-      document.querySelectorAll('.option-button').forEach(btn => {
-        btn.style.color = color;
-        btn.style.borderColor = color;
-        
-        // Update hover effect
-        btn.addEventListener('mouseenter', function() {
-          if (!this.disabled) {
-            this.style.backgroundColor = color;
-            this.style.color = 'white';
-          }
-        });
-        btn.addEventListener('mouseleave', function() {
-          if (!this.disabled && !this.style.background.includes('10B981')) {
-            this.style.backgroundColor = 'transparent';
-            this.style.color = color;
-          }
-        });
-      });
-      
-      // Update time badge
-      document.querySelectorAll('.time-badge').forEach(badge => {
-        badge.style.backgroundColor = color;
-      });
-      
-      // Update completion options background
-      const completionOptions = document.querySelector('.completion-options');
-      if (completionOptions) {
-        completionOptions.style.background = `${color}08`;
-      }
-      
-      // Update plan badge if it's the primary color
-      const planBadge = document.getElementById('planBadge');
-      if (planBadge && !planBadge.classList.contains('premium') && !planBadge.classList.contains('standard')) {
-        planBadge.style.backgroundColor = color;
-      }
-    }
-
+    // ========== CREATE CONFETTI ==========
     function createConfetti() {
-      const color = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
-      const colors = [color, '#FF6B00', '#121212', '#4a4a4a'];
+      const colors = ['#FF6B00', '#121212', '#4a4a4a', '#FFA726'];
       const container = document.querySelector('.thank-you-container');
       
       if (!container) return;
       
-      for (let i = 0; i < 20; i++) {
+      for (let i = 0; i < 15; i++) {
         const confetti = document.createElement('div');
-        confetti.style.position = 'absolute';
-        confetti.style.width = '8px';
-        confetti.style.height = '8px';
-        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-        confetti.style.borderRadius = '50%';
-        confetti.style.left = Math.random() * 100 + '%';
-        confetti.style.top = '-20px';
-        confetti.style.opacity = '0.7';
-        confetti.style.zIndex = '-1';
+        confetti.style.cssText = `
+          position: absolute;
+          width: 8px;
+          height: 8px;
+          background-color: ${colors[Math.floor(Math.random() * colors.length)]};
+          border-radius: 50%;
+          left: ${Math.random() * 100}%;
+          top: -20px;
+          opacity: 0.7;
+          z-index: -1;
+        `;
+        
         container.appendChild(confetti);
         
         // Animate confetti
