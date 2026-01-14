@@ -1617,26 +1617,13 @@ function setPlanModel(planModel) {
     console.log('Setting plan model to:', planModel);
     formData.planModel = planModel;
     
-    // Store ALL critical data in localStorage AND sessionStorage for redundancy
+    // Store ALL critical data
     localStorage.setItem('businessName', formData.businessName || '');
     localStorage.setItem('selectedDesignCode', formData.designCode || 'CUSTOM');
     localStorage.setItem('designConcept', formData.designConcept || '');
     localStorage.setItem('paymentModel', planModel);
     
-    // Also store in sessionStorage (more reliable for short-term)
-    sessionStorage.setItem('businessName', formData.businessName || '');
-    sessionStorage.setItem('selectedDesignCode', formData.designCode || 'CUSTOM');
-    sessionStorage.setItem('paymentModel', planModel);
-    
-    // Store design code features
-    if (formData.designCode && formData.designCode !== 'CUSTOM') {
-        const concept = findConceptByCode(formData.designCode);
-        if (concept) {
-            localStorage.setItem('designCodeFeatures', JSON.stringify(concept.features));
-        }
-    }
-    
-    console.log('Data stored:', {
+    console.log('Data stored in setPlanModel:', {
         businessName: localStorage.getItem('businessName'),
         designCode: localStorage.getItem('selectedDesignCode'),
         paymentModel: localStorage.getItem('paymentModel')
@@ -1760,7 +1747,6 @@ function confirmDesignSelection() {
         formData.designCode = concept.code;
         formData.designConcept = 'From Code';
         
-        // Store design code features for later use
         localStorage.setItem('designCodeFeatures', JSON.stringify(concept.features));
         localStorage.setItem('selectedDesignCode', concept.code);
         
@@ -1986,7 +1972,6 @@ function nextFromServices() {
         localStorage.setItem('forcePremiumPlan', 'false');
     }
     
-    // Store all selected services
     localStorage.setItem('selectedServices', JSON.stringify(formData.features));
     localStorage.setItem('serviceCounts', JSON.stringify({
         standard: standardServiceCount,
@@ -2106,23 +2091,15 @@ function updateHiddenFields() {
     document.getElementById('hiddenFeatures').value = formData.features.join(', ');
 }
 
-// STEP 1: Handle business name input - FIXED
+// ========== STEP 1: Handle business name input - SIMPLIFIED FIX ==========
 function handleBusinessName() {
     const value = businessInput.value.trim();
     if (value) {
         formData.businessName = value;
         
-        // CRITICAL FIX: Store business name immediately and redundantly
+        // SIMPLE FIX: Store in localStorage
         localStorage.setItem('businessName', value);
-        sessionStorage.setItem('businessName', value);
-        localStorage.setItem('userBusinessName', value); // Additional key
-        sessionStorage.setItem('userBusinessName', value); // Additional key
-        
-        console.log('Business name stored in handleBusinessName:', {
-            formData: formData.businessName,
-            localStorage: localStorage.getItem('businessName'),
-            sessionStorage: sessionStorage.getItem('businessName')
-        });
+        console.log('Business name stored:', value);
         
         next();
     } else {
@@ -2171,13 +2148,10 @@ function setGoal(goal) {
     next();
 }
 
-// ========== PAYMENT REDIRECTION WITH DATA PASSING ==========
-
-// Go to payment with correct payment model handling
+// ========== PAYMENT REDIRECTION ==========
 function redirectToPayment(planName, stripeLink) {
     console.log('=== redirectToPayment called ===');
-    console.log('Business name being passed:', formData.businessName);
-    console.log('Design code being passed:', formData.designCode);
+    console.log('Business name:', formData.businessName);
     
     const hasPremiumServices = formData.features.some(f => {
         const service = allServices.find(s => s.name === f);
@@ -2189,87 +2163,43 @@ function redirectToPayment(planName, stripeLink) {
         return;
     }
     
-    // Get payment model
-    const paymentModel = formData.planModel || 
-                        localStorage.getItem('paymentModel') || 
-                        'Own Outright';
-    
-    // Create a UNIQUE order ID
-    const orderId = 'order_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-    
-    // Create complete order data
+    // Create order data
     const orderData = {
-        orderId: orderId,
         businessName: formData.businessName,
         designCode: formData.designCode || 'CUSTOM',
         planType: planName.includes('Premium') ? 'Premium' : 'Standard',
-        paymentModel: paymentModel,
+        paymentModel: formData.planModel || localStorage.getItem('paymentModel') || 'Own Outright',
         features: formData.features,
         standardServices: standardServiceCount,
         premiumServices: premiumServiceCount,
         totalServices: formData.features.length,
-        timestamp: new Date().toISOString(),
-        formData: formData // Store entire form data
+        timestamp: new Date().toISOString()
     };
     
-    // CRITICAL: Store in localStorage with unique key
-    localStorage.setItem('currentOrderData', JSON.stringify(orderData));
-    localStorage.setItem('order_' + orderId, JSON.stringify(orderData));
-    
-    // Store individual values with multiple keys for redundancy
+    // Store data
+    localStorage.setItem('orderData', JSON.stringify(orderData));
     localStorage.setItem('businessName', formData.businessName);
-    localStorage.setItem('userBusinessName', formData.businessName);
     localStorage.setItem('selectedDesignCode', formData.designCode || 'CUSTOM');
     localStorage.setItem('selectedPlan', planName);
-    localStorage.setItem('selectedServices', JSON.stringify(formData.features));
-    localStorage.setItem('serviceCounts', JSON.stringify({
-        standard: standardServiceCount,
-        premium: premiumServiceCount,
-        total: formData.features.length
-    }));
-    localStorage.setItem('paymentModel', paymentModel);
-    localStorage.setItem('currentOrderId', orderId);
     
-    // Also store in sessionStorage
-    sessionStorage.setItem('businessName', formData.businessName);
-    sessionStorage.setItem('userBusinessName', formData.businessName);
-    sessionStorage.setItem('selectedDesignCode', formData.designCode || 'CUSTOM');
-    sessionStorage.setItem('currentOrderId', orderId);
-    
-    console.log('All data stored for thank you page:', {
+    console.log('Data stored for thank you page:', {
         businessName: localStorage.getItem('businessName'),
-        userBusinessName: localStorage.getItem('userBusinessName'),
-        designCode: localStorage.getItem('selectedDesignCode'),
-        currentOrderId: localStorage.getItem('currentOrderId')
+        orderData: localStorage.getItem('orderData')
     });
     
-    // Create a simple success URL with order ID
-    const successUrl = `${window.location.origin}/thank-you.html?orderId=${orderId}`;
-    
-    // Store the success URL
-    localStorage.setItem('thankYouSuccessUrl', successUrl);
-    
-    console.log('Success URL for thank you page:', successUrl);
-    
-    // Redirect to payment
-    console.log('Redirecting to Stripe with link:', stripeLink);
+    // Redirect
     window.location.href = stripeLink;
 }
 
-// FIXED: Show final plans
+// Show final plans
 function showFinalPlans() {
     console.log('=== showFinalPlans() called ===');
     
     const container = document.getElementById('pricingCards');
     const planText = document.getElementById('planRecommendation');
     
-    // Get payment model
     const paymentModel = formData.planModel || localStorage.getItem('paymentModel') || 'Own Outright';
     const isMonthly = paymentModel === 'Monthly Support';
-    
-    console.log('Payment model:', paymentModel);
-    console.log('Is monthly?', isMonthly);
-    console.log('Current business name:', formData.businessName);
     
     const forcePremium = formData.forcePremiumPlan || 
                         formData.features.some(f => {
@@ -2277,7 +2207,6 @@ function showFinalPlans() {
                             return service.tier === 'premium';
                         });
     
-    // Build recommendation text
     let recommendationText;
     if (forcePremium) {
         recommendationText = `You selected <strong>${premiumServiceCount} premium service(s)</strong>. Premium services REQUIRE the <strong>Premium Plan</strong>.`;
@@ -2286,12 +2215,9 @@ function showFinalPlans() {
     }
     planText.innerHTML = recommendationText;
     
-    // Generate HTML based on payment model
     if (isMonthly) {
-        // MONTHLY SUPPORT PLANS
         container.innerHTML = `
             <div class="pricing-container">
-                <!-- Monthly Standard Plan -->
                 <div class="pricing-card ${!forcePremium ? 'recommended-glow' : ''}" 
                      id="monthlyStandardPlan">
                     ${!forcePremium ? '<div class="required-badge recommended-glow">RECOMMENDED</div>' : ''}
@@ -2313,7 +2239,6 @@ function showFinalPlans() {
                     </button>
                 </div>
                 
-                <!-- Monthly Premium Plan -->
                 <div class="pricing-card ${forcePremium ? 'required-glow' : ''}" 
                      id="monthlyPremiumPlan">
                     ${forcePremium ? '<div class="required-badge required-glow">REQUIRED</div>' : ''}
@@ -2339,10 +2264,8 @@ function showFinalPlans() {
             </div>
         `;
     } else {
-        // OWN OUTRIGHT PLANS
         container.innerHTML = `
             <div class="pricing-container">
-                <!-- Standard Own Outright Plan -->
                 <div class="pricing-card ${!forcePremium ? 'recommended-glow' : ''}" 
                      id="standardOwnPlan">
                     ${!forcePremium ? '<div class="required-badge recommended-glow">RECOMMENDED</div>' : ''}
@@ -2364,7 +2287,6 @@ function showFinalPlans() {
                     </button>
                 </div>
                 
-                <!-- Premium Own Outright Plan -->
                 <div class="pricing-card ${forcePremium ? 'required-glow' : ''}" 
                      id="premiumOwnPlan">
                     ${forcePremium ? '<div class="required-badge required-glow">REQUIRED</div>' : ''}
@@ -2391,7 +2313,6 @@ function showFinalPlans() {
         `;
     }
     
-    // Add visual effects to the recommended/required plan
     setTimeout(() => {
         if (forcePremium) {
             const premiumPlan = document.getElementById(isMonthly ? 'monthlyPremiumPlan' : 'premiumOwnPlan');
@@ -2409,19 +2330,11 @@ function showFinalPlans() {
             }
         }
     }, 100);
-    
-    console.log('=== showFinalPlans() completed ===');
 }
 
 // ========== INITIALIZATION ==========
-
-// Initialize page
 document.addEventListener('DOMContentLoaded', () => {
     console.log('=== barber.index.html Initialization ===');
-    
-    // Clear any old data to prevent conflicts
-    localStorage.removeItem('thankYouParams');
-    sessionStorage.clear();
     
     const jumpedFromURL = checkURLParams();
     updateStepIndicator();
@@ -2450,7 +2363,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    console.log('Available barber concepts:', barberConcepts.map(c => c.code));
     console.log('=== Initialization complete ===');
 });
 </script>
