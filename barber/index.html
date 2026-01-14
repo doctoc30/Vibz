@@ -1617,11 +1617,16 @@ function setPlanModel(planModel) {
     console.log('Setting plan model to:', planModel);
     formData.planModel = planModel;
     
-    // Store ALL critical data in localStorage
+    // Store ALL critical data in localStorage AND sessionStorage for redundancy
     localStorage.setItem('businessName', formData.businessName || '');
     localStorage.setItem('selectedDesignCode', formData.designCode || 'CUSTOM');
     localStorage.setItem('designConcept', formData.designConcept || '');
     localStorage.setItem('paymentModel', planModel);
+    
+    // Also store in sessionStorage (more reliable for short-term)
+    sessionStorage.setItem('businessName', formData.businessName || '');
+    sessionStorage.setItem('selectedDesignCode', formData.designCode || 'CUSTOM');
+    sessionStorage.setItem('paymentModel', planModel);
     
     // Store design code features
     if (formData.designCode && formData.designCode !== 'CUSTOM') {
@@ -1631,7 +1636,7 @@ function setPlanModel(planModel) {
         }
     }
     
-    console.log('Data stored in setPlanModel:', {
+    console.log('Data stored:', {
         businessName: localStorage.getItem('businessName'),
         designCode: localStorage.getItem('selectedDesignCode'),
         paymentModel: localStorage.getItem('paymentModel')
@@ -2101,14 +2106,24 @@ function updateHiddenFields() {
     document.getElementById('hiddenFeatures').value = formData.features.join(', ');
 }
 
-// STEP 1: Handle business name input
+// STEP 1: Handle business name input - FIXED
 function handleBusinessName() {
     const value = businessInput.value.trim();
     if (value) {
         formData.businessName = value;
-        // Store business name in localStorage immediately
+        
+        // CRITICAL FIX: Store business name immediately and redundantly
         localStorage.setItem('businessName', value);
-        console.log('Business name stored in handleBusinessName:', value);
+        sessionStorage.setItem('businessName', value);
+        localStorage.setItem('userBusinessName', value); // Additional key
+        sessionStorage.setItem('userBusinessName', value); // Additional key
+        
+        console.log('Business name stored in handleBusinessName:', {
+            formData: formData.businessName,
+            localStorage: localStorage.getItem('businessName'),
+            sessionStorage: sessionStorage.getItem('businessName')
+        });
+        
         next();
     } else {
         alert('Please enter your barber shop name');
@@ -2179,8 +2194,12 @@ function redirectToPayment(planName, stripeLink) {
                         localStorage.getItem('paymentModel') || 
                         'Own Outright';
     
-    // Create complete payment data object
-    const paymentData = {
+    // Create a UNIQUE order ID
+    const orderId = 'order_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    
+    // Create complete order data
+    const orderData = {
+        orderId: orderId,
         businessName: formData.businessName,
         designCode: formData.designCode || 'CUSTOM',
         planType: planName.includes('Premium') ? 'Premium' : 'Standard',
@@ -2189,12 +2208,17 @@ function redirectToPayment(planName, stripeLink) {
         standardServices: standardServiceCount,
         premiumServices: premiumServiceCount,
         totalServices: formData.features.length,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        formData: formData // Store entire form data
     };
     
-    // Store everything in localStorage
-    localStorage.setItem('paymentData', JSON.stringify(paymentData));
+    // CRITICAL: Store in localStorage with unique key
+    localStorage.setItem('currentOrderData', JSON.stringify(orderData));
+    localStorage.setItem('order_' + orderId, JSON.stringify(orderData));
+    
+    // Store individual values with multiple keys for redundancy
     localStorage.setItem('businessName', formData.businessName);
+    localStorage.setItem('userBusinessName', formData.businessName);
     localStorage.setItem('selectedDesignCode', formData.designCode || 'CUSTOM');
     localStorage.setItem('selectedPlan', planName);
     localStorage.setItem('selectedServices', JSON.stringify(formData.features));
@@ -2204,37 +2228,35 @@ function redirectToPayment(planName, stripeLink) {
         total: formData.features.length
     }));
     localStorage.setItem('paymentModel', paymentModel);
+    localStorage.setItem('currentOrderId', orderId);
     
-    console.log('All data stored in localStorage for thank you page:', {
+    // Also store in sessionStorage
+    sessionStorage.setItem('businessName', formData.businessName);
+    sessionStorage.setItem('userBusinessName', formData.businessName);
+    sessionStorage.setItem('selectedDesignCode', formData.designCode || 'CUSTOM');
+    sessionStorage.setItem('currentOrderId', orderId);
+    
+    console.log('All data stored for thank you page:', {
         businessName: localStorage.getItem('businessName'),
+        userBusinessName: localStorage.getItem('userBusinessName'),
         designCode: localStorage.getItem('selectedDesignCode'),
-        paymentData: localStorage.getItem('paymentData')
+        currentOrderId: localStorage.getItem('currentOrderId')
     });
     
-    // Create query string for direct access
-    const queryParams = new URLSearchParams();
-    queryParams.append('business', encodeURIComponent(formData.businessName));
-    queryParams.append('designCode', formData.designCode || 'CUSTOM');
-    queryParams.append('plan', planName.includes('Premium') ? 'Premium' : 'Standard');
-    queryParams.append('paymentModel', paymentModel);
-    queryParams.append('services', formData.features.length);
-    queryParams.append('standardServices', standardServiceCount);
-    queryParams.append('premiumServices', premiumServiceCount);
+    // Create a simple success URL with order ID
+    const successUrl = `${window.location.origin}/thank-you.html?orderId=${orderId}`;
     
-    // Store the query string
-    localStorage.setItem('thankYouQueryParams', queryParams.toString());
+    // Store the success URL
+    localStorage.setItem('thankYouSuccessUrl', successUrl);
     
-    console.log('Redirecting to Stripe with link:', stripeLink);
-    
-    // Add the query string to the thank you page URL
-    const thankYouUrl = `thank-you.html?${queryParams.toString()}`;
-    localStorage.setItem('thankYouUrl', thankYouUrl);
+    console.log('Success URL for thank you page:', successUrl);
     
     // Redirect to payment
+    console.log('Redirecting to Stripe with link:', stripeLink);
     window.location.href = stripeLink;
 }
 
-// FIXED: Show final plans - properly generates HTML with existing CSS classes
+// FIXED: Show final plans
 function showFinalPlans() {
     console.log('=== showFinalPlans() called ===');
     
@@ -2247,6 +2269,7 @@ function showFinalPlans() {
     
     console.log('Payment model:', paymentModel);
     console.log('Is monthly?', isMonthly);
+    console.log('Current business name:', formData.businessName);
     
     const forcePremium = formData.forcePremiumPlan || 
                         formData.features.some(f => {
@@ -2390,23 +2413,15 @@ function showFinalPlans() {
     console.log('=== showFinalPlans() completed ===');
 }
 
-// Helper function to get Stripe link
-function getStripeLink(planKey) {
-    const stripeLinks = {
-        'Standard Own Outright': 'https://buy.stripe.com/test_00wdRa2Lc7093305LxgMw01',
-        'Premium Own Outright': 'https://buy.stripe.com/test_dRmaEYbhI84d1YW8XJgMw02',
-        'Standard Monthly Support': 'https://buy.stripe.com/test_9B614oetUckt6fc7TFgMw04',
-        'Premium Monthly Support': 'https://buy.stripe.com/test_6oU5kE3Pgdox6fc6PBgMw03'
-    };
-    
-    return stripeLinks[planKey] || stripeLinks['Standard Own Outright'];
-}
-
 // ========== INITIALIZATION ==========
 
 // Initialize page
 document.addEventListener('DOMContentLoaded', () => {
     console.log('=== barber.index.html Initialization ===');
+    
+    // Clear any old data to prevent conflicts
+    localStorage.removeItem('thankYouParams');
+    sessionStorage.clear();
     
     const jumpedFromURL = checkURLParams();
     updateStepIndicator();
@@ -2439,7 +2454,6 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('=== Initialization complete ===');
 });
 </script>
-            
 
 </body>
 </html>
