@@ -1511,15 +1511,15 @@
 <script>
 // ========== BARBER CONCEPTS DATABASE ==========
 const barberConcepts = [
-    { code: "barber-1", image: "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
-    { code: "barber-2", image: "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
-    { code: "barber-3", image: "https://images.unsplash.com/photo-1567894340315-735d7c361db0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
-    { code: "barber-4", image: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
-    { code: "barber-5", image: "https://images.unsplash.com/photo-1562157873-818bc0726f68?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
-    { code: "barber-6", image: "https://images.unsplash.com/photo-1580618864180-f6d7d39b8ff6?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
-    { code: "barber-7", image: "https://images.unsplash.com/photo-1621605815972-f9e5c6c4a9c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
-    { code: "barber-8", image: "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
-    { code: "barber-9", image: "https://images.unsplash.com/photo-1580618864180-f6d7d39b8ff6?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" }
+    { code: "barber-1", image: "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80", features: ["Services & Pricing Display", "Team / Barber Profiles", "Photo Gallery", "Basic Before & After Slider", "Opening Hours Display"] },
+    { code: "barber-2", image: "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80", features: ["Online Booking System", "Stripe Payments", "Enhanced Gallery", "Analytics Setup", "Priority Build Queue"] },
+    { code: "barber-3", image: "https://images.unsplash.com/photo-1567894340315-735d7c361db0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80", features: ["Full Branding Package", "Custom Graphics", "Premium SEO", "Social Proof Section", "Multi-Location Info"] },
+    { code: "barber-4", image: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80", features: ["Gift Cards System", "Walk-In System", "Advanced CTAs", "Video Gallery", "Email Newsletter Setup"] },
+    { code: "barber-5", image: "https://images.unsplash.com/photo-1562157873-818bc0726f68?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80", features: ["Contact Form", "Location & Directions", "FAQ Section", "Loyalty Program", "Mobile Responsive"] },
+    { code: "barber-6", image: "https://images.unsplash.com/photo-1580618864180-f6d7d39b8ff6?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80", features: ["Special Offers Section", "Tap-to-Call Buttons", "Automated Reminders", "Reschedule System", "Speed Optimization"] },
+    { code: "barber-7", image: "https://images.unsplash.com/photo-1621605815972-f9e5c6c4a9c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80", features: ["Barber Specialties", "Before & After Filter", "Sticky Header", "Favicon Branding", "Advanced SEO"] },
+    { code: "barber-8", image: "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80", features: ["E-commerce Ready", "Custom Animations", "Priority Support", "Content Management", "Analytics"] },
+    { code: "barber-9", image: "https://images.unsplash.com/photo-1580618864180-f6d7d39b8ff6?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80", features: ["Social Media Integration", "Basic SEO", "Contact Automation", "Mobile Responsive", "Testimonials"] }
 ];
 
 // ========== SERVICES DATABASE ==========
@@ -1616,8 +1616,13 @@ function setPlanModel(planModel) {
     console.log('Setting plan model to:', planModel);
     formData.planModel = planModel;
     
+    // Store business name and design code BEFORE redirecting
+    localStorage.setItem('businessName', formData.businessName);
+    localStorage.setItem('selectedDesignCode', formData.designCode);
+    localStorage.setItem('designConcept', formData.designConcept);
     localStorage.setItem('paymentModel', planModel);
-    console.log('Payment model stored in localStorage:', planModel);
+    console.log('Business name stored:', formData.businessName);
+    console.log('Design code stored:', formData.designCode);
     
     currentStep = 13;
     updateStepIndicator();
@@ -1736,6 +1741,10 @@ function confirmDesignSelection() {
     if (concept) {
         formData.designCode = concept.code;
         formData.designConcept = 'From Code';
+        
+        // Store design code features for later use
+        localStorage.setItem('designCodeFeatures', JSON.stringify(concept.features));
+        
         updateHiddenFields();
         next();
     }
@@ -1958,7 +1967,15 @@ function nextFromServices() {
         localStorage.setItem('forcePremiumPlan', 'false');
     }
     
+    // Store all selected services
+    localStorage.setItem('selectedServices', JSON.stringify(formData.features));
+    localStorage.setItem('serviceCounts', JSON.stringify({
+        standard: standardServiceCount,
+        premium: premiumServiceCount,
+        total: formData.features.length
+    }));
     localStorage.setItem('recommendedPlan', JSON.stringify(recommendedPlan));
+    
     next();
 }
 
@@ -1984,6 +2001,7 @@ function checkURLParams() {
                     formData.designCode = foundConcept.code;
                     formData.designConcept = 'From Concepts';
                     localStorage.setItem('selectedDesignCode', foundConcept.code);
+                    localStorage.setItem('designCodeFeatures', JSON.stringify(foundConcept.features));
                 }
             }
             
@@ -2074,6 +2092,7 @@ function handleBusinessName() {
     const value = businessInput.value.trim();
     if (value) {
         formData.businessName = value;
+        localStorage.setItem('businessName', value); // Store business name immediately
         next();
     } else {
         alert('Please enter your barber shop name');
@@ -2095,6 +2114,7 @@ function setDesignConcept(option) {
         next();
     } else if (option === 'Custom') {
         formData.designCode = 'CUSTOM';
+        localStorage.setItem('selectedDesignCode', 'CUSTOM');
         next();
     }
 }
@@ -2126,6 +2146,8 @@ function setGoal(goal) {
 function redirectToPayment(planName, stripeLink) {
     console.log('=== redirectToPayment called ===');
     console.log('Plan name parameter:', planName);
+    console.log('Business name:', formData.businessName);
+    console.log('Design code:', formData.designCode);
     console.log('formData.planModel:', formData.planModel);
     console.log('localStorage paymentModel:', localStorage.getItem('paymentModel'));
     
@@ -2174,16 +2196,23 @@ function redirectToPayment(planName, stripeLink) {
         total: formData.features.length
     }));
     localStorage.setItem('paymentModel', paymentModel);
+    localStorage.setItem('businessName', formData.businessName); // Ensure business name is stored
+    localStorage.setItem('selectedDesignCode', formData.designCode); // Ensure design code is stored
     
+    console.log('Stored in localStorage - businessName:', localStorage.getItem('businessName'));
+    console.log('Stored in localStorage - selectedDesignCode:', localStorage.getItem('selectedDesignCode'));
     console.log('Stored in localStorage - paymentModel:', localStorage.getItem('paymentModel'));
     console.log('Stored in localStorage - selectedPlan:', localStorage.getItem('selectedPlan'));
     
     const returnParams = new URLSearchParams();
     returnParams.append('niche', 'barber');
     returnParams.append('business', encodeURIComponent(formData.businessName || 'Barber Shop'));
+    returnParams.append('designCode', formData.designCode || 'CUSTOM');
     returnParams.append('plan', planName.includes('Premium') ? 'Premium' : 'Standard');
     returnParams.append('paymentModel', paymentModel);
     returnParams.append('services', formData.features.length);
+    returnParams.append('standardServices', standardServiceCount);
+    returnParams.append('premiumServices', premiumServiceCount);
     
     localStorage.setItem('thankYouParams', returnParams.toString());
     
