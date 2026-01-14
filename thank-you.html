@@ -345,477 +345,163 @@
     </div>
   </div>
 
+  <script>
+    // Get niche and plan from URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const niche = urlParams.get('niche') || 'project';
+    const plan = urlParams.get('plan') || '';
+    const business = urlParams.get('business') || '';
 
+    const titleEl = document.getElementById('thankYouTitle');
+    const textEl = document.getElementById('thankYouText');
+    const projectNameEl = document.getElementById('projectName');
+    const planTypeEl = document.getElementById('planType');
+    const orderStatusEl = document.getElementById('orderStatus');
+    const projectDescEl = document.getElementById('projectDescription');
 
-<script>
-  // ========== STATIC PLAN DETAILS DATABASE ==========
-const STATIC_PLAN_DETAILS = {
-    // Monthly payment plans
-    'Standard Monthly': {
-        price: '£100/month',
-        type: 'monthly',
-        pages: 'Up to 5 Pages',
-        revisions: 'Up to 5 Revisions Per Page (build phase only)',
-        delivery: '10-15 days',
-        hosting: 'Website hosting included',
-        maintenance: 'Monthly maintenance',
-        securityUpdates: true,
-        emailSupport: true,
-        mobileResponsive: true,
-        sslCertificate: 'included',
-        legalTemplates: true,
-        backups: false,
-        performanceMonitoring: false,
-        builtWith: 'Custom HTML, CSS & JavaScript'
-    },
-    'Premium Monthly': {
-        price: '£150/month',
-        type: 'monthly',
-        pages: 'Up to 15 Pages',
-        revisions: 'Up to 10 Revisions Per Page (build phase only)',
-        delivery: '25-30 days',
-        hosting: 'Advanced hosting',
-        maintenance: 'Monthly maintenance',
-        securityUpdates: true,
-        backups: 'Regular backups',
-        performanceMonitoring: true,
-        emailSupport: true,
-        mobileResponsive: true,
-        sslCertificate: 'included',
-        legalTemplates: true,
-        builtWith: 'Custom HTML, CSS & JavaScript'
-    },
-    // One-time payment plans
-    'Standard Outright': {
-        price: '£1,500',
-        type: 'one-time',
-        pages: 'Up to 5 Pages',
-        revisions: 'Up to 5 Revisions Per Page (build phase only)',
-        delivery: '10-15 days',
-        support: '3 Months Post-Launch Support',
-        supportType: 'email only – bug fixes & minor content updates',
-        mobileResponsive: true,
-        sslCertificate: 'via client hosting',
-        legalTemplates: true,
-        hosting: 'not included',
-        hostingNote: 'Client provides their own hosting',
-        pageLimitNote: 'All published pages count toward the page limit',
-        builtWith: 'Custom HTML, CSS & JavaScript',
-        sourceFiles: 'All source code files to own forever'
-    },
-    'Premium Outright': {
-        price: '£3,000',
-        type: 'one-time',
-        pages: 'Up to 15 Pages',
-        revisions: 'Up to 10 Revisions Per Page (build phase only)',
-        delivery: '25-30 days',
-        support: '6 Months Post-Launch Support',
-        supportType: 'email only – bug fixes & minor content updates',
-        mobileResponsive: true,
-        sslCertificate: 'via client hosting',
-        legalTemplates: true,
-        hosting: 'not included',
-        hostingNote: 'Client provides their own hosting',
-        pageLimitNote: 'All published pages count toward the page limit',
-        builtWith: 'Custom HTML, CSS & JavaScript',
-        sourceFiles: 'All source code files to own forever'
-    }
-};
-
-// Helper function to get plan name (UPDATED for new system)
-function getPlanName(funnelPlan, paymentModel) {
-    if (paymentModel === 'Monthly') {
-        return funnelPlan + ' Monthly';
-    } else if (paymentModel === 'Outright') {
-        return funnelPlan + ' Outright';
-    } else if (paymentModel === 'Annual Support') {
-        return funnelPlan + ' Annual Support';
-    }
-    return funnelPlan + ' Plan';
-}
-
-// Get data from URL parameters AND localStorage
-const urlParams = new URLSearchParams(window.location.search);
-
-// Try to get from URL first
-let niche = urlParams.get('niche');
-let plan = urlParams.get('plan');
-let business = urlParams.get('business');
-let paymentModel = urlParams.get('paymentModel');
-
-// ========== Load complete funnel data ==========
-let funnelData = {};
-let selectedServices = [];
-let serviceCounts = {};
-let selectedPlanName = '';
-let staticPlanDetails = null;
-
-try {
-    // Get all data from localStorage
-    funnelData = JSON.parse(localStorage.getItem('barberFunnelData') || '{}');
-    selectedServices = JSON.parse(localStorage.getItem('selectedServices') || '[]');
-    serviceCounts = JSON.parse(localStorage.getItem('serviceCounts') || '{}');
-    selectedPlanName = localStorage.getItem('selectedPlan') || '';
-    paymentModel = paymentModel || localStorage.getItem('paymentModel') || funnelData.planModel || '';
-    
-    // Try to get static plan details
-    try {
-        const storedStaticDetails = localStorage.getItem('staticPlanDetails');
-        if (storedStaticDetails) {
-            staticPlanDetails = JSON.parse(storedStaticDetails);
-        }
-    } catch(e) {
-        console.log('No static plan details in localStorage or parsing error:', e);
-    }
-    
-    console.log('Loaded from localStorage:', { 
-        funnelData, 
-        selectedServices, 
-        serviceCounts, 
-        selectedPlanName,
-        paymentModel,
-        staticPlanDetails 
-    });
-    
-    // If not in URL, use localStorage data
-    if (!niche || !plan || !business) {
-        niche = niche || 'barber';
-        
-        // Determine plan type from selectedPlanName
-        if (selectedPlanName.includes('Premium')) {
-            plan = 'Premium';
-        } else if (selectedPlanName.includes('Standard')) {
-            plan = 'Standard';
-        } else {
-            plan = plan || 'Standard';
-        }
-        
-        business = business || funnelData.businessName || 'Your Barber Shop';
-        
-        console.log('Using localStorage data:', { niche, plan, business, paymentModel });
-    }
-} catch (e) {
-    console.error('Error loading localStorage:', e);
-}
-
-// Default values if still empty
-niche = niche || 'barber';
-plan = plan || 'Standard';
-business = business || 'Your Barber Shop';
-paymentModel = paymentModel || '';
-
-// Get complete plan name using new system
-const completePlanName = getPlanName(plan, paymentModel);
-
-// Get static plan details if not loaded
-if (!staticPlanDetails || Object.keys(staticPlanDetails).length === 0) {
-    if (STATIC_PLAN_DETAILS[completePlanName]) {
-        staticPlanDetails = STATIC_PLAN_DETAILS[completePlanName];
-    } else if (funnelData.staticPlanDetails) {
-        staticPlanDetails = funnelData.staticPlanDetails;
-    } else {
-        // Fallback: create basic plan details
-        staticPlanDetails = {
-            price: paymentModel === 'Monthly' ? 
-                  (plan === 'Premium' ? '£150/month' : '£100/month') :
-                  (plan === 'Premium' ? '£3,000' : '£1,500'),
-            type: paymentModel === 'Monthly' ? 'monthly' : 'one-time',
-            pages: plan === 'Premium' ? 'Up to 15 Pages' : 'Up to 5 Pages',
-            revisions: plan === 'Premium' ? 'Up to 10 Revisions Per Page' : 'Up to 5 Revisions Per Page',
-            delivery: plan === 'Premium' ? '25-30 days' : '10-15 days',
-            mobileResponsive: true,
-            sslCertificate: paymentModel === 'Monthly' ? 'included' : 'via client hosting'
-        };
-    }
-}
-
-// DOM Elements
-const titleEl = document.getElementById('thankYouTitle');
-const textEl = document.getElementById('thankYouText');
-const projectNameEl = document.getElementById('projectName');
-const planTypeEl = document.getElementById('planType');
-const orderStatusEl = document.getElementById('orderStatus');
-const projectDescEl = document.getElementById('projectDescription');
-
-// Niche-specific messages
-const nicheMessages = {
-    barber: {
+    // Niche-specific messages
+    const nicheMessages = {
+      barber: {
         title: "Thank You!",
-        message: `Your barber shop website order has been confirmed!`,
+        message: "Your barber shop website order has been confirmed!",
         projectName: "Barber Shop Website",
         description: "Perfect for showcasing your cuts, booking appointments, and growing your clientele"
-    },
-    plumber: {
+      },
+      plumber: {
         title: "Thank You!",
         message: "Your plumbing service website order has been confirmed!",
         projectName: "Plumbing Service Website",
         description: "Ideal for emergency calls, service listings, and building local trust"
-    },
-    dentist: {
+      },
+      dentist: {
         title: "Thank You!",
         message: "Your dental clinic website order has been confirmed!",
         projectName: "Dental Clinic Website",
         description: "Perfect for patient education, appointment booking, and practice growth"
-    },
-    gym: {
+      },
+      gym: {
         title: "Thank You!",
         message: "Your gym & fitness website order has been confirmed!",
         projectName: "Gym & Fitness Website",
         description: "Ideal for class schedules, membership signups, and member engagement"
-    },
-    default: {
+      },
+      default: {
         title: "Thank You!",
-        message: `Your website order has been confirmed!`,
-        projectName: `${niche.charAt(0).toUpperCase() + niche.slice(1)} Website`,
+        message: `Your ${niche} website order has been confirmed!`,
+        projectName: `${business || niche.charAt(0).toUpperCase() + niche.slice(1)} Website`,
         description: "We'll create a high-converting website tailored to your specific business needs"
-    }
-};
+      }
+    };
 
-// Get the appropriate message
-const nicheData = nicheMessages[niche] || nicheMessages.default;
-
-// Format plan name for display
-let formattedPlan = completePlanName;
-if (!formattedPlan && plan) {
-    formattedPlan = plan;
-    if (paymentModel) {
-        formattedPlan += ` (${paymentModel})`;
-    }
-}
-
-// Update all elements
-titleEl.textContent = nicheData.title;
-textEl.textContent = nicheData.message;
-projectNameEl.textContent = nicheData.projectName;
-planTypeEl.textContent = formattedPlan;
-orderStatusEl.textContent = 'Received & Processing';
-projectDescEl.textContent = nicheData.description;
-
-// Create detailed plan summary
-function createPlanSummary() {
-    const detailsContainer = document.querySelector('.thank-you-details');
+    // Get the appropriate message
+    const nicheData = nicheMessages[niche] || nicheMessages.default;
     
-    if (!detailsContainer) {
-        console.error('Details container not found');
-        return;
-    }
+    // Update all elements
+    titleEl.textContent = nicheData.title;
+    textEl.textContent = nicheData.message;
+    projectNameEl.textContent = nicheData.projectName;
+    planTypeEl.textContent = plan ? plan + ' Plan' : 'Custom Package';
+    orderStatusEl.textContent = 'Received & Processing';
+    projectDescEl.textContent = nicheData.description;
+
+    // Add some dynamic styling based on niche
+    const nicheColors = {
+      barber: '#FF6B00',
+      plumber: '#0066CC',
+      dentist: '#00A86B',
+      gym: '#FF3366'
+    };
     
-    let planSummaryHTML = '';
+    const nicheColor = nicheColors[niche] || '#FF6B00';
     
-    // Show static plan details if available
-    if (staticPlanDetails) {
-        const isMonthly = staticPlanDetails.type === 'monthly';
-        const isPremium = plan === 'Premium';
+    // Update primary color for this niche
+    document.documentElement.style.setProperty('--primary', nicheColor);
+    
+    // Update button styling
+    updateButtonColors(nicheColor);
+    
+    // Handle "Send Within 48 Hours" button click
+    document.getElementById('sendLaterBtn').addEventListener('click', function() {
+      const btn = this;
+      const originalText = btn.innerHTML;
+      
+      // Show loading state
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+      btn.disabled = true;
+      
+      // Simulate API call
+      setTimeout(() => {
+        // Show success
+        btn.innerHTML = '<i class="fas fa-check"></i> Questionnaire Sent!';
+        btn.style.background = '#10B981';
+        btn.style.borderColor = '#10B981';
+        btn.style.color = 'white';
         
-        planSummaryHTML = `
-            <div class="plan-details-summary" style="background: rgba(255, 107, 0, 0.05); padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem;">
-                <h4 style="color: var(--primary); margin-bottom: 1rem;">📋 Your Plan Details:</h4>
-                
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
-                    <!-- Pricing & Basic Info -->
-                    <div>
-                        <p><strong>Plan:</strong> ${completePlanName}</p>
-                        <p><strong>Price:</strong> ${staticPlanDetails.price}</p>
-                        ${isMonthly ? `
-                            <p><strong>Hosting:</strong> ${staticPlanDetails.hosting || 'Website hosting included'}</p>
-                            <p><strong>Maintenance:</strong> ${staticPlanDetails.maintenance || 'Monthly maintenance'}</p>
-                            ${staticPlanDetails.backups ? `<p><strong>Backups:</strong> ${staticPlanDetails.backups}</p>` : ''}
-                            ${staticPlanDetails.performanceMonitoring ? `<p><strong>Performance Monitoring:</strong> ✓</p>` : ''}
-                        ` : `
-                            <p><strong>Pages:</strong> ${staticPlanDetails.pages || (isPremium ? 'Up to 15 Pages' : 'Up to 5 Pages')}</p>
-                            <p><strong>Revisions:</strong> ${staticPlanDetails.revisions || (isPremium ? 'Up to 10 Revisions Per Page' : 'Up to 5 Revisions Per Page')}</p>
-                            <p><strong>Delivery:</strong> ${staticPlanDetails.delivery || (isPremium ? '25-30 days' : '10-15 days')}</p>
-                            <p><strong>Support:</strong> ${staticPlanDetails.support || (isPremium ? '6 Months Post-Launch Support' : '3 Months Post-Launch Support')}</p>
-                            ${staticPlanDetails.supportType ? `<p><small style="color: #666;">${staticPlanDetails.supportType}</small></p>` : ''}
-                        `}
-                    </div>
-                    
-                    <!-- Features -->
-                    <div>
-                        <p><strong>Features Included:</strong></p>
-                        <ul style="margin-top: 0.5rem; padding-left: 1.2rem;">
-                            ${staticPlanDetails.mobileResponsive ? `<li>✓ Mobile Responsive Design</li>` : ''}
-                            ${staticPlanDetails.sslCertificate ? `<li>✓ SSL Certificate ${staticPlanDetails.sslCertificate !== 'included' ? `(${staticPlanDetails.sslCertificate})` : ''}</li>` : ''}
-                            ${staticPlanDetails.legalTemplates ? `<li>✓ Legal Page Templates</li>` : ''}
-                            ${staticPlanDetails.securityUpdates ? `<li>✓ Security Updates</li>` : ''}
-                            ${staticPlanDetails.emailSupport ? `<li>✓ Email Support</li>` : ''}
-                            <li>✓ Professional Design</li>
-                            <li>✓ Fast Loading Speed</li>
-                            ${staticPlanDetails.builtWith ? `<li>✓ ${staticPlanDetails.builtWith}</li>` : ''}
-                        </ul>
-                        
-                        ${!isMonthly && staticPlanDetails.hosting === 'not included' ? `
-                            <div style="background: rgba(255, 107, 0, 0.1); padding: 0.5rem; border-radius: 8px; margin-top: 0.5rem; font-size: 0.9rem;">
-                                <strong>⚠️ Important:</strong> ${staticPlanDetails.hostingNote || 'Client provides their own hosting'}
-                            </div>
-                        ` : ''}
-                        
-                        ${!isMonthly && staticPlanDetails.sourceFiles ? `
-                            <div style="background: rgba(33, 150, 243, 0.1); padding: 0.5rem; border-radius: 8px; margin-top: 0.5rem; font-size: 0.9rem;">
-                                <strong>🎁 Bonus:</strong> ${staticPlanDetails.sourceFiles}
-                            </div>
-                        ` : ''}
-                    </div>
-                </div>
+        // Show success message
+        const successMsg = document.createElement('div');
+        successMsg.style.cssText = 'background: rgba(16, 185, 129, 0.1); border: 1px solid #10B981; color: #065F46; padding: 1rem; border-radius: 12px; margin-top: 1rem; text-align: center;';
+        successMsg.innerHTML = `
+          <h4 style="margin-bottom: 0.5rem; color: #065F46;"><i class="fas fa-check-circle"></i> Success!</h4>
+          <p>We've sent a detailed questionnaire to your email. Please complete it within 48 hours to start your project.</p>
+          <p style="font-size: 0.9rem; margin-top: 0.5rem;">Check your inbox and spam folder.</p>
         `;
-    } else {
-        // Fallback if no static details
-        planSummaryHTML = `
-            <div class="plan-details-summary" style="background: rgba(255, 107, 0, 0.05); padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem;">
-                <h4 style="color: var(--primary); margin-bottom: 1rem;">📋 Your Plan Details:</h4>
-                <p><strong>Plan:</strong> ${formattedPlan}</p>
-                <p><strong>Business:</strong> ${business}</p>
-                <p><strong>Payment Model:</strong> ${paymentModel || 'One-time payment'}</p>
-                <p><strong>Plan Type:</strong> ${plan}</p>
-        `;
-    }
-    
-    // Add selected services if available
-    if (selectedServices && selectedServices.length > 0) {
-        planSummaryHTML += `
-            <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255, 107, 0, 0.2);">
-                <p><strong>🎯 Your Selected Services (${selectedServices.length} total):</strong></p>
-                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.5rem; margin-top: 0.5rem;">
-                    ${selectedServices.slice(0, 10).map(service => `
-                        <div style="background: rgba(255, 107, 0, 0.1); padding: 0.5rem; border-radius: 8px; font-size: 0.9rem;">
-                            <i class="fas fa-check" style="color: var(--primary); margin-right: 0.5rem;"></i>
-                            ${service}
-                        </div>
-                    `).join('')}
-                    ${selectedServices.length > 10 ? `
-                        <div style="background: rgba(255, 107, 0, 0.1); padding: 0.5rem; border-radius: 8px; font-size: 0.9rem; text-align: center;">
-                            <i class="fas fa-plus" style="color: var(--primary); margin-right: 0.5rem;"></i>
-                            +${selectedServices.length - 10} more services
-                        </div>
-                    ` : ''}
-                </div>
-                ${serviceCounts.standard || serviceCounts.premium ? `
-                    <div style="margin-top: 1rem; display: flex; gap: 1rem; font-size: 0.9rem;">
-                        ${serviceCounts.standard ? `<span style="color: #4CAF50;"><i class="fas fa-circle"></i> ${serviceCounts.standard} Standard Services</span>` : ''}
-                        ${serviceCounts.premium ? `<span style="color: #2196F3;"><i class="fas fa-circle"></i> ${serviceCounts.premium} Premium Services</span>` : ''}
-                    </div>
-                ` : ''}
-            </div>
-        `;
-    }
-    
-    planSummaryHTML += `</div>`;
-    
-    detailsContainer.innerHTML = planSummaryHTML;
-}
+        
+        btn.parentNode.parentNode.insertBefore(successMsg, btn.parentNode.nextSibling);
+        
+        // Reset button after 5 seconds
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+          btn.style.background = '';
+          btn.style.borderColor = '';
+          btn.style.color = '';
+          btn.disabled = false;
+          updateButtonColors(nicheColor); // Re-apply color updates
+          successMsg.remove();
+        }, 5000);
+      }, 1500);
+    });
 
-// Add some dynamic styling based on niche
-const nicheColors = {
-    barber: '#FF6B00',
-    plumber: '#0066CC',
-    dentist: '#00A86B',
-    gym: '#FF3366'
-};
-
-const nicheColor = nicheColors[niche] || '#FF6B00';
-
-// Update primary color for this niche
-document.documentElement.style.setProperty('--primary', nicheColor);
-
-// Update button styling
-function updateButtonColors(color) {
-    // Update all option buttons
-    document.querySelectorAll('.option-button').forEach(btn => {
+    // Helper function to update button colors
+    function updateButtonColors(color) {
+      // Update all option buttons
+      document.querySelectorAll('.option-button').forEach(btn => {
         btn.style.color = color;
         btn.style.borderColor = color;
         
         // Update hover effect
         btn.addEventListener('mouseenter', function() {
-            if (!this.disabled) {
-                this.style.backgroundColor = color;
-                this.style.color = 'white';
-            }
+          if (!this.disabled) {
+            this.style.backgroundColor = color;
+            this.style.color = 'white';
+          }
         });
         btn.addEventListener('mouseleave', function() {
-            if (!this.disabled && !this.style.background.includes('10B981')) {
-                this.style.backgroundColor = 'transparent';
-                this.style.color = color;
-            }
+          if (!this.disabled && !this.style.background.includes('10B981')) {
+            this.style.backgroundColor = 'transparent';
+            this.style.color = color;
+          }
         });
-    });
-    
-    // Update time badge
-    document.querySelectorAll('.time-badge').forEach(badge => {
+      });
+      
+      // Update time badge
+      document.querySelectorAll('.time-badge').forEach(badge => {
         badge.style.backgroundColor = color;
-    });
-    
-    // Update completion options background
-    const completionOptions = document.querySelector('.completion-options');
-    if (completionOptions) {
-        completionOptions.style.background = `${color}08`;
+      });
+      
+      // Update completion options background
+      document.querySelector('.completion-options').style.background = `${color}08`;
     }
-}
 
-// Handle "Send Within 48 Hours" button click
-function setupSendLaterButton() {
-    const sendLaterBtn = document.getElementById('sendLaterBtn');
-    if (!sendLaterBtn) return;
-    
-    sendLaterBtn.addEventListener('click', function() {
-        const btn = this;
-        const originalText = btn.innerHTML;
-        
-        // Get business details for email
-        const businessDetails = {
-            name: funnelData.businessName || business,
-            plan: completePlanName,
-            services: selectedServices,
-            timestamp: new Date().toISOString()
-        };
-        
-        // Show loading state
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-        btn.disabled = true;
-        
-        // Simulate API call (in production, send to your backend)
-        setTimeout(() => {
-            // Show success
-            btn.innerHTML = '<i class="fas fa-check"></i> Questionnaire Sent!';
-            btn.style.background = '#10B981';
-            btn.style.borderColor = '#10B981';
-            btn.style.color = 'white';
-            
-            // Store that questionnaire was sent
-            localStorage.setItem('questionnaireSent', 'true');
-            localStorage.setItem('questionnaireTime', new Date().toISOString());
-            
-            // Show success message
-            const successMsg = document.createElement('div');
-            successMsg.style.cssText = 'background: rgba(16, 185, 129, 0.1); border: 1px solid #10B981; color: #065F46; padding: 1rem; border-radius: 12px; margin-top: 1rem; text-align: center;';
-            successMsg.innerHTML = `
-                <h4 style="margin-bottom: 0.5rem; color: #065F46;"><i class="fas fa-check-circle"></i> Success!</h4>
-                <p>We've sent a detailed questionnaire to your email. Please complete it within 48 hours to start your project.</p>
-                <p style="font-size: 0.9rem; margin-top: 0.5rem;">Check your inbox and spam folder.</p>
-            `;
-            
-            btn.parentNode.parentNode.insertBefore(successMsg, btn.parentNode.nextSibling);
-            
-            // Reset button after 5 seconds
-            setTimeout(() => {
-                btn.innerHTML = originalText;
-                btn.style.background = '';
-                btn.style.borderColor = '';
-                btn.style.color = '';
-                btn.disabled = false;
-                updateButtonColors(nicheColor); // Re-apply color updates
-                successMsg.remove();
-            }, 5000);
-        }, 1500);
-    });
-}
+    // Add celebratory confetti on page load
+    setTimeout(() => {
+      createConfetti(nicheColor);
+    }, 500);
 
-// Add celebratory confetti on page load
-function createConfetti(color) {
-    const colors = [color, '#FF6B00', '#121212', '#4a4a4a'];
-    const container = document.querySelector('.thank-you-container');
-    if (!container) return;
-    
-    for (let i = 0; i < 20; i++) {
+    function createConfetti(color) {
+      const colors = [color, '#FF6B00', '#121212', '#4a4a4a'];
+      const container = document.querySelector('.thank-you-container');
+      
+      for (let i = 0; i < 20; i++) {
         const confetti = document.createElement('div');
         confetti.style.position = 'absolute';
         confetti.style.width = '8px';
@@ -830,60 +516,16 @@ function createConfetti(color) {
         
         // Animate confetti
         const animation = confetti.animate([
-            { transform: 'translateY(0) rotate(0deg)', opacity: 0.7 },
-            { transform: `translateY(${window.innerHeight}px) rotate(${Math.random() * 360}deg)`, opacity: 0 }
+          { transform: 'translateY(0) rotate(0deg)', opacity: 0.7 },
+          { transform: `translateY(${window.innerHeight}px) rotate(${Math.random() * 360}deg)`, opacity: 0 }
         ], {
-            duration: Math.random() * 2000 + 1000,
-            easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)'
+          duration: Math.random() * 2000 + 1000,
+          easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)'
         });
         
         animation.onfinish = () => confetti.remove();
+      }
     }
-}
-
-// Initialize page
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Thank You Page Initialized');
-    console.log('Complete Data:', {
-        niche,
-        plan,
-        business,
-        paymentModel,
-        completePlanName,
-        staticPlanDetails,
-        selectedServices,
-        serviceCounts
-    });
-    
-    // Create plan summary
-    createPlanSummary();
-    
-    // Update button colors
-    updateButtonColors(nicheColor);
-    
-    // Setup send later button
-    setupSendLaterButton();
-    
-    // Add confetti
-    setTimeout(() => {
-        createConfetti(nicheColor);
-    }, 500);
-    
-    // Update order form link to pass data
-    const orderFormLink = document.querySelector('a[href="order-form.html"]');
-    if (orderFormLink) {
-        // Pass all necessary data to order form
-        const orderFormUrl = new URL('order-form.html', window.location.origin);
-        orderFormUrl.searchParams.append('niche', niche);
-        orderFormUrl.searchParams.append('plan', plan);
-        orderFormUrl.searchParams.append('business', encodeURIComponent(business));
-        orderFormUrl.searchParams.append('paymentModel', paymentModel);
-        
-        orderFormLink.href = orderFormUrl.toString();
-        console.log('Order Form Link Updated:', orderFormLink.href);
-    }
-});
-      
-</script>
+  </script>
 </body>
 </html>
