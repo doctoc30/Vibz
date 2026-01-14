@@ -1508,6 +1508,7 @@
 </section>
 
 
+
 <script>
 // ========== BARBER CONCEPTS DATABASE ==========
 const barberConcepts = [
@@ -1616,13 +1617,25 @@ function setPlanModel(planModel) {
     console.log('Setting plan model to:', planModel);
     formData.planModel = planModel;
     
-    // Store business name and design code BEFORE redirecting
-    localStorage.setItem('businessName', formData.businessName);
-    localStorage.setItem('selectedDesignCode', formData.designCode);
-    localStorage.setItem('designConcept', formData.designConcept);
+    // Store ALL critical data in localStorage
+    localStorage.setItem('businessName', formData.businessName || '');
+    localStorage.setItem('selectedDesignCode', formData.designCode || 'CUSTOM');
+    localStorage.setItem('designConcept', formData.designConcept || '');
     localStorage.setItem('paymentModel', planModel);
-    console.log('Business name stored:', formData.businessName);
-    console.log('Design code stored:', formData.designCode);
+    
+    // Store design code features
+    if (formData.designCode && formData.designCode !== 'CUSTOM') {
+        const concept = findConceptByCode(formData.designCode);
+        if (concept) {
+            localStorage.setItem('designCodeFeatures', JSON.stringify(concept.features));
+        }
+    }
+    
+    console.log('Data stored in setPlanModel:', {
+        businessName: localStorage.getItem('businessName'),
+        designCode: localStorage.getItem('selectedDesignCode'),
+        paymentModel: localStorage.getItem('paymentModel')
+    });
     
     currentStep = 13;
     updateStepIndicator();
@@ -1744,6 +1757,7 @@ function confirmDesignSelection() {
         
         // Store design code features for later use
         localStorage.setItem('designCodeFeatures', JSON.stringify(concept.features));
+        localStorage.setItem('selectedDesignCode', concept.code);
         
         updateHiddenFields();
         next();
@@ -2092,7 +2106,9 @@ function handleBusinessName() {
     const value = businessInput.value.trim();
     if (value) {
         formData.businessName = value;
-        localStorage.setItem('businessName', value); // Store business name immediately
+        // Store business name in localStorage immediately
+        localStorage.setItem('businessName', value);
+        console.log('Business name stored in handleBusinessName:', value);
         next();
     } else {
         alert('Please enter your barber shop name');
@@ -2145,11 +2161,8 @@ function setGoal(goal) {
 // Go to payment with correct payment model handling
 function redirectToPayment(planName, stripeLink) {
     console.log('=== redirectToPayment called ===');
-    console.log('Plan name parameter:', planName);
-    console.log('Business name:', formData.businessName);
-    console.log('Design code:', formData.designCode);
-    console.log('formData.planModel:', formData.planModel);
-    console.log('localStorage paymentModel:', localStorage.getItem('paymentModel'));
+    console.log('Business name being passed:', formData.businessName);
+    console.log('Design code being passed:', formData.designCode);
     
     const hasPremiumServices = formData.features.some(f => {
         const service = allServices.find(s => s.name === f);
@@ -2166,28 +2179,23 @@ function redirectToPayment(planName, stripeLink) {
                         localStorage.getItem('paymentModel') || 
                         'Own Outright';
     
-    console.log('Using payment model:', paymentModel);
-    
-    const funnelData = {
+    // Create complete payment data object
+    const paymentData = {
         businessName: formData.businessName,
-        projectType: formData.projectType,
-        designConcept: formData.designConcept,
-        designCode: formData.designCode,
-        features: formData.features,
-        audience: formData.audience,
-        style: formData.style,
-        color: formData.color,
-        goal: formData.goal,
-        urgency: formData.urgency,
-        planModel: paymentModel,
+        designCode: formData.designCode || 'CUSTOM',
         planType: planName.includes('Premium') ? 'Premium' : 'Standard',
+        paymentModel: paymentModel,
+        features: formData.features,
         standardServices: standardServiceCount,
         premiumServices: premiumServiceCount,
         totalServices: formData.features.length,
         timestamp: new Date().toISOString()
     };
     
-    localStorage.setItem('barberFunnelData', JSON.stringify(funnelData));
+    // Store everything in localStorage
+    localStorage.setItem('paymentData', JSON.stringify(paymentData));
+    localStorage.setItem('businessName', formData.businessName);
+    localStorage.setItem('selectedDesignCode', formData.designCode || 'CUSTOM');
     localStorage.setItem('selectedPlan', planName);
     localStorage.setItem('selectedServices', JSON.stringify(formData.features));
     localStorage.setItem('serviceCounts', JSON.stringify({
@@ -2196,30 +2204,33 @@ function redirectToPayment(planName, stripeLink) {
         total: formData.features.length
     }));
     localStorage.setItem('paymentModel', paymentModel);
-    localStorage.setItem('businessName', formData.businessName); // Ensure business name is stored
-    localStorage.setItem('selectedDesignCode', formData.designCode); // Ensure design code is stored
     
-    console.log('Stored in localStorage - businessName:', localStorage.getItem('businessName'));
-    console.log('Stored in localStorage - selectedDesignCode:', localStorage.getItem('selectedDesignCode'));
-    console.log('Stored in localStorage - paymentModel:', localStorage.getItem('paymentModel'));
-    console.log('Stored in localStorage - selectedPlan:', localStorage.getItem('selectedPlan'));
+    console.log('All data stored in localStorage for thank you page:', {
+        businessName: localStorage.getItem('businessName'),
+        designCode: localStorage.getItem('selectedDesignCode'),
+        paymentData: localStorage.getItem('paymentData')
+    });
     
-    const returnParams = new URLSearchParams();
-    returnParams.append('niche', 'barber');
-    returnParams.append('business', encodeURIComponent(formData.businessName || 'Barber Shop'));
-    returnParams.append('designCode', formData.designCode || 'CUSTOM');
-    returnParams.append('plan', planName.includes('Premium') ? 'Premium' : 'Standard');
-    returnParams.append('paymentModel', paymentModel);
-    returnParams.append('services', formData.features.length);
-    returnParams.append('standardServices', standardServiceCount);
-    returnParams.append('premiumServices', premiumServiceCount);
+    // Create query string for direct access
+    const queryParams = new URLSearchParams();
+    queryParams.append('business', encodeURIComponent(formData.businessName));
+    queryParams.append('designCode', formData.designCode || 'CUSTOM');
+    queryParams.append('plan', planName.includes('Premium') ? 'Premium' : 'Standard');
+    queryParams.append('paymentModel', paymentModel);
+    queryParams.append('services', formData.features.length);
+    queryParams.append('standardServices', standardServiceCount);
+    queryParams.append('premiumServices', premiumServiceCount);
     
-    localStorage.setItem('thankYouParams', returnParams.toString());
+    // Store the query string
+    localStorage.setItem('thankYouQueryParams', queryParams.toString());
     
     console.log('Redirecting to Stripe with link:', stripeLink);
     
-    document.getElementById('hiddenPaymentLink').value = stripeLink;
+    // Add the query string to the thank you page URL
+    const thankYouUrl = `thank-you.html?${queryParams.toString()}`;
+    localStorage.setItem('thankYouUrl', thankYouUrl);
     
+    // Redirect to payment
     window.location.href = stripeLink;
 }
 
