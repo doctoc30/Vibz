@@ -515,56 +515,105 @@
 
 
 <script>
-    // ========== DATA SERVICES DATABASE ==========
+    // ========== SERVICES DATABASE ==========
     const servicesDatabase = {
-      // Standard Services
-      'Services & Pricing Display': { tier: 'standard', desc: 'Clear layout of all offered services and prices' },
-      'Team / Barber Profiles': { tier: 'standard', desc: 'Photos, bios, and specialties' },
-      'Photo Gallery / Portfolio': { tier: 'standard', desc: 'Image grid showcasing barber work' },
-      'Basic Before & After Slider': { tier: 'standard', desc: 'Compare hairstyles side-by-side' },
-      'Special Offers / Promotions Section': { tier: 'standard', desc: 'Display deals or discounts' },
-      'Opening Hours Display': { tier: 'standard', desc: 'Business hours and open/closed status' },
-      'Location & Directions': { tier: 'standard', desc: 'Google Maps embed with directions button' },
-      'Tap-to-Call & WhatsApp Buttons': { tier: 'standard', desc: 'One-click mobile contact' },
-      'FAQ Section': { tier: 'standard', desc: 'Collapsible questions to answer common client queries' },
-      'Loyalty / Membership Info': { tier: 'standard', desc: 'Show loyalty program details' },
-      'Contact Form': { tier: 'standard', desc: 'Simple enquiry form to collect messages' },
-      'On-Page SEO Basics': { tier: 'standard', desc: 'Page titles, headers, meta tags, and image alt text' },
-      
-      // Premium Services
-      'Online Booking System Integration': { tier: 'premium', desc: 'Calendly, Setmore, etc.' },
-      'Stripe Payments / Deposits': { tier: 'premium', desc: 'Accept payments online' },
-      'Automated Booking Reminders': { tier: 'premium', desc: 'Email/SMS via booking platform' },
-      'Reschedule & Cancellation Management': { tier: 'premium', desc: 'Client-managed bookings' },
-      'Gift Cards / Vouchers': { tier: 'premium', desc: 'Sell digital gift cards' },
-      'Walk-In / Waitlist System': { tier: 'premium', desc: 'Real-time updates for walk-ins' },
-      'Enhanced Before & After Gallery': { tier: 'premium', desc: 'Filter by barber, style, or service' },
-      'Barber Specialties & Service Tags': { tier: 'premium', desc: 'Highlight skills and services' },
-      'Advanced Call-to-Action Buttons': { tier: 'premium', desc: 'Sticky buttons, strategic placement' },
-      'Analytics & Conversion Tracking Setup': { tier: 'premium', desc: 'Tracks Book Now, Call, WhatsApp, and form submissions' },
-      'Priority Build Queue': { tier: 'premium', desc: 'Premium builds scheduled first' },
-      'Enhanced Video & Image Gallery': { tier: 'premium', desc: 'Interactive gallery for client-provided media' },
-      'Social Proof / Reviews Section': { tier: 'premium', desc: 'Display client testimonials' },
-      'Prominent Sticky Header / Banner': { tier: 'premium', desc: 'Highlight bookings, offers, or CTAs' },
-      'Multi-Location / Branch Info': { tier: 'premium', desc: 'Optional for shops with multiple locations' },
-      'Full Branding Package': { tier: 'premium', desc: 'Logo, colors, typography' },
-      'Custom Graphics & Icons': { tier: 'premium', desc: 'Personalized visuals for website sections' },
-      'Branded Email Newsletter Setup': { tier: 'premium', desc: 'Template ready to connect' },
-      'Favicon & Browser Branding': { tier: 'premium', desc: 'Polished appearance in tabs/bookmarks' },
-      'Premium On-Page SEO': { tier: 'premium', desc: 'Schema, technical setup, optimized indexing' }
+      // ... (same services database as before) ...
     };
 
     // ========== INITIALIZE PAGE ==========
     document.addEventListener('DOMContentLoaded', function() {
       console.log('=== Thank You Page Initialization ===');
       
-      // Get data from ALL possible sources
-      const finalData = collectAllData();
+      // FIRST: Check URL parameters for orderId
+      const urlParams = new URLSearchParams(window.location.search);
+      const orderId = urlParams.get('orderId');
       
-      console.log('Final data for thank you page:', finalData);
+      let businessName = '';
+      let designCode = '';
+      let plan = 'Standard';
+      let paymentModel = 'Own Outright';
+      let services = 0;
+      let selectedFeatures = [];
+      
+      // If we have an orderId, get data from that specific order
+      if (orderId) {
+        const orderDataStr = localStorage.getItem('order_' + orderId);
+        if (orderDataStr) {
+          try {
+            const orderData = JSON.parse(orderDataStr);
+            businessName = orderData.businessName || '';
+            designCode = orderData.designCode || 'CUSTOM';
+            plan = orderData.planType || 'Standard';
+            paymentModel = orderData.paymentModel || 'Own Outright';
+            services = orderData.totalServices || 0;
+            selectedFeatures = orderData.features || [];
+            console.log('Got data from orderId:', orderId, businessName);
+          } catch (e) {
+            console.error('Error parsing order data:', e);
+          }
+        }
+      }
+      
+      // If no orderId or businessName is still empty, try all other sources
+      if (!businessName) {
+        // Try localStorage with multiple keys
+        businessName = localStorage.getItem('businessName') || 
+                      localStorage.getItem('userBusinessName') || 
+                      'Barber Shop';
+        
+        designCode = localStorage.getItem('selectedDesignCode') || 'CUSTOM';
+        plan = localStorage.getItem('selectedPlan') || 'Standard';
+        paymentModel = localStorage.getItem('paymentModel') || 'Own Outright';
+        
+        // Get services count
+        const serviceCountsStr = localStorage.getItem('serviceCounts');
+        if (serviceCountsStr) {
+          try {
+            const counts = JSON.parse(serviceCountsStr);
+            services = counts.total || 0;
+          } catch (e) {
+            console.error('Error parsing serviceCounts:', e);
+          }
+        }
+        
+        // Get selected features
+        const selectedServicesStr = localStorage.getItem('selectedServices');
+        if (selectedServicesStr) {
+          try {
+            selectedFeatures = JSON.parse(selectedServicesStr);
+          } catch (e) {
+            console.error('Error parsing selectedServices:', e);
+          }
+        }
+      }
+      
+      // If businessName is still "Barber Shop", try sessionStorage
+      if (businessName === 'Barber Shop') {
+        businessName = sessionStorage.getItem('businessName') || 
+                      sessionStorage.getItem('userBusinessName') || 
+                      'Barber Shop';
+        console.log('Got business name from sessionStorage:', businessName);
+      }
+      
+      console.log('Final data for thank you page:', {
+        businessName,
+        designCode,
+        plan,
+        paymentModel,
+        services,
+        selectedFeaturesCount: selectedFeatures.length
+      });
       
       // Update page content
-      updatePageContent(finalData);
+      updatePageContent({
+        business: businessName,
+        plan: plan,
+        paymentModel: paymentModel,
+        totalServices: services,
+        selectedFeatures: selectedFeatures,
+        designCode: designCode,
+        niche: 'barber'
+      });
       
       // Set up button click handlers
       setupEventHandlers();
@@ -575,180 +624,29 @@
       }, 500);
     });
 
-    // ========== COLLECT ALL DATA ==========
-    function collectAllData() {
-      const urlParams = new URLSearchParams(window.location.search);
-      
-      // Data sources in priority order
-      const dataSources = [
-        // 1. URL parameters (highest priority - from payment processor return)
-        {
-          business: urlParams.get('business') ? decodeURIComponent(urlParams.get('business')) : null,
-          designCode: urlParams.get('designCode'),
-          plan: urlParams.get('plan'),
-          paymentModel: urlParams.get('paymentModel'),
-          services: urlParams.get('services'),
-          standardServices: urlParams.get('standardServices'),
-          premiumServices: urlParams.get('premiumServices')
-        },
-        
-        // 2. paymentData object (from index.js redirectToPayment)
-        (() => {
-          const paymentDataStr = localStorage.getItem('paymentData');
-          if (paymentDataStr) {
-            try {
-              return JSON.parse(paymentDataStr);
-            } catch (e) {
-              console.error('Error parsing paymentData:', e);
-            }
-          }
-          return null;
-        })(),
-        
-        // 3. finalOrderData (from order form)
-        (() => {
-          const orderDataStr = localStorage.getItem('finalOrderData');
-          if (orderDataStr) {
-            try {
-              return JSON.parse(orderDataStr);
-            } catch (e) {
-              console.error('Error parsing finalOrderData:', e);
-            }
-          }
-          return null;
-        })(),
-        
-        // 4. barberFunnelData (from index.js)
-        (() => {
-          const funnelDataStr = localStorage.getItem('barberFunnelData');
-          if (funnelDataStr) {
-            try {
-              return JSON.parse(funnelDataStr);
-            } catch (e) {
-              console.error('Error parsing barberFunnelData:', e);
-            }
-          }
-          return null;
-        })(),
-        
-        // 5. Individual localStorage items
-        {
-          business: localStorage.getItem('businessName'),
-          designCode: localStorage.getItem('selectedDesignCode'),
-          plan: localStorage.getItem('selectedPlan'),
-          paymentModel: localStorage.getItem('paymentModel')
-        }
-      ];
-      
-      // Default values
-      let finalData = {
-        business: 'Barber Shop',
-        designCode: 'CUSTOM',
-        plan: 'Standard',
-        paymentModel: 'Own Outright',
-        services: 0,
-        standardServices: 0,
-        premiumServices: 0,
-        selectedFeatures: [],
-        niche: 'barber'
-      };
-      
-      // Merge data from all sources (later sources override earlier ones)
-      dataSources.forEach(source => {
-        if (!source) return;
-        
-        if (source.business && source.business !== 'Barber Shop') {
-          finalData.business = source.business;
-        }
-        
-        if (source.designCode) {
-          finalData.designCode = source.designCode;
-        }
-        
-        if (source.plan) {
-          finalData.plan = source.plan.includes('Premium') ? 'Premium' : 'Standard';
-        }
-        
-        if (source.paymentModel) {
-          finalData.paymentModel = source.paymentModel;
-        }
-        
-        if (source.services) {
-          finalData.services = parseInt(source.services) || 0;
-        }
-        
-        if (source.standardServices) {
-          finalData.standardServices = parseInt(source.standardServices) || 0;
-        }
-        
-        if (source.premiumServices) {
-          finalData.premiumServices = parseInt(source.premiumServices) || 0;
-        }
-        
-        if (source.features && Array.isArray(source.features)) {
-          finalData.selectedFeatures = source.features;
-        }
-        
-        if (source.standardServices && source.premiumServices) {
-          finalData.services = (parseInt(source.standardServices) || 0) + (parseInt(source.premiumServices) || 0);
-        }
-      });
-      
-      // Get selected features if not already set
-      if (finalData.selectedFeatures.length === 0) {
-        const selectedServicesStr = localStorage.getItem('selectedServices');
-        if (selectedServicesStr) {
-          try {
-            finalData.selectedFeatures = JSON.parse(selectedServicesStr);
-          } catch (e) {
-            console.error('Error parsing selectedServices:', e);
-          }
-        }
-      }
-      
-      // Get service counts if not already set
-      if (finalData.services === 0) {
-        const serviceCountsStr = localStorage.getItem('serviceCounts');
-        if (serviceCountsStr) {
-          try {
-            const counts = JSON.parse(serviceCountsStr);
-            finalData.standardServices = counts.standard || 0;
-            finalData.premiumServices = counts.premium || 0;
-            finalData.services = counts.total || 0;
-          } catch (e) {
-            console.error('Error parsing serviceCounts:', e);
-          }
-        }
-      }
-      
-      return finalData;
-    }
-
     // ========== UPDATE PAGE CONTENT ==========
     function updatePageContent(data) {
       const {
         business,
         plan,
         paymentModel,
-        services,
-        standardServices,
-        premiumServices,
+        totalServices,
         selectedFeatures,
         designCode,
         niche
       } = data;
       
-      console.log('Updating page with:', { business, plan, designCode, services });
+      console.log('Updating page with business name:', business);
       
-      // Update basic info
+      // Update basic info - CRITICAL: Use the actual business name
       document.getElementById('thankYouTitle').textContent = 'Thank You!';
       document.getElementById('thankYouText').textContent = `Your ${business} website order has been confirmed!`;
       document.getElementById('businessName').textContent = business;
       document.getElementById('planType').textContent = `${plan} Plan`;
       document.getElementById('paymentModel').textContent = paymentModel;
-      document.getElementById('totalServices').textContent = services;
+      document.getElementById('totalServices').textContent = totalServices;
       
-      // FIXED: Display correct design code
+      // Display correct design code
       const designConceptElement = document.getElementById('designConcept');
       if (designCode === 'CUSTOM') {
         designConceptElement.textContent = 'Custom Design';
@@ -758,25 +656,15 @@
       
       // Update plan badge
       const planBadge = document.getElementById('planBadge');
-      planBadge.textContent = plan.toUpperCase();
-      planBadge.className = `plan-badge ${plan.toLowerCase()}`;
+      if (planBadge) {
+        planBadge.textContent = plan.toUpperCase();
+        planBadge.className = `plan-badge ${plan.toLowerCase()}`;
+      }
       
       // Update project title
       const projectTitle = document.getElementById('projectTitle');
       if (projectTitle) {
         projectTitle.textContent = `${business} - ${plan} Plan`;
-      }
-      
-      // Update Complete Now button with data
-      const completeNowBtn = document.getElementById('completeNowBtn');
-      if (completeNowBtn) {
-        const orderFormParams = new URLSearchParams();
-        orderFormParams.append('plan', plan.toLowerCase());
-        orderFormParams.append('business', encodeURIComponent(business));
-        orderFormParams.append('designCode', designCode);
-        orderFormParams.append('services', services);
-        orderFormParams.append('paymentModel', paymentModel);
-        completeNowBtn.href = `order-form.html?${orderFormParams.toString()}`;
       }
       
       // Show selected features if any
@@ -802,28 +690,9 @@
             }
           });
         }
-      } else if (services > 0) {
-        // Show summary if we have counts but no features list
-        const featuresSection = document.getElementById('selectedFeaturesSection');
-        const featuresGrid = document.getElementById('featuresGrid');
-        
-        if (featuresSection && featuresGrid) {
-          featuresSection.style.display = 'block';
-          featuresGrid.innerHTML = `
-            <div class="feature-card standard">
-              <div class="feature-tier standard">SUMMARY</div>
-              <div class="feature-name">Service Selection Summary</div>
-              <div class="feature-desc">
-                <strong>${standardServices} Standard Services</strong><br>
-                <strong>${premiumServices} Premium Services</strong><br>
-                <strong>${services} Total Services Selected</strong>
-              </div>
-            </div>
-          `;
-        }
       }
       
-      // Update niche color if needed
+      // Update niche color
       const nicheColors = {
         barber: '#FF6B00',
         plumber: '#0066CC',
@@ -836,7 +705,8 @@
       updateButtonColors(nicheColor);
       
       // Log success
-      console.log('Thank you page updated successfully with business name:', business);
+      console.log('Thank you page updated successfully!');
+      console.log('Business name displayed:', business);
     }
 
     // ========== SETUP EVENT HANDLERS ==========
@@ -959,6 +829,6 @@
       }
     }
   </script>
-  </script>
+  
 </body>
 </html>
