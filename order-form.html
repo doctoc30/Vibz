@@ -893,638 +893,709 @@
         </div>
     </div>
 
-    <script>
-        // ===================== CONFIGURATION =====================
-        const PLANS = {
-            standard: {
-                name: "Standard Plan",
-                pages: 5,
-                revisions: 5,
-                delivery: "10-15 days",
-                support: "3 months",
-                features: ["Mobile Responsive Design", "Basic SEO Setup", "Contact Form", "Social Media Integration", "Speed Optimization"]
-            },
-            premium: {
-                name: "Premium Plan",
-                pages: 15,
-                revisions: 10,
-                delivery: "25-30 days",
-                support: "6 months",
-                features: [
-                    "Mobile Responsive Design",
-                    "Advanced SEO Optimization",
-                    "Contact Form with Automation",
-                    "Social Media Integration",
-                    "Speed Optimization (95+ Score)",
-                    "Advanced Analytics",
-                    "Content Management System",
-                    "E-commerce Ready",
-                    "Custom Animations",
-                    "Priority Support"
-                ]
-            }
-        };
-
-        const PAGE_TYPES = [
-            "About", "Services", "Contact", "Gallery", "Pricing",
-            "Testimonials", "Blog", "FAQ", "Team", "Portfolio",
-            "Booking", "Shop", "Resources", "Careers", "Custom"
-        ];
-
-        const PAGE_GOALS = [
-            { id: "generate-leads", label: "Generate leads", icon: "fa-bullseye" },
-            { id: "inform", label: "Inform visitors", icon: "fa-info-circle" },
-            { id: "build-trust", label: "Build trust", icon: "fa-handshake" },
-            { id: "showcase", label: "Showcase work", icon: "fa-images" },
-            { id: "ai-decides", label: "AI decides best", icon: "fa-robot" }
-        ];
-
-        const PAGE_SECTIONS = [
-            { id: "hero", label: "Hero Section", icon: "fa-star" },
-            { id: "text-image", label: "Text + Image", icon: "fa-align-left" },
-            { id: "gallery", label: "Gallery", icon: "fa-th" },
-            { id: "testimonials", label: "Testimonials", icon: "fa-quote-right" },
-            { id: "cta", label: "Call to Action", icon: "fa-phone-alt" },
-            { id: "ai-sections", label: "AI decides sections", icon: "fa-magic" }
-        ];
-
-        const TONE_OPTIONS = [
-            { id: "modern", label: "Modern", icon: "fa-palette" },
-            { id: "premium", label: "Premium", icon: "fa-gem" },
-            { id: "friendly", label: "Friendly", icon: "fa-heart" },
-            { id: "bold", label: "Bold", icon: "fa-bolt" },
-            { id: "ai-tone", label: "AI decides tone", icon: "fa-robot" }
-        ];
-
-        // ===================== STATE MANAGEMENT =====================
-        let currentStep = 1;
-        const totalSteps = 6;
-        let plan = "standard"; // Will be updated from URL
-        let formData = {
-            pages: [],
-            brand: {},
-            confidence: ""
-        };
-
-        // ===================== INITIALIZATION =====================
-        document.addEventListener('DOMContentLoaded', function() {
-            // Get plan from URL (default to standard if not specified)
-            const urlParams = new URLSearchParams(window.location.search);
-            const planParam = urlParams.get('plan');
-            plan = (planParam && PLANS[planParam.toLowerCase()]) ? planParam.toLowerCase() : 'standard';
-            
-            // Initialize form
-            initializePlan();
-            updateProgress();
-            setupEventListeners();
-        });
-
-        // ===================== PLAN INITIALIZATION =====================
-        function initializePlan() {
-            const planData = PLANS[plan];
-            
-            // Update plan summary
-            document.getElementById('planName').textContent = planData.name;
-            document.getElementById('planBadge').textContent = plan.toUpperCase();
-            
-            const planDetails = document.getElementById('planDetails');
-            planDetails.innerHTML = `
-                <div class="plan-item">
-                    <i class="fas fa-file"></i>
-                    <span>Up to ${planData.pages} pages</span>
-                </div>
-                <div class="plan-item">
-                    <i class="fas fa-sync-alt"></i>
-                    <span>${planData.revisions} revisions per page</span>
-                </div>
-                <div class="plan-item">
-                    <i class="fas fa-shipping-fast"></i>
-                    <span>Delivery: ${planData.delivery}</span>
-                </div>
-                <div class="plan-item">
-                    <i class="fas fa-headset"></i>
-                    <span>${planData.support} support</span>
-                </div>
-            `;
-            
-            // Update features list
-            const featuresList = document.getElementById('featuresList');
-            featuresList.innerHTML = planData.features.map(feature => `
-                <div class="plan-item">
-                    <i class="fas fa-check-circle"></i>
-                    <span>${feature}</span>
-                </div>
-            `).join('');
-            
-            // Initialize pages
-            initializePages();
+ <script>
+    // ===================== CONFIGURATION =====================
+    const PLANS = {
+        standard: {
+            name: "Standard Plan",
+            pages: 5,
+            revisions: 5,
+            delivery: "10-15 days",
+            support: "3 months",
+            features: ["Services & Pricing Display", "Team / Barber Profiles", "Photo Gallery", "Basic Before & After Slider", "Opening Hours Display", "Contact Form", "On-Page SEO Basics", "Mobile Responsive Design"]
+        },
+        premium: {
+            name: "Premium Plan",
+            pages: 15,
+            revisions: 10,
+            delivery: "25-30 days",
+            support: "6 months",
+            features: ["Online Booking System Integration", "Stripe Payments / Deposits", "Enhanced Before & After Gallery", "Analytics & Conversion Tracking", "Full Branding Package", "Custom Graphics & Icons", "Social Proof / Reviews Section", "Advanced SEO", "E-commerce Ready", "Priority Support"]
         }
+    };
 
-        // ===================== PAGES MANAGEMENT =====================
-        function initializePages() {
-            const pagesContainer = document.getElementById('pagesContainer');
-            const pageCount = PLANS[plan].pages;
+    const PAGE_TYPES = [
+        "About", "Services", "Contact", "Gallery", "Pricing",
+        "Testimonials", "Blog", "FAQ", "Team", "Portfolio",
+        "Booking", "Shop", "Resources", "Careers", "Custom"
+    ];
+
+    const PAGE_GOALS = [
+        { id: "generate-leads", label: "Generate leads", icon: "fa-bullseye" },
+        { id: "inform", label: "Inform visitors", icon: "fa-info-circle" },
+        { id: "build-trust", label: "Build trust", icon: "fa-handshake" },
+        { id: "showcase", label: "Showcase work", icon: "fa-images" },
+        { id: "ai-decides", label: "AI decides best", icon: "fa-robot" }
+    ];
+
+    const PAGE_SECTIONS = [
+        { id: "hero", label: "Hero Section", icon: "fa-star" },
+        { id: "text-image", label: "Text + Image", icon: "fa-align-left" },
+        { id: "gallery", label: "Gallery", icon: "fa-th" },
+        { id: "testimonials", label: "Testimonials", icon: "fa-quote-right" },
+        { id: "cta", label: "Call to Action", icon: "fa-phone-alt" },
+        { id: "ai-sections", label: "AI decides sections", icon: "fa-magic" }
+    ];
+
+    const TONE_OPTIONS = [
+        { id: "modern", label: "Modern", icon: "fa-palette" },
+        { id: "premium", label: "Premium", icon: "fa-gem" },
+        { id: "friendly", label: "Friendly", icon: "fa-heart" },
+        { id: "bold", label: "Bold", icon: "fa-bolt" },
+        { id: "ai-tone", label: "AI decides tone", icon: "fa-robot" }
+    ];
+
+    // ===================== STATE MANAGEMENT =====================
+    let currentStep = 1;
+    const totalSteps = 6;
+    let plan = "standard";
+    let formData = {
+        pages: [],
+        brand: {},
+        confidence: "",
+        businessName: "",
+        designCode: ""
+    };
+
+    // ===================== INITIALIZATION =====================
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get data from URL and localStorage
+        const urlParams = new URLSearchParams(window.location.search);
+        const planParam = urlParams.get('plan');
+        const businessName = urlParams.get('business') || localStorage.getItem('businessName') || '';
+        const designCode = urlParams.get('designCode') || localStorage.getItem('selectedDesignCode') || 'CUSTOM';
+        const servicesCount = urlParams.get('services') || 0;
+        const paymentModel = urlParams.get('paymentModel') || localStorage.getItem('paymentModel') || 'Own Outright';
+        
+        // Set plan based on URL parameter or localStorage
+        plan = (planParam && PLANS[planParam.toLowerCase()]) ? planParam.toLowerCase() : 'standard';
+        
+        // Get design-specific features from localStorage
+        const designCodeFeatures = localStorage.getItem('designCodeFeatures');
+        let customFeatures = [];
+        if (designCodeFeatures) {
+            try {
+                customFeatures = JSON.parse(designCodeFeatures);
+            } catch (e) {
+                console.error('Error parsing design code features:', e);
+            }
+        }
+        
+        // Get selected services from funnel
+        const selectedServices = localStorage.getItem('selectedServices');
+        let funnelFeatures = [];
+        if (selectedServices) {
+            try {
+                funnelFeatures = JSON.parse(selectedServices);
+            } catch (e) {
+                console.error('Error parsing selected services:', e);
+            }
+        }
+        
+        // Store data in formData
+        formData.businessName = businessName;
+        formData.designCode = designCode;
+        
+        // Initialize form with dynamic features
+        initializePlan(customFeatures, funnelFeatures);
+        updateProgress();
+        setupEventListeners();
+        
+        // Pre-fill business name if available
+        if (businessName) {
+            const businessNameField = document.getElementById('businessName');
+            if (businessNameField) {
+                businessNameField.value = businessName;
+            }
+        }
+        
+        // Update design code display
+        const designCodeDisplay = document.getElementById('designCodeDisplay');
+        if (designCodeDisplay && designCode !== 'CUSTOM') {
+            designCodeDisplay.textContent = `Design Code: ${designCode.toUpperCase()}`;
+            designCodeDisplay.style.display = 'block';
+        }
+        
+        // Update selected services count
+        const selectedServicesCount = document.getElementById('selectedServicesCount');
+        if (selectedServicesCount && servicesCount > 0) {
+            selectedServicesCount.textContent = `(${servicesCount} services selected)`;
+            selectedServicesCount.style.display = 'inline';
+        }
+    });
+
+    // ===================== PLAN INITIALIZATION =====================
+    function initializePlan(designFeatures = [], funnelFeatures = []) {
+        const planData = PLANS[plan];
+        
+        // Update plan summary
+        document.getElementById('planName').textContent = planData.name;
+        document.getElementById('planBadge').textContent = plan.toUpperCase();
+        
+        const planDetails = document.getElementById('planDetails');
+        planDetails.innerHTML = `
+            <div class="plan-item">
+                <i class="fas fa-file"></i>
+                <span>Up to ${planData.pages} pages</span>
+            </div>
+            <div class="plan-item">
+                <i class="fas fa-sync-alt"></i>
+                <span>${planData.revisions} revisions per page</span>
+            </div>
+            <div class="plan-item">
+                <i class="fas fa-shipping-fast"></i>
+                <span>Delivery: ${planData.delivery}</span>
+                </div>
+            <div class="plan-item">
+                <i class="fas fa-headset"></i>
+                <span>${planData.support} support</span>
+            </div>
+        `;
+        
+        // Create combined features list
+        let allFeatures = [...planData.features];
+        
+        // Add design-specific features if available
+        if (designFeatures.length > 0) {
+            allFeatures = [...allFeatures, ...designFeatures];
+        }
+        
+        // Add funnel-selected features if available
+        if (funnelFeatures.length > 0) {
+            allFeatures = [...allFeatures, ...funnelFeatures];
+        }
+        
+        // Remove duplicates
+        allFeatures = [...new Set(allFeatures)];
+        
+        // Update features list
+        const featuresList = document.getElementById('featuresList');
+        featuresList.innerHTML = allFeatures.map(feature => `
+            <div class="plan-item">
+                <i class="fas fa-check-circle"></i>
+                <span>${feature}</span>
+            </div>
+        `).join('');
+        
+        // Initialize pages
+        initializePages();
+    }
+
+    // ===================== PAGES MANAGEMENT =====================
+    function initializePages() {
+        const pagesContainer = document.getElementById('pagesContainer');
+        const pageCount = PLANS[plan].pages;
+        
+        let pagesHTML = '';
+        
+        for (let i = 1; i <= pageCount; i++) {
+            const isHomePage = i === 1;
+            const pageName = isHomePage ? 'Home' : '';
             
-            let pagesHTML = '';
-            
-            for (let i = 1; i <= pageCount; i++) {
-                const isHomePage = i === 1;
-                const pageName = isHomePage ? 'Home' : '';
-                
-                pagesHTML += `
-                    <div class="page-card" data-page="${i}">
-                        <div class="page-header">
-                            <div class="page-number">Page ${i}</div>
-                            ${isHomePage ? '<div class="page-locked"><i class="fas fa-lock"></i> Home Page (Required)</div>' : ''}
+            pagesHTML += `
+                <div class="page-card" data-page="${i}">
+                    <div class="page-header">
+                        <div class="page-number">Page ${i}</div>
+                        ${isHomePage ? '<div class="page-locked"><i class="fas fa-lock"></i> Home Page (Required)</div>' : ''}
+                    </div>
+                    
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Page Name ${isHomePage ? '(Locked)' : ''}</label>
+                            ${isHomePage ? 
+                                `<input type="text" class="form-control" value="Home" readonly style="background: var(--light);">` :
+                                `<select class="form-control page-type" data-page="${i}">
+                                    <option value="">Select a page type...</option>
+                                    ${PAGE_TYPES.map(type => `<option value="${type.toLowerCase()}">${type}</option>`).join('')}
+                                    <option value="custom">Custom (Specify below)</option>
+                                </select>
+                                <input type="text" class="form-control custom-page-name" data-page="${i}" 
+                                       placeholder="Enter custom page name..." style="margin-top: 10px; display: none;">`
+                            }
                         </div>
                         
-                        <div class="grid-2">
-                            <div class="form-group">
-                                <label class="form-label">Page Name ${isHomePage ? '(Locked)' : ''}</label>
-                                ${isHomePage ? 
-                                    `<input type="text" class="form-control" value="Home" readonly style="background: var(--light);">` :
-                                    `<select class="form-control page-type" data-page="${i}">
-                                        <option value="">Select a page type...</option>
-                                        ${PAGE_TYPES.map(type => `<option value="${type.toLowerCase()}">${type}</option>`).join('')}
-                                        <option value="custom">Custom (Specify below)</option>
-                                    </select>
-                                    <input type="text" class="form-control custom-page-name" data-page="${i}" 
-                                           placeholder="Enter custom page name..." style="margin-top: 10px; display: none;">`
-                                }
+                        <div class="form-group">
+                            <label class="form-label">Page Goal</label>
+                            <div class="radio-group">
+                                ${PAGE_GOALS.map(goal => `
+                                    <div class="radio-item">
+                                        <input type="radio" id="goal-${i}-${goal.id}" name="goal-${i}" value="${goal.id}" 
+                                               ${goal.id === 'ai-decides' ? 'checked' : ''}>
+                                        <label class="radio-label" for="goal-${i}-${goal.id}">
+                                            <i class="fas ${goal.icon}"></i> ${goal.label}
+                                        </label>
+                                    </div>
+                                `).join('')}
                             </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label">Page Goal</label>
-                                <div class="radio-group">
-                                    ${PAGE_GOALS.map(goal => `
-                                        <div class="radio-item">
-                                            <input type="radio" id="goal-${i}-${goal.id}" name="goal-${i}" value="${goal.id}" 
-                                                   ${goal.id === 'ai-decides' ? 'checked' : ''}>
-                                            <label class="radio-label" for="goal-${i}-${goal.id}">
-                                                <i class="fas ${goal.icon}"></i> ${goal.label}
-                                            </label>
-                                        </div>
-                                    `).join('')}
-                                </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">
+                            Main Instruction <small>(What should this page accomplish?)</small>
+                        </label>
+                        <textarea class="form-control page-instruction" data-page="${i}" 
+                                  rows="3" placeholder="Describe what you want on this page... or simply write 'do it for me'"></textarea>
+                    </div>
+                    
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Tone & Style <small>(Optional)</small></label>
+                            <div class="checkbox-group">
+                                ${TONE_OPTIONS.map(tone => `
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="tone-${i}-${tone.id}" value="${tone.id}"
+                                               ${tone.id === 'ai-tone' ? 'checked' : ''}>
+                                        <label class="checkbox-label" for="tone-${i}-${tone.id}">
+                                            <i class="fas ${tone.icon}"></i> ${tone.label}
+                                        </label>
+                                    </div>
+                                `).join('')}
                             </div>
                         </div>
                         
                         <div class="form-group">
-                            <label class="form-label">
-                                Main Instruction <small>(What should this page accomplish?)</small>
-                            </label>
-                            <textarea class="form-control page-instruction" data-page="${i}" 
-                                      rows="3" placeholder="Describe what you want on this page... or simply write 'do it for me'"></textarea>
-                        </div>
-                        
-                        <div class="grid-2">
-                            <div class="form-group">
-                                <label class="form-label">Tone & Style <small>(Optional)</small></label>
-                                <div class="checkbox-group">
-                                    ${TONE_OPTIONS.map(tone => `
-                                        <div class="checkbox-item">
-                                            <input type="checkbox" id="tone-${i}-${tone.id}" value="${tone.id}"
-                                                   ${tone.id === 'ai-tone' ? 'checked' : ''}>
-                                            <label class="checkbox-label" for="tone-${i}-${tone.id}">
-                                                <i class="fas ${tone.icon}"></i> ${tone.label}
-                                            </label>
-                                        </div>
-                                    `).join('')}
-                                </div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label">Sections to Include</label>
-                                <div class="checkbox-group">
-                                    ${PAGE_SECTIONS.map(section => `
-                                        <div class="checkbox-item">
-                                            <input type="checkbox" id="section-${i}-${section.id}" value="${section.id}"
-                                                   ${section.id === 'ai-sections' ? 'checked' : ''}>
-                                            <label class="checkbox-label" for="section-${i}-${section.id}">
-                                                <i class="fas ${section.icon}"></i> ${section.label}
-                                            </label>
-                                        </div>
-                                    `).join('')}
-                                </div>
+                            <label class="form-label">Sections to Include</label>
+                            <div class="checkbox-group">
+                                ${PAGE_SECTIONS.map(section => `
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="section-${i}-${section.id}" value="${section.id}"
+                                               ${section.id === 'ai-sections' ? 'checked' : ''}>
+                                        <label class="checkbox-label" for="section-${i}-${section.id}">
+                                            <i class="fas ${section.icon}"></i> ${section.label}
+                                        </label>
+                                    </div>
+                                `).join('')}
                             </div>
                         </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">Images for this page <small>(Optional)</small></label>
-                            <div class="file-upload page-image-upload" data-page="${i}">
-                                <i class="fas fa-images"></i>
-                                <p>Upload images for this page</p>
-                                <p style="font-size: 0.9rem; color: var(--text-light); margin-top: 5px;">JPG, PNG • Max 10MB each</p>
-                                <input type="file" class="page-images" data-page="${i}" multiple accept=".jpg,.jpeg,.png" style="display: none;">
-                            </div>
-                            <div class="ai-fallback" style="margin-top: 15px;">
-                                <div class="ai-toggle">
-                                    <input type="checkbox" id="noImages-${i}" class="no-images-toggle" data-page="${i}">
-                                    <label for="noImages-${i}" style="cursor: pointer;">
-                                        <i class="fas fa-image"></i>
-                                        I don't have images - use professional placeholders
-                                    </label>
-                                </div>
-                            </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Images for this page <small>(Optional)</small></label>
+                        <div class="file-upload page-image-upload" data-page="${i}">
+                            <i class="fas fa-images"></i>
+                            <p>Upload images for this page</p>
+                            <p style="font-size: 0.9rem; color: var(--text-light); margin-top: 5px;">JPG, PNG • Max 10MB each</p>
+                            <input type="file" class="page-images" data-page="${i}" multiple accept=".jpg,.jpeg,.png" style="display: none;">
                         </div>
-                        
-                        ${!isHomePage ? `
-                        <div class="ai-fallback">
+                        <div class="ai-fallback" style="margin-top: 15px;">
                             <div class="ai-toggle">
-                                <input type="checkbox" id="aiOverride-${i}" class="ai-override-toggle" data-page="${i}">
-                                <label for="aiOverride-${i}" style="cursor: pointer;">
-                                    <i class="fas fa-robot"></i>
-                                    I'm not sure - AI should fully design this page
+                                <input type="checkbox" id="noImages-${i}" class="no-images-toggle" data-page="${i}">
+                                <label for="noImages-${i}" style="cursor: pointer;">
+                                    <i class="fas fa-image"></i>
+                                    I don't have images - use professional placeholders
                                 </label>
                             </div>
                         </div>
-                        ` : ''}
                     </div>
-                `;
+                    
+                    ${!isHomePage ? `
+                    <div class="ai-fallback">
+                        <div class="ai-toggle">
+                            <input type="checkbox" id="aiOverride-${i}" class="ai-override-toggle" data-page="${i}">
+                            <label for="aiOverride-${i}" style="cursor: pointer;">
+                                <i class="fas fa-robot"></i>
+                                I'm not sure - AI should fully design this page
+                            </label>
+                        </div>
+                    </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+        
+        pagesContainer.innerHTML = pagesHTML;
+        
+        // Set up page type change listeners
+        document.querySelectorAll('.page-type').forEach(select => {
+            select.addEventListener('change', function() {
+                const pageNum = this.getAttribute('data-page');
+                const customInput = document.querySelector(`.custom-page-name[data-page="${pageNum}"]`);
+                if (this.value === 'custom') {
+                    customInput.style.display = 'block';
+                    customInput.required = true;
+                } else {
+                    customInput.style.display = 'none';
+                    customInput.required = false;
+                }
+            });
+        });
+        
+        // Set up file upload interactions
+        document.querySelectorAll('.file-upload').forEach(upload => {
+            upload.addEventListener('click', function() {
+                const input = this.querySelector('input[type="file"]');
+                if (input) input.click();
+            });
+        });
+        
+        document.getElementById('logoFile').addEventListener('change', function(e) {
+            const noLogoCheckbox = document.getElementById('noLogoCheckbox');
+            if (this.files.length > 0) {
+                noLogoCheckbox.checked = false;
+            }
+        });
+        
+        document.getElementById('noLogoToggle').addEventListener('click', function(e) {
+            if (e.target.tagName !== 'INPUT') {
+                const checkbox = document.getElementById('noLogoCheckbox');
+                checkbox.checked = !checkbox.checked;
+                if (checkbox.checked) {
+                    document.getElementById('logoFile').value = '';
+                }
+            }
+        });
+        
+        // Set up AI override toggles
+        document.querySelectorAll('.ai-override-toggle').forEach(toggle => {
+            toggle.addEventListener('change', function() {
+                const pageNum = this.getAttribute('data-page');
+                const pageCard = document.querySelector(`.page-card[data-page="${pageNum}"]`);
+                if (this.checked) {
+                    // Disable all inputs in this page card
+                    pageCard.querySelectorAll('input, select, textarea').forEach(input => {
+                        if (input !== this) {
+                            input.disabled = true;
+                            input.style.opacity = '0.6';
+                        }
+                    });
+                } else {
+                    // Re-enable all inputs
+                    pageCard.querySelectorAll('input, select, textarea').forEach(input => {
+                        input.disabled = false;
+                        input.style.opacity = '1';
+                    });
+                }
+            });
+        });
+    }
+
+    // ===================== STEP NAVIGATION =====================
+    function updateProgress() {
+        // Update progress indicators
+        document.querySelectorAll('.progress-step').forEach((step, index) => {
+            const stepNum = index + 1;
+            step.classList.remove('active', 'completed');
+            
+            if (stepNum < currentStep) {
+                step.classList.add('completed');
+            } else if (stepNum === currentStep) {
+                step.classList.add('active');
+            }
+        });
+        
+        // Update button visibility
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        prevBtn.style.display = currentStep > 1 ? 'flex' : 'none';
+        nextBtn.style.display = currentStep < totalSteps ? 'flex' : 'none';
+        submitBtn.style.display = currentStep === totalSteps ? 'flex' : 'none';
+        
+        // Update step content
+        document.querySelectorAll('.step').forEach((step, index) => {
+            step.classList.remove('active');
+            if (index + 1 === currentStep) {
+                step.classList.add('active');
+            }
+        });
+        
+        // Update review if on last step
+        if (currentStep === totalSteps) {
+            generateReview();
+        }
+    }
+
+    function nextStep() {
+        // Validate current step before proceeding
+        if (!validateCurrentStep()) {
+            return;
+        }
+        
+        // Save current step data
+        saveStepData();
+        
+        if (currentStep < totalSteps) {
+            currentStep++;
+            updateProgress();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }
+
+    function prevStep() {
+        if (currentStep > 1) {
+            currentStep--;
+            updateProgress();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }
+
+    function validateCurrentStep() {
+        const currentStepEl = document.querySelector('.step.active');
+        
+        // Step 4 validation
+        if (currentStep === 4) {
+            const requiredFields = [
+                'businessName',
+                'businessLocation',
+                'businessDescription',
+                'contactEmail'
+            ];
+            
+            for (const fieldId of requiredFields) {
+                const field = document.getElementById(fieldId);
+                if (!field.value.trim()) {
+                    alert(`Please fill in the ${field.labels[0].textContent.toLowerCase()}`);
+                    field.focus();
+                    field.style.borderColor = 'var(--warning)';
+                    setTimeout(() => field.style.borderColor = '', 2000);
+                    return false;
+                }
             }
             
-            pagesContainer.innerHTML = pagesHTML;
+            // Email validation
+            const email = document.getElementById('contactEmail').value;
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                alert('Please enter a valid email address');
+                document.getElementById('contactEmail').focus();
+                return false;
+            }
+        }
+        
+        // Step 5 validation
+        if (currentStep === 5) {
+            const selectedConfidence = document.querySelector('input[name="confidence"]:checked');
+            if (!selectedConfidence) {
+                alert('Please select how confident you are with the information provided');
+                return false;
+            }
+            formData.confidence = selectedConfidence.value;
+        }
+        
+        return true;
+    }
+
+    function saveStepData() {
+        if (currentStep === 4) {
+            // Save brand data
+            formData.brand = {
+                name: document.getElementById('businessName').value,
+                location: document.getElementById('businessLocation').value,
+                description: document.getElementById('businessDescription').value,
+                email: document.getElementById('contactEmail').value,
+                phone: document.getElementById('contactPhone').value,
+                hasLogo: !document.getElementById('noLogoCheckbox').checked,
+                style: document.querySelector('input[name="brandStyle"]:checked')?.value || 'ai'
+            };
+        }
+    }
+
+    // ===================== REVIEW GENERATION =====================
+    function generateReview() {
+        const reviewContent = document.getElementById('reviewContent');
+        const planData = PLANS[plan];
+        
+        // Collect page data
+        const pages = [];
+        for (let i = 1; i <= planData.pages; i++) {
+            const pageCard = document.querySelector(`.page-card[data-page="${i}"]`);
+            if (!pageCard) continue;
             
-            // Set up page type change listeners
-            document.querySelectorAll('.page-type').forEach(select => {
-                select.addEventListener('change', function() {
-                    const pageNum = this.getAttribute('data-page');
-                    const customInput = document.querySelector(`.custom-page-name[data-page="${pageNum}"]`);
-                    if (this.value === 'custom') {
-                        customInput.style.display = 'block';
-                        customInput.required = true;
-                    } else {
-                        customInput.style.display = 'none';
-                        customInput.required = false;
-                    }
-                });
-            });
+            const pageName = i === 1 ? 'Home' : 
+                document.querySelector(`.page-type[data-page="${i}"]`)?.value || 'Not specified';
+            const customName = document.querySelector(`.custom-page-name[data-page="${i}"]`)?.value;
+            const goal = document.querySelector(`input[name="goal-${i}"]:checked`)?.value || 'ai-decides';
+            const instruction = document.querySelector(`.page-instruction[data-page="${i}"]`)?.value || '';
+            const aiOverride = document.querySelector(`.ai-override-toggle[data-page="${i}"]`)?.checked || false;
             
-            // Set up file upload interactions
-            document.querySelectorAll('.file-upload').forEach(upload => {
-                upload.addEventListener('click', function() {
-                    const input = this.querySelector('input[type="file"]');
-                    if (input) input.click();
-                });
-            });
-            
-            document.getElementById('logoFile').addEventListener('change', function(e) {
-                const noLogoCheckbox = document.getElementById('noLogoCheckbox');
-                if (this.files.length > 0) {
-                    noLogoCheckbox.checked = false;
-                }
-            });
-            
-            document.getElementById('noLogoToggle').addEventListener('click', function(e) {
-                if (e.target.tagName !== 'INPUT') {
-                    const checkbox = document.getElementById('noLogoCheckbox');
-                    checkbox.checked = !checkbox.checked;
-                    if (checkbox.checked) {
-                        document.getElementById('logoFile').value = '';
-                    }
-                }
-            });
-            
-            // Set up AI override toggles
-            document.querySelectorAll('.ai-override-toggle').forEach(toggle => {
-                toggle.addEventListener('change', function() {
-                    const pageNum = this.getAttribute('data-page');
-                    const pageCard = document.querySelector(`.page-card[data-page="${pageNum}"]`);
-                    if (this.checked) {
-                        // Disable all inputs in this page card
-                        pageCard.querySelectorAll('input, select, textarea').forEach(input => {
-                            if (input !== this) {
-                                input.disabled = true;
-                                input.style.opacity = '0.6';
-                            }
-                        });
-                    } else {
-                        // Re-enable all inputs
-                        pageCard.querySelectorAll('input, select, textarea').forEach(input => {
-                            input.disabled = false;
-                            input.style.opacity = '1';
-                        });
-                    }
-                });
+            pages.push({
+                number: i,
+                name: customName || (pageName === 'custom' ? 'Custom' : pageName),
+                goal: goal,
+                instruction: instruction,
+                aiOverride: aiOverride
             });
         }
-
-        // ===================== STEP NAVIGATION =====================
-        function updateProgress() {
-            // Update progress indicators
-            document.querySelectorAll('.progress-step').forEach((step, index) => {
-                const stepNum = index + 1;
-                step.classList.remove('active', 'completed');
-                
-                if (stepNum < currentStep) {
-                    step.classList.add('completed');
-                } else if (stepNum === currentStep) {
-                    step.classList.add('active');
-                }
-            });
+        
+        let reviewHTML = `
+            <div class="review-section">
+                <div class="review-header">
+                    <i class="fas fa-box"></i>
+                    <span>Your Plan</span>
+                </div>
+                <div class="review-item">
+                    <div class="review-label">Plan Type:</div>
+                    <div class="review-value">${planData.name}</div>
+                </div>
+                <div class="review-item">
+                    <div class="review-label">Design Code:</div>
+                    <div class="review-value">${formData.designCode || 'Custom Design'}</div>
+                </div>
+                <div class="review-item">
+                    <div class="review-label">Pages:</div>
+                    <div class="review-value">${planData.pages} pages total</div>
+                </div>
+                <div class="review-item">
+                    <div class="review-label">Delivery:</div>
+                    <div class="review-value">${planData.delivery}</div>
+                </div>
+            </div>
             
-            // Update button visibility
-            const prevBtn = document.getElementById('prevBtn');
-            const nextBtn = document.getElementById('nextBtn');
+            <div class="review-section">
+                <div class="review-header">
+                    <i class="fas fa-file"></i>
+                    <span>Pages Setup</span>
+                </div>
+        `;
+        
+        pages.forEach(page => {
+            reviewHTML += `
+                <div class="review-item">
+                    <div class="review-label">Page ${page.number}:</div>
+                    <div class="review-value">
+                        <strong>${page.name}</strong>
+                        ${page.aiOverride ? '<span style="color: var(--accent); font-style: italic;"> (AI Design)</span>' : ''}
+                        <br>
+                        <small>Goal: ${page.goal.replace('-', ' ')}</small>
+                    </div>
+                </div>
+            `;
+        });
+        
+        reviewHTML += `</div>`;
+        
+        // Brand Info
+        if (formData.brand.name) {
+            reviewHTML += `
+                <div class="review-section">
+                    <div class="review-header">
+                        <i class="fas fa-building"></i>
+                        <span>Business Details</span>
+                    </div>
+                    <div class="review-item">
+                        <div class="review-label">Business:</div>
+                        <div class="review-value">${formData.brand.name}</div>
+                    </div>
+                    <div class="review-item">
+                        <div class="review-label">Location:</div>
+                        <div class="review-value">${formData.brand.location}</div>
+                    </div>
+                    <div class="review-item">
+                        <div class="review-label">Contact:</div>
+                        <div class="review-value">${formData.brand.email} ${formData.brand.phone ? `• ${formData.brand.phone}` : ''}</div>
+                    </div>
+                    <div class="review-item">
+                        <div class="review-label">Logo:</div>
+                        <div class="review-value">${formData.brand.hasLogo ? 'Uploaded' : 'To be created by VIBZ'}</div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Confidence Level
+        if (formData.confidence) {
+            const confidenceLabels = {
+                'very-confident': 'Very Confident',
+                'somewhat-confident': 'Somewhat Confident',
+                'need-help': 'Needs Help'
+            };
+            
+            reviewHTML += `
+                <div class="review-section">
+                    <div class="review-header">
+                        <i class="fas fa-user-check"></i>
+                        <span>Confidence Level</span>
+                    </div>
+                    <div class="review-item">
+                        <div class="review-label">Status:</div>
+                        <div class="review-value">${confidenceLabels[formData.confidence] || 'Not specified'}</div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        reviewContent.innerHTML = reviewHTML;
+    }
+
+    // ===================== FORM SUBMISSION =====================
+    function setupEventListeners() {
+        const form = document.getElementById('websiteOrderForm');
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Show loading state
             const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            submitBtn.disabled = true;
             
-            prevBtn.style.display = currentStep > 1 ? 'flex' : 'none';
-            nextBtn.style.display = currentStep < totalSteps ? 'flex' : 'none';
-            submitBtn.style.display = currentStep === totalSteps ? 'flex' : 'none';
-            
-            // Update step content
-            document.querySelectorAll('.step').forEach((step, index) => {
-                step.classList.remove('active');
-                if (index + 1 === currentStep) {
-                    step.classList.add('active');
-                }
-            });
-            
-            // Update review if on last step
-            if (currentStep === totalSteps) {
-                generateReview();
-            }
-        }
-
-        function nextStep() {
-            // Validate current step before proceeding
-            if (!validateCurrentStep()) {
-                return;
-            }
-            
-            // Save current step data
-            saveStepData();
-            
-            if (currentStep < totalSteps) {
-                currentStep++;
-                updateProgress();
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-        }
-
-        function prevStep() {
-            if (currentStep > 1) {
-                currentStep--;
-                updateProgress();
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-        }
-
-        function validateCurrentStep() {
-            const currentStepEl = document.querySelector('.step.active');
-            
-            // Step 4 validation
-            if (currentStep === 4) {
-                const requiredFields = [
-                    'businessName',
-                    'businessLocation',
-                    'businessDescription',
-                    'contactEmail'
-                ];
-                
-                for (const fieldId of requiredFields) {
-                    const field = document.getElementById(fieldId);
-                    if (!field.value.trim()) {
-                        alert(`Please fill in the ${field.labels[0].textContent.toLowerCase()}`);
-                        field.focus();
-                        field.style.borderColor = 'var(--warning)';
-                        setTimeout(() => field.style.borderColor = '', 2000);
-                        return false;
-                    }
-                }
-                
-                // Email validation
-                const email = document.getElementById('contactEmail').value;
-                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                    alert('Please enter a valid email address');
-                    document.getElementById('contactEmail').focus();
-                    return false;
-                }
-            }
-            
-            // Step 5 validation
-            if (currentStep === 5) {
-                const selectedConfidence = document.querySelector('input[name="confidence"]:checked');
-                if (!selectedConfidence) {
-                    alert('Please select how confident you are with the information provided');
-                    return false;
-                }
-                formData.confidence = selectedConfidence.value;
-            }
-            
-            return true;
-        }
-
-        function saveStepData() {
-            if (currentStep === 4) {
-                // Save brand data
-                formData.brand = {
-                    name: document.getElementById('businessName').value,
-                    location: document.getElementById('businessLocation').value,
-                    description: document.getElementById('businessDescription').value,
-                    email: document.getElementById('contactEmail').value,
-                    phone: document.getElementById('contactPhone').value,
-                    hasLogo: !document.getElementById('noLogoCheckbox').checked,
-                    style: document.querySelector('input[name="brandStyle"]:checked')?.value || 'ai'
-                };
-            }
-        }
-
-        // ===================== REVIEW GENERATION =====================
-        function generateReview() {
-            const reviewContent = document.getElementById('reviewContent');
-            const planData = PLANS[plan];
+            // Collect all form data
+            const finalData = {
+                plan: plan,
+                planDetails: PLANS[plan],
+                businessName: formData.businessName,
+                designCode: formData.designCode,
+                timestamp: new Date().toISOString(),
+                pages: [],
+                brand: formData.brand,
+                confidence: formData.confidence
+            };
             
             // Collect page data
-            const pages = [];
-            for (let i = 1; i <= planData.pages; i++) {
+            for (let i = 1; i <= PLANS[plan].pages; i++) {
                 const pageCard = document.querySelector(`.page-card[data-page="${i}"]`);
                 if (!pageCard) continue;
                 
                 const pageName = i === 1 ? 'Home' : 
-                    document.querySelector(`.page-type[data-page="${i}"]`)?.value || 'Not specified';
+                    document.querySelector(`.page-type[data-page="${i}"]`)?.value || '';
                 const customName = document.querySelector(`.custom-page-name[data-page="${i}"]`)?.value;
-                const goal = document.querySelector(`input[name="goal-${i}"]:checked`)?.value || 'ai-decides';
+                const goal = document.querySelector(`input[name="goal-${i}"]:checked`)?.value || '';
                 const instruction = document.querySelector(`.page-instruction[data-page="${i}"]`)?.value || '';
                 const aiOverride = document.querySelector(`.ai-override-toggle[data-page="${i}"]`)?.checked || false;
                 
-                pages.push({
+                finalData.pages.push({
                     number: i,
-                    name: customName || (pageName === 'custom' ? 'Custom' : pageName),
+                    name: i === 1 ? 'Home' : (customName || pageName),
                     goal: goal,
                     instruction: instruction,
                     aiOverride: aiOverride
                 });
             }
             
-            let reviewHTML = `
-                <div class="review-section">
-                    <div class="review-header">
-                        <i class="fas fa-box"></i>
-                        <span>Your Plan</span>
-                    </div>
-                    <div class="review-item">
-                        <div class="review-label">Plan Type:</div>
-                        <div class="review-value">${planData.name}</div>
-                    </div>
-                    <div class="review-item">
-                        <div class="review-label">Pages:</div>
-                        <div class="review-value">${planData.pages} pages total</div>
-                    </div>
-                    <div class="review-item">
-                        <div class="review-label">Delivery:</div>
-                        <div class="review-value">${planData.delivery}</div>
-                    </div>
-                </div>
-                
-                <div class="review-section">
-                    <div class="review-header">
-                        <i class="fas fa-file"></i>
-                        <span>Pages Setup</span>
-                    </div>
-            `;
+            // Store final data for thank you page
+            localStorage.setItem('finalOrderData', JSON.stringify(finalData));
             
-            pages.forEach(page => {
-                reviewHTML += `
-                    <div class="review-item">
-                        <div class="review-label">Page ${page.number}:</div>
-                        <div class="review-value">
-                            <strong>${page.name}</strong>
-                            ${page.aiOverride ? '<span style="color: var(--accent); font-style: italic;"> (AI Design)</span>' : ''}
-                            <br>
-                            <small>Goal: ${page.goal.replace('-', ' ')}</small>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            reviewHTML += `</div>`;
-            
-            // Brand Info
-            if (formData.brand.name) {
-                reviewHTML += `
-                    <div class="review-section">
-                        <div class="review-header">
-                            <i class="fas fa-building"></i>
-                            <span>Business Details</span>
-                        </div>
-                        <div class="review-item">
-                            <div class="review-label">Business:</div>
-                            <div class="review-value">${formData.brand.name}</div>
-                        </div>
-                        <div class="review-item">
-                            <div class="review-label">Location:</div>
-                            <div class="review-value">${formData.brand.location}</div>
-                        </div>
-                        <div class="review-item">
-                            <div class="review-label">Contact:</div>
-                            <div class="review-value">${formData.brand.email} ${formData.brand.phone ? `• ${formData.brand.phone}` : ''}</div>
-                        </div>
-                        <div class="review-item">
-                            <div class="review-label">Logo:</div>
-                            <div class="review-value">${formData.brand.hasLogo ? 'Uploaded' : 'To be created by VIBZ'}</div>
-                        </div>
-                    </div>
-                `;
-            }
-            
-            // Confidence Level
-            if (formData.confidence) {
-                const confidenceLabels = {
-                    'very-confident': 'Very Confident',
-                    'somewhat-confident': 'Somewhat Confident',
-                    'need-help': 'Needs Help'
-                };
+            // Simulate API call
+            setTimeout(() => {
+                // Hide form, show success message
+                document.querySelector('.form-container').style.display = 'none';
+                document.getElementById('successMessage').style.display = 'block';
                 
-                reviewHTML += `
-                    <div class="review-section">
-                        <div class="review-header">
-                            <i class="fas fa-user-check"></i>
-                            <span>Confidence Level</span>
-                        </div>
-                        <div class="review-item">
-                            <div class="review-label">Status:</div>
-                            <div class="review-value">${confidenceLabels[formData.confidence] || 'Not specified'}</div>
-                        </div>
-                    </div>
-                `;
-            }
-            
-            reviewContent.innerHTML = reviewHTML;
-        }
-
-        // ===================== FORM SUBMISSION =====================
-        function setupEventListeners() {
-            const form = document.getElementById('websiteOrderForm');
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
+                console.log('Form submitted:', finalData);
                 
-                // Show loading state
-                const submitBtn = document.getElementById('submitBtn');
-                const originalText = submitBtn.innerHTML;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-                submitBtn.disabled = true;
-                
-                // Collect all form data
-                const finalData = {
-                    plan: plan,
-                    planDetails: PLANS[plan],
-                    timestamp: new Date().toISOString(),
-                    pages: [],
-                    brand: formData.brand,
-                    confidence: formData.confidence
-                };
-                
-                // Collect page data
-                for (let i = 1; i <= PLANS[plan].pages; i++) {
-                    const pageCard = document.querySelector(`.page-card[data-page="${i}"]`);
-                    if (!pageCard) continue;
-                    
-                    const pageName = i === 1 ? 'Home' : 
-                        document.querySelector(`.page-type[data-page="${i}"]`)?.value || '';
-                    const customName = document.querySelector(`.custom-page-name[data-page="${i}"]`)?.value;
-                    const goal = document.querySelector(`input[name="goal-${i}"]:checked`)?.value || '';
-                    const instruction = document.querySelector(`.page-instruction[data-page="${i}"]`)?.value || '';
-                    const aiOverride = document.querySelector(`.ai-override-toggle[data-page="${i}"]`)?.checked || false;
-                    
-                    finalData.pages.push({
-                        number: i,
-                        name: i === 1 ? 'Home' : (customName || pageName),
-                        goal: goal,
-                        instruction: instruction,
-                        aiOverride: aiOverride
-                    });
-                }
-                
-                // Simulate API call
+                // Redirect to thank you page after 3 seconds
                 setTimeout(() => {
-                    // Hide form, show success message
-                    document.querySelector('.form-container').style.display = 'none';
-                    document.getElementById('successMessage').style.display = 'block';
-                    
-                    // In production, you would send this data to your server
-                    console.log('Form submitted:', finalData);
-                    
-                    // Optional: Redirect to thank you page or dashboard
-                    // window.location.href = `/thank-you?order=${encodeURIComponent(JSON.stringify(finalData))}`;
-                }, 1500);
-            });
-        }
+                    window.location.href = 'thank-you.html';
+                }, 3000);
+            }, 1500);
+        });
+    }
 
-        // ===================== UTILITY FUNCTIONS =====================
-        function getPageName(pageNum) {
-            if (pageNum === 1) return 'Home';
-            
-            const select = document.querySelector(`.page-type[data-page="${pageNum}"]`);
-            const customInput = document.querySelector(`.custom-page-name[data-page="${pageNum}"]`);
-            
-            if (select && select.value === 'custom' && customInput) {
-                return customInput.value || 'Custom Page';
-            }
-            
-            return select ? select.selectedOptions[0]?.text : 'Page ' + pageNum;
+    // ===================== UTILITY FUNCTIONS =====================
+    function getPageName(pageNum) {
+        if (pageNum === 1) return 'Home';
+        
+        const select = document.querySelector(`.page-type[data-page="${pageNum}"]`);
+        const customInput = document.querySelector(`.custom-page-name[data-page="${pageNum}"]`);
+        
+        if (select && select.value === 'custom' && customInput) {
+            return customInput.value || 'Custom Page';
         }
-    </script>
+        
+        return select ? select.selectedOptions[0]?.text : 'Page ' + pageNum;
+    }
+</script>
 </body>
 </html>
 
