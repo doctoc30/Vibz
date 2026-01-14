@@ -2148,6 +2148,7 @@ function setGoal(goal) {
     next();
 }
 
+
 // ========== PAYMENT REDIRECTION ==========
 function redirectToPayment(planName, stripeLink) {
     console.log('=== redirectToPayment called ===');
@@ -2163,7 +2164,7 @@ function redirectToPayment(planName, stripeLink) {
         return;
     }
     
-    // Create order data
+    // Create order data (EXISTING LOGIC — KEEP)
     const orderData = {
         businessName: formData.businessName,
         designCode: formData.designCode || 'CUSTOM',
@@ -2175,6 +2176,22 @@ function redirectToPayment(planName, stripeLink) {
         totalServices: formData.features.length,
         timestamp: new Date().toISOString()
     };
+    
+    // Store existing data (KEEP)
+    localStorage.setItem('orderData', JSON.stringify(orderData));
+    localStorage.setItem('businessName', formData.businessName);
+    localStorage.setItem('selectedDesignCode', formData.designCode || 'CUSTOM');
+    localStorage.setItem('selectedPlan', planName);
+
+    // ✅ FINAL SNAPSHOT (THIS IS THE FIX)
+    saveOrderDataBeforeRedirect();
+
+    console.log('Final order data saved. Redirecting to Stripe…');
+
+    // Redirect to Stripe
+    window.location.href = stripeLink;
+}
+
     
     // Store data
     localStorage.setItem('orderData', JSON.stringify(orderData));
