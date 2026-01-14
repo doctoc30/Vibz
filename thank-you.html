@@ -346,11 +346,47 @@
   </div>
 
 
+
 <script>
-// ========== STATIC PLAN DETAILS DATABASE ==========
+  // ========== STATIC PLAN DETAILS DATABASE ==========
 const STATIC_PLAN_DETAILS = {
+    // Monthly payment plans
+    'Standard Monthly': {
+        price: '£100/month',
+        type: 'monthly',
+        pages: 'Up to 5 Pages',
+        revisions: 'Up to 5 Revisions Per Page (build phase only)',
+        delivery: '10-15 days',
+        hosting: 'Website hosting included',
+        maintenance: 'Monthly maintenance',
+        securityUpdates: true,
+        emailSupport: true,
+        mobileResponsive: true,
+        sslCertificate: 'included',
+        legalTemplates: true,
+        backups: false,
+        performanceMonitoring: false,
+        builtWith: 'Custom HTML, CSS & JavaScript'
+    },
+    'Premium Monthly': {
+        price: '£150/month',
+        type: 'monthly',
+        pages: 'Up to 15 Pages',
+        revisions: 'Up to 10 Revisions Per Page (build phase only)',
+        delivery: '25-30 days',
+        hosting: 'Advanced hosting',
+        maintenance: 'Monthly maintenance',
+        securityUpdates: true,
+        backups: 'Regular backups',
+        performanceMonitoring: true,
+        emailSupport: true,
+        mobileResponsive: true,
+        sslCertificate: 'included',
+        legalTemplates: true,
+        builtWith: 'Custom HTML, CSS & JavaScript'
+    },
     // One-time payment plans
-    'Standard Own Outright': {
+    'Standard Outright': {
         price: '£1,500',
         type: 'one-time',
         pages: 'Up to 5 Pages',
@@ -363,9 +399,11 @@ const STATIC_PLAN_DETAILS = {
         legalTemplates: true,
         hosting: 'not included',
         hostingNote: 'Client provides their own hosting',
-        pageLimitNote: 'All published pages count toward the page limit'
+        pageLimitNote: 'All published pages count toward the page limit',
+        builtWith: 'Custom HTML, CSS & JavaScript',
+        sourceFiles: 'All source code files to own forever'
     },
-    'Premium Own Outright': {
+    'Premium Outright': {
         price: '£3,000',
         type: 'one-time',
         pages: 'Up to 15 Pages',
@@ -378,43 +416,20 @@ const STATIC_PLAN_DETAILS = {
         legalTemplates: true,
         hosting: 'not included',
         hostingNote: 'Client provides their own hosting',
-        pageLimitNote: 'All published pages count toward the page limit'
-    },
-    // Monthly plans
-    'Standard Monthly Support': {
-        price: '£100/month',
-        type: 'monthly',
-        hosting: 'Website hosting included',
-        mobileResponsive: true,
-        sslCertificate: 'included',
-        maintenance: 'Monthly maintenance',
-        securityUpdates: true,
-        emailSupport: true,
-        legalTemplates: true,
-        backups: false,
-        performanceMonitoring: false
-    },
-    'Premium Monthly Support': {
-        price: '£150/month',
-        type: 'monthly',
-        hosting: 'Advanced hosting',
-        mobileResponsive: true,
-        sslCertificate: 'included',
-        maintenance: 'Monthly maintenance',
-        securityUpdates: true,
-        backups: 'Regular backups',
-        performanceMonitoring: true,
-        emailSupport: true,
-        legalTemplates: true
+        pageLimitNote: 'All published pages count toward the page limit',
+        builtWith: 'Custom HTML, CSS & JavaScript',
+        sourceFiles: 'All source code files to own forever'
     }
 };
 
-// Helper function to get plan name
+// Helper function to get plan name (UPDATED for new system)
 function getPlanName(funnelPlan, paymentModel) {
-    if (paymentModel === 'Monthly Support') {
-        return funnelPlan + ' Monthly Support';
-    } else if (paymentModel === 'Own Outright') {
-        return funnelPlan + ' Own Outright';
+    if (paymentModel === 'Monthly') {
+        return funnelPlan + ' Monthly';
+    } else if (paymentModel === 'Outright') {
+        return funnelPlan + ' Outright';
+    } else if (paymentModel === 'Annual Support') {
+        return funnelPlan + ' Annual Support';
     }
     return funnelPlan + ' Plan';
 }
@@ -445,9 +460,12 @@ try {
     
     // Try to get static plan details
     try {
-        staticPlanDetails = JSON.parse(localStorage.getItem('staticPlanDetails') || '{}');
+        const storedStaticDetails = localStorage.getItem('staticPlanDetails');
+        if (storedStaticDetails) {
+            staticPlanDetails = JSON.parse(storedStaticDetails);
+        }
     } catch(e) {
-        console.log('No static plan details in localStorage');
+        console.log('No static plan details in localStorage or parsing error:', e);
     }
     
     console.log('Loaded from localStorage:', { 
@@ -462,7 +480,16 @@ try {
     // If not in URL, use localStorage data
     if (!niche || !plan || !business) {
         niche = niche || 'barber';
-        plan = plan || (selectedPlanName.includes('Premium') ? 'Premium' : 'Standard');
+        
+        // Determine plan type from selectedPlanName
+        if (selectedPlanName.includes('Premium')) {
+            plan = 'Premium';
+        } else if (selectedPlanName.includes('Standard')) {
+            plan = 'Standard';
+        } else {
+            plan = plan || 'Standard';
+        }
+        
         business = business || funnelData.businessName || 'Your Barber Shop';
         
         console.log('Using localStorage data:', { niche, plan, business, paymentModel });
@@ -477,14 +504,29 @@ plan = plan || 'Standard';
 business = business || 'Your Barber Shop';
 paymentModel = paymentModel || '';
 
-// Get complete plan name
+// Get complete plan name using new system
 const completePlanName = getPlanName(plan, paymentModel);
 
 // Get static plan details if not loaded
-if (!staticPlanDetails && STATIC_PLAN_DETAILS[completePlanName]) {
-    staticPlanDetails = STATIC_PLAN_DETAILS[completePlanName];
-} else if (!staticPlanDetails && funnelData.staticPlanDetails) {
-    staticPlanDetails = funnelData.staticPlanDetails;
+if (!staticPlanDetails || Object.keys(staticPlanDetails).length === 0) {
+    if (STATIC_PLAN_DETAILS[completePlanName]) {
+        staticPlanDetails = STATIC_PLAN_DETAILS[completePlanName];
+    } else if (funnelData.staticPlanDetails) {
+        staticPlanDetails = funnelData.staticPlanDetails;
+    } else {
+        // Fallback: create basic plan details
+        staticPlanDetails = {
+            price: paymentModel === 'Monthly' ? 
+                  (plan === 'Premium' ? '£150/month' : '£100/month') :
+                  (plan === 'Premium' ? '£3,000' : '£1,500'),
+            type: paymentModel === 'Monthly' ? 'monthly' : 'one-time',
+            pages: plan === 'Premium' ? 'Up to 15 Pages' : 'Up to 5 Pages',
+            revisions: plan === 'Premium' ? 'Up to 10 Revisions Per Page' : 'Up to 5 Revisions Per Page',
+            delivery: plan === 'Premium' ? '25-30 days' : '10-15 days',
+            mobileResponsive: true,
+            sslCertificate: paymentModel === 'Monthly' ? 'included' : 'via client hosting'
+        };
+    }
 }
 
 // DOM Elements
@@ -532,12 +574,12 @@ const nicheMessages = {
 // Get the appropriate message
 const nicheData = nicheMessages[niche] || nicheMessages.default;
 
-// Format plan name
+// Format plan name for display
 let formattedPlan = completePlanName;
-if (!formattedPlan) {
+if (!formattedPlan && plan) {
     formattedPlan = plan;
     if (paymentModel) {
-        formattedPlan += ` - ${paymentModel}`;
+        formattedPlan += ` (${paymentModel})`;
     }
 }
 
@@ -562,6 +604,9 @@ function createPlanSummary() {
     
     // Show static plan details if available
     if (staticPlanDetails) {
+        const isMonthly = staticPlanDetails.type === 'monthly';
+        const isPremium = plan === 'Premium';
+        
         planSummaryHTML = `
             <div class="plan-details-summary" style="background: rgba(255, 107, 0, 0.05); padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem;">
                 <h4 style="color: var(--primary); margin-bottom: 1rem;">📋 Your Plan Details:</h4>
@@ -571,17 +616,17 @@ function createPlanSummary() {
                     <div>
                         <p><strong>Plan:</strong> ${completePlanName}</p>
                         <p><strong>Price:</strong> ${staticPlanDetails.price}</p>
-                        ${staticPlanDetails.type === 'one-time' ? `
-                            <p><strong>Pages:</strong> ${staticPlanDetails.pages}</p>
-                            <p><strong>Revisions:</strong> ${staticPlanDetails.revisions}</p>
-                            <p><strong>Delivery:</strong> ${staticPlanDetails.delivery}</p>
-                            <p><strong>Support:</strong> ${staticPlanDetails.support}</p>
-                            <p><small style="color: #666;">${staticPlanDetails.supportType}</small></p>
-                        ` : `
-                            <p><strong>Hosting:</strong> ${staticPlanDetails.hosting}</p>
-                            <p><strong>Maintenance:</strong> ${staticPlanDetails.maintenance}</p>
+                        ${isMonthly ? `
+                            <p><strong>Hosting:</strong> ${staticPlanDetails.hosting || 'Website hosting included'}</p>
+                            <p><strong>Maintenance:</strong> ${staticPlanDetails.maintenance || 'Monthly maintenance'}</p>
                             ${staticPlanDetails.backups ? `<p><strong>Backups:</strong> ${staticPlanDetails.backups}</p>` : ''}
                             ${staticPlanDetails.performanceMonitoring ? `<p><strong>Performance Monitoring:</strong> ✓</p>` : ''}
+                        ` : `
+                            <p><strong>Pages:</strong> ${staticPlanDetails.pages || (isPremium ? 'Up to 15 Pages' : 'Up to 5 Pages')}</p>
+                            <p><strong>Revisions:</strong> ${staticPlanDetails.revisions || (isPremium ? 'Up to 10 Revisions Per Page' : 'Up to 5 Revisions Per Page')}</p>
+                            <p><strong>Delivery:</strong> ${staticPlanDetails.delivery || (isPremium ? '25-30 days' : '10-15 days')}</p>
+                            <p><strong>Support:</strong> ${staticPlanDetails.support || (isPremium ? '6 Months Post-Launch Support' : '3 Months Post-Launch Support')}</p>
+                            ${staticPlanDetails.supportType ? `<p><small style="color: #666;">${staticPlanDetails.supportType}</small></p>` : ''}
                         `}
                     </div>
                     
@@ -596,11 +641,18 @@ function createPlanSummary() {
                             ${staticPlanDetails.emailSupport ? `<li>✓ Email Support</li>` : ''}
                             <li>✓ Professional Design</li>
                             <li>✓ Fast Loading Speed</li>
+                            ${staticPlanDetails.builtWith ? `<li>✓ ${staticPlanDetails.builtWith}</li>` : ''}
                         </ul>
                         
-                        ${staticPlanDetails.hosting === 'not included' ? `
+                        ${!isMonthly && staticPlanDetails.hosting === 'not included' ? `
                             <div style="background: rgba(255, 107, 0, 0.1); padding: 0.5rem; border-radius: 8px; margin-top: 0.5rem; font-size: 0.9rem;">
-                                <strong>⚠️ Important:</strong> ${staticPlanDetails.hostingNote}
+                                <strong>⚠️ Important:</strong> ${staticPlanDetails.hostingNote || 'Client provides their own hosting'}
+                            </div>
+                        ` : ''}
+                        
+                        ${!isMonthly && staticPlanDetails.sourceFiles ? `
+                            <div style="background: rgba(33, 150, 243, 0.1); padding: 0.5rem; border-radius: 8px; margin-top: 0.5rem; font-size: 0.9rem;">
+                                <strong>🎁 Bonus:</strong> ${staticPlanDetails.sourceFiles}
                             </div>
                         ` : ''}
                     </div>
@@ -613,6 +665,8 @@ function createPlanSummary() {
                 <h4 style="color: var(--primary); margin-bottom: 1rem;">📋 Your Plan Details:</h4>
                 <p><strong>Plan:</strong> ${formattedPlan}</p>
                 <p><strong>Business:</strong> ${business}</p>
+                <p><strong>Payment Model:</strong> ${paymentModel || 'One-time payment'}</p>
+                <p><strong>Plan Type:</strong> ${plan}</p>
         `;
     }
     
@@ -622,12 +676,18 @@ function createPlanSummary() {
             <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255, 107, 0, 0.2);">
                 <p><strong>🎯 Your Selected Services (${selectedServices.length} total):</strong></p>
                 <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.5rem; margin-top: 0.5rem;">
-                    ${selectedServices.map(service => `
+                    ${selectedServices.slice(0, 10).map(service => `
                         <div style="background: rgba(255, 107, 0, 0.1); padding: 0.5rem; border-radius: 8px; font-size: 0.9rem;">
                             <i class="fas fa-check" style="color: var(--primary); margin-right: 0.5rem;"></i>
                             ${service}
                         </div>
                     `).join('')}
+                    ${selectedServices.length > 10 ? `
+                        <div style="background: rgba(255, 107, 0, 0.1); padding: 0.5rem; border-radius: 8px; font-size: 0.9rem; text-align: center;">
+                            <i class="fas fa-plus" style="color: var(--primary); margin-right: 0.5rem;"></i>
+                            +${selectedServices.length - 10} more services
+                        </div>
+                    ` : ''}
                 </div>
                 ${serviceCounts.standard || serviceCounts.premium ? `
                     <div style="margin-top: 1rem; display: flex; gap: 1rem; font-size: 0.9rem;">
@@ -812,9 +872,18 @@ document.addEventListener('DOMContentLoaded', function() {
     // Update order form link to pass data
     const orderFormLink = document.querySelector('a[href="order-form.html"]');
     if (orderFormLink) {
-        orderFormLink.href = `order-form.html?niche=${niche}&plan=${encodeURIComponent(plan)}&business=${encodeURIComponent(business)}&paymentModel=${encodeURIComponent(paymentModel)}`;
+        // Pass all necessary data to order form
+        const orderFormUrl = new URL('order-form.html', window.location.origin);
+        orderFormUrl.searchParams.append('niche', niche);
+        orderFormUrl.searchParams.append('plan', plan);
+        orderFormUrl.searchParams.append('business', encodeURIComponent(business));
+        orderFormUrl.searchParams.append('paymentModel', paymentModel);
+        
+        orderFormLink.href = orderFormUrl.toString();
+        console.log('Order Form Link Updated:', orderFormLink.href);
     }
 });
+      
 </script>
 </body>
 </html>
