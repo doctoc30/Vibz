@@ -2194,65 +2194,7 @@ function redirectToPayment(planName, stripeLink) {
     window.location.href = stripeLink;
 }
 
-// NEW FUNCTION: Generate service list HTML for pricing cards
-function generateServiceListHTML() {
-    let standardServicesHTML = '';
-    let premiumServicesHTML = '';
-    
-    // Separate standard and premium services
-    const standardServices = [];
-    const premiumServices = [];
-    
-    formData.features.forEach(serviceName => {
-        const service = allServices.find(s => s.name === serviceName);
-        if (service) {
-            if (service.tier === 'standard') {
-                standardServices.push(service);
-            } else {
-                premiumServices.push(service);
-            }
-        }
-    });
-    
-    // Generate HTML for standard services
-    if (standardServices.length > 0) {
-        standardServicesHTML += '<div class="service-category">';
-        standardServicesHTML += '<div class="service-category-title" style="color: #4CAF50; font-weight: bold; margin-bottom: 0.5rem;">Standard Services:</div>';
-        standardServices.forEach(service => {
-            standardServicesHTML += `
-                <div class="selected-service-item" style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.3rem; font-size: 0.9rem;">
-                    <i class="fas fa-check-circle" style="color: #4CAF50; font-size: 0.8rem;"></i>
-                    <span>${service.name}</span>
-                </div>
-            `;
-        });
-        standardServicesHTML += '</div>';
-    }
-    
-    // Generate HTML for premium services
-    if (premiumServices.length > 0) {
-        premiumServicesHTML += '<div class="service-category">';
-        premiumServicesHTML += '<div class="service-category-title" style="color: #2196F3; font-weight: bold; margin-bottom: 0.5rem;">Premium Services:</div>';
-        premiumServices.forEach(service => {
-            premiumServicesHTML += `
-                <div class="selected-service-item" style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.3rem; font-size: 0.9rem;">
-                    <i class="fas fa-check-circle" style="color: #2196F3; font-size: 0.8rem;"></i>
-                    <span>${service.name}</span>
-                </div>
-            `;
-        });
-        premiumServicesHTML += '</div>';
-    }
-    
-    // Combine both HTML
-    let combinedHTML = '';
-    if (standardServicesHTML) combinedHTML += standardServicesHTML;
-    if (premiumServicesHTML) combinedHTML += premiumServicesHTML;
-    
-    return combinedHTML || '<div style="color: #666; font-style: italic;">No services selected</div>';
-}
-
-// UPDATED: Show final plans - now includes exact service names
+// SIMPLIFIED: Show final plans - clean, easy-to-understand design
 function showFinalPlans() {
     console.log('=== showFinalPlans() called ===');
     
@@ -2272,21 +2214,29 @@ function showFinalPlans() {
                             return service.tier === 'premium';
                         });
     
-    // Build recommendation text
+    // SIMPLIFIED recommendation text
     let recommendationText;
     if (forcePremium) {
-        recommendationText = `You selected <strong>${premiumServiceCount} premium service(s)</strong>. Premium services REQUIRE the <strong>Premium Plan</strong>.`;
+        recommendationText = `You selected <strong>${premiumServiceCount} premium service(s)</strong>. Premium services REQUIRE the <strong style="color: #2196F3;">Premium Plan</strong>.`;
     } else {
-        recommendationText = `Based on your <strong>${formData.features.length} selected services</strong>, we recommend the <strong>${forcePremium ? 'Premium' : 'Standard'}</strong> plan.`;
+        recommendationText = `Based on your <strong>${formData.features.length} selected services</strong>, we recommend the <strong style="color: #4CAF50;">Standard Plan</strong>.`;
     }
     planText.innerHTML = recommendationText;
     
-    // Generate service list HTML
-    const serviceListHTML = generateServiceListHTML();
+    // SIMPLIFIED: Get service names for display
+    let servicesSummary = '';
+    if (formData.features.length > 0) {
+        // Show only first 3-5 services for simplicity
+        const displayServices = formData.features.slice(0, 5);
+        servicesSummary = `<div style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;">
+            Selected services: ${displayServices.map(s => `<span style="color: #333;">${s}</span>`).join(', ')}
+            ${formData.features.length > 5 ? `<span style="color: #666;">...and ${formData.features.length - 5} more</span>` : ''}
+        </div>`;
+    }
     
-    // Generate HTML based on payment model
+    // SIMPLIFIED HTML - Clean, easy-to-read cards
     if (isMonthly) {
-        // MONTHLY SUPPORT PLANS
+        // MONTHLY SUPPORT PLANS - SIMPLIFIED
         container.innerHTML = `
             <div class="pricing-container">
                 <!-- Monthly Standard Plan -->
@@ -2295,28 +2245,22 @@ function showFinalPlans() {
                     ${!forcePremium ? '<div class="required-badge recommended-glow">RECOMMENDED</div>' : ''}
                     <h3>Monthly Standard</h3>
                     <div class="price">£100<span class="price-period">/month</span></div>
-                    <ul class="pricing-features">
-                        <li><i class="fas fa-check"></i> Standard Website Features</li>
-                        <li><i class="fas fa-check"></i> Hosting Included</li>
-                        <li><i class="fas fa-check"></i> Monthly Maintenance</li>
-                        <li><i class="fas fa-check"></i> Security Updates</li>
-                        <li><i class="fas fa-check"></i> Priority Support</li>
-                    </ul>
-                    <!-- EXACT SERVICES SECTION -->
-                    <div class="selected-services-section" style="margin: 1.5rem 0; padding: 1rem; background: rgba(0,0,0,0.03); border-radius: 8px;">
-                        <div style="font-weight: bold; margin-bottom: 0.5rem; color: #333;">Your Selected Services:</div>
-                        <div style="max-height: 200px; overflow-y: auto; padding-right: 0.5rem;">
-                            ${serviceListHTML}
-                        </div>
-                        <div style="margin-top: 0.5rem; font-size: 0.85rem; color: #666;">
-                            Total: ${formData.features.length} services selected
-                        </div>
+                    <div style="font-size: 0.9rem; color: #666; margin-bottom: 1rem;">
+                        Perfect for ${formData.features.length} essential website features
                     </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> All Standard Features Included</li>
+                        <li><i class="fas fa-check"></i> Hosting & Maintenance</li>
+                        <li><i class="fas fa-check"></i> Priority Support</li>
+                        <li><i class="fas fa-check"></i> Regular Updates</li>
+                        ${servicesSummary ? `<li style="border-top: 1px solid #eee; padding-top: 0.8rem; margin-top: 0.8rem;">${servicesSummary}</li>` : ''}
+                    </ul>
                     <button type="button" class="vibz-btn ${!forcePremium ? 'vibz-btn-primary' : ''}" 
                             onclick="redirectToPayment('Monthly Standard - £100/month', 'https://buy.stripe.com/test_9B614oetUckt6fc7TFgMw04')"
                             ${forcePremium ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}>
                         ${!forcePremium ? 'Choose Monthly Standard' : 'Not Available'}
                     </button>
+                    ${!forcePremium ? '<div style="font-size: 0.8rem; color: #4CAF50; margin-top: 0.5rem;">✓ Matches your selected services</div>' : ''}
                 </div>
                 
                 <!-- Monthly Premium Plan -->
@@ -2325,35 +2269,27 @@ function showFinalPlans() {
                     ${forcePremium ? '<div class="required-badge required-glow">REQUIRED</div>' : ''}
                     <h3>Monthly Premium</h3>
                     <div class="price">£150<span class="price-period">/month</span></div>
-                    <ul class="pricing-features">
-                        <li class="premium-feature"><i class="fas fa-check"></i> All Premium Features</li>
-                        <li class="premium-feature"><i class="fas fa-check"></i> Advanced Hosting</li>
-                        <li class="premium-feature"><i class="fas fa-check"></i> 24/7 Priority Support</li>
-                        <li class="premium-feature"><i class="fas fa-check"></i> Regular Updates & Backups</li>
-                        <li class="premium-feature"><i class="fas fa-check"></i> Performance Monitoring</li>
-                    </ul>
-                    <!-- EXACT SERVICES SECTION -->
-                    <div class="selected-services-section" style="margin: 1.5rem 0; padding: 1rem; background: rgba(33, 150, 243, 0.05); border-radius: 8px; border-left: 3px solid #2196F3;">
-                        <div style="font-weight: bold; margin-bottom: 0.5rem; color: #333;">Your Selected Services:</div>
-                        <div style="max-height: 200px; overflow-y: auto; padding-right: 0.5rem;">
-                            ${serviceListHTML}
-                        </div>
-                        <div style="margin-top: 0.5rem; font-size: 0.85rem; color: #666;">
-                            Total: ${formData.features.length} services selected
-                            ${premiumServiceCount > 0 ? `<span style="color: #2196F3;"> (${premiumServiceCount} premium)</span>` : ''}
-                            ${standardServiceCount > 0 ? `<span style="color: #4CAF50;"> (${standardServiceCount} standard)</span>` : ''}
-                        </div>
+                    <div style="font-size: 0.9rem; color: #666; margin-bottom: 1rem;">
+                        Includes ${premiumServiceCount} premium features + ${standardServiceCount} standard
                     </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check" style="color: #2196F3;"></i> All Premium Features</li>
+                        <li><i class="fas fa-check" style="color: #2196F3;"></i> 24/7 Priority Support</li>
+                        <li><i class="fas fa-check" style="color: #2196F3;"></i> Advanced Hosting</li>
+                        <li><i class="fas fa-check" style="color: #2196F3;"></i> Performance Monitoring</li>
+                        ${servicesSummary ? `<li style="border-top: 1px solid #eee; padding-top: 0.8rem; margin-top: 0.8rem;">${servicesSummary}</li>` : ''}
+                    </ul>
                     <button type="button" class="vibz-btn" 
                             onclick="redirectToPayment('Monthly Premium - £150/month', 'https://buy.stripe.com/test_6oU5kE3Pgdox6fc6PBgMw03')"
                             style="${forcePremium ? 'background: #2196F3; border-color: #2196F3; color: white; font-weight: 700;' : ''}">
                         ${forcePremium ? 'Continue with Required Plan' : 'Choose Monthly Premium'}
                     </button>
+                    ${forcePremium ? '<div style="font-size: 0.8rem; color: #2196F3; margin-top: 0.5rem;">✓ Required for your premium services</div>' : ''}
                 </div>
             </div>
         `;
     } else {
-        // OWN OUTRIGHT PLANS
+        // OWN OUTRIGHT PLANS - SIMPLIFIED
         container.innerHTML = `
             <div class="pricing-container">
                 <!-- Standard Own Outright Plan -->
@@ -2362,28 +2298,22 @@ function showFinalPlans() {
                     ${!forcePremium ? '<div class="required-badge recommended-glow">RECOMMENDED</div>' : ''}
                     <h3>Standard Own Outright</h3>
                     <div class="price">£1,500</div>
-                    <ul class="pricing-features">
-                        <li class="standard-feature"><i class="fas fa-check"></i> Upto 5 Pages</li>
-                        <li class="standard-feature"><i class="fas fa-check"></i> Upto 5 Revisions Per Page</li>
-                        <li class="standard-feature"><i class="fas fa-check"></i> Delivery 10-15 days</li>
-                        <li class="standard-feature"><i class="fas fa-check"></i> 3 months support</li>
-                        <li class="standard-feature"><i class="fas fa-check"></i> Mobile responsive</li>
-                    </ul>
-                    <!-- EXACT SERVICES SECTION -->
-                    <div class="selected-services-section" style="margin: 1.5rem 0; padding: 1rem; background: rgba(0,0,0,0.03); border-radius: 8px;">
-                        <div style="font-weight: bold; margin-bottom: 0.5rem; color: #333;">Your Selected Services:</div>
-                        <div style="max-height: 200px; overflow-y: auto; padding-right: 0.5rem;">
-                            ${serviceListHTML}
-                        </div>
-                        <div style="margin-top: 0.5rem; font-size: 0.85rem; color: #666;">
-                            Total: ${formData.features.length} services selected
-                        </div>
+                    <div style="font-size: 0.9rem; color: #666; margin-bottom: 1rem;">
+                        One-time payment for ${formData.features.length} website features
                     </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> 5 Pages Website</li>
+                        <li><i class="fas fa-check"></i> 5 Revisions Per Page</li>
+                        <li><i class="fas fa-check"></i> 10-15 Day Delivery</li>
+                        <li><i class="fas fa-check"></i> 3 Months Support</li>
+                        ${servicesSummary ? `<li style="border-top: 1px solid #eee; padding-top: 0.8rem; margin-top: 0.8rem;">${servicesSummary}</li>` : ''}
+                    </ul>
                     <button type="button" class="vibz-btn ${!forcePremium ? 'vibz-btn-primary' : ''}" 
                             onclick="redirectToPayment('Standard Own Outright - £1,500', 'https://buy.stripe.com/test_00wdRa2Lc7093305LxgMw01')"
                             ${forcePremium ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}>
                         ${!forcePremium ? 'Choose Standard Plan' : 'Not Available'}
                     </button>
+                    ${!forcePremium ? '<div style="font-size: 0.8rem; color: #4CAF50; margin-top: 0.5rem;">✓ Matches your selected services</div>' : ''}
                 </div>
                 
                 <!-- Premium Own Outright Plan -->
@@ -2392,30 +2322,22 @@ function showFinalPlans() {
                     ${forcePremium ? '<div class="required-badge required-glow">REQUIRED</div>' : ''}
                     <h3>Premium Own Outright</h3>
                     <div class="price">£3,000</div>
-                    <ul class="pricing-features">
-                        <li class="premium-feature"><i class="fas fa-check"></i> Upto 15 Pages</li>
-                        <li class="premium-feature"><i class="fas fa-check"></i> Upto 10 Revisions Per Page</li>
-                        <li class="premium-feature"><i class="fas fa-check"></i> Delivery 25-30 days</li>
-                        <li class="premium-feature"><i class="fas fa-check"></i> 6 months support</li>
-                        <li class="premium-feature"><i class="fas fa-check"></i> All Premium Features</li>
-                    </ul>
-                    <!-- EXACT SERVICES SECTION -->
-                    <div class="selected-services-section" style="margin: 1.5rem 0; padding: 1rem; background: rgba(33, 150, 243, 0.05); border-radius: 8px; border-left: 3px solid #2196F3;">
-                        <div style="font-weight: bold; margin-bottom: 0.5rem; color: #333;">Your Selected Services:</div>
-                        <div style="max-height: 200px; overflow-y: auto; padding-right: 0.5rem;">
-                            ${serviceListHTML}
-                        </div>
-                        <div style="margin-top: 0.5rem; font-size: 0.85rem; color: #666;">
-                            Total: ${formData.features.length} services selected
-                            ${premiumServiceCount > 0 ? `<span style="color: #2196F3;"> (${premiumServiceCount} premium)</span>` : ''}
-                            ${standardServiceCount > 0 ? `<span style="color: #4CAF50;"> (${standardServiceCount} standard)</span>` : ''}
-                        </div>
+                    <div style="font-size: 0.9rem; color: #666; margin-bottom: 1rem;">
+                        Includes ${premiumServiceCount} premium features + ${standardServiceCount} standard
                     </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check" style="color: #2196F3;"></i> 15 Pages Website</li>
+                        <li><i class="fas fa-check" style="color: #2196F3;"></i> 10 Revisions Per Page</li>
+                        <li><i class="fas fa-check" style="color: #2196F3;"></i> 25-30 Day Delivery</li>
+                        <li><i class="fas fa-check" style="color: #2196F3;"></i> 6 Months Support</li>
+                        ${servicesSummary ? `<li style="border-top: 1px solid #eee; padding-top: 0.8rem; margin-top: 0.8rem;">${servicesSummary}</li>` : ''}
+                    </ul>
                     <button type="button" class="vibz-btn" 
                             onclick="redirectToPayment('Premium Own Outright - £3,000', 'https://buy.stripe.com/test_dRmaEYbhI84d1YW8XJgMw02')"
                             style="${forcePremium ? 'background: #2196F3; border-color: #2196F3; color: white; font-weight: 700;' : ''}">
                         ${forcePremium ? 'Continue with Required Plan' : 'Choose Premium Plan'}
                     </button>
+                    ${forcePremium ? '<div style="font-size: 0.8rem; color: #2196F3; margin-top: 0.5rem;">✓ Required for your premium services</div>' : ''}
                 </div>
             </div>
         `;
@@ -2426,16 +2348,16 @@ function showFinalPlans() {
         if (forcePremium) {
             const premiumPlan = document.getElementById(isMonthly ? 'monthlyPremiumPlan' : 'premiumOwnPlan');
             if (premiumPlan) {
-                premiumPlan.style.boxShadow = '0 0 40px rgba(33, 150, 243, 0.6), 0 0 80px rgba(33, 150, 243, 0.3)';
-                premiumPlan.style.border = '3px solid #2196F3';
-                premiumPlan.style.transform = 'translateY(-10px)';
+                premiumPlan.style.boxShadow = '0 0 30px rgba(33, 150, 243, 0.4), 0 0 60px rgba(33, 150, 243, 0.2)';
+                premiumPlan.style.border = '2px solid #2196F3';
+                premiumPlan.style.transform = 'translateY(-5px)';
             }
         } else {
             const standardPlan = document.getElementById(isMonthly ? 'monthlyStandardPlan' : 'standardOwnPlan');
             if (standardPlan) {
-                standardPlan.style.boxShadow = '0 0 40px rgba(76, 175, 80, 0.6), 0 0 80px rgba(76, 175, 80, 0.3)';
-                standardPlan.style.border = '3px solid #4CAF50';
-                standardPlan.style.transform = 'translateY(-10px)';
+                standardPlan.style.boxShadow = '0 0 30px rgba(76, 175, 80, 0.4), 0 0 60px rgba(76, 175, 80, 0.2)';
+                standardPlan.style.border = '2px solid #4CAF50';
+                standardPlan.style.transform = 'translateY(-5px)';
             }
         }
     }, 100);
@@ -2492,7 +2414,6 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('=== Initialization complete ===');
 });
 </script>
-            
 
 </body>
 </html>
