@@ -517,103 +517,61 @@
 <script>
     // ========== SERVICES DATABASE ==========
     const servicesDatabase = {
-      // ... (same services database as before) ...
+      // Standard Services
+      'Services & Pricing Display': { tier: 'standard', desc: 'Clear layout of all offered services and prices' },
+      'Team / Barber Profiles': { tier: 'standard', desc: 'Photos, bios, and specialties' },
+      'Photo Gallery / Portfolio': { tier: 'standard', desc: 'Image grid showcasing barber work' },
+      'Basic Before & After Slider': { tier: 'standard', desc: 'Compare hairstyles side-by-side' },
+      'Special Offers / Promotions Section': { tier: 'standard', desc: 'Display deals or discounts' },
+      'Opening Hours Display': { tier: 'standard', desc: 'Business hours and open/closed status' },
+      'Location & Directions': { tier: 'standard', desc: 'Google Maps embed with directions button' },
+      'Tap-to-Call & WhatsApp Buttons': { tier: 'standard', desc: 'One-click mobile contact' },
+      'FAQ Section': { tier: 'standard', desc: 'Collapsible questions to answer common client queries' },
+      'Loyalty / Membership Info': { tier: 'standard', desc: 'Show loyalty program details' },
+      'Contact Form': { tier: 'standard', desc: 'Simple enquiry form to collect messages' },
+      'On-Page SEO Basics': { tier: 'standard', desc: 'Page titles, headers, meta tags, and image alt text' },
+      
+      // Premium Services
+      'Online Booking System Integration': { tier: 'premium', desc: 'Calendly, Setmore, etc.' },
+      'Stripe Payments / Deposits': { tier: 'premium', desc: 'Accept payments online' },
+      'Automated Booking Reminders': { tier: 'premium', desc: 'Email/SMS via booking platform' },
+      'Reschedule & Cancellation Management': { tier: 'premium', desc: 'Client-managed bookings' },
+      'Gift Cards / Vouchers': { tier: 'premium', desc: 'Sell digital gift cards' },
+      'Walk-In / Waitlist System': { tier: 'premium', desc: 'Real-time updates for walk-ins' },
+      'Enhanced Before & After Gallery': { tier: 'premium', desc: 'Filter by barber, style, or service' },
+      'Barber Specialties & Service Tags': { tier: 'premium', desc: 'Highlight skills and services' },
+      'Advanced Call-to-Action Buttons': { tier: 'premium', desc: 'Sticky buttons, strategic placement' },
+      'Analytics & Conversion Tracking Setup': { tier: 'premium', desc: 'Tracks Book Now, Call, WhatsApp, and form submissions' },
+      'Priority Build Queue': { tier: 'premium', desc: 'Premium builds scheduled first' },
+      'Enhanced Video & Image Gallery': { tier: 'premium', desc: 'Interactive gallery for client-provided media' },
+      'Social Proof / Reviews Section': { tier: 'premium', desc: 'Display client testimonials' },
+      'Prominent Sticky Header / Banner': { tier: 'premium', desc: 'Highlight bookings, offers, or CTAs' },
+      'Multi-Location / Branch Info': { tier: 'premium', desc: 'Optional for shops with multiple locations' },
+      'Full Branding Package': { tier: 'premium', desc: 'Logo, colors, typography' },
+      'Custom Graphics & Icons': { tier: 'premium', desc: 'Personalized visuals for website sections' },
+      'Branded Email Newsletter Setup': { tier: 'premium', desc: 'Template ready to connect' },
+      'Favicon & Browser Branding': { tier: 'premium', desc: 'Polished appearance in tabs/bookmarks' },
+      'Premium On-Page SEO': { tier: 'premium', desc: 'Schema, technical setup, optimized indexing' }
     };
 
     // ========== INITIALIZE PAGE ==========
     document.addEventListener('DOMContentLoaded', function() {
       console.log('=== Thank You Page Initialization ===');
       
-      // FIRST: Check URL parameters for orderId
-      const urlParams = new URLSearchParams(window.location.search);
-      const orderId = urlParams.get('orderId');
-      
-      let businessName = '';
-      let designCode = '';
-      let plan = 'Standard';
-      let paymentModel = 'Own Outright';
-      let services = 0;
-      let selectedFeatures = [];
-      
-      // If we have an orderId, get data from that specific order
-      if (orderId) {
-        const orderDataStr = localStorage.getItem('order_' + orderId);
-        if (orderDataStr) {
-          try {
-            const orderData = JSON.parse(orderDataStr);
-            businessName = orderData.businessName || '';
-            designCode = orderData.designCode || 'CUSTOM';
-            plan = orderData.planType || 'Standard';
-            paymentModel = orderData.paymentModel || 'Own Outright';
-            services = orderData.totalServices || 0;
-            selectedFeatures = orderData.features || [];
-            console.log('Got data from orderId:', orderId, businessName);
-          } catch (e) {
-            console.error('Error parsing order data:', e);
-          }
-        }
+      // DEBUG: Show all localStorage data
+      console.log('=== LOCALSTORAGE DEBUG ===');
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        console.log(`${key}:`, localStorage.getItem(key));
       }
       
-      // If no orderId or businessName is still empty, try all other sources
-      if (!businessName) {
-        // Try localStorage with multiple keys
-        businessName = localStorage.getItem('businessName') || 
-                      localStorage.getItem('userBusinessName') || 
-                      'Barber Shop';
-        
-        designCode = localStorage.getItem('selectedDesignCode') || 'CUSTOM';
-        plan = localStorage.getItem('selectedPlan') || 'Standard';
-        paymentModel = localStorage.getItem('paymentModel') || 'Own Outright';
-        
-        // Get services count
-        const serviceCountsStr = localStorage.getItem('serviceCounts');
-        if (serviceCountsStr) {
-          try {
-            const counts = JSON.parse(serviceCountsStr);
-            services = counts.total || 0;
-          } catch (e) {
-            console.error('Error parsing serviceCounts:', e);
-          }
-        }
-        
-        // Get selected features
-        const selectedServicesStr = localStorage.getItem('selectedServices');
-        if (selectedServicesStr) {
-          try {
-            selectedFeatures = JSON.parse(selectedServicesStr);
-          } catch (e) {
-            console.error('Error parsing selectedServices:', e);
-          }
-        }
-      }
+      // Collect all data from localStorage
+      const data = collectDataFromStorage();
       
-      // If businessName is still "Barber Shop", try sessionStorage
-      if (businessName === 'Barber Shop') {
-        businessName = sessionStorage.getItem('businessName') || 
-                      sessionStorage.getItem('userBusinessName') || 
-                      'Barber Shop';
-        console.log('Got business name from sessionStorage:', businessName);
-      }
-      
-      console.log('Final data for thank you page:', {
-        businessName,
-        designCode,
-        plan,
-        paymentModel,
-        services,
-        selectedFeaturesCount: selectedFeatures.length
-      });
+      console.log('Collected data for display:', data);
       
       // Update page content
-      updatePageContent({
-        business: businessName,
-        plan: plan,
-        paymentModel: paymentModel,
-        totalServices: services,
-        selectedFeatures: selectedFeatures,
-        designCode: designCode,
-        niche: 'barber'
-      });
+      updatePageContent(data);
       
       // Set up button click handlers
       setupEventHandlers();
@@ -624,34 +582,153 @@
       }, 500);
     });
 
+    // ========== COLLECT DATA FROM STORAGE ==========
+    function collectDataFromStorage() {
+      let businessName = '';
+      let designCode = '';
+      let plan = 'Standard';
+      let paymentModel = 'Own Outright';
+      let totalServices = 0;
+      let selectedFeatures = [];
+      
+      // METHOD 1: Get from orderData object
+      const orderDataStr = localStorage.getItem('orderData');
+      if (orderDataStr) {
+        try {
+          const orderData = JSON.parse(orderDataStr);
+          businessName = orderData.businessName || '';
+          designCode = orderData.designCode || 'CUSTOM';
+          plan = orderData.planType || 'Standard';
+          paymentModel = orderData.paymentModel || 'Own Outright';
+          totalServices = orderData.totalServices || 0;
+          selectedFeatures = orderData.features || [];
+          console.log('Got data from orderData:', businessName);
+        } catch (e) {
+          console.error('Error parsing orderData:', e);
+        }
+      }
+      
+      // METHOD 2: If businessName is still empty, try direct localStorage
+      if (!businessName || businessName === 'Barber Shop') {
+        businessName = localStorage.getItem('businessName') || 'Barber Shop';
+        console.log('Got businessName from localStorage:', businessName);
+      }
+      
+      // METHOD 3: Get design code
+      if (!designCode || designCode === 'CUSTOM') {
+        designCode = localStorage.getItem('selectedDesignCode') || 'CUSTOM';
+      }
+      
+      // METHOD 4: Get plan
+      const storedPlan = localStorage.getItem('selectedPlan');
+      if (storedPlan && !plan) {
+        plan = storedPlan.includes('Premium') ? 'Premium' : 'Standard';
+      }
+      
+      // METHOD 5: Get payment model
+      const storedPaymentModel = localStorage.getItem('paymentModel');
+      if (storedPaymentModel && !paymentModel) {
+        paymentModel = storedPaymentModel;
+      }
+      
+      // METHOD 6: Get service counts
+      const serviceCountsStr = localStorage.getItem('serviceCounts');
+      if (serviceCountsStr && totalServices === 0) {
+        try {
+          const counts = JSON.parse(serviceCountsStr);
+          totalServices = counts.total || 0;
+        } catch (e) {
+          console.error('Error parsing serviceCounts:', e);
+        }
+      }
+      
+      // METHOD 7: Get selected features
+      const selectedServicesStr = localStorage.getItem('selectedServices');
+      if (selectedServicesStr && selectedFeatures.length === 0) {
+        try {
+          selectedFeatures = JSON.parse(selectedServicesStr);
+        } catch (e) {
+          console.error('Error parsing selectedServices:', e);
+        }
+      }
+      
+      return {
+        business: businessName,
+        designCode: designCode,
+        plan: plan,
+        paymentModel: paymentModel,
+        totalServices: totalServices,
+        selectedFeatures: selectedFeatures,
+        niche: 'barber'
+      };
+    }
+
     // ========== UPDATE PAGE CONTENT ==========
     function updatePageContent(data) {
       const {
         business,
+        designCode,
         plan,
         paymentModel,
         totalServices,
         selectedFeatures,
-        designCode,
         niche
       } = data;
       
-      console.log('Updating page with business name:', business);
+      console.log('Updating page with:', {
+        business: business,
+        plan: plan,
+        designCode: designCode,
+        totalServices: totalServices
+      });
       
-      // Update basic info - CRITICAL: Use the actual business name
-      document.getElementById('thankYouTitle').textContent = 'Thank You!';
-      document.getElementById('thankYouText').textContent = `Your ${business} website order has been confirmed!`;
-      document.getElementById('businessName').textContent = business;
-      document.getElementById('planType').textContent = `${plan} Plan`;
-      document.getElementById('paymentModel').textContent = paymentModel;
-      document.getElementById('totalServices').textContent = totalServices;
-      
-      // Display correct design code
-      const designConceptElement = document.getElementById('designConcept');
-      if (designCode === 'CUSTOM') {
-        designConceptElement.textContent = 'Custom Design';
+      // CRITICAL FIX: Update business name element
+      const businessNameElement = document.getElementById('businessName');
+      if (businessNameElement) {
+        businessNameElement.textContent = business;
+        console.log('Updated businessName element with:', business);
       } else {
-        designConceptElement.textContent = `Design Code: ${designCode.toUpperCase()}`;
+        console.error('ERROR: Element with id="businessName" not found!');
+      }
+      
+      // Update thank you text
+      const thankYouText = document.getElementById('thankYouText');
+      if (thankYouText) {
+        thankYouText.textContent = `Your ${business} website order has been confirmed!`;
+      }
+      
+      // Update project title
+      const projectTitle = document.getElementById('projectTitle');
+      if (projectTitle) {
+        projectTitle.textContent = `${business} - ${plan} Plan`;
+      }
+      
+      // Update plan type
+      const planTypeElement = document.getElementById('planType');
+      if (planTypeElement) {
+        planTypeElement.textContent = `${plan} Plan`;
+      }
+      
+      // Update payment model
+      const paymentModelElement = document.getElementById('paymentModel');
+      if (paymentModelElement) {
+        paymentModelElement.textContent = paymentModel;
+      }
+      
+      // Update total services
+      const totalServicesElement = document.getElementById('totalServices');
+      if (totalServicesElement) {
+        totalServicesElement.textContent = totalServices;
+      }
+      
+      // Update design concept
+      const designConceptElement = document.getElementById('designConcept');
+      if (designConceptElement) {
+        if (designCode === 'CUSTOM') {
+          designConceptElement.textContent = 'Custom Design';
+        } else {
+          designConceptElement.textContent = `Design Code: ${designCode.toUpperCase()}`;
+        }
       }
       
       // Update plan badge
@@ -661,10 +738,16 @@
         planBadge.className = `plan-badge ${plan.toLowerCase()}`;
       }
       
-      // Update project title
-      const projectTitle = document.getElementById('projectTitle');
-      if (projectTitle) {
-        projectTitle.textContent = `${business} - ${plan} Plan`;
+      // Update Complete Now button with data
+      const completeNowBtn = document.getElementById('completeNowBtn');
+      if (completeNowBtn) {
+        const orderFormParams = new URLSearchParams();
+        orderFormParams.append('plan', plan.toLowerCase());
+        orderFormParams.append('business', encodeURIComponent(business));
+        orderFormParams.append('designCode', designCode);
+        orderFormParams.append('services', totalServices);
+        orderFormParams.append('paymentModel', paymentModel);
+        completeNowBtn.href = `order-form.html?${orderFormParams.toString()}`;
       }
       
       // Show selected features if any
@@ -689,6 +772,25 @@
               featuresGrid.appendChild(featureCard);
             }
           });
+          
+          console.log('Displayed', selectedFeatures.length, 'selected features');
+        }
+      } else if (totalServices > 0) {
+        // Show summary if we have counts but no features list
+        const featuresSection = document.getElementById('selectedFeaturesSection');
+        const featuresGrid = document.getElementById('featuresGrid');
+        
+        if (featuresSection && featuresGrid) {
+          featuresSection.style.display = 'block';
+          featuresGrid.innerHTML = `
+            <div class="feature-card standard">
+              <div class="feature-tier standard">SUMMARY</div>
+              <div class="feature-name">Service Selection Summary</div>
+              <div class="feature-desc">
+                <strong>${totalServices} Total Services Selected</strong>
+              </div>
+            </div>
+          `;
         }
       }
       
@@ -704,9 +806,7 @@
       document.documentElement.style.setProperty('--primary', nicheColor);
       updateButtonColors(nicheColor);
       
-      // Log success
-      console.log('Thank you page updated successfully!');
-      console.log('Business name displayed:', business);
+      console.log('Page updated successfully!');
     }
 
     // ========== SETUP EVENT HANDLERS ==========
