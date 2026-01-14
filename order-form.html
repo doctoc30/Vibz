@@ -893,7 +893,11 @@
         </div>
     </div>
 
- <script>
+
+
+
+
+    <script>
     // ===================== CONFIGURATION =====================
     const PLANS = {
         standard: {
@@ -959,16 +963,128 @@
 
     // ===================== INITIALIZATION =====================
     document.addEventListener('DOMContentLoaded', function() {
-        // Get data from URL and localStorage
-        const urlParams = new URLSearchParams(window.location.search);
-        const planParam = urlParams.get('plan');
-        const businessName = urlParams.get('business') || localStorage.getItem('businessName') || '';
-        const designCode = urlParams.get('designCode') || localStorage.getItem('selectedDesignCode') || 'CUSTOM';
-        const servicesCount = urlParams.get('services') || 0;
-        const paymentModel = urlParams.get('paymentModel') || localStorage.getItem('paymentModel') || 'Own Outright';
+        console.log('=== Order Form Initialization ===');
         
-        // Set plan based on URL parameter or localStorage
-        plan = (planParam && PLANS[planParam.toLowerCase()]) ? planParam.toLowerCase() : 'standard';
+        // Get data from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        // Try to get paymentData first (most reliable)
+        const paymentDataStr = localStorage.getItem('paymentData');
+        let paymentData = null;
+        let businessName = '';
+        let designCode = '';
+        let planType = 'standard';
+        
+        if (paymentDataStr) {
+            try {
+                paymentData = JSON.parse(paymentDataStr);
+                businessName = paymentData.businessName || '';
+                designCode = paymentData.designCode || 'CUSTOM';
+                planType = paymentData.planType ? paymentData.planType.toLowerCase() : 'standard';
+                console.log('Got data from paymentData:', { businessName, designCode, planType });
+            } catch (e) {
+                console.error('Error parsing paymentData:', e);
+            }
+        }
+        
+        // Fallback to URL parameters
+        if (!businessName) {
+            businessName = urlParams.get('business') || '';
+            if (businessName) businessName = decodeURIComponent(businessName);
+        }
+        if (!designCode) {
+            designCode = urlParams.get('designCode') || 'CUSTOM';
+        }
+        if (planType === 'standard') {
+            const planParam = urlParams.get('plan');
+            if (planParam) {
+                planType = planParam.toLowerCase();
+            }
+        }
+        
+        // Final fallback to individual localStorage items
+        if (!businessName) {
+            businessName = localStorage.getItem('businessName') || '';
+        }
+        if (!designCode || designCode === 'CUSTOM') {
+            designCode = localStorage.getItem('selectedDesignCode') || 'CUSTOM';
+        }
+        
+        // Set plan
+        plan = (planType && PLANS[planType]) ? planType : 'standard';
+        
+        // Store in formData
+        formData.businessName = businessName;
+        formData.designCode = designCode;
+        
+        console.log('Order form initialized with:', {
+            businessName: formData.businessName,
+            designCode: formData.designCode,
+            plan: plan
+        });
+        
+        // Initialize the form
+        initializePlan();
+        updateProgress();
+        setupEventListeners();
+        
+        // Pre-fill business name field
+        const businessNameField = document.getElementById('businessName');
+        if (businessNameField && formData.businessName) {
+            businessNameField.value = formData.businessName;
+            console.log('Prefilled business name:', formData.businessName);
+        }
+        
+        // Update design code display
+        updateDesignCodeDisplay();
+    });
+
+    // ===================== UPDATE DESIGN CODE DISPLAY =====================
+    function updateDesignCodeDisplay() {
+        const designCodeDisplay = document.getElementById('designCodeDisplay');
+        if (designCodeDisplay && formData.designCode) {
+            if (formData.designCode === 'CUSTOM') {
+                designCodeDisplay.textContent = 'Custom Design';
+            } else {
+                designCodeDisplay.textContent = `Design Code: ${formData.designCode.toUpperCase()}`;
+            }
+            designCodeDisplay.style.display = 'block';
+            designCodeDisplay.style.background = '#FF6B00';
+            designCodeDisplay.style.color = 'white';
+            designCodeDisplay.style.padding = '5px 15px';
+            designCodeDisplay.style.borderRadius = '20px';
+            designCodeDisplay.style.marginTop = '10px';
+            designCodeDisplay.style.display = 'inline-block';
+        }
+    }
+
+    // ===================== PLAN INITIALIZATION =====================
+    function initializePlan() {
+        const planData = PLANS[plan];
+        
+        // Update plan summary
+        document.getElementById('planName').textContent = planData.name;
+        document.getElementById('planBadge').textContent = plan.toUpperCase();
+        
+        const planDetails = document.getElementById('planDetails');
+        planDetails.innerHTML = `
+            <div class="plan-item">
+                <i class="fas fa-file"></i>
+                <span>Up to ${planData.pages} pages</span>
+            </div>
+            <div class="plan-item">
+                <i class="fas fa-sync-alt"></i>
+                <span>${planData.revisions} revisions per page</span>
+            </div>
+            <div class="plan-item">
+                <i class="fas fa-shipping-fast"></i>
+                <span>Delivery: ${planData.delivery}</span>
+            </div>
+            <div class="plan-item">
+                <i class="fas fa-headset"></i>
+                <span>${planData.support} support</span>
+            </div>
+        `;
         
         // Get design-specific features from localStorage
         const designCodeFeatures = localStorage.getItem('designCodeFeatures');
@@ -992,72 +1108,12 @@
             }
         }
         
-        // Store data in formData
-        formData.businessName = businessName;
-        formData.designCode = designCode;
-        
-        // Initialize form with dynamic features
-        initializePlan(customFeatures, funnelFeatures);
-        updateProgress();
-        setupEventListeners();
-        
-        // Pre-fill business name if available
-        if (businessName) {
-            const businessNameField = document.getElementById('businessName');
-            if (businessNameField) {
-                businessNameField.value = businessName;
-            }
-        }
-        
-        // Update design code display
-        const designCodeDisplay = document.getElementById('designCodeDisplay');
-        if (designCodeDisplay && designCode !== 'CUSTOM') {
-            designCodeDisplay.textContent = `Design Code: ${designCode.toUpperCase()}`;
-            designCodeDisplay.style.display = 'block';
-        }
-        
-        // Update selected services count
-        const selectedServicesCount = document.getElementById('selectedServicesCount');
-        if (selectedServicesCount && servicesCount > 0) {
-            selectedServicesCount.textContent = `(${servicesCount} services selected)`;
-            selectedServicesCount.style.display = 'inline';
-        }
-    });
-
-    // ===================== PLAN INITIALIZATION =====================
-    function initializePlan(designFeatures = [], funnelFeatures = []) {
-        const planData = PLANS[plan];
-        
-        // Update plan summary
-        document.getElementById('planName').textContent = planData.name;
-        document.getElementById('planBadge').textContent = plan.toUpperCase();
-        
-        const planDetails = document.getElementById('planDetails');
-        planDetails.innerHTML = `
-            <div class="plan-item">
-                <i class="fas fa-file"></i>
-                <span>Up to ${planData.pages} pages</span>
-            </div>
-            <div class="plan-item">
-                <i class="fas fa-sync-alt"></i>
-                <span>${planData.revisions} revisions per page</span>
-            </div>
-            <div class="plan-item">
-                <i class="fas fa-shipping-fast"></i>
-                <span>Delivery: ${planData.delivery}</span>
-                </div>
-            <div class="plan-item">
-                <i class="fas fa-headset"></i>
-                <span>${planData.support} support</span>
-            </div>
-        `;
-        
         // Create combined features list
         let allFeatures = [...planData.features];
         
         // Add design-specific features if available
-        if (designFeatures.length > 0) {
-            allFeatures = [...allFeatures, ...designFeatures];
+        if (customFeatures.length > 0) {
+            allFeatures = [...allFeatures, ...customFeatures];
         }
         
         // Add funnel-selected features if available
@@ -1425,12 +1481,16 @@
                     <span>Your Plan</span>
                 </div>
                 <div class="review-item">
+                    <div class="review-label">Business Name:</div>
+                    <div class="review-value">${formData.businessName || 'Not specified'}</div>
+                </div>
+                <div class="review-item">
                     <div class="review-label">Plan Type:</div>
                     <div class="review-value">${planData.name}</div>
                 </div>
                 <div class="review-item">
                     <div class="review-label">Design Code:</div>
-                    <div class="review-value">${formData.designCode || 'Custom Design'}</div>
+                    <div class="review-value">${formData.designCode === 'CUSTOM' ? 'Custom Design' : formData.designCode.toUpperCase()}</div>
                 </div>
                 <div class="review-item">
                     <div class="review-label">Pages:</div>
