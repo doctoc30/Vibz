@@ -512,6 +512,8 @@
     </div>
   </div>
 
+
+
   <script>
     // ========== DATA SERVICES DATABASE ==========
     const servicesDatabase = {
@@ -559,15 +561,17 @@
       // Get data from multiple sources
       const urlParams = new URLSearchParams(window.location.search);
       const storedData = localStorage.getItem('barberFunnelData');
+      const finalOrderData = localStorage.getItem('finalOrderData');
       const selectedServices = localStorage.getItem('selectedServices');
       const serviceCounts = localStorage.getItem('serviceCounts');
       const selectedPlan = localStorage.getItem('selectedPlan');
       const paymentModel = localStorage.getItem('paymentModel');
-      const designCode = localStorage.getItem('designCode');
+      const businessName = localStorage.getItem('businessName');
+      const designCode = localStorage.getItem('selectedDesignCode');
       
       console.log('URL Params:', Object.fromEntries(urlParams.entries()));
-      console.log('Stored Data:', storedData);
-      console.log('Selected Services:', selectedServices);
+      console.log('Business Name from localStorage:', businessName);
+      console.log('Design Code from localStorage:', designCode);
       
       // Parse data with fallbacks
       let funnelData = {};
@@ -576,6 +580,15 @@
           funnelData = JSON.parse(storedData);
         } catch (e) {
           console.error('Error parsing stored data:', e);
+        }
+      }
+      
+      let orderData = {};
+      if (finalOrderData) {
+        try {
+          orderData = JSON.parse(finalOrderData);
+        } catch (e) {
+          console.error('Error parsing final order data:', e);
         }
       }
       
@@ -601,18 +614,43 @@
       
       // Get data from URL params (highest priority)
       const niche = urlParams.get('niche') || 'barber';
-      const business = urlParams.get('business') || funnelData.businessName || 'Barber Shop';
-      const plan = urlParams.get('plan') || (funnelData.planType || 'Standard');
-      const paymentModelFromURL = urlParams.get('paymentModel') || paymentModel || 'Own Outright';
-      const totalServicesFromURL = parseInt(urlParams.get('services')) || counts.total || 0;
-      const standardServicesFromURL = parseInt(urlParams.get('standardServices')) || counts.standard || 0;
-      const premiumServicesFromURL = parseInt(urlParams.get('premiumServices')) || counts.premium || 0;
-      const designCodeFromURL = urlParams.get('designCode') || designCode || 'CUSTOM';
+      const business = urlParams.get('business') || 
+                      orderData.businessName || 
+                      funnelData.businessName || 
+                      businessName || 
+                      'Barber Shop';
+      const plan = urlParams.get('plan') || 
+                  orderData.plan || 
+                  (funnelData.planType || 'Standard');
+      const paymentModelFromURL = urlParams.get('paymentModel') || 
+                                paymentModel || 
+                                'Own Outright';
+      const totalServicesFromURL = parseInt(urlParams.get('services')) || 
+                                  counts.total || 
+                                  selectedFeatures.length || 
+                                  0;
+      const standardServicesFromURL = parseInt(urlParams.get('standardServices')) || 
+                                     counts.standard || 
+                                     0;
+      const premiumServicesFromURL = parseInt(urlParams.get('premiumServices')) || 
+                                    counts.premium || 
+                                    0;
+      const designCodeFromURL = urlParams.get('designCode') || 
+                               orderData.designCode || 
+                               designCode || 
+                               funnelData.designCode || 
+                               'CUSTOM';
       
-      console.log('Final Data:', {
-        business, plan, paymentModelFromURL, 
-        totalServicesFromURL, standardServicesFromURL, premiumServicesFromURL,
-        selectedFeatures, designCodeFromURL
+      console.log('Final Data for display:', {
+        business, 
+        plan, 
+        paymentModel: paymentModelFromURL, 
+        totalServices: totalServicesFromURL, 
+        standardServices: standardServicesFromURL, 
+        premiumServices: premiumServicesFromURL,
+        selectedFeatures, 
+        designCode: designCodeFromURL,
+        niche
       });
       
       // Update page content
@@ -651,6 +689,8 @@
         niche
       } = data;
       
+      console.log('Updating page with:', { business, plan, designCode, selectedFeatures });
+      
       // Update basic info
       document.getElementById('thankYouTitle').textContent = 'Thank You!';
       document.getElementById('thankYouText').textContent = `Your ${business} website order has been confirmed!`;
@@ -658,7 +698,14 @@
       document.getElementById('planType').textContent = `${plan} Plan`;
       document.getElementById('paymentModel').textContent = paymentModel;
       document.getElementById('totalServices').textContent = totalServices;
-      document.getElementById('designConcept').textContent = designCode === 'CUSTOM' ? 'Custom Design' : `Design Code: ${designCode.toUpperCase()}`;
+      
+      // FIXED: Display correct design code (not hardcoded BARBER-2)
+      const designConceptElement = document.getElementById('designConcept');
+      if (designCode === 'CUSTOM') {
+        designConceptElement.textContent = 'Custom Design';
+      } else {
+        designConceptElement.textContent = `Design Code: ${designCode.toUpperCase()}`;
+      }
       
       // Update plan badge
       const planBadge = document.getElementById('planBadge');
@@ -673,6 +720,7 @@
       const orderFormParams = new URLSearchParams();
       orderFormParams.append('plan', plan.toLowerCase());
       orderFormParams.append('business', encodeURIComponent(business));
+      orderFormParams.append('designCode', designCode);
       orderFormParams.append('services', totalServices);
       orderFormParams.append('paymentModel', paymentModel);
       completeNowBtn.href = `order-form.html?${orderFormParams.toString()}`;
