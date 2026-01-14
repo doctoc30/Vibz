@@ -514,7 +514,7 @@
 
 
 
-  <script>
+<script>
     // ========== DATA SERVICES DATABASE ==========
     const servicesDatabase = {
       // Standard Services
@@ -558,113 +558,13 @@
     document.addEventListener('DOMContentLoaded', function() {
       console.log('=== Thank You Page Initialization ===');
       
-      // Get data from multiple sources
-      const urlParams = new URLSearchParams(window.location.search);
-      const storedData = localStorage.getItem('barberFunnelData');
-      const finalOrderData = localStorage.getItem('finalOrderData');
-      const selectedServices = localStorage.getItem('selectedServices');
-      const serviceCounts = localStorage.getItem('serviceCounts');
-      const selectedPlan = localStorage.getItem('selectedPlan');
-      const paymentModel = localStorage.getItem('paymentModel');
-      const businessName = localStorage.getItem('businessName');
-      const designCode = localStorage.getItem('selectedDesignCode');
+      // Get data from ALL possible sources
+      const finalData = collectAllData();
       
-      console.log('URL Params:', Object.fromEntries(urlParams.entries()));
-      console.log('Business Name from localStorage:', businessName);
-      console.log('Design Code from localStorage:', designCode);
-      
-      // Parse data with fallbacks
-      let funnelData = {};
-      if (storedData) {
-        try {
-          funnelData = JSON.parse(storedData);
-        } catch (e) {
-          console.error('Error parsing stored data:', e);
-        }
-      }
-      
-      let orderData = {};
-      if (finalOrderData) {
-        try {
-          orderData = JSON.parse(finalOrderData);
-        } catch (e) {
-          console.error('Error parsing final order data:', e);
-        }
-      }
-      
-      // Get selected services
-      let selectedFeatures = [];
-      if (selectedServices) {
-        try {
-          selectedFeatures = JSON.parse(selectedServices);
-        } catch (e) {
-          console.error('Error parsing selected services:', e);
-        }
-      }
-      
-      // Get service counts
-      let counts = { standard: 0, premium: 0, total: 0 };
-      if (serviceCounts) {
-        try {
-          counts = JSON.parse(serviceCounts);
-        } catch (e) {
-          console.error('Error parsing service counts:', e);
-        }
-      }
-      
-      // Get data from URL params (highest priority)
-      const niche = urlParams.get('niche') || 'barber';
-      const business = urlParams.get('business') || 
-                      orderData.businessName || 
-                      funnelData.businessName || 
-                      businessName || 
-                      'Barber Shop';
-      const plan = urlParams.get('plan') || 
-                  orderData.plan || 
-                  (funnelData.planType || 'Standard');
-      const paymentModelFromURL = urlParams.get('paymentModel') || 
-                                paymentModel || 
-                                'Own Outright';
-      const totalServicesFromURL = parseInt(urlParams.get('services')) || 
-                                  counts.total || 
-                                  selectedFeatures.length || 
-                                  0;
-      const standardServicesFromURL = parseInt(urlParams.get('standardServices')) || 
-                                     counts.standard || 
-                                     0;
-      const premiumServicesFromURL = parseInt(urlParams.get('premiumServices')) || 
-                                    counts.premium || 
-                                    0;
-      const designCodeFromURL = urlParams.get('designCode') || 
-                               orderData.designCode || 
-                               designCode || 
-                               funnelData.designCode || 
-                               'CUSTOM';
-      
-      console.log('Final Data for display:', {
-        business, 
-        plan, 
-        paymentModel: paymentModelFromURL, 
-        totalServices: totalServicesFromURL, 
-        standardServices: standardServicesFromURL, 
-        premiumServices: premiumServicesFromURL,
-        selectedFeatures, 
-        designCode: designCodeFromURL,
-        niche
-      });
+      console.log('Final data for thank you page:', finalData);
       
       // Update page content
-      updatePageContent({
-        business,
-        plan,
-        paymentModel: paymentModelFromURL,
-        totalServices: totalServicesFromURL,
-        standardServices: standardServicesFromURL,
-        premiumServices: premiumServicesFromURL,
-        selectedFeatures,
-        designCode: designCodeFromURL,
-        niche
-      });
+      updatePageContent(finalData);
       
       // Set up button click handlers
       setupEventHandlers();
@@ -675,13 +575,162 @@
       }, 500);
     });
 
+    // ========== COLLECT ALL DATA ==========
+    function collectAllData() {
+      const urlParams = new URLSearchParams(window.location.search);
+      
+      // Data sources in priority order
+      const dataSources = [
+        // 1. URL parameters (highest priority - from payment processor return)
+        {
+          business: urlParams.get('business') ? decodeURIComponent(urlParams.get('business')) : null,
+          designCode: urlParams.get('designCode'),
+          plan: urlParams.get('plan'),
+          paymentModel: urlParams.get('paymentModel'),
+          services: urlParams.get('services'),
+          standardServices: urlParams.get('standardServices'),
+          premiumServices: urlParams.get('premiumServices')
+        },
+        
+        // 2. paymentData object (from index.js redirectToPayment)
+        (() => {
+          const paymentDataStr = localStorage.getItem('paymentData');
+          if (paymentDataStr) {
+            try {
+              return JSON.parse(paymentDataStr);
+            } catch (e) {
+              console.error('Error parsing paymentData:', e);
+            }
+          }
+          return null;
+        })(),
+        
+        // 3. finalOrderData (from order form)
+        (() => {
+          const orderDataStr = localStorage.getItem('finalOrderData');
+          if (orderDataStr) {
+            try {
+              return JSON.parse(orderDataStr);
+            } catch (e) {
+              console.error('Error parsing finalOrderData:', e);
+            }
+          }
+          return null;
+        })(),
+        
+        // 4. barberFunnelData (from index.js)
+        (() => {
+          const funnelDataStr = localStorage.getItem('barberFunnelData');
+          if (funnelDataStr) {
+            try {
+              return JSON.parse(funnelDataStr);
+            } catch (e) {
+              console.error('Error parsing barberFunnelData:', e);
+            }
+          }
+          return null;
+        })(),
+        
+        // 5. Individual localStorage items
+        {
+          business: localStorage.getItem('businessName'),
+          designCode: localStorage.getItem('selectedDesignCode'),
+          plan: localStorage.getItem('selectedPlan'),
+          paymentModel: localStorage.getItem('paymentModel')
+        }
+      ];
+      
+      // Default values
+      let finalData = {
+        business: 'Barber Shop',
+        designCode: 'CUSTOM',
+        plan: 'Standard',
+        paymentModel: 'Own Outright',
+        services: 0,
+        standardServices: 0,
+        premiumServices: 0,
+        selectedFeatures: [],
+        niche: 'barber'
+      };
+      
+      // Merge data from all sources (later sources override earlier ones)
+      dataSources.forEach(source => {
+        if (!source) return;
+        
+        if (source.business && source.business !== 'Barber Shop') {
+          finalData.business = source.business;
+        }
+        
+        if (source.designCode) {
+          finalData.designCode = source.designCode;
+        }
+        
+        if (source.plan) {
+          finalData.plan = source.plan.includes('Premium') ? 'Premium' : 'Standard';
+        }
+        
+        if (source.paymentModel) {
+          finalData.paymentModel = source.paymentModel;
+        }
+        
+        if (source.services) {
+          finalData.services = parseInt(source.services) || 0;
+        }
+        
+        if (source.standardServices) {
+          finalData.standardServices = parseInt(source.standardServices) || 0;
+        }
+        
+        if (source.premiumServices) {
+          finalData.premiumServices = parseInt(source.premiumServices) || 0;
+        }
+        
+        if (source.features && Array.isArray(source.features)) {
+          finalData.selectedFeatures = source.features;
+        }
+        
+        if (source.standardServices && source.premiumServices) {
+          finalData.services = (parseInt(source.standardServices) || 0) + (parseInt(source.premiumServices) || 0);
+        }
+      });
+      
+      // Get selected features if not already set
+      if (finalData.selectedFeatures.length === 0) {
+        const selectedServicesStr = localStorage.getItem('selectedServices');
+        if (selectedServicesStr) {
+          try {
+            finalData.selectedFeatures = JSON.parse(selectedServicesStr);
+          } catch (e) {
+            console.error('Error parsing selectedServices:', e);
+          }
+        }
+      }
+      
+      // Get service counts if not already set
+      if (finalData.services === 0) {
+        const serviceCountsStr = localStorage.getItem('serviceCounts');
+        if (serviceCountsStr) {
+          try {
+            const counts = JSON.parse(serviceCountsStr);
+            finalData.standardServices = counts.standard || 0;
+            finalData.premiumServices = counts.premium || 0;
+            finalData.services = counts.total || 0;
+          } catch (e) {
+            console.error('Error parsing serviceCounts:', e);
+          }
+        }
+      }
+      
+      return finalData;
+    }
+
     // ========== UPDATE PAGE CONTENT ==========
     function updatePageContent(data) {
       const {
         business,
         plan,
         paymentModel,
-        totalServices,
+        services,
         standardServices,
         premiumServices,
         selectedFeatures,
@@ -689,7 +738,7 @@
         niche
       } = data;
       
-      console.log('Updating page with:', { business, plan, designCode, selectedFeatures });
+      console.log('Updating page with:', { business, plan, designCode, services });
       
       // Update basic info
       document.getElementById('thankYouTitle').textContent = 'Thank You!';
@@ -697,9 +746,9 @@
       document.getElementById('businessName').textContent = business;
       document.getElementById('planType').textContent = `${plan} Plan`;
       document.getElementById('paymentModel').textContent = paymentModel;
-      document.getElementById('totalServices').textContent = totalServices;
+      document.getElementById('totalServices').textContent = services;
       
-      // FIXED: Display correct design code (not hardcoded BARBER-2)
+      // FIXED: Display correct design code
       const designConceptElement = document.getElementById('designConcept');
       if (designCode === 'CUSTOM') {
         designConceptElement.textContent = 'Custom Design';
@@ -713,57 +762,65 @@
       planBadge.className = `plan-badge ${plan.toLowerCase()}`;
       
       // Update project title
-      document.getElementById('projectTitle').textContent = `${business} - ${plan} Plan`;
+      const projectTitle = document.getElementById('projectTitle');
+      if (projectTitle) {
+        projectTitle.textContent = `${business} - ${plan} Plan`;
+      }
       
       // Update Complete Now button with data
       const completeNowBtn = document.getElementById('completeNowBtn');
-      const orderFormParams = new URLSearchParams();
-      orderFormParams.append('plan', plan.toLowerCase());
-      orderFormParams.append('business', encodeURIComponent(business));
-      orderFormParams.append('designCode', designCode);
-      orderFormParams.append('services', totalServices);
-      orderFormParams.append('paymentModel', paymentModel);
-      completeNowBtn.href = `order-form.html?${orderFormParams.toString()}`;
+      if (completeNowBtn) {
+        const orderFormParams = new URLSearchParams();
+        orderFormParams.append('plan', plan.toLowerCase());
+        orderFormParams.append('business', encodeURIComponent(business));
+        orderFormParams.append('designCode', designCode);
+        orderFormParams.append('services', services);
+        orderFormParams.append('paymentModel', paymentModel);
+        completeNowBtn.href = `order-form.html?${orderFormParams.toString()}`;
+      }
       
       // Show selected features if any
       if (selectedFeatures.length > 0) {
         const featuresSection = document.getElementById('selectedFeaturesSection');
         const featuresGrid = document.getElementById('featuresGrid');
         
-        featuresSection.style.display = 'block';
-        featuresGrid.innerHTML = '';
-        
-        selectedFeatures.forEach(featureName => {
-          const serviceData = servicesDatabase[featureName];
-          if (serviceData) {
-            const featureCard = document.createElement('div');
-            featureCard.className = `feature-card ${serviceData.tier}`;
-            featureCard.innerHTML = `
-              <div class="feature-tier ${serviceData.tier}">${serviceData.tier.toUpperCase()}</div>
-              <div class="feature-name">${featureName}</div>
-              <div class="feature-desc">${serviceData.desc}</div>
-            `;
-            featuresGrid.appendChild(featureCard);
-          }
-        });
-        
-        // If we have counts but no features list, show counts
-      } else if (totalServices > 0) {
+        if (featuresSection && featuresGrid) {
+          featuresSection.style.display = 'block';
+          featuresGrid.innerHTML = '';
+          
+          selectedFeatures.forEach(featureName => {
+            const serviceData = servicesDatabase[featureName];
+            if (serviceData) {
+              const featureCard = document.createElement('div');
+              featureCard.className = `feature-card ${serviceData.tier}`;
+              featureCard.innerHTML = `
+                <div class="feature-tier ${serviceData.tier}">${serviceData.tier.toUpperCase()}</div>
+                <div class="feature-name">${featureName}</div>
+                <div class="feature-desc">${serviceData.desc}</div>
+              `;
+              featuresGrid.appendChild(featureCard);
+            }
+          });
+        }
+      } else if (services > 0) {
+        // Show summary if we have counts but no features list
         const featuresSection = document.getElementById('selectedFeaturesSection');
         const featuresGrid = document.getElementById('featuresGrid');
         
-        featuresSection.style.display = 'block';
-        featuresGrid.innerHTML = `
-          <div class="feature-card standard">
-            <div class="feature-tier standard">SUMMARY</div>
-            <div class="feature-name">Service Selection Summary</div>
-            <div class="feature-desc">
-              <strong>${standardServices} Standard Services</strong><br>
-              <strong>${premiumServices} Premium Services</strong><br>
-              <strong>${totalServices} Total Services Selected</strong>
+        if (featuresSection && featuresGrid) {
+          featuresSection.style.display = 'block';
+          featuresGrid.innerHTML = `
+            <div class="feature-card standard">
+              <div class="feature-tier standard">SUMMARY</div>
+              <div class="feature-name">Service Selection Summary</div>
+              <div class="feature-desc">
+                <strong>${standardServices} Standard Services</strong><br>
+                <strong>${premiumServices} Premium Services</strong><br>
+                <strong>${services} Total Services Selected</strong>
+              </div>
             </div>
-          </div>
-        `;
+          `;
+        }
       }
       
       // Update niche color if needed
@@ -777,50 +834,56 @@
       const nicheColor = nicheColors[niche] || '#FF6B00';
       document.documentElement.style.setProperty('--primary', nicheColor);
       updateButtonColors(nicheColor);
+      
+      // Log success
+      console.log('Thank you page updated successfully with business name:', business);
     }
 
     // ========== SETUP EVENT HANDLERS ==========
     function setupEventHandlers() {
       // Handle "Send Within 48 Hours" button click
-      document.getElementById('sendLaterBtn').addEventListener('click', function() {
-        const btn = this;
-        const originalText = btn.innerHTML;
-        
-        // Show loading state
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-        btn.disabled = true;
-        
-        // Simulate API call
-        setTimeout(() => {
-          // Show success
-          btn.innerHTML = '<i class="fas fa-check"></i> Questionnaire Sent!';
-          btn.style.background = '#10B981';
-          btn.style.borderColor = '#10B981';
-          btn.style.color = 'white';
+      const sendLaterBtn = document.getElementById('sendLaterBtn');
+      if (sendLaterBtn) {
+        sendLaterBtn.addEventListener('click', function() {
+          const btn = this;
+          const originalText = btn.innerHTML;
           
-          // Show success message
-          const successMsg = document.createElement('div');
-          successMsg.style.cssText = 'background: rgba(16, 185, 129, 0.1); border: 1px solid #10B981; color: #065F46; padding: 1rem; border-radius: 12px; margin-top: 1rem; text-align: center;';
-          successMsg.innerHTML = `
-            <h4 style="margin-bottom: 0.5rem; color: #065F46;"><i class="fas fa-check-circle"></i> Success!</h4>
-            <p>We've sent a detailed questionnaire to your email. Please complete it within 48 hours to start your project.</p>
-            <p style="font-size: 0.9rem; margin-top: 0.5rem;">Check your inbox and spam folder.</p>
-          `;
+          // Show loading state
+          btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+          btn.disabled = true;
           
-          btn.parentNode.parentNode.insertBefore(successMsg, btn.parentNode.nextSibling);
-          
-          // Reset button after 5 seconds
+          // Simulate API call
           setTimeout(() => {
-            btn.innerHTML = originalText;
-            btn.style.background = '';
-            btn.style.borderColor = '';
-            btn.style.color = '';
-            btn.disabled = false;
-            updateButtonColors(getComputedStyle(document.documentElement).getPropertyValue('--primary').trim());
-            successMsg.remove();
-          }, 5000);
-        }, 1500);
-      });
+            // Show success
+            btn.innerHTML = '<i class="fas fa-check"></i> Questionnaire Sent!';
+            btn.style.background = '#10B981';
+            btn.style.borderColor = '#10B981';
+            btn.style.color = 'white';
+            
+            // Show success message
+            const successMsg = document.createElement('div');
+            successMsg.style.cssText = 'background: rgba(16, 185, 129, 0.1); border: 1px solid #10B981; color: #065F46; padding: 1rem; border-radius: 12px; margin-top: 1rem; text-align: center;';
+            successMsg.innerHTML = `
+              <h4 style="margin-bottom: 0.5rem; color: #065F46;"><i class="fas fa-check-circle"></i> Success!</h4>
+              <p>We've sent a detailed questionnaire to your email. Please complete it within 48 hours to start your project.</p>
+              <p style="font-size: 0.9rem; margin-top: 0.5rem;">Check your inbox and spam folder.</p>
+            `;
+            
+            btn.parentNode.parentNode.insertBefore(successMsg, btn.parentNode.nextSibling);
+            
+            // Reset button after 5 seconds
+            setTimeout(() => {
+              btn.innerHTML = originalText;
+              btn.style.background = '';
+              btn.style.borderColor = '';
+              btn.style.color = '';
+              btn.disabled = false;
+              updateButtonColors(getComputedStyle(document.documentElement).getPropertyValue('--primary').trim());
+              successMsg.remove();
+            }, 5000);
+          }, 1500);
+        });
+      }
     }
 
     // ========== HELPER FUNCTIONS ==========
@@ -851,11 +914,14 @@
       });
       
       // Update completion options background
-      document.querySelector('.completion-options').style.background = `${color}08`;
+      const completionOptions = document.querySelector('.completion-options');
+      if (completionOptions) {
+        completionOptions.style.background = `${color}08`;
+      }
       
       // Update plan badge if it's the primary color
       const planBadge = document.getElementById('planBadge');
-      if (!planBadge.classList.contains('premium') && !planBadge.classList.contains('standard')) {
+      if (planBadge && !planBadge.classList.contains('premium') && !planBadge.classList.contains('standard')) {
         planBadge.style.backgroundColor = color;
       }
     }
@@ -864,6 +930,8 @@
       const color = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
       const colors = [color, '#FF6B00', '#121212', '#4a4a4a'];
       const container = document.querySelector('.thank-you-container');
+      
+      if (!container) return;
       
       for (let i = 0; i < 20; i++) {
         const confetti = document.createElement('div');
@@ -890,6 +958,7 @@
         animation.onfinish = () => confetti.remove();
       }
     }
+  </script>
   </script>
 </body>
 </html>
