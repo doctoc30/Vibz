@@ -26,6 +26,8 @@
             --radius-lg: 20px;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.05);
+            --standard-green: #4CAF50;
+            --premium-blue: #2196F3;
         }
 
         * {
@@ -226,6 +228,14 @@
             font-weight: 600;
         }
 
+        .plan-badge.premium {
+            background: var(--premium-blue);
+        }
+
+        .plan-badge.standard {
+            background: var(--standard-green);
+        }
+
         .plan-details {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -241,6 +251,83 @@
         .plan-item i {
             color: var(--accent);
             font-size: 1.2rem;
+        }
+
+        /* ================= SELECTED FEATURES DISPLAY ================= */
+        .selected-features-section {
+            background: rgba(255, 107, 0, 0.05);
+            border-radius: var(--radius);
+            padding: 25px;
+            margin: 2rem 0;
+            border: 2px solid rgba(255, 107, 0, 0.2);
+        }
+
+        .selected-features-title {
+            color: var(--accent);
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 1rem;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+
+        .feature-card.standard {
+            border-left: 4px solid var(--standard-green);
+        }
+
+        .feature-card.premium {
+            border-left: 4px solid var(--premium-blue);
+        }
+
+        .feature-tier {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-tier.standard {
+            background: rgba(76, 175, 80, 0.1);
+            color: var(--standard-green);
+        }
+
+        .feature-tier.premium {
+            background: rgba(33, 150, 243, 0.1);
+            color: var(--premium-blue);
+        }
+
+        .feature-name {
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+            color: var(--dark);
+        }
+
+        .feature-desc {
+            font-size: 0.9rem;
+            color: var(--text-light);
         }
 
         /* ================= Form Elements ================= */
@@ -328,6 +415,10 @@
 
         @media (max-width: 768px) {
             .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            
+            .features-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -621,7 +712,7 @@
                 <div class="step active" id="step1">
                     <div class="step-header">
                         <h2 class="step-title">Your Website Plan</h2>
-                        <p class="step-subtitle">Here's what you've purchased. You're all set to proceed!</p>
+                        <p class="step-subtitle" id="planSubtitle">Here's what you've purchased. You're all set to proceed!</p>
                     </div>
 
                     <div class="plan-summary">
@@ -634,12 +725,23 @@
                         </div>
                     </div>
 
+                    <!-- SELECTED FEATURES DISPLAY -->
+                    <div class="selected-features-section" id="selectedFeaturesSection" style="display: none;">
+                        <h3 class="selected-features-title">
+                            <i class="fas fa-star"></i>
+                            Your Selected Features
+                        </h3>
+                        <div class="features-grid" id="selectedFeaturesGrid">
+                            <!-- Features will be populated by JavaScript -->
+                        </div>
+                    </div>
+
                     <div class="help-section">
                         <div class="help-title">
                             <i class="fas fa-info-circle"></i>
                             <span>Ready to start?</span>
                         </div>
-                        <p>Your plan is locked and loaded. We'll use these parameters to build your perfect website. Click "Next" to begin setting up your pages.</p>
+                        <p id="planHelpText">Your plan is locked and loaded. We'll use these parameters to build your perfect website. Click "Next" to begin setting up your pages.</p>
                     </div>
                 </div>
 
@@ -956,10 +1058,52 @@
             { id: "ai-tone", label: "AI decides tone", icon: "fa-robot" }
         ];
 
+        // Services database
+        const SERVICES_DB = {
+            'Services & Pricing Display': { tier: 'standard', desc: 'Clear layout of all offered services and prices' },
+            'Team / Barber Profiles': { tier: 'standard', desc: 'Photos, bios, and specialties' },
+            'Photo Gallery / Portfolio': { tier: 'standard', desc: 'Image grid showcasing barber work' },
+            'Basic Before & After Slider': { tier: 'standard', desc: 'Compare hairstyles side-by-side' },
+            'Special Offers / Promotions Section': { tier: 'standard', desc: 'Display deals or discounts' },
+            'Opening Hours Display': { tier: 'standard', desc: 'Business hours and open/closed status' },
+            'Location & Directions': { tier: 'standard', desc: 'Google Maps embed with directions button' },
+            'Tap-to-Call & WhatsApp Buttons': { tier: 'standard', desc: 'One-click mobile contact' },
+            'FAQ Section': { tier: 'standard', desc: 'Collapsible questions to answer common client queries' },
+            'Loyalty / Membership Info': { tier: 'standard', desc: 'Show loyalty program details' },
+            'Contact Form': { tier: 'standard', desc: 'Simple enquiry form to collect messages' },
+            'On-Page SEO Basics': { tier: 'standard', desc: 'Page titles, headers, meta tags, and image alt text' },
+            
+            // Premium Services
+            'Online Booking System Integration': { tier: 'premium', desc: 'Calendly, Setmore, etc.' },
+            'Stripe Payments / Deposits': { tier: 'premium', desc: 'Accept payments online' },
+            'Automated Booking Reminders': { tier: 'premium', desc: 'Email/SMS via booking platform' },
+            'Reschedule & Cancellation Management': { tier: 'premium', desc: 'Client-managed bookings' },
+            'Gift Cards / Vouchers': { tier: 'premium', desc: 'Sell digital gift cards' },
+            'Walk-In / Waitlist System': { tier: 'premium', desc: 'Real-time updates for walk-ins' },
+            'Enhanced Before & After Gallery': { tier: 'premium', desc: 'Filter by barber, style, or service' },
+            'Barber Specialties & Service Tags': { tier: 'premium', desc: 'Highlight skills and services' },
+            'Advanced Call-to-Action Buttons': { tier: 'premium', desc: 'Sticky buttons, strategic placement' },
+            'Analytics & Conversion Tracking Setup': { tier: 'premium', desc: 'Tracks Book Now, Call, WhatsApp, and form submissions' },
+            'Priority Build Queue': { tier: 'premium', desc: 'Premium builds scheduled first' },
+            'Enhanced Video & Image Gallery': { tier: 'premium', desc: 'Interactive gallery for client-provided media' },
+            'Social Proof / Reviews Section': { tier: 'premium', desc: 'Display client testimonials' },
+            'Prominent Sticky Header / Banner': { tier: 'premium', desc: 'Highlight bookings, offers, or CTAs' },
+            'Multi-Location / Branch Info': { tier: 'premium', desc: 'Optional for shops with multiple locations' },
+            'Full Branding Package': { tier: 'premium', desc: 'Logo, colors, typography' },
+            'Custom Graphics & Icons': { tier: 'premium', desc: 'Personalized visuals for website sections' },
+            'Branded Email Newsletter Setup': { tier: 'premium', desc: 'Template ready to connect' },
+            'Favicon & Browser Branding': { tier: 'premium', desc: 'Polished appearance in tabs/bookmarks' },
+            'Premium On-Page SEO': { tier: 'premium', desc: 'Schema, technical setup, optimized indexing' }
+        };
+
         // ===================== STATE MANAGEMENT =====================
         let currentStep = 1;
         const totalSteps = 6;
-        let plan = "standard"; // Will be updated from URL
+        let plan = "standard";
+        let paymentModel = "Own Outright";
+        let businessName = "Barber Shop";
+        let totalServices = 0;
+        let selectedFeatures = [];
         let formData = {
             pages: [],
             brand: {},
@@ -968,10 +1112,49 @@
 
         // ===================== INITIALIZATION =====================
         document.addEventListener('DOMContentLoaded', function() {
-            // Get plan from URL (default to standard if not specified)
+            console.log('=== Order Form Initialization ===');
+            
+            // Get data from URL params
             const urlParams = new URLSearchParams(window.location.search);
             const planParam = urlParams.get('plan');
+            const businessParam = urlParams.get('business');
+            const servicesParam = urlParams.get('services');
+            const paymentModelParam = urlParams.get('paymentModel');
+            
+            // Get data from localStorage
+            const storedData = localStorage.getItem('barberFunnelData');
+            const storedServices = localStorage.getItem('selectedServices');
+            const storedServiceCounts = localStorage.getItem('serviceCounts');
+            
+            // Parse data with priority: URL params > localStorage > defaults
             plan = (planParam && PLANS[planParam.toLowerCase()]) ? planParam.toLowerCase() : 'standard';
+            businessName = businessParam || (storedData ? JSON.parse(storedData).businessName : 'Barber Shop');
+            paymentModel = paymentModelParam || (storedData ? JSON.parse(storedData).planModel : 'Own Outright');
+            totalServices = parseInt(servicesParam) || (storedServiceCounts ? JSON.parse(storedServiceCounts).total : 0);
+            
+            // Get selected features
+            if (storedServices) {
+                try {
+                    selectedFeatures = JSON.parse(storedServices);
+                } catch (e) {
+                    console.error('Error parsing selected services:', e);
+                }
+            } else if (storedData) {
+                try {
+                    const data = JSON.parse(storedData);
+                    selectedFeatures = data.features || [];
+                } catch (e) {
+                    console.error('Error parsing stored data:', e);
+                }
+            }
+            
+            console.log('Initialized with:', {
+                plan,
+                businessName,
+                paymentModel,
+                totalServices,
+                selectedFeatures
+            });
             
             // Initialize form
             initializePlan();
@@ -984,8 +1167,13 @@
             const planData = PLANS[plan];
             
             // Update plan summary
-            document.getElementById('planName').textContent = planData.name;
+            document.getElementById('planName').textContent = `${businessName} - ${planData.name}`;
             document.getElementById('planBadge').textContent = plan.toUpperCase();
+            document.getElementById('planBadge').className = `plan-badge ${plan}`;
+            
+            // Update subtitle
+            document.getElementById('planSubtitle').textContent = 
+                `You've selected the ${plan.toUpperCase()} plan with ${totalServices} services.`;
             
             const planDetails = document.getElementById('planDetails');
             planDetails.innerHTML = `
@@ -1005,6 +1193,10 @@
                     <i class="fas fa-headset"></i>
                     <span>${planData.support} support</span>
                 </div>
+                <div class="plan-item">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span>Payment: ${paymentModel}</span>
+                </div>
             `;
             
             // Update features list
@@ -1016,8 +1208,67 @@
                 </div>
             `).join('');
             
+            // Show selected features
+            displaySelectedFeatures();
+            
+            // Set business name in form
+            document.getElementById('businessName').value = businessName;
+            
+            // Update help text
+            document.getElementById('planHelpText').textContent = 
+                `Your ${plan.toUpperCase()} plan includes ${totalServices} selected services. We'll use these parameters to build your perfect website. Click "Next" to begin setting up your pages.`;
+            
             // Initialize pages
             initializePages();
+        }
+
+        // ===================== DISPLAY SELECTED FEATURES =====================
+        function displaySelectedFeatures() {
+            const featuresSection = document.getElementById('selectedFeaturesSection');
+            const featuresGrid = document.getElementById('selectedFeaturesGrid');
+            
+            if (selectedFeatures.length > 0) {
+                featuresSection.style.display = 'block';
+                featuresGrid.innerHTML = '';
+                
+                // Count tiers
+                let standardCount = 0;
+                let premiumCount = 0;
+                
+                selectedFeatures.forEach(featureName => {
+                    const serviceData = SERVICES_DB[featureName];
+                    if (serviceData) {
+                        if (serviceData.tier === 'standard') standardCount++;
+                        if (serviceData.tier === 'premium') premiumCount++;
+                        
+                        const featureCard = document.createElement('div');
+                        featureCard.className = `feature-card ${serviceData.tier}`;
+                        featureCard.innerHTML = `
+                            <div class="feature-tier ${serviceData.tier}">${serviceData.tier.toUpperCase()}</div>
+                            <div class="feature-name">${featureName}</div>
+                            <div class="feature-desc">${serviceData.desc}</div>
+                        `;
+                        featuresGrid.appendChild(featureCard);
+                    }
+                });
+                
+                // Add summary card
+                const summaryCard = document.createElement('div');
+                summaryCard.className = 'feature-card';
+                summaryCard.style.borderLeft = '4px solid var(--accent)';
+                summaryCard.innerHTML = `
+                    <div class="feature-tier" style="background: var(--accent-light); color: var(--accent);">SUMMARY</div>
+                    <div class="feature-name">Service Selection</div>
+                    <div class="feature-desc">
+                        <strong>${standardCount} Standard Services</strong><br>
+                        <strong>${premiumCount} Premium Services</strong><br>
+                        <strong>${selectedFeatures.length} Total Services Selected</strong>
+                    </div>
+                `;
+                featuresGrid.appendChild(summaryCard);
+            } else {
+                featuresSection.style.display = 'none';
+            }
         }
 
         // ===================== PAGES MANAGEMENT =====================
@@ -1368,12 +1619,16 @@
                         <div class="review-value">${planData.name}</div>
                     </div>
                     <div class="review-item">
-                        <div class="review-label">Pages:</div>
-                        <div class="review-value">${planData.pages} pages total</div>
+                        <div class="review-label">Business:</div>
+                        <div class="review-value">${businessName}</div>
                     </div>
                     <div class="review-item">
-                        <div class="review-label">Delivery:</div>
-                        <div class="review-value">${planData.delivery}</div>
+                        <div class="review-label">Payment Model:</div>
+                        <div class="review-value">${paymentModel}</div>
+                    </div>
+                    <div class="review-item">
+                        <div class="review-label">Selected Services:</div>
+                        <div class="review-value">${totalServices} services</div>
                     </div>
                 </div>
                 
@@ -1399,6 +1654,46 @@
             });
             
             reviewHTML += `</div>`;
+            
+            // Selected Features
+            if (selectedFeatures.length > 0) {
+                reviewHTML += `
+                    <div class="review-section">
+                        <div class="review-header">
+                            <i class="fas fa-star"></i>
+                            <span>Selected Features</span>
+                        </div>
+                `;
+                
+                // Count tiers
+                let standardCount = 0;
+                let premiumCount = 0;
+                
+                selectedFeatures.forEach(feature => {
+                    const serviceData = SERVICES_DB[feature];
+                    if (serviceData) {
+                        if (serviceData.tier === 'standard') standardCount++;
+                        if (serviceData.tier === 'premium') premiumCount++;
+                    }
+                });
+                
+                reviewHTML += `
+                    <div class="review-item">
+                        <div class="review-label">Standard Services:</div>
+                        <div class="review-value">${standardCount} selected</div>
+                    </div>
+                    <div class="review-item">
+                        <div class="review-label">Premium Services:</div>
+                        <div class="review-value">${premiumCount} selected</div>
+                    </div>
+                    <div class="review-item">
+                        <div class="review-label">Total Services:</div>
+                        <div class="review-value">${selectedFeatures.length} selected</div>
+                    </div>
+                `;
+                
+                reviewHTML += `</div>`;
+            }
             
             // Brand Info
             if (formData.brand.name) {
@@ -1468,7 +1763,11 @@
                 // Collect all form data
                 const finalData = {
                     plan: plan,
-                    planDetails: PLANS[plan],
+                    planName: PLANS[plan].name,
+                    businessName: businessName,
+                    paymentModel: paymentModel,
+                    selectedFeatures: selectedFeatures,
+                    totalServices: totalServices,
                     timestamp: new Date().toISOString(),
                     pages: [],
                     brand: formData.brand,
@@ -1503,10 +1802,15 @@
                     document.getElementById('successMessage').style.display = 'block';
                     
                     // In production, you would send this data to your server
-                    console.log('Form submitted:', finalData);
+                    console.log('Order form submitted:', finalData);
                     
-                    // Optional: Redirect to thank you page or dashboard
-                    // window.location.href = `/thank-you?order=${encodeURIComponent(JSON.stringify(finalData))}`;
+                    // Store final order data
+                    localStorage.setItem('finalOrderData', JSON.stringify(finalData));
+                    
+                    // Optional: Redirect to confirmation page
+                    // setTimeout(() => {
+                    //     window.location.href = '/confirmation.html';
+                    // }, 3000);
                 }, 1500);
             });
         }
@@ -1527,4 +1831,3 @@
     </script>
 </body>
 </html>
-
