@@ -895,11 +895,51 @@
 
 
 
-<script>
+     <script>
+
 // ========== STATIC PLAN DETAILS DATABASE ==========
 const STATIC_PLAN_DETAILS = {
+    // Monthly payment plans
+    'Standard Monthly': {
+        price: '£100/month',
+        type: 'monthly',
+        pages: 'Up to 5 Pages',
+        revisions: 'Up to 5 Revisions Per Page (build phase only)',
+        delivery: '10-15 days',
+        hosting: 'Website hosting included',
+        maintenance: 'Monthly maintenance',
+        securityUpdates: true,
+        emailSupport: true,
+        mobileResponsive: true,
+        sslCertificate: 'included',
+        legalTemplates: true,
+        backups: false,
+        performanceMonitoring: false,
+        builtWith: 'Custom HTML, CSS & JavaScript',
+        domain: 'You provide your own domain name',
+        assistedSetup: 'We can purchase and configure your domain for a £150 one-time assisted setup fee'
+    },
+    'Premium Monthly': {
+        price: '£150/month',
+        type: 'monthly',
+        pages: 'Up to 15 Pages',
+        revisions: 'Up to 10 Revisions Per Page (build phase only)',
+        delivery: '25-30 days',
+        hosting: 'Advanced hosting',
+        maintenance: 'Monthly maintenance',
+        securityUpdates: true,
+        backups: 'Regular backups',
+        performanceMonitoring: true,
+        emailSupport: 'Priority email support',
+        mobileResponsive: true,
+        sslCertificate: 'included',
+        legalTemplates: true,
+        builtWith: 'Custom HTML, CSS & JavaScript',
+        domain: 'You provide your own domain name',
+        assistedSetup: 'We can purchase and configure your domain for a £150 one-time assisted setup fee'
+    },
     // One-time payment plans
-    'Standard Own Outright': {
+    'Standard Outright': {
         price: '£1,500',
         type: 'one-time',
         pages: 'Up to 5 Pages',
@@ -918,7 +958,7 @@ const STATIC_PLAN_DETAILS = {
         domain: 'You provide your own domain name',
         assistedSetup: 'We can handle domain & hosting setup for a £150 one-time assisted setup fee'
     },
-    'Premium Own Outright': {
+    'Premium Outright': {
         price: '£3,000',
         type: 'one-time',
         pages: 'Up to 15 Pages',
@@ -936,43 +976,6 @@ const STATIC_PLAN_DETAILS = {
         sourceFiles: 'All source code files to own forever',
         domain: 'You provide your own domain name',
         assistedSetup: 'We can handle domain & hosting setup for a £150 one-time assisted setup fee'
-    },
-    // Annual plans
-    'Standard Annual Support': {
-        price: '£1,200/year',
-        type: 'annual',
-        pages: 'Up to 5 Pages',
-        revisions: 'Up to 5 Revisions Per Page (build phase only)',
-        delivery: '10-15 days',
-        hosting: 'Website hosting included for 1 year',
-        maintenance: 'Monthly maintenance & security updates',
-        emailSupport: true,
-        mobileResponsive: true,
-        sslCertificate: 'included and managed by us',
-        legalTemplates: true,
-        backups: false,
-        performanceMonitoring: false,
-        builtWith: 'Custom HTML, CSS & JavaScript',
-        domain: 'You provide your own domain name',
-        assistedSetup: 'We can purchase and configure your domain for a £150 one-time assisted setup fee'
-    },
-    'Premium Annual Support': {
-        price: '£1,800/year',
-        type: 'annual',
-        pages: 'Up to 15 Pages',
-        revisions: 'Up to 10 Revisions Per Page (build phase only)',
-        delivery: '25-30 days',
-        hosting: 'Advanced hosting for 1 year',
-        maintenance: 'Monthly maintenance, security updates & backups',
-        emailSupport: 'Priority email support',
-        mobileResponsive: true,
-        sslCertificate: 'included and managed by us',
-        legalTemplates: true,
-        backups: 'Regular backups',
-        performanceMonitoring: true,
-        builtWith: 'Custom HTML, CSS & JavaScript',
-        domain: 'You provide your own domain name',
-        assistedSetup: 'We can purchase and configure your domain for a £150 one-time assisted setup fee'
     }
 };
 
@@ -1026,14 +1029,16 @@ let selectedPlanName = '';
 let paymentModel = '';
 let staticPlanDetails = null;
 
-// Helper function to get complete plan name
+// Helper function to get complete plan name (UPDATED)
 function getCompletePlanName(planType, paymentModel) {
     if (!paymentModel) return planType + ' Plan';
     
-    if (paymentModel === 'Annual Support') {
+    if (paymentModel === 'Monthly') {
+        return planType + ' Monthly';
+    } else if (paymentModel === 'Outright') {
+        return planType + ' Outright';
+    } else if (paymentModel === 'Annual Support') {
         return planType + ' Annual Support';
-    } else if (paymentModel === 'Own Outright') {
-        return planType + ' Own Outright';
     }
     return planType + ' Plan';
 }
@@ -1072,7 +1077,18 @@ document.addEventListener('DOMContentLoaded', function() {
             selectedServices = storedServices;
             serviceCounts = storedCounts;
             selectedPlanName = storedPlan;
+            
+            // Use new payment model system (Monthly/Outright instead of Monthly Support/Own Outright)
             paymentModel = paymentModelParam || storedPaymentModel || funnelData.planModel || '';
+            
+            // Convert old payment model names to new ones if needed
+            if (paymentModel === 'Monthly Support') {
+                paymentModel = 'Monthly';
+                localStorage.setItem('paymentModel', 'Monthly');
+            } else if (paymentModel === 'Own Outright') {
+                paymentModel = 'Outright';
+                localStorage.setItem('paymentModel', 'Outright');
+            }
             
             // Determine plan from stored data
             if (storedPlan.includes('Premium') || storedData.planType === 'Premium') {
@@ -1143,6 +1159,13 @@ function loadFunnelData() {
         serviceCounts = JSON.parse(localStorage.getItem('serviceCounts') || '{}');
         selectedPlanName = localStorage.getItem('selectedPlan') || '';
         paymentModel = localStorage.getItem('paymentModel') || funnelData.planModel || '';
+        
+        // Convert old payment model names to new ones
+        if (paymentModel === 'Monthly Support') {
+            paymentModel = 'Monthly';
+        } else if (paymentModel === 'Own Outright') {
+            paymentModel = 'Outright';
+        }
         
     } catch (e) {
         console.error('❌ Error loading funnel data:', e);
@@ -1220,6 +1243,9 @@ function initializePlan() {
     
     if (!planData) {
         console.error('❌ Plan data not found for:', completePlanName);
+        console.log('Available plans:', Object.keys(STATIC_PLAN_DETAILS));
+        console.log('Current paymentModel:', paymentModel);
+        console.log('Current plan:', plan);
         return;
     }
     
@@ -1232,9 +1258,9 @@ function initializePlan() {
     
     // Add payment model info if available
     let paymentInfo = '';
-    if (paymentModel === 'Annual Support') {
-        paymentInfo = '<div class="plan-item"><span>Annual Subscription</span></div>';
-    } else if (paymentModel === 'Own Outright') {
+    if (paymentModel === 'Monthly') {
+        paymentInfo = '<div class="plan-item"><span>Monthly Subscription</span></div>';
+    } else if (paymentModel === 'Outright') {
         paymentInfo = '<div class="plan-item"><span>One-time Payment</span></div>';
     }
     
@@ -1253,6 +1279,9 @@ function initializePlan() {
             ${planData.type === 'one-time' ? `
                 <div class="plan-item">
                     <span>${planData.support}</span>
+                </div>
+                <div class="plan-item">
+                    <span><small>${planData.supportType}</small></span>
                 </div>
             ` : `
                 <div class="plan-item">
@@ -1275,9 +1304,14 @@ function initializePlan() {
                 <span>${planData.domain}</span>
             </div>
             ${paymentInfo}
-            ${planData.hosting === 'not included' ? `
+            ${planData.type === 'one-time' && planData.hosting === 'not included' ? `
             <div class="plan-item" style="color: #FF6B00;">
                 <span>${planData.hostingNote}</span>
+            </div>
+            ` : ''}
+            ${planData.type === 'one-time' && planData.sourceFiles ? `
+            <div class="plan-item">
+                <span>${planData.sourceFiles}</span>
             </div>
             ` : ''}
         `;
@@ -1299,7 +1333,7 @@ function initializePlan() {
             <div class="plan-item">
                 <span>Professional Design</span>
             </div>
-            ${planData.type === 'annual' ? `
+            ${planData.type === 'monthly' ? `
                 <div class="plan-item">
                     <span>Email Support</span>
                 </div>
@@ -1929,7 +1963,7 @@ setTimeout(function() {
     if (!document.querySelector('.step.active')) {
         console.warn('⚠ Page stuck - forcing initialization');
         plan = 'standard';
-        paymentModel = 'Own Outright';
+        paymentModel = 'Monthly'; // Changed from 'Own Outright' to 'Monthly'
         initializePlan();
         updateProgress();
         setupEventListeners();
@@ -1940,5 +1974,10 @@ setTimeout(function() {
         updateProgress();
     }
 }, 2000);
-</script>
+
+
+  </script>
+            
+
+</body>          
 </html>
