@@ -1508,7 +1508,6 @@
 </section>
 
 
-
 <script>
 // ========== BARBER CONCEPTS DATABASE ==========
 const barberConcepts = [
@@ -2091,17 +2090,21 @@ function updateHiddenFields() {
     document.getElementById('hiddenFeatures').value = formData.features.join(', ');
 }
 
-// ========== STEP 1: Handle business name input - SIMPLIFIED FIX ==========
+// ========== STEP 1: Handle business name input - FIXED VERSION ==========
 function handleBusinessName() {
     const value = businessInput.value.trim();
     if (value) {
         formData.businessName = value;
         
-        // SIMPLE FIX: Store in localStorage
+        // Store in localStorage
         localStorage.setItem('businessName', value);
         console.log('Business name stored:', value);
         
+        // CRITICAL: Call next() to advance to step 2
         next();
+        
+        // Also call updateHiddenFields to ensure form is updated
+        updateHiddenFields();
     } else {
         alert('Please enter your barber shop name');
         businessInput.focus();
@@ -2148,7 +2151,6 @@ function setGoal(goal) {
     next();
 }
 
-
 // ========== PAYMENT REDIRECTION ==========
 function redirectToPayment(planName, stripeLink) {
     console.log('=== redirectToPayment called ===');
@@ -2164,7 +2166,7 @@ function redirectToPayment(planName, stripeLink) {
         return;
     }
     
-    // Create order data (EXISTING LOGIC — KEEP)
+    // Create order data
     const orderData = {
         businessName: formData.businessName,
         designCode: formData.designCode || 'CUSTOM',
@@ -2176,22 +2178,6 @@ function redirectToPayment(planName, stripeLink) {
         totalServices: formData.features.length,
         timestamp: new Date().toISOString()
     };
-    
-    // Store existing data (KEEP)
-    localStorage.setItem('orderData', JSON.stringify(orderData));
-    localStorage.setItem('businessName', formData.businessName);
-    localStorage.setItem('selectedDesignCode', formData.designCode || 'CUSTOM');
-    localStorage.setItem('selectedPlan', planName);
-
-    // ✅ FINAL SNAPSHOT (THIS IS THE FIX)
-    saveOrderDataBeforeRedirect();
-
-    console.log('Final order data saved. Redirecting to Stripe…');
-
-    // Redirect to Stripe
-    window.location.href = stripeLink;
-}
-
     
     // Store data
     localStorage.setItem('orderData', JSON.stringify(orderData));
@@ -2366,6 +2352,13 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (currentStep === 1 && businessInput) {
         businessInput.focus();
+        
+        // Add event listener for Enter key in business name input
+        businessInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                handleBusinessName();
+            }
+        });
     }
     
     designCodeInput.addEventListener('input', validateAndDisplayConcept);
