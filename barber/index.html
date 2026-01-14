@@ -1596,6 +1596,44 @@ const conceptDisplayCode = document.getElementById('conceptDisplayCode');
 const confirmDesignBtn = document.getElementById('confirmDesignBtn');
 const tryDifferentBtn = document.getElementById('tryDifferentBtn');
 
+// ========== ENHANCED DATA STORAGE FUNCTION ==========
+function storeCompleteFormData() {
+    const completeData = {
+        businessName: formData.businessName,
+        projectType: formData.projectType,
+        designConcept: formData.designConcept,
+        designCode: formData.designCode,
+        features: formData.features,
+        audience: formData.audience,
+        style: formData.style,
+        color: formData.color,
+        goal: formData.goal,
+        urgency: formData.urgency,
+        planModel: formData.planModel || localStorage.getItem('paymentModel') || 'Own Outright',
+        planType: formData.planType || (formData.forcePremiumPlan ? 'Premium' : 'Standard'),
+        standardServices: standardServiceCount,
+        premiumServices: premiumServiceCount,
+        totalServices: formData.features.length,
+        forcePremiumPlan: formData.forcePremiumPlan,
+        timestamp: new Date().toISOString()
+    };
+    
+    // Store everything in localStorage
+    localStorage.setItem('barberFunnelData', JSON.stringify(completeData));
+    localStorage.setItem('selectedServices', JSON.stringify(formData.features));
+    localStorage.setItem('serviceCounts', JSON.stringify({
+        standard: standardServiceCount,
+        premium: premiumServiceCount,
+        total: formData.features.length
+    }));
+    localStorage.setItem('selectedPlan', formData.planType + ' - ' + formData.planModel);
+    localStorage.setItem('paymentModel', formData.planModel);
+    localStorage.setItem('forcePremiumPlan', formData.forcePremiumPlan);
+    localStorage.setItem('designCode', formData.designCode);
+    
+    console.log('All form data stored:', completeData);
+}
+
 // ========== UPDATED FUNNEL LOGIC ==========
 
 // STEP 10: Set urgency preference
@@ -1605,6 +1643,7 @@ function setUrgency(urgency) {
     if (urgency === 'Start ASAP') {
         currentStep = 11;
         updateStepIndicator();
+        storeCompleteFormData(); // Store data before moving to payment
     } else if (urgency === 'More Info') {
         currentStep = 12;
         updateStepIndicator();
@@ -1621,6 +1660,7 @@ function setPlanModel(planModel) {
     
     currentStep = 13;
     updateStepIndicator();
+    storeCompleteFormData(); // Store data before showing final plans
 }
 
 // Go back from lead capture form to step 10
@@ -1737,6 +1777,7 @@ function confirmDesignSelection() {
         formData.designCode = concept.code;
         formData.designConcept = 'From Code';
         updateHiddenFields();
+        storeCompleteFormData(); // Store data
         next();
     }
 }
@@ -1801,6 +1842,7 @@ function toggleService(serviceName, element) {
     updateServiceCounters();
     calculateRecommendedPlan();
     showPlanRecommendation();
+    storeCompleteFormData(); // Store updated selections
 }
 
 function updateServiceCounters() {
@@ -1862,6 +1904,7 @@ function removeService(serviceName) {
         updateServiceCounters();
         calculateRecommendedPlan();
         showPlanRecommendation();
+        storeCompleteFormData(); // Store updated selections
     }
 }
 
@@ -1876,14 +1919,19 @@ function calculateRecommendedPlan() {
         recommendedPlan.type = 'Premium';
         recommendedPlan.glow = true;
         recommendedPlan.forcePremium = true;
+        formData.forcePremiumPlan = true;
+        formData.planType = 'Premium';
     } else if (formData.features.length > 0) {
         recommendedPlan.type = 'Standard';
         recommendedPlan.glow = true;
         recommendedPlan.forcePremium = false;
+        formData.forcePremiumPlan = false;
+        formData.planType = 'Standard';
     } else {
         recommendedPlan.type = 'Standard';
         recommendedPlan.glow = false;
         recommendedPlan.forcePremium = false;
+        formData.forcePremiumPlan = false;
     }
     
     return recommendedPlan;
@@ -1951,14 +1999,13 @@ function nextFromServices() {
     if (hasPremiumServices) {
         formData.planType = 'Premium';
         formData.forcePremiumPlan = true;
-        localStorage.setItem('forcePremiumPlan', 'true');
     } else {
         formData.planType = 'Standard';
         formData.forcePremiumPlan = false;
-        localStorage.setItem('forcePremiumPlan', 'false');
     }
     
     localStorage.setItem('recommendedPlan', JSON.stringify(recommendedPlan));
+    storeCompleteFormData(); // Store data before proceeding
     next();
 }
 
@@ -2044,6 +2091,7 @@ function next() {
     if (currentStep < 13) {
         currentStep++;
         updateStepIndicator();
+        storeCompleteFormData(); // Store data on each step
     }
 }
 
@@ -2074,6 +2122,7 @@ function handleBusinessName() {
     const value = businessInput.value.trim();
     if (value) {
         formData.businessName = value;
+        storeCompleteFormData(); // Store business name
         next();
     } else {
         alert('Please enter your barber shop name');
@@ -2084,6 +2133,7 @@ function handleBusinessName() {
 // STEP 2: Project type selection
 function setProjectType(type) {
     formData.projectType = type;
+    storeCompleteFormData(); // Store project type
     next();
 }
 
@@ -2095,6 +2145,7 @@ function setDesignConcept(option) {
         next();
     } else if (option === 'Custom') {
         formData.designCode = 'CUSTOM';
+        storeCompleteFormData(); // Store design choice
         next();
     }
 }
@@ -2102,21 +2153,25 @@ function setDesignConcept(option) {
 // STEP 5-8: Simple selection functions
 function setAudience(audience) {
     formData.audience = audience;
+    storeCompleteFormData(); // Store audience
     next();
 }
 
 function setStyle(style) {
     formData.style = style;
+    storeCompleteFormData(); // Store style
     next();
 }
 
 function setColor(color) {
     formData.color = color;
+    storeCompleteFormData(); // Store color
     next();
 }
 
 function setGoal(goal) {
     formData.goal = goal;
+    storeCompleteFormData(); // Store goal
     next();
 }
 
@@ -2165,7 +2220,9 @@ function redirectToPayment(planName, stripeLink) {
         timestamp: new Date().toISOString()
     };
     
-    localStorage.setItem('barberFunnelData', JSON.stringify(funnelData));
+    // Ensure all data is stored before redirecting
+    storeCompleteFormData();
+    
     localStorage.setItem('selectedPlan', planName);
     localStorage.setItem('selectedServices', JSON.stringify(formData.features));
     localStorage.setItem('serviceCounts', JSON.stringify({
@@ -2178,20 +2235,28 @@ function redirectToPayment(planName, stripeLink) {
     console.log('Stored in localStorage - paymentModel:', localStorage.getItem('paymentModel'));
     console.log('Stored in localStorage - selectedPlan:', localStorage.getItem('selectedPlan'));
     
-    const returnParams = new URLSearchParams();
-    returnParams.append('niche', 'barber');
-    returnParams.append('business', encodeURIComponent(formData.businessName || 'Barber Shop'));
-    returnParams.append('plan', planName.includes('Premium') ? 'Premium' : 'Standard');
-    returnParams.append('paymentModel', paymentModel);
-    returnParams.append('services', formData.features.length);
+    // Generate thank-you page URL with all parameters
+    const thankYouParams = new URLSearchParams();
+    thankYouParams.append('niche', 'barber');
+    thankYouParams.append('business', encodeURIComponent(formData.businessName || 'Barber Shop'));
+    thankYouParams.append('plan', planName.includes('Premium') ? 'Premium' : 'Standard');
+    thankYouParams.append('paymentModel', paymentModel);
+    thankYouParams.append('services', formData.features.length);
+    thankYouParams.append('standardServices', standardServiceCount);
+    thankYouParams.append('premiumServices', premiumServiceCount);
+    thankYouParams.append('designCode', formData.designCode || '');
     
-    localStorage.setItem('thankYouParams', returnParams.toString());
+    localStorage.setItem('thankYouParams', thankYouParams.toString());
     
     console.log('Redirecting to Stripe with link:', stripeLink);
     
     document.getElementById('hiddenPaymentLink').value = stripeLink;
     
-    window.location.href = stripeLink;
+    // Redirect to thank you page after payment (Stripe will redirect back)
+    // For now, redirect to thank you page with all data
+    setTimeout(() => {
+        window.location.href = `thank-you.html?${thankYouParams.toString()}`;
+    }, 100);
 }
 
 // FIXED: Show final plans - properly generates HTML with existing CSS classes
@@ -2367,6 +2432,45 @@ function getStripeLink(planKey) {
 // Initialize page
 document.addEventListener('DOMContentLoaded', () => {
     console.log('=== barber.index.html Initialization ===');
+    
+    // Load saved data if available
+    const savedData = localStorage.getItem('barberFunnelData');
+    if (savedData) {
+        try {
+            const parsedData = JSON.parse(savedData);
+            // Restore form data
+            Object.assign(formData, parsedData);
+            
+            // Restore service counts
+            standardServiceCount = parsedData.standardServices || 0;
+            premiumServiceCount = parsedData.premiumServices || 0;
+            
+            // Restore selected services in UI
+            if (parsedData.features && parsedData.features.length > 0) {
+                formData.features = parsedData.features;
+                
+                // Mark services as selected in UI
+                document.querySelectorAll('.service-card').forEach(card => {
+                    const h4 = card.querySelector('h4');
+                    if (h4 && parsedData.features.includes(h4.textContent)) {
+                        card.classList.add('selected');
+                    }
+                });
+                
+                updateServiceCounters();
+                showPlanRecommendation();
+            }
+            
+            // Restore business name
+            if (parsedData.businessName && businessInput) {
+                businessInput.value = parsedData.businessName;
+            }
+            
+            console.log('Restored saved data:', parsedData);
+        } catch (e) {
+            console.error('Error restoring saved data:', e);
+        }
+    }
     
     const jumpedFromURL = checkURLParams();
     updateStepIndicator();
