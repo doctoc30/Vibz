@@ -1453,61 +1453,56 @@
             reviewContent.innerHTML = reviewHTML;
         }
 
-        // ===================== FORM SUBMISSION =====================
+
+          // ===================== FORM SUBMISSION (FORMSPREE) =====================
         function setupEventListeners() {
             const form = document.getElementById('websiteOrderForm');
+
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
-                
-                // Show loading state
+
                 const submitBtn = document.getElementById('submitBtn');
                 const originalText = submitBtn.innerHTML;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
                 submitBtn.disabled = true;
-                
-                // Collect all form data
+
                 const finalData = {
-                    plan: plan,
+                    plan,
                     planDetails: PLANS[plan],
                     timestamp: new Date().toISOString(),
                     pages: [],
                     brand: formData.brand,
                     confidence: formData.confidence
                 };
-                
-                // Collect page data
+
                 for (let i = 1; i <= PLANS[plan].pages; i++) {
-                    const pageCard = document.querySelector(`.page-card[data-page="${i}"]`);
-                    if (!pageCard) continue;
-                    
-                    const pageName = i === 1 ? 'Home' : 
-                        document.querySelector(`.page-type[data-page="${i}"]`)?.value || '';
-                    const customName = document.querySelector(`.custom-page-name[data-page="${i}"]`)?.value;
-                    const goal = document.querySelector(`input[name="goal-${i}"]:checked`)?.value || '';
-                    const instruction = document.querySelector(`.page-instruction[data-page="${i}"]`)?.value || '';
-                    const aiOverride = document.querySelector(`.ai-override-toggle[data-page="${i}"]`)?.checked || false;
-                    
                     finalData.pages.push({
                         number: i,
-                        name: i === 1 ? 'Home' : (customName || pageName),
-                        goal: goal,
-                        instruction: instruction,
-                        aiOverride: aiOverride
+                        instruction: document.querySelector(`.page-instruction[data-page="${i}"]`)?.value || ''
                     });
                 }
-                
-                // Simulate API call
-                setTimeout(() => {
-                    // Hide form, show success message
+
+                fetch("https://formspree.io/f/mykkzwvy", {
+                    method: "POST",
+                    headers: {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(finalData)
+                })
+                .then(res => {
+                    if (!res.ok) throw new Error("Submission failed");
                     document.querySelector('.form-container').style.display = 'none';
                     document.getElementById('successMessage').style.display = 'block';
-                    
-                    // In production, you would send this data to your server
-                    console.log('Form submitted:', finalData);
-                    
-                    // Optional: Redirect to thank you page or dashboard
-                    // window.location.href = `/thank-you?order=${encodeURIComponent(JSON.stringify(finalData))}`;
-                }, 1500);
+                })
+                .catch(err => {
+                    alert("Something went wrong. Please try again.");
+                    console.error(err);
+                })
+                .finally(() => {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                });
             });
         }
 
