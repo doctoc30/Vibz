@@ -1,1140 +1,162 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elite Barbers | Premium Grooming Experience</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
-    <style>
-        :root {
-            --primary-black: #0a0a0a;
-            --deep-black: #111111;
-            --rich-gold: #d4af37;
-            --light-gold: #f4e8c1;
-            --warm-neutral: #e8e0d5;
-            --cool-neutral: #f5f5f5;
-            --text-light: #f9f9f9;
-            --text-dark: #1a1a1a;
-            --transition-smooth: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-            --transition-quick: all 0.3s ease;
-            --border-radius: 8px;
-            --box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-            --box-shadow-elevated: 0 30px 60px rgba(0, 0, 0, 0.25);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-            overflow-x: hidden;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            line-height: 1.6;
-            color: var(--text-light);
-            background-color: var(--primary-black);
-            overflow-x: hidden;
-            position: relative;
-        }
-
-        h1, h2, h3, h4, h5 {
-            font-family: 'Cinzel', serif;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            line-height: 1.2;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        section {
-            padding: 100px 0;
-            position: relative;
-        }
-
-        /* Header & Navigation */
-        header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 1000;
-            padding: 25px 0;
-            transition: var(--transition-smooth);
-            background-color: rgba(10, 10, 10, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
-        }
-
-        header.scrolled {
-            padding: 15px 0;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        }
-
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-family: 'Cinzel', serif;
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--rich-gold);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-        }
-
-        .logo span {
-            margin-left: 8px;
-        }
-
-        .nav-links {
-            display: flex;
-            list-style: none;
-        }
-
-        .nav-links li {
-            margin-left: 40px;
-        }
-
-        .nav-links a {
-            color: var(--text-light);
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 0.95rem;
-            letter-spacing: 0.5px;
-            transition: var(--transition-quick);
-            position: relative;
-            padding: 5px 0;
-        }
-
-        .nav-links a:after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 1px;
-            background-color: var(--rich-gold);
-            transition: width 0.3s ease;
-        }
-
-        .nav-links a:hover {
-            color: var(--rich-gold);
-        }
-
-        .nav-links a:hover:after {
-            width: 100%;
-        }
-
-        .cta-button {
-            display: inline-block;
-            background-color: var(--rich-gold);
-            color: var(--text-dark);
-            padding: 14px 32px;
-            border-radius: var(--border-radius);
-            text-decoration: none;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            transition: var(--transition-smooth);
-            border: none;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .cta-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 30px rgba(212, 175, 55, 0.3);
-        }
-
-        .mobile-menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            color: var(--text-light);
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        /* Hero Section */
-        .hero {
-            height: 100vh;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            padding-top: 100px;
-        }
-
-        .hero-bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 30% 50%, rgba(212, 175, 55, 0.05) 0%, rgba(10, 10, 10, 1) 70%);
-            z-index: -2;
-        }
-
-        /* Barber Animation Canvas */
-        #barber-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            opacity: 0.8;
-        }
-
-        .hero-content {
-            width: 100%;
-            max-width: 800px;
-            z-index: 2;
-        }
-
-        .hero h1 {
-            font-size: 4.5rem;
-            margin-bottom: 20px;
-            line-height: 1.1;
-            color: var(--text-light);
-        }
-
-        .hero h1 span {
-            color: var(--rich-gold);
-            display: block;
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            max-width: 600px;
-            margin-bottom: 40px;
-            color: var(--warm-neutral);
-            font-weight: 300;
-        }
-
-        .hero-badge {
-            display: inline-block;
-            background-color: rgba(212, 175, 55, 0.1);
-            color: var(--rich-gold);
-            padding: 8px 20px;
-            border-radius: 50px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            letter-spacing: 1px;
-            margin-bottom: 30px;
-            border: 1px solid rgba(212, 175, 55, 0.2);
-        }
-
-        /* Services Section */
-        .services {
-            background-color: var(--deep-black);
-            position: relative;
-        }
-
-        .section-header {
-            text-align: center;
-            margin-bottom: 80px;
-        }
-
-        .section-header h2 {
-            font-size: 3rem;
-            color: var(--text-light);
-            margin-bottom: 15px;
-        }
-
-        .section-header p {
-            color: var(--warm-neutral);
-            max-width: 600px;
-            margin: 0 auto;
-            font-size: 1.1rem;
-        }
-
-        .service-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 30px;
-            margin-top: 50px;
-        }
-
-        .service-card {
-            background-color: rgba(255, 255, 255, 0.03);
-            border-radius: var(--border-radius);
-            padding: 40px 30px;
-            transition: var(--transition-smooth);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .service-card:hover {
-            transform: translateY(-10px);
-            border-color: rgba(212, 175, 55, 0.3);
-            box-shadow: var(--box-shadow-elevated);
-        }
-
-        .service-icon {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 25px;
-            position: relative;
-        }
-
-        .service-icon svg {
-            width: 100%;
-            height: 100%;
-            fill: var(--rich-gold);
-        }
-
-        .service-card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 15px;
-            color: var(--text-light);
-        }
-
-        .service-card p {
-            color: var(--warm-neutral);
-            font-size: 0.95rem;
-            margin-bottom: 20px;
-        }
-
-        .service-price {
-            color: var(--rich-gold);
-            font-weight: 600;
-            font-size: 1.2rem;
-        }
-
-        /* Gallery Section */
-        .gallery {
-            background-color: var(--primary-black);
-        }
-
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            margin-top: 50px;
-        }
-
-        .gallery-item {
-            position: relative;
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            height: 400px;
-            cursor: pointer;
-        }
-
-        .gallery-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: var(--transition-smooth);
-        }
-
-        .gallery-item:hover img {
-            transform: scale(1.05);
-        }
-
-        .gallery-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            padding: 30px;
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
-            transform: translateY(20px);
-            opacity: 0;
-            transition: var(--transition-smooth);
-        }
-
-        .gallery-item:hover .gallery-overlay {
-            transform: translateY(0);
-            opacity: 1;
-        }
-
-        /* Booking Section */
-        .booking {
-            background-color: var(--deep-black);
-            position: relative;
-        }
-
-        .booking-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 80px;
-            align-items: center;
-        }
-
-        .booking-form {
-            background-color: rgba(255, 255, 255, 0.03);
-            padding: 50px;
-            border-radius: var(--border-radius);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .form-group {
-            margin-bottom: 25px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: var(--warm-neutral);
-            font-weight: 500;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 15px 20px;
-            background-color: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: var(--border-radius);
-            color: var(--text-light);
-            font-family: 'Inter', sans-serif;
-            transition: var(--transition-quick);
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--rich-gold);
-        }
-
-        .booking-info h3 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-            color: var(--text-light);
-        }
-
-        .booking-info p {
-            color: var(--warm-neutral);
-            margin-bottom: 30px;
-            font-size: 1.1rem;
-        }
-
-        .info-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .info-icon {
-            width: 50px;
-            height: 50px;
-            background-color: rgba(212, 175, 55, 0.1);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 15px;
-            color: var(--rich-gold);
-            font-size: 1.2rem;
-        }
-
-        /* Footer */
-        footer {
-            background-color: #080808;
-            padding: 80px 0 40px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 50px;
-            margin-bottom: 60px;
-        }
-
-        .footer-logo {
-            font-family: 'Cinzel', serif;
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--rich-gold);
-            margin-bottom: 20px;
-            display: block;
-        }
-
-        .footer-about p {
-            color: var(--warm-neutral);
-            margin-bottom: 20px;
-            font-size: 0.95rem;
-        }
-
-        .footer-heading {
-            font-size: 1.2rem;
-            color: var(--text-light);
-            margin-bottom: 25px;
-            font-weight: 600;
-        }
-
-        .footer-links {
-            list-style: none;
-        }
-
-        .footer-links li {
-            margin-bottom: 12px;
-        }
-
-        .footer-links a {
-            color: var(--warm-neutral);
-            text-decoration: none;
-            transition: var(--transition-quick);
-            font-size: 0.95rem;
-        }
-
-        .footer-links a:hover {
-            color: var(--rich-gold);
-            padding-left: 5px;
-        }
-
-        .copyright {
-            text-align: center;
-            padding-top: 40px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            color: var(--warm-neutral);
-            font-size: 0.9rem;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 1024px) {
-            .hero h1 {
-                font-size: 3.5rem;
-            }
-            
-            .gallery-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .booking-container {
-                grid-template-columns: 1fr;
-                gap: 50px;
-            }
-            
-            .footer-content {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-            }
-            
-            .mobile-menu-btn {
-                display: block;
-            }
-            
-            .hero h1 {
-                font-size: 2.8rem;
-            }
-            
-            .service-cards {
-                grid-template-columns: 1fr;
-            }
-            
-            .gallery-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .booking-form {
-                padding: 30px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .hero h1 {
-                font-size: 2.2rem;
-            }
-            
-            section {
-                padding: 70px 0;
-            }
-            
-            .section-header h2 {
-                font-size: 2.2rem;
-            }
-            
-            .footer-content {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Animation Classes */
-        .fade-in {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-
-        .reveal {
-            opacity: 0;
-            clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
-        }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+
+<title>Elite Barbers — Luxury Barber Experience</title>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+
+<!-- Lottie -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.11.0/lottie.min.js"></script>
+
+<style>
+/* BASE RESET */
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Roboto',sans-serif;color:#fff;background:#000;overflow-x:hidden;}
+
+header{position:fixed;top:0;left:0;width:100%;z-index:1000;
+  background:rgba(0,0,0,0.85);display:flex;justify-content:space-between;align-items:center;
+  padding:20px 50px;}
+header .logo{font-size:2rem;font-family:'Playfair Display';color:#FFD700;}
+header nav a{margin-left:30px;font-weight:500;transition:0.3s;}
+header nav a:hover{color:#FFD700;}
+
+/* HERO */
+.hero{width:100vw;height:100vh;position:relative;display:flex;justify-content:center;align-items:center;background:linear-gradient(180deg,#111,#000);}
+#hero-animation{width:450px;height:450px;z-index:1;}
+.hero-content{position:absolute;z-index:2;text-align:center;}
+.hero-content h1{font-size:3rem;line-height:1.2;color:#FFD700;margin-bottom:15px;}
+.hero-content p{font-size:1.2rem;color:#ddd;margin-bottom:25px;}
+.hero-content button{padding:14px 36px;background:#FFD700;color:#000;font-weight:700;border:none;cursor:pointer;transition:0.3s;}
+.hero-content button:hover{background:#e6c200;}
+
+/* SECTIONS */
+section{padding:100px 50px;opacity:0;transform:translateY(50px);transition:all 1s ease-out;}
+section.visible{opacity:1;transform:translateY(0);}
+
+/* ABOUT */
+.about h2{font-size:2.5rem;text-align:center;color:#FFD700;margin-bottom:20px;}
+.about p{max-width:700px;margin:10px auto;font-size:1.1rem;color:#ddd;line-height:1.6;}
+
+/* SERVICES */
+.services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:40px;}
+.service-card{background:#141414;border:1px solid #333;border-radius:15px;padding:30px;text-align:center;
+  transition:transform .3s,box-shadow .3s;}
+.service-card:hover{transform:translateY(-8px);box-shadow:0 10px 20px rgba(255,215,0,0.4);}
+.service-card img{width:80px;margin-bottom:18px;}
+.service-card h3{font-size:1.4rem;color:#FFD700;margin-bottom:8px;}
+.service-card p{font-size:1rem;color:#ccc;}
+
+/* GALLERY */
+.gallery-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;}
+.gallery-grid img{width:100%;height:auto;border-radius:10px;cursor:pointer;transition:.3s;}
+.gallery-grid img:hover{transform:scale(1.05);}
+
+/* TESTIMONIALS */
+.testimonial{background:#111;border-left:4px solid #FFD700;padding:20px 25px;border-radius:6px;
+  margin:20px 0;font-size:1rem;color:#ddd;}
+
+/* CONTACT FORM */
+form{max-width:600px;margin:0 auto;display:flex;flex-direction:column;gap:15px;}
+form input, form textarea{padding:14px; border:1px solid #333;border-radius:8px;background:#0a0a0a;color:#fff;font-size:1rem;}
+form input:focus, form textarea:focus{outline:none;border-color:#FFD700;}
+
+/* FOOTER */
+footer{text-align:center;color:#555;padding:40px 20px;font-size:0.9rem;}
+</style>
 </head>
 <body>
-    <!-- Header & Navigation -->
-    <header id="main-header">
-        <div class="container">
-            <nav>
-                <a href="#" class="logo">
-                    <i class="fas fa-cut"></i>
-                    <span>ELITE BARBERS</span>
-                </a>
-                <button class="mobile-menu-btn" id="mobile-menu-toggle">
-                    <i class="fas fa-bars"></i>
-                </button>
-                <ul class="nav-links">
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#services">Services</a></li>
-                    <li><a href="#gallery">Gallery</a></li>
-                    <li><a href="#booking">Booking</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                    <li><a href="#" class="cta-button">Book Now</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
 
-    <!-- Hero Section -->
-    <section class="hero" id="home">
-        <div class="hero-bg"></div>
-        <canvas id="barber-canvas"></canvas>
-        <div class="container">
-            <div class="hero-content">
-                <div class="hero-badge">EST. 2010</div>
-                <h1 class="reveal">Precision <span>Craftsmanship</span></h1>
-                <p class="fade-in">Experience the art of traditional barbering combined with modern techniques. Our elite barbers provide unparalleled grooming services in an atmosphere of refined luxury.</p>
-                <a href="#booking" class="cta-button fade-in">Reserve Your Appointment</a>
-            </div>
-        </div>
-    </section>
+<header>
+  <div class="logo">Elite Barbers</div>
+  <nav>
+    <a href="#hero">Home</a>
+    <a href="#about">About</a>
+    <a href="#services">Services</a>
+    <a href="#gallery">Gallery</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
 
-    <!-- Services Section -->
-    <section class="services" id="services">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="reveal">Signature Services</h2>
-                <p class="fade-in">Each service is meticulously crafted to deliver an exceptional grooming experience, using only the finest products and techniques.</p>
-            </div>
-            <div class="service-cards">
-                <div class="service-card fade-in">
-                    <div class="service-icon">
-                        <svg viewBox="0 0 100 100">
-                            <path d="M30,20 L70,20 L80,50 L70,80 L30,80 L20,50 Z" />
-                            <circle cx="50" cy="50" r="15" />
-                            <line x1="30" y1="35" x2="70" y2="35" />
-                            <line x1="30" y1="45" x2="70" y2="45" />
-                            <line x1="30" y1="55" x2="70" y2="55" />
-                            <line x1="30" y1="65" x2="70" y2="65" />
-                        </svg>
-                    </div>
-                    <h3>Skin Fades</h3>
-                    <p>Precision fading techniques that create seamless transitions from skin to hair. Our barbers masterfully blend and taper for a sharp, clean look.</p>
-                    <div class="service-price">From £45</div>
-                </div>
-                <div class="service-card fade-in">
-                    <div class="service-icon">
-                        <svg viewBox="0 0 100 100">
-                            <path d="M30,25 Q50,10 70,25 T90,50 Q90,70 70,85 T50,90 Q30,85 10,70 T10,50 Q10,30 30,25 Z" />
-                            <path d="M30,40 Q50,30 70,40" />
-                            <path d="M25,55 Q50,45 75,55" />
-                            <path d="M30,70 Q50,60 70,70" />
-                        </svg>
-                    </div>
-                    <h3>Beard Sculpting</h3>
-                    <p>Expert shaping and grooming to define your beard's natural contours. Includes hot towel treatment, precise trimming, and conditioning.</p>
-                    <div class="service-price">From £35</div>
-                </div>
-                <div class="service-card fade-in">
-                    <div class="service-icon">
-                        <svg viewBox="0 0 100 100">
-                            <path d="M25,25 L75,25 L85,40 L75,55 L25,55 L15,40 Z" />
-                            <line x1="25" y1="35" x2="75" y2="35" />
-                            <line x1="25" y1="45" x2="75" y2="45" />
-                            <path d="M40,65 L60,65" stroke-width="3" />
-                            <path d="M45,70 L55,70" stroke-width="2" />
-                        </svg>
-                    </div>
-                    <h3>Classic & Modern Cuts</h3>
-                    <p>Timeless barbering techniques combined with contemporary styles. Tailored to your individual features and personal style.</p>
-                    <div class="service-price">From £50</div>
-                </div>
-            </div>
-        </div>
-    </section>
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div id="hero-animation"></div>
+  <div class="hero-content">
+    <h1>Luxury Barber Experience</h1>
+    <p>From Classic Cuts to Modern Fades — Precision & Style</p>
+    <button onclick="scrollToContact()">Book Your Spot</button>
+  </div>
+</section>
 
-    <!-- Gallery Section -->
-    <section class="gallery" id="gallery">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="reveal">Our Craft</h2>
-                <p class="fade-in">Step into our world of precision, style, and unmatched attention to detail.</p>
-            </div>
-            <div class="gallery-grid">
-                <div class="gallery-item fade-in">
-                    <img src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Barber at work">
-                    <div class="gallery-overlay">
-                        <h3>Precision Fading</h3>
-                        <p>Seamless blends created with expert technique</p>
-                    </div>
-                </div>
-                <div class="gallery-item fade-in">
-                    <img src="https://images.unsplash.com/photo-1621607512214-68297480165e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Beard grooming">
-                    <div class="gallery-overlay">
-                        <h3>Beard Mastery</h3>
-                        <p>Detailed sculpting and shaping</p>
-                    </div>
-                </div>
-                <div class="gallery-item fade-in">
-                    <img src="https://images.unsplash.com/photo-1567894340315-735d7c361db0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Barbershop interior">
-                    <div class="gallery-overlay">
-                        <h3>Luxury Environment</h3>
-                        <p>Refined atmosphere for the perfect experience</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+<!-- ABOUT -->
+<section class="about" id="about">
+  <h2>About Elite Barbers</h2>
+  <p>Elite Barbers is a premium grooming sanctuary where craftsmanship meets luxury. Our expert barbers deliver unparalleled precision cuts and bespoke styling in a refined, modern atmosphere.</p>
+</section>
 
-    <!-- Booking Section -->
-    <section class="booking" id="booking">
-        <div class="container">
-            <div class="booking-container">
-                <div class="booking-form fade-in">
-                    <h3>Reserve Your Appointment</h3>
-                    <form id="booking-form">
-                        <div class="form-group">
-                            <label for="name">Full Name</label>
-                            <input type="text" id="name" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="email">Email Address</label>
-                            <input type="email" id="email" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="service">Select Service</label>
-                            <select id="service" class="form-control" required>
-                                <option value="">Choose a service</option>
-                                <option value="skin-fade">Skin Fade & Cut</option>
-                                <option value="beard-sculpt">Beard Sculpting</option>
-                                <option value="classic-cut">Classic Cut</option>
-                                <option value="full-grooming">Full Grooming Experience</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="date">Preferred Date</label>
-                            <input type="date" id="date" class="form-control" required>
-                        </div>
-                        <button type="submit" class="cta-button" style="width: 100%;">Book Appointment</button>
-                    </form>
-                </div>
-                <div class="booking-info fade-in">
-                    <h3>Visit Our Studio</h3>
-                    <p>Located in the heart of Mayfair, our studio offers a sanctuary for those who appreciate the finer details in grooming.</p>
-                    <div class="info-item">
-                        <div class="info-icon">
-                            <i class="fas fa-map-marker-alt"></i>
-                        </div>
-                        <div>
-                            <h4>Address</h4>
-                            <p>27 Bruton Street, Mayfair, London W1J 6QN</p>
-                        </div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-icon">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <div>
-                            <h4>Opening Hours</h4>
-                            <p>Mon-Fri: 9am-8pm | Sat: 10am-6pm | Sun: 11am-4pm</p>
-                        </div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-icon">
-                            <i class="fas fa-phone"></i>
-                        </div>
-                        <div>
-                            <h4>Contact</h4>
-                            <p>+44 (0)20 7930 1234 | info@elitebarbers.com</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+<!-- SERVICES -->
+<section id="services">
+  <h2 style="text-align:center;color:#FFD700;margin-bottom:30px;">Our Services</h2>
+  <div class="services-grid">
+    <div class="service-card"><img src="https://i.ibb.co/vXb8wCk/beard.png"><h3>Beard Sculpting</h3><p>Tailored beard precision for your signature look.</p></div>
+    <div class="service-card"><img src="https://i.ibb.co/DQ2B3cB/fade.png"><h3>Skin Fades</h3><p>Sleek, smooth fades with sharp edges.</p></div>
+    <div class="service-card"><img src="https://i.ibb.co/2y4j3yX/classic.png"><h3>Classic Cuts</h3><p>Timeless grooming with expert hands.</p></div>
+    <div class="service-card"><img src="https://i.ibb.co/W5YNmyF/modern.png"><h3>Modern Styles</h3><p>Trend‑forward cuts with refined detail.</p></div>
+  </div>
+</section>
 
-    <!-- Footer -->
-    <footer id="contact">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-about">
-                    <a href="#" class="footer-logo">ELITE BARBERS</a>
-                    <p>Established in 2010, Elite Barbers has redefined luxury grooming in London. Our commitment to craftsmanship, attention to detail, and unparalleled client experience sets us apart.</p>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                    </div>
-                </div>
-                <div class="footer-services">
-                    <h4 class="footer-heading">Services</h4>
-                    <ul class="footer-links">
-                        <li><a href="#">Skin Fades</a></li>
-                        <li><a href="#">Beard Sculpting</a></li>
-                        <li><a href="#">Classic Cuts</a></li>
-                        <li><a href="#">Hair Treatments</a></li>
-                        <li><a href="#">Shaving Services</a></li>
-                    </ul>
-                </div>
-                <div class="footer-links-col">
-                    <h4 class="footer-heading">Quick Links</h4>
-                    <ul class="footer-links">
-                        <li><a href="#home">Home</a></li>
-                        <li><a href="#services">Services</a></li>
-                        <li><a href="#gallery">Gallery</a></li>
-                        <li><a href="#booking">Booking</a></li>
-                        <li><a href="#contact">Contact</a></li>
-                    </ul>
-                </div>
-                <div class="footer-contact">
-                    <h4 class="footer-heading">Contact Info</h4>
-                    <ul class="footer-links">
-                        <li><i class="fas fa-map-marker-alt"></i> 27 Bruton Street, Mayfair</li>
-                        <li><i class="fas fa-phone"></i> +44 (0)20 7930 1234</li>
-                        <li><i class="fas fa-envelope"></i> info@elitebarbers.com</li>
-                        <li><i class="fas fa-clock"></i> Mon-Sun: By Appointment</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="copyright">
-                <p>&copy; 2023 Elite Barbers. All rights reserved. | Crafted with precision in London.</p>
-            </div>
-        </div>
-    </footer>
+<!-- GALLERY -->
+<section id="gallery">
+  <h2 style="text-align:center;color:#FFD700;margin-bottom:30px;">Gallery</h2>
+  <div class="gallery-grid">
+    <img src="https://picsum.photos/seed/1/600/400">
+    <img src="https://picsum.photos/seed/2/600/400">
+    <img src="https://picsum.photos/seed/3/600/400">
+    <img src="https://picsum.photos/seed/4/600/400">
+  </div>
+</section>
 
-    <script>
-        // GSAP Animations
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize GSAP
-            gsap.registerPlugin(ScrollTrigger);
-            
-            // Header scroll effect
-            window.addEventListener('scroll', function() {
-                const header = document.getElementById('main-header');
-                if (window.scrollY > 50) {
-                    header.classList.add('scrolled');
-                } else {
-                    header.classList.remove('scrolled');
-                }
-            });
-            
-            // Hero animations
-            gsap.to('.reveal', {
-                scrollTrigger: {
-                    trigger: '.hero',
-                    start: 'top top',
-                    toggleActions: 'play none none reverse'
-                },
-                clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)',
-                opacity: 1,
-                duration: 1.5,
-                ease: 'power3.out',
-                stagger: 0.2
-            });
-            
-            gsap.to('.fade-in', {
-                scrollTrigger: {
-                    trigger: '.hero',
-                    start: 'top top',
-                    toggleActions: 'play none none reverse'
-                },
-                opacity: 1,
-                y: 0,
-                duration: 1.2,
-                delay: 0.5,
-                ease: 'power3.out',
-                stagger: 0.2
-            });
-            
-            // Service card animations
-            gsap.utils.toArray('.service-card').forEach(card => {
-                gsap.from(card, {
-                    scrollTrigger: {
-                        trigger: card,
-                        start: 'top 80%',
-                        toggleActions: 'play none none none'
-                    },
-                    opacity: 0,
-                    y: 50,
-                    duration: 1,
-                    ease: 'power3.out'
-                });
-            });
-            
-            // Gallery item animations
-            gsap.utils.toArray('.gallery-item').forEach(item => {
-                gsap.from(item, {
-                    scrollTrigger: {
-                        trigger: item,
-                        start: 'top 85%',
-                        toggleActions: 'play none none none'
-                    },
-                    opacity: 0,
-                    y: 60,
-                    duration: 1,
-                    ease: 'power3.out'
-                });
-            });
-            
-            // Booking form animation
-            gsap.from('.booking-form', {
-                scrollTrigger: {
-                    trigger: '.booking',
-                    start: 'top 70%',
-                    toggleActions: 'play none none none'
-                },
-                opacity: 0,
-                x: -50,
-                duration: 1,
-                ease: 'power3.out'
-            });
-            
-            // Booking info animation
-            gsap.from('.booking-info', {
-                scrollTrigger: {
-                    trigger: '.booking',
-                    start: 'top 70%',
-                    toggleActions: 'play none none none'
-                },
-                opacity: 0,
-                x: 50,
-                duration: 1,
-                ease: 'power3.out'
-            });
-            
-            // Mobile menu toggle
-            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-            const navLinks = document.querySelector('.nav-links');
-            
-            mobileMenuToggle.addEventListener('click', function() {
-                navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
-                if (navLinks.style.display === 'flex') {
-                    navLinks.style.flexDirection = 'column';
-                    navLinks.style.position = 'absolute';
-                    navLinks.style.top = '100%';
-                    navLinks.style.left = '0';
-                    navLinks.style.width = '100%';
-                    navLinks.style.backgroundColor = 'var(--primary-black)';
-                    navLinks.style.padding = '30px';
-                    navLinks.style.boxShadow = '0 20px 40px rgba(0,0,0,0.3)';
-                    
-                    const links = navLinks.querySelectorAll('li');
-                    links.forEach(link => {
-                        link.style.margin = '15px 0';
-                    });
-                }
-            });
-            
-            // Form submission
-            const bookingForm = document.getElementById('booking-form');
-            bookingForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                alert('Thank you for your booking request. We will contact you shortly to confirm your appointment.');
-                bookingForm.reset();
-            });
-            
-            // Initialize barber animation canvas
-            initBarberCanvas();
-        });
-        
-        // Barber-themed Canvas Animation
-        function initBarberCanvas() {
-            const canvas = document.getElementById('barber-canvas');
-            const ctx = canvas.getContext('2d');
-            
-            // Set canvas dimensions
-            function resizeCanvas() {
-                canvas.width = canvas.offsetWidth;
-                canvas.height = canvas.offsetHeight;
-            }
-            
-            resizeCanvas();
-            window.addEventListener('resize', resizeCanvas);
-            
-            // Animation variables
-            let particles = [];
-            let scissors = {
-                x: canvas.width * 0.7,
-                y: canvas.height * 0.5,
-                angle: 0,
-                open: true,
-                bladeAngle: 0.3
-            };
-            
-            let hairLines = [];
-            
-            // Create hair lines
-            for (let i = 0; i < 40; i++) {
-                hairLines.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height * 0.7 + canvas.height * 0.15,
-                    length: 20 + Math.random() * 40,
-                    thickness: 1 + Math.random() * 3,
-                    angle: Math.random() * Math.PI * 2,
-                    speed: 0.5 + Math.random() * 1.5,
-                    opacity: 0.2 + Math.random() * 0.5
-                });
-            }
-            
-            // Create particles
-            for (let i = 0; i < 80; i++) {
-                particles.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    radius: 0.5 + Math.random() * 2,
-                    speedX: (Math.random() - 0.5) * 0.3,
-                    speedY: (Math.random() - 0.5) * 0.3,
-                    opacity: 0.05 + Math.random() * 0.1,
-                    color: `rgba(212, 175, 55, ${0.1 + Math.random() * 0.2})`
-                });
-            }
-            
-            // Animation loop
-            function animate() {
-                // Clear canvas with a slight fade effect
-                ctx.fillStyle = 'rgba(10, 10, 10, 0.05)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                
-                // Update and draw particles
-                particles.forEach(particle => {
-                    particle.x += particle.speedX;
-                    particle.y += particle.speedY;
-                    
-                    // Wrap around edges
-                    if (particle.x < 0) particle.x = canvas.width;
-                    if (particle.x > canvas.width) particle.x = 0;
-                    if (particle.y < 0) particle.y = canvas.height;
-                    if (particle.y > canvas.height) particle.y = 0;
-                    
-                    // Draw particle
-                    ctx.beginPath();
-                    ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
-                    ctx.fillStyle = particle.color;
-                    ctx.globalAlpha = particle.opacity;
-                    ctx.fill();
-                });
-                
-                // Update scissors
-                scissors.angle += 0.005;
-                scissors.bladeAngle = 0.3 + Math.sin(Date.now() * 0.005) * 0.3;
-                
-                // Draw scissors
-                drawScissors(scissors.x, scissors.y, scissors.angle, scissors.bladeAngle);
-                
-                // Update and draw hair lines
-                hairLines.forEach(line => {
-                    line.angle += 0.01;
-                    line.x += Math.cos(line.angle) * line.speed * 0.1;
-                    line.y += Math.sin(line.angle) * line.speed * 0.1;
-                    
-                    // Reset if out of bounds
-                    if (line.x < -50) line.x = canvas.width + 50;
-                    if (line.x > canvas.width + 50) line.x = -50;
-                    if (line.y < -50) line.y = canvas.height + 50;
-                    if (line.y > canvas.height + 50) line.y = -50;
-                    
-                    // Draw hair line
-                    ctx.beginPath();
-                    ctx.moveTo(line.x, line.y);
-                    ctx.lineTo(
-                        line.x + Math.cos(line.angle) * line.length,
-                        line.y + Math.sin(line.angle) * line.length
-                    );
-                    ctx.lineWidth = line.thickness;
-                    ctx.strokeStyle = `rgba(212, 175, 55, ${line.opacity})`;
-                    ctx.globalAlpha = line.opacity * 0.7;
-                    ctx.stroke();
-                });
-                
-                // Reset global alpha
-                ctx.globalAlpha = 1;
-                
-                requestAnimationFrame(animate);
-            }
-            
-            // Draw scissors function
-            function drawScissors(x, y, angle, bladeAngle) {
-                ctx.save();
-                ctx.translate(x, y);
-                ctx.rotate(angle);
-                
-                // Scissors body
-                ctx.fillStyle = 'rgba(200, 200, 200, 0.8)';
-                ctx.strokeStyle = 'rgba(212, 175, 55, 0.9)';
-                ctx.lineWidth = 1;
-                
-                // Left blade
-                ctx.save();
-                ctx.rotate(-bladeAngle);
-                ctx.beginPath();
-                ctx.moveTo(-20, 0);
-                ctx.lineTo(40, -8);
-                ctx.lineTo(40, 8);
-                ctx.lineTo(-20, 0);
-                ctx.fill();
-                ctx.stroke();
-                ctx.restore();
-                
-                // Right blade
-                ctx.save();
-                ctx.rotate(bladeAngle);
-                ctx.beginPath();
-                ctx.moveTo(-20, 0);
-                ctx.lineTo(40, 8);
-                ctx.lineTo(40, -8);
-                ctx.lineTo(-20, 0);
-                ctx.fill();
-                ctx.stroke();
-                ctx.restore();
-                
-                // Scissors center
-                ctx.beginPath();
-                ctx.arc(0, 0, 8, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(212, 175, 55, 0.9)';
-                ctx.fill();
-                ctx.stroke();
-                
-                // Finger holes
-                ctx.beginPath();
-                ctx.arc(-25, 12, 6, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(50, 50, 50, 0.9)';
-                ctx.fill();
-                
-                ctx.beginPath();
-                ctx.arc(-25, -12, 6, 0, Math.PI * 2);
-                ctx.fill();
-                
-                ctx.restore();
-            }
-            
-            // Start animation
-            animate();
-        }
-    </script>
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <h2 style="text-align:center;color:#FFD700;margin-bottom:30px;">Testimonials</h2>
+  <div class="testimonial">“Best barber experience I’ve ever had — precision and atmosphere unmatched.”</div>
+  <div class="testimonial">“Luxury grooming with a modern touch, highly recommend!”</div>
+</section>
+
+<!-- CONTACT / BOOKING -->
+<section id="contact">
+  <h2 style="text-align:center;color:#FFD700;margin-bottom:25px;">Book an Appointment</h2>
+  <form>
+    <input type="text" placeholder="Full Name" required>
+    <input type="email" placeholder="Email Address" required>
+    <textarea rows="5" placeholder="Your Message / Request" required></textarea>
+    <button type="submit" style="background:#FFD700;color:#000;padding:14px;font-weight:700;border:none;cursor:pointer;">Send Request</button>
+  </form>
+</section>
+
+<footer>© 2026 Elite Barbers. All Rights Reserved.</footer>
+
+<script>
+// SCROLL VISIBILITY
+const sections = document.querySelectorAll('section');
+window.addEventListener('scroll',()=>{sections.forEach(s=>{const r=s.getBoundingClientRect();if(r.top<window.innerHeight*0.8)s.classList.add('visible');})});
+
+// Lottie Hero (barber animation) placeholder
+lottie.loadAnimation({
+ container: document.getElementById('hero-animation'),
+ renderer: 'svg',
+ loop: true,
+ autoplay: true,
+ path: 'https://assets10.lottiefiles.com/packages/lf20_z3s87qip.json' // Barber man animation placeholder  [oai_citation:4‡LottieFiles](https://lottiefiles.com/animation/barber-man-11381252?utm_source=chatgpt.com)
+});
+
+// Scroll to Contact
+function scrollToContact(){document.getElementById('contact').scrollIntoView({behavior:'smooth'});}
+</script>
+
 </body>
 </html>
