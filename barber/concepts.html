@@ -321,11 +321,12 @@
             display: block;
         }
 
+        /* Auto-fit grid for unlimited items */
         .concepts-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
             gap: 40px;
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 40px auto 0;
         }
 
@@ -452,6 +453,13 @@
             box-shadow: 0 15px 30px rgba(255, 107, 0, 0.2);
         }
 
+        /* Selected button style */
+        .btn-fill.selected {
+            background: #4CAF50;
+            border-color: #4CAF50;
+            color: white;
+        }
+
         /* Code display - ENHANCED */
         .concept-code {
             font-size: 1.2rem;
@@ -556,8 +564,56 @@
             opacity: 0.7;
         }
 
+        /* ================= PAGINATION CONTROLS ================= */
+        .pagination-controls {
+            grid-column: 1 / -1;
+            text-align: center;
+            margin-top: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .page-info {
+            color: var(--text-gray);
+            font-weight: 600;
+            padding: 0 20px;
+        }
+
+        /* ================= ANIMATIONS ================= */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .concept-card {
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+        }
+
         /* ================= RESPONSIVE DESIGN ================= */
         
+        /* For very large screens: 4 columns */
+        @media (min-width: 1600px) {
+            .concepts-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        /* Tablet: 2 columns */
+        @media (max-width: 1200px) {
+            .concepts-grid {
+                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            }
+        }
+
         /* Mobile Portrait */
         @media (max-width: 768px) {
             /* Mobile scaling for navigation */
@@ -615,15 +671,10 @@
             }
             
             .concept-card {
-                height: 600px;
+                height: 750px;
             }
             
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 20px;
-            }
-
-            /* Mobile portrait button display - 2 buttons with code */
+            /* Mobile portrait button display */
             .concept-buttons {
                 flex-direction: column;
                 padding: 1.5rem;
@@ -641,6 +692,16 @@
             .concept-code {
                 font-size: 1rem;
                 padding: 0.6rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+
+            .pagination-controls {
+                flex-direction: column;
+                gap: 15px;
             }
         }
 
@@ -776,275 +837,13 @@
             }
         }
 
-        /* ================= ANIMATIONS ================= */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        /* Hide only the Concepts intro text, keep the library */
+        #concepts > .section-label,
+        #concepts > h2,
+        #concepts > p {
+            display: none;
         }
-
-        .concept-card {
-            animation: fadeInUp 0.6s ease forwards;
-            opacity: 0;
-        }
-
-        .concept-card:nth-child(1) { animation-delay: 0.1s; }
-        .concept-card:nth-child(2) { animation-delay: 0.2s; }
-        .concept-card:nth-child(3) { animation-delay: 0.3s; }
-        .concept-card:nth-child(4) { animation-delay: 0.4s; }
-        .concept-card:nth-child(5) { animation-delay: 0.5s; }
-        .concept-card:nth-child(6) { animation-delay: 0.6s; }
-        .concept-card:nth-child(7) { animation-delay: 0.7s; }
-        .concept-card:nth-child(8) { animation-delay: 0.8s; }
-        .concept-card:nth-child(9) { animation-delay: 0.9s; }
-    .concept-card:nth-child(10) { animation-delay: 0.10s; }
-    /* ================= RESPONSIVE DESIGN ================= */
-
-/* Mobile Portrait - FIXED IMAGE HEIGHT */
-@media (max-width: 768px) {
-    /* Mobile scaling for navigation */
-    nav {
-        padding: 0.8rem 5%;
-    }
-
-    .nav-btn {
-        padding: 0.6rem 1.4rem;
-        font-size: 0.85rem;
-        border-radius: 10px;
-    }
-
-    .logo {
-        font-size: 1.6rem;
-    }
-
-    .menu-content {
-        padding: 100px 5% 40px;
-    }
-
-    .menu-link {
-        font-size: clamp(2.5rem, 10vw, 4rem);
-        letter-spacing: -2px;
-        margin-bottom: 1rem;
-    }
-
-    .menu-cta-buttons {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .close-menu {
-        font-size: 2rem;
-        width: 50px;
-        height: 50px;
-    }
-
-    /* Hero text mobile scaling */
-    .hero h1 {
-        font-size: 4.5rem;
-        letter-spacing: -3px;
-        line-height: 0.9;
-    }
-
-    .hero p {
-        font-size: 1.1rem;
-        max-width: 100%;
-    }
-
-    /* Concept grid mobile adjustments */
-    .concepts-grid {
-        grid-template-columns: 1fr;
-        gap: 25px;
-    }
-    
-    .concept-card {
-        height: 600px; /* Keep same total height */
-    }
-    
-    /* FIXED: Make concept image MUCH LARGER on mobile portrait */
-    .concept-image {
-        height: 65% !important; /* Increased from ~40% to 65% (will be ~80% with adjustments below) */
-    }
-    
-    /* FIXED: Reduce button section height to accommodate larger image */
-    .concept-buttons {
-        flex-direction: column;
-        padding: 1.2rem; /* Reduced padding */
-        height: auto;
-        min-height: 35%; /* Reduced from previous height */
-        gap: 10px; /* Reduced gap */
-    }
-    
-    .btn {
-        padding: 0.9rem 1.2rem; /* Slightly smaller buttons */
-        font-size: 0.95rem;
-        width: 100%;
-        max-width: none;
-    }
-
-    .concept-code {
-        font-size: 0.95rem;
-        padding: 0.5rem;
-        margin-top: 0.3rem;
-    }
-    
-    .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 20px;
-    }
-}
-
-
-
-
-
-        /* ================= RESPONSIVE DESIGN ================= */
-
-/* Mobile Portrait - FIXED: Large images & proper button spacing */
-@media (max-width: 768px) and (orientation: portrait) {
-    /* ... keep navigation, hero, etc. styles ... */
-
-    /* Concept grid mobile adjustments */
-    .concepts-grid {
-        grid-template-columns: 1fr;
-        gap: 25px;
-    }
-    
-    .concept-card {
-        height: 750px; /* Taller card for better proportions */
-        display: flex;
-        flex-direction: column;
-    }
-    
-    /* FIXED: Make concept image LARGE - 75-80% of card */
-    .concept-image {
-        flex: 0 0 75%; /* Takes 75% of card height */
-        height: 75% !important;
-        min-height: 560px; /* 75% of 750px */
-        position: relative;
-    }
-    
-    /* FIXED: Button section - compact but functional */
-    .concept-buttons {
-        flex: 0 0 25%; /* Takes 25% of card height */
-        display: flex;
-        flex-direction: column;
-        padding: 1rem 0.8rem; /* Compact padding */
-        height: 25%;
-        min-height: 188px; /* 25% of 750px */
-        justify-content: space-around; /* Even spacing */
-        gap: 6px; /* Small gap between elements */
-    }
-    
-    /* FIXED: Buttons - compact but visible */
-    .btn {
-        padding: 0.9rem 0.8rem !important;
-        font-size: 0.95rem !important;
-        width: 100%;
-        max-width: 100%;
-        min-height: 44px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        line-height: 1.2;
-        margin: 0;
-    }
-    
-    /* FIXED: Code display - compact but readable */
-    .concept-code {
-        font-size: 0.9rem !important;
-        padding: 0.6rem !important;
-        margin: 0;
-        width: 100%;
-        min-height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(255, 107, 0, 0.08);
-        border: 1px solid rgba(255, 107, 0, 0.2);
-        border-radius: 6px;
-        box-sizing: border-box;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-    }
-    
-    .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 20px;
-    }
-}
-
-/* Small Mobile Portrait - Tighter layout */
-@media (max-width: 480px) and (orientation: portrait) {
-    .concept-card {
-        height: 720px; /* Slightly shorter */
-    }
-    
-    /* FIXED: Even larger image on small phones - 80% */
-    .concept-image {
-        flex: 0 0 80% !important; /* 80% of card height */
-        height: 80% !important;
-        min-height: 576px; /* 80% of 720px */
-    }
-    
-    /* FIXED: Compact button section - 20% */
-    .concept-buttons {
-        flex: 0 0 20% !important; /* 20% of card height */
-        padding: 0.8rem 0.6rem;
-        height: 20%;
-        min-height: 144px; /* 20% of 720px */
-        gap: 4px; /* Very small gap */
-    }
-    
-    .btn {
-        padding: 0.8rem 0.6rem !important;
-        font-size: 0.9rem !important;
-        min-height: 40px;
-    }
-    
-    .concept-code {
-        font-size: 0.85rem !important;
-        padding: 0.5rem !important;
-        min-height: 36px;
-    }
-    
-    .stats-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-/* Also target mobile without orientation for broader compatibility */
-@media (max-width: 768px) {
-    /* Override any conflicting styles */
-    .concept-image {
-        height: 75% !important;
-    }
-    
-    .concept-buttons {
-        height: 25% !important;
-        gap: 6px !important;
-    }
-}
-
-
-/* Hide only the Concepts intro text, keep the library */
-#concepts > .section-label,
-#concepts > h2,
-#concepts > p {
-    display: none;
-}
     </style>
-
-
-    
 </head>
 <body>
 
@@ -1097,7 +896,7 @@
             <span class="accent">Concepts</span>
         </h1>
         <p>
-            9 premium website designs built exclusively for modern barber shops. 
+            <span id="templateCount">Loading...</span> premium website designs built exclusively for modern barber shops. 
             Each concept is engineered to increase bookings, showcase your work, 
             and build client loyalty.
         </p>
@@ -1118,6 +917,9 @@
         <div class="concepts-grid" id="conceptsGrid">
             <!-- Concepts will be generated dynamically by JavaScript -->
         </div>
+
+        <!-- Pagination controls will be inserted here -->
+        <div id="paginationControls"></div>
     </section>
 
     <!-- Barber Stats Section -->
@@ -1129,7 +931,7 @@
         
         <div class="stats-grid">
             <div class="stat-item">
-                <span class="stat-number" id="conceptCount">9</span>
+                <span class="stat-number" id="conceptCount">0</span>
                 <span class="stat-label">Design Codes</span>
             </div>
             <div class="stat-item">
@@ -1215,149 +1017,256 @@
         </div>
     </div>
 
-
     <script>
-// ========== BARBER CONCEPTS DATABASE ==========
-const barberConcepts = [
-    { code: "barber-1", image: "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
-    { code: "barber-2", image: "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
-    { code: "barber-3", image: "https://images.unsplash.com/photo-1567894340315-735d7c361db0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
-    { code: "barber-4", image: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
-    { code: "barber-5", image: "https://images.unsplash.com/photo-1562157873-818bc0726f68?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
-    { code: "barber-6", image: "https://images.unsplash.com/photo-1580618864180-f6d7d39b8ff6?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
-    { code: "barber-7", image: "https://images.unsplash.com/photo-1621605815972-f9e5c6c4a9c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
-    { code: "barber-8", image: "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
-    { code: "barber-9", image: "https://images.unsplash.com/photo-1580618864180-f6d7d39b8ff6?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" }
-];
+        // ========== BARBER CONCEPTS DATABASE ==========
+        const barberConcepts = [
+            { code: "barber-1", image: "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
+            { code: "barber-2", image: "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
+            { code: "barber-3", image: "https://images.unsplash.com/photo-1567894340315-735d7c361db0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
+            { code: "barber-4", image: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
+            { code: "barber-5", image: "https://images.unsplash.com/photo-1562157873-818bc0726f68?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
+            { code: "barber-6", image: "https://images.unsplash.com/photo-1580618864180-f6d7d39b8ff6?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
+            { code: "barber-7", image: "https://images.unsplash.com/photo-1621605815972-f9e5c6c4a9c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
+            { code: "barber-8", image: "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
+            { code: "barber-9", image: "https://images.unsplash.com/photo-1580618864180-f6d7d39b8ff6?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
+            { code: "barber-10", image: "https://images.unsplash.com/photo-1593702275686-4b8e9be41d8a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
+            { code: "barber-11", image: "https://images.unsplash.com/photo-1622286342621-4bd21321b56f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
+            { code: "barber-12", image: "https://images.unsplash.com/photo-1593702275686-4b8e9be41d8a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
+            { code: "barber-13", image: "https://images.unsplash.com/photo-1580618864180-f6d7d39b8ff6?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
+            { code: "barber-14", image: "https://images.unsplash.com/photo-1567894340315-735d7c361db0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" },
+            { code: "barber-15", image: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" }
+            // Add as many templates as you want - the system will handle them all
+        ];
 
-// ========== MENU ==========
-const menuOverlay = document.getElementById('menuOverlay');
-const hamburgerBtn = document.getElementById('hamburgerBtn');
-const closeMenuBtn = document.getElementById('closeMenu');
-const menuLinks = document.querySelectorAll('.menu-link');
+        // ========== PAGINATION SETTINGS ==========
+        let currentPage = 1;
+        const templatesPerPage = 12; // Show 12 templates per page
 
-hamburgerBtn.addEventListener('click', () => {
-    menuOverlay.classList.add('active');
-    document.body.style.overflow = 'hidden';
-});
+        // ========== MENU FUNCTIONS ==========
+        const menuOverlay = document.getElementById('menuOverlay');
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const closeMenuBtn = document.getElementById('closeMenu');
+        const menuLinks = document.querySelectorAll('.menu-link');
 
-closeMenuBtn.addEventListener('click', () => {
-    menuOverlay.classList.remove('active');
-    document.body.style.overflow = '';
-});
+        function openMenu() {
+            menuOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
 
-menuLinks.forEach(link => link.addEventListener('click', () => {
-    menuOverlay.classList.remove('active');
-    document.body.style.overflow = '';
-}));
+        function closeMenu() {
+            menuOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
 
-// ========== CONCEPT DISPLAY ==========
-let selectedDesign = null;
-const selectionModal = document.getElementById('selectionModal');
-const modalTitle = document.getElementById('modalTitle');
-const modalText = document.getElementById('modalText');
+        hamburgerBtn.addEventListener('click', openMenu);
+        closeMenuBtn.addEventListener('click', closeMenu);
+        menuLinks.forEach(link => link.addEventListener('click', closeMenu));
 
-function generateConceptCards() {
-    const conceptsGrid = document.getElementById('conceptsGrid');
-    conceptsGrid.innerHTML = '';
+        // ========== CONCEPT DISPLAY ==========
+        let selectedDesign = null;
+        const selectionModal = document.getElementById('selectionModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalText = document.getElementById('modalText');
 
-    barberConcepts.forEach((concept, index) => {
-        const conceptId = concept.code.split('-')[1];
+        function generateConceptCards(page = 1) {
+            const conceptsGrid = document.getElementById('conceptsGrid');
+            conceptsGrid.innerHTML = '';
+            
+            // Calculate pagination
+            const startIndex = (page - 1) * templatesPerPage;
+            const endIndex = Math.min(startIndex + templatesPerPage, barberConcepts.length);
+            const currentTemplates = barberConcepts.slice(startIndex, endIndex);
+            
+            // Generate cards for current page
+            currentTemplates.forEach((concept, index) => {
+                const conceptId = concept.code.split('-')[1];
+                const globalIndex = startIndex + index;
+                const animationDelay = (index * 0.1) + 0.1;
 
-        conceptsGrid.innerHTML += `
-            <div class="concept-card">
-                <div class="concept-image">
-                    <div class="concept-number">${String(index + 1).padStart(2, '0')}</div>
-                    <img src="${concept.image}" alt="${concept.code}">
-                </div>
-                <div class="concept-buttons">
-                    <button class="btn btn-fill select-design" data-code="${concept.code}" data-concept="${conceptId}">
-                        Select This Design
-                    </button>
-                    <button class="btn btn-outline view-demo" data-concept="${conceptId}">
-                        View Live Demo
-                    </button>
-                    <div class="concept-code">CODE: ${concept.code.toUpperCase()}</div>
-                </div>
-            </div>
-        `;
-    });
+                conceptsGrid.innerHTML += `
+                    <div class="concept-card" style="animation-delay: ${animationDelay}s">
+                        <div class="concept-image">
+                            <div class="concept-number">${String(globalIndex + 1).padStart(2, '0')}</div>
+                            <img src="${concept.image}" alt="${concept.code}" loading="lazy">
+                        </div>
+                        <div class="concept-buttons">
+                            <button class="btn btn-fill select-design" data-code="${concept.code}" data-concept="${conceptId}" data-index="${globalIndex}">
+                                Select This Design
+                            </button>
+                            <button class="btn btn-outline view-demo" data-concept="${conceptId}">
+                                View Live Demo
+                            </button>
+                            <div class="concept-code">CODE: ${concept.code.toUpperCase()}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            // Generate pagination controls
+            generatePaginationControls(page);
+            
+            // Update counts
+            updateCounts();
+            
+            // Attach event listeners
+            attachEventListeners();
+        }
 
-    document.getElementById('conceptCount').textContent = barberConcepts.length;
-    attachEventListeners();
-}
-
-// ========== EVENTS ==========
-function attachEventListeners() {
-
-    // Select design
-    document.querySelectorAll('.select-design').forEach(btn => {
-        btn.onclick = () => {
-            const code = btn.dataset.code;
-            const id = btn.dataset.concept;
-
-            selectedDesign = { code, id };
-            localStorage.setItem('selectedDesignCode', code);
-
-            modalTitle.textContent = 'Design Code Selected!';
-            modalText.innerHTML = `
-                You've selected <strong>${code.toUpperCase()}</strong><br><br>
-                Enter this code in the funnel.
+        function generatePaginationControls(currentPage) {
+            const totalPages = Math.ceil(barberConcepts.length / templatesPerPage);
+            
+            if (totalPages <= 1) {
+                document.getElementById('paginationControls').innerHTML = '';
+                return;
+            }
+            
+            let paginationHTML = `
+                <div class="pagination-controls">
             `;
+            
+            // Previous button
+            if (currentPage > 1) {
+                paginationHTML += `
+                    <button class="btn btn-outline" onclick="changePage(${currentPage - 1})">
+                        <i class="fas fa-chevron-left"></i> Previous
+                    </button>
+                `;
+            }
+            
+            // Page info
+            paginationHTML += `
+                <span class="page-info">
+                    Page ${currentPage} of ${totalPages} 
+                    <span style="opacity: 0.7; font-size: 0.9em;">(${barberConcepts.length} total designs)</span>
+                </span>
+            `;
+            
+            // Next button
+            if (currentPage < totalPages) {
+                paginationHTML += `
+                    <button class="btn btn-outline" onclick="changePage(${currentPage + 1})">
+                        Next <i class="fas fa-chevron-right"></i>
+                    </button>
+                `;
+            }
+            
+            paginationHTML += `</div>`;
+            document.getElementById('paginationControls').innerHTML = paginationHTML;
+        }
 
-            selectionModal.style.display = 'flex';
-            updateSelectedButton(id);
-        };
-    });
+        function changePage(page) {
+            currentPage = page;
+            generateConceptCards(page);
+            // Smooth scroll to top of concepts section
+            document.getElementById('concepts').scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
 
-    // ✅ VIEW LIVE DEMO (REAL LINK)
-    document.querySelectorAll('.view-demo').forEach(btn => {
-        btn.onclick = () => {
-            const id = btn.dataset.concept;
-            const concept = barberConcepts.find(c => c.code === `barber-${id}`);
-            if (!concept) return;
+        function updateCounts() {
+            document.getElementById('conceptCount').textContent = barberConcepts.length;
+            document.getElementById('templateCount').textContent = barberConcepts.length;
+        }
 
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
-            btn.disabled = true;
+        // ========== EVENT HANDLERS ==========
+        function attachEventListeners() {
+            // Select design
+            document.querySelectorAll('.select-design').forEach(btn => {
+                btn.onclick = () => {
+                    const code = btn.dataset.code;
+                    const id = btn.dataset.concept;
+                    const index = btn.dataset.index;
 
-            setTimeout(() => {
-                btn.innerHTML = 'View Live Demo';
-                btn.disabled = false;
-                window.open(`https://www.vibz.co.uk/barber/pages/${concept.code}.html`, '_blank');
-            }, 600);
-        };
-    });
-}
+                    selectedDesign = { code, id, index };
+                    localStorage.setItem('selectedDesignCode', code);
+                    localStorage.setItem('selectedDesignIndex', index);
 
-// ========== UI HELPERS ==========
-function updateSelectedButton(conceptId) {
-    document.querySelectorAll('.select-design').forEach(btn => {
-        btn.innerHTML = 'Select This Design';
-        btn.classList.remove('selected');
-    });
+                    modalTitle.textContent = 'Design Code Selected!';
+                    modalText.innerHTML = `
+                        You've selected <strong>${code.toUpperCase()}</strong> (Design #${parseInt(index) + 1})<br><br>
+                        Enter this code in the funnel.
+                    `;
 
-    const selected = document.querySelector(`.select-design[data-concept="${conceptId}"]`);
-    if (selected) {
-        selected.innerHTML = '✓ Selected';
-        selected.classList.add('selected');
-    }
-}
+                    selectionModal.style.display = 'flex';
+                    updateSelectedButton(id);
+                };
+            });
 
-function closeModal() {
-    selectionModal.style.display = 'none';
-}
+            // View Live Demo
+            document.querySelectorAll('.view-demo').forEach(btn => {
+                btn.onclick = () => {
+                    const id = btn.dataset.concept;
+                    const concept = barberConcepts.find(c => c.code === `barber-${id}`);
+                    if (!concept) return;
 
-function continueToFunnel() {
-    if (!selectedDesign) return;
-    window.location.href = `https://www.vibz.co.uk/barber/?step=4&concept=${selectedDesign.code}`;
-}
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+                    btn.disabled = true;
 
-selectionModal.addEventListener('click', e => {
-    if (e.target === selectionModal) closeModal();
-});
+                    setTimeout(() => {
+                        btn.innerHTML = 'View Live Demo';
+                        btn.disabled = false;
+                        window.open(`https://www.vibz.co.uk/barber/pages/${concept.code}.html`, '_blank');
+                    }, 600);
+                };
+            });
+        }
 
-// ========== INIT ==========
-document.addEventListener('DOMContentLoaded', generateConceptCards);
-</script>
+        // ========== UI HELPER FUNCTIONS ==========
+        function updateSelectedButton(conceptId) {
+            document.querySelectorAll('.select-design').forEach(btn => {
+                btn.innerHTML = 'Select This Design';
+                btn.classList.remove('selected');
+            });
+
+            const selected = document.querySelector(`.select-design[data-concept="${conceptId}"]`);
+            if (selected) {
+                selected.innerHTML = '<i class="fas fa-check"></i> Selected';
+                selected.classList.add('selected');
+            }
+        }
+
+        function closeModal() {
+            selectionModal.style.display = 'none';
+        }
+
+        function continueToFunnel() {
+            if (!selectedDesign) return;
+            window.location.href = `https://www.vibz.co.uk/barber/?step=4&concept=${selectedDesign.code}`;
+        }
+
+        selectionModal.addEventListener('click', e => {
+            if (e.target === selectionModal) closeModal();
+        });
+
+        // ========== LOAD TEMPLATES FROM EXTERNAL SOURCE (Optional) ==========
+        async function loadTemplatesFromAPI() {
+            try {
+                // Example: Load templates from an external JSON file
+                // const response = await fetch('templates.json');
+                // const externalTemplates = await response.json();
+                // barberConcepts.push(...externalTemplates);
+                // generateConceptCards(currentPage);
+            } catch (error) {
+                console.log('Using default templates');
+            }
+        }
+
+        // ========== INITIALIZATION ==========
+        document.addEventListener('DOMContentLoaded', () => {
+            generateConceptCards(currentPage);
+            // Uncomment if you want to load from external source
+            // loadTemplatesFromAPI();
+        });
+
+        // Keyboard navigation for pagination
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft' && currentPage > 1) {
+                changePage(currentPage - 1);
+            } else if (e.key === 'ArrowRight' && currentPage < Math.ceil(barberConcepts.length / templatesPerPage)) {
+                changePage(currentPage + 1);
+            }
+        });
+    </script>
 </body>
 </html>
