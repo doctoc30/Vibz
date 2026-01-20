@@ -1,211 +1,294 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium Barber Shop</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE GENTRY | Premium Barbering</title>
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f9f9f9;
-            color: #333;
-            line-height: 1.6;
-        }
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
 
-        header {
-            background: #333;
-            color: #fff;
-            padding: 20px 0;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
+<style>
+:root {
+    --brand-red: #D32F2F;
+    --brand-gold: #FFD700;
+    --bg-airy: #FAFAFA;
+    --text-main: #121212;
+    --text-muted: #626262;
+    --white: #ffffff;
+    --shadow: 0 20px 40px rgba(0,0,0,0.06);
+    --transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
 
-        nav {
-            display: flex;
-            justify-content: space-between;
-            padding: 0 20px;
-            align-items: center;
-        }
+/* Reset */
+* { margin:0; padding:0; box-sizing:border-box; scroll-behavior: smooth; }
+body { font-family: 'Montserrat', sans-serif; background: var(--bg-airy); color: var(--text-main); overflow-x: hidden; }
 
-        nav ul {
-            list-style-type: none;
-            display: flex;
-        }
+/* Barber Pole */
+.pole-wrap { width: 45px; height: 140px; border-radius: 25px; overflow: hidden; position: relative; background: white; box-shadow: var(--shadow); }
+.pole-stripes { height: 200%; width: 100%; background: repeating-linear-gradient(45deg, var(--brand-red), var(--brand-red) 20px, #fff 20px, #fff 40px); animation: spin 2s linear infinite; }
+@keyframes spin { from { transform: translateY(0); } to { transform: translateY(-60px); } }
 
-        nav ul li {
-            margin: 0 15px;
-        }
+/* Navigation */
+nav { position: fixed; top: 0; width: 100%; padding: 25px 5%; display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.9); backdrop-filter: blur(15px); z-index: 1000; border-bottom: 1px solid rgba(0,0,0,0.05); }
+.nav-links { display: flex; gap: 35px; align-items: center; }
+.nav-links a { text-decoration: none; color: var(--text-main); font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; }
+.nav-links a:hover { color: var(--brand-red); }
+.hamburger { display: none; cursor: pointer; }
 
-        nav ul li a {
-            color: #fff;
-            text-decoration: none;
-            font-weight: 600;
-        }
+/* Buttons */
+.btn-book { background: var(--brand-red); color: white !important; padding: 14px 32px; border-radius: 0px; transition: var(--transition); border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; font-weight: 700; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 2px; }
+.btn-book:hover { transform: scale(1.05); filter: brightness(1.1); box-shadow: 0 15px 30px rgba(211,47,47,0.3); }
 
-        .menu-toggle {
-            display: none;
-            cursor: pointer;
-        }
+/* Hero Section */
+.hero { height: 100vh; display: flex; align-items: center; padding: 0 10%; background: linear-gradient(to right, #fff 45%, transparent 100%), url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&q=80&w=2074') center/cover; }
+.hero-content { max-width: 650px; }
+.hero-content h1 { font-family: 'Playfair Display', serif; font-size: clamp(3.5rem, 8vw, 6rem); line-height: 1; margin-bottom: 25px; font-style: italic; }
 
-        .hero {
-            background: url('barber-background.jpg') center/cover no-repeat;
-            height: 60vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+/* Promo Bar */
+.promo-bar { background: var(--brand-red); color: white; padding: 12px; text-align: center; font-size: 0.8rem; font-weight: 600; letter-spacing: 1px; }
 
-        .hero h1 {
-            color: #fff;
-            font-size: 3em;
-            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.8);
-        }
+/* Sections */
+.section { padding: 120px 10%; }
+.service-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; margin-top: 60px; }
+.service-card { background: white; padding: 50px; border: 1px solid #eee; transition: var(--transition); position: relative; }
+.service-card:hover { border-color: var(--brand-red); transform: translateY(-10px); }
 
-        .services, .about, .contact {
-            padding: 50px 20px;
-            text-align: center;
-        }
+/* Barber Grid */
+.barber-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+.barber-card { text-align: center; }
+.barber-img { width: 100%; aspect-ratio: 3/4; object-fit: cover; filter: grayscale(100%); transition: var(--transition); margin-bottom: 20px; }
+.barber-card:hover .barber-img { filter: grayscale(0%); }
 
-        .services h2, .about h2, .contact h2 {
-            margin-bottom: 20px;
-            font-size: 2em;
-            color: #333;
-        }
+/* Before & After Slider */
+.ba-container { position: relative; width: 100%; height: 500px; overflow: hidden; border-radius: 4px; }
+.ba-img { position: absolute; top:0; left:0; width:100%; height:100%; background-size: cover; background-position: center; }
+.ba-after { width: 50%; border-right: 4px solid var(--brand-red); z-index: 2; }
 
-        .services div {
-            margin: 20px 0;
-        }
+/* Contact Section */
+.contact-container { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; }
+input, textarea { width: 100%; padding: 15px; margin-bottom: 20px; border: 1px solid #ddd; background: #fff; font-family: inherit; outline: none; }
+input:focus { border-color: var(--brand-red); }
 
-        .contact form {
-            display: flex;
-            flex-direction: column;
-            max-width: 400px;
-            margin: auto;
-        }
+/* Footer */
+footer { padding: 80px 10%; background: var(--brand-red); color: white; border-top: 2px solid var(--brand-gold); text-align: center; }
+footer p { font-size:0.8rem; opacity:0.9; }
+footer .socials { margin-top:20px; display:flex; justify-content:center; gap:20px; }
+footer .socials i { cursor:pointer; transition:0.3s; }
+footer .socials i:hover { color: var(--brand-gold); }
 
-        .contact input, 
-        .contact textarea {
-            margin: 10px 0;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
+/* Back to Top */
+.back-to-top { position: fixed; bottom: 30px; right: 30px; background: var(--white); border: 1px solid #ddd; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 99; cursor: pointer; opacity: 0; transition: 0.3s; }
+.back-to-top.show { opacity: 1; }
 
-        .contact button {
-            padding: 10px;
-            background: #333;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+/* Mobile */
+@media (max-width: 992px) {
+    .hero { padding: 150px 5% 50px; height: auto; text-align:center; }
+    .nav-links { display: none; }
+    .hamburger { display: block; }
+    .contact-container, .barber-grid { grid-template-columns: 1fr; }
+}
 
-        footer {
-            background: #333;
-            color: #fff;
-            text-align: center;
-            padding: 20px 0;
-        }
-
-        @media (max-width: 768px) {
-            .menu-toggle {
-                display: block;
-                color: #fff;
-            }
-
-            nav ul {
-                display: none;
-                flex-direction: column;
-                position: absolute;
-                background: #333;
-                width: 100%;
-                top: 60px;
-                left: 0;
-            }
-
-            nav ul.show {
-                display: flex;
-            }
-        }
-    </style>
+/* Reveal Animation */
+.reveal { opacity: 0; transform: translateY(40px); }
+</style>
 </head>
-
 <body>
 
-    <header>
-        <nav>
-            <div class="logo">Barber Shop</div>
-            <div class="menu-toggle" id="mobile-menu">☰</div>
-            <ul id="nav-list">
-                <li><a href="#services">Services</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
+<div class="promo-bar">
+    ENJOY COMPLIMENTARY WHISKEY WITH EVERY SIGNATURE CUT — <a href="#" style="color:white">BOOK NOW</a>
+</div>
 
-    <section class="hero">
-        <h1>Your Premium Grooming Experience</h1>
-    </section>
+<nav>
+    <div style="display:flex; align-items:center; gap:15px;">
+        <div class="pole-wrap" style="height:40px; width:18px; border-width:1px;">
+            <div class="pole-stripes"></div>
+        </div>
+        <span style="font-family:'Playfair Display'; font-size:1.5rem; letter-spacing:3px; font-weight:700;">GENTRY</span>
+    </div>
+    <div class="nav-links">
+        <a href="#services">Services</a>
+        <a href="#gallery">Gallery</a>
+        <a href="#team">Barbers</a>
+        <a href="#contact">Contact</a>
+        <a href="#" class="btn-book">Book Appointment</a>
+    </div>
+    <div class="hamburger"><i data-lucide="menu"></i></div>
+</nav>
 
-    <section class="services" id="services">
-        <h2>Our Services</h2>
-        <div>Haircuts</div>
-        <div>Shaves</div>
-        <div>Beard Trims</div>
-    </section>
+<section class="hero">
+    <div class="hero-content reveal">
+        <p style="text-transform:uppercase; letter-spacing:5px; color:var(--brand-red); font-weight:700; margin-bottom:15px;">Est. 2012</p>
+        <h1>The New Standard of Grooming.</h1>
+        <p style="font-size:1.2rem; color:var(--text-muted); margin-bottom:40px; font-weight:300;">Experience precision engineering for the modern man. A bright, airy sanctuary located in the heart of London.</p>
+        <div style="display:flex; gap:20px; flex-wrap:wrap;">
+            <button class="btn-book">Book Your Experience</button>
+            <a href="tel:+442071234567" class="btn-book" style="background:transparent; color:var(--text-main)!important; border:1px solid #ddd;">
+                <i data-lucide="phone"></i> 020 7123 4567
+            </a>
+        </div>
+    </div>
+</section>
 
-    <section class="about" id="about">
-        <h2>About Us</h2>
-        <p>We are dedicated to providing the best grooming experience in town.</p>
-    </section>
+<section class="section" id="services">
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:20px;">
+        <div>
+            <h2 class="reveal" style="font-family:'Playfair Display'; font-size:3rem;">Crafted Services</h2>
+            <p class="reveal" style="color:var(--text-muted);">Minimalist prices for maximalist results.</p>
+        </div>
+        <div class="reveal">
+            <div class="pole-wrap" style="height:60px; width:25px; margin-bottom:20px;"><div class="pole-stripes"></div></div>
+        </div>
+    </div>
+    <div class="service-grid">
+        <div class="service-card reveal">
+            <span style="font-size:0.8rem; color:var(--brand-red); font-weight:700;">01.</span>
+            <h3 style="margin:15px 0;">Signature Haircut</h3>
+            <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:20px;">Precision cut, scalp massage, and bespoke styling.</p>
+            <div style="display:flex; justify-content:space-between; font-weight:700; border-top:1px solid #eee; padding-top:20px;">
+                <span>45 MINS</span><span>£55.00</span>
+            </div>
+        </div>
+        <div class="service-card reveal">
+            <span style="font-size:0.8rem; color:var(--brand-red); font-weight:700;">02.</span>
+            <h3 style="margin:15px 0;">Beard Sculpting</h3>
+            <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:20px;">Linework, hot towel, and premium beard oil finish.</p>
+            <div style="display:flex; justify-content:space-between; font-weight:700; border-top:1px solid #eee; padding-top:20px;">
+                <span>30 MINS</span><span>£35.00</span>
+            </div>
+        </div>
+        <div class="service-card reveal">
+            <span style="font-size:0.8rem; color:var(--brand-red); font-weight:700;">03.</span>
+            <h3 style="margin:15px 0;">The Gentry Ritual</h3>
+            <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:20px;">Haircut, Shave, and Botanical Facial treatment.</p>
+            <div style="display:flex; justify-content:space-between; font-weight:700; border-top:1px solid #eee; padding-top:20px;">
+                <span>90 MINS</span><span>£110.00</span>
+            </div>
+        </div>
+    </div>
+</section>
 
-    <section class="contact" id="contact">
-        <h2>Contact Us</h2>
-        <form id="contact-form">
-            <input type="text" id="name" placeholder="Your Name" required />
-            <input type="email" id="email" placeholder="Your Email" required />
-            <textarea id="message" placeholder="Your Message" required></textarea>
-            <button type="submit">Send Message</button>
-        </form>
-    </section>
+<section class="section" style="background:#fff;">
+    <h2 style="text-align:center; margin-bottom:60px; font-family:'Playfair Display';">The Transformation</h2>
+    <div class="ba-container">
+        <div class="ba-img" style="background-image:url('https://images.unsplash.com/photo-1599351431247-f10b218163e9?auto=format&fit=crop&q=80&w=2000');"></div>
+        <div class="ba-img ba-after" style="background-image:url('https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&q=80&w=2000');"></div>
+        <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); z-index:10; background:var(--brand-red); color:white; padding:10px 20px; font-weight:700; pointer-events:none;">SLIDE</div>
+    </div>
+</section>
 
-    <footer>
-        <p>&copy; 2023 Premium Barber Shop. All rights reserved.</p>
-    </footer>
+<section class="section" id="team">
+    <h2 class="reveal" style="font-family:'Playfair Display'; font-size:2.5rem; margin-bottom:50px;">Meet the Masters</h2>
+    <div class="barber-grid">
+        <div class="barber-card reveal">
+            <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=800" class="barber-img">
+            <h3 style="font-family:'Playfair Display';">James Sinclair</h3>
+            <p style="color:var(--brand-red); font-size:0.8rem; font-weight:700; text-transform:uppercase;">Master Barber / Founder</p>
+        </div>
+        <div class="barber-card reveal">
+            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=800" class="barber-img">
+            <h3 style="font-family:'Playfair Display';">Leo Rossi</h3>
+            <p style="color:var(--brand-red); font-size:0.8rem; font-weight:700; text-transform:uppercase;">Stylist & Fade Specialist</p>
+        </div>
+        <div class="barber-card reveal">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=800" class="barber-img">
+            <h3 style="font-family:'Playfair Display';">Marcus Thorne</h3>
+            <p style="color:var(--brand-red); font-size:0.8rem; font-weight:700; text-transform:uppercase;">Beard Architect</p>
+        </div>
+    </div>
+</section>
 
-    <script>
-        const mobileMenu = document.getElementById('mobile-menu');
-        const navList = document.getElementById('nav-list');
+<section class="section" id="products" style="background:#fff;">
+    <h2 style="text-align:center; margin-bottom:60px; font-family:'Playfair Display';">Premium Grooming Products</h2>
+    <div class="service-grid">
+        <div class="service-card reveal">
+            <h3>Beard Oil</h3>
+            <p style="color:var(--text-muted); font-size:0.9rem;">Nourish and style your beard.</p>
+            <button class="btn-book" style="width:100%;">Buy Now</button>
+        </div>
+        <div class="service-card reveal">
+            <h3>Pomade</h3>
+            <p style="color:var(--text-muted); font-size:0.9rem;">Strong hold with natural shine.</p>
+            <button class="btn-book" style="width:100%;">Buy Now</button>
+        </div>
+        <div class="service-card reveal">
+            <h3>Shaving Cream</h3>
+            <p style="color:var(--text-muted); font-size:0.9rem;">Smooth, irritation-free shave.</p>
+            <button class="btn-book" style="width:100%;">Buy Now</button>
+        </div>
+    </div>
+</section>
 
-        mobileMenu.addEventListener('click', () => {
-            navList.classList.toggle('show');
-        });
+<section class="section" id="contact" style="background:#fff;">
+    <div class="contact-container">
+        <div class="reveal">
+            <h2 style="font-family:'Playfair Display'; font-size:3rem; margin-bottom:30px;">Visit the Studio.</h2>
+            <div style="margin-bottom:40px;">
+                <p style="font-weight:700; margin-bottom:5px;">Address</p>
+                <p style="opacity:0.7;">12A Savile Row, Mayfair<br>London, W1S 3PR</p>
+            </div>
+            <div style="margin-bottom:40px;">
+                <p style="font-weight:700; margin-bottom:5px;">Hours</p>
+                <p style="opacity:0.7;">Tue — Fri: 10:00 - 20:00<br>Sat: 09:00 - 18:00<br>Sun/Mon: Closed</p>
+            </div>
+            <a href="https://wa.me/442071234567" class="btn-book" style="background:#25D366;">
+                <i data-lucide="message-circle"></i> WhatsApp Now
+            </a>
+        </div>
+        <div class="reveal">
+            <form>
+                <input type="text" placeholder="FULL NAME" style="background:transparent; border:1px solid #444; color:black;">
+                <input type="email" placeholder="EMAIL ADDRESS" style="background:transparent; border:1px solid #444; color:black;">
+                <textarea rows="5" placeholder="MESSAGE" style="background:transparent; border:1px solid #444; color:black;"></textarea>
+                <button class="btn-book" style="width:100%;">Send Inquiry</button>
+            </form>
+        </div>
+    </div>
+</section>
 
-        const form = document.getElementById('contact-form');
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const message = document.getElementById('message').value;
+<footer>
+    <p>© 2026 THE GENTRY BARBER CO. ALL RIGHTS RESERVED.</p>
+    <div class="socials">
+        <i data-lucide="instagram"></i>
+        <i data-lucide="facebook"></i>
+    </div>
+</footer>
 
-            if (name && email && message) {
-                alert('Thank you for your message, ' + name + '!');
-                form.reset();
-            } else {
-                alert('Please fill in all fields.');
-            }
-        });
-    </script>
+<div class="back-to-top" id="backToTop"><i data-lucide="arrow-up"></i></div>
+
+<script>
+lucide.createIcons();
+
+gsap.registerPlugin(ScrollTrigger);
+gsap.utils.toArray(".reveal").forEach((elem) => {
+    gsap.to(elem, {
+        scrollTrigger: elem,
+        opacity: 1,
+        y: 0,
+        duration: 1.5,
+        ease: "power4.out",
+        stagger: 0.2
+    });
+});
+
+const btt = document.getElementById('backToTop');
+window.addEventListener('scroll', () => {
+    if(window.scrollY > 500) btt.classList.add('show');
+    else btt.classList.remove('show');
+});
+btt.addEventListener('click', () => window.scrollTo(0,0));
+
+const container = document.querySelector('.ba-container');
+const afterImg = document.querySelector('.ba-after');
+container.addEventListener('mousemove', (e) => {
+    let rect = container.getBoundingClientRect();
+    let x = e.clientX - rect.left;
+    let percent = (x / rect.width) * 100;
+    afterImg.style.width = percent + "%";
+});
+</script>
+
 </body>
-
 </html>
