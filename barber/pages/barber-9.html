@@ -3,1657 +3,394 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE GUILD | Premium Grooming & Barbering</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <title>THE CREAM CHAIR | Elite Grooming</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- GSAP for animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <!-- Lucide icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;800&family=Playfair+Display:ital,wght@0,900;1,900&display=swap" rel="stylesheet">
+    
     <style>
-        /* --- CSS VARIABLES & RESET --- */
+        /* Theme Colors */
         :root {
-            --cream: #F8F5F0;
-            --beige-light: #E8DFD1;
-            --beige-medium: #D4C5AB;
-            --brown-light: #A78B71;
-            --brown-medium: #8B7355;
-            --brown-dark: #5D4C3A;
-            --gold: #C5A059;
-            --white: #FFFFFF;
-            --black: #1A1A1A;
-            --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-            --shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-            --shadow-heavy: 0 15px 40px rgba(0, 0, 0, 0.08);
+            --cream: #fdfaf6;
+            --stone: #e5e5e5;
+            --soft-gray: #c9c9c9;
+            --gold: #b2935b;
+            --charcoal: #333333;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-            scroll-padding-top: 100px;
-        }
-
+        /* Global Styles */
         body {
-            font-family: 'Montserrat', sans-serif;
+            font-family: 'Outfit', sans-serif;
             background-color: var(--cream);
-            color: var(--brown-dark);
-            line-height: 1.7;
+            color: var(--charcoal);
             overflow-x: hidden;
-            font-weight: 400;
         }
+        .serif { font-family: 'Playfair Display', serif; }
 
-        h1, h2, h3, h4, .serif {
-            font-family: 'Cormorant Garamond', serif;
-            font-weight: 700;
-            letter-spacing: 1px;
-            color: var(--brown-dark);
-        }
-
-        section {
-            padding: 100px 10%;
+        /* Scroll reveal animations */
+        .reveal {
             opacity: 0;
-            transform: translateY(40px);
-            transition: opacity 0.8s ease, transform 0.8s ease;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
         }
-
-        section.reveal {
+        .reveal.active {
             opacity: 1;
             transform: translateY(0);
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            width: 100%;
+        /* Hover lift effect */
+        .hover-lift {
+            transition: transform 0.3s ease;
+        }
+        .hover-lift:hover {
+            transform: translateY(-10px);
         }
 
-        .btn {
-            display: inline-block;
-            padding: 16px 40px;
-            background: var(--brown-dark);
-            color: var(--white);
-            text-decoration: none;
-            text-transform: uppercase;
-            font-size: 0.8rem;
-            font-weight: 600;
-            letter-spacing: 2px;
-            transition: var(--transition);
-            border: 2px solid var(--brown-dark);
-            cursor: pointer;
-            border-radius: 0;
+        /* Before/After slider */
+        .ba-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            border-radius: 24px;
+            overflow: hidden;
+            cursor: ew-resize;
+        }
+        .ba-after {
+            clip-path: inset(0 0 0 50%);
+        }
+
+        /* Wave separator */
+        .wave-container {
+            line-height: 0;
+            width: 100%;
+        }
+        .wave-fill { fill: var(--cream); }
+
+        /* Video box */
+        .video-box {
+            aspect-ratio: 1/1;
             position: relative;
             overflow: hidden;
-            z-index: 1;
+            border-radius: 20px;
+            background: #000;
         }
-
-        .btn:after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
+        .video-box video, .video-box img {
             width: 100%;
             height: 100%;
-            background-color: var(--gold);
-            z-index: -2;
+            object-cover: cover;
+            opacity: 0.7;
         }
 
-        .btn:before {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0%;
-            height: 100%;
-            background-color: var(--brown-medium);
-            transition: all 0.3s;
-            z-index: -1;
-        }
-
-        .btn:hover {
-            color: var(--white);
-            border-color: var(--brown-medium);
-        }
-
-        .btn:hover:before {
-            width: 100%;
-        }
-
-        .btn-gold {
-            background: var(--gold);
-            border-color: var(--gold);
-        }
-
-        .btn-gold:after {
-            background-color: var(--brown-dark);
-        }
-
-        .btn-gold:hover {
-            border-color: var(--brown-medium);
-        }
-
-        .section-title {
-            text-align: center;
-            margin-bottom: 70px;
-            position: relative;
-        }
-
-        .section-title h2 {
-            font-size: 3.2rem;
-            margin-bottom: 15px;
-            position: relative;
-            display: inline-block;
-        }
-
-        .section-title h2:after {
-            content: '';
-            position: absolute;
-            width: 80px;
-            height: 2px;
-            background: var(--gold);
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .section-title p {
-            max-width: 600px;
-            margin: 0 auto;
-            color: var(--brown-medium);
-            font-size: 1.1rem;
-        }
-
-        /* --- NAVIGATION --- */
-        nav {
+        /* Mobile action bar */
+        .mobile-action-bar {
             position: fixed;
-            top: 0;
+            bottom: 0;
+            left: 0;
             width: 100%;
-            padding: 25px 10%;
+            background: white;
+            border-top: 1px solid var(--stone);
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            justify-content: space-around;
+            padding: 12px;
             z-index: 1000;
-            transition: var(--transition);
-            background: rgba(248, 245, 240, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(212, 197, 171, 0.2);
-        }
-
-        nav.sticky {
-            padding: 15px 10%;
-            box-shadow: var(--shadow);
-            background: rgba(248, 245, 240, 0.98);
-        }
-
-        .logo {
-            font-size: 2.2rem;
-            font-family: 'Cormorant Garamond', serif;
-            font-weight: 700;
-            color: var(--brown-dark);
-            display: flex;
-            align-items: center;
-        }
-
-        .logo i {
-            color: var(--gold);
-            margin-right: 10px;
-            font-size: 1.8rem;
-        }
-
-        .nav-links {
-            display: flex;
-            list-style: none;
-        }
-
-        .nav-links li {
-            margin-left: 40px;
-            position: relative;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: var(--brown-dark);
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            transition: var(--transition);
-            padding: 5px 0;
-        }
-
-        .nav-links a:after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            background: var(--gold);
-            left: 0;
-            bottom: -5px;
-            transition: var(--transition);
-        }
-
-        .nav-links a:hover {
-            color: var(--gold);
-        }
-
-        .nav-links a:hover:after {
-            width: 100%;
-        }
-
-        .mobile-menu-btn {
-            display: none;
-            font-size: 1.5rem;
-            color: var(--brown-dark);
-            cursor: pointer;
-        }
-
-        /* --- HERO SECTION --- */
-        #hero {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            position: relative;
-            color: var(--white);
-            opacity: 1;
-            transform: none;
-            padding: 0;
-            overflow: hidden;
-        }
-
-        .hero-bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(rgba(93, 76, 58, 0.85), rgba(93, 76, 58, 0.7)), 
-                        url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&q=80&w=2070') center/cover;
-            z-index: -1;
-        }
-
-        .hero-content {
-            max-width: 900px;
-            padding: 0 20px;
-            z-index: 2;
-        }
-
-        #hero h1 {
-            font-size: 4.5rem;
-            margin-bottom: 25px;
-            line-height: 1.1;
-            text-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        #hero p {
-            font-size: 1.3rem;
-            margin-bottom: 40px;
-            max-width: 700px;
-            font-weight: 300;
-            letter-spacing: 0.5px;
-            color: var(--beige-light);
-        }
-
-        .hero-booking {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 30px;
-            margin-top: 30px;
-        }
-
-        /* --- STATS SECTION --- */
-        .stats-container {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 30px;
-            background: var(--brown-dark);
-            color: var(--gold);
-            padding: 80px 10%;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stats-container:before {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23c5a059' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
-            opacity: 0.2;
-        }
-
-        .stat-item {
-            position: relative;
-            z-index: 2;
-        }
-
-        .stat-item h3 {
-            font-size: 3.2rem;
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
-
-        .stat-item p {
-            color: var(--beige-light);
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-weight: 600;
-        }
-
-        /* --- ABOUT SECTION --- */
-        #about {
-            background-color: var(--white);
-            position: relative;
-        }
-
-        .about-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 70px;
-            align-items: center;
-        }
-
-        .about-image {
-            border-radius: 5px;
-            overflow: hidden;
-            box-shadow: var(--shadow-heavy);
-            position: relative;
-        }
-
-        .about-image:before {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border: 10px solid var(--beige-medium);
-            top: 30px;
-            left: 30px;
-            z-index: -1;
-            border-radius: 5px;
-        }
-
-        .about-image img {
-            width: 100%;
-            height: 500px;
-            object-fit: cover;
-            transition: var(--transition);
-        }
-
-        .about-image:hover img {
-            transform: scale(1.03);
-        }
-
-        .about-text h2 {
-            font-size: 2.8rem;
-            margin-bottom: 25px;
-            color: var(--brown-dark);
-        }
-
-        .about-text p {
-            margin-bottom: 25px;
-            font-size: 1.1rem;
-            color: var(--brown-medium);
-        }
-
-        .about-features {
-            margin-top: 40px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
-        }
-
-        .feature-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 15px;
-        }
-
-        .feature-item i {
-            color: var(--gold);
-            font-size: 1.5rem;
-            margin-top: 5px;
-        }
-
-        /* --- SERVICES & PRICING --- */
-        #services {
-            background-color: var(--cream);
-        }
-
-        .pricing-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 50px;
-            margin-top: 30px;
-        }
-
-        .price-category {
-            background: var(--white);
-            padding: 40px;
-            border-radius: 5px;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-        }
-
-        .price-category:hover {
-            transform: translateY(-10px);
-            box-shadow: var(--shadow-heavy);
-        }
-
-        .price-category h3 {
-            font-size: 1.8rem;
-            margin-bottom: 25px;
-            color: var(--brown-dark);
-            position: relative;
-            padding-bottom: 15px;
-        }
-
-        .price-category h3:after {
-            content: '';
-            position: absolute;
-            width: 50px;
-            height: 2px;
-            background: var(--gold);
-            bottom: 0;
-            left: 0;
-        }
-
-        .price-item {
-            display: flex;
-            justify-content: space-between;
-            border-bottom: 1px solid var(--beige-light);
-            padding: 18px 0;
-            transition: var(--transition);
-        }
-
-        .price-item:hover {
-            border-bottom-color: var(--gold);
-            padding-left: 10px;
-        }
-
-        .price-item span {
-            font-weight: 500;
-        }
-
-        .price-item strong {
-            color: var(--gold);
-            font-size: 1.2rem;
-        }
-
-        /* --- TEAM SECTION --- */
-        #barbers {
-            background-color: var(--white);
-        }
-
-        .team-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 40px;
-        }
-
-        .barber-card {
-            background: var(--cream);
-            overflow: hidden;
-            text-align: center;
-            border-radius: 5px;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-            position: relative;
-        }
-
-        .barber-card:hover {
-            transform: translateY(-10px);
-            box-shadow: var(--shadow-heavy);
-        }
-
-        .barber-img {
-            width: 100%;
-            height: 350px;
-            overflow: hidden;
-        }
-
-        .barber-card img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            filter: grayscale(20%);
-            transition: var(--transition);
-        }
-
-        .barber-card:hover img {
-            filter: grayscale(0%);
-            transform: scale(1.05);
-        }
-
-        .barber-info {
-            padding: 30px;
-        }
-
-        .barber-info h3 {
-            font-size: 1.8rem;
-            margin-bottom: 5px;
-        }
-
-        .barber-info p {
-            color: var(--brown-medium);
-            margin-bottom: 15px;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 600;
-        }
-
-        .barber-social {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 15px;
-        }
-
-        .barber-social a {
-            color: var(--brown-dark);
-            font-size: 1rem;
-            transition: var(--transition);
-        }
-
-        .barber-social a:hover {
-            color: var(--gold);
-            transform: translateY(-3px);
-        }
-
-        /* --- GALLERY --- */
-        #gallery {
-            background-color: var(--cream);
-        }
-
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-        }
-
-        .gallery-item {
-            height: 250px;
-            overflow: hidden;
-            border-radius: 5px;
-            position: relative;
-            cursor: pointer;
-        }
-
-        .gallery-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: var(--transition);
-        }
-
-        .gallery-item:hover img {
-            transform: scale(1.1);
-        }
-
-        .gallery-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(165, 137, 103, 0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            transition: var(--transition);
-        }
-
-        .gallery-item:hover .gallery-overlay {
-            opacity: 1;
-        }
-
-        .gallery-overlay i {
-            color: var(--white);
-            font-size: 2rem;
-        }
-
-        /* --- FAQ ACCORDION --- */
-        #faq {
-            background-color: var(--white);
-        }
-
-        .faq-container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .faq-item {
-            margin-bottom: 15px;
-            border: 1px solid var(--beige-light);
-            border-radius: 5px;
-            overflow: hidden;
-            transition: var(--transition);
-        }
-
-        .faq-item:hover {
-            border-color: var(--beige-medium);
-        }
-
-        .faq-question {
-            padding: 25px;
-            background: var(--cream);
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: 600;
-            font-size: 1.1rem;
-            transition: var(--transition);
-        }
-
-        .faq-question:hover {
-            background: rgba(212, 197, 171, 0.1);
-        }
-
-        .faq-question i {
-            color: var(--gold);
-            transition: var(--transition);
-        }
-
-        .faq-item.active .faq-question i {
-            transform: rotate(180deg);
-        }
-
-        .faq-answer {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s ease-out;
-            background: var(--cream);
-        }
-
-        .faq-item.active .faq-answer {
-            max-height: 300px;
-        }
-
-        .faq-answer-content {
-            padding: 0 25px 25px;
-            color: var(--brown-medium);
-        }
-
-        /* --- CONTACT & HOURS --- */
-        #contact {
-            background-color: var(--cream);
-        }
-
-        .contact-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 70px;
-        }
-
-        .info-box {
-            background: var(--white);
-            padding: 40px;
-            border-radius: 5px;
-            box-shadow: var(--shadow);
-        }
-
-        .info-box h3 {
-            font-size: 1.8rem;
-            margin-bottom: 25px;
-            color: var(--brown-dark);
-            position: relative;
-            padding-bottom: 15px;
-        }
-
-        .info-box h3:after {
-            content: '';
-            position: absolute;
-            width: 50px;
-            height: 2px;
-            background: var(--gold);
-            bottom: 0;
-            left: 0;
-        }
-
-        .info-box p {
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .info-box i {
-            color: var(--gold);
-            width: 20px;
-        }
-
-        .hours-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .hour-item {
-            display: flex;
-            justify-content: space-between;
-            border-bottom: 1px dashed var(--beige-light);
-            padding-bottom: 8px;
-        }
-
-        .map-placeholder {
-            background: var(--beige-light);
-            border-radius: 5px;
-            min-height: 400px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: var(--shadow);
-            overflow: hidden;
-            position: relative;
-        }
-
-        .map-placeholder:before {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(rgba(212, 197, 171, 0.7), rgba(212, 197, 171, 0.7)), 
-                        url('https://images.unsplash.com/photo-1549925862-990e5b9cde42?auto=format&fit=crop&q=80&w=2070') center/cover;
-        }
-
-        .map-placeholder p {
-            position: relative;
-            z-index: 2;
-            color: var(--brown-dark);
-            font-weight: 600;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 15px 30px;
-            border-radius: 5px;
-        }
-
-        /* --- BOOKING MODAL --- */
-        .booking-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(26, 26, 26, 0.9);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.4s ease;
-        }
-
-        .booking-modal.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .booking-form {
-            background: var(--white);
-            width: 90%;
-            max-width: 600px;
-            padding: 50px;
-            border-radius: 5px;
-            position: relative;
-            transform: translateY(-50px);
-            transition: transform 0.4s ease;
-        }
-
-        .booking-modal.active .booking-form {
-            transform: translateY(0);
-        }
-
-        .close-modal {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 1.5rem;
-            color: var(--brown-dark);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .close-modal:hover {
-            color: var(--gold);
-        }
-
-        .booking-form h2 {
-            font-size: 2.5rem;
-            margin-bottom: 30px;
-            text-align: center;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--brown-dark);
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 15px;
-            border: 1px solid var(--beige-light);
-            border-radius: 5px;
-            font-family: 'Montserrat', sans-serif;
-            transition: var(--transition);
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: var(--gold);
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        /* --- FOOTER --- */
-        footer {
-            background: var(--brown-dark);
-            color: var(--white);
-            padding: 100px 10% 40px;
-            text-align: center;
-        }
-
-        .footer-cta {
-            margin-bottom: 60px;
-        }
-
-        .footer-cta h2 {
-            font-size: 3rem;
-            margin-bottom: 25px;
-            color: var(--white);
-        }
-
-        .footer-cta p {
-            max-width: 600px;
-            margin: 0 auto 40px;
-            color: var(--beige-light);
-            font-size: 1.1rem;
-        }
-
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 40px;
-            margin-bottom: 60px;
-            text-align: left;
-        }
-
-        .footer-column h4 {
-            color: var(--gold);
-            font-size: 1.3rem;
-            margin-bottom: 25px;
-            position: relative;
-            padding-bottom: 10px;
-        }
-
-        .footer-column h4:after {
-            content: '';
-            position: absolute;
-            width: 40px;
-            height: 2px;
-            background: var(--gold);
-            bottom: 0;
-            left: 0;
-        }
-
-        .footer-column p,
-        .footer-column a {
-            color: var(--beige-light);
-            margin-bottom: 15px;
-            display: block;
-            text-decoration: none;
-            transition: var(--transition);
-        }
-
-        .footer-column a:hover {
-            color: var(--gold);
-            padding-left: 5px;
-        }
-
-        .social-icons {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .social-icons a {
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: var(--white);
-            transition: var(--transition);
-        }
-
-        .social-icons a:hover {
-            background: var(--gold);
-            transform: translateY(-5px);
-        }
-
-        .copyright {
-            padding-top: 40px;
-            border-top: 1px solid rgba(212, 197, 171, 0.2);
-            color: var(--beige-light);
-            font-size: 0.9rem;
-        }
-
-        /* --- MOBILE RESPONSIVE --- */
-        @media (max-width: 1200px) {
-            section {
-                padding: 80px 5%;
-            }
-            
-            .stats-container {
-                padding: 60px 5%;
-            }
-            
-            nav {
-                padding: 25px 5%;
-            }
-            
-            footer {
-                padding: 80px 5% 30px;
-            }
-        }
-
-        @media (max-width: 992px) {
-            .about-content,
-            .contact-container,
-            .pricing-grid,
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-            
-            .stats-container,
-            .footer-content {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .gallery-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .hero-booking {
-                flex-direction: column;
-                gap: 20px;
-            }
-            
-            #hero h1 {
-                font-size: 3.5rem;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .nav-links {
-                position: fixed;
-                top: 80px;
-                left: 0;
-                width: 100%;
-                background: var(--white);
-                flex-direction: column;
-                align-items: center;
-                padding: 30px 0;
-                box-shadow: var(--shadow);
-                transform: translateY(-100%);
-                opacity: 0;
-                transition: var(--transition);
-                z-index: 999;
-            }
-            
-            .nav-links.active {
-                transform: translateY(0);
-                opacity: 1;
-            }
-            
-            .nav-links li {
-                margin: 15px 0;
-            }
-            
-            .mobile-menu-btn {
-                display: block;
-            }
-            
-            .section-title h2 {
-                font-size: 2.5rem;
-            }
-            
-            #hero h1 {
-                font-size: 2.8rem;
-            }
-            
-            .stat-item h3 {
-                font-size: 2.5rem;
-            }
-            
-            .footer-cta h2 {
-                font-size: 2.2rem;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .stats-container,
-            .footer-content {
-                grid-template-columns: 1fr;
-            }
-            
-            .gallery-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .about-features {
-                grid-template-columns: 1fr;
-            }
-            
-            .booking-form {
-                padding: 30px 20px;
-            }
-            
-            #hero h1 {
-                font-size: 2.2rem;
-            }
-            
-            .section-title h2 {
-                font-size: 2rem;
-            }
         }
     </style>
 </head>
 <body>
+
+    <!-- Top promo bar -->
+    <div class="bg-gold text-charcoal py-2 text-center text-[10px] font-bold tracking-[0.3em] uppercase">
+        First Visit? Use Code "CREAM20" for 20% Off
+    </div>
+
     <!-- Navigation -->
-    <nav id="navbar">
-        <div class="logo"><i class="fas fa-cut"></i> THE GUILD</div>
-        <ul class="nav-links">
-            <li><a href="#hero">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#services">Services</a></li>
-            <li><a href="#barbers">Barbers</a></li>
-            <li><a href="#gallery">Gallery</a></li>
-            <li><a href="#faq">FAQ</a></li>
-            <li><a href="#contact">Contact</a></li>
-        </ul>
-        <a href="#" class="btn btn-gold book-btn">Book Now</a>
-        <div class="mobile-menu-btn"><i class="fas fa-bars"></i></div>
+    <nav class="sticky top-0 z-[100] bg-white/80 backdrop-blur-md px-6 py-4 border-b border-soft-gray flex justify-between items-center">
+        <div class="flex items-center gap-2">
+            <div class="w-10 h-10 bg-charcoal rounded-lg flex items-center justify-center text-white"><i data-lucide="scissors"></i></div>
+            <span class="serif text-xl">CREAM</span>
+        </div>
+        <div class="hidden lg:flex gap-8 text-xs font-bold uppercase tracking-widest">
+            <a href="#services">Services</a>
+            <a href="#films">Gallery</a>
+            <a href="#reviews">Reviews</a>
+        </div>
+        <div class="flex items-center gap-4">
+            <a href="#booking" class="bg-charcoal text-white px-6 py-2.5 rounded-full text-xs font-bold hover:bg-gray-800">BOOK NOW</a>
+            <button class="lg:hidden"><i data-lucide="menu"></i></button>
+        </div>
     </nav>
 
     <!-- Hero Section -->
-    <header id="hero">
-        <div class="hero-bg"></div>
-        <div class="hero-content">
-            <h1>Refining the Modern Gentleman</h1>
-            <p>Experience the art of grooming in an atmosphere of timeless sophistication. Where tradition meets modern excellence.</p>
-            <div class="hero-booking">
-                <a href="#" class="btn btn-gold book-btn">Schedule Appointment</a>
-                <a href="#barbers" class="btn">Meet Our Barbers</a>
+    <section class="relative min-h-screen flex items-center px-6 overflow-hidden">
+        <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
+            <div class="reveal">
+                <h1 class="serif text-6xl md:text-8xl leading-none mb-6">
+                    The Art of <br>
+                    <span class="italic text-gold">The Blade.</span>
+                </h1>
+                <p class="text-lg text-charcoal/60 mb-8 max-w-md">
+                    Premium grooming in a serene, creamy studio environment. Precision meets tranquility.
+                </p>
+                <div class="flex gap-4">
+                    <button class="bg-charcoal text-white px-8 py-4 rounded-2xl font-bold shadow-lg">VIEW MENU</button>
+                    <button class="border-2 border-charcoal px-8 py-4 rounded-2xl font-bold">OUR STORY</button>
+                </div>
+            </div>
+            <div class="relative reveal">
+                <svg viewBox="0 0 500 400" class="w-full drop-shadow-2xl">
+                    <rect x="50" y="100" width="400" height="250" rx="20" fill="#333333"/>
+                    <rect x="100" y="150" width="120" height="150" rx="10" fill="#fdfaf6" fill-opacity="0.1"/>
+                    <rect x="280" y="150" width="120" height="150" rx="10" fill="#fdfaf6" fill-opacity="0.1"/>
+                    <path d="M30 110L250 20L470 110" stroke="#333333" stroke-width="8" fill="none"/>
+                    <circle cx="250" cy="220" r="40" fill="#fdfaf6" fill-opacity="0.2"/>
+                    <text x="250" y="230" text-anchor="middle" fill="#fdfaf6" class="serif" font-size="40">C</text>
+                </svg>
             </div>
         </div>
-    </header>
+    </section>
 
-    <!-- Stats Section -->
-    <div class="stats-container">
-        <div class="stat-item">
-            <h3 class="counter" data-target="15">0</h3>
-            <p>Years Experience</p>
-        </div>
-        <div class="stat-item">
-            <h3 class="counter" data-target="12">0</h3>
-            <p>Master Barbers</p>
-        </div>
-        <div class="stat-item">
-            <h3 class="counter" data-target="1500">0</h3>
-            <p>Happy Clients</p>
-        </div>
-        <div class="stat-item">
-            <h3 class="counter" data-target="98">0</h3>
-            <p>% Satisfaction</p>
-        </div>
+    <!-- Wave Separator -->
+    <div class="wave-container">
+        <svg viewBox="0 0 1440 120" class="wave-fill bg-cream">
+            <path d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
+        </svg>
     </div>
 
-    <!-- About Section -->
-    <section id="about">
-        <div class="container">
-            <div class="section-title">
-                <h2>Our Heritage</h2>
-                <p>Founded in 2008, The Guild started with a single chair and a vision: to return to the golden era of barbering.</p>
-            </div>
-            <div class="about-content">
-                <div class="about-image">
-                    <img src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&q=80&w=2070" alt="Barbershop interior">
+    <!-- Gallery / Cinematic Films Section -->
+    <section id="films" class="bg-stone py-20 px-6">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="serif text-5xl mb-12 text-center">
+                Cinematic <span class="text-gold italic">Grooming</span>
+            </h2>
+            <div class="grid grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="video-box reveal">
+                    <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=600" alt="Video Placeholder">
                 </div>
-                <div class="about-text">
-                    <h2>Where Tradition Meets Modern Excellence</h2>
-                    <p>We blend traditional straight-razor techniques with modern styling to ensure you leave looking and feeling your absolute best. Our barbers are not just stylists; they are craftsmen who understand the nuances of men's grooming.</p>
-                    <p>Our shop is designed as a sanctuary—a place where gentlemen can unwind, enjoy a premium beverage, and receive unparalleled grooming services in an atmosphere of refined masculinity.</p>
-                    
-                    <div class="about-features">
-                        <div class="feature-item">
-                            <i class="fas fa-award"></i>
-                            <div>
-                                <h4>Award Winning</h4>
-                                <p>Multiple "Best Barbershop" awards</p>
-                            </div>
-                        </div>
-                        <div class="feature-item">
-                            <i class="fas fa-user-tie"></i>
-                            <div>
-                                <h4>Expert Barbers</h4>
-                                <p>Master barbers with 10+ years experience</p>
-                            </div>
-                        </div>
-                        <div class="feature-item">
-                            <i class="fas fa-star"></i>
-                            <div>
-                                <h4>Premium Products</h4>
-                                <p>Only the finest grooming products used</p>
-                            </div>
-                        </div>
-                        <div class="feature-item">
-                            <i class="fas fa-clock"></i>
-                            <div>
-                                <h4>Flexible Hours</h4>
-                                <p>Open late for your convenience</p>
-                            </div>
-                        </div>
-                    </div>
+                <div class="video-box reveal">
+                    <img src="https://images.unsplash.com/photo-1512690196236-d5a743f4f0bb?w=600" alt="Video Placeholder">
+                </div>
+                <div class="video-box reveal">
+                    <img src="https://images.unsplash.com/photo-1621605815841-aa89780b67d2?w=600" alt="Video Placeholder">
+                </div>
+                <div class="video-box reveal">
+                    <img src="https://images.unsplash.com/photo-1593702275677-f916c8c98ca7?w=600" alt="Video Placeholder">
+                </div>
+                <div class="video-box reveal">
+                    <img src="https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?w=600" alt="Video Placeholder">
+                </div>
+                <div class="video-box reveal">
+                    <img src="https://images.unsplash.com/photo-1599351431247-f50940243edc?w=600" alt="Video Placeholder">
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Services Section -->
-    <section id="services">
-        <div class="container">
-            <div class="section-title">
-                <h2>Services & Pricing</h2>
-                <p>We offer a complete range of grooming services tailored to the modern gentleman.</p>
+    <section id="services" class="py-24 px-6 bg-cream relative">
+        <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-20">
+            <div class="reveal">
+                <h2 class="serif text-6xl mb-12">Our Menu.</h2>
+                <div class="space-y-10">
+                    <div class="flex justify-between items-center border-b border-soft-gray pb-4 hover-lift">
+                        <div>
+                            <h4 class="font-bold text-xl uppercase">The Cream Fade</h4>
+                            <p class="text-sm opacity-60">Consultation, Wash & Signature Cut</p>
+                        </div>
+                        <span class="serif text-3xl">£50</span>
+                    </div>
+                    <div class="flex justify-between items-center border-b border-soft-gray pb-4 hover-lift">
+                        <div>
+                            <h4 class="font-bold text-xl uppercase">Hot Towel Shave</h4>
+                            <p class="text-sm opacity-60">Straight Razor & Steam Ritual</p>
+                        </div>
+                        <span class="serif text-3xl">£40</span>
+                    </div>
+                    <div class="flex justify-between items-center border-b border-soft-gray pb-4 hover-lift">
+                        <div>
+                            <h4 class="font-bold text-xl uppercase">Beard Sculpt</h4>
+                            <p class="text-sm opacity-60">Architectural shaping & oils</p>
+                        </div>
+                        <span class="serif text-3xl">£30</span>
+                    </div>
+                    <div class="flex justify-between items-center border-b border-soft-gray pb-4 hover-lift">
+                        <div>
+                            <h4 class="font-bold text-xl uppercase">Luxury Scalp Treatment</h4>
+                            <p class="text-sm opacity-60">Invigorating massage & scalp care</p>
+                        </div>
+                        <span class="serif text-3xl">£35</span>
+                    </div>
+                </div>
             </div>
-            <div class="pricing-grid">
-                <div class="price-category">
-                    <h3>Hair Services</h3>
-                    <div class="price-item">
-                        <span>Signature Haircut</span>
-                        <strong>$45</strong>
-                    </div>
-                    <div class="price-item">
-                        <span>Clipper Cut & Fade</span>
-                        <strong>$40</strong>
-                    </div>
-                    <div class="price-item">
-                        <span>Haircut & Shampoo</span>
-                        <strong>$50</strong>
-                    </div>
-                    <div class="price-item">
-                        <span>Young Gentleman (Under 12)</span>
-                        <strong>$35</strong>
-                    </div>
-                </div>
-                <div class="price-category">
-                    <h3>Beard & Shave</h3>
-                    <div class="price-item">
-                        <span>Beard Sculpt & Trim</span>
-                        <strong>$30</strong>
-                    </div>
-                    <div class="price-item">
-                        <span>Hot Towel Straight Shave</span>
-                        <strong>$55</strong>
-                    </div>
-                    <div class="price-item">
-                        <span>The Full Executive (Hair + Shave)</span>
-                        <strong>$90</strong>
-                    </div>
-                    <div class="price-item">
-                        <span>Head Shave & Treatment</span>
-                        <strong>$40</strong>
-                    </div>
-                </div>
+
+            <!-- Booking Form -->
+            <div id="booking" class="bg-white p-10 rounded-[40px] shadow-2xl reveal">
+                <h3 class="serif text-3xl mb-8 text-center">Reserve Your Seat</h3>
+                <form class="space-y-4">
+                    <input type="text" placeholder="Your Name" class="w-full p-5 rounded-2xl bg-stone focus:ring-2 focus:ring-gold outline-none">
+                    <input type="email" placeholder="Email Address" class="w-full p-5 rounded-2xl bg-stone focus:ring-2 focus:ring-gold outline-none">
+                    <select class="w-full p-5 rounded-2xl bg-stone focus:ring-2 focus:ring-gold outline-none">
+                        <option>Select Specialist</option>
+                        <option>Marcus (Founder)</option>
+                        <option>Andre (Master)</option>
+                        <option>Lara (Stylist)</option>
+                    </select>
+                    <button class="w-full bg-charcoal text-white py-5 rounded-2xl font-bold uppercase tracking-widest shadow-lg hover:bg-gray-800">
+                        Confirm Appointment
+                    </button>
+                </form>
             </div>
         </div>
     </section>
 
-    <!-- Barbers Section -->
-    <section id="barbers">
-        <div class="container">
-            <div class="section-title">
-                <h2>Master Barbers</h2>
-                <p>Our team of master barbers brings decades of combined experience and artistry.</p>
+    <!-- Testimonials Section -->
+    <section class="py-24 px-6 bg-stone">
+        <div class="max-w-7xl mx-auto grid lg:grid-cols-3 gap-8">
+            <div class="bg-white p-8 rounded-[30px] text-center hover-lift reveal">
+                <div class="w-24 h-24 rounded-full bg-cream mx-auto mb-6 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400" class="object-cover">
+                </div>
+                <h4 class="serif text-xl">Marcus Oak</h4>
+                <p class="text-xs font-bold text-gold uppercase tracking-widest">Master Barber</p>
             </div>
-            <div class="team-grid">
-                <div class="barber-card">
-                    <div class="barber-img">
-                        <img src="https://images.unsplash.com/photo-1519085115850-39072fd63cc1?auto=format&fit=crop&q=80&w=600" alt="Barber">
-                    </div>
-                    <div class="barber-info">
-                        <h3>Julian Vance</h3>
-                        <p>Founder & Creative Director</p>
-                        <p>Specializing in classic cuts and traditional barbering techniques with 20 years of experience.</p>
-                        <div class="barber-social">
-                            <a href="#"><i class="fab fa-instagram"></i></a>
-                            <a href="#"><i class="fab fa-twitter"></i></a>
-                            <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        </div>
-                    </div>
+            <div class="lg:col-span-2 bg-charcoal text-white p-12 rounded-[40px] flex flex-col justify-center reveal">
+                <div class="flex text-gold mb-6">
+                    <i data-lucide="star" class="fill-current w-5"></i>
+                    <i data-lucide="star" class="fill-current w-5"></i>
+                    <i data-lucide="star" class="fill-current w-5"></i>
+                    <i data-lucide="star" class="fill-current w-5"></i>
+                    <i data-lucide="star" class="fill-current w-5"></i>
                 </div>
-                <div class="barber-card">
-                    <div class="barber-img">
-                        <img src="https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&q=80&w=600" alt="Barber">
-                    </div>
-                    <div class="barber-info">
-                        <h3>Marcus Thorne</h3>
-                        <p>Beard Specialist</p>
-                        <p>Beard grooming expert with an eye for detail and mastery of shaping and maintenance.</p>
-                        <div class="barber-social">
-                            <a href="#"><i class="fab fa-instagram"></i></a>
-                            <a href="#"><i class="fab fa-twitter"></i></a>
-                            <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        </div>
-                    </div>
-                </div>
-                <div class="barber-card">
-                    <div class="barber-img">
-                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=600" alt="Barber">
-                    </div>
-                    <div class="barber-info">
-                        <h3>Elias Reed</h3>
-                        <p>Traditional Shave Expert</p>
-                        <p>Master of the straight razor with extensive training in traditional wet shaving techniques.</p>
-                        <div class="barber-social">
-                            <a href="#"><i class="fab fa-instagram"></i></a>
-                            <a href="#"><i class="fab fa-twitter"></i></a>
-                            <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        </div>
-                    </div>
-                </div>
+                <p class="serif text-2xl italic leading-relaxed">
+                    "The most meticulous skin fade I've ever received. The creamy studio vibe is incredibly relaxing. A flawless experience every time."
+                </p>
+                <span class="mt-6 font-bold uppercase tracking-widest text-gold">— James Henderson</span>
             </div>
         </div>
     </section>
 
-    <!-- Gallery Section -->
-    <section id="gallery">
-        <div class="container">
-            <div class="section-title">
-                <h2>The Craft</h2>
-                <p>Step inside our world of precision, tradition, and masculine elegance.</p>
+    <!-- Before/After Slider Section -->
+    <section class="py-24 px-6 bg-cream">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="serif text-4xl text-center mb-16">
+                Transformative <span class="text-gold italic">Shifts</span>
+            </h2>
+            <div class="ba-container reveal" id="baSlider">
+                <img src="https://images.unsplash.com/photo-1599351431247-f50940243edc?w=1200" class="absolute inset-0 w-full h-full object-cover grayscale">
+                <img src="https://images.unsplash.com/photo-1621605815841-aa89780b67d2?w=1200" class="absolute inset-0 w-full h-full object-cover ba-after">
             </div>
-            <div class="gallery-grid">
-                <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&q=80&w=400" alt="Work">
-                    <div class="gallery-overlay">
-                        <i class="fas fa-search-plus"></i>
-                    </div>
-                </div>
-                <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1621605815976-6c8b8c8c8c8c?auto=format&fit=crop&q=80&w=400" alt="Work">
-                    <div class="gallery-overlay">
-                        <i class="fas fa-search-plus"></i>
-                    </div>
-                </div>
-                <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1593702275677-f916c6c7b0a0?auto=format&fit=crop&q=80&w=400" alt="Work">
-                    <div class="gallery-overlay">
-                        <i class="fas fa-search-plus"></i>
-                    </div>
-                </div>
-                <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1512690118275-1aa3c24176e6?auto=format&fit=crop&q=80&w=400" alt="Work">
-                    <div class="gallery-overlay">
-                        <i class="fas fa-search-plus"></i>
-                    </div>
-                </div>
-            </div>
+            <p class="text-center mt-6 text-charcoal/70 text-sm">Slide over the image to see the transformation in detail.</p>
         </div>
     </section>
 
-    <!-- FAQ Section -->
-    <section id="faq">
-        <div class="container">
-            <div class="section-title">
-                <h2>Frequently Asked</h2>
-                <p>Find answers to common questions about our services and policies.</p>
-            </div>
-            <div class="faq-container">
-                <div class="faq-item">
-                    <div class="faq-question">
-                        Do I need an appointment?
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="faq-answer">
-                        <div class="faq-answer-content">
-                            <p>While we welcome walk-ins, we highly recommend booking in advance to ensure you get your preferred time and barber. You can book online through our website or by calling us directly.</p>
-                        </div>
-                    </div>
+    <!-- Studio Info & Map Section -->
+    <section class="grid lg:grid-cols-2 gap-0 border-y border-soft-gray reveal">
+        <!-- Studio Info -->
+        <div class="p-20 bg-cream">
+            <h2 class="serif text-5xl mb-12">The Studio</h2>
+            <div class="grid grid-cols-2 gap-10">
+                <div>
+                    <h5 class="text-xs font-bold uppercase tracking-[0.3em] text-gold mb-4">Location</h5>
+                    <p class="text-lg">
+                        88 Cream Lane<br>
+                        Kensington, London
+                    </p>
                 </div>
-                <div class="faq-item">
-                    <div class="faq-question">
-                        What products do you use?
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="faq-answer">
-                        <div class="faq-answer-content">
-                            <p>We exclusively use premium grooming products from Baxter of California, Layrite, and other high-end brands that we trust for their quality and results. All products are available for purchase in our shop.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <div class="faq-question">
-                        Is there parking available?
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="faq-answer">
-                        <div class="faq-answer-content">
-                            <p>Yes, we offer complimentary valet parking for all our clients at the rear entrance. Street parking is also available nearby with metered spots.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <div class="faq-question">
-                        What is your cancellation policy?
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="faq-answer">
-                        <div class="faq-answer-content">
-                            <p>We require at least 24 hours notice for cancellations or rescheduling. Late cancellations may be subject to a 50% service charge. We understand emergencies happen and will work with you on a case-by-case basis.</p>
-                        </div>
-                    </div>
+                <div>
+                    <h5 class="text-xs font-bold uppercase tracking-[0.3em] text-gold mb-4">Hours</h5>
+                    <p class="text-sm">
+                        Tue-Fri: 10am - 8pm<br>
+                        Sat: 9am - 6pm
+                    </p>
                 </div>
             </div>
+        </div>
+        <!-- Map Embed -->
+        <div class="h-[500px] bg-stone grayscale hover:grayscale-0 transition-all duration-1000">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1982.123456789!2d-0.189!3d51.501!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x487604b5c6d5c123%3A0x123456789abcdef!2sKensington%20Barbershop!5e0!3m2!1sen!2suk!4v1671234567890!5m2!1sen!2suk" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
         </div>
     </section>
 
-    <!-- Contact Section -->
-    <section id="contact">
-        <div class="container">
-            <div class="section-title">
-                <h2>Visit Our Shop</h2>
-                <p>Come experience premium grooming in our luxurious, masculine environment.</p>
-            </div>
-            <div class="contact-container">
-                <div class="info-box">
-                    <h3>Contact Info</h3>
-                    <p><i class="fas fa-map-marker-alt"></i> 123 Luxury Avenue, London, UK</p>
-                    <p><i class="fas fa-phone"></i> +44 20 7946 0000</p>
-                    <p><i class="fas fa-envelope"></i> hello@theguildbarber.com</p>
-                    
-                    <h3 style="margin-top: 40px;">Hours</h3>
-                    <div class="hours-grid">
-                        <div class="hour-item">
-                            <span>Monday - Friday</span>
-                            <span>09:00 - 20:00</span>
-                        </div>
-                        <div class="hour-item">
-                            <span>Saturday</span>
-                            <span>09:00 - 18:00</span>
-                        </div>
-                        <div class="hour-item">
-                            <span>Sunday</span>
-                            <span>11:00 - 16:00</span>
-                        </div>
-                        <div class="hour-item">
-                            <span>Holidays</span>
-                            <span>By Appointment</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="map-placeholder">
-                    <p><i class="fas fa-map-marked-alt"></i> Google Map Integrated Here</p>
-                </div>
-            </div>
-        </div>
+    <!-- Call-to-Action Section -->
+    <section class="py-20 bg-charcoal text-white text-center px-6 reveal">
+        <h2 class="serif text-5xl mb-8 italic">Ready for an elevation?</h2>
+        <p class="mb-10 opacity-70">Join over 2,500 monthly regulars in The Cream Chair.</p>
+        <button class="bg-gold text-charcoal px-12 py-5 rounded-full font-bold hover:scale-105 transition-transform">
+            JOIN THE CLUB
+        </button>
     </section>
-
-    <!-- Booking Modal -->
-    <div class="booking-modal">
-        <div class="booking-form">
-            <div class="close-modal">&times;</div>
-            <h2>Book Your Appointment</h2>
-            <form id="bookingForm">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="name">Full Name</label>
-                        <input type="text" id="name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="phone">Phone Number</label>
-                        <input type="tel" id="phone" required>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="email">Email Address</label>
-                        <input type="email" id="email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="date">Preferred Date</label>
-                        <input type="date" id="date" required>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="service">Service</label>
-                        <select id="service" required>
-                            <option value="">Select a service</option>
-                            <option value="haircut">Signature Haircut - $45</option>
-                            <option value="beard">Beard Sculpt & Trim - $30</option>
-                            <option value="shave">Hot Towel Straight Shave - $55</option>
-                            <option value="executive">The Full Executive - $90</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="barber">Preferred Barber</label>
-                        <select id="barber">
-                            <option value="any">Any Available Barber</option>
-                            <option value="julian">Julian Vance</option>
-                            <option value="marcus">Marcus Thorne</option>
-                            <option value="elias">Elias Reed</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="message">Special Requests</label>
-                    <textarea id="message" rows="4"></textarea>
-                </div>
-                <button type="submit" class="btn btn-gold" style="width: 100%; margin-top: 20px;">Book Appointment</button>
-            </form>
-        </div>
-    </div>
 
     <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-cta">
-                <h2>Ready for a change?</h2>
-                <p>Book your appointment today and experience grooming elevated to an art form.</p>
-                <a href="#" class="btn btn-gold book-btn">Book Your Chair Now</a>
+    <footer class="py-20 px-6 bg-cream text-center mb-16">
+        <div class="serif text-4xl mb-6">CREAM CHAIR</div>
+        <div class="flex justify-center gap-8 text-[10px] font-bold uppercase tracking-[0.4em] opacity-40 mb-10">
+            <a href="#">Privacy</a>
+            <a href="#">Careers</a>
+            <a href="#">Terms</a>
+        </div>
+        <div class="flex justify-center gap-4 mb-10">
+            <div class="w-12 h-12 rounded-full border border-soft-gray flex items-center justify-center">
+                <i data-lucide="instagram"></i>
             </div>
-            
-            <div class="footer-content">
-                <div class="footer-column">
-                    <h4>THE GUILD</h4>
-                    <p>Premium grooming for the modern gentleman. Where tradition meets contemporary style and sophistication.</p>
-                    <div class="social-icons">
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-tiktok"></i></a>
-                    </div>
-                </div>
-                <div class="footer-column">
-                    <h4>Quick Links</h4>
-                    <a href="#about">About Us</a>
-                    <a href="#services">Services</a>
-                    <a href="#barbers">Our Barbers</a>
-                    <a href="#gallery">Gallery</a>
-                    <a href="#contact">Contact</a>
-                </div>
-                <div class="footer-column">
-                    <h4>Services</h4>
-                    <a href="#services">Haircut & Styling</a>
-                    <a href="#services">Beard Grooming</a>
-                    <a href="#services">Traditional Shaves</a>
-                    <a href="#services">Grooming Products</a>
-                    <a href="#services">Membership</a>
-                </div>
-                <div class="footer-column">
-                    <h4>Contact Us</h4>
-                    <p><i class="fas fa-map-marker-alt"></i> 123 Luxury Avenue, London, UK</p>
-                    <p><i class="fas fa-phone"></i> +44 20 7946 0000</p>
-                    <p><i class="fas fa-envelope"></i> hello@theguildbarber.com</p>
-                </div>
+            <div class="w-12 h-12 rounded-full border border-soft-gray flex items-center justify-center">
+                <i data-lucide="facebook"></i>
             </div>
-            
-            <div class="copyright">
-                <p>&copy; 2023 THE GUILD BARBER SHOP. ALL RIGHTS RESERVED. | Designed with excellence</p>
+            <div class="w-12 h-12 rounded-full border border-soft-gray flex items-center justify-center">
+                <i data-lucide="twitter"></i>
             </div>
         </div>
+        <p class="text-[9px] font-bold tracking-[0.6em] opacity-20 uppercase">
+            © 2026 THE CREAM CHAIR STUDIOS
+        </p>
     </footer>
 
+    <!-- Scroll to Top Button -->
+    <button onclick="window.scrollTo({top:0, behavior:'smooth'})" class="fixed bottom-24 right-6 w-12 h-12 bg-charcoal text-white rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition-transform">
+        <i data-lucide="arrow-up"></i>
+    </button>
+
+    <!-- Mobile Action Bar -->
+    <div class="mobile-action-bar lg:hidden shadow-[0_-5px_15px_rgba(0,0,0,0.05)]">
+        <a href="tel:000" class="flex flex-col items-center gap-1 text-charcoal">
+            <i data-lucide="phone" class="w-5"></i>
+            <span class="text-[8px] font-bold uppercase">Call</span>
+        </a>
+        <a href="https://wa.me/000" class="flex flex-col items-center gap-1 text-charcoal">
+            <i data-lucide="message-circle" class="w-5"></i>
+            <span class="text-[8px] font-bold uppercase">WhatsApp</span>
+        </a>
+        <a href="mailto:hello@creamchair.com" class="flex flex-col items-center gap-1 text-charcoal">
+            <i data-lucide="mail" class="w-5"></i>
+            <span class="text-[8px] font-bold uppercase">Email</span>
+        </a>
+    </div>
+
+    <!-- JS Scripts -->
     <script>
-        // Mobile Menu Toggle
-        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-        const navLinks = document.querySelector('.nav-links');
-        
-        mobileMenuBtn.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-            mobileMenuBtn.innerHTML = navLinks.classList.contains('active') 
-                ? '<i class="fas fa-times"></i>' 
-                : '<i class="fas fa-bars"></i>';
-        });
+        // Initialize Lucide icons
+        lucide.createIcons();
 
-        // Close mobile menu when clicking a link
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', () => {
-                navLinks.classList.remove('active');
-                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+        // Scroll Reveal
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('active');
             });
-        });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-        // Sticky Header & Scroll Reveal
-        window.addEventListener('scroll', () => {
-            const nav = document.querySelector('nav');
-            nav.classList.toggle('sticky', window.scrollY > 50);
-
-            // Reveal sections on scroll
-            const sections = document.querySelectorAll('section');
-            sections.forEach(section => {
-                const sectionTop = section.getBoundingClientRect().top;
-                if (sectionTop < window.innerHeight - 100) {
-                    section.classList.add('reveal');
-                }
-            });
-
-            // Start Counter when in view
-            handleCounters();
+        // Before/After Slider Logic
+        const baSlider = document.getElementById('baSlider');
+        const afterImg = baSlider.querySelector('.ba-after');
+        baSlider.addEventListener('mousemove', (e) => {
+            const rect = baSlider.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
+            afterImg.style.clipPath = `inset(0 0 0 ${x}%)`;
         });
-
-        // FAQ Accordion Toggle
-        document.querySelectorAll('.faq-question').forEach(question => {
-            question.addEventListener('click', () => {
-                const item = question.parentElement;
-                
-                // Close other open items
-                document.querySelectorAll('.faq-item').forEach(otherItem => {
-                    if (otherItem !== item && otherItem.classList.contains('active')) {
-                        otherItem.classList.remove('active');
-                    }
-                });
-                
-                // Toggle current item
-                item.classList.toggle('active');
-            });
-        });
-
-        // Booking Modal
-        const bookBtns = document.querySelectorAll('.book-btn');
-        const bookingModal = document.querySelector('.booking-modal');
-        const closeModal = document.querySelector('.close-modal');
-        
-        bookBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                bookingModal.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            });
-        });
-        
-        closeModal.addEventListener('click', () => {
-            bookingModal.classList.remove('active');
-            document.body.style.overflow = 'auto';
-        });
-        
-        // Close modal when clicking outside
-        bookingModal.addEventListener('click', (e) => {
-            if (e.target === bookingModal) {
-                bookingModal.classList.remove('active');
-                document.body.style.overflow = 'auto';
-            }
-        });
-        
-        // Form Submission
-        document.getElementById('bookingForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            alert('Thank you for your booking request! We will contact you shortly to confirm your appointment.');
-            bookingModal.classList.remove('active');
-            document.body.style.overflow = 'auto';
-            document.getElementById('bookingForm').reset();
-        });
-
-        // Animated Counter Logic
-        let countersStarted = false;
-        function handleCounters() {
-            const statsSection = document.querySelector('.stats-container');
-            const rect = statsSection.getBoundingClientRect();
-            
-            if (rect.top < window.innerHeight && !countersStarted) {
-                countersStarted = true;
-                const counters = document.querySelectorAll('.counter');
-                counters.forEach(counter => {
-                    const target = +counter.getAttribute('data-target');
-                    const increment = target / 100;
-                    let current = 0;
-                    
-                    const updateCount = () => {
-                        if (current < target) {
-                            current += increment;
-                            counter.innerText = Math.ceil(current);
-                            setTimeout(updateCount, 20);
-                        } else {
-                            counter.innerText = target + (target === 98 ? '%' : target > 50 ? '+' : '');
-                        }
-                    };
-                    
-                    updateCount();
-                });
-            }
-        }
-
-        // Trigger initial reveal for sections in view
-        window.dispatchEvent(new Event('scroll'));
-        
-        // Set minimum date for booking form to today
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('date').setAttribute('min', today);
     </script>
 </body>
 </html>
