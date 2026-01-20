@@ -3,216 +3,238 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VINTAGE STEEL | Premium Grooming Atelier</title>
+    <title>THE ATELIER | Premium Barbering</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&family=Playfair+Display:ital,wght@0,900;1,900&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --cream: #FDFBF0;
-            --retro-orange: #D97706;
-            --charcoal: #1C1C1C;
-            --paper: #F3EFE0;
+            --bg-cream: #f8f6f2;
+            --accent-tan: #b38a5f;
+            --deep-black: #121212;
+            --glass-white: rgba(255, 255, 255, 0.85);
         }
-        body { font-family: 'Space Grotesk', sans-serif; background-color: var(--cream); color: var(--charcoal); }
-        .retro-title { font-family: 'Abril Fatface', serif; }
+        body { font-family: 'Outfit', sans-serif; background-color: var(--bg-cream); color: var(--deep-black); overflow-x: hidden; }
+        .serif { font-family: 'Playfair Display', serif; }
         
-        /* 19. Reveal Animations */
-        .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s ease-out; }
-        .reveal.active { opacity: 1; transform: translateY(0); }
+        /* Smooth Scroll Setup */
+        html { scroll-behavior: smooth; }
 
-        /* 4. Video Grid */
-        .video-reel { position: relative; border-radius: 4px; overflow: hidden; aspect-ratio: 1/1; background: #000; border: 4px solid var(--charcoal); }
-        .video-reel video, .video-reel img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; filter: sepia(0.3); }
+        /* Hero Image/Video Overlay */
+        .hero-mask { 
+            background: linear-gradient(to right, rgba(248, 246, 242, 1) 40%, rgba(248, 246, 242, 0) 100%);
+        }
 
-        /* 9. Before/After */
-        .ba-container { position: relative; height: 450px; border: 10px solid var(--charcoal); overflow: hidden; cursor: ew-resize; }
+        /* 19. Scroll Animations */
+        .reveal { opacity: 0; transform: translateY(40px); transition: all 1s ease-out; }
+        
+        /* 4. 6-Video Grid Styling */
+        .video-card { position: relative; border-radius: 20px; overflow: hidden; aspect-ratio: 4/5; cursor: pointer; border: 1px solid rgba(0,0,0,0.05); }
+        .video-card img, .video-card video { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.2, 0, 0.2, 1); }
+        .video-card:hover img { transform: scale(1.08); }
+
+        /* 9. Before/After Slider */
+        .ba-slider { position: relative; width: 100%; height: 500px; border-radius: 30px; overflow: hidden; border: 8px solid white; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
         .ba-after { clip-path: inset(0 0 0 50%); }
 
-        /* 14, 15. Mobile Sticky Bar */
-        .mobile-bar { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; background: var(--charcoal); border-radius: 12px; display: flex; justify-content: space-around; padding: 15px; z-index: 1000; border-top: 4px solid var(--retro-orange); }
+        /* 14, 15. Static Mobile Bottom Bar */
+        .mobile-action-bar {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            width: 92%; max-width: 400px; background: var(--deep-black);
+            border-radius: 100px; display: flex; justify-content: space-around;
+            padding: 14px; z-index: 1000; box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        }
 
-        /* 23. Zig-Zag Separator */
-        .zigzag { height: 20px; background-color: var(--charcoal); clip-path: polygon(0 0, 5% 100%, 10% 0, 15% 100%, 20% 0, 25% 100%, 30% 0, 35% 100%, 40% 0, 45% 100%, 50% 0, 55% 100%, 60% 0, 65% 100%, 70% 0, 75% 100%, 80% 0, 85% 100%, 90% 0, 95% 100%, 100% 0); }
+        /* Pricing Card Glassmorphism */
+        .pricing-card { background: white; border-radius: 24px; transition: all 0.3s ease; border: 1px solid #eee; }
+        .pricing-card:hover { transform: translateY(-10px); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1); }
     </style>
 </head>
 <body>
 
-    <div class="bg-amber-600 text-white py-2 text-center text-[10px] font-bold tracking-[0.4em] uppercase">
-        EST. 1926 — THE ORIGINAL MAYFAIR TRADITION — BOOK THE CHAIR
-    </div>
-
-    <nav class="sticky top-0 z-[100] bg-[#FDFBF0]/90 backdrop-blur-md px-8 py-4 flex justify-between items-center border-b-4 border-black">
-        <div class="flex items-center gap-3">
-            <div class="w-12 h-12 bg-black flex items-center justify-center rounded-sm rotate-3 shadow-lg">
-                <i data-lucide="scissors" class="text-amber-500 w-6"></i>
-            </div>
-            <span class="retro-title text-3xl tracking-tight">VINTAGE STEEL</span>
+    <nav class="fixed top-0 w-full z-50 bg-[#f8f6f2]/90 backdrop-blur-md px-6 py-4 flex justify-between items-center border-b border-black/5">
+        <div class="flex items-center gap-2">
+            <i data-lucide="menu" class="w-6 cursor-pointer lg:hidden"></i>
+            <span class="serif text-xl font-black tracking-tight uppercase">THE CUT & CO.</span>
         </div>
-        <div class="hidden lg:flex gap-10 text-xs font-black uppercase tracking-tighter">
-            <a href="#services" class="hover:text-amber-600">Services</a>
-            <a href="#films" class="hover:text-amber-600">The Archives</a>
-            <a href="#booking" class="hover:text-amber-600">Reserve</a>
-        </div>
-        <a href="#booking" class="bg-black text-white px-8 py-3 font-bold uppercase text-xs tracking-widest hover:bg-amber-600 transition-all">Book Now</a>
+        <a href="#booking" class="bg-black text-white px-8 py-3 rounded-xl text-[10px] font-bold tracking-widest hover:bg-neutral-800 transition-all">BOOK NOW</a>
     </nav>
 
-    <section class="relative min-h-screen flex items-center px-8 pt-12 overflow-hidden">
-        <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
+    <section class="relative min-h-screen flex items-center pt-20 px-6 overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1512690196236-d5a743f4f0bb?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover grayscale-[0.3]" alt="Premium Shopfront">
+            <div class="absolute inset-0 hero-mask"></div>
+        </div>
+
+        <div class="container mx-auto relative z-10 grid lg:grid-cols-2">
             <div class="reveal">
-                <h1 class="retro-title text-7xl md:text-9xl leading-[0.85] mb-6">Master <br><span class="text-amber-600 italic">Your Form.</span></h1>
-                <p class="text-xl font-medium max-w-md mb-10 leading-snug">Traditional precision for the modern gentleman. We don't just cut hair; we sculpt legacies.</p>
-                <div class="flex gap-4">
-                    <button class="bg-black text-white w-16 h-16 flex items-center justify-center rounded-full"><i data-lucide="play" class="fill-current"></i></button>
-                    <span class="text-xs font-black uppercase tracking-widest flex items-center">Watch The 2026 Film</span>
+                <h1 class="serif text-7xl md:text-9xl leading-[0.85] mb-8 font-black">MASTER <br><span class="text-[#b38a5f] italic">YOUR LOOK.</span></h1>
+                <p class="text-xl text-neutral-600 max-w-md mb-10 leading-relaxed font-light">Precision cuts, elevated style, and the finest grooming rituals in the heart of the city.</p>
+                <div class="flex gap-4 items-center">
+                    <a href="#booking" class="bg-[#b38a5f] text-white px-10 py-5 rounded-2xl font-bold shadow-xl hover:scale-105 transition-transform">Book Your Transformation</a>
                 </div>
-            </div>
-            <div class="reveal relative p-6 bg-amber-50 rounded-lg border-2 border-black/10">
-                <svg viewBox="0 0 500 400" class="w-full drop-shadow-2xl">
-                    <rect x="50" y="50" width="400" height="300" fill="#1C1C1C"/>
-                    <rect x="70" y="70" width="100" height="200" fill="#FDFBF0" fill-opacity="0.1"/>
-                    <rect x="330" y="70" width="100" height="200" fill="#FDFBF0" fill-opacity="0.1"/>
-                    <rect x="180" y="70" width="140" height="260" fill="#D97706"/>
-                    <rect x="235" y="240" width="30" height="10" fill="black" opacity="0.5"/>
-                    <text x="250" y="40" text-anchor="middle" font-family="Abril Fatface" font-size="28" fill="#D97706">STEEL & CO.</text>
-                    <path d="M50 50 L250 -20 L450 50" stroke="#1C1C1C" stroke-width="10" fill="none"/>
-                </svg>
             </div>
         </div>
     </section>
 
-    <div class="zigzag"></div>
+    <div class="bg-[#f8f6f2] relative -mt-1">
+        <svg viewBox="0 0 1440 120" class="fill-[#f8f6f2]"><path d="M0,64L80,58.7C160,53,320,43,480,48C640,53,800,75,960,80C1120,85,1280,75,1360,69.3L1440,64L1440,0L1360,0C1280,0,1120,0,960,0C800,0,640,0,480,0C320,0,160,0,80,0L0,0Z"></path></svg>
+    </div>
 
-    <section id="films" class="py-24 bg-black px-8">
+    <section class="py-24 px-6">
         <div class="max-w-7xl mx-auto">
-            <h2 class="retro-title text-white text-5xl mb-16 text-center">The <span class="text-amber-500 italic">Motion Archives</span></h2>
-            <div class="grid grid-cols-2 lg:grid-cols-6 gap-4">
-                <div class="video-reel reveal"><img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=400"></div>
-                <div class="video-reel reveal" style="transition-delay: 100ms;"><img src="https://images.unsplash.com/photo-1512690196236-d5a743f4f0bb?w=400"></div>
-                <div class="video-reel reveal" style="transition-delay: 200ms;"><img src="https://images.unsplash.com/photo-1621605815841-aa89780b67d2?w=400"></div>
-                <div class="video-reel reveal" style="transition-delay: 300ms;"><img src="https://images.unsplash.com/photo-1593702275677-f916c8c98ca7?w=400"></div>
-                <div class="video-reel reveal" style="transition-delay: 400ms;"><img src="https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?w=400"></div>
-                <div class="video-reel reveal" style="transition-delay: 500ms;"><img src="https://images.unsplash.com/photo-1599351431247-f50940243edc?w=400"></div>
+            <div class="flex justify-between items-end mb-12">
+                <h2 class="serif text-5xl">Our <span class="italic text-[#b38a5f]">Craft</span></h2>
+                <span class="text-xs font-bold tracking-widest text-neutral-400 uppercase">Gallery 2026</span>
+            </div>
+            <div class="grid grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="video-card reveal"><img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=600"><div class="absolute bottom-4 left-4 text-white text-[10px] font-bold px-3 py-1 bg-black/50 rounded-full">DB01</div></div>
+                <div class="video-card reveal" style="transition-delay: 100ms;"><img src="https://images.unsplash.com/photo-1621605815841-aa89780b67d2?w=600"><div class="absolute bottom-4 left-4 text-white text-[10px] font-bold px-3 py-1 bg-black/50 rounded-full">DB02</div></div>
+                <div class="video-card reveal" style="transition-delay: 200ms;"><img src="https://images.unsplash.com/photo-1593702275677-f916c8c98ca7?w=600"><div class="absolute bottom-4 left-4 text-white text-[10px] font-bold px-3 py-1 bg-black/50 rounded-full">DB03</div></div>
+                <div class="video-card reveal"><img src="https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?w=600"><div class="absolute bottom-4 left-4 text-white text-[10px] font-bold px-3 py-1 bg-black/50 rounded-full">DB04</div></div>
+                <div class="video-card reveal" style="transition-delay: 100ms;"><img src="https://images.unsplash.com/photo-1599351431247-f50940243edc?w=600"><div class="absolute bottom-4 left-4 text-white text-[10px] font-bold px-3 py-1 bg-black/50 rounded-full">DB05</div></div>
+                <div class="video-card reveal" style="transition-delay: 200ms;"><img src="https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=600"><div class="absolute bottom-4 left-4 text-white text-[10px] font-bold px-3 py-1 bg-black/50 rounded-full">DB06</div></div>
             </div>
         </div>
     </section>
 
-    <section id="services" class="py-24 px-8 bg-[#F3EFE0]">
-        <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-20">
-            <div id="booking" class="bg-white border-4 border-black p-10 reveal">
-                <h3 class="retro-title text-4xl mb-8">Take The Seat</h3>
-                <form class="space-y-6">
-                    <div class="grid grid-cols-2 gap-4">
-                        <input type="text" placeholder="Full Name" class="border-2 border-black p-4 outline-none">
-                        <input type="text" placeholder="Phone" class="border-2 border-black p-4 outline-none">
-                    </div>
-                    <select class="w-full border-2 border-black p-4 outline-none">
-                        <option>Choose Specialist</option>
-                        <option>Marcus Oak (Master)</option>
-                    </select>
-                    <div class="h-40 bg-stone-200 border-2 border-black grayscale">
-                         <iframe src="https://www.google.com/maps/embed?..." width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-                    </div>
-                    <button class="w-full bg-black text-white py-5 font-black uppercase tracking-widest hover:bg-amber-600 transition-colors">Confirm Schedule</button>
-                </form>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4 reveal">
-                <div class="border-2 border-black/10 bg-white p-8 flex flex-col items-center text-center">
-                    <i data-lucide="scissors" class="text-amber-600 mb-4"></i>
-                    <h4 class="font-bold text-lg mb-2">Signature Fade</h4>
-                    <span class="text-2xl retro-title">£45.00</span>
-                </div>
-                <div class="border-2 border-black/10 bg-white p-8 flex flex-col items-center text-center">
-                    <i data-lucide="flame" class="text-amber-600 mb-4"></i>
-                    <h4 class="font-bold text-lg mb-2">Hot Shave</h4>
-                    <span class="text-2xl retro-title">£35.00</span>
-                </div>
-                <div class="col-span-2 border-2 border-black bg-white p-8">
-                    <div class="flex gap-4 items-center mb-4">
-                        <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center font-bold">JD</div>
-                        <div class="flex text-amber-500"><i data-lucide="star" class="w-3 fill-current"></i><i data-lucide="star" class="w-3 fill-current"></i><i data-lucide="star" class="w-3 fill-current"></i><i data-lucide="star" class="w-3 fill-current"></i><i data-lucide="star" class="w-3 fill-current"></i></div>
-                    </div>
-                    <p class="text-sm font-medium italic">"Best atmosphere in London. Authentic, sharp, and the bourbon selection is second to none."</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="py-24 px-8 bg-black overflow-hidden">
-        <div class="max-w-4xl mx-auto">
-            <h2 class="retro-title text-white text-5xl text-center mb-16 italic">The Transformation</h2>
-            <div class="ba-container reveal shadow-2xl" id="baSlider">
-                <img src="https://images.unsplash.com/photo-1599351431247-f50940243edc?w=1200" class="absolute inset-0 w-full h-full object-cover grayscale">
-                <img src="https://images.unsplash.com/photo-1621605815841-aa89780b67d2?w=1200" class="absolute inset-0 w-full h-full object-cover ba-after">
-            </div>
-        </div>
-    </section>
-
-    <section class="py-24 px-8 bg-[#FDFBF0]">
-        <div class="max-w-7xl mx-auto grid md:grid-cols-3 gap-16">
+    <section class="py-24 px-6 bg-white">
+        <div class="max-w-6xl mx-auto grid md:grid-cols-3 gap-12">
             <div class="text-center reveal">
-                <div class="w-44 h-44 border-8 border-black rounded-full flex flex-col items-center justify-center mx-auto mb-6 bg-white shadow-[8px_8px_0px_#D97706]">
-                    <span class="retro-title text-4xl">10K+</span>
+                <div class="w-48 h-48 border-[12px] border-[#b38a5f]/20 rounded-full flex flex-col items-center justify-center mx-auto mb-6">
+                    <span class="text-4xl font-black">10K+</span>
+                    <span class="text-[10px] uppercase tracking-widest opacity-50 font-bold">Happy Clients</span>
                 </div>
-                <p class="text-[10px] font-black uppercase tracking-[0.4em]">Happy Clients</p>
             </div>
             <div class="text-center reveal" style="transition-delay: 100ms;">
-                <div class="w-44 h-44 border-8 border-black rounded-full flex flex-col items-center justify-center mx-auto mb-6 bg-white shadow-[8px_8px_0px_#D97706]">
-                    <span class="retro-title text-4xl">15+</span>
+                <div class="w-48 h-48 border-[12px] border-[#b38a5f] rounded-full flex flex-col items-center justify-center mx-auto mb-6">
+                    <span class="text-4xl font-black">15+</span>
+                    <span class="text-[10px] uppercase tracking-widest opacity-50 font-bold">Years Experience</span>
                 </div>
-                <p class="text-[10px] font-black uppercase tracking-[0.4em]">Years Mastery</p>
             </div>
             <div class="text-center reveal" style="transition-delay: 200ms;">
-                <div class="w-44 h-44 border-8 border-black rounded-full flex flex-col items-center justify-center mx-auto mb-6 bg-white shadow-[8px_8px_0px_#D97706]">
-                    <span class="retro-title text-4xl">4.9/5</span>
+                <div class="w-48 h-48 border-[12px] border-[#b38a5f]/20 rounded-full flex flex-col items-center justify-center mx-auto mb-6">
+                    <span class="text-4xl font-black">4.9/3</span>
+                    <span class="text-[10px] uppercase tracking-widest opacity-50 font-bold">Average Rating</span>
                 </div>
-                <p class="text-[10px] font-black uppercase tracking-[0.4em]">Avg. Rating</p>
             </div>
         </div>
     </section>
 
-    <footer class="py-20 px-8 text-center bg-white border-t-8 border-black mb-20">
-        <div class="retro-title text-4xl mb-6">VINTAGE STEEL</div>
-        <div class="flex justify-center gap-10 mb-12 opacity-60">
-            <i data-lucide="instagram"></i>
-            <i data-lucide="facebook"></i>
-            <i data-lucide="youtube"></i>
+    <section id="services" class="py-32 px-6">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="serif text-6xl mb-20 text-center uppercase tracking-tighter">Price List</h2>
+            <div class="grid lg:grid-cols-12 gap-12">
+                <div id="booking" class="lg:col-span-4 bg-white p-10 rounded-[40px] shadow-2xl reveal border border-black/5 self-start">
+                    <h3 class="serif text-2xl mb-8 font-bold">Book Appointment</h3>
+                    <form class="space-y-4">
+                        <input type="text" placeholder="Name" class="w-full bg-neutral-50 p-4 rounded-xl outline-none focus:ring-1 focus:ring-[#b38a5f]">
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="date" class="w-full bg-neutral-50 p-4 rounded-xl text-xs">
+                            <input type="time" class="w-full bg-neutral-50 p-4 rounded-xl text-xs">
+                        </div>
+                        <select class="w-full bg-neutral-50 p-4 rounded-xl outline-none text-xs">
+                            <option>Select Specialist</option>
+                            <option>Marcus (Master Barber)</option>
+                        </select>
+                        <div class="h-40 bg-neutral-100 rounded-3xl overflow-hidden mt-6 grayscale">
+                            <iframe src="https://www.google.com/maps/embed?..." width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                        </div>
+                        <button class="w-full bg-[#b38a5f] text-white py-5 rounded-2xl font-bold uppercase tracking-widest shadow-lg mt-4">Schedule Now</button>
+                    </form>
+                </div>
+
+                <div class="lg:col-span-8 grid md:grid-cols-2 gap-8">
+                    <div class="pricing-card p-8 flex flex-col items-center text-center reveal">
+                        <div class="w-14 h-14 bg-[#f8f6f2] rounded-full flex items-center justify-center mb-6"><i data-lucide="scissors" class="text-[#b38a5f]"></i></div>
+                        <h4 class="font-bold text-lg mb-1">Signature Fade</h4>
+                        <p class="text-xs text-neutral-400 mb-6">Precision cut with luxury finish</p>
+                        <span class="bg-[#f8f6f2] px-6 py-2 rounded-full font-bold text-[#b38a5f]">$17.00</span>
+                    </div>
+                    <div class="pricing-card p-8 flex flex-col items-center text-center reveal" style="transition-delay: 100ms;">
+                        <div class="w-14 h-14 bg-[#f8f6f2] rounded-full flex items-center justify-center mb-6"><i data-lucide="flame" class="text-[#b38a5f]"></i></div>
+                        <h4 class="font-bold text-lg mb-1">Hot Towel Shave</h4>
+                        <p class="text-xs text-neutral-400 mb-6">Traditional straight razor ritual</p>
+                        <span class="bg-[#f8f6f2] px-6 py-2 rounded-full font-bold text-[#b38a5f]">$35.00</span>
+                    </div>
+
+                    <div class="pricing-card p-8 reveal col-span-1">
+                        <div class="flex gap-4 items-center mb-6">
+                            <div class="w-12 h-12 bg-neutral-200 rounded-full overflow-hidden"><img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100"></div>
+                            <div>
+                                <h5 class="font-bold text-sm">Signature Fade</h5>
+                                <div class="flex text-yellow-500"><i data-lucide="star" class="w-3 fill-current"></i><i data-lucide="star" class="w-3 fill-current"></i><i data-lucide="star" class="w-3 fill-current"></i><i data-lucide="star" class="w-3 fill-current"></i><i data-lucide="star" class="w-3 fill-current"></i></div>
+                            </div>
+                        </div>
+                        <p class="text-[13px] italic opacity-60">"Attention to detail is unparalleled. Highly recommend the ritual."</p>
+                    </div>
+                    <div class="pricing-card p-8 reveal bg-neutral-900 text-white col-span-1 flex flex-col justify-center">
+                        <h4 class="serif text-3xl mb-4">Full Grooming Ritual</h4>
+                        <p class="text-xs opacity-50 mb-6">The ultimate experience</p>
+                        <span class="text-3xl font-black text-[#b38a5f]">$89.00</span>
+                    </div>
+                </div>
+            </div>
         </div>
-        <p class="text-[8px] font-black tracking-[0.6em] opacity-30 uppercase">© 2026 VINTAGE STEEL BARBER CO • LONDON • NYC • TOKYO</p>
+    </section>
+
+    <section class="py-24 px-6 bg-neutral-100">
+        <div class="max-w-5xl mx-auto">
+            <h2 class="serif text-5xl text-center mb-16">The <span class="italic text-[#b38a5f]">Reveal</span></h2>
+            <div class="ba-slider reveal" id="baSlider">
+                <img src="https://images.unsplash.com/photo-1599351431247-f50940243edc?w=1200" class="absolute inset-0 w-full h-full object-cover grayscale">
+                <img src="https://images.unsplash.com/photo-1621605815841-aa89780b67d2?w=1200" class="absolute inset-0 w-full h-full object-cover ba-after">
+                <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div class="w-1 h-full bg-white shadow-2xl"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-white py-24 px-6 text-center border-t border-black/5 pb-32">
+        <div class="serif text-4xl mb-6">THE CUT & CO.</div>
+        <p class="text-sm text-neutral-400 mb-10">88 West End Ave, NYC • 212-555-0198</p>
+        <div class="flex justify-center gap-6 mb-16">
+            <a href="#" class="w-10 h-10 border border-neutral-200 flex items-center justify-center rounded-full"><i data-lucide="instagram" class="w-4"></i></a>
+            <a href="#" class="w-10 h-10 border border-neutral-200 flex items-center justify-center rounded-full"><i data-lucide="facebook" class="w-4"></i></a>
+        </div>
+        <p class="text-[9px] font-bold tracking-[0.8em] opacity-20 uppercase">© 2026 THE ATELIER SERIES</p>
     </footer>
 
-    <div class="mobile-bar lg:hidden">
+    <div class="mobile-action-bar lg:hidden">
         <a href="tel:000" class="text-white flex flex-col items-center gap-1">
-            <i data-lucide="phone" class="w-5 text-amber-500"></i><span class="text-[8px] font-bold uppercase tracking-widest">Call</span>
+            <i data-lucide="phone" class="w-5"></i><span class="text-[8px] font-bold uppercase">Call</span>
         </a>
         <a href="https://wa.me/000" class="text-white flex flex-col items-center gap-1">
-            <i data-lucide="message-circle" class="w-5 text-amber-500"></i><span class="text-[8px] font-bold uppercase tracking-widest">WhatsApp</span>
+            <i data-lucide="message-circle" class="w-5"></i><span class="text-[8px] font-bold uppercase">WhatsApp</span>
         </a>
-        <a href="mailto:hello@vintagesteel.com" class="text-white flex flex-col items-center gap-1">
-            <i data-lucide="mail" class="w-5 text-amber-500"></i><span class="text-[8px] font-bold uppercase tracking-widest">Email</span>
+        <a href="mailto:hello@thecutandco.com" class="text-white flex flex-col items-center gap-1">
+            <i data-lucide="mail" class="w-5"></i><span class="text-[8px] font-bold uppercase">Email</span>
         </a>
     </div>
 
-    <button onclick="window.scrollTo({top:0, behavior:'smooth'})" class="fixed bottom-28 right-8 w-12 h-12 bg-amber-600 text-white flex items-center justify-center rounded-sm shadow-xl hover:bg-black transition-all">
-        <i data-lucide="arrow-up"></i>
+    <button onclick="window.scrollTo({top:0, behavior:'smooth'})" class="fixed bottom-24 right-6 w-12 h-12 bg-black text-white rounded-full flex items-center justify-center shadow-2xl z-[90]">
+        <i data-lucide="arrow-up" class="w-4"></i>
     </button>
 
     <script>
         lucide.createIcons();
 
-        // 19. Reveal animations
+        // Scroll Reveal logic
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting) entry.target.classList.add('active');
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = "1";
+                    entry.target.style.transform = "translateY(0)";
+                }
             });
         }, { threshold: 0.1 });
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-        // 9. Before/After Interaction
+        // Before/After Logic
         const baSlider = document.getElementById('baSlider');
         const afterImg = baSlider.querySelector('.ba-after');
         baSlider.addEventListener('mousemove', (e) => {
