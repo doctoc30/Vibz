@@ -3,287 +3,295 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE AMBER ATELIER | Master Barbering</title>
+    <title>ROSE & RAZOR | Elite Barbering</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Bormioli:wght@700&family=Outfit:wght@300;400;700;900&family=Playfair+Display:ital,wght@0,900;1,900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&family=Playfair+Display:ital,wght@0,900;1,900&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --light-orange: #fff9f2;
-            --amber-accent: #f59e0b;
-            --deep-burnt: #92400e;
-            --charcoal: #1c1917;
+            --soft-pink: #fce7f3; /* Light Pink */
+            --deep-rose: #f472b6;
+            --charcoal: #18181b;
+            --champagne: #fdfaf9;
         }
-        body { font-family: 'Outfit', sans-serif; background-color: var(--light-orange); color: var(--charcoal); overflow-x: hidden; }
+        body { font-family: 'Outfit', sans-serif; background-color: var(--champagne); color: var(--charcoal); overflow-x: hidden; }
         .serif { font-family: 'Playfair Display', serif; }
         
-        /* Photorealistic Hero */
-        .hero-viewport {
-            background: linear-gradient(to right, rgba(255,249,242,1) 30%, rgba(255,249,242,0) 100%), 
-                        url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=2070&auto=format&fit=crop');
-            background-size: cover;
-            background-position: center;
+        /* 19 & 20. App-like Smooth UI */
+        .reveal { opacity: 0; transform: translateY(30px); }
+        .btn-hover { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .btn-hover:hover { transform: scale(1.05) translateY(-2px); box-shadow: 0 20px 40px rgba(244, 114, 182, 0.3); }
+
+        /* 2. Hero Storefront Styling */
+        .hero-storefront {
+            background: linear-gradient(rgba(253, 250, 249, 0.8), rgba(253, 250, 249, 0.2)), 
+                        url('https://images.unsplash.com/photo-1512690196236-d5a743f4f0bb?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover; background-position: center;
         }
 
-        /* Rotating Socials Animation */
-        .social-rotate:hover { animation: spin 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        /* 9. Before/After Slider */
+        .ba-container { position: relative; height: 450px; border-radius: 30px; overflow: hidden; cursor: ew-resize; border: 8px solid white; }
+        .ba-after { clip-path: inset(0 0 0 50%); }
 
-        /* Scroll Reveal Utility */
-        .reveal { opacity: 0; transform: translateY(40px); }
+        /* 4. Video Grid Cards */
+        .video-box { position: relative; border-radius: 20px; overflow: hidden; aspect-ratio: 9/16; background: #000; }
+        .video-box video { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; }
 
-        /* Gallery Grid */
-        .gallery-box { border-radius: 20px; overflow: hidden; position: relative; aspect-ratio: 1/1; }
-        .gallery-box img { transition: transform 0.8s ease; width: 100%; height: 100%; object-fit: cover; }
-        .gallery-box:hover img { transform: scale(1.1); }
+        /* 25. Back to Top */
+        #backToTop { position: fixed; bottom: 100px; right: 20px; z-index: 99; opacity: 0; transition: 0.3s; }
 
-        /* FAQ Droplist */
-        .faq-item { border-bottom: 1px solid rgba(146, 64, 14, 0.1); cursor: pointer; }
-        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
-        .faq-item.active .faq-answer { max-height: 100px; padding-bottom: 20px; }
-
-        .mobile-bottom-nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; background: var(--charcoal); border-radius: 100px; display: flex; justify-content: space-around; padding: 15px; z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--champagne); }
+        ::-webkit-scrollbar-thumb { background: var(--deep-rose); border-radius: 10px; }
     </style>
 </head>
 <body>
 
-    <nav class="fixed top-0 w-full z-50 bg-[#fff9f2]/90 backdrop-blur-xl border-b border-orange-100 px-8 py-5 flex justify-between items-center">
-        <div class="flex items-center gap-2">
-            <i data-lucide="scissors" class="text-amber-600"></i>
-            <span class="serif text-2xl font-black tracking-tighter">AMBER ATELIER</span>
+    <div class="bg-pink-500 text-white py-2 text-center text-[10px] font-bold tracking-[0.4em] uppercase z-[200] relative">
+        VALENTINE’S SPECIAL: 20% OFF ALL RITUALS — USE CODE ‘ROSE26’
+    </div>
+
+    <nav class="sticky top-0 z-[150] bg-white/80 backdrop-blur-md px-6 py-4 flex justify-between items-center border-b border-pink-100">
+        <div class="flex items-center gap-3">
+            <button class="lg:hidden text-charcoal"><i data-lucide="menu"></i></button>
+            <span class="serif text-2xl font-black tracking-tighter uppercase text-pink-600">Rose & Razor</span>
         </div>
-        <div class="hidden lg:flex gap-10 text-[10px] font-bold uppercase tracking-widest text-stone-500">
-            <a href="#services" class="hover:text-amber-600">Services</a>
-            <a href="#about" class="hover:text-amber-600">About</a>
-            <a href="#barbers" class="hover:text-amber-600">The Team</a>
-            <a href="#contact" class="hover:text-amber-600">Contact</a>
+        <div class="hidden lg:flex gap-8 text-[10px] font-bold uppercase tracking-widest">
+            <a href="#services" class="hover:text-pink-500">Services</a>
+            <a href="#gallery" class="hover:text-pink-500">Gallery</a>
+            <a href="#barbers" class="hover:text-pink-500">Artists</a>
+            <a href="#contact" class="hover:text-pink-500">Location</a>
         </div>
-        <a href="#booking" class="bg-amber-600 text-white px-8 py-3 rounded-full text-[10px] font-bold tracking-widest hover:bg-black transition-all">BOOK NOW</a>
+        <a href="#booking" class="bg-charcoal text-white px-6 py-3 rounded-full text-[10px] font-bold tracking-widest btn-hover">BOOK APPOINTMENT</a>
     </nav>
 
-    <section class="hero-viewport min-h-screen flex items-center px-8 pt-20">
-        <div class="container mx-auto grid lg:grid-cols-2">
-            <div id="hero-text">
-                <span class="text-amber-600 font-bold uppercase tracking-[0.4em] text-xs mb-6 block">Est. 2026 • London</span>
-                <h1 class="serif text-7xl md:text-[8rem] leading-[0.85] mb-8 font-black">THE GOLDEN <br><span class="italic text-amber-600">STANDARD.</span></h1>
-                <p class="text-xl text-stone-500 max-w-sm mb-10 leading-relaxed">Experience a masterclass in modern barbering within our light-drenched studio.</p>
-                <div class="flex gap-6">
-                    <div class="flex flex-col items-center">
-                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg border border-orange-50"><i data-lucide="blade" class="w-5 text-amber-600"></i></div>
-                        <span class="text-[8px] mt-2 font-bold uppercase tracking-widest">Hand Razor</span>
-                    </div>
-                    <div class="flex flex-col items-center">
-                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg border border-orange-50"><i data-lucide="spray-can" class="w-5 text-amber-600"></i></div>
-                        <span class="text-[8px] mt-2 font-bold uppercase tracking-widest">Organic Tones</span>
-                    </div>
+    <section class="hero-storefront min-h-[90vh] flex items-center px-6 relative">
+        <div class="container mx-auto">
+            <div class="max-w-3xl reveal-hero">
+                <h2 class="text-pink-500 font-black uppercase tracking-[0.5em] text-xs mb-4">The Modern Gentleman's Atelier</h2>
+                <h1 class="serif text-7xl md:text-[9rem] leading-[0.8] mb-8">Sculpt <br><span class="italic text-pink-400">Your Identity.</span></h1>
+                <p class="text-xl text-stone-500 mb-10 max-w-lg font-light">Soft tones meet hard fades. Experience the pink-coded revolution in luxury grooming.</p>
+                <div class="flex gap-4">
+                    <a href="#booking" class="bg-pink-500 text-white px-10 py-5 rounded-2xl font-bold btn-hover shadow-xl shadow-pink-200">Book The Chair</a>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="py-24 bg-white px-8">
-        <div class="max-w-6xl mx-auto grid md:grid-cols-3 gap-12">
-            <div class="text-center reveal">
-                <div class="w-44 h-44 border-[12px] border-orange-50 rounded-full flex flex-col items-center justify-center mx-auto mb-6">
-                    <span class="text-4xl font-black">12K</span>
-                    <span class="text-[9px] uppercase font-bold opacity-40">Happy Clients</span>
-                </div>
-            </div>
-            <div class="text-center reveal" style="transition-delay: 150ms;">
-                <div class="w-44 h-44 border-[12px] border-amber-500 rounded-full flex flex-col items-center justify-center mx-auto mb-6 shadow-2xl shadow-orange-200">
-                    <span class="text-4xl font-black text-amber-600">18+</span>
-                    <span class="text-[9px] uppercase font-bold opacity-60">Barber Specialists</span>
-                </div>
-            </div>
-            <div class="text-center reveal" style="transition-delay: 300ms;">
-                <div class="w-44 h-44 border-[12px] border-orange-50 rounded-full flex flex-col items-center justify-center mx-auto mb-6">
-                    <span class="text-4xl font-black">4.9</span>
-                    <span class="text-[9px] uppercase font-bold opacity-40">Google Rating</span>
-                </div>
-            </div>
-        </div>
-    </section>
+    <div class="h-24 bg-gradient-to-b from-white to-pink-50"></div>
 
-    <section id="services" class="py-24 px-8 bg-orange-50/50">
+    <section class="py-24 px-6 bg-pink-50/50">
         <div class="max-w-7xl mx-auto">
-            <h2 class="serif text-6xl mb-16 text-center italic">Service Menu</h2>
-            <div class="grid lg:grid-cols-2 gap-x-20 gap-y-12">
-                <div class="flex justify-between items-end border-b border-orange-200 pb-6 reveal">
-                    <div>
-                        <h4 class="text-xl font-bold uppercase tracking-tighter">The Amber Signature Cut</h4>
-                        <p class="text-sm text-stone-400">Consultation, wash, cut & style</p>
+            <h3 class="serif text-4xl mb-12 italic text-center text-pink-600">Atmosphere in Motion</h3>
+            <div class="grid grid-cols-2 lg:grid-cols-6 gap-4">
+                <div class="video-box reveal"><video autoplay muted loop playsinline><source src="https://assets.mixkit.co/videos/preview/mixkit-barber-cutting-hair-of-a-client-close-up-23214-large.mp4"></video></div>
+                <div class="video-box reveal" style="transition-delay: 0.1s;"><img src="https://images.unsplash.com/photo-1599351431247-f50940243edc?w=400" class="h-full object-cover"></div>
+                <div class="video-box reveal" style="transition-delay: 0.2s;"><video autoplay muted loop playsinline><source src="https://assets.mixkit.co/videos/preview/mixkit-barber-styling-a-clients-hair-with-a-comb-23216-large.mp4"></video></div>
+                <div class="video-box reveal" style="transition-delay: 0.3s;"><img src="https://images.unsplash.com/photo-1512690196236-d5a743f4f0bb?w=400" class="h-full object-cover"></div>
+                <div class="video-box reveal" style="transition-delay: 0.4s;"><video autoplay muted loop playsinline><source src="https://assets.mixkit.co/videos/preview/mixkit-shaving-a-beard-with-a-straight-razor-23218-large.mp4"></video></div>
+                <div class="video-box reveal" style="transition-delay: 0.5s;"><img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=400" class="h-full object-cover"></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="services" class="py-32 px-6 bg-white">
+        <div class="max-w-7xl mx-auto grid lg:grid-cols-12 gap-20">
+            <div class="lg:col-span-4 reveal">
+                <h2 class="serif text-6xl text-pink-600 mb-8 leading-tight">The <br>Menu.</h2>
+                <p class="text-stone-400 mb-12">Hand-crafted services tailored for the discerning client.</p>
+                <div class="p-8 bg-pink-50 rounded-[40px] border border-pink-100">
+                    <h4 class="font-black text-xs uppercase tracking-widest mb-4">Quick Contact</h4>
+                    <div class="space-y-4">
+                        <a href="tel:000" class="flex items-center gap-3 text-sm font-bold"><i data-lucide="phone" class="text-pink-500 w-4"></i> 14. Click-to-Call</a>
+                        <a href="https://wa.me/000" class="flex items-center gap-3 text-sm font-bold"><i data-lucide="message-circle" class="text-pink-500 w-4"></i> 15. WhatsApp Now</a>
                     </div>
-                    <span class="serif text-3xl font-black text-amber-600">$55</span>
                 </div>
-                <div class="flex justify-between items-end border-b border-orange-200 pb-6 reveal">
-                    <div>
-                        <h4 class="text-xl font-bold uppercase tracking-tighter">Skin Fade Specialist</h4>
-                        <p class="text-sm text-stone-400">Precision zero-fade with foil finish</p>
+            </div>
+            <div class="lg:col-span-8 space-y-10 reveal">
+                <div class="flex justify-between items-center border-b border-pink-100 pb-8 group cursor-pointer">
+                    <div class="flex gap-6 items-center">
+                        <div class="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center text-pink-600 group-hover:bg-pink-500 group-hover:text-white transition-all"><i data-lucide="scissors"></i></div>
+                        <div>
+                            <h4 class="text-2xl font-bold">The Signature Fade</h4>
+                            <p class="text-xs text-stone-400 mt-1">45 Min • Wash, Cut, & Style</p>
+                        </div>
                     </div>
-                    <span class="serif text-3xl font-black text-amber-600">$45</span>
+                    <span class="serif text-3xl text-pink-500 font-black">$45</span>
                 </div>
-                <div class="flex justify-between items-end border-b border-orange-200 pb-6 reveal">
-                    <div>
-                        <h4 class="text-xl font-bold uppercase tracking-tighter">Straight Razor Shave</h4>
-                        <p class="text-sm text-stone-400">Hot towel, steam & balm</p>
+                <div class="flex justify-between items-center border-b border-pink-100 pb-8 group cursor-pointer">
+                    <div class="flex gap-6 items-center">
+                        <div class="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center text-pink-600 group-hover:bg-pink-500 group-hover:text-white transition-all"><i data-lucide="flame"></i></div>
+                        <div>
+                            <h4 class="text-2xl font-bold">Rose Ritual Shave</h4>
+                            <p class="text-xs text-stone-400 mt-1">30 Min • Hot Towel & Razor</p>
+                        </div>
                     </div>
-                    <span class="serif text-3xl font-black text-amber-600">$35</span>
+                    <span class="serif text-3xl text-pink-500 font-black">$35</span>
                 </div>
-                <div class="flex justify-between items-end border-b border-orange-200 pb-6 reveal">
-                    <div>
-                        <h4 class="text-xl font-bold uppercase tracking-tighter">Full Grooming Ritual</h4>
-                        <p class="text-sm text-stone-400">Cut, Beard, Facial & Mask</p>
+                <div class="flex justify-between items-center border-b border-pink-100 pb-8 group cursor-pointer">
+                    <div class="flex gap-6 items-center">
+                        <div class="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center text-pink-600 group-hover:bg-pink-500 group-hover:text-white transition-all"><i data-lucide="crown"></i></div>
+                        <div>
+                            <h4 class="text-2xl font-bold">The Full Atelier</h4>
+                            <p class="text-xs text-stone-400 mt-1">90 Min • The Works</p>
+                        </div>
                     </div>
-                    <span class="serif text-3xl font-black text-amber-600">$95</span>
+                    <span class="serif text-3xl text-pink-500 font-black">$95</span>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="booking" class="py-24 px-8 bg-white overflow-hidden">
-        <div class="max-w-7xl mx-auto grid lg:grid-cols-12 gap-16 items-center">
-            <div class="lg:col-span-5 reveal">
-                <h2 class="serif text-5xl mb-8">Reserve The Chair</h2>
-                <form class="space-y-6">
-                    <input type="text" placeholder="Full Name" class="w-full border-2 border-orange-50 p-5 rounded-2xl outline-none focus:border-amber-500 transition-all">
-                    <div class="grid grid-cols-2 gap-4">
-                        <input type="date" class="border-2 border-orange-50 p-5 rounded-2xl">
-                        <input type="time" class="border-2 border-orange-50 p-5 rounded-2xl">
+    <section class="py-20 bg-charcoal text-white text-center relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10 flex justify-center items-center"><i data-lucide="scissors" class="w-[500px] h-[500px]"></i></div>
+        <div class="relative z-10 px-6">
+            <h2 class="serif text-4xl md:text-6xl mb-8">Ready for the transformation?</h2>
+            <a href="#booking" class="bg-pink-500 text-white px-12 py-5 rounded-full font-black tracking-widest btn-hover inline-block">SECURE YOUR SLOT</a>
+        </div>
+    </section>
+
+    <section class="py-32 px-6 bg-champagne">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="serif text-5xl text-center mb-16 italic text-pink-600">The Reveal</h2>
+            <div class="ba-container reveal shadow-2xl" id="baSlider">
+                <img src="https://images.unsplash.com/photo-1599351431247-f50940243edc?w=1200" class="absolute inset-0 w-full h-full object-cover grayscale">
+                <img src="https://images.unsplash.com/photo-1621605815841-aa89780b67d2?w=1200" class="absolute inset-0 w-full h-full object-cover ba-after">
+            </div>
+        </div>
+    </section>
+
+    <section id="gallery" class="py-24 px-6 bg-white">
+        <div class="max-w-7xl mx-auto text-center">
+            <h2 class="serif text-5xl mb-4">On the Gram</h2>
+            <p class="text-pink-400 font-bold mb-16 tracking-widest uppercase text-xs">@ROSE_AND_RAZOR_ATELIER</p>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="aspect-square rounded-3xl overflow-hidden reveal"><img src="https://images.unsplash.com/photo-1512690196236-d5a743f4f0bb?w=500" class="h-full object-cover hover:scale-110 transition-transform"></div>
+                <div class="aspect-square rounded-3xl overflow-hidden reveal" style="transition-delay: 0.1s;"><img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=500" class="h-full object-cover hover:scale-110 transition-transform"></div>
+                <div class="aspect-square rounded-3xl overflow-hidden reveal" style="transition-delay: 0.2s;"><img src="https://images.unsplash.com/photo-1621605815841-aa89780b67d2?w=500" class="h-full object-cover hover:scale-110 transition-transform"></div>
+                <div class="aspect-square rounded-3xl overflow-hidden reveal" style="transition-delay: 0.3s;"><img src="https://images.unsplash.com/photo-1599351431247-f50940243edc?w=500" class="h-full object-cover hover:scale-110 transition-transform"></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="barbers" class="py-24 bg-pink-50/30 px-6">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="serif text-5xl mb-16 text-center">The <span class="text-pink-500 italic">Artists</span></h2>
+            <div class="grid md:grid-cols-3 gap-12">
+                <div class="bg-white p-6 rounded-[50px] shadow-xl reveal group">
+                    <div class="aspect-[4/5] rounded-[40px] overflow-hidden mb-6 grayscale group-hover:grayscale-0 transition-all duration-700">
+                        <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=600" class="h-full object-cover">
                     </div>
-                    <select class="w-full border-2 border-orange-50 p-5 rounded-2xl">
-                        <option>Choose Your Barber</option>
-                        <option>Dino (Master)</option>
-                        <option>Sarah (Senior)</option>
-                    </select>
-                    <button class="w-full bg-amber-600 text-white py-6 rounded-2xl font-black uppercase tracking-widest shadow-2xl hover:bg-black transition-all">Schedule Appointment</button>
+                    <h4 class="text-2xl font-bold">Julian Rose</h4>
+                    <p class="text-pink-500 font-bold uppercase text-[10px] tracking-widest mt-2">Master Barber / Founder</p>
+                </div>
+                <div class="bg-white p-6 rounded-[50px] shadow-xl reveal group" style="transition-delay: 0.2s;">
+                    <div class="aspect-[4/5] rounded-[40px] overflow-hidden mb-6 grayscale group-hover:grayscale-0 transition-all duration-700">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600" class="h-full object-cover">
+                    </div>
+                    <h4 class="text-2xl font-bold">Leo Vance</h4>
+                    <p class="text-pink-500 font-bold uppercase text-[10px] tracking-widest mt-2">Senior Stylist</p>
+                </div>
+                <div class="bg-white p-6 rounded-[50px] shadow-xl reveal group" style="transition-delay: 0.4s;">
+                    <div class="aspect-[4/5] rounded-[40px] overflow-hidden mb-6 grayscale group-hover:grayscale-0 transition-all duration-700">
+                        <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=600" class="h-full object-cover">
+                    </div>
+                    <h4 class="text-2xl font-bold">Andre Steel</h4>
+                    <p class="text-pink-500 font-bold uppercase text-[10px] tracking-widest mt-2">Fade Specialist</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-24 bg-white px-6">
+        <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+            <div class="reveal">
+                <h2 class="serif text-5xl mb-6">Clients <br><span class="text-pink-500 italic">Love Us.</span></h2>
+                <div class="flex text-pink-400 gap-1 mb-4"><i data-lucide="star" class="fill-current"></i><i data-lucide="star" class="fill-current"></i><i data-lucide="star" class="fill-current"></i><i data-lucide="star" class="fill-current"></i><i data-lucide="star" class="fill-current"></i></div>
+                <p class="text-2xl font-light italic">"The most aesthetically pleasing and professional experience in the city. The detail on the fade is absolute perfection."</p>
+                <p class="mt-8 font-black uppercase text-xs tracking-widest">— James P., Tech Founder</p>
+            </div>
+            <div class="bg-pink-100 h-80 rounded-[60px] reveal"></div>
+        </div>
+    </section>
+
+    <section id="contact" class="py-32 bg-pink-50/50 px-6">
+        <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-20">
+            <div class="reveal">
+                <h2 class="serif text-5xl mb-12 italic">Visit The Studio</h2>
+                <div class="grid md:grid-cols-2 gap-10">
+                    <div>
+                        <h5 class="text-pink-500 font-black uppercase text-[10px] tracking-widest mb-4">Location</h5>
+                        <p class="text-lg font-bold">88 Rosewood Terrace<br>District 5, London</p>
+                    </div>
+                    <div>
+                        <h5 class="text-pink-500 font-black uppercase text-[10px] tracking-widest mb-4">Hours</h5>
+                        <p class="text-sm font-bold">Mon - Fri: 09:00 — 20:00<br>Sat: 08:00 — 18:00</p>
+                    </div>
+                </div>
+                <div class="mt-12 h-64 rounded-3xl overflow-hidden border-4 border-white grayscale hover:grayscale-0 transition-all">
+                    <iframe src="https://www.google.com/maps/embed?..." width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+            </div>
+            <div id="booking" class="bg-white p-10 rounded-[50px] shadow-2xl reveal border border-pink-100">
+                <h3 class="serif text-3xl mb-8">Direct Booking</h3>
+                <form class="space-y-4">
+                    <input type="text" placeholder="Full Name" class="w-full bg-pink-50/50 p-5 rounded-2xl outline-none focus:ring-2 focus:ring-pink-500">
+                    <div class="grid grid-cols-2 gap-4">
+                        <input type="date" class="bg-pink-50/50 p-5 rounded-2xl text-xs outline-none">
+                        <input type="time" class="bg-pink-50/50 p-5 rounded-2xl text-xs outline-none">
+                    </div>
+                    <textarea placeholder="Special Requests..." class="w-full bg-pink-50/50 p-5 rounded-2xl h-32 outline-none"></textarea>
+                    <button class="w-full bg-pink-500 text-white py-6 rounded-2xl font-black uppercase tracking-widest btn-hover">Confirm My Slot</button>
                 </form>
             </div>
-            <div class="lg:col-span-7 h-[600px] rounded-[50px] overflow-hidden border-8 border-orange-50 relative reveal">
-                <iframe src="https://www.google.com/maps/embed?..." width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-                <div class="absolute bottom-8 right-8 bg-white p-10 rounded-[30px] shadow-2xl">
-                    <h5 class="text-amber-600 font-bold uppercase text-[10px] tracking-widest mb-4">Opening Hours</h5>
-                    <div class="text-xs space-y-2 font-bold">
-                        <p class="flex justify-between gap-10"><span>Mon - Fri</span> <span>09:00 - 20:00</span></p>
-                        <p class="flex justify-between gap-10"><span>Saturday</span> <span>08:00 - 18:00</span></p>
-                        <p class="flex justify-between gap-10 text-stone-300"><span>Sunday</span> <span>CLOSED</span></p>
-                    </div>
-                </div>
-            </div>
         </div>
     </section>
 
-    <section id="gallery" class="py-24 px-8 bg-white">
-        <div class="max-w-7xl mx-auto">
-            <h2 class="serif text-5xl mb-16 text-center">Studio <span class="italic text-amber-600">Gallery</span></h2>
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="gallery-box reveal"><img src="https://images.unsplash.com/photo-1512690196236-d5a743f4f0bb?w=600"></div>
-                <div class="gallery-box lg:col-span-2 lg:row-span-2 reveal"><img src="https://images.unsplash.com/photo-1621605815841-aa89780b67d2?w=800"></div>
-                <div class="gallery-box reveal"><img src="https://images.unsplash.com/photo-1593702275677-f916c8c98ca7?w=600"></div>
-                <div class="gallery-box reveal"><img src="https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?w=600"></div>
-                <div class="gallery-box reveal"><img src="https://images.unsplash.com/photo-1599351431247-f50940243edc?w=600"></div>
-            </div>
+    <footer class="bg-charcoal text-white py-24 px-6 text-center pb-40">
+        <div class="serif text-4xl mb-6 text-pink-400">ROSE & RAZOR</div>
+        <div class="flex justify-center gap-10 mb-12 opacity-50">
+            <a href="#" class="hover:text-pink-500 transition-colors"><i data-lucide="instagram"></i></a>
+            <a href="#" class="hover:text-pink-500 transition-colors"><i data-lucide="facebook"></i></a>
+            <a href="#" class="hover:text-pink-500 transition-colors"><i data-lucide="youtube"></i></a>
         </div>
-    </section>
-
-    <section id="barbers" class="py-24 px-8 bg-orange-50/30">
-        <div class="max-w-7xl mx-auto">
-            <div class="flex justify-between items-end mb-16">
-                <h2 class="serif text-5xl">The <span class="text-amber-600 italic">Artists</span></h2>
-                <div class="flex gap-2">
-                    <button class="w-12 h-12 border border-orange-200 rounded-full flex items-center justify-center"><i data-lucide="arrow-left"></i></button>
-                    <button class="w-12 h-12 bg-amber-600 text-white rounded-full flex items-center justify-center"><i data-lucide="arrow-right"></i></button>
-                </div>
-            </div>
-            <div class="grid md:grid-cols-3 gap-12">
-                <div class="reveal">
-                    <div class="aspect-[3/4] rounded-[40px] overflow-hidden mb-6"><img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=600" class="w-full h-full object-cover"></div>
-                    <h4 class="text-2xl font-bold">Dino Moretti</h4>
-                    <p class="text-xs font-bold uppercase text-amber-600 tracking-widest mt-1">Master Barber / 12 YRS EXP</p>
-                </div>
-                <div class="reveal" style="transition-delay: 150ms;">
-                    <div class="aspect-[3/4] rounded-[40px] overflow-hidden mb-6"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600" class="w-full h-full object-cover"></div>
-                    <h4 class="text-2xl font-bold">Leo Vance</h4>
-                    <p class="text-xs font-bold uppercase text-amber-600 tracking-widest mt-1">Fade Specialist</p>
-                </div>
-                <div class="reveal" style="transition-delay: 300ms;">
-                    <div class="aspect-[3/4] rounded-[40px] overflow-hidden mb-6"><img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=600" class="w-full h-full object-cover"></div>
-                    <h4 class="text-2xl font-bold">Julian Brooks</h4>
-                    <p class="text-xs font-bold uppercase text-amber-600 tracking-widest mt-1">Creative Director</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="py-24 px-8 bg-white">
-        <div class="max-w-3xl mx-auto reveal">
-            <h2 class="serif text-5xl text-center mb-16">Enquiries</h2>
-            <div class="space-y-4">
-                <div class="faq-item p-6 active">
-                    <div class="flex justify-between items-center font-bold text-lg">
-                        <span>Do you accept walk-ins?</span>
-                        <i data-lucide="chevron-down" class="w-5 text-amber-600"></i>
-                    </div>
-                    <div class="faq-answer text-stone-500 mt-4">We primarily operate on an appointment basis to ensure the highest quality of service, however, we do accommodate walk-ins when possible.</div>
-                </div>
-                <div class="faq-item p-6">
-                    <div class="flex justify-between items-center font-bold text-lg">
-                        <span>Cancellation Policy</span>
-                        <i data-lucide="chevron-down" class="w-5 text-amber-600"></i>
-                    </div>
-                    <div class="faq-answer text-stone-500 mt-4">Please provide 24-hour notice for cancellations to avoid a 50% service fee charge.</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <footer id="contact" class="bg-white border-t border-orange-100 pt-24 pb-40 px-8 text-center">
-        <div class="serif text-4xl font-black mb-10 tracking-tighter">AMBER ATELIER</div>
-        <div class="flex justify-center gap-12 mb-16">
-            <a href="#" class="social-rotate"><i data-lucide="instagram" class="w-8 h-8 text-stone-300 hover:text-amber-600 transition-colors"></i></a>
-            <a href="#" class="social-rotate"><i data-lucide="facebook" class="w-8 h-8 text-stone-300 hover:text-amber-600 transition-colors"></i></a>
-            <a href="#" class="social-rotate"><i data-lucide="twitter" class="w-8 h-8 text-stone-300 hover:text-amber-600 transition-colors"></i></a>
-        </div>
-        <div class="text-[10px] font-bold uppercase tracking-[0.5em] opacity-30">
-            © 2026 THE AMBER ATELIER SERIES • MAYFAIR • LONDON
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto text-[10px] font-bold uppercase tracking-widest opacity-30">
+            <a href="#">Privacy</a><a href="#">Terms</a><a href="#">Careers</a><a href="#">Shop</a>
         </div>
     </footer>
 
-    <div class="mobile-bottom-nav lg:hidden">
-        <a href="tel:0207123456" class="text-white flex flex-col items-center"><i data-lucide="phone" class="w-5 text-amber-500"></i><span class="text-[8px] uppercase mt-1">Call</span></a>
-        <a href="https://wa.me/..." class="text-white flex flex-col items-center"><i data-lucide="message-circle" class="w-5 text-amber-500"></i><span class="text-[8px] uppercase mt-1">Chat</span></a>
-        <a href="#booking" class="text-white flex flex-col items-center"><i data-lucide="calendar" class="w-5 text-amber-500"></i><span class="text-[8px] uppercase mt-1">Book</span></a>
-    </div>
+    <button id="backToTop" class="w-14 h-14 bg-pink-500 text-white rounded-full flex items-center justify-center shadow-2xl"><i data-lucide="arrow-up"></i></button>
 
     <script>
         lucide.createIcons();
         gsap.registerPlugin(ScrollTrigger);
 
-        // GSAP Animations
-        gsap.from("#hero-text", { opacity: 0, x: -100, duration: 1.5, ease: "power4.out" });
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = "1";
-                    entry.target.style.transform = "translateY(0)";
-                }
-            });
-        }, { threshold: 0.1 });
-
-        document.querySelectorAll('.reveal').forEach(el => {
-            el.style.transition = "all 1s cubic-bezier(0.2, 0, 0.2, 1)";
-            observer.observe(el);
-        });
-
-        // FAQ Toggle
-        document.querySelectorAll('.faq-item').forEach(item => {
-            item.addEventListener('click', () => {
-                item.classList.toggle('active');
+        // 19. Scroll Reveal Animations
+        gsap.from(".reveal-hero", { opacity: 0, x: -50, duration: 1.5, ease: "power4.out" });
+        
+        gsap.utils.toArray('.reveal').forEach((elem) => {
+            gsap.to(elem, {
+                scrollTrigger: { trigger: elem, start: "top 90%", toggleActions: "play none none none" },
+                opacity: 1, y: 0, duration: 1.2, ease: "power4.out"
             });
         });
+
+        // 9. Before/After Logic
+        const baSlider = document.getElementById('baSlider');
+        const afterImg = baSlider.querySelector('.ba-after');
+        baSlider.addEventListener('mousemove', (e) => {
+            const rect = baSlider.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
+            afterImg.style.clipPath = `inset(0 0 0 ${x}%)`;
+        });
+
+        // 25. Back to Top Logic
+        const btt = document.getElementById('backToTop');
+        window.onscroll = () => { btt.style.opacity = window.scrollY > 800 ? "1" : "0"; };
+        btt.onclick = () => window.scrollTo({top:0, behavior:'smooth'});
     </script>
 </body>
 </html>
