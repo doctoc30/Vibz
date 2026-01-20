@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE OAK & CHAIR | Boutique Barbering</title>
+    <title>THE OAK & CHAIR | Boutique Barbering Studio</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
@@ -17,216 +17,298 @@
             --parchment: #fdfaf5;
             --sand: #e8dec9;
         }
-        body { font-family: 'DM Sans', sans-serif; background-color: var(--parchment); color: var(--tobacco); }
+        body { font-family: 'DM Sans', sans-serif; background-color: var(--parchment); color: var(--tobacco); scroll-behavior: smooth; }
         .serif { font-family: 'Fraunces', serif; }
-        
-        /* App-Like Container */
-        .app-card { background: white; border-radius: 32px; border: 1px solid var(--sand); }
-        
-        /* 19. Scroll Reveal */
-        .reveal { opacity: 0; transform: translateY(20px); }
-
-        /* 9. Before/After */
-        .ba-container { position: relative; width: 100%; height: 400px; border-radius: 24px; overflow: hidden; }
+        .app-card { background: white; border-radius: 32px; border: 1px solid var(--sand); transition: transform 0.3s ease; }
+        .app-card:hover { transform: translateY(-5px); }
+        .reveal { opacity: 0; }
+        .ba-container { position: relative; width: 100%; height: 450px; border-radius: 24px; overflow: hidden; cursor: col-resize; }
         .ba-after { clip-path: inset(0 0 0 50%); }
-
-        /* 2. Storefront Graphic Animation */
-        .storefront-icon { transition: all 0.5s ease; }
-        .storefront-wrap:hover .storefront-icon { transform: scale(1.02); }
-
-        /* 4. Sticky Nav */
-        .sticky-nav { backdrop-filter: blur(10px); background: rgba(253, 250, 245, 0.8); }
+        .sticky-nav { backdrop-filter: blur(12px); background: rgba(253, 250, 245, 0.9); }
+        
+        /* Custom Accordion */
+        .faq-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+        .faq-item.active .faq-content { max-height: 200px; padding-bottom: 1rem; }
     </style>
 </head>
-<body class="p-2 md:p-6">
+<body class="p-3 md:p-8">
 
-    <div class="w-full bg-[#4a3728] text-[#e8dec9] py-3 text-center rounded-2xl mb-4 text-xs font-bold tracking-widest uppercase">
-        ☕ Local Vibes: Free Espresso with every haircut this week
+    <div class="w-full bg-[#4a3728] text-[#e8dec9] py-3 text-center rounded-2xl mb-4 text-[10px] font-bold tracking-[0.3em] uppercase z-50 relative">
+        EST. 2026 • THE FINEST GROOMING IN SOUTH KENSINGTON • BOOKINGS OPEN
     </div>
 
-    <nav class="sticky-nav sticky top-4 z-50 p-4 rounded-2xl border border-[#e8dec9] flex justify-between items-center mb-8">
-        <div class="flex items-center gap-2">
-            <div class="w-10 h-10 bg-[#b08d57] rounded-xl flex items-center justify-center text-white">
-                <i data-lucide="scissors"></i>
-            </div>
-            <span class="serif text-xl font-bold">OAK & CHAIR</span>
-        </div>
-        
-        <div class="hidden md:flex gap-8 text-sm font-medium">
-            <a href="#services" class="hover:text-[#b08d57]">Services</a>
-            <a href="#gallery" class="hover:text-[#b08d57]">Gallery</a>
-            <a href="#contact" class="hover:text-[#b08d57]">Location</a>
-        </div>
-
+    <nav class="sticky-nav sticky top-4 z-[100] p-4 rounded-2xl border border-[#e8dec9] flex justify-between items-center mb-10 shadow-sm">
         <div class="flex items-center gap-3">
-            <a href="#booking" class="bg-[#b08d57] text-white px-5 py-2.5 rounded-xl text-xs font-bold hover:shadow-lg transition-all">BOOK NOW</a>
-            <button class="md:hidden p-2"><i data-lucide="menu"></i></button>
+            <div class="w-10 h-10 bg-[#b08d57] rounded-xl flex items-center justify-center text-white shadow-inner">
+                <i data-lucide="scissors" class="w-5"></i>
+            </div>
+            <span class="serif text-xl font-bold tracking-tight">OAK & CHAIR</span>
+        </div>
+        <div class="hidden lg:flex gap-10 text-[11px] font-bold uppercase tracking-widest">
+            <a href="#services" class="hover:text-[#b08d57] transition-colors">Services</a>
+            <a href="#process" class="hover:text-[#b08d57] transition-colors">The Experience</a>
+            <a href="#reviews" class="hover:text-[#b08d57] transition-colors">Reviews</a>
+            <a href="#contact" class="hover:text-[#b08d57] transition-colors">Location</a>
+        </div>
+        <div class="flex items-center gap-3">
+            <a href="#booking" class="bg-[#b08d57] text-white px-6 py-3 rounded-xl text-[10px] font-bold tracking-widest hover:bg-[#4a3728] transition-all">BOOK APPOINTMENT</a>
+            <button class="lg:hidden p-2" id="mobileMenuTrigger"><i data-lucide="menu"></i></button>
         </div>
     </nav>
 
-    <section class="grid lg:grid-cols-2 gap-6 mb-6">
-        <div class="app-card p-10 flex flex-col justify-center reveal">
-            <h1 class="serif text-5xl md:text-7xl mb-6">A small shop with <span class="italic text-[#b08d57]">big character.</span></h1>
-            <p class="text-lg text-stone-500 mb-8 max-w-md">No rush, no egos. Just classic barbering, warm towels, and the best conversation in London.</p>
-            <div class="flex gap-4">
-                <a href="tel:000" class="flex items-center gap-2 bg-[#fdfaf5] border border-[#e8dec9] px-6 py-4 rounded-2xl font-bold hover:bg-[#e8dec9] transition-all">
-                    <i data-lucide="phone" class="w-4"></i> Call Us
+    <section class="grid lg:grid-cols-5 gap-6 mb-6">
+        <div class="lg:col-span-3 app-card p-12 flex flex-col justify-center reveal">
+            <span class="text-[#b08d57] font-bold text-xs uppercase tracking-[0.4em] mb-4">Boutique Barbering</span>
+            <h1 class="serif text-5xl md:text-8xl mb-8 leading-[0.9]">Where time <br><span class="italic text-[#b08d57]">stands still.</span></h1>
+            <p class="text-xl text-stone-500 mb-10 max-w-lg leading-relaxed">A neighborhood retreat dedicated to the art of the cut. We focus on one chair, one client, and one perfect result at a time.</p>
+            <div class="flex flex-wrap gap-4">
+                <a href="#booking" class="bg-[#4a3728] text-white px-10 py-5 rounded-2xl font-bold hover:shadow-2xl transition-all">RESERVE A SEAT</a>
+                <a href="tel:02071234567" class="flex items-center gap-3 border border-[#e8dec9] px-8 py-5 rounded-2xl font-bold hover:bg-white transition-all">
+                    <i data-lucide="phone-call" class="w-5 text-[#b08d57]"></i> 020 7123 4567
                 </a>
-                <a href="https://wa.me/000" class="flex items-center gap-2 bg-[#25D366] text-white px-6 py-4 rounded-2xl font-bold hover:opacity-90 transition-all">
-                    <i data-lucide="message-circle" class="w-4"></i> WhatsApp
-                </a>
             </div>
         </div>
-        
-        <div class="app-card bg-[#e8dec9] flex items-center justify-center p-12 storefront-wrap reveal">
-            <svg viewBox="0 0 400 300" class="w-full max-w-sm storefront-icon">
-                <rect x="50" y="80" width="300" height="200" rx="10" fill="#4a3728"/> <rect x="80" y="110" width="100" height="120" rx="5" fill="#fdfaf5" fill-opacity="0.2"/> <rect x="220" y="110" width="100" height="120" rx="5" fill="#fdfaf5" fill-opacity="0.2"/> <rect x="185" y="150" width="30" height="130" fill="#b08d57"/> <path d="M40 85L200 30L360 85Z" fill="#b08d57"/> <circle cx="200" cy="120" r="20" fill="#fdfaf5" fill-opacity="0.1"/> <rect x="70" y="280" width="260" height="10" fill="#4a3728" opacity="0.2"/> </svg>
+        <div class="lg:col-span-2 app-card bg-[#e8dec9] flex items-center justify-center p-12 reveal">
+            <svg viewBox="0 0 400 400" class="w-full drop-shadow-3xl">
+                <rect x="60" y="100" width="280" height="240" rx="12" fill="#4a3728"/>
+                <rect x="80" y="130" width="240" height="120" rx="8" fill="#fdfaf5" fill-opacity="0.1"/>
+                <path d="M40 110L200 40L360 110Z" fill="#b08d57"/>
+                <rect x="180" y="250" width="40" height="90" fill="#b08d57"/>
+                <circle cx="200" cy="80" r="25" fill="#fdfaf5" fill-opacity="0.2"/>
+                <text x="200" y="210" text-anchor="middle" fill="#e8dec9" font-family="Fraunces" font-style="italic" font-size="32">O&C</text>
+            </svg>
         </div>
     </section>
 
-    <div class="flex items-center gap-4 my-12 px-6 opacity-20">
-        <div class="h-[1px] bg-[#4a3728] flex-1"></div>
-        <i data-lucide="scissors" class="w-4"></i>
-        <div class="h-[1px] bg-[#4a3728] flex-1"></div>
-    </div>
-
-    <section id="services" class="grid md:grid-cols-3 gap-6 mb-6">
-        <div class="app-card p-8 reveal">
-            <div class="w-12 h-12 bg-[#fdfaf5] border border-[#e8dec9] rounded-2xl flex items-center justify-center mb-6">
-                <i data-lucide="scissors" class="text-[#b08d57]"></i>
-            </div>
-            <h3 class="serif text-2xl mb-2">The Standard</h3>
-            <p class="text-sm text-stone-500 mb-6">Clipper or scissor cut, wash, and style.</p>
-            <div class="text-2xl font-bold">£32.00</div>
-        </div>
-        <div class="app-card p-8 reveal" style="transition-delay: 100ms;">
-            <div class="w-12 h-12 bg-[#fdfaf5] border border-[#e8dec9] rounded-2xl flex items-center justify-center mb-6">
-                <i data-lucide="wind" class="text-[#b08d57]"></i>
-            </div>
-            <h3 class="serif text-2xl mb-2">The Hot Shave</h3>
-            <p class="text-sm text-stone-500 mb-6">Traditional straight razor with steam.</p>
-            <div class="text-2xl font-bold">£28.00</div>
-        </div>
-        <div class="app-card p-8 reveal" style="transition-delay: 200ms;">
-            <div class="w-12 h-12 bg-[#fdfaf5] border border-[#e8dec9] rounded-2xl flex items-center justify-center mb-6">
-                <i data-lucide="coffee" class="text-[#b08d57]"></i>
-            </div>
-            <h3 class="serif text-2xl mb-2">The Full Works</h3>
-            <p class="text-sm text-stone-500 mb-6">Cut, beard shape, and exfoliating facial.</p>
-            <div class="text-2xl font-bold">£55.00</div>
-        </div>
-    </section>
-
-    <section class="app-card bg-[#4a3728] text-[#fdfaf5] p-12 text-center mb-6 reveal">
-        <h2 class="serif text-4xl mb-6">Need a fresh look for the weekend?</h2>
-        <p class="mb-8 opacity-70">Spots fill up fast. Our local regulars book 2 days ahead.</p>
-        <button class="bg-[#b08d57] text-white px-10 py-4 rounded-2xl font-bold hover:scale-105 transition-all">CLAIM YOUR CHAIR</button>
-    </section>
-
-    <section class="grid lg:grid-cols-2 gap-6 mb-6">
-        <div class="app-card p-6 reveal">
-            <h3 class="serif text-2xl mb-6">The Clean-Up</h3>
-            <div class="ba-container" id="slider">
-                <img src="https://images.unsplash.com/photo-1599351431247-f50940243edc?w=800" class="absolute inset-0 w-full h-full object-cover">
-                <img src="https://images.unsplash.com/photo-1621605815841-aa89780b67d2?w=800" class="absolute inset-0 w-full h-full object-cover ba-after">
-                <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <div class="bg-white/80 backdrop-blur px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest">Slide to Compare</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="app-card p-6 grid grid-cols-2 gap-4 reveal">
-            <div class="rounded-2xl bg-stone-100 overflow-hidden h-44"><img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=400" class="w-full h-full object-cover"></div>
-            <div class="rounded-2xl bg-stone-100 overflow-hidden h-44"><img src="https://images.unsplash.com/photo-1512690196236-d5a743f4f0bb?w=400" class="w-full h-full object-cover"></div>
-            <div class="rounded-2xl bg-stone-100 overflow-hidden h-44"><img src="https://images.unsplash.com/photo-1622286332618-f2802b9c74bc?w=400" class="w-full h-full object-cover"></div>
-            <div class="rounded-2xl bg-stone-100 overflow-hidden h-44 flex items-center justify-center bg-[#e8dec9] text-[#4a3728] text-xs font-bold p-4 text-center">
-                Follow us @oakandchair
-            </div>
-        </div>
-    </section>
-
-    <section class="grid lg:grid-cols-3 gap-6 mb-6">
+    <section class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-6">
         <div class="app-card p-8 text-center reveal">
-            <div class="w-24 h-24 bg-stone-200 rounded-full mx-auto mb-6 overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=200" class="w-full h-full object-cover">
-            </div>
-            <h4 class="serif text-xl">Arthur Oak</h4>
-            <p class="text-xs text-[#b08d57] font-bold uppercase tracking-widest mt-1">Founder / Beard Master</p>
+            <h4 class="serif text-4xl text-[#b08d57] mb-1">12k+</h4>
+            <p class="text-[10px] font-bold uppercase tracking-widest opacity-60">Cuts Performed</p>
         </div>
-        <div class="app-card p-8 lg:col-span-2 flex flex-col justify-center reveal">
-            <div class="flex gap-1 text-yellow-500 mb-4">
-                <i data-lucide="star" class="fill-current w-4"></i><i data-lucide="star" class="fill-current w-4"></i><i data-lucide="star" class="fill-current w-4"></i><i data-lucide="star" class="fill-current w-4"></i><i data-lucide="star" class="fill-current w-4"></i>
+        <div class="app-card p-8 text-center reveal" style="transition-delay: 100ms;">
+            <h4 class="serif text-4xl text-[#b08d57] mb-1">15</h4>
+            <p class="text-[10px] font-bold uppercase tracking-widest opacity-60">Years in Craft</p>
+        </div>
+        <div class="app-card p-8 text-center reveal" style="transition-delay: 200ms;">
+            <h4 class="serif text-4xl text-[#b08d57] mb-1">5.0</h4>
+            <p class="text-[10px] font-bold uppercase tracking-widest opacity-60">Google Rating</p>
+        </div>
+        <div class="app-card p-8 text-center reveal" style="transition-delay: 300ms;">
+            <h4 class="serif text-4xl text-[#b08d57] mb-1">∞</h4>
+            <p class="text-[10px] font-bold uppercase tracking-widest opacity-60">Coffee Poured</p>
+        </div>
+    </section>
+
+    <section id="services" class="app-card p-12 mb-6 reveal">
+        <div class="flex flex-col md:flex-row justify-between items-end mb-16">
+            <div class="max-w-xl">
+                <h2 class="serif text-5xl mb-4">Our Services</h2>
+                <p class="text-stone-500">Simple, transparent pricing. No hidden extras.</p>
             </div>
-            <p class="serif text-xl italic text-stone-600">"The only place in the city where you actually feel at home. Arthur isn't just a barber, he's an artist. Best fade I've ever had."</p>
-            <span class="mt-4 text-xs font-bold uppercase tracking-widest">— David G.</span>
+            <a href="#booking" class="text-[#b08d57] font-bold border-b-2 border-[#b08d57] pb-1 hover:text-[#4a3728] transition-colors mb-4 md:mb-0">Book a Service</a>
+        </div>
+        <div class="grid md:grid-cols-2 gap-x-20 gap-y-10">
+            <div class="flex justify-between items-center border-b border-stone-100 pb-6 group">
+                <div class="group-hover:translate-x-2 transition-transform">
+                    <h4 class="font-bold text-lg uppercase">The Classic Cut</h4>
+                    <p class="text-sm text-stone-400">Consultation, wash, cut & style</p>
+                </div>
+                <span class="serif text-2xl font-bold">£35</span>
+            </div>
+            <div class="flex justify-between items-center border-b border-stone-100 pb-6 group">
+                <div class="group-hover:translate-x-2 transition-transform">
+                    <h4 class="font-bold text-lg uppercase">Skin Fade Specialist</h4>
+                    <p class="text-sm text-stone-400">Zero-tapered precision fade</p>
+                </div>
+                <span class="serif text-2xl font-bold">£40</span>
+            </div>
+            <div class="flex justify-between items-center border-b border-stone-100 pb-6 group">
+                <div class="group-hover:translate-x-2 transition-transform">
+                    <h4 class="font-bold text-lg uppercase">Beard Sculpting</h4>
+                    <p class="text-sm text-stone-400">Shaping & Hot Towel finish</p>
+                </div>
+                <span class="serif text-2xl font-bold">£25</span>
+            </div>
+            <div class="flex justify-between items-center border-b border-stone-100 pb-6 group">
+                <div class="group-hover:translate-x-2 transition-transform">
+                    <h4 class="font-bold text-lg uppercase">The Full Ritual</h4>
+                    <p class="text-sm text-stone-400">Signature Cut + Beard + Face Mask</p>
+                </div>
+                <span class="serif text-2xl font-bold">£65</span>
+            </div>
         </div>
     </section>
 
     <section class="grid lg:grid-cols-2 gap-6 mb-6">
         <div class="app-card p-10 reveal">
-            <h3 class="serif text-3xl mb-8">Drop a line</h3>
-            <form class="space-y-4">
-                <input type="text" placeholder="Your Name" class="w-full p-4 rounded-xl bg-[#fdfaf5] border border-[#e8dec9] focus:outline-none focus:border-[#b08d57]">
-                <textarea placeholder="How can we help?" class="w-full p-4 rounded-xl bg-[#fdfaf5] border border-[#e8dec9] h-32 focus:outline-none focus:border-[#b08d57]"></textarea>
-                <button class="w-full bg-[#4a3728] text-white py-4 rounded-xl font-bold">SEND MESSAGE</button>
-            </form>
+            <h2 class="serif text-4xl mb-6">Visible <span class="text-[#b08d57] italic">Results.</span></h2>
+            <p class="text-stone-500 mb-10">Use the slider to see how we transform overgrown textures into sharp, manageable styles.</p>
+            <div class="ba-container" id="baSlider">
+                <img src="https://images.unsplash.com/photo-1599351431247-f50940243edc?w=1000" class="absolute inset-0 w-full h-full object-cover">
+                <img src="https://images.unsplash.com/photo-1621605815841-aa89780b67d2?w=1000" class="absolute inset-0 w-full h-full object-cover ba-after">
+            </div>
         </div>
         
-        <div class="app-card p-10 flex flex-col justify-between reveal">
-            <div class="grid grid-cols-2 gap-8">
-                <div>
-                    <h5 class="font-bold text-xs uppercase tracking-widest text-[#b08d57] mb-4">Visit Us</h5>
-                    <p class="text-sm">12 Willow Lane<br>South Kensington<br>London, SW7 2PT</p>
+        <div id="gallery" class="grid grid-cols-2 gap-6 reveal">
+            <div class="app-card overflow-hidden h-full"><img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=600" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"></div>
+            <div class="app-card overflow-hidden h-full mt-10"><img src="https://images.unsplash.com/photo-1512690196236-d5a743f4f0bb?w=600" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"></div>
+            <div class="app-card overflow-hidden h-full -mt-10"><img src="https://images.unsplash.com/photo-1622286332618-f2802b9c74bc?w=600" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"></div>
+            <div class="app-card bg-[#4a3728] p-8 flex flex-col justify-center text-[#e8dec9]">
+                <h4 class="serif text-2xl mb-2">Our Work.</h4>
+                <p class="text-xs opacity-60 uppercase tracking-widest">Handcrafted Styles</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="process" class="py-20 text-center reveal">
+        <h2 class="serif text-5xl mb-16">The O&C Experience</h2>
+        <div class="grid md:grid-cols-3 gap-12 max-w-6xl mx-auto">
+            <div class="space-y-6">
+                <div class="w-16 h-16 bg-white border border-[#e8dec9] rounded-full flex items-center justify-center mx-auto text-2xl serif">1</div>
+                <h4 class="font-bold text-xl uppercase">The Consult</h4>
+                <p class="text-stone-500 text-sm">We discuss your face shape, growth patterns and lifestyle before we touch a clipper.</p>
+            </div>
+            <div class="space-y-6">
+                <div class="w-16 h-16 bg-white border border-[#e8dec9] rounded-full flex items-center justify-center mx-auto text-2xl serif">2</div>
+                <h4 class="font-bold text-xl uppercase">The Craft</h4>
+                <p class="text-stone-500 text-sm">Relax with a locally sourced coffee while our masters work with precision and care.</p>
+            </div>
+            <div class="space-y-6">
+                <div class="w-16 h-16 bg-white border border-[#e8dec9] rounded-full flex items-center justify-center mx-auto text-2xl serif">3</div>
+                <h4 class="font-bold text-xl uppercase">The Finish</h4>
+                <p class="text-stone-500 text-sm">Every cut ends with a hot towel neck shave and artisan styling products.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="grid lg:grid-cols-2 gap-6 mb-6">
+        <div class="app-card p-12 reveal">
+            <div class="flex items-center gap-8 mb-8">
+                <div class="w-32 h-32 rounded-3xl overflow-hidden bg-stone-100 border-4 border-[#e8dec9]">
+                    <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400" class="w-full h-full object-cover">
                 </div>
                 <div>
-                    <h5 class="font-bold text-xs uppercase tracking-widest text-[#b08d57] mb-4">Hours</h5>
-                    <p class="text-sm">Tue-Fri: 10am - 8pm<br>Sat: 9am - 6pm<br>Sun/Mon: Closed</p>
+                    <h3 class="serif text-3xl">Arthur Oak</h3>
+                    <p class="text-[#b08d57] font-bold text-xs uppercase tracking-widest">Master Barber & Founder</p>
                 </div>
             </div>
-            <div class="w-full h-48 bg-[#e8dec9] rounded-2xl mt-8 overflow-hidden">
+            <p class="text-stone-500 leading-relaxed italic">"I wanted to build a shop that felt like my grandfather's, but with the precision of a modern studio. No rushing. Just quality."</p>
+        </div>
+
+        <div id="reviews" class="app-card p-12 reveal">
+            <h3 class="serif text-3xl mb-8">Client Words</h3>
+            <div class="space-y-8">
+                <div>
+                    <div class="flex text-yellow-500 mb-2"><i data-lucide="star" class="w-3 fill-current"></i><i data-lucide="star" class="w-3 fill-current"></i><i data-lucide="star" class="w-3 fill-current"></i><i data-lucide="star" class="w-3 fill-current"></i><i data-lucide="star" class="w-3 fill-current"></i></div>
+                    <p class="text-sm font-medium">"The attention to detail is unmatched in London. Arthur is a true craftsman."</p>
+                    <p class="text-[10px] text-stone-400 mt-2 uppercase font-bold tracking-widest">— Simon P.</p>
+                </div>
+                <div class="border-t border-stone-100 pt-8">
+                    <div class="flex text-yellow-500 mb-2"><i data-lucide="star" class="w-3 fill-current"></i><i data-lucide="star" class="w-3 fill-current"></i><i data-lucide="star" class="w-3 fill-current"></i><i data-lucide="star" class="w-3 fill-current"></i><i data-lucide="star" class="w-3 fill-current"></i></div>
+                    <p class="text-sm font-medium">"Warm atmosphere, great espresso, and the best fade I've ever had."</p>
+                    <p class="text-[10px] text-stone-400 mt-2 uppercase font-bold tracking-widest">— Thomas K.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="app-card p-12 mb-6 reveal max-w-4xl mx-auto">
+        <h2 class="serif text-4xl mb-10 text-center">Your Questions</h2>
+        <div class="space-y-4">
+            <div class="faq-item border-b border-stone-100 cursor-pointer">
+                <div class="flex justify-between items-center py-4"><h4 class="font-bold uppercase text-xs tracking-widest">Do I need to book?</h4><i data-lucide="plus" class="w-4"></i></div>
+                <div class="faq-content text-sm text-stone-500">We highly recommend booking as we are a boutique one-chair studio. Walk-ins are rarely available.</div>
+            </div>
+            <div class="faq-item border-b border-stone-100 cursor-pointer">
+                <div class="flex justify-between items-center py-4"><h4 class="font-bold uppercase text-xs tracking-widest">Where should I park?</h4><i data-lucide="plus" class="w-4"></i></div>
+                <div class="faq-content text-sm text-stone-500">There is local street parking on Willow Lane, free after 6:30 PM.</div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="grid lg:grid-cols-2 gap-6 mb-10">
+        <div class="app-card p-12 reveal">
+            <h2 class="serif text-5xl mb-10">Say Hello</h2>
+            <form class="space-y-6">
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="text" placeholder="Name" class="bg-stone-50 p-5 rounded-2xl border-none focus:ring-2 focus:ring-[#b08d57] w-full">
+                    <input type="email" placeholder="Email" class="bg-stone-50 p-5 rounded-2xl border-none focus:ring-2 focus:ring-[#b08d57] w-full">
+                </div>
+                <textarea placeholder="Your Message" rows="4" class="bg-stone-50 p-5 rounded-2xl border-none focus:ring-2 focus:ring-[#b08d57] w-full"></textarea>
+                <button class="w-full bg-[#4a3728] text-white py-5 rounded-2xl font-bold uppercase tracking-widest hover:bg-[#b08d57] transition-all">Submit Enquiry</button>
+            </form>
+        </div>
+        <div class="app-card p-12 flex flex-col justify-between reveal">
+            <div class="space-y-10">
+                <div>
+                    <h5 class="text-[10px] font-bold uppercase tracking-[0.3em] text-[#b08d57] mb-2">Location</h5>
+                    <p class="text-xl serif italic">12 Willow Lane, South Kensington<br>London, SW7 2PT</p>
+                </div>
+                <div class="flex justify-between">
+                    <div>
+                        <h5 class="text-[10px] font-bold uppercase tracking-[0.3em] text-[#b08d57] mb-2">Opening Hours</h5>
+                        <p class="text-sm">Tue - Fri: 10am — 8pm<br>Sat: 9am — 6pm</p>
+                    </div>
+                    <div class="text-right">
+                        <h5 class="text-[10px] font-bold uppercase tracking-[0.3em] text-[#b08d57] mb-2">Get in touch</h5>
+                        <p class="text-sm">hello@oakandchair.co.uk<br>020 7123 4567</p>
+                    </div>
+                </div>
+            </div>
+            <div class="h-56 bg-stone-100 rounded-3xl mt-10 overflow-hidden border border-[#e8dec9] grayscale opacity-70">
                 <iframe src="https://www.google.com/maps/embed?..." width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
             </div>
         </div>
     </section>
 
-    <footer class="app-card bg-[#fdfaf5] p-12 text-center reveal">
-        <div class="serif text-2xl font-bold mb-6">OAK & CHAIR</div>
-        <div class="flex justify-center gap-8 text-xs font-bold uppercase tracking-widest mb-10">
-            <a href="#" class="hover:text-[#b08d57]">Home</a>
-            <a href="#" class="hover:text-[#b08d57]">Privacy</a>
-            <a href="#" class="hover:text-[#b08d57]">Contact</a>
+    <footer class="app-card bg-[#4a3728] text-[#fdfaf5] p-16 text-center reveal">
+        <div class="serif text-4xl mb-8">THE OAK & CHAIR</div>
+        <div class="flex justify-center gap-10 text-[10px] font-bold uppercase tracking-[0.3em] opacity-60 mb-12">
+            <a href="#services">Services</a>
+            <a href="#booking">Booking</a>
+            <a href="#gallery">Gallery</a>
         </div>
-        <div class="flex justify-center gap-4 mb-10">
-            <div class="w-10 h-10 border border-[#e8dec9] rounded-full flex items-center justify-center hover:bg-[#b08d57] hover:text-white transition-all"><i data-lucide="instagram" class="w-4"></i></div>
-            <div class="w-10 h-10 border border-[#e8dec9] rounded-full flex items-center justify-center hover:bg-[#b08d57] hover:text-white transition-all"><i data-lucide="facebook" class="w-4"></i></div>
+        <div class="flex justify-center gap-6">
+            <a href="#" class="w-12 h-12 border border-[#b08d57] rounded-full flex items-center justify-center text-[#b08d57] hover:bg-[#b08d57] hover:text-white transition-all"><i data-lucide="instagram" class="w-5"></i></a>
+            <a href="#" class="w-12 h-12 border border-[#b08d57] rounded-full flex items-center justify-center text-[#b08d57] hover:bg-[#b08d57] hover:text-white transition-all"><i data-lucide="facebook" class="w-5"></i></a>
         </div>
-        <p class="text-[10px] text-stone-400 font-bold tracking-widest">© 2026 THE OAK & CHAIR STUDIOS. LONDON.</p>
+        <div class="mt-16 text-[9px] font-bold opacity-30 tracking-[0.5em] uppercase">© 2026 THE OAK & CHAIR STUDIOS • REGISTERED IN THE UK</div>
     </footer>
 
-    <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="fixed bottom-8 right-8 w-12 h-12 bg-[#b08d57] text-white rounded-full shadow-xl flex items-center justify-center hover:-translate-y-2 transition-transform z-[100]">
-        <i data-lucide="arrow-up"></i>
+    <button onclick="window.scrollTo({top:0, behavior:'smooth'})" class="fixed bottom-10 right-10 w-14 h-14 bg-[#b08d57] text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-transform z-[101]">
+        <i data-lucide="arrow-up" class="w-6"></i>
     </button>
 
     <script>
         lucide.createIcons();
         gsap.registerPlugin(ScrollTrigger);
 
-        // 19. Scroll Reveal Animations
+        // 19. Reveal Animations
         gsap.utils.toArray('.reveal').forEach((elem) => {
-            gsap.fromTo(elem, { opacity: 0, y: 30 }, { 
-                opacity: 1, y: 0, duration: 1, ease: "power2.out",
+            gsap.fromTo(elem, { opacity: 0, y: 40 }, { 
+                opacity: 1, y: 0, duration: 1.2, ease: "power3.out",
                 scrollTrigger: { trigger: elem, start: "top 90%" }
             });
         });
 
         // 9. Before/After Interaction
-        const slider = document.getElementById('slider');
-        const afterImg = slider.querySelector('.ba-after');
-        slider.onmousemove = (e) => {
-            const rect = slider.getBoundingClientRect();
+        const baSlider = document.getElementById('baSlider');
+        const afterImg = baSlider.querySelector('.ba-after');
+        baSlider.addEventListener('mousemove', (e) => {
+            const rect = baSlider.getBoundingClientRect();
             const x = ((e.clientX - rect.left) / rect.width) * 100;
             afterImg.style.clipPath = `inset(0 0 0 ${x}%)`;
-        };
+        });
+
+        // FAQ Toggles
+        document.querySelectorAll('.faq-item').forEach(item => {
+            item.onclick = () => {
+                item.classList.toggle('active');
+                const icon = item.querySelector('i');
+                icon.setAttribute('data-lucide', item.classList.contains('active') ? 'minus' : 'plus');
+                lucide.createIcons();
+            }
+        });
     </script>
 </body>
 </html>
