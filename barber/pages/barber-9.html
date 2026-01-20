@@ -16,8 +16,49 @@
     --charcoal: #333333;
     --light-gray: #f5f5f5;
 }
-body { font-family: 'Outfit', sans-serif; background-color: var(--cream); color: var(--charcoal); overflow-x: hidden; }
+body { 
+    font-family: 'Outfit', sans-serif; 
+    background-color: var(--cream); 
+    color: var(--charcoal); 
+    overflow-x: hidden; 
+    scroll-behavior: smooth;
+}
 .serif { font-family: 'Playfair Display', serif; }
+/* Mobile Menu Animation */
+#mobileMenu {
+    transform: translateX(-100%);
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+#mobileMenu.open {
+    transform: translateX(0);
+}
+/* Backdrop for mobile menu */
+#mobileMenuBackdrop {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+#mobileMenuBackdrop.open {
+    opacity: 1;
+    visibility: visible;
+}
+/* Hamburger animation */
+.hamburger-line {
+    transition: all 0.3s ease;
+}
+.hamburger.open .hamburger-line:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+.hamburger.open .hamburger-line:nth-child(2) {
+    opacity: 0;
+}
+.hamburger.open .hamburger-line:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -6px);
+}
+/* Prevent body scroll when menu is open */
+body.menu-open {
+    overflow: hidden;
+}
 /* Reveal animations */
 .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
 .reveal.active { opacity: 1; transform: translateY(0); }
@@ -35,16 +76,28 @@ body { font-family: 'Outfit', sans-serif; background-color: var(--cream); color:
     background: var(--cream); border-top: 1px solid var(--light-gray);
     display: flex; justify-content: space-around; padding: 12px; z-index: 1000;
 }
-/* Mobile Menu Animation */
-.mobile-menu-enter { transform: translateX(-100%); }
-.mobile-menu-enter-active { transform: translateX(0); transition: transform 0.5s ease-out; }
-.mobile-menu-exit { transform: translateX(0); }
-.mobile-menu-exit-active { transform: translateX(-100%); transition: transform 0.5s ease-in; }
 /* B18 Hairstyles Grid */
 .b18-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
 /* FAQ Toggle */
 .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.5s ease; }
 .faq-answer.open { max-height: 500px; }
+/* Menu link animation */
+.menu-link {
+    position: relative;
+}
+.menu-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--soft-gold);
+    transition: width 0.3s ease;
+}
+.menu-link:hover::after {
+    width: 100%;
+}
 </style>
 </head>
 <body>
@@ -53,7 +106,7 @@ body { font-family: 'Outfit', sans-serif; background-color: var(--cream); color:
 <header class="sticky top-0 z-[100] bg-cream/90 backdrop-blur-md px-6 py-4 border-b border-light-gray shadow-md">
     <div class="max-w-7xl mx-auto flex justify-between items-center">
         <!-- Logo -->
-        <div class="flex items-center gap-2 reveal">
+        <div class="flex items-center gap-2">
             <div class="w-10 h-10 bg-soft-gold rounded-lg flex items-center justify-center text-charcoal">
                 <i data-lucide="scissors"></i>
             </div>
@@ -61,43 +114,48 @@ body { font-family: 'Outfit', sans-serif; background-color: var(--cream); color:
         </div>
 
         <!-- Desktop Menu -->
-        <nav class="hidden lg:flex gap-8 text-sm font-bold uppercase tracking-wide reveal">
-            <a href="#services" class="hover:text-soft-gold transition-colors">Services</a>
-            <a href="#barbers" class="hover:text-soft-gold transition-colors">Barbers</a>
-            <a href="#features" class="hover:text-soft-gold transition-colors">Features</a>
-            <a href="#gallery" class="hover:text-soft-gold transition-colors">Gallery</a>
-            <a href="#map" class="hover:text-soft-gold transition-colors">Location</a>
-            <a href="#faq" class="hover:text-soft-gold transition-colors">FAQ</a>
-            <a href="#pricing" class="hover:text-soft-gold transition-colors">Pricing</a>
-            <a href="#b18" class="hover:text-soft-gold transition-colors">B18 Styles</a>
-            <a href="#testimonials" class="hover:text-soft-gold transition-colors">Testimonials</a>
-            <a href="#booking" class="hover:text-soft-gold transition-colors">Booking</a>
+        <nav class="hidden lg:flex gap-8 text-sm font-bold uppercase tracking-wide">
+            <a href="#services" class="menu-link hover:text-soft-gold transition-colors">Services</a>
+            <a href="#barbers" class="menu-link hover:text-soft-gold transition-colors">Barbers</a>
+            <a href="#features" class="menu-link hover:text-soft-gold transition-colors">Features</a>
+            <a href="#gallery" class="menu-link hover:text-soft-gold transition-colors">Gallery</a>
+            <a href="#map" class="menu-link hover:text-soft-gold transition-colors">Location</a>
+            <a href="#faq" class="menu-link hover:text-soft-gold transition-colors">FAQ</a>
+            <a href="#pricing" class="menu-link hover:text-soft-gold transition-colors">Pricing</a>
+            <a href="#b18" class="menu-link hover:text-soft-gold transition-colors">B18 Styles</a>
+            <a href="#testimonials" class="menu-link hover:text-soft-gold transition-colors">Testimonials</a>
+            <a href="#booking" class="menu-link hover:text-soft-gold transition-colors">Booking</a>
         </nav>
 
-        <!-- Mobile Hamburger -->
-        <div class="lg:hidden relative reveal z-[1000]">
-            <button id="mobileMenuBtn" class="text-charcoal z-[1001] relative">
-                <i data-lucide="menu" id="menuIcon" class="w-6 h-6"></i>
-            </button>
-
-            <!-- Mobile Menu -->
-            <div id="mobileMenu" class="fixed inset-0 bg-cream z-[999] flex flex-col justify-start items-start p-6 pt-24 transform -translate-x-full transition-transform duration-500 ease-out">
-                <div class="w-full space-y-6">
-                    <a href="#services" onclick="toggleMobileMenu()" class="block text-xl font-bold uppercase hover:text-soft-gold transition-colors py-3 border-b border-light-gray">Services</a>
-                    <a href="#barbers" onclick="toggleMobileMenu()" class="block text-xl font-bold uppercase hover:text-soft-gold transition-colors py-3 border-b border-light-gray">Barbers</a>
-                    <a href="#features" onclick="toggleMobileMenu()" class="block text-xl font-bold uppercase hover:text-soft-gold transition-colors py-3 border-b border-light-gray">Features</a>
-                    <a href="#gallery" onclick="toggleMobileMenu()" class="block text-xl font-bold uppercase hover:text-soft-gold transition-colors py-3 border-b border-light-gray">Gallery</a>
-                    <a href="#map" onclick="toggleMobileMenu()" class="block text-xl font-bold uppercase hover:text-soft-gold transition-colors py-3 border-b border-light-gray">Location</a>
-                    <a href="#faq" onclick="toggleMobileMenu()" class="block text-xl font-bold uppercase hover:text-soft-gold transition-colors py-3 border-b border-light-gray">FAQ</a>
-                    <a href="#pricing" onclick="toggleMobileMenu()" class="block text-xl font-bold uppercase hover:text-soft-gold transition-colors py-3 border-b border-light-gray">Pricing</a>
-                    <a href="#b18" onclick="toggleMobileMenu()" class="block text-xl font-bold uppercase hover:text-soft-gold transition-colors py-3 border-b border-light-gray">B18 AI Styles</a>
-                    <a href="#testimonials" onclick="toggleMobileMenu()" class="block text-xl font-bold uppercase hover:text-soft-gold transition-colors py-3 border-b border-light-gray">Testimonials</a>
-                    <a href="#booking" onclick="toggleMobileMenu()" class="block text-xl font-bold uppercase hover:text-soft-gold transition-colors py-3 border-b border-light-gray">Booking</a>
-                </div>
-                <button onclick="toggleMobileMenu()" class="absolute top-8 right-6 text-charcoal z-[1001]">
-                    <i data-lucide="x" id="closeIcon" class="w-8 h-8"></i>
-                </button>
+        <!-- Mobile Hamburger Button -->
+        <button id="mobileMenuBtn" class="lg:hidden relative z-[1100] p-2 focus:outline-none">
+            <div class="hamburger w-6 h-6 flex flex-col justify-between">
+                <span class="hamburger-line block w-full h-0.5 bg-charcoal"></span>
+                <span class="hamburger-line block w-full h-0.5 bg-charcoal"></span>
+                <span class="hamburger-line block w-full h-0.5 bg-charcoal"></span>
             </div>
+        </button>
+
+        <!-- Mobile Menu Backdrop -->
+        <div id="mobileMenuBackdrop" class="fixed inset-0 bg-black/50 z-[999]"></div>
+
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="fixed inset-y-0 left-0 w-full max-w-xs bg-cream z-[1000] shadow-2xl p-6 pt-24">
+            <div class="w-full space-y-4">
+                <a href="#services" class="block text-xl font-bold uppercase hover:text-soft-gold transition-colors py-3 border-b border-light-gray">Services</a>
+                <a href="#barbers" class="block text-xl font-bold uppercase hover:text-soft-gold transition-colors py-3 border-b border-light-gray">Barbers</a>
+                <a href="#features" class="block text-xl font-bold uppercase hover:text-soft-gold transition-colors py-3 border-b border-light-gray">Features</a>
+                <a href="#gallery" class="block text-xl font-bold uppercase hover:text-soft-gold transition-colors py-3 border-b border-light-gray">Gallery</a>
+                <a href="#map" class="block text-xl font-bold uppercase hover:text-soft-gold transition-colors py-3 border-b border-light-gray">Location</a>
+                <a href="#faq" class="block text-xl font-bold uppercase hover:text-soft-gold transition-colors py-3 border-b border-light-gray">FAQ</a>
+                <a href="#pricing" class="block text-xl font-bold uppercase hover:text-soft-gold transition-colors py-3 border-b border-light-gray">Pricing</a>
+                <a href="#b18" class="block text-xl font-bold uppercase hover:text-soft-gold transition-colors py-3 border-b border-light-gray">B18 AI Styles</a>
+                <a href="#testimonials" class="block text-xl font-bold uppercase hover:text-soft-gold transition-colors py-3 border-b border-light-gray">Testimonials</a>
+                <a href="#booking" class="block text-xl font-bold uppercase hover:text-soft-gold transition-colors py-3 border-b border-light-gray">Booking</a>
+            </div>
+            <button id="closeMenuBtn" class="absolute top-6 right-6 text-charcoal hover:text-soft-gold transition-colors">
+                <i data-lucide="x" class="w-8 h-8"></i>
+            </button>
         </div>
     </div>
 </header>
@@ -146,6 +204,76 @@ body { font-family: 'Outfit', sans-serif; background-color: var(--cream); color:
         <div>
             <h3 class="serif text-5xl counter" data-target="15">0</h3>
             <p class="uppercase font-bold tracking-wide mt-2">Awards Won</p>
+        </div>
+    </div>
+</section>
+
+<!-- SERVICES SECTION (First one - keep this) -->
+<section id="services" class="py-24 px-6 reveal">
+    <div class="max-w-7xl mx-auto">
+        <h2 class="serif text-5xl mb-12 text-center">Our Services</h2>
+        <div class="grid lg:grid-cols-2 gap-12">
+            <div class="space-y-8">
+                <div class="flex justify-between items-center border-b border-light-gray pb-4 hover-lift">
+                    <div>
+                        <h4 class="font-bold text-xl uppercase">Classic Cut</h4>
+                        <p class="text-sm opacity-70">Consultation + Precision Cut</p>
+                    </div>
+                    <span class="serif text-3xl">£40</span>
+                </div>
+                <div class="flex justify-between items-center border-b border-light-gray pb-4 hover-lift">
+                    <div>
+                        <h4 class="font-bold text-xl uppercase">Hot Towel Shave</h4>
+                        <p class="text-sm opacity-70">Luxury Steam & Straight Razor</p>
+                    </div>
+                    <span class="serif text-3xl">£35</span>
+                </div>
+                <div class="flex justify-between items-center border-b border-light-gray pb-4 hover-lift">
+                    <div>
+                        <h4 class="font-bold text-xl uppercase">Beard Sculpt</h4>
+                        <p class="text-sm opacity-70">Precision Shaping & Oils</p>
+                    </div>
+                    <span class="serif text-3xl">£25</span>
+                </div>
+                <div class="flex justify-between items-center border-b border-light-gray pb-4 hover-lift">
+                    <div>
+                        <h4 class="font-bold text-xl uppercase">B18 AI Consultation</h4>
+                        <p class="text-sm opacity-70">Personalized Style Analysis</p>
+                    </div>
+                    <span class="serif text-3xl">£20</span>
+                </div>
+                <div class="flex justify-between items-center border-b border-light-gray pb-4 hover-lift">
+                    <div>
+                        <h4 class="font-bold text-xl uppercase">Hair & Scalp Treatment</h4>
+                        <p class="text-sm opacity-70">Deep Conditioning Therapy</p>
+                    </div>
+                    <span class="serif text-3xl">£30</span>
+                </div>
+            </div>
+            <div id="booking" class="bg-cream p-10 rounded-3xl shadow-lg reveal">
+                <h3 class="serif text-3xl mb-8 text-center">Book Your Appointment</h3>
+                <form class="space-y-4">
+                    <input type="text" placeholder="Your Name" class="w-full p-5 rounded-2xl bg-light-gray focus:ring-2 focus:ring-charcoal outline-none">
+                    <input type="email" placeholder="Email Address" class="w-full p-5 rounded-2xl bg-light-gray focus:ring-2 focus:ring-charcoal outline-none">
+                    <input type="tel" placeholder="Phone Number" class="w-full p-5 rounded-2xl bg-light-gray focus:ring-2 focus:ring-charcoal outline-none">
+                    <select class="w-full p-5 rounded-2xl bg-light-gray focus:ring-2 focus:ring-charcoal outline-none">
+                        <option>Select Service</option>
+                        <option>Classic Cut (£40)</option>
+                        <option>Hot Towel Shave (£35)</option>
+                        <option>Beard Sculpt (£25)</option>
+                        <option>B18 AI Consultation (£20)</option>
+                        <option>Premium Package (£65)</option>
+                        <option>Executive Experience (£95)</option>
+                    </select>
+                    <select class="w-full p-5 rounded-2xl bg-light-gray focus:ring-2 focus:ring-charcoal outline-none">
+                        <option>Select Specialist</option>
+                        <option>Marcus (Classic Cuts)</option>
+                        <option>Andre (Beard Specialist)</option>
+                        <option>Jamal (Creative Designs)</option>
+                    </select>
+                    <button type="button" class="w-full bg-charcoal text-soft-gold py-5 rounded-2xl font-bold uppercase tracking-wide hover:scale-105 transition-transform">Confirm Appointment</button>
+                </form>
+            </div>
         </div>
     </div>
 </section>
@@ -519,76 +647,6 @@ body { font-family: 'Outfit', sans-serif; background-color: var(--cream); color:
     </div>
 </section>
 
-<!-- SERVICES SECTION -->
-<section id="services" class="py-24 px-6 reveal">
-    <div class="max-w-7xl mx-auto">
-        <h2 class="serif text-5xl mb-12 text-center">Our Services</h2>
-        <div class="grid lg:grid-cols-2 gap-12">
-            <div class="space-y-8">
-                <div class="flex justify-between items-center border-b border-light-gray pb-4 hover-lift">
-                    <div>
-                        <h4 class="font-bold text-xl uppercase">Classic Cut</h4>
-                        <p class="text-sm opacity-70">Consultation + Precision Cut</p>
-                    </div>
-                    <span class="serif text-3xl">£40</span>
-                </div>
-                <div class="flex justify-between items-center border-b border-light-gray pb-4 hover-lift">
-                    <div>
-                        <h4 class="font-bold text-xl uppercase">Hot Towel Shave</h4>
-                        <p class="text-sm opacity-70">Luxury Steam & Straight Razor</p>
-                    </div>
-                    <span class="serif text-3xl">£35</span>
-                </div>
-                <div class="flex justify-between items-center border-b border-light-gray pb-4 hover-lift">
-                    <div>
-                        <h4 class="font-bold text-xl uppercase">Beard Sculpt</h4>
-                        <p class="text-sm opacity-70">Precision Shaping & Oils</p>
-                    </div>
-                    <span class="serif text-3xl">£25</span>
-                </div>
-                <div class="flex justify-between items-center border-b border-light-gray pb-4 hover-lift">
-                    <div>
-                        <h4 class="font-bold text-xl uppercase">B18 AI Consultation</h4>
-                        <p class="text-sm opacity-70">Personalized Style Analysis</p>
-                    </div>
-                    <span class="serif text-3xl">£20</span>
-                </div>
-                <div class="flex justify-between items-center border-b border-light-gray pb-4 hover-lift">
-                    <div>
-                        <h4 class="font-bold text-xl uppercase">Hair & Scalp Treatment</h4>
-                        <p class="text-sm opacity-70">Deep Conditioning Therapy</p>
-                    </div>
-                    <span class="serif text-3xl">£30</span>
-                </div>
-            </div>
-            <div id="booking" class="bg-cream p-10 rounded-3xl shadow-lg reveal">
-                <h3 class="serif text-3xl mb-8 text-center">Book Your Appointment</h3>
-                <form class="space-y-4">
-                    <input type="text" placeholder="Your Name" class="w-full p-5 rounded-2xl bg-light-gray focus:ring-2 focus:ring-charcoal outline-none">
-                    <input type="email" placeholder="Email Address" class="w-full p-5 rounded-2xl bg-light-gray focus:ring-2 focus:ring-charcoal outline-none">
-                    <input type="tel" placeholder="Phone Number" class="w-full p-5 rounded-2xl bg-light-gray focus:ring-2 focus:ring-charcoal outline-none">
-                    <select class="w-full p-5 rounded-2xl bg-light-gray focus:ring-2 focus:ring-charcoal outline-none">
-                        <option>Select Service</option>
-                        <option>Classic Cut (£40)</option>
-                        <option>Hot Towel Shave (£35)</option>
-                        <option>Beard Sculpt (£25)</option>
-                        <option>B18 AI Consultation (£20)</option>
-                        <option>Premium Package (£65)</option>
-                        <option>Executive Experience (£95)</option>
-                    </select>
-                    <select class="w-full p-5 rounded-2xl bg-light-gray focus:ring-2 focus:ring-charcoal outline-none">
-                        <option>Select Specialist</option>
-                        <option>Marcus (Classic Cuts)</option>
-                        <option>Andre (Beard Specialist)</option>
-                        <option>Jamal (Creative Designs)</option>
-                    </select>
-                    <button class="w-full bg-charcoal text-soft-gold py-5 rounded-2xl font-bold uppercase tracking-wide hover:scale-105 transition-transform">Confirm Appointment</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</section>
-
 <!-- TESTIMONIALS SECTION -->
 <section id="testimonials" class="py-24 bg-light-gray px-6 reveal">
     <div class="max-w-7xl mx-auto">
@@ -670,9 +728,62 @@ body { font-family: 'Outfit', sans-serif; background-color: var(--cream); color:
 
 <!-- JS Scripts -->
 <script>
-    // Lucide Icons
+    // Initialize Lucide Icons
     lucide.createIcons();
 
+    // Mobile Menu Functionality
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const closeMenuBtn = document.getElementById('closeMenuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const mobileMenuBackdrop = document.getElementById('mobileMenuBackdrop');
+    const hamburger = document.querySelector('.hamburger');
+    const body = document.body;
+    
+    let isMenuOpen = false;
+    
+    function toggleMobileMenu() {
+        isMenuOpen = !isMenuOpen;
+        
+        if (isMenuOpen) {
+            mobileMenu.classList.add('open');
+            mobileMenuBackdrop.classList.add('open');
+            hamburger.classList.add('open');
+            body.classList.add('menu-open');
+        } else {
+            mobileMenu.classList.remove('open');
+            mobileMenuBackdrop.classList.remove('open');
+            hamburger.classList.remove('open');
+            body.classList.remove('menu-open');
+        }
+    }
+    
+    function closeMobileMenu() {
+        isMenuOpen = false;
+        mobileMenu.classList.remove('open');
+        mobileMenuBackdrop.classList.remove('open');
+        hamburger.classList.remove('open');
+        body.classList.remove('menu-open');
+    }
+    
+    // Event Listeners
+    if (mobileMenuBtn) {
+        mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+    }
+    
+    if (closeMenuBtn) {
+        closeMenuBtn.addEventListener('click', closeMobileMenu);
+    }
+    
+    if (mobileMenuBackdrop) {
+        mobileMenuBackdrop.addEventListener('click', closeMobileMenu);
+    }
+    
+    // Close menu when clicking on mobile menu links
+    const mobileMenuLinks = document.querySelectorAll('#mobileMenu a');
+    mobileMenuLinks.forEach(link => {
+        link.addEventListener('click', closeMobileMenu);
+    });
+    
     // GSAP Scroll Reveal
     gsap.utils.toArray('.reveal').forEach(el => {
         gsap.fromTo(el,
@@ -719,68 +830,30 @@ body { font-family: 'Outfit', sans-serif; background-color: var(--cream); color:
             icon.style.transform = 'rotate(0deg)';
         }
     }
-
-    // Mobile Menu Toggle with improved animation
-    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-    const mobileMenu = document.getElementById('mobileMenu');
-    const menuIcon = document.getElementById('menuIcon');
-    const closeIcon = document.getElementById('closeIcon');
-    
-    let menuOpen = false;
-    
-    function toggleMobileMenu() {
-        menuOpen = !menuOpen;
-        
-        if (menuOpen) {
-            mobileMenu.classList.remove('-translate-x-full');
-            // Hide menu icon, show close icon
-            menuIcon.style.display = 'none';
-            closeIcon.style.display = 'block';
-            
-            // Animate menu items
-            gsap.fromTo(mobileMenu.querySelectorAll('a'), 
-                {x: -50, opacity: 0}, 
-                {x: 0, opacity: 1, duration: 0.5, stagger: 0.08, ease: "power2.out"}
-            );
-        } else {
-            mobileMenu.classList.add('-translate-x-full');
-            // Show menu icon, hide close icon
-            menuIcon.style.display = 'block';
-            closeIcon.style.display = 'none';
-        }
-    }
-    
-    if (mobileMenuBtn) {
-        mobileMenuBtn.addEventListener('click', toggleMobileMenu);
-    }
-    
-    // Close menu when clicking on a link
-    mobileMenu.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
-            menuOpen = true; // Set to true so toggle will close it
-            toggleMobileMenu();
-        });
-    });
-    
-    // Close menu when clicking outside
-    document.addEventListener('click', (e) => {
-        if (menuOpen && 
-            !mobileMenu.contains(e.target) && 
-            !mobileMenuBtn.contains(e.target)) {
-            toggleMobileMenu();
-        }
-    });
     
     // Helper functions for scrolling
     function scrollToBooking() {
-        document.getElementById('booking').scrollIntoView({ behavior: 'smooth' });
-        if (menuOpen) toggleMobileMenu();
+        closeMobileMenu();
+        document.getElementById('booking').scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'start'
+        });
     }
     
     function scrollToB18() {
-        document.getElementById('b18').scrollIntoView({ behavior: 'smooth' });
-        if (menuOpen) toggleMobileMenu();
+        closeMobileMenu();
+        document.getElementById('b18').scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'start'
+        });
     }
+    
+    // Close mobile menu on window resize if it becomes desktop
+    window.addEventListener('resize', function() {
+        if (window.innerWidth >= 1024 && isMenuOpen) {
+            closeMobileMenu();
+        }
+    });
 </script>
 </body>
 </html>
