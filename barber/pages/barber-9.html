@@ -28,56 +28,78 @@ body { font-family: 'Outfit', sans-serif; background-color: var(--cream); color:
 .hero-svg { width: 100%; max-width: 1200px; margin: auto; }
 /* Video/Gallery */
 .video-box { aspect-ratio: 1/1; position: relative; overflow: hidden; border-radius: 20px; background: #000; }
-.video-box video, .video-box img { width: 100%; height: 100%; object-cover: cover; opacity: 0.7; }
+.video-box video, .video-box img { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; }
 /* Mobile Action Bar */
 .mobile-action-bar {
     position: fixed; bottom: 0; left: 0; width: 100%; 
     background: var(--cream); border-top: 1px solid var(--light-gray);
     display: flex; justify-content: space-around; padding: 12px; z-index: 1000;
 }
+/* Mobile Menu Animation */
+.mobile-menu-enter { transform: translateX(-100%); }
+.mobile-menu-enter-active { transform: translateX(0); transition: transform 0.5s ease-out; }
+.mobile-menu-exit { transform: translateX(0); }
+.mobile-menu-exit-active { transform: translateX(-100%); transition: transform 0.5s ease-in; }
+/* B18 Hairstyles Grid */
+.b18-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+/* FAQ Toggle */
+.faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.5s ease; }
+.faq-answer.open { max-height: 500px; }
 </style>
 </head>
 <body>
 
 <!-- HEADER / NAVBAR -->
-<header class="sticky top-0 z-50 bg-cream/90 backdrop-blur-md px-6 py-4 border-b border-light-gray shadow-md">
-  <div class="max-w-7xl mx-auto flex justify-between items-center">
-    <!-- Logo -->
-    <div class="flex items-center gap-2">
-      <div class="w-10 h-10 bg-soft-gold rounded-lg flex items-center justify-center text-charcoal">
-        <i data-lucide="scissors"></i>
-      </div>
-      <span class="serif text-xl font-bold">Vibz Barber</span>
+<header class="sticky top-0 z-[100] bg-cream/90 backdrop-blur-md px-6 py-4 border-b border-light-gray shadow-md">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+        <!-- Logo -->
+        <div class="flex items-center gap-2 reveal">
+            <div class="w-10 h-10 bg-soft-gold rounded-lg flex items-center justify-center text-charcoal">
+                <i data-lucide="scissors"></i>
+            </div>
+            <span class="serif text-xl font-bold">Vibz Barber</span>
+        </div>
+
+        <!-- Desktop Menu -->
+        <nav class="hidden lg:flex gap-8 text-sm font-bold uppercase tracking-wide reveal">
+            <a href="#services" class="hover:text-soft-gold transition-colors">Services</a>
+            <a href="#barbers" class="hover:text-soft-gold transition-colors">Barbers</a>
+            <a href="#features" class="hover:text-soft-gold transition-colors">Features</a>
+            <a href="#gallery" class="hover:text-soft-gold transition-colors">Gallery</a>
+            <a href="#map" class="hover:text-soft-gold transition-colors">Location</a>
+            <a href="#faq" class="hover:text-soft-gold transition-colors">FAQ</a>
+            <a href="#pricing" class="hover:text-soft-gold transition-colors">Pricing</a>
+            <a href="#b18" class="hover:text-soft-gold transition-colors">B18 Styles</a>
+            <a href="#testimonials" class="hover:text-soft-gold transition-colors">Testimonials</a>
+            <a href="#booking" class="hover:text-soft-gold transition-colors">Booking</a>
+        </nav>
+
+        <!-- Mobile Hamburger -->
+        <div class="lg:hidden relative reveal z-[1000]">
+            <button id="mobileMenuBtn" class="text-charcoal z-[1001] relative">
+                <i data-lucide="menu" id="menuIcon" class="w-6 h-6"></i>
+            </button>
+
+            <!-- Mobile Menu -->
+            <div id="mobileMenu" class="fixed inset-0 bg-cream z-[999] flex flex-col justify-start items-start p-6 pt-24 transform -translate-x-full transition-transform duration-500 ease-out">
+                <div class="w-full space-y-6">
+                    <a href="#services" onclick="toggleMobileMenu()" class="block text-xl font-bold uppercase hover:text-soft-gold transition-colors py-3 border-b border-light-gray">Services</a>
+                    <a href="#barbers" onclick="toggleMobileMenu()" class="block text-xl font-bold uppercase hover:text-soft-gold transition-colors py-3 border-b border-light-gray">Barbers</a>
+                    <a href="#features" onclick="toggleMobileMenu()" class="block text-xl font-bold uppercase hover:text-soft-gold transition-colors py-3 border-b border-light-gray">Features</a>
+                    <a href="#gallery" onclick="toggleMobileMenu()" class="block text-xl font-bold uppercase hover:text-soft-gold transition-colors py-3 border-b border-light-gray">Gallery</a>
+                    <a href="#map" onclick="toggleMobileMenu()" class="block text-xl font-bold uppercase hover:text-soft-gold transition-colors py-3 border-b border-light-gray">Location</a>
+                    <a href="#faq" onclick="toggleMobileMenu()" class="block text-xl font-bold uppercase hover:text-soft-gold transition-colors py-3 border-b border-light-gray">FAQ</a>
+                    <a href="#pricing" onclick="toggleMobileMenu()" class="block text-xl font-bold uppercase hover:text-soft-gold transition-colors py-3 border-b border-light-gray">Pricing</a>
+                    <a href="#b18" onclick="toggleMobileMenu()" class="block text-xl font-bold uppercase hover:text-soft-gold transition-colors py-3 border-b border-light-gray">B18 AI Styles</a>
+                    <a href="#testimonials" onclick="toggleMobileMenu()" class="block text-xl font-bold uppercase hover:text-soft-gold transition-colors py-3 border-b border-light-gray">Testimonials</a>
+                    <a href="#booking" onclick="toggleMobileMenu()" class="block text-xl font-bold uppercase hover:text-soft-gold transition-colors py-3 border-b border-light-gray">Booking</a>
+                </div>
+                <button onclick="toggleMobileMenu()" class="absolute top-8 right-6 text-charcoal z-[1001]">
+                    <i data-lucide="x" id="closeIcon" class="w-8 h-8"></i>
+                </button>
+            </div>
+        </div>
     </div>
-
-    <!-- Desktop Menu -->
-    <nav class="hidden lg:flex gap-8 text-sm font-bold uppercase tracking-wide">
-      <a href="#services" class="hover:text-soft-gold transition-colors">Services</a>
-      <a href="#gallery" class="hover:text-soft-gold transition-colors">Gallery</a>
-      <a href="#testimonials" class="hover:text-soft-gold transition-colors">Testimonials</a>
-      <a href="#booking" class="hover:text-soft-gold transition-colors">Booking</a>
-    </nav>
-
-    <!-- Mobile Hamburger -->
-    <div class="lg:hidden relative">
-      <button id="mobileMenuBtn" class="flex flex-col justify-between w-6 h-5 focus:outline-none">
-        <span class="block h-0.5 bg-charcoal"></span>
-        <span class="block h-0.5 bg-charcoal"></span>
-        <span class="block h-0.5 bg-charcoal"></span>
-      </button>
-
-      <!-- Mobile Menu -->
-      <div id="mobileMenu" class="fixed inset-0 bg-cream transform -translate-x-full transition-transform duration-500 z-50 flex flex-col justify-center items-center gap-8 text-2xl font-bold uppercase">
-        <a href="#services" onclick="toggleMobileMenu()" class="hover:text-soft-gold transition-colors">Services</a>
-        <a href="#gallery" onclick="toggleMobileMenu()" class="hover:text-soft-gold transition-colors">Gallery</a>
-        <a href="#testimonials" onclick="toggleMobileMenu()" class="hover:text-soft-gold transition-colors">Testimonials</a>
-        <a href="#booking" onclick="toggleMobileMenu()" class="hover:text-soft-gold transition-colors">Booking</a>
-        <button onclick="toggleMobileMenu()" class="absolute top-6 right-6 text-charcoal">
-          <i data-lucide="x" class="w-6 h-6"></i>
-        </button>
-      </div>
-    </div>
-  </div>
 </header>
 
 <!-- HERO SECTION -->
@@ -87,8 +109,8 @@ body { font-family: 'Outfit', sans-serif; background-color: var(--cream); color:
             <h1 class="serif text-6xl md:text-8xl leading-none mb-6">The Art of <br><span class="italic text-soft-gold">The Blade.</span></h1>
             <p class="text-lg text-charcoal/70 mb-8 max-w-md">Luxury grooming in a stylized barber shop environment. Precision meets style.</p>
             <div class="flex gap-4">
-                <button class="bg-charcoal text-soft-gold px-8 py-4 rounded-2xl font-bold shadow-lg hover:scale-105 transition-transform">View Menu</button>
-                <button class="border-2 border-charcoal px-8 py-4 rounded-2xl font-bold hover:bg-light-gray transition">Our Story</button>
+                <button onclick="scrollToBooking()" class="bg-charcoal text-soft-gold px-8 py-4 rounded-2xl font-bold shadow-lg hover:scale-105 transition-transform">Book Now</button>
+                <button onclick="scrollToB18()" class="border-2 border-charcoal px-8 py-4 rounded-2xl font-bold hover:bg-light-gray transition">View B18 Styles</button>
             </div>
         </div>
         <div class="relative reveal">
@@ -128,44 +150,441 @@ body { font-family: 'Outfit', sans-serif; background-color: var(--cream); color:
     </div>
 </section>
 
-<!-- SERVICES SECTION -->
-<section id="services" class="py-24 px-6 reveal">
-    <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12">
-        <div class="space-y-8">
-            <div class="flex justify-between items-center border-b border-light-gray pb-4 hover-lift">
-                <div>
-                    <h4 class="font-bold text-xl uppercase">Classic Cut</h4>
-                    <p class="text-sm opacity-70">Consultation + Precision Cut</p>
+<!-- BARBERS SECTION -->
+<section id="barbers" class="py-24 px-6 reveal">
+    <div class="max-w-7xl mx-auto">
+        <h2 class="serif text-5xl mb-12 text-center">Master Barbers</h2>
+        <div class="grid md:grid-cols-3 gap-10">
+            <div class="text-center hover-lift">
+                <div class="w-48 h-48 rounded-full bg-light-gray mx-auto mb-6 flex items-center justify-center">
+                    <i data-lucide="user" class="w-24 h-24 text-soft-gold"></i>
                 </div>
-                <span class="serif text-3xl">£40</span>
+                <h3 class="font-bold text-xl mb-2">Marcus</h3>
+                <p class="text-sm opacity-70 mb-4">Specializes in precision cuts & classic styles</p>
+                <span class="text-soft-gold font-bold">15 years experience</span>
             </div>
-            <div class="flex justify-between items-center border-b border-light-gray pb-4 hover-lift">
-                <div>
-                    <h4 class="font-bold text-xl uppercase">Hot Towel Shave</h4>
-                    <p class="text-sm opacity-70">Luxury Steam & Straight Razor</p>
+            <div class="text-center hover-lift">
+                <div class="w-48 h-48 rounded-full bg-light-gray mx-auto mb-6 flex items-center justify-center">
+                    <i data-lucide="user" class="w-24 h-24 text-soft-gold"></i>
                 </div>
-                <span class="serif text-3xl">£35</span>
+                <h3 class="font-bold text-xl mb-2">Andre</h3>
+                <p class="text-sm opacity-70 mb-4">Beard sculpting & modern fades expert</p>
+                <span class="text-soft-gold font-bold">10 years experience</span>
             </div>
-            <div class="flex justify-between items-center border-b border-light-gray pb-4 hover-lift">
-                <div>
-                    <h4 class="font-bold text-xl uppercase">Beard Sculpt</h4>
-                    <p class="text-sm opacity-70">Precision Shaping & Oils</p>
+            <div class="text-center hover-lift">
+                <div class="w-48 h-48 rounded-full bg-light-gray mx-auto mb-6 flex items-center justify-center">
+                    <i data-lucide="user" class="w-24 h-24 text-soft-gold"></i>
                 </div>
-                <span class="serif text-3xl">£25</span>
+                <h3 class="font-bold text-xl mb-2">Jamal</h3>
+                <p class="text-sm opacity-70 mb-4">Creative designs & artistic barbering</p>
+                <span class="text-soft-gold font-bold">8 years experience</span>
             </div>
         </div>
-        <div id="booking" class="bg-cream p-10 rounded-3xl shadow-lg reveal">
-            <h3 class="serif text-3xl mb-8 text-center">Book Your Appointment</h3>
-            <form class="space-y-4">
-                <input type="text" placeholder="Your Name" class="w-full p-5 rounded-2xl bg-light-gray focus:ring-2 focus:ring-charcoal outline-none">
-                <input type="email" placeholder="Email Address" class="w-full p-5 rounded-2xl bg-light-gray focus:ring-2 focus:ring-charcoal outline-none">
-                <select class="w-full p-5 rounded-2xl bg-light-gray focus:ring-2 focus:ring-charcoal outline-none">
-                    <option>Select Specialist</option>
-                    <option>Marcus</option>
-                    <option>Andre</option>
-                </select>
-                <button class="w-full bg-charcoal text-soft-gold py-5 rounded-2xl font-bold uppercase tracking-wide hover:scale-105 transition-transform">Confirm Appointment</button>
-            </form>
+    </div>
+</section>
+
+<!-- FEATURES SECTION -->
+<section id="features" class="py-24 bg-light-gray px-6 reveal">
+    <div class="max-w-7xl mx-auto">
+        <h2 class="serif text-5xl mb-12 text-center">Premium Features</h2>
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div class="text-center p-6 hover-lift">
+                <div class="w-16 h-16 bg-soft-gold rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="sparkles" class="w-8 h-8 text-cream"></i>
+                </div>
+                <h3 class="font-bold text-lg mb-2">Luxury Products</h3>
+                <p class="text-sm opacity-70">Premium grooming products only</p>
+            </div>
+            <div class="text-center p-6 hover-lift">
+                <div class="w-16 h-16 bg-soft-gold rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="wine" class="w-8 h-8 text-cream"></i>
+                </div>
+                <h3 class="font-bold text-lg mb-2">Refreshments</h3>
+                <p class="text-sm opacity-70">Complimentary drinks</p>
+            </div>
+            <div class="text-center p-6 hover-lift">
+                <div class="w-16 h-16 bg-soft-gold rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="wifi" class="w-8 h-8 text-cream"></i>
+                </div>
+                <h3 class="font-bold text-lg mb-2">High-Speed WiFi</h3>
+                <p class="text-sm opacity-70">Stay connected</p>
+            </div>
+            <div class="text-center p-6 hover-lift">
+                <div class="w-16 h-16 bg-soft-gold rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="shield-check" class="w-8 h-8 text-cream"></i>
+                </div>
+                <h3 class="font-bold text-lg mb-2">Sanitized Tools</h3>
+                <p class="text-sm opacity-70">Hospitality-grade hygiene</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- B18 AI HAIRSTYLES SECTION -->
+<section id="b18" class="py-24 px-6 reveal">
+    <div class="max-w-7xl mx-auto">
+        <h2 class="serif text-5xl mb-12 text-center">B18 AI Hairstyle Visualizer</h2>
+        <p class="text-center text-lg opacity-70 mb-12 max-w-2xl mx-auto">Preview your next style with our AI-powered hairstyle simulator. Choose from 10 curated looks.</p>
+        
+        <div class="b18-grid">
+            <!-- AI Generated Hairstyle 1 -->
+            <div class="bg-light-gray rounded-2xl overflow-hidden hover-lift">
+                <div class="h-48 bg-gradient-to-r from-charcoal to-soft-gold flex items-center justify-center">
+                    <i data-lucide="sparkles" class="w-16 h-16 text-cream"></i>
+                </div>
+                <div class="p-6">
+                    <h3 class="font-bold text-lg mb-2">Classic Taper Fade</h3>
+                    <p class="text-sm opacity-70 mb-4">Clean, professional look with sharp edges</p>
+                    <span class="text-soft-gold font-bold">AI Match: 95%</span>
+                </div>
+            </div>
+            
+            <!-- AI Generated Hairstyle 2 -->
+            <div class="bg-light-gray rounded-2xl overflow-hidden hover-lift">
+                <div class="h-48 bg-gradient-to-r from-soft-gold to-charcoal flex items-center justify-center">
+                    <i data-lucide="sparkles" class="w-16 h-16 text-cream"></i>
+                </div>
+                <div class="p-6">
+                    <h3 class="font-bold text-lg mb-2">Modern Textured Crop</h3>
+                    <p class="text-sm opacity-70 mb-4">Versatile, low-maintenance style</p>
+                    <span class="text-soft-gold font-bold">AI Match: 88%</span>
+                </div>
+            </div>
+            
+            <!-- AI Generated Hairstyle 3 -->
+            <div class="bg-light-gray rounded-2xl overflow-hidden hover-lift">
+                <div class="h-48 bg-gradient-to-r from-charcoal to-soft-gold flex items-center justify-center">
+                    <i data-lucide="sparkles" class="w-16 h-16 text-cream"></i>
+                </div>
+                <div class="p-6">
+                    <h3 class="font-bold text-lg mb-2">Executive Undercut</h3>
+                    <p class="text-sm opacity-70 mb-4">Sharp contrast, business-ready</p>
+                    <span class="text-soft-gold font-bold">AI Match: 92%</span>
+                </div>
+            </div>
+            
+            <!-- AI Generated Hairstyle 4 -->
+            <div class="bg-light-gray rounded-2xl overflow-hidden hover-lift">
+                <div class="h-48 bg-gradient-to-r from-soft-gold to-charcoal flex items-center justify-center">
+                    <i data-lucide="sparkles" class="w-16 h-16 text-cream"></i>
+                </div>
+                <div class="p-6">
+                    <h3 class="font-bold text-lg mb-2">Curly Top Fade</h3>
+                    <p class="text-sm opacity-70 mb-4">Natural texture with clean sides</p>
+                    <span class="text-soft-gold font-bold">AI Match: 85%</span>
+                </div>
+            </div>
+            
+            <!-- AI Generated Hairstyle 5 -->
+            <div class="bg-light-gray rounded-2xl overflow-hidden hover-lift">
+                <div class="h-48 bg-gradient-to-r from-charcoal to-soft-gold flex items-center justify-center">
+                    <i data-lucide="sparkles" class="w-16 h-16 text-cream"></i>
+                </div>
+                <div class="p-6">
+                    <h3 class="font-bold text-lg mb-2">French Crop</h3>
+                    <p class="text-sm opacity-70 mb-4">European-inspired short cut</p>
+                    <span class="text-soft-gold font-bold">AI Match: 90%</span>
+                </div>
+            </div>
+            
+            <!-- AI Generated Hairstyle 6 -->
+            <div class="bg-light-gray rounded-2xl overflow-hidden hover-lift">
+                <div class="h-48 bg-gradient-to-r from-soft-gold to-charcoal flex items-center justify-center">
+                    <i data-lucide="sparkles" class="w-16 h-16 text-cream"></i>
+                </div>
+                <div class="p-6">
+                    <h3 class="font-bold text-lg mb-2">Slick Back Undercut</h3>
+                    <p class="text-sm opacity-70 mb-4">Classic pompadour revival</p>
+                    <span class="text-soft-gold font-bold">AI Match: 87%</span>
+                </div>
+            </div>
+            
+            <!-- AI Generated Hairstyle 7 -->
+            <div class="bg-light-gray rounded-2xl overflow-hidden hover-lift">
+                <div class="h-48 bg-gradient-to-r from-charcoal to-soft-gold flex items-center justify-center">
+                    <i data-lucide="sparkles" class="w-16 h-16 text-cream"></i>
+                </div>
+                <div class="p-6">
+                    <h3 class="font-bold text-lg mb-2">Textured Quiff</h3>
+                    <p class="text-sm opacity-70 mb-4">Volume and movement</p>
+                    <span class="text-soft-gold font-bold">AI Match: 84%</span>
+                </div>
+            </div>
+            
+            <!-- AI Generated Hairstyle 8 -->
+            <div class="bg-light-gray rounded-2xl overflow-hidden hover-lift">
+                <div class="h-48 bg-gradient-to-r from-soft-gold to-charcoal flex items-center justify-center">
+                    <i data-lucide="sparkles" class="w-16 h-16 text-cream"></i>
+                </div>
+                <div class="p-6">
+                    <h3 class="font-bold text-lg mb-2">Buzz Cut Fade</h3>
+                    <p class="text-sm opacity-70 mb-4">Ultra low maintenance</p>
+                    <span class="text-soft-gold font-bold">AI Match: 96%</span>
+                </div>
+            </div>
+            
+            <!-- AI Generated Hairstyle 9 -->
+            <div class="bg-light-gray rounded-2xl overflow-hidden hover-lift">
+                <div class="h-48 bg-gradient-to-r from-charcoal to-soft-gold flex items-center justify-center">
+                    <i data-lucide="sparkles" class="w-16 h-16 text-cream"></i>
+                </div>
+                <div class="p-6">
+                    <h3 class="font-bold text-lg mb-2">Side Part Classic</h3>
+                    <p class="text-sm opacity-70 mb-4">Timeless gentleman's style</p>
+                    <span class="text-soft-gold font-bold">AI Match: 93%</span>
+                </div>
+            </div>
+            
+            <!-- AI Generated Hairstyle 10 -->
+            <div class="bg-light-gray rounded-2xl overflow-hidden hover-lift">
+                <div class="h-48 bg-gradient-to-r from-soft-gold to-charcoal flex items-center justify-center">
+                    <i data-lucide="sparkles" class="w-16 h-16 text-cream"></i>
+                </div>
+                <div class="p-6">
+                    <h3 class="font-bold text-lg mb-2">Modern Mullet</h3>
+                    <p class="text-sm opacity-70 mb-4">Business in front, party in back</p>
+                    <span class="text-soft-gold font-bold">AI Match: 82%</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-12">
+            <button onclick="scrollToBooking()" class="bg-charcoal text-soft-gold px-8 py-4 rounded-2xl font-bold shadow-lg hover:scale-105 transition-transform">Try B18 AI Visualizer</button>
+        </div>
+    </div>
+</section>
+
+<!-- PRICING SECTION -->
+<section id="pricing" class="py-24 bg-light-gray px-6 reveal">
+    <div class="max-w-7xl mx-auto">
+        <h2 class="serif text-5xl mb-12 text-center">Transparent Pricing</h2>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="bg-cream p-8 rounded-2xl shadow-lg hover-lift">
+                <h3 class="font-bold text-2xl mb-4">Classic Service</h3>
+                <div class="serif text-4xl mb-6">£40<span class="text-lg">/session</span></div>
+                <ul class="space-y-3 mb-8">
+                    <li class="flex items-center"><i data-lucide="check" class="w-5 h-5 text-soft-gold mr-2"></i> Precision Haircut</li>
+                    <li class="flex items-center"><i data-lucide="check" class="w-5 h-5 text-soft-gold mr-2"></i> Consultation</li>
+                    <li class="flex items-center"><i data-lucide="check" class="w-5 h-5 text-soft-gold mr-2"></i> Styling</li>
+                </ul>
+                <button onclick="scrollToBooking()" class="w-full bg-charcoal text-soft-gold py-3 rounded-xl font-bold">Book Now</button>
+            </div>
+            
+            <div class="bg-cream p-8 rounded-2xl shadow-lg hover-lift border-2 border-soft-gold relative">
+                <div class="absolute top-0 right-6 bg-soft-gold text-cream px-4 py-1 rounded-b-lg">Popular</div>
+                <h3 class="font-bold text-2xl mb-4">Premium Package</h3>
+                <div class="serif text-4xl mb-6">£65<span class="text-lg">/session</span></div>
+                <ul class="space-y-3 mb-8">
+                    <li class="flex items-center"><i data-lucide="check" class="w-5 h-5 text-soft-gold mr-2"></i> Precision Haircut</li>
+                    <li class="flex items-center"><i data-lucide="check" class="w-5 h-5 text-soft-gold mr-2"></i> Hot Towel Shave</li>
+                    <li class="flex items-center"><i data-lucide="check" class="w-5 h-5 text-soft-gold mr-2"></i> Beard Sculpting</li>
+                    <li class="flex items-center"><i data-lucide="check" class="w-5 h-5 text-soft-gold mr-2"></i> Premium Products</li>
+                </ul>
+                <button onclick="scrollToBooking()" class="w-full bg-soft-gold text-charcoal py-3 rounded-xl font-bold">Book Now</button>
+            </div>
+            
+            <div class="bg-cream p-8 rounded-2xl shadow-lg hover-lift">
+                <h3 class="font-bold text-2xl mb-4">Executive Experience</h3>
+                <div class="serif text-4xl mb-6">£95<span class="text-lg">/session</span></div>
+                <ul class="space-y-3 mb-8">
+                    <li class="flex items-center"><i data-lucide="check" class="w-5 h-5 text-soft-gold mr-2"></i> All Premium Services</li>
+                    <li class="flex items-center"><i data-lucide="check" class="w-5 h-5 text-soft-gold mr-2"></i> B18 AI Consultation</li>
+                    <li class="flex items-center"><i data-lucide="check" class="w-5 h-5 text-soft-gold mr-2"></i> Luxury Products Kit</li>
+                    <li class="flex items-center"><i data-lucide="check" class="w-5 h-5 text-soft-gold mr-2"></i> Priority Booking</li>
+                </ul>
+                <button onclick="scrollToBooking()" class="w-full bg-charcoal text-soft-gold py-3 rounded-xl font-bold">Book Now</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ SECTION -->
+<section id="faq" class="py-24 px-6 reveal">
+    <div class="max-w-4xl mx-auto">
+        <h2 class="serif text-5xl mb-12 text-center">Frequently Asked Questions</h2>
+        <div class="space-y-6">
+            <div class="faq-item bg-light-gray rounded-2xl p-6 cursor-pointer hover:shadow-lg transition-shadow">
+                <div class="flex justify-between items-center" onclick="toggleFAQ(this)">
+                    <h3 class="font-bold text-lg">What is the B18 AI Hairstyle Visualizer?</h3>
+                    <i data-lucide="chevron-down" class="w-6 h-6 text-soft-gold transition-transform"></i>
+                </div>
+                <div class="faq-answer mt-4">
+                    <p class="opacity-70">B18 is our proprietary AI system that analyzes your facial features and hair type to recommend and visualize the 10 most suitable hairstyles from our curated collection.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item bg-light-gray rounded-2xl p-6 cursor-pointer hover:shadow-lg transition-shadow">
+                <div class="flex justify-between items-center" onclick="toggleFAQ(this)">
+                    <h3 class="font-bold text-lg">How do I book an appointment?</h3>
+                    <i data-lucide="chevron-down" class="w-6 h-6 text-soft-gold transition-transform"></i>
+                </div>
+                <div class="faq-answer mt-4">
+                    <p class="opacity-70">Use our online booking system above, call us directly, or visit our location. We recommend booking at least 48 hours in advance for premium time slots.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item bg-light-gray rounded-2xl p-6 cursor-pointer hover:shadow-lg transition-shadow">
+                <div class="flex justify-between items-center" onclick="toggleFAQ(this)">
+                    <h3 class="font-bold text-lg">What's your cancellation policy?</h3>
+                    <i data-lucide="chevron-down" class="w-6 h-6 text-soft-gold transition-transform"></i>
+                </div>
+                <div class="faq-answer mt-4">
+                    <p class="opacity-70">We require 24 hours notice for cancellations. Late cancellations may incur a 50% fee. No-shows will be charged the full service amount.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item bg-light-gray rounded-2xl p-6 cursor-pointer hover:shadow-lg transition-shadow">
+                <div class="flex justify-between items-center" onclick="toggleFAQ(this)">
+                    <h3 class="font-bold text-lg">Do you accept walk-ins?</h3>
+                    <i data-lucide="chevron-down" class="w-6 h-6 text-soft-gold transition-transform"></i>
+                </div>
+                <div class="faq-answer mt-4">
+                    <p class="opacity-70">Yes, based on availability. However, we highly recommend booking ahead to guarantee your preferred time and barber.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- MAP/LOCATION SECTION -->
+<section id="map" class="py-24 bg-light-gray px-6 reveal">
+    <div class="max-w-7xl mx-auto">
+        <h2 class="serif text-5xl mb-12 text-center">Find Us</h2>
+        <div class="grid lg:grid-cols-2 gap-12">
+            <div>
+                <div class="bg-charcoal text-cream rounded-2xl p-8 mb-8">
+                    <h3 class="font-bold text-2xl mb-4">Vibz Barber Studio</h3>
+                    <p class="mb-4">123 Luxury Street<br>London W1K 7TN<br>United Kingdom</p>
+                    <p class="mb-2"><strong>Hours:</strong> Mon-Sat 9am-8pm, Sun 10am-6pm</p>
+                    <p class="mb-2"><strong>Phone:</strong> +44 20 7123 4567</p>
+                    <p><strong>Email:</strong> hello@vibzbarber.com</p>
+                </div>
+                <div class="space-y-4">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="train" class="w-6 h-6 text-soft-gold"></i>
+                        <span>Nearest Tube: Bond Street (2 min walk)</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="car" class="w-6 h-6 text-soft-gold"></i>
+                        <span>Parking available at Q-Park Mayfair</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="bike" class="w-6 h-6 text-soft-gold"></i>
+                        <span>Santander Cycles station nearby</span>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-soft-gold/20 rounded-2xl p-8 flex items-center justify-center">
+                <!-- Map Placeholder -->
+                <div class="text-center">
+                    <i data-lucide="map-pin" class="w-24 h-24 text-soft-gold mb-6"></i>
+                    <p class="font-bold text-lg mb-2">Mayfair Location</p>
+                    <p class="opacity-70">Interactive map coming soon</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- GALLERY SECTION -->
+<section id="gallery" class="py-24 px-6 reveal">
+    <div class="max-w-7xl mx-auto">
+        <h2 class="serif text-5xl mb-12 text-center">Our Gallery</h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div class="video-box">
+                <div class="absolute inset-0 bg-gradient-to-t from-charcoal to-transparent opacity-50"></div>
+                <div class="absolute bottom-6 left-6 text-cream">
+                    <p class="font-bold">Precision Cut</p>
+                </div>
+            </div>
+            <div class="video-box">
+                <div class="absolute inset-0 bg-gradient-to-t from-charcoal to-transparent opacity-50"></div>
+                <div class="absolute bottom-6 left-6 text-cream">
+                    <p class="font-bold">Beard Sculpt</p>
+                </div>
+            </div>
+            <div class="video-box">
+                <div class="absolute inset-0 bg-gradient-to-t from-charcoal to-transparent opacity-50"></div>
+                <div class="absolute bottom-6 left-6 text-cream">
+                    <p class="font-bold">Hot Towel</p>
+                </div>
+            </div>
+            <div class="video-box">
+                <div class="absolute inset-0 bg-gradient-to-t from-charcoal to-transparent opacity-50"></div>
+                <div class="absolute bottom-6 left-6 text-cream">
+                    <p class="font-bold">Studio</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SERVICES SECTION -->
+<section id="services" class="py-24 px-6 reveal">
+    <div class="max-w-7xl mx-auto">
+        <h2 class="serif text-5xl mb-12 text-center">Our Services</h2>
+        <div class="grid lg:grid-cols-2 gap-12">
+            <div class="space-y-8">
+                <div class="flex justify-between items-center border-b border-light-gray pb-4 hover-lift">
+                    <div>
+                        <h4 class="font-bold text-xl uppercase">Classic Cut</h4>
+                        <p class="text-sm opacity-70">Consultation + Precision Cut</p>
+                    </div>
+                    <span class="serif text-3xl">£40</span>
+                </div>
+                <div class="flex justify-between items-center border-b border-light-gray pb-4 hover-lift">
+                    <div>
+                        <h4 class="font-bold text-xl uppercase">Hot Towel Shave</h4>
+                        <p class="text-sm opacity-70">Luxury Steam & Straight Razor</p>
+                    </div>
+                    <span class="serif text-3xl">£35</span>
+                </div>
+                <div class="flex justify-between items-center border-b border-light-gray pb-4 hover-lift">
+                    <div>
+                        <h4 class="font-bold text-xl uppercase">Beard Sculpt</h4>
+                        <p class="text-sm opacity-70">Precision Shaping & Oils</p>
+                    </div>
+                    <span class="serif text-3xl">£25</span>
+                </div>
+                <div class="flex justify-between items-center border-b border-light-gray pb-4 hover-lift">
+                    <div>
+                        <h4 class="font-bold text-xl uppercase">B18 AI Consultation</h4>
+                        <p class="text-sm opacity-70">Personalized Style Analysis</p>
+                    </div>
+                    <span class="serif text-3xl">£20</span>
+                </div>
+                <div class="flex justify-between items-center border-b border-light-gray pb-4 hover-lift">
+                    <div>
+                        <h4 class="font-bold text-xl uppercase">Hair & Scalp Treatment</h4>
+                        <p class="text-sm opacity-70">Deep Conditioning Therapy</p>
+                    </div>
+                    <span class="serif text-3xl">£30</span>
+                </div>
+            </div>
+            <div id="booking" class="bg-cream p-10 rounded-3xl shadow-lg reveal">
+                <h3 class="serif text-3xl mb-8 text-center">Book Your Appointment</h3>
+                <form class="space-y-4">
+                    <input type="text" placeholder="Your Name" class="w-full p-5 rounded-2xl bg-light-gray focus:ring-2 focus:ring-charcoal outline-none">
+                    <input type="email" placeholder="Email Address" class="w-full p-5 rounded-2xl bg-light-gray focus:ring-2 focus:ring-charcoal outline-none">
+                    <input type="tel" placeholder="Phone Number" class="w-full p-5 rounded-2xl bg-light-gray focus:ring-2 focus:ring-charcoal outline-none">
+                    <select class="w-full p-5 rounded-2xl bg-light-gray focus:ring-2 focus:ring-charcoal outline-none">
+                        <option>Select Service</option>
+                        <option>Classic Cut (£40)</option>
+                        <option>Hot Towel Shave (£35)</option>
+                        <option>Beard Sculpt (£25)</option>
+                        <option>B18 AI Consultation (£20)</option>
+                        <option>Premium Package (£65)</option>
+                        <option>Executive Experience (£95)</option>
+                    </select>
+                    <select class="w-full p-5 rounded-2xl bg-light-gray focus:ring-2 focus:ring-charcoal outline-none">
+                        <option>Select Specialist</option>
+                        <option>Marcus (Classic Cuts)</option>
+                        <option>Andre (Beard Specialist)</option>
+                        <option>Jamal (Creative Designs)</option>
+                    </select>
+                    <button class="w-full bg-charcoal text-soft-gold py-5 rounded-2xl font-bold uppercase tracking-wide hover:scale-105 transition-transform">Confirm Appointment</button>
+                </form>
+            </div>
         </div>
     </div>
 </section>
@@ -183,7 +602,7 @@ body { font-family: 'Outfit', sans-serif; background-color: var(--cream); color:
                     <i data-lucide="star" class="w-5 fill-current"></i>
                     <i data-lucide="star" class="w-5 fill-current"></i>
                 </div>
-                <p class="text-charcoal/80 italic">"Luxury grooming done to perfection. Every visit is a premium experience."</p>
+                <p class="text-charcoal/80 italic">"Luxury grooming done to perfection. The B18 AI visualizer helped me choose the perfect cut!"</p>
                 <span class="mt-4 font-bold block">— Alexander P.</span>
             </div>
             <div class="bg-cream p-8 rounded-2xl hover-lift reveal shadow-lg">
@@ -194,7 +613,7 @@ body { font-family: 'Outfit', sans-serif; background-color: var(--cream); color:
                     <i data-lucide="star" class="w-5 fill-current"></i>
                     <i data-lucide="star" class="w-5 fill-current"></i>
                 </div>
-                <p class="text-charcoal/80 italic">"The best barber shop in town. Clean, stylish, professional."</p>
+                <p class="text-charcoal/80 italic">"The best barber shop in town. Clean, stylish, professional. Worth every penny."</p>
                 <span class="mt-4 font-bold block">— Sofia M.</span>
             </div>
             <div class="bg-cream p-8 rounded-2xl hover-lift reveal shadow-lg">
@@ -205,7 +624,7 @@ body { font-family: 'Outfit', sans-serif; background-color: var(--cream); color:
                     <i data-lucide="star" class="w-5 fill-current"></i>
                     <i data-lucide="star" class="w-5 fill-current"></i>
                 </div>
-                <p class="text-charcoal/80 italic">"Impeccable cuts and a relaxing environment. Highly recommend."</p>
+                <p class="text-charcoal/80 italic">"Impeccable cuts and a relaxing environment. The AI hairstyle preview was spot on!"</p>
                 <span class="mt-4 font-bold block">— Liam K.</span>
             </div>
         </div>
@@ -219,18 +638,19 @@ body { font-family: 'Outfit', sans-serif; background-color: var(--cream); color:
         <a href="#">Privacy</a>
         <a href="#">Terms</a>
         <a href="#">Careers</a>
+        <a href="#b18">B18 Technology</a>
     </div>
     <div class="flex justify-center gap-6 mb-6">
         <a href="#" class="w-10 h-10 rounded-full border border-charcoal flex items-center justify-center"><i data-lucide="instagram"></i></a>
         <a href="#" class="w-10 h-10 rounded-full border border-charcoal flex items-center justify-center"><i data-lucide="facebook"></i></a>
         <a href="#" class="w-10 h-10 rounded-full border border-charcoal flex items-center justify-center"><i data-lucide="twitter"></i></a>
     </div>
-    <p class="text-[9px] font-bold tracking-widest opacity-20 uppercase">© 2026 Vibz Barber Studios</p>
+    <p class="text-[9px] font-bold tracking-widest opacity-20 uppercase">© 2026 Vibz Barber Studios | B18 AI Technology</p>
 </footer>
 
 <!-- MOBILE ACTION BAR -->
 <div class="mobile-action-bar lg:hidden shadow-lg">
-    <a href="tel:000" class="flex flex-col items-center text-charcoal text-[10px]">
+    <a href="tel:+442071234567" class="flex flex-col items-center text-charcoal text-[10px]">
         <i data-lucide="phone" class="w-5 h-5"></i>
         <span>Call</span>
     </a>
@@ -241,6 +661,10 @@ body { font-family: 'Outfit', sans-serif; background-color: var(--cream); color:
     <a href="#booking" class="flex flex-col items-center text-charcoal text-[10px]">
         <i data-lucide="calendar" class="w-5 h-5"></i>
         <span>Book</span>
+    </a>
+    <a href="#b18" class="flex flex-col items-center text-charcoal text-[10px]">
+        <i data-lucide="sparkles" class="w-5 h-5"></i>
+        <span>B18 AI</span>
     </a>
 </div>
 
@@ -279,27 +703,84 @@ body { font-family: 'Outfit', sans-serif; background-color: var(--cream); color:
         });
     });
 
-    // FAQ toggle
-    const faqItems = document.querySelectorAll('.faq-item');
-    faqItems.forEach(item => {
-        const content = item.querySelector('.faq-content');
-        if(content) content.style.display = 'none';
-        item.addEventListener('click', () => {
-            if(content) content.style.display = content.style.display === 'block' ? 'none' : 'block';
-        });
-    });
-
-    // Mobile Menu Toggle
-    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-    const mobileMenu = document.getElementById('mobileMenu');
-    function toggleMobileMenu() {
-        mobileMenu.classList.toggle('-translate-x-full');
-        if(!mobileMenu.classList.contains('-translate-x-full')){
-            gsap.fromTo(mobileMenu.querySelectorAll('a'), {x:-100, opacity:0}, {x:0, opacity:1, duration:0.5, stagger:0.1});
+    // FAQ toggle function
+    function toggleFAQ(element) {
+        const faqItem = element.closest('.faq-item');
+        const answer = faqItem.querySelector('.faq-answer');
+        const icon = faqItem.querySelector('i');
+        
+        // Toggle answer visibility
+        answer.classList.toggle('open');
+        
+        // Rotate icon
+        if (answer.classList.contains('open')) {
+            icon.style.transform = 'rotate(180deg)';
+        } else {
+            icon.style.transform = 'rotate(0deg)';
         }
     }
-    if(mobileMenuBtn) mobileMenuBtn.addEventListener('click', toggleMobileMenu);
-    mobileMenu.querySelectorAll('a').forEach(link => link.addEventListener('click', () => mobileMenu.classList.add('-translate-x-full')));
+
+    // Mobile Menu Toggle with improved animation
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const menuIcon = document.getElementById('menuIcon');
+    const closeIcon = document.getElementById('closeIcon');
+    
+    let menuOpen = false;
+    
+    function toggleMobileMenu() {
+        menuOpen = !menuOpen;
+        
+        if (menuOpen) {
+            mobileMenu.classList.remove('-translate-x-full');
+            // Hide menu icon, show close icon
+            menuIcon.style.display = 'none';
+            closeIcon.style.display = 'block';
+            
+            // Animate menu items
+            gsap.fromTo(mobileMenu.querySelectorAll('a'), 
+                {x: -50, opacity: 0}, 
+                {x: 0, opacity: 1, duration: 0.5, stagger: 0.08, ease: "power2.out"}
+            );
+        } else {
+            mobileMenu.classList.add('-translate-x-full');
+            // Show menu icon, hide close icon
+            menuIcon.style.display = 'block';
+            closeIcon.style.display = 'none';
+        }
+    }
+    
+    if (mobileMenuBtn) {
+        mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+    }
+    
+    // Close menu when clicking on a link
+    mobileMenu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            menuOpen = true; // Set to true so toggle will close it
+            toggleMobileMenu();
+        });
+    });
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+        if (menuOpen && 
+            !mobileMenu.contains(e.target) && 
+            !mobileMenuBtn.contains(e.target)) {
+            toggleMobileMenu();
+        }
+    });
+    
+    // Helper functions for scrolling
+    function scrollToBooking() {
+        document.getElementById('booking').scrollIntoView({ behavior: 'smooth' });
+        if (menuOpen) toggleMobileMenu();
+    }
+    
+    function scrollToB18() {
+        document.getElementById('b18').scrollIntoView({ behavior: 'smooth' });
+        if (menuOpen) toggleMobileMenu();
+    }
 </script>
 </body>
 </html>
