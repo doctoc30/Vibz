@@ -3,282 +3,286 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE CUT & CO. | Premier Barbering Atelier</title>
+    <title>THE AMBER ATELIER | Master Barbering</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&family=Playfair+Display:ital,wght@0,900;1,900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bormioli:wght@700&family=Outfit:wght@300;400;700;900&family=Playfair+Display:ital,wght@0,900;1,900&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --bg-cream: #f9f7f2;
-            --accent-gold: #c5a059;
-            --charcoal: #1a1a1a;
+            --light-orange: #fff9f2;
+            --amber-accent: #f59e0b;
+            --deep-burnt: #92400e;
+            --charcoal: #1c1917;
         }
-        body { font-family: 'Outfit', sans-serif; background-color: var(--bg-cream); color: var(--charcoal); overflow-x: hidden; }
+        body { font-family: 'Outfit', sans-serif; background-color: var(--light-orange); color: var(--charcoal); overflow-x: hidden; }
         .serif { font-family: 'Playfair Display', serif; }
         
-        /* 19. Scroll Animations Prep */
-        .reveal { opacity: 0; transform: translateY(40px); }
-
-        /* 2. Realistic Hero Storefront Overlay */
-        .hero-bg {
-            background: linear-gradient(rgba(249, 247, 242, 0.9), rgba(249, 247, 242, 0.2)), 
-                        url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80&w=2074&auto=format&fit=crop');
+        /* Photorealistic Hero */
+        .hero-viewport {
+            background: linear-gradient(to right, rgba(255,249,242,1) 30%, rgba(255,249,242,0) 100%), 
+                        url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=2070&auto=format&fit=crop');
             background-size: cover;
             background-position: center;
         }
 
-        /* Rotating Animation for Footer Icons */
-        @keyframes rotate-social {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        .rotate-hover:hover i { animation: rotate-social 0.6s ease-in-out; }
+        /* Rotating Socials Animation */
+        .social-rotate:hover { animation: spin 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-        /* 9. Before/After Slider */
-        .ba-container { position: relative; height: 500px; border-radius: 40px; overflow: hidden; cursor: ew-resize; border: 10px solid white; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.2); }
-        .ba-after { clip-path: inset(0 0 0 50%); }
+        /* Scroll Reveal Utility */
+        .reveal { opacity: 0; transform: translateY(40px); }
 
-        /* Mobile Action Bar */
-        .mobile-nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; background: var(--charcoal); border-radius: 100px; display: flex; justify-content: space-around; padding: 12px; z-index: 1000; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+        /* Gallery Grid */
+        .gallery-box { border-radius: 20px; overflow: hidden; position: relative; aspect-ratio: 1/1; }
+        .gallery-box img { transition: transform 0.8s ease; width: 100%; height: 100%; object-fit: cover; }
+        .gallery-box:hover img { transform: scale(1.1); }
+
+        /* FAQ Droplist */
+        .faq-item { border-bottom: 1px solid rgba(146, 64, 14, 0.1); cursor: pointer; }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+        .faq-item.active .faq-answer { max-height: 100px; padding-bottom: 20px; }
+
+        .mobile-bottom-nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; background: var(--charcoal); border-radius: 100px; display: flex; justify-content: space-around; padding: 15px; z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
     </style>
 </head>
 <body>
 
-    <div class="bg-black text-[#c5a059] py-2 text-center text-[10px] font-bold tracking-[0.5em] uppercase z-[110] relative">
-        Reserve Your Chair — The Winter Grooming Series is Now Open
-    </div>
-
-    <nav class="sticky top-0 z-[100] bg-[#f9f7f2]/80 backdrop-blur-xl px-8 py-6 flex justify-between items-center border-b border-black/5">
-        <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-black rounded-lg flex items-center justify-center text-[#c5a059]"><i data-lucide="scissors"></i></div>
-            <span class="serif text-2xl font-black tracking-tighter">THE CUT & CO.</span>
+    <nav class="fixed top-0 w-full z-50 bg-[#fff9f2]/90 backdrop-blur-xl border-b border-orange-100 px-8 py-5 flex justify-between items-center">
+        <div class="flex items-center gap-2">
+            <i data-lucide="scissors" class="text-amber-600"></i>
+            <span class="serif text-2xl font-black tracking-tighter">AMBER ATELIER</span>
         </div>
-        <div class="hidden lg:flex gap-10 text-[10px] font-bold uppercase tracking-[0.2em]">
-            <a href="#services">Services</a>
-            <a href="#about">About</a>
-            <a href="#barbers">Barbers</a>
-            <a href="#gallery">Gallery</a>
+        <div class="hidden lg:flex gap-10 text-[10px] font-bold uppercase tracking-widest text-stone-500">
+            <a href="#services" class="hover:text-amber-600">Services</a>
+            <a href="#about" class="hover:text-amber-600">About</a>
+            <a href="#barbers" class="hover:text-amber-600">The Team</a>
+            <a href="#contact" class="hover:text-amber-600">Contact</a>
         </div>
-        <a href="#booking" class="bg-black text-white px-8 py-3 rounded-full text-[10px] font-bold tracking-widest hover:bg-[#c5a059] transition-all">BOOK NOW</a>
+        <a href="#booking" class="bg-amber-600 text-white px-8 py-3 rounded-full text-[10px] font-bold tracking-widest hover:bg-black transition-all">BOOK NOW</a>
     </nav>
 
-    <section class="hero-bg min-h-screen flex items-center px-8 relative overflow-hidden">
-        <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center relative z-10">
-            <div class="reveal-hero">
-                <h1 class="serif text-7xl md:text-[9rem] leading-[0.8] mb-8 font-black">LEGENDARY <br><span class="text-[#c5a059] italic">FINISH.</span></h1>
-                <p class="text-xl text-stone-600 max-w-md mb-10 leading-relaxed">London’s premier grooming atelier. We merge heritage techniques with modern precision.</p>
-                <div class="flex gap-4">
-                    <a href="#booking" class="bg-black text-white px-10 py-5 rounded-2xl font-bold shadow-2xl hover:scale-105 transition-transform">Reserve Appointment</a>
+    <section class="hero-viewport min-h-screen flex items-center px-8 pt-20">
+        <div class="container mx-auto grid lg:grid-cols-2">
+            <div id="hero-text">
+                <span class="text-amber-600 font-bold uppercase tracking-[0.4em] text-xs mb-6 block">Est. 2026 • London</span>
+                <h1 class="serif text-7xl md:text-[8rem] leading-[0.85] mb-8 font-black">THE GOLDEN <br><span class="italic text-amber-600">STANDARD.</span></h1>
+                <p class="text-xl text-stone-500 max-w-sm mb-10 leading-relaxed">Experience a masterclass in modern barbering within our light-drenched studio.</p>
+                <div class="flex gap-6">
+                    <div class="flex flex-col items-center">
+                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg border border-orange-50"><i data-lucide="blade" class="w-5 text-amber-600"></i></div>
+                        <span class="text-[8px] mt-2 font-bold uppercase tracking-widest">Hand Razor</span>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg border border-orange-50"><i data-lucide="spray-can" class="w-5 text-amber-600"></i></div>
+                        <span class="text-[8px] mt-2 font-bold uppercase tracking-widest">Organic Tones</span>
+                    </div>
                 </div>
             </div>
-            <div class="hidden lg:block relative reveal-hero">
-                <div class="absolute -top-20 -right-10 opacity-10"><i data-lucide="scissors" class="w-64 h-64"></i></div>
-                <div class="bg-white/30 backdrop-blur-md p-4 rounded-[40px] border border-white/50 shadow-2xl">
-                    <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=800" class="rounded-[30px] shadow-lg" alt="Barber Tool Detail">
+        </div>
+    </section>
+
+    <section class="py-24 bg-white px-8">
+        <div class="max-w-6xl mx-auto grid md:grid-cols-3 gap-12">
+            <div class="text-center reveal">
+                <div class="w-44 h-44 border-[12px] border-orange-50 rounded-full flex flex-col items-center justify-center mx-auto mb-6">
+                    <span class="text-4xl font-black">12K</span>
+                    <span class="text-[9px] uppercase font-bold opacity-40">Happy Clients</span>
+                </div>
+            </div>
+            <div class="text-center reveal" style="transition-delay: 150ms;">
+                <div class="w-44 h-44 border-[12px] border-amber-500 rounded-full flex flex-col items-center justify-center mx-auto mb-6 shadow-2xl shadow-orange-200">
+                    <span class="text-4xl font-black text-amber-600">18+</span>
+                    <span class="text-[9px] uppercase font-bold opacity-60">Barber Specialists</span>
+                </div>
+            </div>
+            <div class="text-center reveal" style="transition-delay: 300ms;">
+                <div class="w-44 h-44 border-[12px] border-orange-50 rounded-full flex flex-col items-center justify-center mx-auto mb-6">
+                    <span class="text-4xl font-black">4.9</span>
+                    <span class="text-[9px] uppercase font-bold opacity-40">Google Rating</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="services" class="py-24 px-8 bg-orange-50/50">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="serif text-6xl mb-16 text-center italic">Service Menu</h2>
+            <div class="grid lg:grid-cols-2 gap-x-20 gap-y-12">
+                <div class="flex justify-between items-end border-b border-orange-200 pb-6 reveal">
+                    <div>
+                        <h4 class="text-xl font-bold uppercase tracking-tighter">The Amber Signature Cut</h4>
+                        <p class="text-sm text-stone-400">Consultation, wash, cut & style</p>
+                    </div>
+                    <span class="serif text-3xl font-black text-amber-600">$55</span>
+                </div>
+                <div class="flex justify-between items-end border-b border-orange-200 pb-6 reveal">
+                    <div>
+                        <h4 class="text-xl font-bold uppercase tracking-tighter">Skin Fade Specialist</h4>
+                        <p class="text-sm text-stone-400">Precision zero-fade with foil finish</p>
+                    </div>
+                    <span class="serif text-3xl font-black text-amber-600">$45</span>
+                </div>
+                <div class="flex justify-between items-end border-b border-orange-200 pb-6 reveal">
+                    <div>
+                        <h4 class="text-xl font-bold uppercase tracking-tighter">Straight Razor Shave</h4>
+                        <p class="text-sm text-stone-400">Hot towel, steam & balm</p>
+                    </div>
+                    <span class="serif text-3xl font-black text-amber-600">$35</span>
+                </div>
+                <div class="flex justify-between items-end border-b border-orange-200 pb-6 reveal">
+                    <div>
+                        <h4 class="text-xl font-bold uppercase tracking-tighter">Full Grooming Ritual</h4>
+                        <p class="text-sm text-stone-400">Cut, Beard, Facial & Mask</p>
+                    </div>
+                    <span class="serif text-3xl font-black text-amber-600">$95</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="booking" class="py-24 px-8 bg-white overflow-hidden">
+        <div class="max-w-7xl mx-auto grid lg:grid-cols-12 gap-16 items-center">
+            <div class="lg:col-span-5 reveal">
+                <h2 class="serif text-5xl mb-8">Reserve The Chair</h2>
+                <form class="space-y-6">
+                    <input type="text" placeholder="Full Name" class="w-full border-2 border-orange-50 p-5 rounded-2xl outline-none focus:border-amber-500 transition-all">
+                    <div class="grid grid-cols-2 gap-4">
+                        <input type="date" class="border-2 border-orange-50 p-5 rounded-2xl">
+                        <input type="time" class="border-2 border-orange-50 p-5 rounded-2xl">
+                    </div>
+                    <select class="w-full border-2 border-orange-50 p-5 rounded-2xl">
+                        <option>Choose Your Barber</option>
+                        <option>Dino (Master)</option>
+                        <option>Sarah (Senior)</option>
+                    </select>
+                    <button class="w-full bg-amber-600 text-white py-6 rounded-2xl font-black uppercase tracking-widest shadow-2xl hover:bg-black transition-all">Schedule Appointment</button>
+                </form>
+            </div>
+            <div class="lg:col-span-7 h-[600px] rounded-[50px] overflow-hidden border-8 border-orange-50 relative reveal">
+                <iframe src="https://www.google.com/maps/embed?..." width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                <div class="absolute bottom-8 right-8 bg-white p-10 rounded-[30px] shadow-2xl">
+                    <h5 class="text-amber-600 font-bold uppercase text-[10px] tracking-widest mb-4">Opening Hours</h5>
+                    <div class="text-xs space-y-2 font-bold">
+                        <p class="flex justify-between gap-10"><span>Mon - Fri</span> <span>09:00 - 20:00</span></p>
+                        <p class="flex justify-between gap-10"><span>Saturday</span> <span>08:00 - 18:00</span></p>
+                        <p class="flex justify-between gap-10 text-stone-300"><span>Sunday</span> <span>CLOSED</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="gallery" class="py-24 px-8 bg-white">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="serif text-5xl mb-16 text-center">Studio <span class="italic text-amber-600">Gallery</span></h2>
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="gallery-box reveal"><img src="https://images.unsplash.com/photo-1512690196236-d5a743f4f0bb?w=600"></div>
+                <div class="gallery-box lg:col-span-2 lg:row-span-2 reveal"><img src="https://images.unsplash.com/photo-1621605815841-aa89780b67d2?w=800"></div>
+                <div class="gallery-box reveal"><img src="https://images.unsplash.com/photo-1593702275677-f916c8c98ca7?w=600"></div>
+                <div class="gallery-box reveal"><img src="https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?w=600"></div>
+                <div class="gallery-box reveal"><img src="https://images.unsplash.com/photo-1599351431247-f50940243edc?w=600"></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="barbers" class="py-24 px-8 bg-orange-50/30">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex justify-between items-end mb-16">
+                <h2 class="serif text-5xl">The <span class="text-amber-600 italic">Artists</span></h2>
+                <div class="flex gap-2">
+                    <button class="w-12 h-12 border border-orange-200 rounded-full flex items-center justify-center"><i data-lucide="arrow-left"></i></button>
+                    <button class="w-12 h-12 bg-amber-600 text-white rounded-full flex items-center justify-center"><i data-lucide="arrow-right"></i></button>
+                </div>
+            </div>
+            <div class="grid md:grid-cols-3 gap-12">
+                <div class="reveal">
+                    <div class="aspect-[3/4] rounded-[40px] overflow-hidden mb-6"><img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=600" class="w-full h-full object-cover"></div>
+                    <h4 class="text-2xl font-bold">Dino Moretti</h4>
+                    <p class="text-xs font-bold uppercase text-amber-600 tracking-widest mt-1">Master Barber / 12 YRS EXP</p>
+                </div>
+                <div class="reveal" style="transition-delay: 150ms;">
+                    <div class="aspect-[3/4] rounded-[40px] overflow-hidden mb-6"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600" class="w-full h-full object-cover"></div>
+                    <h4 class="text-2xl font-bold">Leo Vance</h4>
+                    <p class="text-xs font-bold uppercase text-amber-600 tracking-widest mt-1">Fade Specialist</p>
+                </div>
+                <div class="reveal" style="transition-delay: 300ms;">
+                    <div class="aspect-[3/4] rounded-[40px] overflow-hidden mb-6"><img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=600" class="w-full h-full object-cover"></div>
+                    <h4 class="text-2xl font-bold">Julian Brooks</h4>
+                    <p class="text-xs font-bold uppercase text-amber-600 tracking-widest mt-1">Creative Director</p>
                 </div>
             </div>
         </div>
     </section>
 
     <section class="py-24 px-8 bg-white">
-        <div class="max-w-6xl mx-auto grid md:grid-cols-3 gap-12 text-center">
-            <div class="reveal">
-                <div class="w-40 h-40 border-[10px] border-[#c5a059]/20 rounded-full flex flex-col items-center justify-center mx-auto mb-4">
-                    <span class="text-4xl font-black">10K+</span>
-                </div>
-                <p class="text-[10px] font-bold uppercase tracking-widest opacity-40">Clients Served</p>
-            </div>
-            <div class="reveal">
-                <div class="w-40 h-40 border-[10px] border-[#c5a059] rounded-full flex flex-col items-center justify-center mx-auto mb-4">
-                    <span class="text-4xl font-black">15+</span>
-                </div>
-                <p class="text-[10px] font-bold uppercase tracking-widest opacity-40">Years Mastery</p>
-            </div>
-            <div class="reveal">
-                <div class="w-40 h-40 border-[10px] border-[#c5a059]/20 rounded-full flex flex-col items-center justify-center mx-auto mb-4">
-                    <span class="text-4xl font-black">4.9/5</span>
-                </div>
-                <p class="text-[10px] font-bold uppercase tracking-widest opacity-40">Top Reviews</p>
-            </div>
-        </div>
-    </section>
-
-    <section id="services" class="py-32 px-8 bg-[#f9f7f2]">
-        <div class="max-w-7xl mx-auto grid lg:grid-cols-12 gap-16">
-            <div class="lg:col-span-7 reveal">
-                <h2 class="serif text-6xl mb-16">The Service Menu</h2>
-                <div class="space-y-8">
-                    <div class="flex justify-between items-end border-b border-black/10 pb-6 group hover:border-[#c5a059] transition-colors">
-                        <div>
-                            <h4 class="serif text-3xl">Signature Skin Fade</h4>
-                            <p class="text-xs text-stone-400 mt-2">Precision cut, luxury wash & styling</p>
-                        </div>
-                        <span class="text-2xl font-bold text-[#c5a059]">£45</span>
+        <div class="max-w-3xl mx-auto reveal">
+            <h2 class="serif text-5xl text-center mb-16">Enquiries</h2>
+            <div class="space-y-4">
+                <div class="faq-item p-6 active">
+                    <div class="flex justify-between items-center font-bold text-lg">
+                        <span>Do you accept walk-ins?</span>
+                        <i data-lucide="chevron-down" class="w-5 text-amber-600"></i>
                     </div>
-                    <div class="flex justify-between items-end border-b border-black/10 pb-6 group hover:border-[#c5a059] transition-colors">
-                        <div>
-                            <h4 class="serif text-3xl">The Hot Towel Ritual</h4>
-                            <p class="text-xs text-stone-400 mt-2">Traditional straight razor & steam shave</p>
-                        </div>
-                        <span class="text-2xl font-bold text-[#c5a059]">£35</span>
-                    </div>
-                    <div class="flex justify-between items-end border-b border-black/10 pb-6 group hover:border-[#c5a059] transition-colors">
-                        <div>
-                            <h4 class="serif text-3xl">Beard Architect</h4>
-                            <p class="text-xs text-stone-400 mt-2">Sculpting, oils and razor lining</p>
-                        </div>
-                        <span class="text-2xl font-bold text-[#c5a059]">£25</span>
-                    </div>
+                    <div class="faq-answer text-stone-500 mt-4">We primarily operate on an appointment basis to ensure the highest quality of service, however, we do accommodate walk-ins when possible.</div>
                 </div>
-            </div>
-
-            <div id="booking" class="lg:col-span-5 bg-white p-10 rounded-[40px] shadow-2xl reveal border border-black/5">
-                <div class="flex items-center gap-4 mb-8">
-                    <i data-lucide="calendar" class="text-[#c5a059]"></i>
-                    <h3 class="serif text-2xl font-bold">Book The Chair</h3>
-                </div>
-                <form class="space-y-4">
-                    <input type="text" placeholder="Full Name" class="w-full bg-stone-50 p-5 rounded-2xl outline-none focus:ring-1 focus:ring-[#c5a059]">
-                    <div class="grid grid-cols-2 gap-4">
-                        <input type="date" class="bg-stone-50 p-5 rounded-2xl text-xs">
-                        <input type="time" class="bg-stone-50 p-5 rounded-2xl text-xs">
+                <div class="faq-item p-6">
+                    <div class="flex justify-between items-center font-bold text-lg">
+                        <span>Cancellation Policy</span>
+                        <i data-lucide="chevron-down" class="w-5 text-amber-600"></i>
                     </div>
-                    <select class="w-full bg-stone-50 p-5 rounded-2xl text-xs outline-none">
-                        <option>Select Specialist</option>
-                        <option>Andre (Master)</option>
-                        <option>Marcus (Senior)</option>
-                    </select>
-                    <button class="w-full bg-black text-white py-5 rounded-2xl font-bold uppercase tracking-widest shadow-xl mt-4 hover:bg-[#c5a059] transition-all">Schedule Now</button>
-                </form>
-            </div>
-        </div>
-    </section>
-
-    <section id="barbers" class="py-24 px-8 bg-white">
-        <div class="max-w-7xl mx-auto">
-            <h2 class="serif text-5xl text-center mb-16 italic">The Master Craftsmen</h2>
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="reveal group">
-                    <div class="aspect-square rounded-[40px] overflow-hidden mb-6 grayscale group-hover:grayscale-0 transition-all duration-700">
-                        <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=600" class="w-full h-full object-cover">
-                    </div>
-                    <h4 class="serif text-2xl">Andre Steel</h4>
-                    <p class="text-[10px] font-bold uppercase tracking-widest text-[#c5a059]">Founder / Master Barber</p>
-                </div>
-                <div class="reveal group" style="transition-delay: 200ms;">
-                    <div class="aspect-square rounded-[40px] overflow-hidden mb-6 grayscale group-hover:grayscale-0 transition-all duration-700">
-                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=600" class="w-full h-full object-cover">
-                    </div>
-                    <h4 class="serif text-2xl">Marcus J.</h4>
-                    <p class="text-[10px] font-bold uppercase tracking-widest text-[#c5a059]">Senior Groomer</p>
-                </div>
-                <div class="reveal group" style="transition-delay: 400ms;">
-                    <div class="aspect-square rounded-[40px] overflow-hidden mb-6 grayscale group-hover:grayscale-0 transition-all duration-700">
-                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600" class="w-full h-full object-cover">
-                    </div>
-                    <h4 class="serif text-2xl">Leo Brooks</h4>
-                    <p class="text-[10px] font-bold uppercase tracking-widest text-[#c5a059]">Styling Specialist</p>
+                    <div class="faq-answer text-stone-500 mt-4">Please provide 24-hour notice for cancellations to avoid a 50% service fee charge.</div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="py-24 px-8 bg-stone-100">
-        <div class="max-w-4xl mx-auto">
-            <h2 class="serif text-5xl text-center mb-16">The <span class="italic text-[#c5a059]">Metamorphosis</span></h2>
-            <div class="ba-container reveal" id="baSlider">
-                <img src="https://images.unsplash.com/photo-1599351431247-f50940243edc?w=1200" class="absolute inset-0 w-full h-full object-cover grayscale">
-                <img src="https://images.unsplash.com/photo-1621605815841-aa89780b67d2?w=1200" class="absolute inset-0 w-full h-full object-cover ba-after">
-            </div>
+    <footer id="contact" class="bg-white border-t border-orange-100 pt-24 pb-40 px-8 text-center">
+        <div class="serif text-4xl font-black mb-10 tracking-tighter">AMBER ATELIER</div>
+        <div class="flex justify-center gap-12 mb-16">
+            <a href="#" class="social-rotate"><i data-lucide="instagram" class="w-8 h-8 text-stone-300 hover:text-amber-600 transition-colors"></i></a>
+            <a href="#" class="social-rotate"><i data-lucide="facebook" class="w-8 h-8 text-stone-300 hover:text-amber-600 transition-colors"></i></a>
+            <a href="#" class="social-rotate"><i data-lucide="twitter" class="w-8 h-8 text-stone-300 hover:text-amber-600 transition-colors"></i></a>
         </div>
-    </section>
-
-    <section class="grid lg:grid-cols-2 border-y border-black/5">
-        <div class="p-20 bg-white reveal">
-            <h2 class="serif text-6xl mb-12">The Atelier</h2>
-            <div class="grid grid-cols-2 gap-12">
-                <div>
-                    <h5 class="text-[10px] font-black uppercase tracking-widest text-[#c5a059] mb-4">Location</h5>
-                    <p class="text-lg">88 Bruton Street<br>Mayfair, London</p>
-                </div>
-                <div>
-                    <h5 class="text-[10px] font-black uppercase tracking-widest text-[#c5a059] mb-4">Hours</h5>
-                    <p class="text-sm">Mon-Fri: 10am — 8pm<br>Sat: 9am — 6pm</p>
-                </div>
-            </div>
-            <div class="mt-12 flex gap-4">
-                <div class="w-12 h-12 rounded-full border border-black/10 flex items-center justify-center"><i data-lucide="phone" class="w-4"></i></div>
-                <div class="w-12 h-12 rounded-full border border-black/10 flex items-center justify-center"><i data-lucide="mail" class="w-4"></i></div>
-            </div>
+        <div class="text-[10px] font-bold uppercase tracking-[0.5em] opacity-30">
+            © 2026 THE AMBER ATELIER SERIES • MAYFAIR • LONDON
         </div>
-        <div class="min-h-[500px] bg-stone-200 grayscale hover:grayscale-0 transition-all duration-1000">
-            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2482.9050207917!2d-0.1444698!3d51.51495!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x48761ad554c335bb%3A0x5994237f37a4e69b!2sBruton%20St%2C%20London!5e0!3m2!1sen!2suk!4v1675850000000!5m2!1sen!2suk" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-        </div>
-    </section>
-
-    <footer class="py-32 bg-white text-center pb-40">
-        <div class="serif text-4xl mb-10 font-black">THE CUT & CO.</div>
-        <div class="flex justify-center gap-12 mb-20">
-            <a href="#" class="rotate-hover transition-all text-neutral-400 hover:text-black">
-                <i data-lucide="instagram" class="w-8 h-8"></i>
-            </a>
-            <a href="#" class="rotate-hover transition-all text-neutral-400 hover:text-black">
-                <i data-lucide="facebook" class="w-8 h-8"></i>
-            </a>
-            <a href="#" class="rotate-hover transition-all text-neutral-400 hover:text-black">
-                <i data-lucide="twitter" class="w-8 h-8"></i>
-            </a>
-        </div>
-        <p class="text-[10px] font-black tracking-[0.8em] opacity-20 uppercase">© 2026 THE CUT & CO. ATELIER SERIES</p>
     </footer>
 
-    <div class="mobile-nav lg:hidden">
-        <a href="tel:000" class="text-white flex flex-col items-center gap-1">
-            <i data-lucide="phone" class="w-5 text-[#c5a059]"></i><span class="text-[8px] font-bold uppercase tracking-widest">Call</span>
-        </a>
-        <a href="https://wa.me/000" class="text-white flex flex-col items-center gap-1">
-            <i data-lucide="message-square" class="w-5 text-[#c5a059]"></i><span class="text-[8px] font-bold uppercase tracking-widest">WhatsApp</span>
-        </a>
-        <a href="#booking" class="text-white flex flex-col items-center gap-1">
-            <i data-lucide="calendar" class="w-5 text-[#c5a059]"></i><span class="text-[8px] font-bold uppercase tracking-widest">Book</span>
-        </a>
+    <div class="mobile-bottom-nav lg:hidden">
+        <a href="tel:0207123456" class="text-white flex flex-col items-center"><i data-lucide="phone" class="w-5 text-amber-500"></i><span class="text-[8px] uppercase mt-1">Call</span></a>
+        <a href="https://wa.me/..." class="text-white flex flex-col items-center"><i data-lucide="message-circle" class="w-5 text-amber-500"></i><span class="text-[8px] uppercase mt-1">Chat</span></a>
+        <a href="#booking" class="text-white flex flex-col items-center"><i data-lucide="calendar" class="w-5 text-amber-500"></i><span class="text-[8px] uppercase mt-1">Book</span></a>
     </div>
 
     <script>
         lucide.createIcons();
         gsap.registerPlugin(ScrollTrigger);
 
-        // GSAP Hero Reveal
-        gsap.from(".reveal-hero", {
-            y: 100,
-            opacity: 0,
-            duration: 1.5,
-            stagger: 0.2,
-            ease: "power4.out"
-        });
+        // GSAP Animations
+        gsap.from("#hero-text", { opacity: 0, x: -100, duration: 1.5, ease: "power4.out" });
 
-        // Scroll Reveal logic
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    entry.target.classList.add('active');
                     entry.target.style.opacity = "1";
                     entry.target.style.transform = "translateY(0)";
                 }
             });
         }, { threshold: 0.1 });
-        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-        // Before/After Slider Interaction
-        const baSlider = document.getElementById('baSlider');
-        const afterImg = baSlider.querySelector('.ba-after');
-        baSlider.addEventListener('mousemove', (e) => {
-            const rect = baSlider.getBoundingClientRect();
-            const x = ((e.clientX - rect.left) / rect.width) * 100;
-            afterImg.style.clipPath = `inset(0 0 0 ${x}%)`;
+        document.querySelectorAll('.reveal').forEach(el => {
+            el.style.transition = "all 1s cubic-bezier(0.2, 0, 0.2, 1)";
+            observer.observe(el);
+        });
+
+        // FAQ Toggle
+        document.querySelectorAll('.faq-item').forEach(item => {
+            item.addEventListener('click', () => {
+                item.classList.toggle('active');
+            });
         });
     </script>
 </body>
