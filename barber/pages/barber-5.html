@@ -17,6 +17,7 @@
             --light: #f0f0f0;
             --grid: #1a1a1a;
             --glow: rgba(0, 255, 157, 0.1);
+            --menu-bg: rgba(10, 10, 10, 0.98);
         }
 
         * {
@@ -57,7 +58,7 @@
             z-index: 9999;
         }
 
-        /* NEW TYPOGRAPHY */
+        /* TYPOGRAPHY */
         h1, h2, h3, h4 {
             font-family: 'Orbitron', monospace;
             font-weight: 900;
@@ -80,12 +81,16 @@
             color: var(--rust);
         }
 
-        /* PROMO BAR - INDUSTRIAL STYLE */
+        /* PROMO BAR */
         .promo-bar {
             background: linear-gradient(90deg, var(--black) 0%, var(--concrete) 50%, var(--black) 100%);
             border-bottom: 1px solid var(--rust);
             padding: 12px 0;
-            position: relative;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1002;
             overflow: hidden;
         }
 
@@ -94,6 +99,7 @@
             justify-content: center;
             align-items: center;
             gap: 40px;
+            padding: 0 20px;
         }
 
         .promo-item {
@@ -117,14 +123,18 @@
             50% { opacity: 0.3; }
         }
 
-        /* HEADER - INDUSTRIAL */
-        header {
+        /* MOBILE-FRIENDLY HAMBURGER MENU */
+        .header-container {
             position: fixed;
             top: 40px;
             left: 0;
             width: 100%;
-            z-index: 1000;
+            z-index: 1001;
             padding: 0 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
         }
 
         .nav-container {
@@ -136,6 +146,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            width: 100%;
             box-shadow: 0 0 30px rgba(183, 65, 14, 0.1);
         }
 
@@ -143,6 +154,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            z-index: 1003;
         }
 
         .logo-icon {
@@ -164,13 +176,56 @@
             line-height: 0;
         }
 
-        nav ul {
+        /* HAMBURGER MENU STYLES */
+        .hamburger-menu {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 30px;
+            height: 21px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            z-index: 1003;
+            position: relative;
+        }
+
+        .hamburger-menu span {
+            display: block;
+            height: 3px;
+            width: 100%;
+            background-color: var(--neon);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger-menu.active span:nth-child(1) {
+            transform: translateY(9px) rotate(45deg);
+        }
+
+        .hamburger-menu.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger-menu.active span:nth-child(3) {
+            transform: translateY(-9px) rotate(-45deg);
+        }
+
+        /* DESKTOP NAV */
+        .desktop-nav {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .desktop-nav ul {
             display: flex;
             list-style: none;
             gap: 40px;
         }
 
-        nav a {
+        .desktop-nav a {
             color: var(--light);
             text-decoration: none;
             font-weight: 600;
@@ -181,7 +236,7 @@
             transition: all 0.3s ease;
         }
 
-        nav a::before {
+        .desktop-nav a::before {
             content: '>';
             position: absolute;
             left: -20px;
@@ -190,11 +245,11 @@
             transition: opacity 0.3s ease;
         }
 
-        nav a:hover::before {
+        .desktop-nav a:hover::before {
             opacity: 1;
         }
 
-        nav a:hover {
+        .desktop-nav a:hover {
             color: var(--neon);
         }
 
@@ -207,6 +262,8 @@
             font-size: 0.9rem;
             border: 1px solid transparent;
             transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
         }
 
         .nav-number:hover {
@@ -214,7 +271,140 @@
             border-color: var(--rust);
         }
 
-        /* HERO - INDUSTRIAL SHOWCASE */
+        /* MOBILE NAV OVERLAY */
+        .mobile-nav-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: var(--menu-bg);
+            backdrop-filter: blur(15px);
+            z-index: 1002;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+            padding: 100px 20px 40px;
+        }
+
+        .mobile-nav-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-nav-links {
+            list-style: none;
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .mobile-nav-links li {
+            margin-bottom: 40px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.4s ease;
+        }
+
+        .mobile-nav-overlay.active .mobile-nav-links li {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .mobile-nav-links li:nth-child(1) { transition-delay: 0.1s; }
+        .mobile-nav-links li:nth-child(2) { transition-delay: 0.15s; }
+        .mobile-nav-links li:nth-child(3) { transition-delay: 0.2s; }
+        .mobile-nav-links li:nth-child(4) { transition-delay: 0.25s; }
+        .mobile-nav-links li:nth-child(5) { transition-delay: 0.3s; }
+
+        .mobile-nav-links a {
+            color: var(--light);
+            text-decoration: none;
+            font-size: 2.5rem;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            letter-spacing: 3px;
+            position: relative;
+            padding: 10px 0;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 3px;
+            background-color: var(--neon);
+            transition: width 0.3s ease;
+        }
+
+        .mobile-nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .mobile-nav-links a:hover {
+            color: var(--neon);
+        }
+
+        .mobile-contact-info {
+            text-align: center;
+            margin-top: 40px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.4s ease 0.4s;
+        }
+
+        .mobile-nav-overlay.active .mobile-contact-info {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .mobile-contact-info h3 {
+            color: var(--neon);
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .mobile-contact-info p {
+            color: var(--steel);
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .mobile-social-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .mobile-social-links a {
+            width: 50px;
+            height: 50px;
+            border: 1px solid var(--steel);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--light);
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-social-links a:hover {
+            border-color: var(--neon);
+            color: var(--neon);
+            transform: translateY(-3px);
+        }
+
+        /* HERO */
         .hero {
             height: 100vh;
             display: flex;
@@ -240,6 +430,7 @@
             position: relative;
             z-index: 2;
             max-width: 700px;
+            margin-top: 60px;
         }
 
         .hero-title {
@@ -261,6 +452,7 @@
             display: flex;
             gap: 20px;
             margin-top: 50px;
+            flex-wrap: wrap;
         }
 
         .btn {
@@ -276,6 +468,8 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            text-decoration: none;
+            display: inline-block;
         }
 
         .btn::before {
@@ -334,7 +528,7 @@
             margin-top: 5px;
         }
 
-        /* SERVICES - INDUSTRIAL GRID */
+        /* SERVICES */
         .section {
             padding: 120px 5%;
             position: relative;
@@ -424,7 +618,7 @@
             margin: 20px 0;
         }
 
-        /* GALLERY - INDUSTRIAL */
+        /* GALLERY */
         .gallery {
             background: var(--concrete);
         }
@@ -472,7 +666,7 @@
             transform: translateY(0);
         }
 
-        /* BARBERS - INDUSTRIAL TEAM */
+        /* BARBERS */
         .team-slider {
             display: flex;
             gap: 30px;
@@ -567,7 +761,7 @@
             font-size: 0.8rem;
         }
 
-        /* BOOKING - INDUSTRIAL FORM */
+        /* BOOKING */
         .booking-section {
             background: var(--concrete);
             border-top: 1px solid var(--rust);
@@ -651,7 +845,7 @@
             gap: 20px;
         }
 
-        /* TESTIMONIALS - INDUSTRIAL */
+        /* TESTIMONIALS */
         .testimonials-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -707,7 +901,7 @@
             object-fit: cover;
         }
 
-        /* FOOTER - INDUSTRIAL */
+        /* FOOTER */
         footer {
             background: var(--black);
             border-top: 1px solid var(--rust);
@@ -829,14 +1023,20 @@
                 gap: 40px;
             }
             
-            .nav-container {
-                flex-direction: column;
-                gap: 20px;
+            .desktop-nav {
+                display: none;
             }
             
-            nav ul {
-                flex-wrap: wrap;
-                justify-content: center;
+            .hamburger-menu {
+                display: flex;
+            }
+            
+            .nav-container {
+                padding: 15px 20px;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -866,12 +1066,24 @@
                 grid-column: span 1;
             }
             
-            .info-grid {
+            .footer-grid {
                 grid-template-columns: 1fr;
             }
             
-            .footer-grid {
+            .form-row {
                 grid-template-columns: 1fr;
+            }
+            
+            .mobile-nav-links a {
+                font-size: 2rem;
+            }
+            
+            .header-container {
+                padding: 0 3%;
+            }
+            
+            .section {
+                padding: 80px 3%;
             }
         }
 
@@ -894,8 +1106,29 @@
                 grid-template-columns: 1fr;
             }
             
-            .form-row {
-                grid-template-columns: 1fr;
+            .logo-text {
+                font-size: 1.5rem;
+                letter-spacing: 2px;
+            }
+            
+            .hero-stats {
+                gap: 30px;
+            }
+            
+            .stat-number {
+                font-size: 2.5rem;
+            }
+            
+            .mobile-nav-links a {
+                font-size: 1.8rem;
+            }
+            
+            .service-card {
+                padding: 30px 20px;
+            }
+            
+            .barber-card {
+                min-width: 300px;
             }
         }
     </style>
@@ -906,26 +1139,24 @@
 
     <!-- Promo Bar -->
     <div class="promo-bar">
-        <div class="container">
-            <div class="promo-content">
-                <div class="promo-item">
-                    <span class="promo-icon"><i class="fas fa-bolt"></i></span>
-                    <span class="promo-flash">NEW LOCATION OPENING SOON</span>
-                </div>
-                <div class="promo-item">
-                    <span class="promo-icon"><i class="fas fa-trophy"></i></span>
-                    <span>AWARD-WINNING BARBER STUDIO</span>
-                </div>
-                <div class="promo-item">
-                    <span class="promo-icon"><i class="fas fa-clock"></i></span>
-                    <span>OPEN 7 DAYS • 8AM - 10PM</span>
-                </div>
+        <div class="promo-content">
+            <div class="promo-item">
+                <span class="promo-icon"><i class="fas fa-bolt"></i></span>
+                <span class="promo-flash">NEW LOCATION OPENING SOON</span>
+            </div>
+            <div class="promo-item">
+                <span class="promo-icon"><i class="fas fa-trophy"></i></span>
+                <span>AWARD-WINNING BARBER STUDIO</span>
+            </div>
+            <div class="promo-item">
+                <span class="promo-icon"><i class="fas fa-clock"></i></span>
+                <span>OPEN 7 DAYS • 8AM - 10PM</span>
             </div>
         </div>
     </div>
 
-    <!-- Header -->
-    <header>
+    <!-- Header with Mobile Hamburger Menu -->
+    <div class="header-container">
         <div class="nav-container">
             <div class="logo">
                 <span class="logo-icon"><i class="fas fa-cut"></i></span>
@@ -933,7 +1164,8 @@
                 <span class="logo-dot">.</span>
             </div>
             
-            <nav>
+            <!-- Desktop Navigation -->
+            <nav class="desktop-nav">
                 <ul>
                     <li><a href="#services">SERVICES</a></li>
                     <li><a href="#gallery">GALLERY</a></li>
@@ -941,11 +1173,43 @@
                     <li><a href="#booking">BOOKING</a></li>
                     <li><a href="#contact">CONTACT</a></li>
                 </ul>
+                <a href="tel:+442012345678" class="nav-number">020 8123 4567</a>
             </nav>
             
-            <a href="tel:+442012345678" class="nav-number">020 8123 4567</a>
+            <!-- Mobile Hamburger Menu Button -->
+            <button class="hamburger-menu" id="hamburgerMenu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
         </div>
-    </header>
+    </div>
+
+    <!-- Mobile Navigation Overlay -->
+    <div class="mobile-nav-overlay" id="mobileNav">
+        <ul class="mobile-nav-links">
+            <li><a href="#services">SERVICES</a></li>
+            <li><a href="#gallery">GALLERY</a></li>
+            <li><a href="#team">BARBERS</a></li>
+            <li><a href="#booking">BOOKING</a></li>
+            <li><a href="#contact">CONTACT</a></li>
+        </ul>
+        
+        <div class="mobile-contact-info">
+            <h3>CONTACT</h3>
+            <p>020 8123 4567</p>
+            <p>Unit 7, Industrial Estate</p>
+            <p>London E1 6AN</p>
+            <p>engineer@artoffades.com</p>
+            
+            <div class="mobile-social-links">
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+                <a href="#"><i class="fab fa-tiktok"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+        </div>
+    </div>
 
     <!-- Hero -->
     <section class="hero">
@@ -955,8 +1219,8 @@
             <p class="hero-subtitle">Where mechanical precision meets artisanal craft. Experience barbering redefined through engineering, geometry, and uncompromising attention to detail.</p>
             
             <div class="hero-buttons">
-                <button class="btn" onclick="scrollToBooking()">BOOK SESSION</button>
-                <button class="btn btn-alt" onclick="scrollToServices()">VIEW SERVICES</button>
+                <a href="#booking" class="btn">BOOK SESSION</a>
+                <a href="#services" class="btn btn-alt">VIEW SERVICES</a>
             </div>
             
             <div class="hero-stats">
@@ -993,7 +1257,7 @@
                 <p class="service-desc">Geometric analysis and calculated cutting for perfect symmetry and balance.</p>
                 <div class="service-line"></div>
                 <div class="service-price">£48</div>
-                <button class="btn" onclick="scrollToBooking()">SELECT</button>
+                <a href="#booking" class="btn">SELECT</a>
             </div>
             
             <div class="service-card">
@@ -1002,7 +1266,7 @@
                 <p class="service-desc">Seamless transition engineering with calibrated clipper work.</p>
                 <div class="service-line"></div>
                 <div class="service-price">£58</div>
-                <button class="btn" onclick="scrollToBooking()">SELECT</button>
+                <a href="#booking" class="btn">SELECT</a>
             </div>
             
             <div class="service-card">
@@ -1011,7 +1275,7 @@
                 <p class="service-desc">Structural shaping based on facial geometry and growth patterns.</p>
                 <div class="service-line"></div>
                 <div class="service-price">£38</div>
-                <button class="btn" onclick="scrollToBooking()">SELECT</button>
+                <a href="#booking" class="btn">SELECT</a>
             </div>
             
             <div class="service-card">
@@ -1020,7 +1284,7 @@
                 <p class="service-desc">Complete engineering package: cut, fade, beard, and maintenance protocol.</p>
                 <div class="service-line"></div>
                 <div class="service-price">£85</div>
-                <button class="btn" onclick="scrollToBooking()">SELECT</button>
+                <a href="#booking" class="btn">SELECT</a>
             </div>
         </div>
     </section>
@@ -1197,7 +1461,7 @@
             </div>
             
             <div class="booking-form">
-                <form id="bookingForm" onsubmit="event.preventDefault(); bookSession()">
+                <form id="bookingForm">
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label">FIRST NAME</label>
@@ -1361,13 +1625,45 @@
     </footer>
 
     <script>
-        // Navigation scroll
-        document.querySelectorAll('nav a').forEach(anchor => {
+        // Mobile Hamburger Menu Toggle
+        const hamburgerMenu = document.getElementById('hamburgerMenu');
+        const mobileNav = document.getElementById('mobileNav');
+        const body = document.body;
+
+        hamburgerMenu.addEventListener('click', () => {
+            hamburgerMenu.classList.toggle('active');
+            mobileNav.classList.toggle('active');
+            body.style.overflow = mobileNav.classList.contains('active') ? 'hidden' : 'auto';
+        });
+
+        // Close mobile menu when clicking on a link
+        const mobileNavLinks = document.querySelectorAll('.mobile-nav-links a');
+        mobileNavLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                hamburgerMenu.classList.remove('active');
+                mobileNav.classList.remove('active');
+                body.style.overflow = 'auto';
+            });
+        });
+
+        // Close mobile menu when clicking outside
+        mobileNav.addEventListener('click', (e) => {
+            if (e.target === mobileNav) {
+                hamburgerMenu.classList.remove('active');
+                mobileNav.classList.remove('active');
+                body.style.overflow = 'auto';
+            }
+        });
+
+        // Navigation scroll for all links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
                 e.preventDefault();
                 const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
                 const targetElement = document.querySelector(targetId);
-                if(targetElement) {
+                if (targetElement) {
                     window.scrollTo({
                         top: targetElement.offsetTop - 100,
                         behavior: 'smooth'
@@ -1376,24 +1672,14 @@
             });
         });
 
-        // Scroll functions for buttons
-        function scrollToBooking() {
-            document.getElementById('booking').scrollIntoView({ behavior: 'smooth' });
-        }
-
-        function scrollToServices() {
-            document.getElementById('services').scrollIntoView({ behavior: 'smooth' });
-        }
-
         // Booking form submission
-        function bookSession() {
-            const form = document.getElementById('bookingForm');
-            const formData = new FormData(form);
+        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
             
             // Simple validation
             let isValid = true;
-            form.querySelectorAll('[required]').forEach(input => {
-                if(!input.value.trim()) {
+            this.querySelectorAll('[required]').forEach(input => {
+                if (!input.value.trim()) {
                     isValid = false;
                     input.style.borderColor = 'var(--rust)';
                 } else {
@@ -1401,45 +1687,41 @@
                 }
             });
             
-            if(isValid) {
+            if (isValid) {
                 alert('SESSION CONFIRMED\n\nEngineering session booked. You will receive calibration details via email.\n\nPrecision requires preparation. Please arrive 10 minutes early for geometric analysis.');
-                form.reset();
+                this.reset();
+                
+                // Set date to tomorrow
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                const dateInput = this.querySelector('input[type="date"]');
+                dateInput.valueAsDate = tomorrow;
             } else {
                 alert('SYSTEM CALIBRATION REQUIRED\n\nPlease complete all required fields for precision scheduling.');
             }
-        }
-
-        // Animate elements on scroll
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if(entry.isIntersecting) {
-                    entry.target.style.animation = 'slideIn 0.6s ease forwards';
-                }
-            });
-        }, observerOptions);
-
-        // Observe service cards
-        document.querySelectorAll('.service-card').forEach(card => {
-            observer.observe(card);
         });
 
-        // Observe barber cards
-        document.querySelectorAll('.barber-card').forEach(card => {
-            observer.observe(card);
-        });
-
-        // Date picker - set min date to today
+        // Set min date to today for date picker
         const dateInput = document.querySelector('input[type="date"]');
         const today = new Date().toISOString().split('T')[0];
         dateInput.min = today;
-        dateInput.value = today;
+        
+        // Set default date to tomorrow
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        dateInput.valueAsDate = tomorrow;
 
-        // Team slider navigation
+        // Header scroll effect
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('.header-container');
+            if (window.scrollY > 100) {
+                header.style.top = '0';
+            } else {
+                header.style.top = '40px';
+            }
+        });
+
+        // Team slider interaction
         const teamSlider = document.querySelector('.team-slider');
         let isDown = false;
         let startX;
@@ -1463,11 +1745,34 @@
         });
 
         teamSlider.addEventListener('mousemove', (e) => {
-            if(!isDown) return;
+            if (!isDown) return;
             e.preventDefault();
             const x = e.pageX - teamSlider.offsetLeft;
             const walk = (x - startX) * 2;
             teamSlider.scrollLeft = scrollLeft - walk;
+        });
+
+        // Animate elements on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements for animation
+        document.querySelectorAll('.service-card, .gallery-item, .barber-card, .testimonial-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(card);
         });
     </script>
 </body>
