@@ -3,214 +3,319 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UMBER & ASH | Professional Grooming</title>
+    <title>UMBER & ASH | Professional Grooming Studio</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Bormiolo:ital,wght@0,700;1,700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --warm-brown: #3d2b1f;
-            --soft-amber: #d4a373;
-            --cream: #fefae0;
-            --deep-earth: #281e16;
+            --umber: #2d241e;
+            --gold: #c5a059;
+            --cream: #f9f6f2;
         }
-        body { 
-            font-family: 'Outfit', sans-serif; 
-            background-color: var(--cream); 
-            color: var(--deep-earth); 
-            overflow-x: hidden; 
-        }
+        body { font-family: 'Outfit', sans-serif; background-color: var(--cream); color: var(--umber); scroll-behavior: smooth; }
         .serif { font-family: 'Instrument Serif', serif; }
-        .bg-brown-gradient { 
-            background: linear-gradient(135deg, #3d2b1f 0%, #281e16 100%); 
-        }
-        .text-amber { color: var(--soft-amber); }
+        .bg-umber { background-color: var(--umber); }
+        .text-gold { color: var(--gold); }
         .reveal { opacity: 0; transform: translateY(30px); }
         
-        /* Custom UI Elements */
-        .glass-nav { 
-            backdrop-filter: blur(15px); 
-            background: rgba(254, 250, 224, 0.8); 
+        /* 2. Graphic Storefront Illustration Styles */
+        .storefront-graphic {
+            background: linear-gradient(to bottom, #3d3129, #2d241e);
+            border: 8px solid #1a1512;
+            position: relative;
+            height: 400px;
+            width: 100%;
+            border-radius: 10px 10px 0 0;
         }
-        .storefront-mask {
-            clip-path: polygon(0 0, 100% 0, 100% 85%, 50% 100%, 0 85%);
+        .window-glow {
+            background: rgba(197, 160, 89, 0.1);
+            border: 2px solid rgba(197, 160, 89, 0.3);
         }
-        .avatar-placeholder {
-            background: linear-gradient(to bottom, #e5e5e5, #a3a3a3);
-            border-radius: 50% 50% 10% 10%;
-        }
+
+        /* 9. Before/After Slider */
+        .slider-container { position: relative; width: 100%; height: 400px; overflow: hidden; border-radius: 20px; }
+        .slider-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+        .after-img { clip-path: inset(0 0 0 50%); }
+
+        /* 5. Mobile Menu Overlay */
+        #mobile-menu { display: none; }
+        #mobile-menu.active { display: flex; }
     </style>
 </head>
 <body>
 
-    <nav class="fixed w-full z-50 glass-nav border-b border-stone-200">
-        <div class="max-w-7xl mx-auto px-8 py-5 flex justify-between items-center">
-            <div class="text-2xl font-bold tracking-widest flex items-center gap-3">
-                <span class="w-6 h-6 bg-amber-700 rotate-45"></span> UMBER & ASH
+    <div class="bg-umber text-gold text-center py-2 text-xs font-bold tracking-[0.3em] uppercase">
+        First Visit: Complimentary Hot Towel Treatment • Book Today
+    </div>
+
+    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-stone-200">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-xl font-bold tracking-tighter flex items-center gap-2">
+                <i data-lucide="scissors" class="w-5 h-5 text-gold"></i> UMBER & ASH
             </div>
             
-            <div class="hidden md:flex space-x-10 text-xs font-bold uppercase tracking-[0.2em]">
-                <a href="#studio" class="hover:text-amber-700 transition-colors">The Studio</a>
-                <a href="#services" class="hover:text-amber-700 transition-colors">Services</a>
-                <a href="#team" class="hover:text-amber-700 transition-colors">Artisans</a>
-                <a href="#find-us" class="hover:text-amber-700 transition-colors">Find Us</a>
+            <div class="hidden md:flex space-x-8 text-xs font-bold uppercase tracking-widest">
+                <a href="#services" class="hover:text-gold transition-colors">Services</a>
+                <a href="#team" class="hover:text-gold transition-colors">Artisans</a>
+                <a href="#gallery" class="hover:text-gold transition-colors">Gallery</a>
+                <a href="#contact" class="hover:text-gold transition-colors">Contact</a>
             </div>
 
-            <a href="#book" class="bg-stone-900 text-cream px-8 py-3 text-xs font-bold tracking-widest hover:bg-amber-800 transition-all">
-                BOOK SEAT
-            </a>
+            <div class="flex items-center gap-4">
+                <a href="#book" class="hidden md:block bg-umber text-white px-6 py-2 rounded-full text-xs font-bold hover:bg-gold transition-all">BOOK APPOINTMENT</a>
+                <button id="menu-btn" class="md:hidden text-umber"><i data-lucide="menu"></i></button>
+            </div>
         </div>
     </nav>
 
-    <section id="studio" class="relative min-height-[90vh] pt-32 pb-20 px-6">
-        <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
+    <div id="mobile-menu" class="fixed inset-0 bg-umber z-[60] flex-col items-center justify-center space-y-8 text-white text-2xl hidden">
+        <button id="close-menu" class="absolute top-8 right-8"><i data-lucide="x" class="w-10 h-10"></i></button>
+        <a href="#services" class="mobile-link">Services</a>
+        <a href="#team" class="mobile-link">Artisans</a>
+        <a href="#contact" class="mobile-link">Booking</a>
+    </div>
+
+    <section class="pt-16 pb-24 px-6">
+        <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
             <div class="reveal">
-                <h1 class="serif text-7xl md:text-9xl leading-none mb-8">Refined <br><span class="italic text-amber-700">Tradition.</span></h1>
-                <p class="text-lg text-stone-600 mb-10 max-w-md leading-relaxed">
-                    A minimalist sanctuary for the modern gentleman. We blend old-world barbering with contemporary brown-scale aesthetics.
-                </p>
-                <div class="flex gap-6">
-                    <button class="border-b-2 border-stone-900 pb-2 font-bold hover:text-amber-700 hover:border-amber-700 transition-all">VIEW PRICELIST</button>
-                    <button class="border-b-2 border-stone-900 pb-2 font-bold hover:text-amber-700 hover:border-amber-700 transition-all">OUR STORY</button>
+                <span class="text-gold font-bold tracking-widest text-xs uppercase underline decoration-2 underline-offset-8">Est. 2026</span>
+                <h1 class="serif text-7xl md:text-8xl mt-8 leading-none">The Art of <br><span class="italic font-light">Precision.</span></h1>
+                <p class="mt-8 text-stone-500 max-w-md text-lg leading-relaxed">London’s premier minimalist grooming destination. We believe in structure, style, and the perfect fade.</p>
+                <div class="mt-10 flex flex-wrap gap-4">
+                    <button class="bg-umber text-white px-8 py-4 rounded-xl font-bold hover:scale-105 transition-transform">SECURE YOUR CHAIR</button>
+                    <button class="border border-stone-300 px-8 py-4 rounded-xl font-bold hover:bg-stone-50 transition-colors">EXPLORE SERVICES</button>
                 </div>
             </div>
-            <div class="relative reveal">
-                <div class="storefront-mask overflow-hidden rounded-2xl aspect-[4/5] bg-stone-200 shadow-2xl">
-                    <img src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&q=80&w=1000" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000" alt="Shop Front">
+
+            <div class="reveal relative">
+                <div class="storefront-graphic shadow-2xl">
+                    <div class="absolute top-0 left-0 w-full h-12 bg-black/20 flex justify-center items-center">
+                        <span class="text-[10px] text-gold tracking-[0.5em] uppercase">Umber & Ash Artisans</span>
+                    </div>
+                    <div class="grid grid-cols-3 h-full px-8 pt-20 gap-4">
+                        <div class="window-glow rounded-t-full h-40"></div>
+                        <div class="bg-stone-800/50 rounded-t-lg h-52 flex flex-col items-center pt-4">
+                            <div class="w-1 h-20 bg-gold animate-pulse"></div>
+                        </div>
+                        <div class="window-glow rounded-t-full h-40"></div>
+                    </div>
                 </div>
-                <div class="absolute -bottom-6 -left-6 bg-amber-700 text-white p-8 hidden md:block">
-                    <p class="text-4xl serif italic">"Best in City"</p>
-                    <p class="text-xs uppercase tracking-widest mt-2">Grooming Awards 2025</p>
+                <div class="absolute -bottom-10 -right-10 bg-gold text-umber p-8 rounded-2xl hidden md:block">
+                    <p class="font-bold text-4xl serif">5.0</p>
+                    <div class="flex gap-1 my-1"><i data-lucide="star" class="w-3 fill-current"></i><i data-lucide="star" class="w-3 fill-current"></i><i data-lucide="star" class="w-3 fill-current"></i><i data-lucide="star" class="w-3 fill-current"></i><i data-lucide="star" class="w-3 fill-current"></i></div>
+                    <p class="text-[10px] uppercase font-bold tracking-tighter">Verified Reviews</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="services" class="py-24 bg-stone-900 text-stone-300">
+    <hr class="border-stone-200 mx-auto max-w-7xl">
+
+    <section id="services" class="py-24 px-6 max-w-7xl mx-auto">
+        <div class="flex flex-col md:flex-row justify-between items-end mb-16 reveal">
+            <div>
+                <h2 class="serif text-5xl mb-4">Grooming Menu</h2>
+                <p class="text-stone-500 uppercase text-xs tracking-widest font-bold">Standard of Excellence</p>
+            </div>
+            <div class="mt-4 md:mt-0 flex gap-4">
+                <a href="tel:000" class="p-3 border border-stone-200 rounded-full hover:bg-gold hover:text-white transition-all"><i data-lucide="phone" class="w-4 h-4"></i></a>
+                <a href="https://wa.me/000" class="p-3 border border-stone-200 rounded-full hover:bg-green-600 hover:text-white transition-all"><i data-lucide="message-circle" class="w-4 h-4"></i></a>
+            </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-12">
+            <div class="group reveal border-b border-stone-200 pb-8 hover:border-gold transition-colors">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-2xl font-bold uppercase tracking-tighter">The Tailored Fade</h3>
+                    <span class="text-xl font-light text-gold">$45</span>
+                </div>
+                <p class="text-stone-500 text-sm leading-relaxed mb-6">Precision clipper work and scissor finishing. Includes hair wash and cooling tonic.</p>
+                <div class="flex items-center gap-2 text-[10px] font-bold text-stone-400">
+                    <i data-lucide="clock" class="w-3"></i> 45 MINS
+                </div>
+            </div>
+            <div class="group reveal border-b border-stone-200 pb-8 hover:border-gold transition-colors">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-2xl font-bold uppercase tracking-tighter">Beard Sculpture</h3>
+                    <span class="text-xl font-light text-gold">$30</span>
+                </div>
+                <p class="text-stone-500 text-sm leading-relaxed mb-6">Traditional shaping with straight razor outline and sandalwood oil treatment.</p>
+                <div class="flex items-center gap-2 text-[10px] font-bold text-stone-400">
+                    <i data-lucide="clock" class="w-3"></i> 30 MINS
+                </div>
+            </div>
+            <div class="group reveal border-b border-stone-200 pb-8 hover:border-gold transition-colors">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-2xl font-bold uppercase tracking-tighter">Umber Ritual</h3>
+                    <span class="text-xl font-light text-gold">$85</span>
+                </div>
+                <p class="text-stone-500 text-sm leading-relaxed mb-6">The full works: Signature cut, beard trim, charcoal mask and steam shave.</p>
+                <div class="flex items-center gap-2 text-[10px] font-bold text-stone-400">
+                    <i data-lucide="clock" class="w-3"></i> 90 MINS
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-20 bg-umber text-white text-center">
+        <h2 class="serif text-5xl mb-8 reveal">Ready for a new chapter?</h2>
+        <button class="bg-gold text-umber px-12 py-5 rounded-full font-bold hover:scale-105 transition-all reveal">BOOK THE CHAIR</button>
+    </section>
+
+    <section class="py-24 max-w-5xl mx-auto px-6">
+        <h2 class="serif text-4xl text-center mb-12 reveal">The Transformation</h2>
+        <div class="slider-container reveal shadow-2xl">
+            <img src="https://images.unsplash.com/photo-1599351431247-f50940243edc?w=1000" class="slider-img" alt="Before">
+            <img src="https://images.unsplash.com/photo-1621605815841-aa89780b67d2?w=1000" class="slider-img after-img" alt="After">
+            <div class="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white/20 backdrop-blur-md px-4 py-1 rounded-full text-[10px] uppercase font-bold text-white tracking-widest">Slide to Compare</div>
+        </div>
+    </section>
+
+    <section id="team" class="py-24 bg-stone-100">
         <div class="max-w-7xl mx-auto px-6">
-            <div class="grid md:grid-cols-3 gap-0 border border-stone-800">
-                <div class="p-12 border-r border-stone-800 hover:bg-stone-800 transition-colors reveal">
-                    <span class="text-amber-600 font-mono">01/</span>
-                    <h3 class="text-white text-3xl serif mt-4 mb-6">Sculpted Cut</h3>
-                    <p class="text-sm leading-loose mb-8">Tailored taper, precision fade, or classic scissor work. Includes organic wash and styling.</p>
-                    <span class="text-2xl text-amber-500 font-light">$55</span>
+            <h2 class="serif text-5xl mb-16 reveal">The Artisans</h2>
+            <div class="grid md:grid-cols-3 gap-12">
+                <div class="reveal group">
+                    <div class="aspect-[4/5] bg-stone-300 rounded-3xl overflow-hidden mb-6 relative">
+                        <div class="absolute inset-0 bg-gradient-to-t from-stone-900 to-transparent flex items-end p-8">
+                           <div>
+                                <h4 class="text-white text-2xl font-bold uppercase tracking-tighter">Julian Thorne</h4>
+                                <p class="text-gold text-xs font-bold uppercase tracking-widest mt-2">Master Barber</p>
+                           </div>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <i data-lucide="instagram" class="w-4 text-stone-400"></i>
+                        <i data-lucide="twitter" class="w-4 text-stone-400"></i>
+                    </div>
                 </div>
-                <div class="p-12 border-r border-stone-800 hover:bg-stone-800 transition-colors reveal">
-                    <span class="text-amber-600 font-mono">02/</span>
-                    <h3 class="text-white text-3xl serif mt-4 mb-6">Aged Oak Shave</h3>
-                    <p class="text-sm leading-loose mb-8">Straight razor shave with hot cedar-infused towels and cold-stone finish.</p>
-                    <span class="text-2xl text-amber-500 font-light">$45</span>
-                </div>
-                <div class="p-12 hover:bg-stone-800 transition-colors reveal">
-                    <span class="text-amber-600 font-mono">03/</span>
-                    <h3 class="text-white text-3xl serif mt-4 mb-6">The Ritual</h3>
-                    <p class="text-sm leading-loose mb-8">Our signature full-service experience. Haircut, shave, and botanical facial.</p>
-                    <span class="text-2xl text-amber-500 font-light">$90</span>
+                <div class="reveal group translate-y-12">
+                    <div class="aspect-[4/5] bg-stone-400 rounded-3xl overflow-hidden mb-6 relative">
+                        <div class="absolute inset-0 bg-gradient-to-t from-stone-900 to-transparent flex items-end p-8">
+                           <div>
+                                <h4 class="text-white text-2xl font-bold uppercase tracking-tighter">Marcus Vane</h4>
+                                <p class="text-gold text-xs font-bold uppercase tracking-widest mt-2">Fade Specialist</p>
+                           </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="team" class="py-24 px-6">
-        <div class="max-w-7xl mx-auto">
-            <div class="text-center mb-20 reveal">
-                <h2 class="serif text-6xl mb-4">The Artisans</h2>
-                <div class="w-24 h-1 bg-amber-700 mx-auto"></div>
-            </div>
-
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-12">
-                <div class="text-center reveal">
-                    <div class="aspect-square avatar-placeholder mb-6 mx-auto w-48 shadow-inner"></div>
-                    <h4 class="font-bold text-lg">Elias Thorne</h4>
-                    <p class="text-xs uppercase text-stone-500 tracking-widest">Master Barber</p>
-                </div>
-                <div class="text-center reveal">
-                    <div class="aspect-square avatar-placeholder mb-6 mx-auto w-48 shadow-inner"></div>
-                    <h4 class="font-bold text-lg">Marcus Vane</h4>
-                    <p class="text-xs uppercase text-stone-500 tracking-widest">Creative Lead</p>
-                </div>
-                <div class="text-center reveal">
-                    <div class="aspect-square avatar-placeholder mb-6 mx-auto w-48 shadow-inner"></div>
-                    <h4 class="font-bold text-lg">Julian Reed</h4>
-                    <p class="text-xs uppercase text-stone-500 tracking-widest">Senior Stylist</p>
-                </div>
-                <div class="text-center reveal">
-                    <div class="aspect-square avatar-placeholder mb-6 mx-auto w-48 shadow-inner"></div>
-                    <h4 class="font-bold text-lg">Silas Brooks</h4>
-                    <p class="text-xs uppercase text-stone-500 tracking-widest">Beard Specialist</p>
-                </div>
-            </div>
+    <section id="gallery" class="py-24 px-6">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-7xl mx-auto">
+            <div class="h-64 bg-stone-200 rounded-2xl reveal overflow-hidden"><img src="https://images.unsplash.com/photo-1512690196236-d5a743f4f0bb?w=400" class="w-full h-full object-cover"></div>
+            <div class="h-64 bg-stone-200 rounded-2xl reveal overflow-hidden mt-8"><img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=400" class="w-full h-full object-cover"></div>
+            <div class="h-64 bg-stone-200 rounded-2xl reveal overflow-hidden"><img src="https://images.unsplash.com/photo-1622286332618-f2802b9c74bc?w=400" class="w-full h-full object-cover"></div>
+            <div class="h-64 bg-stone-200 rounded-2xl reveal overflow-hidden mt-8"><img src="https://images.unsplash.com/photo-1593702275677-f916c8c98ca7?w=400" class="w-full h-full object-cover"></div>
         </div>
     </section>
 
-    <section id="find-us" class="bg-white">
-        <div class="grid md:grid-cols-2">
-            <div class="bg-brown-gradient p-12 md:p-24 text-stone-200 reveal">
-                <h2 class="serif text-5xl text-amber-500 mb-8">Secure Your Chair</h2>
-                <p class="mb-12 text-stone-400">Walk-ins are welcome, but appointments are prioritized for the best experience.</p>
-                
-                <div class="space-y-6">
-                    <div class="flex items-center gap-4 border-b border-stone-700 pb-4">
-                        <i data-lucide="map-pin" class="text-amber-500"></i>
-                        <span>128 Umber Street, East London</span>
-                    </div>
-                    <div class="flex items-center gap-4 border-b border-stone-700 pb-4">
-                        <i data-lucide="phone" class="text-amber-500"></i>
-                        <span>+44 20 7946 0123</span>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <i data-lucide="clock" class="text-amber-500"></i>
-                        <span>Tue—Sat: 10am — 8pm</span>
-                    </div>
-                </div>
+    <div class="py-12 bg-white text-center reveal">
+        <p class="text-xs font-bold text-gold tracking-widest uppercase mb-4">Follow the Studio @UMBERANDASH</p>
+        <div class="flex justify-center gap-2 overflow-hidden px-4 opacity-50 grayscale">
+            <div class="w-20 h-20 bg-stone-200 shrink-0 rounded"></div>
+            <div class="w-20 h-20 bg-stone-200 shrink-0 rounded"></div>
+            <div class="w-20 h-20 bg-stone-200 shrink-0 rounded"></div>
+            <div class="w-20 h-20 bg-stone-200 shrink-0 rounded"></div>
+            <div class="w-20 h-20 bg-stone-200 shrink-0 rounded"></div>
+        </div>
+    </div>
 
-                <button class="mt-12 bg-amber-700 text-white w-full py-5 font-bold tracking-widest hover:bg-amber-600 transition-colors">
-                    ONLINE BOOKING SYSTEM
-                </button>
+    <section id="contact" class="bg-white border-t border-stone-200">
+        <div class="grid lg:grid-cols-2">
+            <div class="p-12 md:p-24 reveal">
+                <h2 class="serif text-5xl mb-12">Get in Touch</h2>
+                <form class="space-y-6">
+                    <input type="text" placeholder="Name" class="w-full border-b border-stone-200 py-4 focus:outline-none focus:border-gold transition-colors">
+                    <input type="email" placeholder="Email" class="w-full border-b border-stone-200 py-4 focus:outline-none focus:border-gold transition-colors">
+                    <select class="w-full border-b border-stone-200 py-4 focus:outline-none focus:border-gold transition-colors">
+                        <option>General Enquiry</option>
+                        <option>Corporate Booking</option>
+                    </select>
+                    <button class="bg-umber text-white w-full py-5 rounded-xl font-bold uppercase tracking-widest hover:bg-gold transition-all">Send Message</button>
+                </form>
             </div>
             
-            <div class="h-[400px] md:h-auto grayscale contrast-125">
-                <iframe 
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2482.90502214152!2d-0.1235!3d51.5074!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNTHCsDMwJzI2LjYiTiAwwrAwNycxNC42Ilc!5e0!3m2!1sen!2suk!4v1625000000000!5m2!1sen!2suk" 
-                    width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy">
-                </iframe>
+            <div class="bg-stone-50 p-12 md:p-24 reveal">
+                <div class="mb-12">
+                    <h4 class="font-bold text-xs uppercase tracking-widest mb-6">Opening Hours</h4>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between border-b border-stone-200 pb-2"><span>Mon - Fri</span><span>09:00 - 20:00</span></div>
+                        <div class="flex justify-between border-b border-stone-200 pb-2"><span>Saturday</span><span>10:00 - 18:00</span></div>
+                        <div class="flex justify-between text-stone-400"><span>Sunday</span><span>Closed</span></div>
+                    </div>
+                </div>
+                <div class="mb-12">
+                    <h4 class="font-bold text-xs uppercase tracking-widest mb-4">Location</h4>
+                    <p class="text-xl serif">42 Precision Avenue, Umber District<br>London, E14 7AA</p>
+                </div>
+                <div class="h-48 rounded-2xl overflow-hidden grayscale">
+                    <iframe src="https://www.google.com/maps/embed" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                </div>
             </div>
         </div>
     </section>
 
-    <footer class="py-12 bg-stone-100 px-6 text-center border-t border-stone-200">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-            <p class="text-xs font-bold tracking-tighter uppercase">© 2026 Umber & Ash Artisans</p>
-            <div class="flex gap-8">
-                <a href="#" class="text-xs font-bold hover:text-amber-700">INSTAGRAM</a>
-                <a href="#" class="text-xs font-bold hover:text-amber-700">JOURNAL</a>
-                <a href="#" class="text-xs font-bold hover:text-amber-700">PRIVACY</a>
+    <footer class="bg-umber text-stone-400 py-20 px-6">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
+            <div class="text-white text-3xl font-bold tracking-tighter">UMBER & ASH</div>
+            <div class="flex gap-8 text-xs font-bold uppercase tracking-widest">
+                <a href="#" class="hover:text-gold">Home</a>
+                <a href="#" class="hover:text-gold">Policy</a>
+                <a href="#" class="hover:text-gold">Careers</a>
+            </div>
+            <div class="flex gap-4">
+                <a href="#" class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-gold hover:text-white transition-all"><i data-lucide="instagram" class="w-4"></i></a>
+                <a href="#" class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-gold hover:text-white transition-all"><i data-lucide="facebook" class="w-4"></i></a>
             </div>
         </div>
+        <p class="text-center text-[10px] mt-20 opacity-30">© 2026 UMBER & ASH STUDIOS. ALL RIGHTS RESERVED.</p>
     </footer>
+
+    <button onclick="window.scrollTo(0,0)" class="fixed bottom-8 right-8 bg-gold p-4 rounded-full shadow-2xl z-50 hover:-translate-y-2 transition-transform text-white">
+        <i data-lucide="arrow-up"></i>
+    </button>
 
     <script>
         lucide.createIcons();
         gsap.registerPlugin(ScrollTrigger);
 
+        // 19. Scroll Animations
         gsap.utils.toArray('.reveal').forEach((elem) => {
             gsap.fromTo(elem, 
-                { opacity: 0, y: 40 }, 
+                { opacity: 0, y: 50 }, 
                 { 
-                    opacity: 1, 
-                    y: 0, 
-                    duration: 1.2, 
-                    ease: "expo.out",
-                    scrollTrigger: {
-                        trigger: elem,
-                        start: "top 90%",
-                    }
+                    opacity: 1, y: 0, duration: 1, ease: "power3.out",
+                    scrollTrigger: { trigger: elem, start: "top 85%" }
                 }
             );
         });
+
+        // 5. Mobile Menu Toggle
+        const menuBtn = document.getElementById('menu-btn');
+        const closeBtn = document.getElementById('close-menu');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        menuBtn.onclick = () => mobileMenu.classList.add('active');
+        closeBtn.onclick = () => mobileMenu.classList.remove('active');
+        document.querySelectorAll('.mobile-link').forEach(link => {
+            link.onclick = () => mobileMenu.classList.remove('active');
+        });
+
+        // 9. Before/After Slider Interaction
+        const sliderContainer = document.querySelector('.slider-container');
+        const afterImg = document.querySelector('.after-img');
+        sliderContainer.onmousemove = (e) => {
+            const rect = sliderContainer.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
+            afterImg.style.clipPath = `inset(0 0 0 ${x}%)`;
+        };
     </script>
 </body>
 </html>
