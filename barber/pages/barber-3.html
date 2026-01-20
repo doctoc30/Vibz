@@ -1,131 +1,173 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LUXE & EDGE | Premium Grooming</title>
+    <title>Luxe & Edge | The Pinnacle of Grooming</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    
     <style>
-        body { font-family: 'Inter', sans-serif; background: #050505; color: white; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #08080a; color: #fff; overflow-x: hidden; }
         .serif { font-family: 'Playfair Display', serif; }
-        .gradient-bg {
-            background: radial-gradient(circle at top right, #4c1d95, #1e1b4b, #050505);
-        }
-        .glass {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .btn-glow:hover {
-            box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
-        }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .gradient-text { background: linear-gradient(90deg, #a78bfa, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .slider-handle { cursor: ew-resize; }
+        /* Floating Action Bar */
+        .fab-bar { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 100; width: 90%; max-width: 500px; }
     </style>
 </head>
-<body class="gradient-bg min-h-screen">
+<body x-data="{ mobileMenu: false }">
 
-    <nav class="flex justify-between items-center px-8 py-6 max-w-7xl mx-auto">
-        <div class="text-2xl font-bold tracking-tighter serif italic">L&E</div>
-        <div class="hidden md:flex space-x-10 text-sm uppercase tracking-widest font-medium text-gray-400">
-            <a href="#" class="hover:text-white transition">Book Now</a>
-            <a href="#" class="hover:text-white transition">Services</a>
-            <a href="#" class="hover:text-white transition">The Atelier</a>
-            <a href="#" class="hover:text-white transition">Contact</a>
+    <div class="bg-indigo-600 text-white text-center py-2 text-xs font-bold tracking-widest uppercase">
+        First visit? Use code <span class="underline text-indigo-200 uppercase">LUXE20</span> for 20% off
+    </div>
+
+    <nav class="sticky top-0 z-50 glass border-b border-white/5 px-6 py-4 flex justify-between items-center">
+        <div class="text-2xl font-extrabold serif italic tracking-tighter">L&E.</div>
+        
+        <div class="hidden md:flex space-x-8 text-sm font-semibold uppercase tracking-widest text-gray-400">
+            <a href="#services" class="hover:text-indigo-400 transition">Services</a>
+            <a href="#gallery" class="hover:text-indigo-400 transition">Gallery</a>
+            <a href="#barbers" class="hover:text-indigo-400 transition">Team</a>
+            <a href="#contact" class="hover:text-indigo-400 transition">Location</a>
         </div>
-        <button class="glass px-6 py-2 rounded-full text-sm font-semibold border border-white/20 hover:bg-white hover:text-black transition duration-500">
-            MEMBER LOGIN
-        </button>
+
+        <div class="flex items-center space-x-4">
+            <button class="hidden md:block bg-indigo-600 hover:bg-indigo-500 px-6 py-2 rounded-full text-xs font-bold transition-all transform hover:scale-105">BOOK APPOINTMENT</button>
+            <button @click="mobileMenu = !mobileMenu" class="md:hidden text-white uppercase text-xs font-bold">Menu</button>
+        </div>
     </nav>
 
-    <main class="max-w-7xl mx-auto px-8 pt-20 pb-32 grid lg:grid-cols-2 gap-12 items-center">
-        <div>
-            <span class="text-purple-400 font-semibold tracking-[0.3em] text-xs uppercase">Est. 2024 — London</span>
-            <h1 class="text-7xl lg:text-8xl serif italic leading-tight mt-4">
-                Effortless <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-indigo-500">Grooming.</span>
-            </h1>
-            <p class="text-gray-400 mt-8 text-lg max-w-md leading-relaxed">
-                Experience the intersection of traditional craftsmanship and modern aesthetic. Tailored cuts for the discerning gentleman.
+    <div x-show="mobileMenu" class="fixed inset-0 z-[60] glass flex flex-col items-center justify-center space-y-8 text-2xl font-bold" x-transition>
+        <button @click="mobileMenu = false" class="absolute top-10 right-10 text-sm">CLOSE</button>
+        <a href="#services" @click="mobileMenu = false">Services</a>
+        <a href="#gallery" @click="mobileMenu = false">Gallery</a>
+        <a href="#contact" @click="mobileMenu = false">Contact</a>
+    </div>
+
+    <section class="relative h-[90vh] flex items-center justify-center overflow-hidden">
+        <video autoplay muted loop class="absolute w-full h-full object-cover opacity-40 scale-110">
+            <source src="https://assets.mixkit.co/videos/preview/mixkit-barber-cutting-hair-with-a-clipper-41002-large.mp4" type="video/mp4">
+        </video>
+        <div class="relative z-10 text-center px-4" data-aos="fade-up">
+            <h1 class="text-6xl md:text-8xl serif italic mb-6">Mastery In <br><span class="gradient-text">Every Blade.</span></h1>
+            <p class="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed uppercase tracking-widest font-light">
+                Premium grooming experiences for the modern architect of his own destiny.
             </p>
-            
-            <div class="mt-12 flex space-x-4">
-                <button class="bg-white text-black px-10 py-4 rounded-full font-bold text-sm tracking-widest hover:bg-purple-500 hover:text-white transition-all duration-300 btn-glow">
-                    RESERVE EXPERIENCE
-                </button>
-                <button class="glass px-10 py-4 rounded-full font-bold text-sm tracking-widest hover:bg-white/10 transition-all">
-                    VIEW SERVICES
-                </button>
-            </div>
-        </div>
-
-        <div class="glass rounded-3xl p-8 lg:p-12 shadow-2xl relative overflow-hidden">
-            <div class="absolute top-0 right-0 w-32 h-32 bg-purple-600/20 blur-3xl"></div>
-            <h3 class="text-2xl font-bold mb-8">Quick Booking</h3>
-            
-            <div class="space-y-6">
-                <div>
-                    <label class="block text-xs uppercase tracking-widest text-gray-500 mb-2">Select Service</label>
-                    <select class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 focus:outline-none focus:border-purple-500 appearance-none">
-                        <option>Signature Haircut & Beard Trim</option>
-                        <option>The Executive Shave</option>
-                        <option>Luxury Scalp Treatment</option>
-                    </select>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs uppercase tracking-widest text-gray-500 mb-2">Date</label>
-                        <input type="date" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 focus:outline-none focus:border-purple-500 text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-xs uppercase tracking-widest text-gray-500 mb-2">Time</label>
-                        <select class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 focus:outline-none focus:border-purple-500 text-sm appearance-none">
-                            <option>10:00 AM</option>
-                            <option>11:30 AM</option>
-                            <option>02:00 PM</option>
-                        </select>
-                    </div>
-                </div>
-
-                <button class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 py-5 rounded-xl font-bold uppercase tracking-widest text-sm hover:scale-[1.02] transition-transform duration-300">
-                    Find Availability
-                </button>
-            </div>
-        </div>
-    </main>
-
-    <section class="max-w-7xl mx-auto px-8 py-20 border-t border-white/10">
-        <div class="flex justify-between items-end mb-16">
-            <div>
-                <h2 class="text-4xl serif italic">The Signature Menu</h2>
-                <p class="text-gray-500 mt-2">Precision engineered grooming solutions.</p>
-            </div>
-            <a href="#" class="text-sm border-b border-purple-500 pb-1 text-purple-400 tracking-widest uppercase">View All</a>
-        </div>
-
-        <div class="grid md:grid-cols-3 gap-8">
-            <div class="group cursor-pointer">
-                <div class="overflow-hidden rounded-2xl mb-6 h-80 bg-zinc-900">
-                    <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80&w=800" alt="Service" class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition duration-700">
-                </div>
-                <h4 class="text-xl font-semibold italic serif">The Vanguard Cut</h4>
-                <p class="text-gray-500 text-sm mt-2">45 Mins — £55</p>
-            </div>
-            <div class="group cursor-pointer">
-                <div class="overflow-hidden rounded-2xl mb-6 h-80 bg-zinc-900">
-                    <img src="https://images.unsplash.com/photo-1621605815844-83556069904d?auto=format&fit=crop&q=80&w=800" alt="Service" class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition duration-700">
-                </div>
-                <h4 class="text-xl font-semibold italic serif">Beard Sculpting</h4>
-                <p class="text-gray-500 text-sm mt-2">30 Mins — £35</p>
-            </div>
-            <div class="group cursor-pointer">
-                <div class="overflow-hidden rounded-2xl mb-6 h-80 bg-zinc-900">
-                    <img src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&q=80&w=800" alt="Service" class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition duration-700">
-                </div>
-                <h4 class="text-xl font-semibold italic serif">The Royal Ritual</h4>
-                <p class="text-gray-500 text-sm mt-2">90 Mins — £120</p>
-            </div>
+            <a href="#booking" class="bg-white text-black px-12 py-5 rounded-full font-bold text-sm tracking-widest hover:bg-indigo-500 hover:text-white transition-all 20. HOVER EFFECTS">START YOUR TRANSFORMATION</a>
         </div>
     </section>
 
+    <section id="services" class="max-w-7xl mx-auto px-6 py-32">
+        <div class="text-center mb-20" data-aos="fade-up">
+            <h2 class="text-4xl serif italic mb-4">Crafted Services</h2>
+            <div class="h-1 w-20 bg-indigo-600 mx-auto"></div>
+        </div>
+        
+        <div class="grid md:grid-cols-3 gap-8">
+            <template x-for="i in [1,2,3]">
+                <div class="glass p-10 rounded-3xl group hover:border-indigo-500/50 transition-all duration-500" data-aos="fade-up">
+                    <div class="h-12 w-12 bg-indigo-600/20 rounded-xl flex items-center justify-center mb-8 group-hover:bg-indigo-600 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758L5 19m0-14l4.121 4.121"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 italic">Executive Cut</h3>
+                    <p class="text-gray-400 mb-6 text-sm leading-loose">Precision fading, tapering, and architectural styling tailored to your head shape.</p>
+                    <span class="text-indigo-400 font-bold tracking-widest">FROM £45</span>
+                </div>
+            </template>
+        </div>
+    </section>
+
+    <section class="bg-indigo-900/20 py-24 border-y border-white/5 my-20">
+        <div class="max-w-4xl mx-auto text-center px-6" data-aos="zoom-in">
+            <h2 class="text-3xl md:text-5xl font-bold mb-8">Ready to Elevate Your Image?</h2>
+            <button class="bg-white text-black px-10 py-4 rounded-full font-bold text-sm tracking-widest hover:invert transition-all">RESERVE NOW</button>
+        </div>
+    </section>
+
+    <section class="max-w-4xl mx-auto px-6 py-32 overflow-hidden">
+        <h2 class="text-center text-3xl serif italic mb-16">The Transformation</h2>
+        <div class="relative h-[500px] rounded-3xl overflow-hidden shadow-2xl" x-data="{ open: 50 }">
+            <img src="https://images.unsplash.com/photo-1593702295094-222440317e0b?auto=format&fit=crop&q=80&w=1200" class="absolute inset-0 w-full h-full object-cover">
+            <div class="absolute inset-0 w-full h-full object-cover overflow-hidden" :style="`width: ${open}%`" style="width: 50%;">
+                <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80&w=1200" class="absolute inset-0 w-screen h-full object-cover">
+            </div>
+            <input type="range" min="0" max="100" x-model="open" class="absolute inset-0 w-full h-full opacity-0 slider-handle z-20">
+            <div class="absolute top-0 bottom-0 w-1 bg-white z-10 pointer-events-none" :style="`left: ${open}%`"></div>
+        </div>
+    </section>
+
+    <section id="barbers" class="max-w-7xl mx-auto px-6 py-32 bg-zinc-900/30 rounded-[3rem]">
+        <h2 class="text-4xl serif italic text-center mb-20">The Craftsmen</h2>
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <template x-for="name in ['Julian V.', 'Marcus K.', 'Leo D.', 'Aiden S.']">
+                <div class="text-center group" data-aos="fade-up">
+                    <div class="aspect-[3/4] overflow-hidden rounded-2xl mb-6 glass">
+                        <img src="https://images.unsplash.com/photo-1512101176959-c557f3516787?auto=format&fit=crop&q=80&w=400" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700">
+                    </div>
+                    <h4 class="text-xl font-bold" x-text="name"></h4>
+                    <p class="text-indigo-400 text-xs tracking-widest uppercase mt-1">Master Barber</p>
+                </div>
+            </template>
+        </div>
+    </section>
+
+    <section id="contact" class="max-w-7xl mx-auto px-6 py-32 grid lg:grid-cols-2 gap-20">
+        <div data-aos="fade-right">
+            <h2 class="text-4xl serif italic mb-8">Visit The Studio</h2>
+            <p class="text-gray-400 text-lg mb-12">124 Savile Row, Mayfair, London<br>W1S 3PR, United Kingdom</p>
+            
+            <div class="space-y-4 mb-12">
+                <div class="flex justify-between border-b border-white/5 pb-2"><span class="text-gray-500">Mon — Fri</span><span>09:00 - 20:00</span></div>
+                <div class="flex justify-between border-b border-white/5 pb-2"><span class="text-gray-500">Saturday</span><span>10:00 - 18:00</span></div>
+                <div class="flex justify-between text-indigo-400"><span class="font-bold">Sunday</span><span class="font-bold uppercase tracking-widest">Closed</span></div>
+            </div>
+
+            <div class="h-64 rounded-3xl overflow-hidden glass grayscale contrast-125">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2483.003926521742!2d-0.1414446!3d51.5131584!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNTHCsDMwJzQ3LjQiTiAwwrAwOCcyOS4yIlc!5e0!3m2!1sen!2suk!4v1625000000000" class="w-full h-full border-0" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+        </div>
+
+        <div class="glass p-10 rounded-3xl" data-aos="fade-left">
+            <h3 class="text-2xl font-bold mb-8">Direct Inquiry</h3>
+            <form class="space-y-6">
+                <input type="text" placeholder="Full Name" class="w-full bg-white/5 border border-white/10 rounded-xl px-6 py-4 focus:outline-none focus:border-indigo-500 transition-all">
+                <input type="email" placeholder="Email Address" class="w-full bg-white/5 border border-white/10 rounded-xl px-6 py-4 focus:outline-none focus:border-indigo-500 transition-all">
+                <textarea rows="4" placeholder="How can we help?" class="w-full bg-white/5 border border-white/10 rounded-xl px-6 py-4 focus:outline-none focus:border-indigo-500 transition-all"></textarea>
+                <button class="w-full bg-indigo-600 py-4 rounded-xl font-bold tracking-widest uppercase text-sm hover:shadow-[0_0_20px_rgba(99,102,241,0.4)]">Send Message</button>
+            </form>
+        </div>
+    </section>
+
+    <footer class="bg-black py-20 border-t border-white/5 text-center">
+        <div class="text-4xl serif italic mb-10">L&E.</div>
+        <div class="flex justify-center space-x-8 mb-10 text-gray-500 text-sm uppercase tracking-widest">
+            <a href="#">Privacy</a><a href="#">Terms</a><a href="#">Careers</a>
+        </div>
+        <p class="text-gray-700 text-xs">© 2026 LUXE & EDGE STUDIO. ALL RIGHTS RESERVED.</p>
+    </footer>
+
+    <button onclick="window.scrollTo(0,0)" class="fixed bottom-24 right-6 glass p-4 rounded-full z-50 text-xs font-bold uppercase hover:bg-white hover:text-black transition-all">Top ↑</button>
+
+    <div class="fab-bar">
+        <div class="glass p-2 rounded-full flex justify-between items-center shadow-2xl border border-white/20">
+            <a href="tel:+44201234567" class="w-12 h-12 flex items-center justify-center bg-zinc-800 rounded-full hover:bg-indigo-600 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+            </a>
+            <button class="flex-grow mx-4 bg-indigo-600 h-12 rounded-full font-bold text-xs tracking-tighter uppercase">Book Appointment</button>
+            <a href="https://wa.me/yournumber" class="w-12 h-12 flex items-center justify-center bg-green-600/80 rounded-full hover:bg-green-500 transition-colors">
+                <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.72.937 3.659 1.432 5.628 1.433h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // 19. INITIALIZE ANIMATIONS
+        AOS.init({ duration: 1000, once: true });
+    </script>
 </body>
 </html>
