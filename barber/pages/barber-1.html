@@ -3,283 +3,269 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE GENTRY | Premium Grooming & Barbering</title>
+    <title>THE GENTRY | Premium Barbering</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
         :root {
-            --primary-red: #D32F2F; /* Brand Ruby Red */
-            --bg-light: #FAFAFA;
-            --text-dark: #1A1A1A;
-            --text-muted: #666666;
-            --white: #FFFFFF;
-            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            --brand-red: #D32F2F; /* From Image */
+            --bg-airy: #FAFAFA;
+            --text-main: #121212;
+            --text-muted: #626262;
+            --white: #ffffff;
+            --shadow: 0 20px 40px rgba(0,0,0,0.06);
+            --transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: 'Montserrat', sans-serif; 
-            background: var(--bg-light); 
-            color: var(--text-dark);
-            overflow-x: hidden;
-            line-height: 1.6;
-        }
+        * { margin:0; padding:0; box-sizing:border-box; scroll-behavior: smooth; }
+        body { font-family: 'Montserrat', sans-serif; background: var(--bg-airy); color: var(--text-main); overflow-x: hidden; }
 
-        /* --- Custom Barber Pole Animation --- */
-        .barber-pole-container {
-            width: 40px;
-            height: 120px;
-            border: 3px solid #333;
-            border-radius: 20px;
-            overflow: hidden;
-            position: relative;
-            background: white;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-        .pole-stripes {
-            height: 200%;
-            width: 100%;
-            background: repeating-linear-gradient(
-                45deg,
-                var(--primary-red),
-                var(--primary-red) 20px,
-                #fff 20px,
-                #fff 40px,
-                #222 40px,
-                #222 60px
-            );
-            animation: moveStripes 2s linear infinite;
-        }
-        @keyframes moveStripes {
-            from { transform: translateY(0); }
-            to { transform: translateY(-60px); }
-        }
+        /* 26. Barber Pole Animation */
+        .pole-wrap { width: 45px; height: 140px; border: 2px solid #222; border-radius: 25px; overflow: hidden; position: relative; background: white; box-shadow: var(--shadow); }
+        .pole-stripes { height: 200%; width: 100%; background: repeating-linear-gradient(45deg, var(--brand-red), var(--brand-red) 20px, #fff 20px, #fff 40px, #111 40px, #111 60px); animation: spin 2s linear infinite; }
+        @keyframes spin { from { transform: translateY(0); } to { transform: translateY(-60px); } }
 
-        /* --- Navigation --- */
-        nav {
-            position: fixed;
-            top: 0; width: 100%;
-            padding: 20px 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(255,255,255,0.95);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-        }
-        .nav-links { display: flex; gap: 30px; align-items: center; }
-        .nav-links a { text-decoration: none; color: var(--text-dark); font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
-        .nav-links a:hover { color: var(--primary-red); }
+        /* 4. Sticky Nav & 5. Hamburger */
+        nav { position: fixed; top: 0; width: 100%; padding: 25px 5%; display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.8); backdrop-filter: blur(15px); z-index: 1000; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .nav-links { display: flex; gap: 35px; align-items: center; }
+        .nav-links a { text-decoration: none; color: var(--text-main); font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; }
+        .nav-links a:hover { color: var(--brand-red); }
+        
+        /* 1. Book Button */
+        .btn-book { background: var(--brand-red); color: white !important; padding: 14px 32px; border-radius: 0px; transition: var(--transition); border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; font-weight: 700; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 2px; }
+        .btn-book:hover { transform: scale(1.05); filter: brightness(1.1); box-shadow: 0 15px 30px rgba(211,47,47,0.3); }
 
-        .btn-book {
-            background: var(--primary-red);
-            color: white !important;
-            padding: 12px 28px;
-            border-radius: 50px;
-            transition: var(--transition);
-        }
-        .btn-book:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(211, 47, 47, 0.3); }
+        .hamburger { display: none; cursor: pointer; }
 
-        /* --- Hero Section --- */
-        header {
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            padding: 0 10%;
-            background: linear-gradient(to right, #fff 40%, transparent 100%), 
-                        url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80&w=2070') center/cover;
-        }
-        .hero-content { max-width: 600px; }
-        .hero-content h1 { 
-            font-family: 'Playfair Display', serif; 
-            font-size: clamp(3rem, 8vw, 5rem); 
-            line-height: 1.1; 
-            margin-bottom: 20px;
-        }
+        /* 2. Hero Section */
+        .hero { height: 100vh; display: flex; align-items: center; padding: 0 10%; background: linear-gradient(to right, #fff 45%, transparent 100%), url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&q=80&w=2074') center/cover; }
+        .hero-content { max-width: 650px; }
+        .hero-content h1 { font-family: 'Playfair Display', serif; font-size: clamp(3.5rem, 8vw, 6rem); line-height: 1; margin-bottom: 25px; font-style: italic; }
+        
+        /* 22. Promotion Banner */
+        .promo-bar { background: var(--brand-red); color: white; padding: 12px; text-align: center; font-size: 0.8rem; font-weight: 600; letter-spacing: 1px; }
 
-        /* --- Services & Pricing --- */
-        .section { padding: 100px 10%; }
-        .grid-services {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-top: 50px;
-        }
-        .service-card {
-            background: white;
-            padding: 40px;
-            border-radius: 4px;
-            transition: var(--transition);
-            border-bottom: 3px solid transparent;
-        }
-        .service-card:hover { 
-            transform: translateY(-10px); 
-            border-bottom: 3px solid var(--primary-red);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
-        }
+        /* 6. Service Cards & 7. Price List */
+        .section { padding: 120px 10%; }
+        .service-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; margin-top: 60px; }
+        .service-card { background: white; padding: 50px; border: 1px solid #eee; transition: var(--transition); position: relative; }
+        .service-card:hover { border-color: var(--brand-red); transform: translateY(-10px); }
 
-        /* --- Gallery Grid --- */
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            grid-gap: 15px;
-        }
-        .gallery-item { height: 300px; background-size: cover; background-position: center; border-radius: 4px; }
-        .gallery-item:nth-child(1) { grid-column: span 2; }
+        /* 9. Before & After Slider */
+        .ba-container { position: relative; width: 100%; height: 500px; overflow: hidden; border-radius: 4px; }
+        .ba-img { position: absolute; top:0; left:0; width:100%; height:100%; background-size: cover; background-position: center; }
+        .ba-after { width: 50%; border-right: 4px solid var(--brand-red); z-index: 2; }
 
-        /* --- Mobile Optimization --- */
-        @media (max-width: 768px) {
+        /* 10. Barber Profiles */
+        .barber-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+        .barber-card { text-align: center; }
+        .barber-img { width: 100%; aspect-ratio: 3/4; object-fit: cover; filter: grayscale(100%); transition: var(--transition); margin-bottom: 20px; }
+        .barber-card:hover .barber-img { filter: grayscale(0%); }
+
+        /* 25. Back to Top */
+        .back-to-top { position: fixed; bottom: 30px; right: 30px; background: var(--white); border: 1px solid #ddd; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 99; cursor: pointer; opacity: 0; transition: 0.3s; }
+        .back-to-top.show { opacity: 1; }
+
+        /* Form / Contact / 12. Map */
+        .contact-container { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; }
+        input, textarea { width: 100%; padding: 15px; margin-bottom: 20px; border: 1px solid #ddd; background: #fff; font-family: inherit; outline: none; }
+        input:focus { border-color: var(--brand-red); }
+
+        /* Mobile Adjustments */
+        @media (max-width: 992px) {
+            .hero { padding: 150px 5% 50px; background: #fff; height: auto; text-align: center; }
             .nav-links { display: none; }
-            .hero-content { text-align: center; }
-            header { background: #fff; padding: 120px 5% 50px; height: auto; }
-            .gallery-grid { grid-template-columns: 1fr 1fr; }
+            .hamburger { display: block; }
+            .contact-container, .barber-grid { grid-template-columns: 1fr; }
         }
 
-        /* Utility Classes for GSAP */
-        .reveal { opacity: 0; transform: translateY(30px); }
+        .reveal { opacity: 0; transform: translateY(40px); }
     </style>
 </head>
 <body>
 
+    <div class="promo-bar">
+        ENJOY COMPLIMENTARY WHISKEY WITH EVERY SIGNATURE CUT — <a href="#" style="color:white">BOOK NOW</a>
+    </div>
+
     <nav>
-        <div style="display:flex; align-items:center; gap:10px;">
-            <div class="barber-pole-container" style="height: 40px; width: 15px; border-width: 1px;">
-                <div class="pole-stripes" style="animation-duration: 1s;"></div>
+        <div style="display:flex; align-items:center; gap:15px;">
+            <div class="pole-wrap" style="height:40px; width:18px; border-width:1px;">
+                <div class="pole-stripes"></div>
             </div>
-            <h2 style="font-family: 'Playfair Display'; letter-spacing: 2px;">GENTRY</h2>
+            <span style="font-family:'Playfair Display'; font-size:1.5rem; letter-spacing:3px; font-weight:700;">GENTRY</span>
         </div>
         <div class="nav-links">
             <a href="#services">Services</a>
             <a href="#gallery">Gallery</a>
+            <a href="#team">Barbers</a>
             <a href="#contact">Contact</a>
             <a href="#" class="btn-book">Book Appointment</a>
         </div>
-        <div class="mobile-menu-toggle" style="display:none;"><i data-lucide="menu"></i></div>
+        <div class="hamburger"><i data-lucide="menu"></i></div>
     </nav>
 
-    <header>
+    <section class="hero">
         <div class="hero-content reveal">
-            <p style="text-transform: uppercase; letter-spacing: 4px; color: var(--primary-red); font-weight: 600; margin-bottom: 10px;">The Art of Grooming</p>
-            <h1>Precision Tailored To You.</h1>
-            <p style="font-size: 1.1rem; color: var(--text-muted); margin: 25px 0 40px;">London's premier destination for the modern gentleman. Experience unmatched craftsmanship in a minimalist sanctuary.</p>
-            <div style="display: flex; gap: 20px;">
-                <a href="#" class="btn-book">Book Now</a>
-                <a href="tel:+44123456789" style="display:flex; align-items:center; gap:8px; text-decoration:none; color:var(--text-dark); font-weight:600;"><i data-lucide="phone"></i> Call Studio</a>
+            <p style="text-transform:uppercase; letter-spacing:5px; color:var(--brand-red); font-weight:700; margin-bottom:15px;">Est. 2012</p>
+            <h1>The New Standard of Grooming.</h1>
+            <p style="font-size:1.2rem; color:var(--text-muted); margin-bottom:40px; font-weight:300;">Experience precision engineering for the modern man. A bright, airy sanctuary located in the heart of London.</p>
+            <div style="display:flex; gap:20px; flex-wrap:wrap;">
+                <button class="btn-book">Book Your Experience</button>
+                <a href="tel:+442071234567" class="btn-book" style="background:transparent; color:var(--text-main)!important; border:1px solid #ddd;">
+                    <i data-lucide="phone"></i> 020 7123 4567
+                </a>
             </div>
         </div>
-    </header>
+    </section>
 
-    <div style="background: var(--primary-red); color: white; padding: 15px; text-align: center; font-weight: 600; letter-spacing: 1px;">
-        <i data-lucide="sparkles" style="display:inline-block; vertical-align:middle; margin-right:10px;"></i>
-        FIRST TIME CLIENT? GET 20% OFF WITH CODE: <span style="text-decoration: underline;">GENTRY20</span>
-    </div>
+    <hr style="border:0; border-top:1px solid #eee; margin:0 10%;">
 
     <section class="section" id="services">
-        <div style="text-align: center; margin-bottom: 60px;">
-            <h2 class="reveal" style="font-family: 'Playfair Display'; font-size: 2.5rem;">Signature Services</h2>
-            <div style="width: 50px; height: 3px; background: var(--primary-red); margin: 20px auto;"></div>
-        </div>
-        <div class="grid-services">
-            <div class="service-card reveal">
-                <i data-lucide="scissors" style="color: var(--primary-red); margin-bottom: 20px;"></i>
-                <h3>Signature Haircut</h3>
-                <p>Personalized consultation, precision cut, wash, and style.</p>
-                <h4 style="margin-top:20px; color: var(--primary-red);">£45.00</h4>
-            </div>
-            <div class="service-card reveal">
-                <i data-lucide="razor" style="color: var(--primary-red); margin-bottom: 20px;"></i>
-                <h3>Hot Towel Shave</h3>
-                <p>Traditional straight-razor shave with essential oils.</p>
-                <h4 style="margin-top:20px; color: var(--primary-red);">£35.00</h4>
-            </div>
-            <div class="service-card reveal">
-                <i data-lucide="user-check" style="color: var(--primary-red); margin-bottom: 20px;"></i>
-                <h3>The Full Ritual</h3>
-                <p>Haircut, Beard Sculpting, and Express Facial.</p>
-                <h4 style="margin-top:20px; color: var(--primary-red);">£75.00</h4>
-            </div>
-        </div>
-    </section>
-
-    <section style="padding: 120px 10%; background: #111; color: white; position: relative; overflow: hidden;">
-        <div style="position: relative; z-index: 2;">
-            <h2 style="font-family: 'Playfair Display'; font-size: 3rem; margin-bottom: 30px;">Elevate Your Image.</h2>
-            <p style="margin-bottom: 40px; opacity: 0.8; max-width: 500px;">Join our exclusive membership for monthly maintenance and premium perks.</p>
-            <a href="#" class="btn-book" style="padding: 20px 40px;">Explore Memberships</a>
-        </div>
-        <div style="position: absolute; right: 10%; top: 50%; transform: translateY(-50%); opacity: 0.2;">
-            <div class="barber-pole-container" style="width: 100px; height: 300px; border-color: #444;">
-                <div class="pole-stripes"></div>
-            </div>
-        </div>
-    </section>
-
-    <footer style="padding: 80px 10% 40px; background: white; border-top: 1px solid #eee;">
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 50px;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:20px;">
             <div>
-                <h3 style="font-family: 'Playfair Display'; margin-bottom: 20px;">The Gentry</h3>
-                <p style="color: var(--text-muted);">123 Savile Row,<br>London, W1S 3PR</p>
-                <div style="margin-top: 20px; display: flex; gap: 15px;">
-                    <i data-lucide="instagram"></i>
-                    <i data-lucide="facebook"></i>
-                    <i data-lucide="twitter"></i>
+                <h2 class="reveal" style="font-family:'Playfair Display'; font-size:3rem;">Crafted Services</h2>
+                <p class="reveal" style="color:var(--text-muted);">Minimalist prices for maximalist results.</p>
+            </div>
+            <div class="reveal">
+                <div class="pole-wrap" style="height:60px; width:25px; margin-bottom:20px;"><div class="pole-stripes"></div></div>
+            </div>
+        </div>
+
+        <div class="service-grid">
+            <div class="service-card reveal">
+                <span style="font-size:0.8rem; color:var(--brand-red); font-weight:700;">01.</span>
+                <h3 style="margin:15px 0;">Signature Haircut</h3>
+                <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:20px;">Precision cut, scalp massage, and bespoke styling.</p>
+                <div style="display:flex; justify-content:space-between; font-weight:700; border-top:1px solid #eee; pt:20px;">
+                    <span>45 MINS</span><span>£55.00</span>
                 </div>
             </div>
-            <div>
-                <h4 style="margin-bottom: 20px;">Opening Hours</h4>
-                <p style="color: var(--text-muted); font-size: 0.9rem;">Mon - Fri: 09:00 - 20:00</p>
-                <p style="color: var(--text-muted); font-size: 0.9rem;">Sat: 09:00 - 18:00</p>
-                <p style="color: var(--text-muted); font-size: 0.9rem;">Sun: Closed</p>
+            <div class="service-card reveal">
+                <span style="font-size:0.8rem; color:var(--brand-red); font-weight:700;">02.</span>
+                <h3 style="margin:15px 0;">Beard Sculpting</h3>
+                <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:20px;">Linework, hot towel, and premium beard oil finish.</p>
+                <div style="display:flex; justify-content:space-between; font-weight:700; border-top:1px solid #eee; pt:20px;">
+                    <span>30 MINS</span><span>£35.00</span>
+                </div>
             </div>
-            <div>
-                <h4 style="margin-bottom: 20px;">Quick Links</h4>
-                <p><a href="#" style="color: var(--text-muted); text-decoration: none;">Privacy Policy</a></p>
-                <p><a href="#" style="color: var(--text-muted); text-decoration: none;">Careers</a></p>
-                <p><a href="#" style="color: var(--text-muted); text-decoration: none;">Gift Cards</a></p>
+            <div class="service-card reveal">
+                <span style="font-size:0.8rem; color:var(--brand-red); font-weight:700;">03.</span>
+                <h3 style="margin:15px 0;">The Gentry Ritual</h3>
+                <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:20px;">Haircut, Shave, and Botanical Facial treatment.</p>
+                <div style="display:flex; justify-content:space-between; font-weight:700; border-top:1px solid #eee; pt:20px;">
+                    <span>90 MINS</span><span>£110.00</span>
+                </div>
             </div>
         </div>
-        <div style="text-align: center; margin-top: 60px; padding-top: 30px; border-top: 1px solid #eee; font-size: 0.8rem; color: #999;">
-            © 2024 THE GENTRY BARBER CO. ALL RIGHTS RESERVED.
+    </section>
+
+    <section class="section" style="background:#fff;">
+        <h2 style="text-align:center; margin-bottom:60px; font-family:'Playfair Display';">The Transformation</h2>
+        <div class="ba-container">
+            <div class="ba-img" style="background-image:url('https://images.unsplash.com/photo-1599351431247-f10b218163e9?auto=format&fit=crop&q=80&w=2000');"></div>
+            <div class="ba-img ba-after" style="background-image:url('https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&q=80&w=2000');"></div>
+            <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); z-index:10; background:var(--brand-red); color:white; padding:10px 20px; font-weight:700; pointer-events:none;">SLIDE</div>
+        </div>
+    </section>
+
+    <section class="section" id="team">
+        <h2 class="reveal" style="font-family:'Playfair Display'; font-size:2.5rem; margin-bottom:50px;">Meet the Masters</h2>
+        <div class="barber-grid">
+            <div class="barber-card reveal">
+                <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=800" class="barber-img">
+                <h3 style="font-family:'Playfair Display';">James Sinclair</h3>
+                <p style="color:var(--brand-red); font-size:0.8rem; font-weight:700; text-transform:uppercase;">Master Barber / Founder</p>
+            </div>
+            <div class="barber-card reveal">
+                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=800" class="barber-img">
+                <h3 style="font-family:'Playfair Display';">Leo Rossi</h3>
+                <p style="color:var(--brand-red); font-size:0.8rem; font-weight:700; text-transform:uppercase;">Stylist & Fade Specialist</p>
+            </div>
+            <div class="barber-card reveal">
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=800" class="barber-img">
+                <h3 style="font-family:'Playfair Display';">Marcus Thorne</h3>
+                <p style="color:var(--brand-red); font-size:0.8rem; font-weight:700; text-transform:uppercase;">Beard Architect</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="contact" style="background:#111; color:white;">
+        <div class="contact-container">
+            <div class="reveal">
+                <h2 style="font-family:'Playfair Display'; font-size:3rem; margin-bottom:30px;">Visit the Studio.</h2>
+                <div style="margin-bottom:40px;">
+                    <p style="font-weight:700; margin-bottom:5px;">Address</p>
+                    <p style="opacity:0.7;">12A Savile Row, Mayfair<br>London, W1S 3PR</p>
+                </div>
+                <div style="margin-bottom:40px;">
+                    <p style="font-weight:700; margin-bottom:5px;">Hours</p>
+                    <p style="opacity:0.7;">Tue — Fri: 10:00 - 20:00<br>Sat: 09:00 - 18:00<br>Sun/Mon: Closed</p>
+                </div>
+                <a href="https://wa.me/442071234567" class="btn-book" style="background:#25D366;">
+                    <i data-lucide="message-circle"></i> WhatsApp Now
+                </a>
+            </div>
+            <div class="reveal">
+                <form>
+                    <input type="text" placeholder="FULL NAME" style="background:transparent; border:1px solid #444; color:white;">
+                    <input type="email" placeholder="EMAIL ADDRESS" style="background:transparent; border:1px solid #444; color:white;">
+                    <textarea rows="5" placeholder="MESSAGE" style="background:transparent; border:1px solid #444; color:white;"></textarea>
+                    <button class="btn-book" style="width:100%;">Send Inquiry</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <div class="back-to-top" id="backToTop"><i data-lucide="arrow-up"></i></div>
+
+    <footer style="padding:60px 10%; background:#000; color:white; border-top:1px solid #222;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:30px;">
+            <p style="font-size:0.8rem; opacity:0.5;">© 2026 THE GENTRY BARBER CO. ALL RIGHTS RESERVED.</p>
+            <div style="display:flex; gap:20px;">
+                <i data-lucide="instagram" style="cursor:pointer;"></i>
+                <i data-lucide="facebook" style="cursor:pointer;"></i>
+            </div>
         </div>
     </footer>
 
     <script>
-        // Initialize Icons
+        // 18. Initialize Icons
         lucide.createIcons();
 
-        // GSAP Scroll Animations
+        // 19. GSAP Animations
         gsap.registerPlugin(ScrollTrigger);
-
         gsap.utils.toArray(".reveal").forEach((elem) => {
             gsap.to(elem, {
-                scrollTrigger: {
-                    trigger: elem,
-                    start: "top 85%",
-                    toggleActions: "play none none none"
-                },
+                scrollTrigger: elem,
                 opacity: 1,
                 y: 0,
-                duration: 1.2,
-                ease: "power4.out"
+                duration: 1.5,
+                ease: "power4.out",
+                stagger: 0.2
             });
         });
 
-        // Sticky Nav Effect
-        window.addEventListener("scroll", () => {
-            const nav = document.querySelector("nav");
-            if (window.scrollY > 50) {
-                nav.style.padding = "10px 5%";
-                nav.style.boxShadow = "0 10px 30px rgba(0,0,0,0.05)";
-            } else {
-                nav.style.padding = "20px 5%";
-                nav.style.boxShadow = "none";
-            }
+        // 25. Back to Top Logic
+        const btt = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if(window.scrollY > 500) btt.classList.add('show');
+            else btt.classList.remove('show');
+        });
+        btt.addEventListener('click', () => window.scrollTo(0,0));
+
+        // 9. Slider Logic
+        const container = document.querySelector('.ba-container');
+        const afterImg = document.querySelector('.ba-after');
+        container.addEventListener('mousemove', (e) => {
+            let rect = container.getBoundingClientRect();
+            let x = e.clientX - rect.left;
+            let percent = (x / rect.width) * 100;
+            afterImg.style.width = percent + "%";
         });
     </script>
 </body>
