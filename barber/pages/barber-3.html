@@ -3,276 +3,352 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE GENTRY | Ultra-Premium Barber Experience</title>
+    <title>The Gentry | Premium Barber Studio</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
     <style>
         :root {
             --brand-pink: #ff007a;
             --brand-deep: #0f172a;
-            --brand-purple: #1e1b4b;
             --glass: rgba(255, 255, 255, 0.03);
         }
-        
-        body { background-color: var(--brand-deep); color: white; scroll-behavior: smooth; font-family: 'Inter', sans-serif; overflow-x: hidden; }
 
-        /* SCROLL REVEAL */
-        .reveal { opacity: 0; transform: translateY(40px); transition: all 0.9s cubic-bezier(0.17, 0.55, 0.55, 1); }
+        body { background-color: var(--brand-deep); color: white; scroll-behavior: smooth; font-family: 'Inter', sans-serif; }
+
+        /* Glassmorphism Utility */
+        .glass-card { background: var(--glass); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); transition: all 0.3s ease; }
+        .glass-card:hover { border-color: var(--brand-pink); transform: translateY(-5px); }
+
+        /* Style Selection Grid Glow */
+        .style-card.selected { border: 2px solid var(--brand-pink); box-shadow: 0 0 20px rgba(255, 0, 122, 0.3); }
+
+        /* Animated Barber Pole */
+        .pole-small {
+            width: 20px; height: 100px; border-radius: 10px; overflow: hidden;
+            background: repeating-linear-gradient(-45deg, #fff, #fff 10px, #ff007a 10px, #ff007a 20px, #1e1b4b 20px, #1e1b4b 30px);
+            animation: roll 2s linear infinite;
+        }
+        @keyframes roll { from { transform: translateY(0); } to { transform: translateY(-30px); } }
+
+        /* Reveal on Scroll */
+        .reveal { opacity: 0; transform: translateY(20px); transition: all 0.6s ease-out; }
         .reveal.active { opacity: 1; transform: translateY(0); }
 
-        /* FLOATING CALL BUTTON */
-        .float-btn { position: fixed; bottom: 30px; left: 30px; z-index: 100; animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 0, 122, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(255, 0, 122, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 0, 122, 0); } }
+        /* Hamburger Menu */
+        #mobile-menu { display: none; }
+        @media(max-width:768px){
+            #desktop-nav { display: none; }
+            #mobile-menu { display: flex; flex-direction: column; gap: 2rem; position: absolute; top: 100%; left:0; width:100%; background: var(--brand-deep); padding:2rem; z-index:40; display:none; }
+        }
 
-        /* COMIC BOOK SECTION */
-        .book-container { perspective: 1200px; width: 280px; height: 350px; margin: 0 auto; }
-        .book { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 1.5s cubic-bezier(0.6, -0.28, 0.735, 0.045); }
-        .book-container:hover .book { transform: rotateY(-160deg); }
-        .page { position: absolute; width: 100%; height: 100%; transform-origin: left; border: 4px solid #000; }
-        .cover { background: var(--brand-pink); z-index: 2; backface-visibility: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
-        .inside { background: #fff; color: #000; padding: 25px; transform: rotateY(0deg); z-index: 1; font-family: 'Courier New', monospace; }
+        /* Before/After Slider */
+        .before-after-container { position: relative; width: 100%; overflow: hidden; border-radius: 1.5rem; }
+        .before-after-container img { width: 100%; display: block; }
+        .before-after-slider { position: absolute; top:0; left:50%; width:50%; height:100%; overflow:hidden; cursor: ew-resize; }
+        .before-handle { position: absolute; top:0; left:50%; transform: translateX(-50%); width:4px; height:100%; background:#ff007a; cursor: ew-resize; z-index:10; }
 
-        /* SCANNING LINE ANIMATION */
-        .scan-line { position: absolute; width: 100%; height: 2px; background: var(--brand-pink); top: 0; animation: scan 3s linear infinite; box-shadow: 0 0 10px var(--brand-pink); }
-        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
-
-        /* ROTATING SOCIALS */
-        .social-circle { animation: spin 8s linear infinite; }
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-        /* TABBED PRICING */
-        .price-card:hover { background: linear-gradient(145deg, rgba(255,0,122,0.1), transparent); border-color: var(--brand-pink); }
+        /* Map Border Glow */
+        .map-frame { border: 8px solid #ff007a; border-radius: 1.5rem; overflow: hidden; box-shadow: 0 0 40px rgba(255,0,122,0.4); }
     </style>
 </head>
-<body>
+<body class="relative">
 
-    <a href="tel:02071234567" class="float-btn bg-[#ff007a] p-4 rounded-full text-white shadow-2xl">
-        <i data-lucide="phone-forwarded"></i>
-    </a>
-
-    <nav class="fixed w-full z-50 bg-[#0f172a]/80 backdrop-blur-xl border-b border-white/5 px-8 py-4 flex justify-between items-center">
-        <div class="flex items-center gap-2">
-            <div class="w-8 h-8 bg-[#ff007a] rounded-lg flex items-center justify-center font-black">G</div>
-            <span class="text-xl font-black tracking-tighter uppercase">The Gentry</span>
-        </div>
-        <div class="hidden lg:flex space-x-10 text-[10px] font-black uppercase tracking-[0.2em]">
-            <a href="#services" class="hover:text-[#ff007a] transition">Services</a>
-            <a href="#shop" class="hover:text-[#ff007a] transition">Products</a>
-            <a href="#team" class="hover:text-[#ff007a] transition">Barbers</a>
-            <a href="#booking" class="hover:text-[#ff007a] transition text-[#ff007a]">Book Now</a>
+    <!-- Sticky Navigation -->
+    <nav class="fixed w-full z-50 glass-card px-6 py-4 flex justify-between items-center">
+        <div class="text-2xl font-black italic tracking-tighter">GENTRY<span class="text-[#ff007a]">.</span></div>
+        <div id="desktop-nav" class="hidden md:flex space-x-8 text-xs font-bold uppercase tracking-widest">
+            <a href="#styles" class="hover:text-[#ff007a]">Styles</a>
+            <a href="#prices" class="hover:text-[#ff007a]">Pricing</a>
+            <a href="#reviews" class="hover:text-[#ff007a]">Reviews</a>
+            <a href="#gallery" class="hover:text-[#ff007a]">Gallery</a>
+            <a href="#find-us" class="hover:text-[#ff007a]">Location</a>
+            <a href="#contact" class="hover:text-[#ff007a]">Contact</a>
         </div>
         <div class="flex items-center gap-4">
-            <i data-lucide="search" class="w-5 h-5 cursor-pointer hover:text-[#ff007a]"></i>
-            <button class="bg-[#ff007a] px-6 py-2 rounded-full text-[10px] font-black uppercase">Appointment</button>
+            <button class="bg-[#ff007a] text-white px-5 py-2 rounded-full font-bold text-sm">BOOK NOW</button>
+            <button id="hamburger" class="md:hidden p-2">
+                <i data-lucide="menu"></i>
+            </button>
         </div>
     </nav>
 
-    <header class="h-screen flex items-center relative overflow-hidden px-10">
-        <div class="absolute inset-0 z-0">
-            <video autoplay muted loop class="w-full h-full object-cover opacity-20">
-                <source src="https://assets.mixkit.co/videos/preview/mixkit-barber-cutting-hair-with-a-razor-42614-large.mp4" type="video/mp4">
-            </video>
-            <div class="absolute inset-0 bg-gradient-to-r from-[#0f172a] via-[#0f172a]/80 to-transparent"></div>
-        </div>
-        
-        <div class="relative z-10 max-w-4xl reveal">
-            <h1 class="text-8xl md:text-[10rem] font-black leading-[0.8] uppercase mb-6">Master<br><span class="text-[#ff007a]">Class.</span></h1>
-            <p class="text-lg md:text-2xl text-gray-400 mb-10 max-w-xl font-light leading-relaxed">Beyond a haircut. We curate your identity through precision blades and traditional steam therapy.</p>
-            <div class="flex gap-6">
-                <button class="bg-white text-black px-12 py-5 rounded-sm font-black uppercase text-sm hover:bg-[#ff007a] hover:text-white transition-all">Start Booking</button>
-                <button class="border-2 border-white/20 px-12 py-5 rounded-sm font-black uppercase text-sm hover:border-[#ff007a] transition-all">View Gallery</button>
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="glass-card hidden">
+        <a href="#styles" class="hover:text-[#ff007a]">Styles</a>
+        <a href="#prices" class="hover:text-[#ff007a]">Pricing</a>
+        <a href="#reviews" class="hover:text-[#ff007a]">Reviews</a>
+        <a href="#gallery" class="hover:text-[#ff007a]">Gallery</a>
+        <a href="#find-us" class="hover:text-[#ff007a]">Location</a>
+        <a href="#contact" class="hover:text-[#ff007a]">Contact</a>
+    </div>
+
+    <!-- Hero Section -->
+    <header class="h-screen flex items-center justify-center relative overflow-hidden">
+        <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1512690196246-83461239c4d2?q=80&w=2070')] bg-cover bg-center opacity-30 scale-110"></div>
+        <div class="relative z-10 text-center px-4">
+            <h1 class="text-7xl md:text-9xl font-black uppercase mb-4 animate__animated animate__fadeInDown">Art of <span class="text-[#ff007a]">Fades</span></h1>
+            <p class="text-xl text-gray-400 mb-8 max-w-xl mx-auto">Voted #1 Grooming Studio for the modern London gentleman. Precision is our religion.</p>
+            <div class="flex flex-col md:flex-row gap-4 justify-center items-center">
+                <button class="bg-[#ff007a] px-10 py-4 rounded-xl font-black text-lg shadow-lg">1. SELECT YOUR STYLE</button>
+                <a href="tel:0000000" class="glass-card px-10 py-4 rounded-xl font-bold flex items-center gap-2"><i data-lucide="phone"></i> CALL STUDIO</a>
+                <a href="https://wa.me/447000000000" target="_blank" class="glass-card px-10 py-4 rounded-xl font-bold flex items-center gap-2 bg-green-600"><i data-lucide="message-circle"></i> WHATSAPP</a>
             </div>
         </div>
     </header>
 
-    <div class="bg-[#ff007a] py-4 overflow-hidden whitespace-nowrap border-y-4 border-black">
-        <div class="flex animate-marquee space-x-12 items-center">
-            <span class="text-2xl font-black italic">ESTABLISHED 2026</span>
-            <span class="text-2xl font-black italic">•</span>
-            <span class="text-2xl font-black italic">PREMIUM GROOMING</span>
-            <span class="text-2xl font-black italic">•</span>
-            <span class="text-2xl font-black italic">SHOREDITCH LONDON</span>
-            <span class="text-2xl font-black italic">•</span>
-            <span class="text-2xl font-black italic">COLD BEER INCLUDED</span>
-            <span class="text-2xl font-black italic">•</span>
-        </div>
-    </div>
+    <!-- Offer Banner -->
+    <section class="bg-[#ff007a] text-black text-center py-4 font-bold uppercase tracking-wider reveal">
+        🎉 Book this month and get 10% off your first service! 🎉
+    </section>
 
-    <section id="styles" class="py-32 px-10 bg-black/20">
-        <div class="mb-20 reveal">
-            <h2 class="text-5xl font-black uppercase mb-4">The Style Menu</h2>
-            <div class="h-1 w-32 bg-[#ff007a]"></div>
+    <!-- Styles Section -->
+    <section id="styles" class="py-24 px-6 max-w-7xl mx-auto">
+        <div class="flex items-center gap-4 mb-12">
+            <div class="pole-small"></div>
+            <h2 class="text-4xl font-black uppercase">Choose Your Vibe</h2>
         </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="relative group h-[500px] overflow-hidden rounded-3xl reveal">
-                <img src="https://images.unsplash.com/photo-1599351435612-1871f28cb198?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover transition duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0">
-                <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent p-8 flex flex-col justify-end">
-                    <h3 class="text-2xl font-black uppercase">The Fade</h3>
-                    <p class="text-sm text-gray-400 mb-4">Precision Skin Taper</p>
-                    <button class="bg-white/10 backdrop-blur-md border border-white/20 py-3 rounded-full text-xs font-bold uppercase opacity-0 group-hover:opacity-100 transition">Select Style</button>
-                </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="style-card glass-card p-4 rounded-2xl cursor-pointer reveal">
+                <img src="https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=400" class="rounded-xl mb-4 w-full h-48 object-cover grayscale hover:grayscale-0 transition duration-500">
+                <h4 class="font-bold">Skin Fade Pompadour</h4>
+                <p class="text-xs text-gray-500">45 Minutes • $40</p>
             </div>
-            <div class="relative group h-[500px] overflow-hidden rounded-3xl reveal">
-                <img src="https://images.unsplash.com/photo-1621605815844-246ade206bec?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-700 group-hover:scale-110">
-                <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent p-8 flex flex-col justify-end">
-                    <h3 class="text-2xl font-black uppercase">Modern Pompa</h3>
-                    <p class="text-sm text-gray-400 mb-4">Volume & Shine</p>
-                    <button class="bg-white/10 backdrop-blur-md border border-white/20 py-3 rounded-full text-xs font-bold uppercase opacity-0 group-hover:opacity-100 transition">Select Style</button>
-                </div>
+            <div class="style-card glass-card p-4 rounded-2xl cursor-pointer reveal">
+                <img src="https://images.unsplash.com/photo-1599351435612-1871f28cb198?w=400" class="rounded-xl mb-4 w-full h-48 object-cover grayscale hover:grayscale-0 transition duration-500">
+                <h4 class="font-bold">Executive Taper</h4>
+                <p class="text-xs text-gray-500">30 Minutes • $35</p>
             </div>
-            <div class="relative group h-[500px] overflow-hidden rounded-3xl reveal">
-                <img src="https://images.unsplash.com/photo-1512690196246-83461239c4d2?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-700 group-hover:scale-110">
-                <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent p-8 flex flex-col justify-end">
-                    <h3 class="text-2xl font-black uppercase">Long Trim</h3>
-                    <p class="text-sm text-gray-400 mb-4">Scissor Work Only</p>
-                    <button class="bg-white/10 backdrop-blur-md border border-white/20 py-3 rounded-full text-xs font-bold uppercase opacity-0 group-hover:opacity-100 transition">Select Style</button>
-                </div>
+            <div class="style-card glass-card p-4 rounded-2xl cursor-pointer reveal selected">
+                <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=400" class="rounded-xl mb-4 w-full h-48 object-cover grayscale hover:grayscale-0 transition duration-500">
+                <h4 class="font-bold text-[#ff007a]">Classic Buzz & Beard</h4>
+                <p class="text-xs text-gray-500">50 Minutes • $55</p>
             </div>
-            <div class="relative group h-[500px] overflow-hidden rounded-3xl reveal">
-                <img src="https://images.unsplash.com/photo-1593702295094-ada74bc4a149?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-700 group-hover:scale-110">
-                <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent p-8 flex flex-col justify-end">
-                    <h3 class="text-2xl font-black uppercase">Royal Shave</h3>
-                    <p class="text-sm text-gray-400 mb-4">Straight Razor</p>
-                    <button class="bg-white/10 backdrop-blur-md border border-white/20 py-3 rounded-full text-xs font-bold uppercase opacity-0 group-hover:opacity-100 transition">Select Style</button>
+            <div class="style-card glass-card p-4 rounded-2xl cursor-pointer reveal">
+                <img src="https://images.unsplash.com/photo-1634152962473-4758a936c615?w=400" class="rounded-xl mb-4 w-full h-48 object-cover grayscale hover:grayscale-0 transition duration-500">
+                <h4 class="font-bold">The Slick Back</h4>
+                <p class="text-xs text-gray-500">40 Minutes • $42</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Prices Section -->
+    <section id="prices" class="py-24 bg-black/40 px-6">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-3xl font-black uppercase text-center mb-16 underline decoration-[#ff007a]">Service Menu</h2>
+            <div class="space-y-6">
+                <div class="flex justify-between items-end border-b border-white/10 pb-2 reveal">
+                    <div>
+                        <h4 class="text-xl font-bold">The Signature Cut</h4>
+                        <p class="text-gray-400 text-sm italic">Wash, precision cut, neck shave & style</p>
+                    </div>
+                    <div class="text-[#ff007a] font-black text-2xl">$45</div>
+                </div>
+                <div class="flex justify-between items-end border-b border-white/10 pb-2 reveal">
+                    <div>
+                        <h4 class="text-xl font-bold">Beard Sculpt & Steam</h4>
+                        <p class="text-gray-400 text-sm italic">Hot towel, alignment, and balm treatment</p>
+                    </div>
+                    <div class="text-[#ff007a] font-black text-2xl">$30</div>
+                </div>
+                <div class="flex justify-between items-end border-b border-white/10 pb-2 reveal">
+                    <div>
+                        <h4 class="text-xl font-bold">Gentry Full Service</h4>
+                        <p class="text-gray-400 text-sm italic">Haircut, Beard, Charcoal Mask & Drink</p>
+                    </div>
+                    <div class="text-[#ff007a] font-black text-2xl">$85</div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="prices" class="py-32 px-10 max-w-7xl mx-auto">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-            <div class="reveal">
-                <h2 class="text-6xl font-black uppercase mb-8 italic">The Cost of <span class="text-[#ff007a]">Excellence.</span></h2>
-                <div class="space-y-8">
-                    <div class="price-card group flex justify-between items-center border-b border-white/10 pb-6 transition-all">
-                        <div>
-                            <h4 class="text-2xl font-bold group-hover:text-[#ff007a] transition">Standard Cut</h4>
-                            <p class="text-gray-400 text-xs mt-1">45 mins • Wash & Finish</p>
-                        </div>
-                        <span class="text-3xl font-black">$45</span>
-                    </div>
-                    <div class="price-card group flex justify-between items-center border-b border-white/10 pb-6 transition-all">
-                        <div>
-                            <h4 class="text-2xl font-bold group-hover:text-[#ff007a] transition">The Full Gentry</h4>
-                            <p class="text-gray-400 text-xs mt-1">90 mins • Hair + Beard + Steam</p>
-                        </div>
-                        <span class="text-3xl font-black">$95</span>
-                    </div>
-                    <div class="price-card group flex justify-between items-center border-b border-white/10 pb-6 transition-all">
-                        <div>
-                            <h4 class="text-2xl font-bold group-hover:text-[#ff007a] transition">Beard Sculpt</h4>
-                            <p class="text-gray-400 text-xs mt-1">30 mins • Shape & Oil</p>
-                        </div>
-                        <span class="text-3xl font-black">$35</span>
-                    </div>
-                </div>
+    <!-- Gallery Section -->
+    <section id="gallery" class="py-24 px-6 max-w-7xl mx-auto">
+        <h2 class="text-3xl font-black text-center mb-12 uppercase">Gallery</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 reveal">
+            <img src="https://images.unsplash.com/photo-1600181950161-dc2f824cfc3f?w=400" class="rounded-xl w-full h-48 object-cover hover:scale-105 transition duration-500">
+            <img src="https://images.unsplash.com/photo-1600181950187-bc5bb3b1a38d?w=400" class="rounded-xl w-full h-48 object-cover hover:scale-105 transition duration-500">
+            <img src="https://images.unsplash.com/photo-1600181950205-c5f3b5df9c5b?w=400" class="rounded-xl w-full h-48 object-cover hover:scale-105 transition duration-500">
+            <img src="https://images.unsplash.com/photo-1600181950222-9e64df27e9ff?w=400" class="rounded-xl w-full h-48 object-cover hover:scale-105 transition duration-500">
+        </div>
+    </section>
+
+    <!-- Before & After Section -->
+    <section class="py-24 px-6 max-w-4xl mx-auto reveal">
+        <h2 class="text-3xl font-black text-center mb-12 uppercase">Before & After</h2>
+        <div class="before-after-container h-96 reveal">
+            <img src="https://images.unsplash.com/photo-1600181950161-dc2f824cfc3f?w=600" class="absolute top-0 left-0 w-full h-full object-cover">
+            <div class="before-after-slider">
+                <img src="https://images.unsplash.com/photo-1600181950222-9e64df27e9ff?w=600" class="h-full object-cover">
             </div>
-            
-            <div class="reveal">
-                <div class="book-container">
-                    <div class="book">
-                        <div class="page inside">
-                            <div class="scan-line"></div>
-                            <h3 class="font-black text-xl mb-4 text-[#ff007a]">STYLE DOSSIER</h3>
-                            <p class="text-[10px] leading-tight mb-4">TOP SECRET BARBER TECHNIQUES REVEALED.</p>
-                            <ul class="text-[9px] space-y-2">
-                                <li>- BLADE ANGLE: 30 DEGREES</li>
-                                <li>- STEAM TEMP: 180F</li>
-                                <li>- BALM TYPE: SANDALWOOD</li>
-                            </ul>
-                            <div class="mt-10 pt-4 border-t border-black text-center text-[8px] font-bold">SCAN COMPLETE: READY TO BOOK</div>
-                        </div>
-                        <div class="page cover shadow-2xl">
-                            <i data-lucide="scissors" class="w-12 h-12 mb-4 text-black"></i>
-                            <h3 class="text-xl font-black text-black leading-none">THE<br>GENTRY<br>GUIDE</h3>
-                        </div>
-                    </div>
-                </div>
-                <p class="text-center mt-10 text-xs text-gray-500 font-bold uppercase tracking-widest">Hover to scan style guide</p>
+            <div class="before-handle"></div>
+        </div>
+    </section>
+
+    <!-- Barber Profiles -->
+    <section id="barbers" class="py-24 px-6 max-w-7xl mx-auto">
+        <h2 class="text-3xl font-black text-center mb-12 uppercase">Meet Our Barbers</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 reveal">
+            <div class="glass-card p-8 rounded-3xl text-center">
+                <img src="https://images.unsplash.com/photo-1599577180370-c8a6eec537d0?w=200" class="rounded-full mx-auto mb-4 w-32 h-32 object-cover">
+                <h4 class="font-bold text-xl">Marcus</h4>
+                <p class="text-gray-400 text-sm">Fade Specialist & Grooming Guru</p>
+            </div>
+            <div class="glass-card p-8 rounded-3xl text-center">
+                <img src="https://images.unsplash.com/photo-1599577180370-c8a6eec537d0?w=200" class="rounded-full mx-auto mb-4 w-32 h-32 object-cover">
+                <h4 class="font-bold text-xl">Leo</h4>
+                <p class="text-gray-400 text-sm">Beard Sculpting Expert</p>
+            </div>
+            <div class="glass-card p-8 rounded-3xl text-center">
+                <img src="https://images.unsplash.com/photo-1599577180370-c8a6eec537d0?w=200" class="rounded-full mx-auto mb-4 w-32 h-32 object-cover">
+                <h4 class="font-bold text-xl">Alex</h4>
+                <p class="text-gray-400 text-sm">Style & Haircare Advisor</p>
             </div>
         </div>
     </section>
 
-    <section class="py-32 bg-white text-black">
-        <div class="px-10 text-center mb-20 reveal">
-            <h2 class="text-5xl font-black uppercase">Client Testimonials</h2>
+    <!-- Reviews Section -->
+    <section id="reviews" class="py-24 px-6 max-w-7xl mx-auto">
+        <h2 class="text-3xl font-black text-center mb-12 uppercase">Word on the Street</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="glass-card p-8 rounded-3xl reveal">
+                <div class="flex gap-1 text-[#ff007a] mb-4">
+                    <i data-lucide="star" fill="currentColor" size="16"></i>
+                    <i data-lucide="star" fill="currentColor" size="16"></i>
+                    <i data-lucide="star" fill="currentColor" size="16"></i>
+                    <i data-lucide="star" fill="currentColor" size="16"></i>
+                    <i data-lucide="star" fill="currentColor" size="16"></i>
+                </div>
+                <p class="italic text-gray-300 mb-6">"Best fade in the city. The atmosphere is electric and the service is high-end. Marcus knows exactly what he's doing."</p>
+                <p class="font-bold">— James T., Verified Client</p>
+            </div>
+            <div class="glass-card p-8 rounded-3xl reveal">
+                <div class="flex gap-1 text-[#ff007a] mb-4">
+                    <i data-lucide="star" fill="currentColor" size="16"></i>
+                    <i data-lucide="star" fill="currentColor" size="16"></i>
+                    <i data-lucide="star" fill="currentColor" size="16"></i>
+                    <i data-lucide="star" fill="currentColor" size="16"></i>
+                    <i data-lucide="star" fill="currentColor" size="16"></i>
+                </div>
+                <p class="italic text-gray-300 mb-6">"The online booking is so smooth. Love the complimentary drink and the hot razor finish. Top class."</p>
+                <p class="font-bold">— Sarah M., Verified Client</p>
+            </div>
         </div>
-        <div class="flex flex-wrap justify-center gap-10 px-10">
-            <div class="max-w-xs p-8 border-2 border-black reveal">
-                <div class="flex gap-1 mb-4 text-[#ff007a]"><i data-lucide="star" fill="currentColor"></i><i data-lucide="star" fill="currentColor"></i><i data-lucide="star" fill="currentColor"></i><i data-lucide="star" fill="currentColor"></i><i data-lucide="star" fill="currentColor"></i></div>
-                <p class="italic font-medium mb-6">"The only place in London that understands a true classic taper. The vibe is unmatched."</p>
+    </section>
+
+    <!-- Contact Form -->
+    <section id="contact" class="py-24 px-6 max-w-4xl mx-auto reveal">
+        <h2 class="text-3xl font-black text-center mb-12 uppercase">Contact Us</h2>
+        <form class="space-y-6 bg-[#1e1b4b] p-8 rounded-3xl glass-card">
+            <div>
+                <label class="block mb-2 font-bold">Name</label>
+                <input type="text" class="w-full p-3 rounded-lg bg-black/30 border border-white/20 text-white" placeholder="Your Name" required>
+            </div>
+            <div>
+                <label class="block mb-2 font-bold">Email</label>
+                <input type="email" class="w-full p-3 rounded-lg bg-black/30 border border-white/20 text-white" placeholder="Your Email" required>
+            </div>
+            <div>
+                <label class="block mb-2 font-bold">Message</label>
+                <textarea class="w-full p-3 rounded-lg bg-black/30 border border-white/20 text-white" rows="5" placeholder="Your Message" required></textarea>
+            </div>
+            <button class="bg-[#ff007a] px-8 py-3 rounded-lg font-bold hover:bg-white hover:text-black transition">Send Message</button>
+        </form>
+    </section>
+
+    <!-- Map Section -->
+    <section id="find-us" class="py-24 grid grid-cols-1 lg:grid-cols-2 gap-0 items-center reveal">
+        <div class="p-12 lg:p-24 bg-[#1e1b4b]">
+            <h2 class="text-4xl font-black mb-6">Find the Studio</h2>
+            <div class="space-y-6">
                 <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-full bg-gray-200"></div>
-                    <span class="font-black uppercase text-xs">A. Thompson</span>
+                    <i data-lucide="map-pin" class="text-[#ff007a]"></i>
+                    <p class="text-lg">452 Grooming Blvd, Shoreditch, London</p>
                 </div>
-            </div>
-            </div>
-    </section>
-
-    <section class="py-32 px-10">
-        <div class="max-w-6xl mx-auto border-4 border-white/5 p-4 rounded-3xl reveal">
-            <div class="h-[600px] rounded-2xl overflow-hidden grayscale contrast-125 hover:grayscale-0 transition duration-1000">
-                <iframe class="w-full h-full" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2482.43232847684!2d-0.07849492341517053!3d51.52362877181515!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x48761cb6002488a1%3A0x6e76162a0d1e3860!2sShoreditch%2C%20London!5e0!3m2!1sen!2suk!4v1705000000000" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-            </div>
-        </div>
-        <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-10 text-center uppercase tracking-widest text-[10px] font-bold text-gray-400">
-            <div><i data-lucide="map-pin" class="mx-auto mb-4 text-[#ff007a]"></i> 452 Shoreditch High St, London</div>
-            <div><i data-lucide="clock" class="mx-auto mb-4 text-[#ff007a]"></i> Mon-Sat: 09:00 - 21:00</div>
-            <div><i data-lucide="message-square" class="mx-auto mb-4 text-[#ff007a]"></i> 020 7123 4567</div>
-        </div>
-    </section>
-
-    <footer class="bg-black/80 pt-32 pb-10 border-t border-white/5">
-        <div class="px-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-20 mb-32">
-            <div class="lg:col-span-2 reveal">
-                <h3 class="text-4xl font-black uppercase mb-6">Join The <span class="text-[#ff007a]">Elite.</span></h3>
-                <p class="text-gray-500 mb-10 max-w-sm">Receive exclusive access to flash booking slots and new product drops.</p>
-                <form class="flex border-b border-white/20 pb-4">
-                    <input type="email" placeholder="YOUR@EMAIL.COM" class="bg-transparent flex-1 text-xs font-bold tracking-widest focus:outline-none">
-                    <button class="text-[#ff007a] font-black uppercase text-xs">Subscribe</button>
-                </form>
-            </div>
-            
-            <div class="reveal">
-                <h5 class="text-xs font-black uppercase mb-6 tracking-widest text-gray-400">Quick Links</h5>
-                <ul class="space-y-4 text-xs font-bold">
-                    <li><a href="#" class="hover:text-[#ff007a]">Terms of Service</a></li>
-                    <li><a href="#" class="hover:text-[#ff007a]">Privacy Policy</a></li>
-                    <li><a href="#" class="hover:text-[#ff007a]">Careers</a></li>
-                </ul>
-            </div>
-
-            <div class="flex justify-center items-center reveal">
-                <div class="relative w-32 h-32">
-                    <div class="social-circle absolute inset-0 border border-dashed border-white/20 rounded-full"></div>
-                    <div class="absolute inset-0 flex items-center justify-center gap-4">
-                        <i data-lucide="instagram" class="w-4 h-4 hover:text-[#ff007a] cursor-pointer"></i>
-                        <i data-lucide="twitter" class="w-4 h-4 hover:text-[#ff007a] cursor-pointer"></i>
-                        <i data-lucide="facebook" class="w-4 h-4 hover:text-[#ff007a] cursor-pointer"></i>
-                    </div>
+                <div class="flex items-center gap-4">
+                    <i data-lucide="clock" class="text-[#ff007a]"></i>
+                    <p class="text-lg">Mon-Sat: 9am - 9pm / Sun: 11am - 5pm</p>
+                </div>
+                <div class="pt-6 flex gap-4 flex-wrap">
+                    <a href="https://goo.gl/maps/xyz" class="bg-white text-black px-8 py-3 rounded-lg font-bold hover:bg-[#ff007a] hover:text-white transition">GET DIRECTIONS</a>
+                    <a href="tel:0000000" class="bg-[#ff007a] px-8 py-3 rounded-lg font-bold hover:bg-white hover:text-black transition">CALL NOW</a>
+                    <a href="https://wa.me/447000000000" class="bg-green-600 px-8 py-3 rounded-lg font-bold hover:bg-white hover:text-black transition">WHATSAPP</a>
                 </div>
             </div>
         </div>
-        <div class="text-center text-[8px] font-black uppercase tracking-[1em] text-gray-700">
-            GENTRY STUDIO LONDON © 2026
+        <div class="h-[500px] w-full flex justify-center items-center">
+            <div class="map-frame w-full h-full">
+                <iframe class="w-full h-full grayscale rounded-3xl" 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2482.3486187702484!2d-0.0784!3d51.5235!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x48761cb61d996e39%3A0x67396746f345c228!2sShoreditch%2C%20London!5e0!3m2!1sen!2suk!4v1700000000000" 
+                    style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            </div>
         </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 text-center text-gray-600 text-sm reveal">
+        <div class="flex justify-center gap-6 mb-4">
+            <a href="#styles" class="hover:text-[#ff007a]">Styles</a>
+            <a href="#prices" class="hover:text-[#ff007a]">Pricing</a>
+            <a href="#reviews" class="hover:text-[#ff007a]">Reviews</a>
+            <a href="#gallery" class="hover:text-[#ff007a]">Gallery</a>
+            <a href="#contact" class="hover:text-[#ff007a]">Contact</a>
+        </div>
+        <p>© 2026 THE GENTRY. NO REFUNDS. ALL STYLE.</p>
     </footer>
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" class="fixed bottom-8 right-8 p-4 rounded-full bg-[#ff007a] hidden z-50"><i data-lucide="arrow-up" class="text-white"></i></button>
 
     <script>
         lucide.createIcons();
 
-        // Reveal on scroll logic
-        const observerOptions = { threshold: 0.1 };
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('active');
+        // Reveal on Scroll
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 100;
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
                 }
-            });
-        }, observerOptions);
+            }
+        }
+        window.addEventListener("scroll", reveal);
+        reveal();
 
-        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        // Hamburger toggle
+        const hamburger = document.getElementById("hamburger");
+        const mobileMenu = document.getElementById("mobile-menu");
+        hamburger.addEventListener("click", () => {
+            mobileMenu.classList.toggle("hidden");
+        });
+
+        // Back to Top
+        const backTop = document.getElementById("back-to-top");
+        window.addEventListener("scroll", () => {
+            if(window.scrollY > 300) backTop.classList.remove("hidden");
+            else backTop.classList.add("hidden");
+        });
+        backTop.addEventListener("click", () => { window.scrollTo({top:0, behavior:"smooth"}); });
+
+        // Before & After Slider
+        const slider = document.querySelector(".before-after-slider");
+        const handle = document.querySelector(".before-handle");
+        let isDown = false;
+
+        handle.addEventListener("mousedown", () => isDown = true);
+        window.addEventListener("mouseup", () => isDown = false);
+        window.addEventListener("mousemove", e => {
+            if(!isDown) return;
+            const rect = slider.parentElement.getBoundingClientRect();
+            let x = e.clientX - rect.left;
+            if(x<0) x=0; if(x>rect.width) x=rect.width;
+            slider.style.width = x + "px";
+            handle.style.left = x + "px";
+        });
     </script>
 </body>
 </html>
