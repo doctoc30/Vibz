@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        :root {
+:root {
     --red-grad: linear-gradient(135deg, #8b0000 0%, #ff3131 100%);
     --dark: #0a0a0a;
     --dark-grey: #161616;
@@ -102,6 +102,51 @@ nav {
     transition: 0.3s;
 }
 
+/* Hamburger animation when active */
+.hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+.hamburger.active span:nth-child(2) { opacity: 0; }
+.hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+/* Mobile Menu Overlay */
+.mobile-menu {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 80%;
+    max-width: 300px;
+    height: 100%;
+    background: var(--dark-grey);
+    z-index: 9999;
+    padding-top: 80px;
+    display: flex;
+    flex-direction: column;
+    transition: left 0.5s ease;
+}
+
+.mobile-menu ul {
+    list-style: none;
+    padding: 0 20px;
+}
+
+.mobile-menu ul li {
+    margin-bottom: 30px;
+    opacity: 0;
+    transform: translateX(-30px);
+    transition: all 0.4s ease;
+}
+
+.mobile-menu ul li.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.mobile-menu ul li a {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: white;
+    text-transform: uppercase;
+}
+
 /* --- Hero --- */
 .hero {
     height: 100vh;
@@ -126,7 +171,7 @@ nav {
     -webkit-text-fill-color: transparent;
 }
 
-/* --- Hairstyles / Services Strip (FIXED & RESPONSIVE) --- */
+/* --- Hairstyles / Services Strip --- */
 .hairstyles-strip {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
@@ -380,16 +425,39 @@ footer {
 </head>
 <body>
 
-    <nav>
-        <div class="logo"><i class="fas fa-cut"></i> VIBZ BARBERS</div>
-        <ul class="nav-links">
-            <li><a href="#about">About</a></li>
-            <li><a href="#services">Services</a></li>
-            <li><a href="#gallery">Gallery</a></li>
-            <li><a href="#contact">Contact</a></li>
-        </ul>
-        <div class="hamburger"><span></span><span></span><span></span></div>
-    </nav>
+ <!-- Navigation -->
+<nav>
+    <!-- Logo -->
+    <div class="logo">
+        <i class="fas fa-cut"></i>
+        VIBZ BARBERS
+    </div>
+
+    <!-- Desktop Links -->
+    <ul class="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#gallery">Gallery</a></li>
+        <li><a href="#contact">Contact</a></li>
+    </ul>
+
+    <!-- Hamburger Menu (Mobile) -->
+    <div class="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+</nav>
+
+<!-- Mobile Menu Overlay -->
+<div class="mobile-menu">
+    <ul>
+        <li><a href="#about">About</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#gallery">Gallery</a></li>
+        <li><a href="#contact">Contact</a></li>
+    </ul>
+</div>
 
     <header class="hero">
         <h1 class="reveal">VIBZ<br>BARBERS.</h1>
@@ -535,6 +603,28 @@ footer {
                 btn.querySelector('i').classList.toggle('fa-minus');
             });
         });
+
+
+        // Mobile Menu Toggle
+const hamburger = document.querySelector('.hamburger');
+const mobileMenu = document.querySelector('.mobile-menu');
+const mobileLinks = document.querySelectorAll('.mobile-menu ul li');
+
+hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('active');
+
+    // Slide menu in/out
+    if (mobileMenu.style.left === '0px') {
+        mobileMenu.style.left = '-100%';
+        mobileLinks.forEach(link => link.classList.remove('show'));
+    } else {
+        mobileMenu.style.left = '0';
+        // Animate links one by one
+        mobileLinks.forEach((link, index) => {
+            setTimeout(() => link.classList.add('show'), index * 100);
+        });
+    }
+});
     </script>
 </body>
 </html>
