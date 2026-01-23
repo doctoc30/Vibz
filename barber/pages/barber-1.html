@@ -1,1 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE QUARTERS | Hyper-Elite Grooming Lab</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,900;1,900&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --dark-forest: #1A2421;
+            --sage: #8BA88E;
+            --cream: #F2F2F2;
+            --gold: #C5A059;
+        }
 
+        /* Prevent Horizontal Scroll Globally */
+        html, body {
+            max-width: 100%;
+            overflow-x: hidden;
+            background-color: var(--dark-forest);
+            color: var(--cream);
+            font-family: 'Space Grotesk', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        h1, h2, .serif { font-family: 'Playfair Display', serif; }
+
+        /* Left Portrait Social Bar - Desktop Only */
+        .social-sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 70px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 3rem;
+            border-right: 1px solid rgba(139, 168, 142, 0.1);
+            z-index: 50;
+            background: var(--dark-forest);
+        }
+        .social-sidebar a {
+            writing-mode: vertical-rl;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            font-size: 0.65rem;
+            color: var(--sage);
+            transition: 0.4s;
+        }
+        .social-sidebar a:hover { color: var(--gold); transform: translateY(-5px); }
+
+        /* Liquid Blur Menu */
+        #menu-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(26, 36, 33, 0.98);
+            backdrop-filter: blur(25px);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            clip-path: circle(0% at 90% 10%);
+            transition: clip-path 0.8s cubic-bezier(0.85, 0, 0.15, 1);
+        }
+        #menu-overlay.open { clip-path: circle(150% at 90% 10%); }
+
+        /* Tool Grid */
+        .tool-box {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(139, 168, 142, 0.1);
+            padding: 3rem;
+            transition: 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+        .tool-box:hover {
+            background: var(--sage);
+            color: var(--dark-forest);
+            transform: scale(1.02);
+        }
+
+        /* Stats Counter */
+        .stat-value { font-size: 4rem; font-weight: 900; line-height: 1; margin-bottom: 0.5rem; }
+
+        /* Responsive Container */
+        .main-content { margin-left: 0; }
+        @media (min-width: 768px) { .main-content { margin-left: 70px; } }
+
+        /* Marquee */
+        @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        .ticker { display: flex; width: max-content; animation: scroll 30s linear infinite; }
+
+        /* Custom Accordion */
+        .faq-btn:after { content: '+'; font-size: 1.5rem; }
+        .faq-btn.active:after { content: '−'; }
+    </style>
+</head>
+<body>
+
+    <aside class="social-sidebar hidden md:flex">
+        <a href="#">Instagram</a>
+        <a href="#">TikTok</a>
+        <a href="#">Facebook</a>
+    </aside>
+
+    <nav class="fixed top-0 left-0 md:left-[70px] right-0 z-[110] p-6 md:p-10 flex justify-between items-center bg-transparent">
+        <div class="text-xl font-bold tracking-[0.4em] uppercase">The Quarters</div>
+        <button onclick="toggleMenu()" class="w-12 h-12 flex flex-col justify-center items-end gap-1.5 group">
+            <span class="w-8 h-[2px] bg-white transition-all group-hover:w-12"></span>
+            <span class="w-12 h-[2px] bg-gold"></span>
+        </button>
+    </nav>
+
+    <div id="menu-overlay">
+        <button onclick="toggleMenu()" class="absolute top-10 right-10 text-gold uppercase tracking-[0.3em] text-xs">Close Index</button>
+        <div class="space-y-10 text-center">
+            <a href="#about" onclick="toggleMenu()" class="serif text-5xl md:text-8xl block hover:italic transition">Heritage</a>
+            <a href="#services" onclick="toggleMenu()" class="serif text-5xl md:text-8xl block hover:italic transition">Menu</a>
+            <a href="#stats" onclick="toggleMenu()" class="serif text-5xl md:text-8xl block hover:italic transition">Archives</a>
+            <a href="#contact" onclick="toggleMenu()" class="serif text-5xl md:text-8xl block hover:italic transition">Contact</a>
+        </div>
+    </div>
+
+    <main class="main-content">
+        <section class="min-h-screen flex items-center px-6 md:px-20 relative overflow-hidden">
+            <div class="z-10 max-w-6xl">
+                <span class="text-gold uppercase tracking-[1em] text-[10px] mb-8 block" data-aos="fade-right">Curated Excellence</span>
+                <h1 class="text-6xl md:text-[11rem] leading-[0.85] uppercase mb-12" data-aos="fade-up" data-aos-delay="200">
+                    Precision<br>
+                    <span class="serif italic text-sage">Redefined.</span>
+                </h1>
+                <div class="flex flex-col md:flex-row gap-12">
+                    <a href="#book" class="bg-gold text-dark-forest px-12 py-5 font-bold uppercase tracking-widest text-sm hover:bg-white transition-colors">Book a Session</a>
+                    <p class="max-w-xs text-xs opacity-50 leading-relaxed uppercase tracking-widest">A hyper-focused sanctuary for the modern connoisseur. We curate identities through architectural barbering.</p>
+                </div>
+            </div>
+            <div class="absolute right-[-5%] top-[15%] w-1/2 h-[70%] opacity-10 grayscale pointer-events-none hidden lg:block">
+                <img src="https://images.unsplash.com/photo-1512690196236-d4da7008d51a?auto=format&fit=crop&q=80&w=1200" alt="Barber Lab Front">
+            </div>
+        </section>
+
+        <section id="stats" class="py-24 border-y border-sage/10 bg-[#1d2925]">
+            <div class="max-w-7xl mx-auto px-6 grid grid-cols-2 lg:grid-cols-4 gap-12">
+                <div class="text-center" data-aos="fade-up">
+                    <div class="stat-value counter" data-target="15">0</div>
+                    <div class="text-[10px] uppercase tracking-[0.4em] text-sage">Years Mastery</div>
+                </div>
+                <div class="text-center" data-aos="fade-up" data-aos-delay="100">
+                    <div class="stat-value counter" data-target="98">0</div>
+                    <div class="text-[10px] uppercase tracking-[0.4em] text-sage">% Retention</div>
+                </div>
+                <div class="text-center" data-aos="fade-up" data-aos-delay="200">
+                    <div class="stat-value counter" data-target="6">0</div>
+                    <div class="text-[10px] uppercase tracking-[0.4em] text-sage">Master Crafters</div>
+                </div>
+                <div class="text-center" data-aos="fade-up" data-aos-delay="300">
+                    <div class="stat-value counter" data-target="12000">0</div>
+                    <div class="text-[10px] uppercase tracking-[0.4em] text-sage">Service Hours</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-32 px-6 md:px-20">
+            <h2 class="serif text-5xl md:text-7xl mb-16 italic">Technical Arsenal</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="tool-box" data-aos="zoom-in">
+                    <i class="fas fa-cut text-4xl mb-8"></i>
+                    <h3 class="text-xl font-bold uppercase mb-4">Japanese Steel</h3>
+                    <p class="text-xs opacity-60 leading-loose">We exclusively use hand-forged shears from Kyoto for unrivaled edge retention.</p>
+                </div>
+                <div class="tool-box" data-aos="zoom-in" data-aos-delay="100">
+                    <i class="fas fa-microchip text-4xl mb-8"></i>
+                    <h3 class="text-xl font-bold uppercase mb-4">Magnetic Motors</h3>
+                    <p class="text-xs opacity-60 leading-loose">Precision clippers with high-frequency magnetic motors for surgical-grade tapers.</p>
+                </div>
+                <div class="tool-box" data-aos="zoom-in" data-aos-delay="200">
+                    <i class="fas fa-razor text-4xl mb-8"></i>
+                    <h3 class="text-xl font-bold uppercase mb-4">Straight-Edge Therapy</h3>
+                    <p class="text-xs opacity-60 leading-loose">Disposable platinum blades combined with traditional ozone steaming protocols.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="py-32 px-6 md:px-20 grid lg:grid-cols-2 gap-20 items-center bg-[#1d2925]">
+            <div data-aos="fade-right">
+                <h2 class="serif text-6xl md:text-8xl mb-10 italic">Heritage & Vision</h2>
+                <p class="text-lg text-sage mb-8 leading-relaxed">Born in the heart of London, The Quarters was founded as a rejection of the "fast-barbering" culture. We believe grooming is an architectural dialogue between the barber and the bone structure.</p>
+                <div class="space-y-4">
+                    <div class="flex items-center gap-4"><i class="fas fa-check text-gold"></i> <span class="text-xs uppercase tracking-widest">Private Studio Environment</span></div>
+                    <div class="flex items-center gap-4"><i class="fas fa-check text-gold"></i> <span class="text-xs uppercase tracking-widest">Apothecary-Grade Products</span></div>
+                    <div class="flex items-center gap-4"><i class="fas fa-check text-gold"></i> <span class="text-xs uppercase tracking-widest">Sustainability Focused</span></div>
+                </div>
+            </div>
+            <div class="relative" data-aos="fade-left">
+                <div class="aspect-[4/5] bg-sage/10 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover mix-blend-overlay">
+                </div>
+                <div class="absolute -bottom-10 -left-10 bg-gold p-10 hidden md:block">
+                    <p class="text-dark-forest font-bold text-2xl uppercase italic">No Compromise.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-32 px-6 md:px-20 max-w-4xl mx-auto">
+            <h2 class="serif text-5xl mb-16 text-center">Inquiries</h2>
+            <div class="border-t border-sage/20">
+                <div class="border-b border-sage/20 py-4">
+                    <button class="faq-btn w-full py-6 flex justify-between items-center text-left font-bold uppercase tracking-widest text-sm hover:text-gold transition-colors">Appointment Protocol</button>
+                    <div class="faq-content hidden py-6 text-xs leading-loose opacity-60 uppercase tracking-widest">We operate a strict 24-hour cancellation policy. Late arrivals of 10 minutes or more may require rescheduling at full cost.</div>
+                </div>
+                <div class="border-b border-sage/20 py-4">
+                    <button class="faq-btn w-full py-6 flex justify-between items-center text-left font-bold uppercase tracking-widest text-sm hover:text-gold transition-colors">Mobile Free Zone</button>
+                    <div class="faq-content hidden py-6 text-xs leading-loose opacity-60 uppercase tracking-widest">To preserve the acoustic integrity of The Quarters, we request all devices be silenced during your session.</div>
+                </div>
+            </div>
+        </section>
+
+        <footer id="contact" class="bg-dark-forest pt-32 pb-12 px-6 border-t border-sage/10">
+            <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-20 mb-20">
+                <div>
+                    <h2 class="serif text-7xl md:text-9xl mb-10 italic">Visit Us.</h2>
+                    <div class="space-y-6 text-xs tracking-[0.4em] uppercase text-sage">
+                        <p>12 Savile Row, London, UK</p>
+                        <p>Mon - Sat [ 10:00 - 20:00 ]</p>
+                        <p>Email: HQ@THEQUARTERS.COM</p>
+                    </div>
+                </div>
+                <form class="space-y-8">
+                    <input type="text" placeholder="NAME" class="w-full bg-transparent border-b border-sage/20 py-4 outline-none focus:border-gold transition">
+                    <input type="email" placeholder="EMAIL" class="w-full bg-transparent border-b border-sage/20 py-4 outline-none focus:border-gold transition">
+                    <textarea placeholder="MESSAGE" class="w-full bg-transparent border-b border-sage/20 py-4 outline-none focus:border-gold transition"></textarea>
+                    <button class="bg-white text-dark-forest px-12 py-5 font-bold uppercase tracking-widest text-xs">Transmit</button>
+                </form>
+            </div>
+            <div class="border-t border-sage/10 pt-12 flex flex-col md:flex-row justify-between items-center gap-8">
+                <div class="flex gap-8 text-sage text-xl">
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-tiktok"></i></a>
+                    <a href="#"><i class="fab fa-whatsapp"></i></a>
+                </div>
+                <p class="text-[9px] tracking-[0.6em] uppercase opacity-30 text-center">© 2026 The Quarters Elite Grooming • All Rights Reserved</p>
+            </div>
+        </footer>
+    </main>
+
+    <div class="fixed bottom-0 left-0 w-full h-16 bg-dark-forest border-t border-sage/20 flex md:hidden z-[100]">
+        <a href="tel:+" class="flex-1 flex items-center justify-center border-r border-sage/20 text-gold"><i class="fas fa-phone"></i></a>
+        <a href="https://wa.me/+" class="flex-1 flex items-center justify-center border-r border-sage/20 text-green-500"><i class="fab fa-whatsapp text-2xl"></i></a>
+        <a href="#book" class="flex-[3] flex items-center justify-center bg-gold text-dark-forest font-bold uppercase text-[10px] tracking-widest">Reserve Session</a>
+    </div>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ once: true, duration: 1000 });
+
+        function toggleMenu() {
+            document.getElementById('menu-overlay').classList.toggle('open');
+        }
+
+        // FAQ Toggle Logic
+        document.querySelectorAll('.faq-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                btn.classList.toggle('active');
+                const content = btn.nextElementSibling;
+                content.classList.toggle('hidden');
+            });
+        });
+
+        // Stats Counter Logic
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const target = +entry.target.getAttribute('data-target');
+                    let count = 0;
+                    const increment = target / 50;
+                    const update = () => {
+                        if (count < target) {
+                            count += increment;
+                            entry.target.innerText = Math.ceil(count);
+                            setTimeout(update, 30);
+                        } else {
+                            entry.target.innerText = target;
+                        }
+                    };
+                    update();
+                }
+            });
+        }, { threshold: 1 });
+        document.querySelectorAll('.counter').forEach(c => observer.observe(c));
+    </script>
+</body>
+</html>
