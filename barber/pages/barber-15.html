@@ -21,20 +21,20 @@
             color: white;
             font-family: 'Inter', sans-serif;
             overflow-x: hidden;
-            padding-bottom: 70px;
+            padding-bottom: 80px; /* Space for bottom bar */
         }
 
         .font-bold-display { font-family: 'Archivo Black', sans-serif; }
         .font-funky { font-family: 'Bungee', cursive; }
 
-        /* --- BRAND LIME SPLASH MENU --- */
+        /* --- WATER SPLASH MENU --- */
         #splash-nav {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: var(--neon-lime);
+            background: var(--electric-purple);
             z-index: 200;
             clip-path: circle(0% at 90% 5%);
             transition: clip-path 0.8s cubic-bezier(0.77, 0, 0.175, 1);
@@ -47,10 +47,8 @@
             clip-path: circle(150% at 90% 5%); 
             pointer-events: auto;
         }
-        #splash-nav a { color: var(--deep-dark); }
-        #splash-nav a:hover { color: var(--electric-purple); }
 
-        /* --- MOBILE ACTION BAR --- */
+        /* --- MOBILE BOTTOM HUB --- */
         .mobile-action-bar {
             position: fixed;
             bottom: 0;
@@ -68,163 +66,179 @@
             align-items: center;
             justify-content: center;
             border-right: 1px solid rgba(255,255,255,0.1);
+            font-weight: 900;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+        }
+        .bar-book {
+            background: var(--neon-lime);
+            color: var(--deep-dark);
+            font-family: 'Bungee', cursive;
+            font-size: 1rem;
         }
 
-        /* --- RESPONSIVE STATS --- */
-        .stat-card {
+        /* Styles kept from previous build */
+        #promo-popup {
+            position: fixed;
+            inset: 0;
+            z-index: 300;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .hair-silhouette {
             background: var(--street-gray);
-            border: 2px solid var(--electric-purple);
-            padding: 1.5rem;
-            text-align: center;
-            border-radius: 1rem;
+            border: 2px solid var(--neon-lime);
+            transition: 0.3s;
+            cursor: pointer;
         }
-
-        /* Gallery Grid */
-        .gallery-item {
-            aspect-ratio: 1;
-            overflow: hidden;
-            border-radius: 15px;
-            border: 2px solid var(--street-gray);
-        }
-        .gallery-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            filter: grayscale(100%);
-            transition: 0.5s;
-        }
-        .gallery-item:hover img { filter: grayscale(0%); transform: scale(1.1); }
+        .hair-silhouette:hover { background: var(--neon-lime); color: var(--deep-dark); transform: translateY(-10px) rotate(-3deg); }
+        .faq-item { background: var(--street-gray); border-radius: 15px; transition: 0.3s; border: 2px solid transparent; }
+        .faq-item:hover { border-color: var(--electric-purple); }
     </style>
 </head>
 <body>
 
+    <div id="promo-popup">
+        <div class="bg-white text-black p-10 max-w-lg relative border-[10px] border-neon-lime">
+            <button onclick="closePopup()" class="absolute top-4 right-4 font-black text-2xl">X</button>
+            <h2 class="font-funky text-4xl mb-4 text-electric-purple">FRESH REWARD!</h2>
+            <p class="font-bold mb-6 uppercase tracking-tighter">Get 20% OFF your first "Full Overhaul" service. Use code: <span class="bg-black text-white px-2">CHOP20</span></p>
+            <button onclick="closePopup()" class="w-full py-4 bg-black text-white font-bold uppercase tracking-widest">Claim My Chair</button>
+        </div>
+    </div>
+
     <div id="splash-nav">
-        <button onclick="toggleMenu()" class="absolute top-8 right-8 text-black text-4xl font-black">×</button>
-        <div class="text-center space-y-6">
-            <a href="#about" onclick="toggleMenu()" class="block text-4xl font-funky">HERITAGE</a>
-            <a href="#barbers" onclick="toggleMenu()" class="block text-4xl font-funky">THE CREW</a>
-            <a href="#services" onclick="toggleMenu()" class="block text-4xl font-funky">SERVICES</a>
-            <a href="#gallery" onclick="toggleMenu()" class="block text-4xl font-funky">GALLERY</a>
-            <a href="#reviews" onclick="toggleMenu()" class="block text-4xl font-funky">REVIEWS</a>
-            <a href="#contact" onclick="toggleMenu()" class="block text-4xl font-funky">FIND US</a>
+        <button onclick="toggleMenu()" class="absolute top-8 right-8 text-white text-4xl font-black">&times;</button>
+        <div class="text-center text-white space-y-10">
+            <a href="#about" onclick="toggleMenu()" class="block text-5xl font-funky hover:text-neon-lime transition">ABOUT</a>
+            <a href="#services" onclick="toggleMenu()" class="block text-5xl font-funky hover:text-neon-lime transition">SERVICES</a>
+            <a href="#pricing" onclick="toggleMenu()" class="block text-5xl font-funky hover:text-neon-lime transition">PRICING</a>
+            <a href="#contact" onclick="toggleMenu()" class="block text-5xl font-funky hover:text-neon-lime transition">LOCATION</a>
         </div>
     </div>
 
     <nav class="p-6 flex justify-between items-center relative z-[110]">
-        <div class="font-funky text-2xl text-neon-lime">CHOP_SHOP</div>
-        <button onclick="toggleMenu()" class="bg-neon-lime text-black p-3 rounded-full shadow-[4px_4px_0px_#9D00FF]">
-            <i class="fas fa-bolt"></i>
+        <div class="font-funky text-3xl text-neon-lime italic">CHOP_SHOP.exe</div>
+        <button onclick="toggleMenu()" class="text-white text-3xl p-2 bg-street-gray rounded-lg">
+            <i class="fas fa-bars"></i>
         </button>
     </nav>
 
-    <section class="min-h-[80vh] flex items-center px-6 md:px-20">
-        <div class="grid lg:grid-cols-2 gap-10 items-center">
-            <div data-aos="fade-right">
-                <h1 class="text-6xl md:text-[8rem] font-bold-display leading-[0.8] mb-6 uppercase">
-                    FADE<br><span class="text-neon-lime">GODS</span>
-                </h1>
-                <p class="text-lg mb-8 uppercase font-black opacity-70">Street-certified grooming for the bold.</p>
-                <a href="#book" class="inline-block bg-electric-purple text-white px-8 py-4 font-funky text-lg shadow-[6px_6px_0px_#DFFF00]">BOOK APPOINTMENT</a>
-            </div>
-            <div class="hidden lg:block" data-aos="zoom-in">
-                <img src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&q=80&w=800" class="rounded-3xl border-8 border-street-gray">
-            </div>
-        </div>
-    </section>
-
-    <section class="py-20 px-6">
-        <div class="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div class="stat-card" data-aos="fade-up">
-                <i class="fas fa-calendar-alt text-neon-lime mb-2"></i>
-                <div class="text-3xl font-funky counter" data-target="12">0</div>
-                <div class="text-[10px] uppercase font-bold">Years Exp</div>
-            </div>
-            <div class="stat-card" data-aos="fade-up" data-aos-delay="100">
-                <i class="fas fa-users text-neon-lime mb-2"></i>
-                <div class="text-3xl font-funky counter" data-target="8500">0</div>
-                <div class="text-[10px] uppercase font-bold">Clients</div>
-            </div>
-            <div class="stat-card" data-aos="fade-up" data-aos-delay="200">
-                <i class="fas fa-award text-neon-lime mb-2"></i>
-                <div class="text-3xl font-funky counter" data-target="15">0</div>
-                <div class="text-[10px] uppercase font-bold">Awards</div>
-            </div>
-            <div class="stat-card" data-aos="fade-up" data-aos-delay="300">
-                <i class="fas fa-star text-neon-lime mb-2"></i>
-                <div class="text-3xl font-funky">4.9</div>
-                <div class="text-[10px] uppercase font-bold">Rating</div>
-            </div>
-        </div>
-    </section>
-
-    <section id="barbers" class="py-24 px-6 bg-street-gray">
-        <h2 class="font-funky text-4xl mb-12 text-center">THE ELITE CREW</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <div class="text-center" data-aos="fade-up">
-                <div class="w-48 h-48 mx-auto rounded-full border-4 border-neon-lime overflow-hidden mb-4">
-                    <img src="https://images.unsplash.com/photo-1534308143481-c5509e24d2ee?auto=format&fit=crop&q=80&w=400" class="w-full h-full object-cover">
-                </div>
-                <h3 class="font-bold-display text-xl">MARCO "THE BLADE"</h3>
-                <p class="text-xs text-neon-lime uppercase font-bold">Master of Tapers</p>
-            </div>
-            <div class="text-center" data-aos="fade-up" data-aos-delay="100">
-                <div class="w-48 h-48 mx-auto rounded-full border-4 border-electric-purple overflow-hidden mb-4">
-                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400" class="w-full h-full object-cover">
-                </div>
-                <h3 class="font-bold-display text-xl">JAXON FADE</h3>
-                <p class="text-xs text-neon-lime uppercase font-bold">Skin Fade Specialist</p>
-            </div>
-            <div class="text-center" data-aos="fade-up" data-aos-delay="200">
-                <div class="w-48 h-48 mx-auto rounded-full border-4 border-neon-lime overflow-hidden mb-4">
-                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400" class="w-full h-full object-cover">
-                </div>
-                <h3 class="font-bold-display text-xl">LEO SCISSORS</h3>
-                <p class="text-xs text-neon-lime uppercase font-bold">Long Hair Guru</p>
-            </div>
-        </div>
-    </section>
-
-    <section id="gallery" class="py-24 px-6">
-        <h2 class="font-funky text-4xl mb-12 text-center text-neon-lime">FRESH CUTS</h2>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-7xl mx-auto">
-            <div class="gallery-item" data-aos="zoom-in"><img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&w=400"></div>
-            <div class="gallery-item" data-aos="zoom-in"><img src="https://images.unsplash.com/photo-1593702295094-ada74342990e?auto=format&fit=crop&w=400"></div>
-            <div class="gallery-item" data-aos="zoom-in"><img src="https://images.unsplash.com/photo-1605497788044-5a32c7078486?auto=format&fit=crop&w=400"></div>
-            <div class="gallery-item" data-aos="zoom-in"><img src="https://images.unsplash.com/photo-1592647425447-1825310688a2?auto=format&fit=crop&w=400"></div>
-        </div>
-    </section>
-
-    <section id="reviews" class="py-24 px-6 bg-electric-purple">
-        <h2 class="font-funky text-4xl mb-12 text-center text-white">REVIEWS</h2>
-        <div class="max-w-4xl mx-auto space-y-6">
-            <div class="bg-black p-8 rounded-2xl border-l-8 border-neon-lime" data-aos="fade-left">
-                <p class="italic font-bold mb-4 text-lg">"The sharpest fade I've ever had. Marco is a genius."</p>
-                <div class="text-neon-lime font-funky text-xs">- JORDAN K.</div>
-            </div>
-            <div class="bg-black p-8 rounded-2xl border-l-8 border-neon-lime" data-aos="fade-left" data-aos-delay="100">
-                <p class="italic font-bold mb-4 text-lg">"Best vibe in London. Music is 10/10."</p>
-                <div class="text-neon-lime font-funky text-xs">- SAM R.</div>
-            </div>
-        </div>
-    </section>
-
     <div class="mobile-action-bar">
-        <a href="https://wa.me/123" class="bar-item text-green-400 border-r border-white/10">
-            <i class="fab fa-whatsapp text-3xl"></i>
+        <a href="https://wa.me/123" class="bar-item text-green-400">
+            <i class="fab fa-whatsapp text-2xl"></i>
         </a>
-        <a href="tel:+123" class="bar-item text-white border-r border-white/10">
-            <i class="fas fa-phone text-2xl"></i>
+        <a href="tel:+123" class="bar-item text-white">
+            <i class="fas fa-phone text-xl"></i>
         </a>
-        <a href="#book" class="bar-item bg-neon-lime text-black font-funky text-lg">
+        <a href="#book" class="bar-item bar-book">
             BOOK NOW
         </a>
     </div>
 
+    <section class="min-h-screen flex items-center px-6 md:px-20 relative">
+        <div class="grid lg:grid-cols-2 gap-10 items-center w-full">
+            <div data-aos="fade-right">
+                <h1 class="text-7xl md:text-[9rem] font-bold-display leading-[0.8] mb-8 uppercase">
+                    Stay<br><span class="text-neon-lime">Sharp</span><br>Live<br><span class="text-electric-purple">Loud.</span>
+                </h1>
+                <p class="text-xl mb-10 max-w-sm uppercase font-black opacity-80">The neighborhood's loudest grooming sanctuary. No quiet voices. No bad fades.</p>
+                <div class="flex gap-4">
+                    <a href="#book" class="bg-electric-purple text-white px-10 py-5 font-funky text-xl shadow-[8px_8px_0px_#DFFF00]">Grab a Slot</a>
+                </div>
+            </div>
+            <div class="relative" data-aos="zoom-in-left">
+                <div class="border-[15px] border-street-gray rounded-[2rem] overflow-hidden rotate-3 hover:rotate-0 transition-transform duration-500">
+                    <img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&q=80&w=800" alt="Shop Front" class="w-full grayscale hover:grayscale-0 transition duration-700">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-10 bg-electric-purple overflow-hidden border-y-4 border-white">
+        <div class="flex whitespace-nowrap gap-20 font-funky text-4xl text-white opacity-90">
+            <div class="flex items-center gap-10">
+                <span>YEARS: <span class="counter" data-target="10">0</span></span>
+                <span>CHOPPED: <span class="counter" data-target="9500">0</span>+</span>
+                <span>ARTISTS: <span class="counter" data-target="6">0</span></span>
+                <span>FADE_LEVEL: 100%</span>
+            </div>
+        </div>
+    </section>
+
+    <section id="services" class="py-24 px-6 max-w-7xl mx-auto">
+        <h2 class="font-funky text-5xl mb-16 text-electric-purple text-center">THE DAMAGE</h2>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="md:col-span-2 bg-street-gray p-10 rounded-3xl border-b-8 border-neon-lime" data-aos="fade-right">
+                <h3 class="text-4xl font-bold-display mb-4">THE CHOP</h3>
+                <p class="mb-10 opacity-60 uppercase font-bold text-sm">Wash, Cut, Dry, & Fresh Line-up.</p>
+                <span class="text-6xl font-funky text-neon-lime">£35</span>
+            </div>
+            <div class="bg-electric-purple p-10 rounded-3xl flex flex-col justify-between" data-aos="fade-up">
+                <h3 class="text-2xl font-bold-display mb-4">BEARD WORK</h3>
+                <span class="text-4xl font-funky">£20</span>
+            </div>
+            <div class="bg-white text-black p-10 rounded-3xl flex flex-col justify-between" data-aos="fade-left">
+                <h3 class="text-2xl font-bold-display mb-4">THE FULL OVERHAUL</h3>
+                <span class="text-4xl font-funky">£50</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-24 px-6 max-w-3xl mx-auto">
+        <h2 class="font-funky text-4xl mb-12 text-center text-neon-lime">INTEL / FAQ</h2>
+        <div class="space-y-4">
+            <div class="faq-item p-6 cursor-pointer" onclick="toggleFaq(this)">
+                <div class="flex justify-between items-center font-bold uppercase">
+                    <span>Do you take walk-ins?</span>
+                    <i class="fas fa-chevron-down transition-transform"></i>
+                </div>
+                <div class="hidden mt-4 opacity-60 text-sm">We prefer bookings, but if the chair is empty, it's yours. Come by.</div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="py-24 px-6 max-w-7xl mx-auto">
+        <div class="grid lg:grid-cols-2 gap-10">
+            <div class="bg-street-gray p-12 rounded-3xl" data-aos="fade-right">
+                <h2 class="font-funky text-4xl mb-8">HIT US UP</h2>
+                <form class="space-y-6">
+                    <input type="text" placeholder="NAME / ALIAS" class="w-full bg-black border-2 border-electric-purple p-4 outline-none focus:border-neon-lime transition font-bold">
+                    <button class="w-full bg-neon-lime text-black py-4 font-funky text-2xl shadow-[6px_6px_0px_#9D00FF]">SEND IT</button>
+                </form>
+            </div>
+            <div class="rounded-3xl overflow-hidden border-8 border-street-gray h-[400px]">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2482.9!2d-0.14!3d51.5!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNTHCsDMwJzAwLjAiTiAwwrAwNycxMi4wIlc!5e0!3m2!1sen!2suk!4v1642921000000" width="100%" height="100%" style="border:0; filter: invert(90%) hue-rotate(180deg);" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-20 px-6 text-center border-t-8 border-electric-purple bg-street-gray">
+        <div class="font-funky text-5xl text-neon-lime mb-10 italic">CHOP_SHOP</div>
+        <p class="text-[10px] font-black tracking-[0.5em] opacity-40 uppercase">© 2026 THE CHOP SHOP / NO COMPROMISE</p>
+    </footer>
+
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         AOS.init({ duration: 800, once: true });
-        function toggleMenu() { document.getElementById('splash-nav').classList.toggle('open'); }
-        
+
+        function toggleMenu() {
+            document.getElementById('splash-nav').classList.toggle('open');
+        }
+
+        function closePopup() {
+            document.getElementById('promo-popup').style.display = 'none';
+        }
+
+        function toggleFaq(el) {
+            const content = el.querySelector('div:last-child');
+            content.classList.toggle('hidden');
+        }
+
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -232,7 +246,7 @@
                     let count = 0;
                     const update = () => {
                         if (count < target) {
-                            count += Math.ceil(target / 30);
+                            count += Math.ceil(target / 50);
                             entry.target.innerText = count > target ? target : count;
                             setTimeout(update, 30);
                         }
@@ -242,6 +256,8 @@
             });
         });
         document.querySelectorAll('.counter').forEach(c => observer.observe(c));
+
+        setTimeout(() => { document.getElementById('promo-popup').style.display = 'flex'; }, 3000);
     </script>
 </body>
 </html>
