@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE QUARTERS | Hyper-Elite Grooming</title>
+    <title>THE QUARTERS | Hyper-Elite Grooming Lab</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -16,262 +16,241 @@
             --gold: #C5A059;
         }
 
-        body {
+        /* Prevent Horizontal Scroll Globally */
+        html, body {
+            max-width: 100%;
+            overflow-x: hidden;
             background-color: var(--dark-forest);
             color: var(--cream);
             font-family: 'Space Grotesk', sans-serif;
-            overflow-x: hidden;
-            max-width: 100vw;
+            scroll-behavior: smooth;
         }
 
         h1, h2, .serif { font-family: 'Playfair Display', serif; }
 
-        /* Left Portrait Social Bar */
+        /* Left Portrait Social Bar - Desktop Only */
         .social-sidebar {
             position: fixed;
             left: 0;
             top: 0;
             bottom: 0;
-            width: 60px;
+            width: 70px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            gap: 2rem;
-            border-right: 1px solid rgba(139, 168, 142, 0.2);
+            gap: 3rem;
+            border-right: 1px solid rgba(139, 168, 142, 0.1);
             z-index: 50;
             background: var(--dark-forest);
         }
-
         .social-sidebar a {
             writing-mode: vertical-rl;
             text-transform: uppercase;
-            letter-spacing: 0.2em;
-            font-size: 0.7rem;
+            letter-spacing: 0.3em;
+            font-size: 0.65rem;
             color: var(--sage);
-            transition: 0.3s;
+            transition: 0.4s;
         }
+        .social-sidebar a:hover { color: var(--gold); transform: translateY(-5px); }
 
-        .social-sidebar a:hover { color: var(--gold); }
-
-        /* Modern Liquid Menu */
+        /* Liquid Blur Menu */
         #menu-overlay {
             position: fixed;
             inset: 0;
             background: rgba(26, 36, 33, 0.98);
-            backdrop-filter: blur(20px);
+            backdrop-filter: blur(25px);
             z-index: 100;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: 0.6s cubic-bezier(0.85, 0, 0.15, 1);
+            clip-path: circle(0% at 90% 10%);
+            transition: clip-path 0.8s cubic-bezier(0.85, 0, 0.15, 1);
         }
+        #menu-overlay.open { clip-path: circle(150% at 90% 10%); }
 
-        #menu-overlay.open { opacity: 1; pointer-events: auto; }
-
-        /* Floating Stat Hub */
-        .elite-hub {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            z-index: 90;
+        /* Tool Grid */
+        .tool-box {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(139, 168, 142, 0.1);
+            padding: 3rem;
+            transition: 0.5s cubic-bezier(0.19, 1, 0.22, 1);
         }
-
-        .hub-trigger {
-            width: 60px;
-            height: 60px;
-            background: var(--gold);
-            border-radius: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .tool-box:hover {
+            background: var(--sage);
             color: var(--dark-forest);
-            font-weight: bold;
-            box-shadow: 10px 10px 0px var(--sage);
+            transform: scale(1.02);
         }
 
-        /* Continuous Text Marquee */
-        @keyframes ticker {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-        .ticker-wrap { overflow: hidden; width: 100%; background: var(--gold); color: var(--dark-forest); padding: 10px 0; }
-        .ticker-move { display: flex; width: max-content; animation: ticker 20s linear infinite; }
+        /* Stats Counter */
+        .stat-value { font-size: 4rem; font-weight: 900; line-height: 1; margin-bottom: 0.5rem; }
 
-        /* Grid Layout */
-        .elite-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 20px; }
-        
-        .service-card {
-            background: #232E2A;
-            padding: 40px;
-            border-left: 4px solid var(--gold);
-            transition: 0.4s;
-        }
-        .service-card:hover { background: var(--sage); color: var(--dark-forest); }
+        /* Responsive Container */
+        .main-content { margin-left: 0; }
+        @media (min-width: 768px) { .main-content { margin-left: 70px; } }
 
-        /* FAQ Accordion */
-        .faq-box { border-bottom: 1px solid rgba(139, 168, 142, 0.3); }
-        .faq-ans { display: none; padding: 20px 0; font-weight: 300; opacity: 0.8; }
+        /* Marquee */
+        @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        .ticker { display: flex; width: max-content; animation: scroll 30s linear infinite; }
+
+        /* Custom Accordion */
+        .faq-btn:after { content: '+'; font-size: 1.5rem; }
+        .faq-btn.active:after { content: '−'; }
     </style>
 </head>
-<body class="pl-[60px]">
+<body>
 
     <aside class="social-sidebar hidden md:flex">
-        <a href="#">INSTAGRAM</a>
-        <a href="#">TWITTER</a>
-        <a href="#">FACEBOOK</a>
+        <a href="#">Instagram</a>
+        <a href="#">TikTok</a>
+        <a href="#">Facebook</a>
     </aside>
 
-    <nav class="fixed top-0 left-[60px] right-0 z-[110] p-8 flex justify-between items-center bg-transparent">
-        <div class="text-xl font-bold tracking-[0.5em] uppercase">The Quarters</div>
-        <button onclick="toggleMenu()" class="group flex items-center gap-4">
-            <span class="text-xs tracking-widest uppercase opacity-60 group-hover:opacity-100">Index</span>
-            <div class="space-y-1">
-                <div class="w-8 h-[2px] bg-white"></div>
-                <div class="w-4 h-[2px] bg-gold ml-auto"></div>
-            </div>
+    <nav class="fixed top-0 left-0 md:left-[70px] right-0 z-[110] p-6 md:p-10 flex justify-between items-center bg-transparent">
+        <div class="text-xl font-bold tracking-[0.4em] uppercase">The Quarters</div>
+        <button onclick="toggleMenu()" class="w-12 h-12 flex flex-col justify-center items-end gap-1.5 group">
+            <span class="w-8 h-[2px] bg-white transition-all group-hover:w-12"></span>
+            <span class="w-12 h-[2px] bg-gold"></span>
         </button>
     </nav>
 
     <div id="menu-overlay">
-        <button onclick="toggleMenu()" class="absolute top-10 right-10 text-gold text-sm uppercase tracking-widest">Close [x]</button>
-        <div class="text-center space-y-6">
-            <a href="#about" onclick="toggleMenu()" class="serif text-7xl block hover:italic transition">Heritage</a>
-            <a href="#services" onclick="toggleMenu()" class="serif text-7xl block hover:italic transition">Curations</a>
-            <a href="#location" onclick="toggleMenu()" class="serif text-7xl block hover:italic transition">Quarters</a>
-            <a href="#book" onclick="toggleMenu()" class="mt-8 inline-block px-12 py-4 bg-gold text-dark-forest font-bold">RESERVE NOW</a>
+        <button onclick="toggleMenu()" class="absolute top-10 right-10 text-gold uppercase tracking-[0.3em] text-xs">Close Index</button>
+        <div class="space-y-10 text-center">
+            <a href="#about" onclick="toggleMenu()" class="serif text-5xl md:text-8xl block hover:italic transition">Heritage</a>
+            <a href="#services" onclick="toggleMenu()" class="serif text-5xl md:text-8xl block hover:italic transition">Menu</a>
+            <a href="#stats" onclick="toggleMenu()" class="serif text-5xl md:text-8xl block hover:italic transition">Archives</a>
+            <a href="#contact" onclick="toggleMenu()" class="serif text-5xl md:text-8xl block hover:italic transition">Contact</a>
         </div>
     </div>
 
-    <div class="elite-hub">
-        <a href="tel:+" class="hub-trigger"><i class="fas fa-phone"></i></a>
-        <a href="https://wa.me/" class="hub-trigger" style="background: #25D366; box-shadow: 10px 10px 0px #128C7E;"><i class="fab fa-whatsapp text-2xl"></i></a>
-    </div>
-
-    <section class="h-screen flex items-center px-10 relative overflow-hidden">
-        <div class="z-10 max-w-5xl">
-            <span class="text-gold uppercase tracking-[0.8em] text-xs block mb-6" data-aos="fade-right">Est. 2026 London</span>
-            <h1 class="text-7xl md:text-[10rem] leading-[0.85] uppercase mb-8" data-aos="fade-up">Precision<br><span class="serif italic text-sage">Over</span><br>Profile.</h1>
-            <div class="flex flex-col md:flex-row gap-12 items-start md:items-center">
-                <a href="#book" class="px-16 py-6 border border-sage text-sage font-bold hover:bg-sage hover:text-dark-forest transition-all">BOOK SESSION</a>
-                <p class="max-w-xs text-sm opacity-60 leading-relaxed uppercase tracking-wider">A hyper-focused sanctuary for the modern man. We don't just cut hair; we curate identities.</p>
-            </div>
-        </div>
-        <div class="absolute right-[-10%] top-[20%] w-1/2 h-[70%] opacity-20 pointer-events-none">
-            <img src="https://images.unsplash.com/photo-1512690196236-d4da7008d51a?auto=format&fit=crop&q=80&w=800" class="grayscale w-full h-full object-cover">
-        </div>
-    </section>
-
-    <div class="ticker-wrap">
-        <div class="ticker-move uppercase font-bold text-sm tracking-widest">
-            <span>&nbsp; • High Frequency Fades • Hot Towel Therapy • Architectural Shaves • Sculpting Lab • Neighborhood Heritage • &nbsp;</span>
-            <span>&nbsp; • High Frequency Fades • Hot Towel Therapy • Architectural Shaves • Sculpting Lab • Neighborhood Heritage • &nbsp;</span>
-        </div>
-    </div>
-
-    <section class="py-32 px-10">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-20">
-            <div class="text-center md:text-left" data-aos="fade-up">
-                <i class="fas fa-microchip text-gold text-4xl mb-6"></i>
-                <h3 class="serif text-3xl mb-4 italic">Tech-Led Shaving</h3>
-                <p class="opacity-60 text-sm">We utilize micro-precision clippers for the tightest tapers in the city.</p>
-            </div>
-            <div class="text-center md:text-left" data-aos="fade-up" data-aos-delay="100">
-                <i class="fas fa-flask text-gold text-4xl mb-6"></i>
-                <h3 class="serif text-3xl mb-4 italic">Apothecary Lab</h3>
-                <p class="opacity-60 text-sm">Custom-blended oils and scents created specifically for your skin profile.</p>
-            </div>
-            <div class="text-center md:text-left" data-aos="fade-up" data-aos-delay="200">
-                <i class="fas fa-compass text-gold text-4xl mb-6"></i>
-                <h3 class="serif text-3xl mb-4 italic">Elite Pedigree</h3>
-                <div class="text-5xl font-black mt-4 counter" data-target="15">0</div>
-                <p class="text-xs uppercase tracking-widest opacity-40 mt-2">Award Winning Years</p>
-            </div>
-        </div>
-    </section>
-
-    <section id="services" class="py-32 px-10 bg-[#161E1B]">
-        <h2 class="serif text-6xl md:text-8xl mb-20">The Curations</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-sage/20">
-            <div class="service-card" data-aos="fade-up">
-                <span class="text-gold text-xs font-bold">01</span>
-                <h4 class="text-2xl font-bold mt-4 mb-2 uppercase">The Signature Sculpt</h4>
-                <p class="text-sm opacity-50 mb-8 italic">Precision cut, wash, and charcoal mask.</p>
-                <div class="text-3xl serif italic">£75</div>
-            </div>
-            <div class="service-card" data-aos="fade-up" data-aos-delay="100">
-                <span class="text-gold text-xs font-bold">02</span>
-                <h4 class="text-2xl font-bold mt-4 mb-2 uppercase">Blade Architecture</h4>
-                <p class="text-sm opacity-50 mb-8 italic">Straight razor beard sculpt with steam.</p>
-                <div class="text-3xl serif italic">£50</div>
-            </div>
-            <div class="service-card" data-aos="fade-up" data-aos-delay="200">
-                <span class="text-gold text-xs font-bold">03</span>
-                <h4 class="text-2xl font-bold mt-4 mb-2 uppercase">The Lab Ritual</h4>
-                <p class="text-sm opacity-50 mb-8 italic">Full service with scalp therapy.</p>
-                <div class="text-3xl serif italic">£110</div>
-            </div>
-        </div>
-    </section>
-
-    <section class="py-32 px-10 max-w-4xl">
-        <h2 class="serif text-5xl mb-12">Inquiries</h2>
-        <div class="faq-box">
-            <button onclick="toggleFaq(this)" class="w-full py-8 flex justify-between items-center group">
-                <span class="text-xl uppercase tracking-widest group-hover:text-gold transition">Appointment Protocol</span>
-                <i class="fas fa-plus text-xs"></i>
-            </button>
-            <div class="faq-ans">We operate on a strict 15-minute grace period. No-shows are charged at 100% value.</div>
-        </div>
-        <div class="faq-box">
-            <button onclick="toggleFaq(this)" class="w-full py-8 flex justify-between items-center group">
-                <span class="text-xl uppercase tracking-widest group-hover:text-gold transition">The Quarters Policy</span>
-                <i class="fas fa-plus text-xs"></i>
-            </button>
-            <div class="faq-ans">The Lab is a phone-free zone to ensure a premium acoustic environment.</div>
-        </div>
-    </section>
-
-    <section id="location" class="py-32 px-10 border-t border-sage/10">
-        <div class="grid lg:grid-cols-2 gap-20">
-            <div data-aos="fade-right">
-                <h2 class="serif text-6xl mb-8 italic">Find Us.</h2>
-                <div class="space-y-4 uppercase tracking-[0.3em] text-xs">
-                    <p class="text-gold">12 SAVILE ROW, LONDON</p>
-                    <p>MON — SAT [ 10:00 — 20:00 ]</p>
-                    <p>SUN [ 11:00 — 17:00 ]</p>
+    <main class="main-content">
+        <section class="min-h-screen flex items-center px-6 md:px-20 relative overflow-hidden">
+            <div class="z-10 max-w-6xl">
+                <span class="text-gold uppercase tracking-[1em] text-[10px] mb-8 block" data-aos="fade-right">Curated Excellence</span>
+                <h1 class="text-6xl md:text-[11rem] leading-[0.85] uppercase mb-12" data-aos="fade-up" data-aos-delay="200">
+                    Precision<br>
+                    <span class="serif italic text-sage">Redefined.</span>
+                </h1>
+                <div class="flex flex-col md:flex-row gap-12">
+                    <a href="#book" class="bg-gold text-dark-forest px-12 py-5 font-bold uppercase tracking-widest text-sm hover:bg-white transition-colors">Book a Session</a>
+                    <p class="max-w-xs text-xs opacity-50 leading-relaxed uppercase tracking-widest">A hyper-focused sanctuary for the modern connoisseur. We curate identities through architectural barbering.</p>
                 </div>
-                <form class="mt-16 space-y-6">
-                    <input type="text" placeholder="NAME" class="w-full bg-transparent border-b border-sage/40 py-4 outline-none focus:border-gold transition">
-                    <input type="email" placeholder="EMAIL" class="w-full bg-transparent border-b border-sage/40 py-4 outline-none focus:border-gold transition">
-                    <button class="bg-gold text-dark-forest px-10 py-4 font-bold uppercase tracking-widest">Transmit Message</button>
+            </div>
+            <div class="absolute right-[-5%] top-[15%] w-1/2 h-[70%] opacity-10 grayscale pointer-events-none hidden lg:block">
+                <img src="https://images.unsplash.com/photo-1512690196236-d4da7008d51a?auto=format&fit=crop&q=80&w=1200" alt="Barber Lab Front">
+            </div>
+        </section>
+
+        <section id="stats" class="py-24 border-y border-sage/10 bg-[#1d2925]">
+            <div class="max-w-7xl mx-auto px-6 grid grid-cols-2 lg:grid-cols-4 gap-12">
+                <div class="text-center" data-aos="fade-up">
+                    <div class="stat-value counter" data-target="15">0</div>
+                    <div class="text-[10px] uppercase tracking-[0.4em] text-sage">Years Mastery</div>
+                </div>
+                <div class="text-center" data-aos="fade-up" data-aos-delay="100">
+                    <div class="stat-value counter" data-target="98">0</div>
+                    <div class="text-[10px] uppercase tracking-[0.4em] text-sage">% Retention</div>
+                </div>
+                <div class="text-center" data-aos="fade-up" data-aos-delay="200">
+                    <div class="stat-value counter" data-target="6">0</div>
+                    <div class="text-[10px] uppercase tracking-[0.4em] text-sage">Master Crafters</div>
+                </div>
+                <div class="text-center" data-aos="fade-up" data-aos-delay="300">
+                    <div class="stat-value counter" data-target="12000">0</div>
+                    <div class="text-[10px] uppercase tracking-[0.4em] text-sage">Service Hours</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-32 px-6 md:px-20">
+            <h2 class="serif text-5xl md:text-7xl mb-16 italic">Technical Arsenal</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="tool-box" data-aos="zoom-in">
+                    <i class="fas fa-cut text-4xl mb-8"></i>
+                    <h3 class="text-xl font-bold uppercase mb-4">Japanese Steel</h3>
+                    <p class="text-xs opacity-60 leading-loose">We exclusively use hand-forged shears from Kyoto for unrivaled edge retention.</p>
+                </div>
+                <div class="tool-box" data-aos="zoom-in" data-aos-delay="100">
+                    <i class="fas fa-microchip text-4xl mb-8"></i>
+                    <h3 class="text-xl font-bold uppercase mb-4">Magnetic Motors</h3>
+                    <p class="text-xs opacity-60 leading-loose">Precision clippers with high-frequency magnetic motors for surgical-grade tapers.</p>
+                </div>
+                <div class="tool-box" data-aos="zoom-in" data-aos-delay="200">
+                    <i class="fas fa-razor text-4xl mb-8"></i>
+                    <h3 class="text-xl font-bold uppercase mb-4">Straight-Edge Therapy</h3>
+                    <p class="text-xs opacity-60 leading-loose">Disposable platinum blades combined with traditional ozone steaming protocols.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="py-32 px-6 md:px-20 grid lg:grid-cols-2 gap-20 items-center bg-[#1d2925]">
+            <div data-aos="fade-right">
+                <h2 class="serif text-6xl md:text-8xl mb-10 italic">Heritage & Vision</h2>
+                <p class="text-lg text-sage mb-8 leading-relaxed">Born in the heart of London, The Quarters was founded as a rejection of the "fast-barbering" culture. We believe grooming is an architectural dialogue between the barber and the bone structure.</p>
+                <div class="space-y-4">
+                    <div class="flex items-center gap-4"><i class="fas fa-check text-gold"></i> <span class="text-xs uppercase tracking-widest">Private Studio Environment</span></div>
+                    <div class="flex items-center gap-4"><i class="fas fa-check text-gold"></i> <span class="text-xs uppercase tracking-widest">Apothecary-Grade Products</span></div>
+                    <div class="flex items-center gap-4"><i class="fas fa-check text-gold"></i> <span class="text-xs uppercase tracking-widest">Sustainability Focused</span></div>
+                </div>
+            </div>
+            <div class="relative" data-aos="fade-left">
+                <div class="aspect-[4/5] bg-sage/10 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover mix-blend-overlay">
+                </div>
+                <div class="absolute -bottom-10 -left-10 bg-gold p-10 hidden md:block">
+                    <p class="text-dark-forest font-bold text-2xl uppercase italic">No Compromise.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-32 px-6 md:px-20 max-w-4xl mx-auto">
+            <h2 class="serif text-5xl mb-16 text-center">Inquiries</h2>
+            <div class="border-t border-sage/20">
+                <div class="border-b border-sage/20 py-4">
+                    <button class="faq-btn w-full py-6 flex justify-between items-center text-left font-bold uppercase tracking-widest text-sm hover:text-gold transition-colors">Appointment Protocol</button>
+                    <div class="faq-content hidden py-6 text-xs leading-loose opacity-60 uppercase tracking-widest">We operate a strict 24-hour cancellation policy. Late arrivals of 10 minutes or more may require rescheduling at full cost.</div>
+                </div>
+                <div class="border-b border-sage/20 py-4">
+                    <button class="faq-btn w-full py-6 flex justify-between items-center text-left font-bold uppercase tracking-widest text-sm hover:text-gold transition-colors">Mobile Free Zone</button>
+                    <div class="faq-content hidden py-6 text-xs leading-loose opacity-60 uppercase tracking-widest">To preserve the acoustic integrity of The Quarters, we request all devices be silenced during your session.</div>
+                </div>
+            </div>
+        </section>
+
+        <footer id="contact" class="bg-dark-forest pt-32 pb-12 px-6 border-t border-sage/10">
+            <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-20 mb-20">
+                <div>
+                    <h2 class="serif text-7xl md:text-9xl mb-10 italic">Visit Us.</h2>
+                    <div class="space-y-6 text-xs tracking-[0.4em] uppercase text-sage">
+                        <p>12 Savile Row, London, UK</p>
+                        <p>Mon - Sat [ 10:00 - 20:00 ]</p>
+                        <p>Email: HQ@THEQUARTERS.COM</p>
+                    </div>
+                </div>
+                <form class="space-y-8">
+                    <input type="text" placeholder="NAME" class="w-full bg-transparent border-b border-sage/20 py-4 outline-none focus:border-gold transition">
+                    <input type="email" placeholder="EMAIL" class="w-full bg-transparent border-b border-sage/20 py-4 outline-none focus:border-gold transition">
+                    <textarea placeholder="MESSAGE" class="w-full bg-transparent border-b border-sage/20 py-4 outline-none focus:border-gold transition"></textarea>
+                    <button class="bg-white text-dark-forest px-12 py-5 font-bold uppercase tracking-widest text-xs">Transmit</button>
                 </form>
             </div>
-            <div class="grayscale invert h-[600px] border border-sage/20 shadow-2xl overflow-hidden" data-aos="fade-left">
-                <iframe src="http://googleusercontent.com/maps.google.com/embed?pb=!1m18!1m12!1m3!1d2482.9!2d-0.14!3d51.5!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNTHCsDMwJzAwLjAiTiAwwrAwNycxMi4wIlc!5e0!3m2!1sen!2suk!4v1642921000000" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            <div class="border-t border-sage/10 pt-12 flex flex-col md:flex-row justify-between items-center gap-8">
+                <div class="flex gap-8 text-sage text-xl">
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-tiktok"></i></a>
+                    <a href="#"><i class="fab fa-whatsapp"></i></a>
+                </div>
+                <p class="text-[9px] tracking-[0.6em] uppercase opacity-30 text-center">© 2026 The Quarters Elite Grooming • All Rights Reserved</p>
             </div>
-        </div>
-    </section>
+        </footer>
+    </main>
 
-    <footer class="py-20 px-10 bg-black text-center">
-        <div class="serif text-8xl md:text-[15rem] opacity-5 select-none">QUARTERS</div>
-        <div class="flex justify-center gap-12 mt-[-50px] mb-12 text-sage">
-            <a href="#" class="hover:text-gold"><i class="fab fa-instagram text-2xl"></i></a>
-            <a href="#" class="hover:text-gold"><i class="fab fa-tiktok text-2xl"></i></a>
-            <a href="#" class="hover:text-gold"><i class="fab fa-facebook text-2xl"></i></a>
-        </div>
-        <p class="text-[10px] tracking-[0.5em] opacity-40 uppercase">Elite Grooming Lab © 2026 • Curated in London</p>
-    </footer>
-
-    <div class="fixed bottom-0 left-0 w-full h-16 bg-dark-forest flex md:hidden z-[100] border-t border-sage/20">
+    <div class="fixed bottom-0 left-0 w-full h-16 bg-dark-forest border-t border-sage/20 flex md:hidden z-[100]">
         <a href="tel:+" class="flex-1 flex items-center justify-center border-r border-sage/20 text-gold"><i class="fas fa-phone"></i></a>
-        <a href="#book" class="flex-[3] flex items-center justify-center bg-gold text-dark-forest font-bold uppercase text-xs tracking-widest">Reserve a Slot</a>
+        <a href="https://wa.me/+" class="flex-1 flex items-center justify-center border-r border-sage/20 text-green-500"><i class="fab fa-whatsapp text-2xl"></i></a>
+        <a href="#book" class="flex-[3] flex items-center justify-center bg-gold text-dark-forest font-bold uppercase text-[10px] tracking-widest">Reserve Session</a>
     </div>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
@@ -282,26 +261,29 @@
             document.getElementById('menu-overlay').classList.toggle('open');
         }
 
-        function toggleFaq(btn) {
-            const ans = btn.nextElementSibling;
-            const icon = btn.querySelector('i');
-            const isOpen = ans.style.display === "block";
-            
-            ans.style.display = isOpen ? "none" : "block";
-            icon.classList.toggle('fa-plus');
-            icon.classList.toggle('fa-minus');
-        }
+        // FAQ Toggle Logic
+        document.querySelectorAll('.faq-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                btn.classList.toggle('active');
+                const content = btn.nextElementSibling;
+                content.classList.toggle('hidden');
+            });
+        });
 
+        // Stats Counter Logic
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     const target = +entry.target.getAttribute('data-target');
                     let count = 0;
+                    const increment = target / 50;
                     const update = () => {
                         if (count < target) {
-                            count++;
-                            entry.target.innerText = count;
-                            setTimeout(update, 50);
+                            count += increment;
+                            entry.target.innerText = Math.ceil(count);
+                            setTimeout(update, 30);
+                        } else {
+                            entry.target.innerText = target;
                         }
                     };
                     update();
