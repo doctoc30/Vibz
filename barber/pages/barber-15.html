@@ -21,58 +21,74 @@
             color: white;
             font-family: 'Inter', sans-serif;
             overflow-x: hidden;
+            padding-bottom: 80px; /* Space for bottom bar */
         }
 
         .font-bold-display { font-family: 'Archivo Black', sans-serif; }
         .font-funky { font-family: 'Bungee', cursive; }
 
-        /* Bento Box Grid */
-        .bento-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            grid-template-rows: repeat(2, 300px);
-            gap: 20px;
-        }
-
-        /* Funky Float Hub */
-        .floating-hub {
+        /* --- WATER SPLASH MENU --- */
+        #splash-nav {
             position: fixed;
-            bottom: 30px;
-            right: 30px;
-            z-index: 100;
-            background: var(--neon-lime);
-            padding: 10px;
-            border-radius: 50px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            box-shadow: 10px 10px 0px var(--electric-purple);
-        }
-        .hub-icon {
-            width: 50px;
-            height: 50px;
-            background: var(--deep-dark);
-            border-radius: 50%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--electric-purple);
+            z-index: 200;
+            clip-path: circle(0% at 90% 5%);
+            transition: clip-path 0.8s cubic-bezier(0.77, 0, 0.175, 1);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--neon-lime);
-            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none;
         }
-        .hub-icon:hover { transform: scale(1.2) rotate(12deg); background: var(--electric-purple); color: white; }
+        #splash-nav.open { 
+            clip-path: circle(150% at 90% 5%); 
+            pointer-events: auto;
+        }
 
-        /* Pop up Offer */
+        /* --- MOBILE BOTTOM HUB --- */
+        .mobile-action-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 70px;
+            background: var(--street-gray);
+            border-top: 3px solid var(--neon-lime);
+            display: grid;
+            grid-template-columns: 1fr 1fr 2fr;
+            z-index: 150;
+        }
+        .bar-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-right: 1px solid rgba(255,255,255,0.1);
+            font-weight: 900;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+        }
+        .bar-book {
+            background: var(--neon-lime);
+            color: var(--deep-dark);
+            font-family: 'Bungee', cursive;
+            font-size: 1rem;
+        }
+
+        /* Styles kept from previous build */
         #promo-popup {
             position: fixed;
             inset: 0;
-            z-index: 200;
+            z-index: 300;
             background: rgba(0,0,0,0.9);
             display: none;
             align-items: center;
             justify-content: center;
             padding: 20px;
         }
-
         .hair-silhouette {
             background: var(--street-gray);
             border: 2px solid var(--neon-lime);
@@ -80,20 +96,13 @@
             cursor: pointer;
         }
         .hair-silhouette:hover { background: var(--neon-lime); color: var(--deep-dark); transform: translateY(-10px) rotate(-3deg); }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 10px; }
-        ::-webkit-scrollbar-track { background: var(--deep-dark); }
-        ::-webkit-scrollbar-thumb { background: var(--electric-purple); }
-
-        /* Accordion Custom */
         .faq-item { background: var(--street-gray); border-radius: 15px; transition: 0.3s; border: 2px solid transparent; }
         .faq-item:hover { border-color: var(--electric-purple); }
     </style>
 </head>
 <body>
 
-    <div id="promo-popup" class="flex">
+    <div id="promo-popup">
         <div class="bg-white text-black p-10 max-w-lg relative border-[10px] border-neon-lime">
             <button onclick="closePopup()" class="absolute top-4 right-4 font-black text-2xl">X</button>
             <h2 class="font-funky text-4xl mb-4 text-electric-purple">FRESH REWARD!</h2>
@@ -102,21 +111,34 @@
         </div>
     </div>
 
-    <div class="floating-hub">
-        <a href="https://wa.me/" class="hub-icon"><i class="fab fa-whatsapp text-2xl"></i></a>
-        <a href="tel:+" class="hub-icon"><i class="fas fa-phone"></i></a>
-        <a href="#book" class="hub-icon" style="background: var(--electric-purple); color: white;"><i class="fas fa-calendar-check"></i></a>
+    <div id="splash-nav">
+        <button onclick="toggleMenu()" class="absolute top-8 right-8 text-white text-4xl font-black">&times;</button>
+        <div class="text-center text-white space-y-10">
+            <a href="#about" onclick="toggleMenu()" class="block text-5xl font-funky hover:text-neon-lime transition">ABOUT</a>
+            <a href="#services" onclick="toggleMenu()" class="block text-5xl font-funky hover:text-neon-lime transition">SERVICES</a>
+            <a href="#pricing" onclick="toggleMenu()" class="block text-5xl font-funky hover:text-neon-lime transition">PRICING</a>
+            <a href="#contact" onclick="toggleMenu()" class="block text-5xl font-funky hover:text-neon-lime transition">LOCATION</a>
+        </div>
     </div>
 
-    <nav class="p-6 flex justify-between items-center relative z-50">
+    <nav class="p-6 flex justify-between items-center relative z-[110]">
         <div class="font-funky text-3xl text-neon-lime italic">CHOP_SHOP.exe</div>
-        <div class="hidden md:flex gap-8 items-center font-bold text-xs uppercase tracking-widest">
-            <a href="#services" class="hover:text-neon-lime transition">Services</a>
-            <a href="#barbers" class="hover:text-neon-lime transition">The Crew</a>
-            <a href="#pricing" class="hover:text-neon-lime transition">Pricing</a>
-            <a href="#book" class="bg-neon-lime text-black px-6 py-2 rounded-full">Book Now</a>
-        </div>
+        <button onclick="toggleMenu()" class="text-white text-3xl p-2 bg-street-gray rounded-lg">
+            <i class="fas fa-bars"></i>
+        </button>
     </nav>
+
+    <div class="mobile-action-bar">
+        <a href="https://wa.me/123" class="bar-item text-green-400">
+            <i class="fab fa-whatsapp text-2xl"></i>
+        </a>
+        <a href="tel:+123" class="bar-item text-white">
+            <i class="fas fa-phone text-xl"></i>
+        </a>
+        <a href="#book" class="bar-item bar-book">
+            BOOK NOW
+        </a>
+    </div>
 
     <section class="min-h-screen flex items-center px-6 md:px-20 relative">
         <div class="grid lg:grid-cols-2 gap-10 items-center w-full">
@@ -133,9 +155,6 @@
                 <div class="border-[15px] border-street-gray rounded-[2rem] overflow-hidden rotate-3 hover:rotate-0 transition-transform duration-500">
                     <img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&q=80&w=800" alt="Shop Front" class="w-full grayscale hover:grayscale-0 transition duration-700">
                 </div>
-                <div class="absolute -top-10 -right-10 bg-neon-lime text-black p-8 rounded-full font-funky animate-bounce hidden md:block">
-                    OPEN<br>LATE
-                </div>
             </div>
         </div>
     </section>
@@ -148,29 +167,6 @@
                 <span>ARTISTS: <span class="counter" data-target="6">0</span></span>
                 <span>FADE_LEVEL: 100%</span>
             </div>
-            <div class="flex items-center gap-10">
-                <span>YEARS: <span class="counter" data-target="10">0</span></span>
-                <span>CHOPPED: <span class="counter" data-target="9500">0</span>+</span>
-                <span>ARTISTS: <span class="counter" data-target="6">0</span></span>
-                <span>FADE_LEVEL: 100%</span>
-            </div>
-        </div>
-    </section>
-
-    <section class="py-24 px-6 text-center">
-        <h2 class="font-funky text-5xl mb-16">CHOOSE YOUR IDENTITY</h2>
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 max-w-7xl mx-auto">
-            <script>
-                const styles = ['Low Fade', 'Mullet', 'Buzz Cut', 'Taper', 'Mohawk', 'Pompy'];
-                styles.forEach((s, i) => {
-                    document.write(`
-                        <div class="hair-silhouette p-8 rounded-2xl" data-aos="fade-up" data-aos-delay="${i*100}">
-                            <i class="fas fa-user-ninja text-4xl mb-4"></i>
-                            <h4 class="font-bold text-xs uppercase">${s}</h4>
-                        </div>
-                    `);
-                });
-            </script>
         </div>
     </section>
 
@@ -193,13 +189,6 @@
         </div>
     </section>
 
-    <section id="about" class="py-24 px-6 bg-street-gray">
-        <div class="max-w-5xl mx-auto text-center">
-            <h2 class="font-funky text-6xl mb-8">NO RULES. JUST FADES.</h2>
-            <p class="text-xl leading-relaxed font-bold uppercase opacity-70">Started in a garage. Now we're the loudest shop in the city. We don't do boring cuts. We don't do quiet waiting rooms. We do premium work with a punk rock attitude.</p>
-        </div>
-    </section>
-
     <section class="py-24 px-6 max-w-3xl mx-auto">
         <h2 class="font-funky text-4xl mb-12 text-center text-neon-lime">INTEL / FAQ</h2>
         <div class="space-y-4">
@@ -210,13 +199,6 @@
                 </div>
                 <div class="hidden mt-4 opacity-60 text-sm">We prefer bookings, but if the chair is empty, it's yours. Come by.</div>
             </div>
-            <div class="faq-item p-6 cursor-pointer" onclick="toggleFaq(this)">
-                <div class="flex justify-between items-center font-bold uppercase">
-                    <span>What music do you play?</span>
-                    <i class="fas fa-chevron-down transition-transform"></i>
-                </div>
-                <div class="hidden mt-4 opacity-60 text-sm">Only the loudest. Hip-hop, Punk, and Neo-Soul.</div>
-            </div>
         </div>
     </section>
 
@@ -226,35 +208,27 @@
                 <h2 class="font-funky text-4xl mb-8">HIT US UP</h2>
                 <form class="space-y-6">
                     <input type="text" placeholder="NAME / ALIAS" class="w-full bg-black border-2 border-electric-purple p-4 outline-none focus:border-neon-lime transition font-bold">
-                    <input type="email" placeholder="EMAIL" class="w-full bg-black border-2 border-electric-purple p-4 outline-none focus:border-neon-lime transition font-bold">
-                    <textarea placeholder="MESSAGE" class="w-full bg-black border-2 border-electric-purple p-4 outline-none focus:border-neon-lime transition font-bold" rows="4"></textarea>
                     <button class="w-full bg-neon-lime text-black py-4 font-funky text-2xl shadow-[6px_6px_0px_#9D00FF]">SEND IT</button>
                 </form>
             </div>
-            <div class="rounded-3xl overflow-hidden border-8 border-street-gray h-[500px]">
-                <iframe src="http://googleusercontent.com/maps.google.com/embed?pb=!1m18!1m12!1m3!1d2482.9!2d-0.14!3d51.5!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNTHCsDMwJzAwLjAiTiAwwrAwNycxMi4wIlc!5e0!3m2!1sen!2suk!4v1642921000000" width="100%" height="100%" style="border:0; filter: invert(90%) hue-rotate(180deg);" allowfullscreen="" loading="lazy"></iframe>
+            <div class="rounded-3xl overflow-hidden border-8 border-street-gray h-[400px]">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2482.9!2d-0.14!3d51.5!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNTHCsDMwJzAwLjAiTiAwwrAwNycxMi4wIlc!5e0!3m2!1sen!2suk!4v1642921000000" width="100%" height="100%" style="border:0; filter: invert(90%) hue-rotate(180deg);" allowfullscreen="" loading="lazy"></iframe>
             </div>
         </div>
     </section>
 
     <footer class="py-20 px-6 text-center border-t-8 border-electric-purple bg-street-gray">
         <div class="font-funky text-5xl text-neon-lime mb-10 italic">CHOP_SHOP</div>
-        <div class="flex justify-center gap-12 mb-12 text-3xl">
-            <a href="#" class="hover:text-electric-purple transition"><i class="fab fa-instagram"></i></a>
-            <a href="#" class="hover:text-electric-purple transition"><i class="fab fa-tiktok"></i></a>
-            <a href="#" class="hover:text-electric-purple transition"><i class="fab fa-youtube"></i></a>
-        </div>
-        <p class="text-[10px] font-black tracking-[0.5em] opacity-40 uppercase">© 2026 THE CHOP SHOP / NO COMPROMISE / ALL RIGHTS RESERVED</p>
+        <p class="text-[10px] font-black tracking-[0.5em] opacity-40 uppercase">© 2026 THE CHOP SHOP / NO COMPROMISE</p>
     </footer>
-
-    <div class="fixed bottom-0 left-0 w-full h-20 bg-black border-t-4 border-neon-lime flex md:hidden z-[100]">
-        <a href="tel:+" class="flex-1 flex items-center justify-center text-neon-lime border-r border-street-gray"><i class="fas fa-phone text-2xl"></i></a>
-        <a href="#book" class="flex-[3] flex items-center justify-center bg-neon-lime text-black font-funky text-xl">BOOK CHAIR</a>
-    </div>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         AOS.init({ duration: 800, once: true });
+
+        function toggleMenu() {
+            document.getElementById('splash-nav').classList.toggle('open');
+        }
 
         function closePopup() {
             document.getElementById('promo-popup').style.display = 'none';
@@ -262,21 +236,17 @@
 
         function toggleFaq(el) {
             const content = el.querySelector('div:last-child');
-            const icon = el.querySelector('i');
             content.classList.toggle('hidden');
-            icon.classList.toggle('rotate-180');
         }
 
-        // Stats Counter
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     const target = +entry.target.getAttribute('data-target');
                     let count = 0;
-                    const increment = Math.ceil(target / 40);
                     const update = () => {
                         if (count < target) {
-                            count += increment;
+                            count += Math.ceil(target / 50);
                             entry.target.innerText = count > target ? target : count;
                             setTimeout(update, 30);
                         }
@@ -284,13 +254,10 @@
                     update();
                 }
             });
-        }, { threshold: 1 });
+        });
         document.querySelectorAll('.counter').forEach(c => observer.observe(c));
 
-        // Auto-show popup after 3 seconds
-        setTimeout(() => {
-            document.getElementById('promo-popup').style.display = 'flex';
-        }, 3000);
+        setTimeout(() => { document.getElementById('promo-popup').style.display = 'flex'; }, 3000);
     </script>
 </body>
 </html>
