@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QTRS | THE SCULPTURE LAB</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --lime: #D4FF80;
+            --matte-black: #121212;
+            --matte-white: #F5F5F5;
+            --glass: rgba(255, 255, 255, 0.03);
+        }
+
+        body {
+            background-color: var(--matte-white);
+            color: var(--matte-black);
+            font-family: 'Space Grotesk', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .heading-font { font-family: 'Syncopate', sans-serif; text-transform: uppercase; letter-spacing: -0.05em; }
+
+        /* --- Floating Left Comms --- */
+        .side-comm {
+            position: fixed; left: 20px; top: 50%; transform: translateY(-50%);
+            display: flex; flex-direction: column; gap: 10px; z-index: 100;
+        }
+        .comm-link {
+            width: 45px; height: 45px; background: var(--matte-black); color: var(--lime);
+            display: flex; justify-content: center; align-items: center;
+            border-radius: 5px; transition: 0.3s;
+        }
+        .comm-link:hover { transform: translateX(5px); background: var(--lime); color: var(--matte-black); }
+
+        /* --- Hero Mannequin Animation --- */
+        .mannequin-hero {
+            position: absolute; right: 0; top: 10%; width: 40%;
+            filter: drop-shadow(0 20px 50px rgba(0,0,0,0.1));
+            animation: float 6s ease-in-out infinite;
+            z-index: -1;
+        }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-30px); } }
+
+        /* --- Glass & Blur Styling --- */
+        .glass-ui {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0,0,0,0.05);
+            border-radius: 20px;
+        }
+
+        .gradient-blur {
+            position: absolute; width: 40vw; height: 40vw;
+            background: radial-gradient(circle, rgba(212, 255, 128, 0.2) 0%, transparent 70%);
+            filter: blur(60px); z-index: -2;
+        }
+
+        /* --- Before/After Slider --- */
+        .ba-slider { position: relative; width: 100%; height: 400px; overflow: hidden; border-radius: 20px; }
+        .ba-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+        .ba-overlay { width: 50%; border-right: 2px solid var(--lime); }
+
+        /* --- Typewriter --- */
+        .typewriter { border-right: 3px solid var(--lime); white-space: nowrap; overflow: hidden; animation: typing 3.5s steps(30, end), blink .75s step-end infinite; }
+        @keyframes typing { from { width: 0 } to { width: 100% } }
+        @keyframes blink { from, to { border-color: transparent } 50% { border-color: var(--lime); } }
+    </style>
+</head>
+<body>
+
+    <div class="gradient-blur" style="top: -10%; left: -10%;"></div>
+    <div class="gradient-blur" style="bottom: -10%; right: -10%;"></div>
+
+    <nav class="fixed top-0 w-full p-6 md:px-12 flex justify-between items-center z-50 bg-white/50 backdrop-blur-md">
+        <div class="heading-font font-bold text-xl tracking-tighter">SCULPT<span class="text-lime-500">.LAB</span></div>
+        <button onclick="toggleMenu()" class="w-10 h-10 flex flex-col justify-center items-center gap-2 group">
+            <div class="w-8 h-[2px] bg-black"></div>
+            <div class="w-5 h-[2px] bg-lime-500 self-end transition-all group-hover:w-8"></div>
+        </button>
+    </nav>
+
+    <aside class="side-comm hidden md:flex">
+        <a href="https://wa.me/+" class="comm-link"><i class="fab fa-whatsapp"></i></a>
+        <a href="tel:+" class="comm-link"><i class="fas fa-phone"></i></a>
+        <a href="#contact" class="comm-link"><i class="fas fa-map-marker-alt"></i></a>
+    </aside>
+
+    <div id="nav-overlay" class="fixed inset-0 bg-zinc-950 z-[100] hidden flex-col justify-center p-12 text-white">
+        <button onclick="toggleMenu()" class="absolute top-10 right-10 heading-font text-xs text-lime-400">Close</button>
+        <div class="space-y-6 heading-font text-5xl italic">
+            <a href="#services" class="block hover:text-lime-400" onclick="toggleMenu()">Services</a>
+            <a href="#shop" class="block hover:text-lime-400" onclick="toggleMenu()">Shop</a>
+            <a href="#reviews" class="block hover:text-lime-400" onclick="toggleMenu()">Reviews</a>
+            <a href="#contact" class="block hover:text-lime-400" onclick="toggleMenu()">Location</a>
+        </div>
+    </div>
+
+    <main class="mt-32 px-6 md:px-20">
+        <section class="relative min-h-[85vh] flex flex-col justify-center">
+            <div class="max-w-4xl z-10">
+                <p class="uppercase text-[10px] tracking-[0.5em] text-zinc-400 mb-4" data-aos="fade-right">Precision Aesthetic • London</p>
+                <h1 class="heading-font text-5xl md:text-8xl leading-tight mb-8">
+                    <span class="typewriter block">Anatomy of Style</span>
+                    <span class="text-lime-500">Engineered.</span>
+                </h1>
+                <p class="text-xl max-w-lg mb-12 opacity-60">We remove the variable of the human face to focus on the pure architecture of the cut. Matte finish. Master precision.</p>
+                
+                <div class="glass-ui p-4 md:w-max flex flex-col md:flex-row gap-4 border-l-4 border-lime-500 shadow-xl" data-aos="fade-up">
+                    <select class="p-4 bg-transparent outline-none font-bold text-sm uppercase">
+                        <option>CHOOSE ARCHITECTURE</option>
+                        <option>Matte Skin Fade</option>
+                        <option>Structural Sculpt</option>
+                        <option>Geometric Beard</option>
+                    </select>
+                    <button class="bg-black text-white px-10 py-4 font-bold text-xs uppercase hover:bg-lime-500 hover:text-black transition-all">Check Availability</button>
+                </div>
+            </div>
+            <img src="https://images.unsplash.com/photo-1549490349-8643362247b5?auto=format&fit=crop&q=80&w=800" class="mannequin-hero grayscale opacity-80" alt="Sculpted Head">
+        </section>
+
+        <section class="py-20 grid grid-cols-2 md:grid-cols-3 gap-4" data-aos="fade-up">
+            <div class="aspect-video bg-zinc-900 rounded-lg overflow-hidden flex items-center justify-center text-lime-500"><i class="fas fa-play"></i></div>
+            <div class="aspect-video bg-zinc-200 rounded-lg"></div>
+            <div class="aspect-video bg-zinc-300 rounded-lg"></div>
+            <div class="aspect-video bg-zinc-200 rounded-lg"></div>
+            <div class="aspect-video bg-zinc-900 rounded-lg flex items-center justify-center text-lime-500"><i class="fas fa-play"></i></div>
+            <div class="aspect-video bg-zinc-300 rounded-lg"></div>
+        </section>
+
+        <section id="services" class="py-24 border-t border-zinc-200">
+            <h2 class="heading-font text-4xl mb-16">The Protocols</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="glass-ui p-8 hover:bg-black hover:text-white transition group" data-aos="fade-up">
+                    <div class="w-12 h-12 bg-lime-500 rounded-full mb-6 group-hover:scale-125 transition"></div>
+                    <h3 class="heading-font text-lg mb-4">Precision Fade</h3>
+                    <p class="text-xs opacity-60">Technical removal of volume using high-speed German steel.</p>
+                </div>
+                <div class="glass-ui p-8 hover:bg-black hover:text-white transition group" data-aos="fade-up" data-aos-delay="100">
+                    <div class="w-12 h-12 bg-zinc-100 rounded-full mb-6"></div>
+                    <h3 class="heading-font text-lg mb-4">Beard Geometry</h3>
+                    <p class="text-xs opacity-60">Linear realignment of facial structure via straight-edge.</p>
+                </div>
+                <div class="md:col-span-2 glass-ui p-8 bg-zinc-950 text-white">
+                    <div class="flex justify-between items-center mb-4"><span class="heading-font">Cut Protocol</span><span class="text-lime-500">$50</span></div>
+                    <div class="flex justify-between items-center mb-4"><span class="heading-font">The Lab Works</span><span class="text-lime-500">$95</span></div>
+                    <div class="flex justify-between items-center"><span class="heading-font">Maintenance</span><span class="text-lime-500">$30</span></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-24">
+            <h2 class="heading-font text-4xl mb-16 text-center">Sculpture Gallery</h2>
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="aspect-[3/4] bg-zinc-100 rounded-xl overflow-hidden grayscale"><img src="https://images.unsplash.com/photo-1549490349-8643362247b5?auto=format&fit=crop&q=80&w=400" class="w-full h-full object-cover"></div>
+                <div class="aspect-[3/4] bg-zinc-900 rounded-xl overflow-hidden"><img src="https://images.unsplash.com/photo-1549490349-8643362247b5?auto=format&fit=crop&q=80&w=400" class="w-full h-full object-cover opacity-50"></div>
+                <div class="aspect-[3/4] bg-zinc-100 rounded-xl overflow-hidden grayscale"><img src="https://images.unsplash.com/photo-1549490349-8643362247b5?auto=format&fit=crop&q=80&w=400" class="w-full h-full object-cover"></div>
+                <div class="aspect-[3/4] bg-zinc-900 rounded-xl overflow-hidden"><img src="https://images.unsplash.com/photo-1549490349-8643362247b5?auto=format&fit=crop&q=80&w=400" class="w-full h-full object-cover opacity-50"></div>
+            </div>
+        </section>
+
+        <section class="py-24 max-w-4xl mx-auto">
+            <h2 class="heading-font text-2xl mb-10 italic">Evolution Analysis</h2>
+            <div class="ba-slider">
+                <img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&q=80&w=800" class="ba-img grayscale">
+                <div class="ba-overlay absolute inset-0 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&q=80&w=800" class="w-[200%] max-w-none h-full object-cover grayscale-0">
+                </div>
+                <div class="absolute bottom-6 left-6 heading-font text-xs bg-lime-500 p-2">Slider Control</div>
+            </div>
+        </section>
+
+        <section id="shop" class="py-24">
+            <h2 class="heading-font text-4xl mb-12">Product Infrastructure</h2>
+            <div class="grid grid-cols-2 lg:grid-cols-6 gap-6">
+                <div class="text-center group" data-aos="fade-up">
+                    <div class="aspect-square bg-white border border-zinc-100 rounded-full mb-4 flex items-center justify-center group-hover:bg-lime-50 transition">
+                        <i class="fas fa-flask text-zinc-300"></i>
+                    </div>
+                    <span class="heading-font text-[10px]">Clay 01</span>
+                    <p class="font-bold text-xs">$25</p>
+                </div>
+                <div class="text-center group" data-aos="fade-up" data-aos-delay="100"><div class="aspect-square bg-white border border-zinc-100 rounded-full mb-4"></div><span class="heading-font text-[10px]">Mist 02</span></div>
+                <div class="text-center group" data-aos="fade-up" data-aos-delay="200"><div class="aspect-square bg-white border border-zinc-100 rounded-full mb-4"></div><span class="heading-font text-[10px]">Oil 03</span></div>
+                <div class="text-center group" data-aos="fade-up" data-aos-delay="300"><div class="aspect-square bg-white border border-zinc-100 rounded-full mb-4"></div><span class="heading-font text-[10px]">Wash 04</span></div>
+                <div class="text-center group" data-aos="fade-up" data-aos-delay="400"><div class="aspect-square bg-white border border-zinc-100 rounded-full mb-4"></div><span class="heading-font text-[10px]">Powder 05</span></div>
+                <div class="text-center group" data-aos="fade-up" data-aos-delay="500"><div class="aspect-square bg-white border border-zinc-100 rounded-full mb-4"></div><span class="heading-font text-[10px]">Balm 06</span></div>
+            </div>
+        </section>
+
+        <section class="my-24 bg-zinc-950 rounded-[40px] p-20 text-center text-white relative overflow-hidden">
+            <div class="relative z-10">
+                <h2 class="heading-font text-5xl mb-8">Enter the Lab</h2>
+                <button class="bg-lime-500 text-black px-12 py-6 heading-font text-sm hover:scale-110 transition">Book Chair</button>
+            </div>
+            <div class="absolute top-0 right-0 w-64 h-64 bg-lime-500/20 blur-[100px]"></div>
+        </section>
+
+        <section id="reviews" class="py-24 grid lg:grid-cols-2 gap-20">
+            <div>
+                <h2 class="heading-font text-4xl mb-12">Client Telemetry</h2>
+                <div class="space-y-6">
+                    <div class="glass-ui p-6 italic border-l-2 border-lime-500">
+                        "The most sterile yet artistic haircut in the city. Truly a lab environment."
+                        <span class="block mt-4 heading-font text-[10px]">— Verified Subject 77</span>
+                    </div>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="glass-ui p-6 text-center">
+                    <div class="w-20 h-20 bg-zinc-900 rounded-full mx-auto mb-4 border-2 border-lime-500"></div>
+                    <span class="heading-font text-xs">Technician A</span>
+                </div>
+                <div class="glass-ui p-6 text-center">
+                    <div class="w-20 h-20 bg-zinc-200 rounded-full mx-auto mb-4 border-2 border-lime-500"></div>
+                    <span class="heading-font text-xs">Technician B</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="py-24 grid lg:grid-cols-2 gap-12 border-t border-zinc-200">
+            <div class="glass-ui p-12">
+                <h3 class="heading-font text-3xl mb-10">Location Hub</h3>
+                <div class="space-y-4 font-bold uppercase text-xs tracking-widest mb-12">
+                    <div class="flex justify-between"><span>Mon - Fri</span><span>09:00 - 21:00</span></div>
+                    <div class="flex justify-between text-lime-600"><span>Sat - Sun</span><span>10:00 - 18:00</span></div>
+                </div>
+                <p class="heading-font text-sm mb-2">12 Savile Row, London</p>
+                <form class="space-y-4 mt-10">
+                    <input type="text" placeholder="SUBJECT NAME" class="w-full p-4 bg-zinc-100 border-none outline-none text-xs">
+                    <button class="w-full bg-black text-white p-4 heading-font text-[10px]">Submit Protocol</button>
+                </form>
+            </div>
+            <div class="h-[500px] rounded-[30px] overflow-hidden border border-zinc-100 grayscale">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2483.1558284564283!2d-0.1420785!3d51.510344!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x487605151522238d%3A0xc609c91039860472!2sSavile%20Row%2C%20London!5e0!3m2!1sen!2suk!4v1675850000000" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-zinc-950 text-white py-20 px-12 mt-24">
+        <div class="flex flex-col md:flex-row justify-between items-start gap-12">
+            <div>
+                <div class="heading-font text-4xl mb-4 text-lime-400">QTRS.LAB</div>
+                <p class="text-xs opacity-40 uppercase tracking-widest">Architectural Grooming Laboratory</p>
+            </div>
+            <div class="flex gap-12 text-xs heading-font">
+                <a href="#" class="hover:text-lime-400">Instagram</a>
+                <a href="#" class="hover:text-lime-400">Terms</a>
+            </div>
+        </div>
+    </footer>
+
+    <div class="fixed bottom-0 left-0 w-full flex md:hidden z-50 bg-white border-t border-zinc-100">
+        <a href="tel:+" class="flex-1 p-6 text-center heading-font text-[10px] border-r border-zinc-100">Call</a>
+        <a href="#book" class="flex-1 p-6 text-center heading-font text-[10px] bg-lime-500">Book</a>
+    </div>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init();
+        function toggleMenu() {
+            const m = document.getElementById('nav-overlay');
+            m.classList.toggle('hidden');
+            m.classList.toggle('flex');
+        }
+    </script>
+</body>
+</html>
