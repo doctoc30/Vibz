@@ -3,201 +3,287 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE QUARTERS | ELITE GENTLEMANS LAB</title>
+    <title>THE QUARTERS | THE CHOP LAB 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Outfit:wght@300;600;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@800&family=Public+Sans:wght@400;900&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --cream: #F5F2EB;
-            --bold-black: #0A0A0A;
-            --accent: #D4AF37;
+            --burgundy: #800020;
+            --acid-cream: #FFFDF7;
+            --bold-black: #121212;
+            --white: #FFFFFF;
+            --shadow: 8px 8px 0px var(--bold-black);
         }
 
         body {
-            background-color: var(--cream);
+            background-color: var(--acid-cream);
             color: var(--bold-black);
-            font-family: 'Outfit', sans-serif;
-            overflow-x: hidden;
+            font-family: 'Public Sans', sans-serif;
+            scroll-behavior: smooth;
         }
 
-        .bold-title { font-family: 'Archivo Black', sans-serif; text-transform: uppercase; line-height: 0.85; }
+        .heavy-font { font-family: 'Syne', sans-serif; text-transform: uppercase; }
+
+        /* --- 2026 Brutalist Components --- */
+        .brutal-card {
+            background: var(--white);
+            border: 4px solid var(--bold-black);
+            box-shadow: var(--shadow);
+            transition: 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .brutal-card:hover { 
+            transform: translate(-4px, -4px); 
+            box-shadow: 12px 12px 0px var(--burgundy); 
+        }
+
+        .btn-burgundy {
+            background: var(--burgundy);
+            color: white;
+            padding: 1rem 2rem;
+            border: 3px solid var(--bold-black);
+            box-shadow: 4px 4px 0px var(--bold-black);
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+        .btn-burgundy:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px var(--bold-black); }
 
         /* --- Welcome Reveal --- */
-        #reveal-screen {
-            position: fixed; inset: 0; background: var(--bold-black);
-            z-index: 1000; display: flex; justify-content: center; align-items: center;
-            transition: transform 1s cubic-bezier(1, 0, 0, 1);
+        #loader {
+            position: fixed; inset: 0; background: var(--burgundy); z-index: 1000;
+            display: flex; justify-content: center; align-items: center;
+            transition: transform 0.8s cubic-bezier(1, 0, 0, 1);
         }
-        #reveal-screen.hide { transform: translateY(-100%); }
+        #loader.off { transform: translateY(-100%); }
 
-        /* --- Floating Left Comm Bar --- */
+        /* --- Left Side Comm Bar --- */
         .comm-bar {
-            position: fixed; left: 20px; top: 50%; transform: translateY(-50%);
-            display: flex; flex-direction: column; gap: 15px; z-index: 90;
+            position: fixed; left: 0; top: 50%; transform: translateY(-50%);
+            display: flex; flex-direction: column; z-index: 100;
         }
-        .comm-btn {
-            width: 50px; height: 50px; border-radius: 15px; background: var(--bold-black);
-            color: white; display: flex; justify-content: center; align-items: center;
-            font-size: 1.2rem; transition: 0.3s; box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-        .comm-btn:hover { background: var(--accent); transform: scale(1.1); }
-
-        /* --- Fullscreen Hamburger Menu --- */
-        #nav-overlay {
-            position: fixed; inset: 0; background: var(--bold-black);
-            z-index: 200; clip-path: circle(0% at 95% 5%);
-            transition: clip-path 0.8s cubic-bezier(0.85, 0, 0.15, 1);
-            display: flex; flex-direction: column; justify-content: center; padding: 10%;
-        }
-        #nav-overlay.active { clip-path: circle(150% at 95% 5%); }
-        .nav-link { font-size: 12vw; color: var(--cream); transition: 0.4s; line-height: 1; }
-        .nav-link:hover { color: var(--accent); -webkit-text-stroke: 2px var(--cream); color: transparent; }
-
-        /* --- 2026 UI Blocks --- */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.5);
-            backdrop-filter: blur(10px);
-            border: 2px solid var(--bold-black);
-            border-radius: 30px;
-            padding: 40px;
+        .comm-item {
+            background: var(--white); border: 3px solid var(--bold-black);
+            padding: 15px; margin-left: -3px; border-left: none;
             transition: 0.3s;
         }
-        .glass-card:hover { background: var(--bold-black); color: var(--cream); }
+        .comm-item:hover { background: var(--burgundy); color: white; padding-left: 25px; }
 
-        .form-input {
-            background: transparent; border-bottom: 4px solid var(--bold-black);
-            padding: 15px 0; font-size: 1.2rem; width: 100%; outline: none;
-            font-weight: 900; text-transform: uppercase;
-        }
-
-        /* Review Slider Simulation */
-        .review-track { display: flex; gap: 20px; overflow-x: auto; padding-bottom: 20px; scrollbar-width: none; }
+        /* Typewriter Animation */
+        .type-wrap { display: inline-block; overflow: hidden; border-right: .15em solid var(--burgundy); white-space: nowrap; animation: typing 3s steps(30, end), blink .75s step-end infinite; }
+        @keyframes typing { from { width: 0 } to { width: 100% } }
+        @keyframes blink { from, to { border-color: transparent } 50% { border-color: var(--burgundy); } }
     </style>
 </head>
 <body>
 
-    <div id="reveal-screen">
-        <h1 class="bold-title text-white text-4xl tracking-tighter animate-pulse">The Quarters</h1>
+    <div id="loader">
+        <h1 class="heavy-font text-white text-5xl italic animate-pulse">ESTABLISHING VIBE...</h1>
     </div>
 
-    <div class="comm-bar hidden md:flex">
-        <a href="https://wa.me/yournumber" class="comm-btn"><i class="fab fa-whatsapp"></i></a>
-        <a href="tel:+123456789" class="comm-btn"><i class="fas fa-phone-alt"></i></a>
-        <a href="#" class="comm-btn"><i class="fas fa-calendar-check"></i></a>
-    </div>
+    <aside class="comm-bar hidden md:flex">
+        <a href="https://wa.me/+" class="comm-item"><i class="fab fa-whatsapp fa-xl"></i></a>
+        <a href="tel:+" class="comm-item text-burgundy"><i class="fas fa-phone-alt fa-xl"></i></a>
+        <a href="#contact" class="comm-item"><i class="fas fa-envelope fa-xl"></i></a>
+    </aside>
 
-    <nav class="fixed top-0 w-full p-8 flex justify-between items-center z-[210]">
-        <div class="bold-title text-2xl tracking-tighter">QTRS.LAB</div>
-        <button onclick="toggleMenu()" class="w-12 h-12 bg-black rounded-full flex flex-col items-center justify-center gap-1 group">
-            <span class="w-6 h-1 bg-white transition-all group-hover:w-4"></span>
-            <span class="w-6 h-1 bg-white"></span>
-        </button>
+    <nav class="fixed top-0 w-full z-50 bg-white border-b-4 border-black p-4 md:px-12 flex justify-between items-center">
+        <div class="heavy-font text-3xl font-black">QTRS<span class="text-burgundy">.</span></div>
+        <div class="hidden lg:flex gap-8 font-black text-xs uppercase">
+            <a href="#about" class="hover:text-burgundy">History</a>
+            <a href="#pricing" class="hover:text-burgundy">Menu</a>
+            <a href="#shop" class="hover:text-burgundy">Shop</a>
+            <a href="#reviews" class="hover:text-burgundy">Reviews</a>
+        </div>
+        <button onclick="toggleMenu()" class="bg-black text-white px-4 py-2 heavy-font text-xs">Menu</button>
     </nav>
 
-    <div id="nav-overlay">
-        <button onclick="toggleMenu()" class="absolute top-10 right-10 text-white text-xl uppercase font-black">Close X</button>
-        <a href="#lab" onclick="toggleMenu()" class="bold-title nav-link">LAB</a>
-        <a href="#reviews" onclick="toggleMenu()" class="bold-title nav-link">REVIEWS</a>
-        <a href="#visit" onclick="toggleMenu()" class="bold-title nav-link">VISIT</a>
-        <a href="#contact" onclick="toggleMenu()" class="bold-title nav-link">BOOK</a>
+    <div id="mobile-menu" class="fixed inset-0 bg-burgundy z-[110] hidden flex-col justify-center items-center text-white">
+        <button onclick="toggleMenu()" class="absolute top-10 right-10 heavy-font text-2xl">CLOSE X</button>
+        <div class="flex flex-col gap-6 text-5xl heavy-font italic">
+            <a href="#about" onclick="toggleMenu()">STORY</a>
+            <a href="#pricing" onclick="toggleMenu()">PRICES</a>
+            <a href="#shop" onclick="toggleMenu()">GEAR</a>
+            <a href="#contact" onclick="toggleMenu()">VISIT</a>
+        </div>
     </div>
 
-    <main class="pt-40 px-6 md:px-24">
-        <section class="min-h-screen">
-            <span class="uppercase font-black text-sm mb-4 block" data-aos="fade-right">Est. 2026 / London</span>
-            <h1 class="bold-title text-[15vw] md:text-[12vw] mb-10" data-aos="fade-up">
-                Elite <br> <span class="text-white" style="-webkit-text-stroke: 3px black;">Precision</span>
-            </h1>
-            
-            <div class="grid md:grid-cols-2 gap-20 items-center">
-                <div class="space-y-8">
-                    <p class="text-2xl font-bold leading-tight">WE DON'T JUST CUT HAIR. WE ARCHITECT IDENTITIES USING MATHEMATICAL SYMMETRY AND JAPANESE STEEL.</p>
-                    <button class="bg-black text-white px-10 py-6 rounded-full font-black uppercase text-xl hover:bg-accent transition">Book Your Session</button>
-                </div>
-                <div class="rounded-[40px] overflow-hidden border-4 border-black" data-aos="zoom-in">
-                    <img src="https://images.unsplash.com/photo-1599351431247-f50940397ec2?auto=format&fit=crop&q=80&w=800" alt="Barber Tooling" class="w-full">
-                </div>
-            </div>
-        </section>
-
-        <section id="reviews" class="py-32">
-            <h2 class="bold-title text-6xl mb-12">Verified<br>Sentiments</h2>
-            <div class="review-track">
-                <div class="glass-card min-w-[300px] md:min-w-[450px]">
-                    <div class="flex text-accent mb-4"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-                    <p class="text-xl font-bold mb-6">"The only place in London that understands bone structure. It's not a haircut, it's surgery."</p>
-                    <span class="font-black uppercase">— James V.</span>
-                </div>
-                <div class="glass-card min-w-[300px] md:min-w-[450px]">
-                    <div class="flex text-accent mb-4"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-                    <p class="text-xl font-bold mb-6">"Elite atmosphere. The cream-bright studio is a refreshing change from dark, moody shops."</p>
-                    <span class="font-black uppercase">— Marcus Thorne</span>
+    <main class="mt-24 px-4 md:px-12">
+        <section class="min-h-[80vh] flex flex-col justify-center py-20">
+            <div class="max-w-5xl">
+                <p class="heavy-font text-burgundy mb-4 tracking-tighter">Local Legend • London SE1</p>
+                <h1 class="heavy-font text-6xl md:text-[9rem] leading-[0.85] mb-8">
+                    <span class="type-wrap">STAY SHARP.</span><br>NO EGO.
+                </h1>
+                <div class="grid md:grid-cols-2 gap-10 items-end">
+                    <div class="brutal-card p-8 bg-white" id="book">
+                        <h3 class="heavy-font text-xl mb-4">Book A Session</h3>
+                        <div class="space-y-4">
+                            <select class="w-full p-4 border-2 border-black font-bold appearance-none bg-zinc-50">
+                                <option>Select Service</option>
+                                <option>The Signature Fade - $45</option>
+                                <option>Beard Sculpt - $30</option>
+                                <option>The Works - $70</option>
+                            </select>
+                            <button class="btn-burgundy w-full text-xl">Confirm Time</button>
+                        </div>
+                    </div>
+                    <p class="text-xl font-bold uppercase leading-tight italic opacity-70">
+                        The Quarters is a high-volume, high-energy barber lab where we treat grooming like industrial design. 
+                    </p>
                 </div>
             </div>
         </section>
 
-        <section id="contact" class="py-32 grid md:grid-cols-2 gap-20">
-            <div>
-                <h2 class="bold-title text-7xl mb-10">Get In<br>The Chair.</h2>
-                <form class="space-y-10">
-                    <input type="text" placeholder="Your Name" class="form-input">
-                    <input type="email" placeholder="Email Address" class="form-input">
-                    <select class="form-input">
-                        <option>Full Reconstruction</option>
-                        <option>Beard Sculpt</option>
-                        <option>Ozone Therapy</option>
-                    </select>
-                    <button class="w-full py-8 bg-black text-white font-black uppercase text-2xl rounded-2xl">Send Request</button>
-                </form>
+        <section id="about" class="py-24 grid lg:grid-cols-2 gap-16 border-t-4 border-black">
+            <div data-aos="fade-right">
+                <h2 class="heavy-font text-6xl mb-8">Not Your<br><span class="text-burgundy">Grandpa's</span> Shop</h2>
+                <p class="text-xl font-medium mb-6">Founded in 2021 and evolved for 2026, we stripped away the mahogany and the "gentleman's club" cliché. We replaced it with industrial steel, loud music, and surgical precision.</p>
+                <div class="flex gap-4">
+                    <div class="brutal-card p-4 flex-1 text-center">
+                        <span class="heavy-font text-4xl block">12k</span>
+                        <span class="font-black text-[10px] uppercase">Fades Yearly</span>
+                    </div>
+                    <div class="brutal-card p-4 flex-1 text-center bg-burgundy text-white">
+                        <span class="heavy-font text-4xl block">0</span>
+                        <span class="font-black text-[10px] uppercase">Ego Policy</span>
+                    </div>
+                </div>
             </div>
-            <div class="space-y-8">
-                <div class="h-[400px] rounded-[40px] overflow-hidden border-4 border-black grayscale hover:grayscale-0 transition-all duration-700">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2483.154830335345!2d-0.1417576!3d51.510357!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x487604d50361860b%3A0x280e8e6022e17180!2sSavile%20Row%2C%20London!5e0!3m2!1sen!2suk!4v1700000000000" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            <div class="grid grid-cols-2 gap-4" data-aos="zoom-in">
+                <div class="brutal-card overflow-hidden h-64 bg-zinc-200"><img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80&w=400" class="w-full h-full object-cover grayscale"></div>
+                <div class="brutal-card overflow-hidden h-64 bg-zinc-200 mt-12"><img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&q=80&w=400" class="w-full h-full object-cover grayscale"></div>
+            </div>
+        </section>
+
+        <section id="pricing" class="py-24 bg-white -mx-4 md:-mx-12 px-4 md:px-12 border-y-4 border-black">
+            <h2 class="heavy-font text-6xl text-center mb-16">The Service Menu</h2>
+            <div class="max-w-4xl mx-auto space-y-4">
+                <div class="brutal-card p-6 flex justify-between items-center hover:bg-zinc-50">
+                    <div><h4 class="heavy-font text-2xl">Skin Fade</h4><p class="text-xs font-bold opacity-50">Precision clippers + foil finish</p></div>
+                    <span class="heavy-font text-3xl">$45</span>
                 </div>
-                <div class="p-8 bg-white border-4 border-black rounded-[30px]">
-                    <p class="font-black text-2xl uppercase">HQ: 12 Savile Row, London</p>
-                    <p class="font-bold text-zinc-500">Mon-Sat: 09:00 - 21:00</p>
+                <div class="brutal-card p-6 flex justify-between items-center bg-zinc-900 text-white">
+                    <div><h4 class="heavy-font text-2xl text-burgundy">The Full Reconstruction</h4><p class="text-xs font-bold opacity-50">Haircut + Beard + Hot Towel + Scrub</p></div>
+                    <span class="heavy-font text-3xl">$85</span>
                 </div>
+                <div class="brutal-card p-6 flex justify-between items-center hover:bg-zinc-50">
+                    <div><h4 class="heavy-font text-2xl">Quick Buzz</h4><p class="text-xs font-bold opacity-50">Single grade all over</p></div>
+                    <span class="heavy-font text-3xl">$25</span>
+                </div>
+                <div class="brutal-card p-6 flex justify-between items-center hover:bg-zinc-50">
+                    <div><h4 class="heavy-font text-2xl">Beard Architect</h4><p class="text-xs font-bold opacity-50">Shape, line, and steam therapy</p></div>
+                    <span class="heavy-font text-3xl">$35</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="shop" class="py-24">
+            <h2 class="heavy-font text-6xl mb-12">Shop The Gear</h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-8">
+                <div class="brutal-card p-4 group">
+                    <div class="bg-zinc-100 aspect-square mb-4 border-2 border-black overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1590159357004-919062961608?auto=format&fit=crop&q=80&w=400" class="w-full h-full object-cover group-hover:scale-110 transition">
+                    </div>
+                    <h5 class="heavy-font text-lg">Matte Clay 01</h5>
+                    <p class="font-black text-burgundy">$22.00</p>
+                    <button class="w-full mt-4 p-2 bg-black text-white font-bold text-xs">ADD TO BOX</button>
+                </div>
+                <div class="brutal-card p-4 group"><div class="bg-zinc-100 aspect-square mb-4 border-2 border-black"></div><h5 class="heavy-font text-lg">Ozone Spray</h5><p class="font-black text-burgundy">$18.00</p><button class="w-full mt-4 p-2 bg-black text-white font-bold text-xs">ADD TO BOX</button></div>
+                <div class="brutal-card p-4 group"><div class="bg-zinc-100 aspect-square mb-4 border-2 border-black"></div><h5 class="heavy-font text-lg">Carbon Comb</h5><p class="font-black text-burgundy">$12.00</p><button class="w-full mt-4 p-2 bg-black text-white font-bold text-xs">ADD TO BOX</button></div>
+                <div class="brutal-card p-4 group"><div class="bg-zinc-100 aspect-square mb-4 border-2 border-black"></div><h5 class="heavy-font text-lg">Post-Shave Oil</h5><p class="font-black text-burgundy">$28.00</p><button class="w-full mt-4 p-2 bg-black text-white font-bold text-xs">ADD TO BOX</button></div>
+                <div class="brutal-card p-4 group"><div class="bg-zinc-100 aspect-square mb-4 border-2 border-black"></div><h5 class="heavy-font text-lg">Texture Dust</h5><p class="font-black text-burgundy">$20.00</p><button class="w-full mt-4 p-2 bg-black text-white font-bold text-xs">ADD TO BOX</button></div>
+                <div class="brutal-card p-4 group"><div class="bg-zinc-100 aspect-square mb-4 border-2 border-black"></div><h5 class="heavy-font text-lg">Beard Balm</h5><p class="font-black text-burgundy">$19.00</p><button class="w-full mt-4 p-2 bg-black text-white font-bold text-xs">ADD TO BOX</button></div>
+            </div>
+        </section>
+
+        <section id="reviews" class="py-24 bg-zinc-900 text-white -mx-4 md:-mx-12 px-12">
+            <h2 class="heavy-font text-6xl mb-16 italic text-center">Wall of Fame</h2>
+            <div class="flex gap-8 overflow-x-auto pb-10 scrollbar-hide">
+                <div class="brutal-card bg-white text-black min-w-[320px] p-8">
+                    <div class="flex text-burgundy mb-4"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <p class="font-bold text-lg mb-6">"Most aggressive fade in London. These guys don't miss."</p>
+                    <span class="heavy-font text-sm">— @jacks_gram</span>
+                </div>
+                <div class="brutal-card bg-white text-black min-w-[320px] p-8">
+                    <div class="flex text-burgundy mb-4"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <p class="font-bold text-lg mb-6">"Finally a shop that respects my time. In and out, perfect cut."</p>
+                    <span class="heavy-font text-sm">— Mike D.</span>
+                </div>
+                <div class="brutal-card bg-white text-black min-w-[320px] p-8">
+                    <div class="flex text-burgundy mb-4"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <p class="font-bold text-lg mb-6">"The cream/burgundy aesthetic is fire. Best shop design I've seen."</p>
+                    <span class="heavy-font text-sm">— Leo T.</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="py-24 grid md:grid-cols-2 gap-12">
+            <div class="brutal-card p-10 bg-white">
+                <h2 class="heavy-font text-5xl mb-8">Visit The Lab</h2>
+                <div class="space-y-6 font-black uppercase">
+                    <div class="flex justify-between border-b-2 border-zinc-100 pb-2"><span>Monday</span><span>09:00 - 20:00</span></div>
+                    <div class="flex justify-between border-b-2 border-zinc-100 pb-2"><span>Tue-Fri</span><span>09:00 - 21:00</span></div>
+                    <div class="flex justify-between border-b-4 border-burgundy pb-2 text-burgundy"><span>Saturday</span><span>08:00 - 18:00</span></div>
+                    <div class="flex justify-between opacity-30"><span>Sunday</span><span>Closed</span></div>
+                </div>
+                <div class="mt-12">
+                    <p class="heavy-font text-2xl mb-2">12 Savile Row</p>
+                    <p class="font-bold opacity-60">London, W1S 3PQ • United Kingdom</p>
+                    <div class="flex gap-4 mt-6">
+                        <a href="#" class="btn-burgundy text-xs">Get Directions</a>
+                        <a href="tel:+" class="bg-black text-white p-4 px-6 border-2 border-black hover:bg-zinc-800"><i class="fas fa-phone"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="h-full min-h-[400px] border-4 border-black grayscale">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2483.1558284564283!2d-0.1420785!3d51.510344!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x487605151522238d%3A0xc609c91039860472!2sSavile%20Row%2C%20London!5e0!3m2!1sen!2suk!4v1675850000000" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
             </div>
         </section>
     </main>
 
-    <footer class="bg-black text-white py-20 px-6 md:px-24">
-        <div class="flex flex-col md:flex-row justify-between items-center gap-10">
-            <div class="bold-title text-5xl">QTRS.</div>
-            <div class="flex gap-8 text-3xl">
-                <a href="#"><i class="fab fa-instagram"></i></a>
-                <a href="#"><i class="fab fa-tiktok"></i></a>
-                <a href="#"><i class="fab fa-youtube"></i></a>
+    <footer class="bg-black text-white py-20 px-4 md:px-12">
+        <div class="grid md:grid-cols-3 gap-16 mb-20">
+            <div>
+                <h2 class="heavy-font text-5xl mb-4">QTRS<span class="text-burgundy">.</span></h2>
+                <p class="font-bold opacity-40 uppercase text-xs tracking-widest">Architectural Barbering Laboratory</p>
+            </div>
+            <div class="flex flex-col gap-4 font-black uppercase text-sm">
+                <a href="#" class="hover:text-burgundy">Privacy Policy</a>
+                <a href="#" class="hover:text-burgundy">Cookie Policy</a>
+                <a href="#" class="hover:text-burgundy">Booking Terms</a>
+            </div>
+            <div class="flex gap-6 text-3xl">
+                <a href="#" class="hover:text-burgundy"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="hover:text-burgundy"><i class="fab fa-tiktok"></i></a>
+                <a href="#" class="hover:text-burgundy"><i class="fab fa-youtube"></i></a>
             </div>
         </div>
-        <div class="mt-20 border-t border-zinc-800 pt-10 text-center text-xs font-bold tracking-widest opacity-50 uppercase">
-            © 2026 The Quarters Elite Lab • Design by Elite Systems
-        </div>
+        <p class="text-[10px] font-black opacity-20 text-center border-t border-white/10 pt-10">© 2026 THE QUARTERS • DESIGNED FOR THE ELITE • NO HUMANS WERE HARMED IN THE MAKING OF THIS SITE</p>
     </footer>
 
-    <div class="fixed bottom-0 left-0 w-full flex md:hidden z-[100] border-t-4 border-black">
-        <a href="tel:+" class="flex-1 bg-white p-6 text-center font-black border-r-2 border-black">CALL</a>
-        <a href="https://wa.me/+" class="flex-1 bg-[#25D366] text-white p-6 text-center font-black">WHATSAPP</a>
+    <div class="fixed bottom-0 w-full flex md:hidden z-[110] border-t-4 border-black">
+        <a href="tel:+" class="flex-1 bg-white p-6 text-center heavy-font border-r-4 border-black">CALL NOW</a>
+        <a href="#book" class="flex-1 bg-burgundy text-white p-6 text-center heavy-font">BOOK CHAIR</a>
     </div>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        AOS.init({ duration: 1000, once: true });
+        AOS.init({ duration: 800 });
 
-        // Welcome Reveal
-        window.addEventListener('load', () => {
+        // Loader
+        window.onload = () => {
             setTimeout(() => {
-                document.getElementById('reveal-screen').classList.add('hide');
-            }, 1200);
-        });
+                document.getElementById('loader').classList.add('off');
+            }, 1000);
+        };
 
-        // Menu Toggle
+        // Menu
         function toggleMenu() {
-            document.getElementById('nav-overlay').classList.toggle('active');
+            const m = document.getElementById('mobile-menu');
+            m.classList.toggle('hidden');
+            m.classList.toggle('flex');
         }
     </script>
 </body>
