@@ -3,207 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE CHAIR | Studio 2026</title>
+    <title>VIBZ BARBERS | Precision Engineering</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <script src="https://unpkg.com/scrollreveal"></script>
     <style>
         :root {
-            /* Exact AA Yellow Color */
-            --aa-yellow: #FFD200; 
-            --deep-black: #111111;
+            --vibz-yellow: #FFD200;
+            --vibz-black: #000000;
+            --vibz-dark: #111111;
         }
         
-        body { 
-            background-color: var(--aa-yellow); 
-            color: black; 
-            font-family: 'Helvetica Neue', Arial, sans-serif; 
-            overflow-x: hidden; 
-        }
+        body { background-color: var(--vibz-black); color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; }
 
-        /* 1. Rotating Barber Chair Animation */
-        .hero-container {
-            perspective: 1200px;
-            height: 350px;
+        /* 1. Mastermind Style Hero */
+        .mastermind-hero {
+            height: 100vh;
+            background: radial-gradient(circle at center, #222 0%, #000 70%);
             display: flex;
-            align-items: center;
+            flex-direction: column;
             justify-content: center;
-        }
-
-        .chair-wrapper {
-            width: 280px;
-            height: 280px;
+            align-items: center;
             position: relative;
-            transform-style: preserve-3d;
-            animation: rotateChair 12s linear infinite;
         }
 
-        /* Transparent PNG Barber Chair */
+        .chair-container {
+            perspective: 1000px;
+            margin-bottom: 2rem;
+        }
+
         .rotating-chair {
-            width: 100%;
-            height: 100%;
-            background: url('https://pngimg.com/d/barber_chair_PNG56.png') center/contain no-repeat;
-            filter: drop-shadow(0 20px 30px rgba(0,0,0,0.2));
+            width: 350px;
+            filter: drop-shadow(0 0 30px rgba(255, 210, 0, 0.4));
+            animation: rotateMastermind 15s linear infinite;
         }
 
-        @keyframes rotateChair {
-            0% { transform: rotateY(0deg) translateY(0px); }
-            50% { transform: rotateY(180deg) translateY(-10px); }
-            100% { transform: rotateY(360deg) translateY(0px); }
+        @keyframes rotateMastermind {
+            from { transform: rotateY(0deg); }
+            to { transform: rotateY(360deg); }
         }
 
-        /* AA Style Elements */
-        .aa-button {
-            background-color: #231F20;
-            color: white;
-            padding: 1rem 2.5rem;
-            border-radius: 8px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            transition: all 0.2s;
-        }
+        /* 9. Before/After Slider */
+        .ba-slider { position: relative; width: 100%; height: 400px; overflow: hidden; border-radius: 12px; }
+        .ba-before { position: absolute; top: 0; left: 0; width: 50%; height: 100%; z-index: 10; border-right: 3px solid var(--vibz-yellow); }
 
-        .aa-button:hover {
-            background-color: #000;
-            transform: scale(1.02);
-        }
-
-        .aa-card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
-        }
-
-        .sale-badge {
-            background: white;
-            padding: 4px 12px;
-            font-weight: bold;
-            border-radius: 4px;
-            display: inline-block;
-            margin-bottom: 1rem;
-        }
-
-        /* Glassmorphism for sub-sections */
-        .dark-section {
-            background: #111;
-            color: white;
-        }
+        /* Custom UI Components */
+        .yellow-btn { background: var(--vibz-yellow); color: black; font-weight: 800; text-transform: uppercase; transition: 0.3s; }
+        .yellow-btn:hover { background: white; transform: scale(1.05); }
+        
+        .section-divider { height: 4px; background: var(--vibz-yellow); width: 100px; margin: 2rem 0; }
+        
+        .glass-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
     </style>
 </head>
 <body>
 
-    <nav class="w-full py-6 px-8 flex justify-between items-center max-w-7xl mx-auto">
-        <div class="text-3xl font-black tracking-tighter flex items-center gap-2">
-            <span class="bg-black text-[#FFD200] px-2 py-1 rounded">AA</span>
-            <span>BARBERS</span>
-        </div>
-        <div class="hidden md:flex gap-8 font-bold text-sm uppercase">
-            <a href="#" class="hover:underline">Pricing</a>
-            <a href="#" class="hover:underline">Locations</a>
-            <a href="#" class="hover:underline">Shop</a>
-        </div>
-        <i data-lucide="menu" class="w-8 h-8 cursor-pointer"></i>
+    <nav class="fixed w-full z-50 px-6 py-4 flex justify-between items-center bg-black/80 backdrop-blur-md">
+        <div class="text-2xl font-black text-[#FFD200]">VIBZ.</div>
+        <button id="menuBtn" class="text-[#FFD200]"><i data-lucide="menu" class="w-8 h-8"></i></button>
     </nav>
 
-    <section class="flex flex-col items-center text-center px-6 pt-12 pb-20 overflow-hidden">
-        <div class="sale-badge animate__animated animate__pulse animate__infinite">Sale ends in 3 days</div>
-        
-        <div class="hero-container mb-8">
-            <div class="chair-wrapper">
-                <div class="rotating-chair"></div>
-            </div>
-        </div>
+    <div id="mobileMenu" class="fixed inset-0 bg-black z-[60] hidden flex flex-col items-center justify-center space-y-8 text-2xl font-bold">
+        <button id="closeBtn" class="absolute top-6 right-6 text-[#FFD200]"><i data-lucide="x" class="w-10 h-10"></i></button>
+        <a href="#services" class="hover:text-[#FFD200]">SERVICES</a>
+        <a href="#prices" class="hover:text-[#FFD200]">PRICING</a>
+        <a href="#gallery" class="hover:text-[#FFD200]">GALLERY</a>
+    </div>
 
-        <h1 class="text-6xl md:text-8xl font-black uppercase leading-[0.9] mb-6">
-            40% OFF<br>
-            <span class="text-4xl md:text-5xl">Grooming Plans</span>
-        </h1>
-        
-        <p class="max-w-xl mx-auto font-medium mb-10 text-lg">
-            Exclusively available online until 29 January 2026.*<br>
-            Get 40% off when you add Skin Fade, Beard Sculpt or Hot Towel treatments.
-        </p>
-
-        <div class="aa-card p-2 flex flex-col md:flex-row gap-2 w-full max-w-3xl">
-            <div class="flex-1 flex items-center px-4 border-b md:border-b-0 md:border-r border-gray-100">
-                <i data-lucide="scissors" class="w-5 h-5 mr-3 text-gray-400"></i>
-                <select class="w-full py-4 outline-none font-bold appearance-none bg-transparent">
-                    <option>Select Treatment</option>
-                    <option>Signature Cut</option>
-                    <option>Executive Service</option>
-                </select>
-            </div>
-            <div class="flex-1 flex items-center px-4">
-                <i data-lucide="map-pin" class="w-5 h-5 mr-3 text-gray-400"></i>
-                <select class="w-full py-4 outline-none font-bold appearance-none bg-transparent">
-                    <option>Select Studio</option>
-                    <option>London Central</option>
-                    <option>Manchester</option>
-                </select>
-            </div>
-            <button class="aa-button">Get a quote</button>
+    <section class="mastermind-hero">
+        <div class="chair-container">
+            <img src="https://pngimg.com/d/barber_chair_PNG56.png" alt="Barber Chair" class="rotating-chair">
         </div>
+        <h1 class="text-5xl md:text-8xl font-black text-center uppercase leading-none reveal">The <span class="text-[#FFD200]">Standard</span><br>of Precision.</h1>
+        <p class="mt-4 text-gray-400 font-medium tracking-widest reveal">ENGINEERED GROOMING • STUDIO 2026</p>
     </section>
 
-    <section class="dark-section py-24 px-6">
-        <div class="max-w-7xl mx-auto">
-            <h2 class="text-4xl font-black mb-16 border-l-8 border-[#FFD200] pl-6">OUR SERVICES</h2>
-            
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="group bg-zinc-900 p-8 rounded-2xl hover:bg-zinc-800 transition-all cursor-pointer">
-                    <div class="w-12 h-12 bg-[#FFD200] rounded-lg mb-6 flex items-center justify-center">
-                        <i data-lucide="zap" class="text-black"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-4">Express Recovery</h3>
-                    <p class="text-gray-400 mb-6">A quick 20-minute clean up for when you're on the move. Includes neck shave.</p>
-                    <span class="text-[#FFD200] font-black text-xl">£22.00</span>
-                </div>
+    <div class="relative z-20 -mt-12 px-4 max-w-5xl mx-auto">
+        <div class="bg-white p-4 rounded-xl shadow-2xl flex flex-col md:flex-row gap-4">
+            <select class="flex-1 p-4 bg-gray-100 text-black font-bold rounded-lg appearance-none">
+                <option>SELECT TREATMENT</option>
+                <option>THE VIBZ CUT</option>
+                <option>SCULPTING & LINING</option>
+            </select>
+            <select class="flex-1 p-4 bg-gray-100 text-black font-bold rounded-lg appearance-none">
+                <option>SELECT DATE</option>
+                <option>TOMORROW</option>
+            </select>
+            <button class="yellow-btn px-8 py-4 rounded-lg">BOOK NOW</button>
+        </div>
+    </div>
 
-                <div class="group bg-zinc-900 p-8 rounded-2xl border-2 border-[#FFD200] relative overflow-hidden">
-                    <div class="absolute top-0 right-0 bg-[#FFD200] text-black px-4 py-1 font-bold text-xs uppercase">Popular</div>
-                    <div class="w-12 h-12 bg-[#FFD200] rounded-lg mb-6 flex items-center justify-center">
-                        <i data-lucide="shield-check" class="text-black"></i>
+    <section id="services" class="py-24 px-6 max-w-7xl mx-auto">
+        <div class="grid md:grid-cols-2 gap-16">
+            <div>
+                <h2 class="text-4xl font-black italic mb-2">SERVICES</h2>
+                <div class="section-divider"></div>
+                <div class="space-y-6">
+                    <div class="flex justify-between items-end border-b border-zinc-800 pb-2 hover:text-[#FFD200] transition-colors cursor-pointer group">
+                        <div>
+                            <h3 class="text-xl font-bold uppercase">Skin Fade Engineer</h3>
+                            <p class="text-sm text-gray-500">45 MINS • WASH + FINISH</p>
+                        </div>
+                        <span class="font-black text-xl">£35</span>
                     </div>
-                    <h3 class="text-2xl font-bold mb-4">Total Breakdown</h3>
-                    <p class="text-gray-400 mb-6">Full luxury treatment: consultation, cut, wash, and traditional hot towel shave.</p>
-                    <span class="text-[#FFD200] font-black text-xl">£45.00</span>
+                    <div class="flex justify-between items-end border-b border-zinc-800 pb-2 group">
+                        <div>
+                            <h3 class="text-xl font-bold uppercase">Beard Architecture</h3>
+                            <p class="text-sm text-gray-500">30 MINS • STEAM + OIL</p>
+                        </div>
+                        <span class="font-black text-xl">£25</span>
+                    </div>
                 </div>
-
-                <div class="group bg-zinc-900 p-8 rounded-2xl hover:bg-zinc-800 transition-all cursor-pointer">
-                    <div class="w-12 h-12 bg-[#FFD200] rounded-lg mb-6 flex items-center justify-center">
-                        <i data-lucide="framer" class="text-black"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-4">National Recovery</h3>
-                    <p class="text-gray-400 mb-6">Home visits within 20 miles. We bring the studio to your front door.</p>
-                    <span class="text-[#FFD200] font-black text-xl">£65.00</span>
+            </div>
+            <div class="reveal">
+                <h2 class="text-4xl font-black italic mb-8 text-right">RESULTS</h2>
+                <div class="ba-slider">
+                    <div class="ba-before" style="background: url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&q=80&w=800') center/cover;"></div>
+                    <div class="ba-after w-full h-full" style="background: url('https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&q=80&w=800') center/cover;"></div>
                 </div>
             </div>
         </div>
     </section>
 
-    <footer class="bg-black text-gray-500 py-12 px-6">
+    <section class="bg-zinc-950 py-20 px-6">
+        <h2 class="text-center text-3xl font-black mb-12">STUDIO IN MOTION</h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-7xl mx-auto">
+            <div class="aspect-video bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800 flex items-center justify-center"><i data-lucide="play" class="text-[#FFD200]"></i></div>
+            <div class="aspect-video bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800 flex items-center justify-center"><i data-lucide="play" class="text-[#FFD200]"></i></div>
+            <div class="aspect-video bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800 flex items-center justify-center"><i data-lucide="play" class="text-[#FFD200]"></i></div>
+            <div class="aspect-video bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800 flex items-center justify-center"><i data-lucide="play" class="text-[#FFD200]"></i></div>
+            <div class="aspect-video bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800 flex items-center justify-center"><i data-lucide="play" class="text-[#FFD200]"></i></div>
+            <div class="aspect-video bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800 flex items-center justify-center"><i data-lucide="play" class="text-[#FFD200]"></i></div>
+        </div>
+    </section>
+
+    <section class="py-20 px-6 max-w-7xl mx-auto">
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="glass-card p-8 rounded-2xl text-center reveal">
+                <div class="w-24 h-24 bg-[#FFD200] rounded-full mx-auto mb-6 flex items-center justify-center"><i data-lucide="scissors" class="text-black w-10 h-10"></i></div>
+                <h4 class="text-2xl font-bold">STATION 01</h4>
+                <p class="text-gray-500">Master of Modern Fades</p>
+                <div class="flex justify-center mt-4 text-[#FFD200]">
+                    <i data-lucide="star" class="fill-current w-4"></i><i data-lucide="star" class="fill-current w-4"></i><i data-lucide="star" class="fill-current w-4"></i><i data-lucide="star" class="fill-current w-4"></i><i data-lucide="star" class="fill-current w-4"></i>
+                </div>
+            </div>
+            </div>
+    </section>
+
+    <section class="bg-[#FFD200] py-16 px-6 text-center text-black">
+        <h2 class="text-4xl font-black mb-6">READY FOR AN UPGRADE?</h2>
+        <button class="bg-black text-white px-12 py-4 font-black rounded-full hover:scale-110 transition-transform">BOOK YOUR CHAIR</button>
+    </section>
+
+    <section class="grid md:grid-cols-2">
+        <div class="bg-zinc-900 p-12 flex flex-col justify-center">
+            <h2 class="text-4xl font-black mb-8">OPENING HOURS</h2>
+            <div class="space-y-4 max-w-sm">
+                <div class="flex justify-between border-b border-zinc-800 pb-2"><span>MON - FRI</span><span class="text-[#FFD200]">09:00 - 20:00</span></div>
+                <div class="flex justify-between border-b border-zinc-800 pb-2"><span>SATURDAY</span><span class="text-[#FFD200]">09:00 - 18:00</span></div>
+                <div class="flex justify-between"><span>SUNDAY</span><span class="text-red-500">CLOSED</span></div>
+            </div>
+            <div class="mt-12">
+                <h3 class="font-bold text-[#FFD200]">ADDRESS</h3>
+                <p>123 VIBZ LANE, LONDON, SE1 7PB</p>
+            </div>
+        </div>
+        <div class="h-96 md:h-auto bg-zinc-800 grayscale">
+            <iframe width="100%" height="100%" frameborder="0" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2483.5404234351!2d-0.121975!3d51.503399!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x487604b900d26973%3A0x4291f3172409ea92!2sLondon%20Eye!5e0!3m2!1sen!2suk!4v1625562000000!5m2!1sen!2suk"></iframe>
+        </div>
+    </section>
+
+    <div class="fixed bottom-6 right-6 flex flex-col gap-3 z-40">
+        <a href="tel:000" class="w-14 h-14 bg-white text-black rounded-full flex items-center justify-center shadow-xl hover:bg-[#FFD200] transition-colors"><i data-lucide="phone"></i></a>
+        <a href="#" class="w-14 h-14 bg-[#25D366] text-white rounded-full flex items-center justify-center shadow-xl"><i data-lucide="message-circle"></i></a>
+    </div>
+
+    <section class="py-20 px-6 max-w-3xl mx-auto">
+        <h2 class="text-center text-3xl font-black mb-12">GET IN TOUCH</h2>
+        <form class="space-y-4">
+            <input type="text" placeholder="NAME" class="w-full p-4 bg-zinc-900 border border-zinc-800 rounded outline-none focus:border-[#FFD200]">
+            <textarea placeholder="MESSAGE" class="w-full p-4 bg-zinc-900 border border-zinc-800 rounded h-32 outline-none focus:border-[#FFD200]"></textarea>
+            <button class="yellow-btn w-full py-4 rounded">SEND MESSAGE</button>
+        </form>
+    </section>
+
+    <footer class="bg-black border-t border-zinc-900 py-12 px-6">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-            <div class="text-2xl font-black text-[#FFD200]">AA BARBERS.</div>
-            <div class="flex gap-8 text-xs uppercase tracking-widest">
-                <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
-                <a href="#" class="hover:text-white transition-colors">Terms of Sale</a>
-                <a href="#" class="hover:text-white transition-colors">Cookie Policy</a>
+            <div class="text-3xl font-black text-[#FFD200]">VIBZ.</div>
+            <div class="flex gap-8 text-sm text-gray-500 font-bold uppercase">
+                <a href="#">Privacy</a><a href="#">Terms</a><a href="#">FAQ</a>
             </div>
             <div class="flex gap-4">
-                <div class="w-10 h-10 rounded-full border border-zinc-800 flex items-center justify-center hover:bg-[#FFD200] hover:text-black transition-all cursor-pointer">
-                    <i data-lucide="instagram" class="w-5 h-5"></i>
-                </div>
-                <div class="w-10 h-10 rounded-full border border-zinc-800 flex items-center justify-center hover:bg-[#FFD200] hover:text-black transition-all cursor-pointer">
-                    <i data-lucide="twitter" class="w-5 h-5"></i>
-                </div>
+                <i data-lucide="instagram" class="w-6 h-6 hover:text-[#FFD200] cursor-pointer"></i>
+                <i data-lucide="facebook" class="w-6 h-6 hover:text-[#FFD200] cursor-pointer"></i>
             </div>
         </div>
     </footer>
 
     <script>
-        // Initialize Lucide Icons
         lucide.createIcons();
+        ScrollReveal().reveal('.reveal', { delay: 200, distance: '50px', duration: 1000, origin: 'bottom' });
+
+        const menuBtn = document.getElementById('menuBtn');
+        const closeBtn = document.getElementById('closeBtn');
+        const menu = document.getElementById('mobileMenu');
+
+        menuBtn.onclick = () => menu.classList.remove('hidden');
+        closeBtn.onclick = () => menu.classList.add('hidden');
     </script>
 </body>
 </html>
