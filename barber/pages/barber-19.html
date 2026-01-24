@@ -1,223 +1,262 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>THE CUT ESTATE | Elite Men's Grooming</title>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE CUT ESTATE | PREMIER GROOMING ARCHIVE</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/typewriter-effect@latest/dist/core.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Plus+Jakarta+Sans:wght@300;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bronze: #c5a059;
+            --gold: #c5a059;
             --espresso: #1a1512;
             --cream: #f4f1ee;
         }
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            background-color: var(--cream);
-            color: var(--espresso);
-        }
+        body { background-color: var(--cream); font-family: 'Plus Jakarta Sans', sans-serif; color: var(--espresso); overflow-x: hidden; }
         .font-serif { font-family: 'Playfair Display', serif; }
+        .reveal { opacity: 0; transform: translateY(40px); transition: all 1s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
         
-        .premium-gradient {
-            background: linear-gradient(135deg, #2d241e 0%, #1a1512 100%);
-        }
-        .bronze-text { color: var(--bronze); }
-        .bronze-bg { background-color: var(--bronze); }
-        
-        .hero-mask {
-            clip-path: polygon(0 0, 100% 0, 100% 90%, 0% 100%);
-        }
+        /* B&A Slider */
+        .ba-container { position: relative; width: 100%; height: 500px; overflow: hidden; border-radius: 4px; }
+        .ba-image { position: absolute; inset: 0; background-size: cover; background-position: center; }
+        .ba-before { width: 50%; border-right: 2px solid var(--gold); z-index: 10; }
 
-        /* Custom Dropdown styling */
-        select {
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23c5a059'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 1rem center;
-            background-size: 1em;
-        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--espresso); }
+        ::-webkit-scrollbar-thumb { background: var(--gold); }
     </style>
 </head>
-
 <body>
 
-<nav class="fixed top-0 w-full z-[100] bg-white/80 backdrop-blur-md border-b border-stone-200 px-8 py-4 flex justify-between items-center">
-    <div class="flex items-center gap-4">
-        <div class="w-10 h-10 bronze-bg flex items-center justify-center text-white font-serif italic text-xl shadow-lg">
-            E
+    <nav class="fixed top-0 w-full z-[1000] bg-white/90 backdrop-blur-md border-b border-stone-200 px-8 py-5 flex justify-between items-center">
+        <div class="font-serif text-2xl tracking-tighter font-bold uppercase">The Cut Estate</div>
+        <div class="flex items-center gap-6">
+            <a href="tel:0201234567" class="hidden md:flex items-center gap-2 text-xs font-bold tracking-widest uppercase hover:text-[--gold] transition"><i data-lucide="phone" class="w-4 h-4"></i> 14. Call</a>
+            <button id="menuBtn" class="p-2 hover:text-[--gold] transition"><i data-lucide="menu" class="w-8 h-8"></i></button>
         </div>
-        <span class="font-serif text-2xl tracking-tighter font-bold uppercase">The Cut Estate</span>
-    </div>
-    
-    <div class="hidden md:flex gap-8 text-xs font-bold uppercase tracking-widest">
-        <a href="#services" class="hover:text-[#c5a059] transition-colors">The Menu</a>
-        <a href="#barbers" class="hover:text-[#c5a059] transition-colors">Specialists</a>
-        <a href="#gallery" class="hover:text-[#c5a059] transition-colors">Portfolio</a>
-    </div>
+    </nav>
 
-    <button class="bronze-bg text-white px-8 py-3 rounded-none font-bold text-xs uppercase tracking-widest hover:bg-black transition-all">
-        Membership
-    </button>
-</nav>
-
-<section class="relative pt-24 pb-40 premium-gradient text-white hero-mask overflow-hidden">
-    <div class="absolute inset-0 opacity-20">
-        <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=2000" class="w-full h-full object-cover grayscale">
-    </div>
-    
-    <div class="relative z-10 max-w-7xl mx-auto px-8 grid lg:grid-cols-2 gap-16 items-center pt-16">
-        <div>
-            <h1 class="font-serif text-6xl md:text-8xl leading-none mb-6">Mastery In <br><span class="italic bronze-text">Every Detail.</span></h1>
-            <p class="text-stone-400 text-lg max-w-md mb-8">Experience London's most exclusive grooming protocol. Where architectural precision meets heritage craft.</p>
+    <div id="sideNav" class="fixed inset-0 bg-[--espresso] z-[2000] translate-x-full transition-transform duration-500 flex flex-col p-12">
+        <button id="closeBtn" class="self-end text-white mb-20"><i data-lucide="x" class="w-10 h-10"></i></button>
+        <div class="flex flex-col gap-8 text-4xl font-serif italic text-white">
+            <a href="#services">The Menu</a>
+            <a href="#products">The Armory</a>
+            <a href="#contact">Contact</a>
         </div>
+    </div>
 
-        <div class="bg-white text-espresso p-8 shadow-2xl rounded-sm">
-            <h2 class="font-serif text-2xl mb-6">Reserve Your Chair</h2>
-            <div class="grid grid-cols-1 gap-4">
-                <div class="space-y-1">
-                    <label class="text-[10px] font-bold uppercase tracking-widest text-stone-400">Select Protocol</label>
-                    <select class="w-full border-b border-stone-200 py-3 font-semibold focus:outline-none focus:border-[#c5a059] bg-transparent">
-                        <option>Executive Skin Fade (£45)</option>
-                        <option>Beard Architecture (£30)</option>
-                        <option>The Full Protocol (£70)</option>
-                        <option>Traditional Hot Towel Shave (£40)</option>
-                    </select>
+    <section class="pt-40 pb-20 px-8 bg-[--espresso] text-white relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/leather.png')]"></div>
+        <div class="max-w-7xl mx-auto relative z-10">
+            <h1 class="text-6xl md:text-9xl font-serif mb-6 leading-none">
+                <span id="typewriter"></span>
+            </h1>
+            <p class="text-xl md:text-2xl text-stone-400 max-w-2xl font-light mb-12">3. Architectural grooming for the modern professional. Precision engineering meets heritage luxury.</p>
+        </div>
+    </section>
+
+    <section class="max-w-7xl mx-auto px-8 -mt-16 relative z-50">
+        <div class="bg-white p-8 shadow-2xl border-t-4 border-[--gold] grid md:grid-cols-4 gap-6">
+            <div class="space-y-2">
+                <label class="text-[10px] font-bold uppercase tracking-widest opacity-50">Service Protocol</label>
+                <select class="w-full border-b border-stone-200 py-3 focus:outline-none focus:border-[--gold]">
+                    <option>Executive Cut (£45)</option>
+                    <option>Beard Architecture (£30)</option>
+                    <option>The Full Protocol (£85)</option>
+                </select>
+            </div>
+            <div class="space-y-2">
+                <label class="text-[10px] font-bold uppercase tracking-widest opacity-50">Select Date</label>
+                <input type="date" class="w-full border-b border-stone-200 py-3 focus:outline-none focus:border-[--gold]">
+            </div>
+            <div class="space-y-2">
+                <label class="text-[10px] font-bold uppercase tracking-widest opacity-50">Preferred Time</label>
+                <select class="w-full border-b border-stone-200 py-3 focus:outline-none focus:border-[--gold]">
+                    <option>Morning</option>
+                    <option>Afternoon</option>
+                    <option>Evening</option>
+                </select>
+            </div>
+            <button class="bg-[--espresso] text-white font-bold py-4 hover:bg-[--gold] transition-colors uppercase text-xs tracking-[0.2em]">Reserve Chair</button>
+        </div>
+    </section>
+
+    <section id="services" class="py-32 max-w-7xl mx-auto px-8">
+        <div class="grid md:grid-cols-3 gap-12">
+            <div class="reveal space-y-6">
+                <div class="h-80 bg-stone-200 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1512690118299-444732007827?q=80&w=600" class="w-full h-full object-cover grayscale">
                 </div>
+                <h3 class="text-2xl font-serif italic">Structural Fades</h3>
+                <p class="text-sm text-stone-500 leading-relaxed">Technical transitions engineered with surgical precision for a lasting silhouette.</p>
+            </div>
+            </div>
+    </section>
 
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-bold uppercase tracking-widest text-stone-400">Preferred Date</label>
-                        <input type="date" class="w-full border-b border-stone-200 py-3 font-semibold focus:outline-none focus:border-[#c5a059]">
+    <div class="h-px bg-stone-200 max-w-5xl mx-auto"></div>
+
+    <section class="py-32 max-w-4xl mx-auto px-8">
+        <h2 class="font-serif text-5xl text-center mb-16">The Price List</h2>
+        <div class="space-y-8">
+            <div class="flex justify-between items-end border-b border-stone-200 pb-4">
+                <span class="text-xl font-bold uppercase tracking-tighter">The Executive Protocol</span>
+                <span class="text-2xl font-serif text-[--gold]">£45</span>
+            </div>
+            <div class="flex justify-between items-end border-b border-stone-200 pb-4">
+                <span class="text-xl font-bold uppercase tracking-tighter">Beard Alignment</span>
+                <span class="text-2xl font-serif text-[--gold]">£30</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-32 bg-stone-900 px-8">
+        <div class="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div class="reveal aspect-video bg-stone-800 flex items-center justify-center border border-white/5"><i data-lucide="play" class="text-white/20"></i></div>
+            <div class="reveal aspect-video bg-stone-800 flex items-center justify-center border border-white/5"><i data-lucide="play" class="text-white/20"></i></div>
+            <div class="reveal aspect-video bg-stone-800 flex items-center justify-center border border-white/5"><i data-lucide="play" class="text-white/20"></i></div>
+            <div class="reveal aspect-video bg-stone-800 flex items-center justify-center border border-white/5"><i data-lucide="play" class="text-white/20"></i></div>
+            <div class="reveal aspect-video bg-stone-800 flex items-center justify-center border border-white/5"><i data-lucide="play" class="text-white/20"></i></div>
+            <div class="reveal aspect-video bg-stone-800 flex items-center justify-center border border-white/5"><i data-lucide="play" class="text-white/20"></i></div>
+        </div>
+    </section>
+
+    <section id="products" class="py-32 max-w-7xl mx-auto px-8">
+        <h2 class="font-serif text-4xl mb-12">The Armory</h2>
+        <div class="grid grid-cols-2 md:grid-cols-6 gap-6">
+            <div class="reveal text-center">
+                <div class="aspect-square bg-white border border-stone-100 p-8 mb-4">
+                    <img src="https://images.unsplash.com/photo-1593702275687-f8b402bf1fb5?q=80&w=300" class="w-full h-full object-contain grayscale">
+                </div>
+                <p class="text-[10px] font-bold uppercase tracking-widest">Matte Pomade</p>
+                <p class="text-[--gold] font-bold">£22</p>
+            </div>
+            </div>
+    </section>
+
+    <section class="py-32 bg-stone-100">
+        <div class="max-w-5xl mx-auto px-8">
+            <h2 class="font-serif text-3xl mb-8">Structural Evolution</h2>
+            <div class="ba-container reveal shadow-2xl">
+                <div class="ba-image" style="background-image: url('https://images.unsplash.com/photo-1512690118299-444732007827?q=80&w=1200')"></div>
+                <div class="ba-image ba-before" id="baHandle" style="background-image: url('https://images.unsplash.com/photo-1593702275687-f8b402bf1fb5?q=80&w=1200')"></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-32 max-w-7xl mx-auto px-8">
+        <div class="grid md:grid-cols-3 gap-12">
+            <div class="reveal border-l-2 border-[--gold] p-10 bg-white shadow-sm">
+                <h4 class="text-xs font-bold uppercase tracking-[0.3em] text-[--gold] mb-4">Master Station 01</h4>
+                <p class="font-serif text-2xl italic mb-6">"Precision is the only variable we control."</p>
+                <div class="flex gap-1 text-[--gold]"><i data-lucide="star" class="fill-current w-4 h-4"></i><i data-lucide="star" class="fill-current w-4 h-4"></i><i data-lucide="star" class="fill-current w-4 h-4"></i><i data-lucide="star" class="fill-current w-4 h-4"></i><i data-lucide="star" class="fill-current w-4 h-4"></i></div>
+            </div>
+            </div>
+    </section>
+
+    <section class="py-24 bg-fixed bg-cover bg-center text-center text-white" style="background-image: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=1200')">
+        <h2 class="text-5xl font-serif mb-8 italic">Ready for the protocol?</h2>
+        <button class="border-2 border-white px-12 py-5 font-bold uppercase tracking-[0.3em] hover:bg-white hover:text-black transition-all">Claim 20% Induction Discount</button>
+    </section>
+
+    <section id="contact" class="grid lg:grid-cols-2">
+        <div class="bg-[--espresso] text-white p-20 flex flex-col justify-center">
+            <h2 class="font-serif text-5xl mb-12">The Estate HQ</h2>
+            <div class="grid md:grid-cols-2 gap-12">
+                <div class="space-y-6">
+                    <p class="text-xs font-bold uppercase tracking-[0.3em] text-[--gold]">Location</p>
+                    <p class="text-xl font-light">13. 44 Savile Row, Mayfair<br>London, W1S 3QD</p>
+                </div>
+                <div class="space-y-6">
+                    <p class="text-xs font-bold uppercase tracking-[0.3em] text-[--gold]">Hours</p>
+                    <div class="text-sm font-light space-y-2">
+                        <div class="flex justify-between"><span>Mon - Fri</span><span>09:00 - 21:00</span></div>
+                        <div class="flex justify-between text-[--gold]"><span>Sat - Sun</span><span>Closed</span></div>
                     </div>
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-bold uppercase tracking-widest text-stone-400">Time Slot</label>
-                        <select class="w-full border-b border-stone-200 py-3 font-semibold focus:outline-none focus:border-[#c5a059] bg-transparent">
-                            <option>Morning (09:00 - 12:00)</option>
-                            <option>Afternoon (12:00 - 17:00)</option>
-                            <option>Evening (17:00 - 21:00)</option>
-                        </select>
-                    </div>
-                </div>
-
-                <button class="w-full bronze-bg text-white py-5 mt-4 font-bold uppercase tracking-widest hover:bg-black transition-all">
-                    Confirm Appointment
-                </button>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section id="services" class="max-w-7xl mx-auto px-8 py-24">
-    <div class="text-center mb-16">
-        <span class="bronze-text font-bold tracking-[0.3em] uppercase text-xs">Aesthetic Excellence</span>
-        <h2 class="font-serif text-5xl mt-2">The Menu</h2>
-    </div>
-
-    <div class="grid md:grid-cols-2 gap-x-20 gap-y-10">
-        <div class="flex justify-between items-end border-b border-stone-200 pb-4 group cursor-pointer">
-            <div>
-                <h3 class="text-xl font-bold group-hover:bronze-text transition-colors">The Signature Cut</h3>
-                <p class="text-stone-400 text-sm italic">Wash, precision cut, and structural finish.</p>
-            </div>
-            <span class="text-2xl font-serif bronze-text font-bold">£40</span>
-        </div>
-        
-        <div class="flex justify-between items-end border-b border-stone-200 pb-4 group cursor-pointer">
-            <div>
-                <h3 class="text-xl font-bold group-hover:bronze-text transition-colors">Beard Sculpting</h3>
-                <p class="text-stone-400 text-sm italic">Straight razor lining & hot towel treatment.</p>
-            </div>
-            <span class="text-2xl font-serif bronze-text font-bold">£30</span>
-        </div>
-
-        <div class="flex justify-between items-end border-b border-stone-200 pb-4 group cursor-pointer">
-            <div>
-                <h3 class="text-xl font-bold group-hover:bronze-text transition-colors">The Estate Ritual</h3>
-                <p class="text-stone-400 text-sm italic">Hair, Beard, Face Mask, and Scalp Massage.</p>
-            </div>
-            <span class="text-2xl font-serif bronze-text font-bold">£85</span>
-        </div>
-
-        <div class="flex justify-between items-end border-b border-stone-200 pb-4 group cursor-pointer">
-            <div>
-                <h3 class="text-xl font-bold group-hover:bronze-text transition-colors">Skin Fade Protocol</h3>
-                <p class="text-stone-400 text-sm italic">Technical transition with foil finish.</p>
-            </div>
-            <span class="text-2xl font-serif bronze-text font-bold">£45</span>
-        </div>
-    </div>
-</section>
-
-<section id="barbers" class="bg-white py-24">
-    <div class="max-w-7xl mx-auto px-8">
-        <h2 class="font-serif text-4xl mb-12">The Specialists</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
-            <div class="group">
-                <div class="relative overflow-hidden mb-6 aspect-[3/4]">
-                    <img src="https://images.unsplash.com/photo-1520975916090-3105956dac38?q=80&w=600" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105">
-                    <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                </div>
-                <h4 class="font-serif text-2xl">Jay Sterling</h4>
-                <p class="bronze-text text-xs font-bold uppercase tracking-widest mt-1">Master Architect</p>
-            </div>
-
-            <div class="group">
-                <div class="relative overflow-hidden mb-6 aspect-[3/4]">
-                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=600" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105">
-                </div>
-                <h4 class="font-serif text-2xl">Luis Vora</h4>
-                <p class="bronze-text text-xs font-bold uppercase tracking-widest mt-1">Beard Technician</p>
-            </div>
-
-            <div class="group">
-                <div class="relative overflow-hidden mb-6 aspect-[3/4]">
-                    <img src="https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?q=80&w=600" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105">
-                </div>
-                <h4 class="font-serif text-2xl">Marcus Thorne</h4>
-                <p class="bronze-text text-xs font-bold uppercase tracking-widest mt-1">Senior Sculptor</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section class="premium-gradient text-white py-24 px-8">
-    <div class="max-w-7xl mx-auto flex flex-col md:flex-row gap-20 items-center">
-        <div class="md:w-1/2">
-            <span class="text-stone-500 font-bold tracking-[0.3em] uppercase text-xs">Client Voices</span>
-            <div class="mt-8 relative">
-                <i data-lucide="quote" class="absolute -top-6 -left-8 w-16 h-16 opacity-10 bronze-text"></i>
-                <p class="text-3xl font-serif italic leading-snug">
-                    "The atmosphere is reminiscent of a private members club. The attention to detail is quite frankly, obsessive. Truly the elite standard of London."
-                </p>
-                <div class="mt-8 flex items-center gap-4">
-                    <div class="w-12 h-px bronze-bg"></div>
-                    <span class="font-bold uppercase tracking-widest text-xs">James Kensington</span>
                 </div>
             </div>
+            <div class="mt-20 flex gap-4">
+                <a href="tel:020" class="flex-1 bg-white text-black py-4 text-center font-bold text-xs uppercase tracking-widest hover:bg-[--gold] transition">Call Estate</a>
+                <a href="https://wa.me/123" class="flex-1 border border-white/20 py-4 text-center font-bold text-xs uppercase tracking-widest hover:bg-white/10 transition">WhatsApp</a>
+            </div>
+            <form class="mt-12 space-y-4">
+                <input type="text" placeholder="FULL NAME" class="w-full bg-white/5 border border-white/10 p-4 focus:border-[--gold] outline-none transition">
+                <button class="w-full bg-[--gold] py-4 font-bold uppercase text-xs tracking-widest">Transmit Inquiry</button>
+            </form>
         </div>
-        
-        <div class="md:w-1/2 w-full h-[400px] border border-stone-800 p-2">
-            <div class="w-full h-full bg-stone-900 flex flex-col items-center justify-center text-center p-10">
-                <i data-lucide="map-pin" class="w-10 h-10 bronze-text mb-4"></i>
-                <h3 class="font-serif text-2xl mb-2">The Mayfair HQ</h3>
-                <p class="text-stone-400">44 Savile Row, London W1S 3QD</p>
-                <p class="text-xs mt-6 bronze-text font-bold tracking-widest">PRIVATE ENTRANCE VIA THE ESTATE</p>
+        <div class="min-h-[600px] grayscale">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2483.003429304915!2d-0.1414!3d51.51!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x487604d49f!2sSavile%20Row!5e0!3m2!1sen!2suk!4v1" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+    </section>
+
+    <section class="py-32 px-8 bg-white">
+        <h2 class="text-center font-serif text-3xl mb-12">@TheCutEstate Archive</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 max-w-7xl mx-auto">
+            <div class="aspect-square bg-stone-100"></div>
+            <div class="aspect-square bg-stone-100"></div>
+            <div class="aspect-square bg-stone-100"></div>
+            <div class="aspect-square bg-stone-100"></div>
+        </div>
+    </section>
+
+    <footer class="bg-[--espresso] py-20 px-8 text-white border-t border-white/5">
+        <div class="max-w-7xl mx-auto grid md:grid-cols-4 gap-12">
+            <div class="col-span-2">
+                <h3 class="font-serif text-3xl mb-6 uppercase tracking-tighter">The Cut Estate</h3>
+                <p class="text-stone-500 max-w-sm">Architectural hair engineering based in the heart of Mayfair. Private bookings only.</p>
+            </div>
+            <div class="space-y-4">
+                <p class="text-[10px] font-bold uppercase tracking-widest text-[--gold]">Navigation</p>
+                <a href="#" class="block text-sm opacity-50 hover:opacity-100">Reserve</a>
+                <a href="#" class="block text-sm opacity-50 hover:opacity-100">Services</a>
+            </div>
+            <div class="space-y-4">
+                <p class="text-[10px] font-bold uppercase tracking-widest text-[--gold]">Social</p>
+                <a href="#" class="block text-sm opacity-50 hover:opacity-100">Instagram</a>
+                <a href="#" class="block text-sm opacity-50 hover:opacity-100">LinkedIn</a>
             </div>
         </div>
-    </div>
-</section>
+        <div class="mt-20 pt-8 border-t border-white/5 text-center text-[10px] font-bold tracking-[0.5em] opacity-30">
+            ©2026 THE CUT ESTATE INTERNATIONAL
+        </div>
+    </footer>
 
-<footer class="py-12 bg-white text-center border-t border-stone-100">
-    <p class="text-[10px] font-bold uppercase tracking-[1em] text-stone-400">The Cut Estate International • MMXXVI</p>
-</footer>
+    <script>
+        lucide.createIcons();
+        gsap.registerPlugin(ScrollTrigger);
 
-<script>
-lucide.createIcons();
-</script>
+        // 1. Typewriter Animation
+        new Typewriter('#typewriter', {
+            strings: ['ELITE CUTS.', 'MASTER ARCHITECTURE.', 'THE ESTATE PROTOCOL.'],
+            autoStart: true, loop: true, delay: 50,
+        });
 
+        // 5. Menu Logic
+        const nav = document.getElementById('sideNav');
+        document.getElementById('menuBtn').onclick = () => nav.classList.remove('translate-x-full');
+        document.getElementById('closeBtn').onclick = () => nav.classList.add('translate-x-full');
+
+        // 9. B&A Slider
+        const handle = document.getElementById('baHandle');
+        document.querySelector('.ba-container').addEventListener('mousemove', (e) => {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
+            handle.style.width = `${x}%`;
+        });
+
+        // 19. Reveal on Scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('active');
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    </script>
 </body>
 </html>
