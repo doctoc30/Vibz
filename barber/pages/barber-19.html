@@ -3,232 +3,253 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SVRGN | ARCHITECTURAL GROOMING</title>
+    <title>THE CUT ESTATE | PREMIUM GROOMING</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="https://unpkg.com/typewriter-effect@latest/dist/core.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --tobacco: #2D1E1B; 
-            --gold: #D4AF37;
-            --clay: #3D2B28;
+            --vintage-tan: #D9C5B2;
+            --deep-bourbon: #2D1E1B;
+            --accent-gold: #D4AF37;
+            --off-white: #F4F1EE;
         }
-        body { 
-            background-color: var(--tobacco); 
-            font-family: 'Inter', sans-serif;
-            color: white;
-            overflow-x: hidden;
-        }
-        .font-heavy { font-family: 'Archivo Black', sans-serif; line-height: 0.8; letter-spacing: -0.05em; }
+        body { background-color: var(--off-white); font-family: 'Inter', sans-serif; color: var(--deep-bourbon); }
+        .font-heavy { font-family: 'Archivo Black', sans-serif; text-transform: uppercase; }
         
-        .app-shell {
-            background: var(--clay);
-            border: 2px solid rgba(255,255,255,0.05);
-            border-radius: 24px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-            transition: all 0.4s ease;
-        }
-        .app-shell:hover { border-color: var(--gold); }
-
-        .hero-bg {
-            height: 85vh;
-            background: linear-gradient(to bottom, rgba(45, 30, 27, 0.4), var(--tobacco)), 
-                        url('https://images.unsplash.com/photo-1512690118299-444732007827?q=80&w=2000&auto=format&fit=crop');
-            background-size: cover;
-            background-position: center;
+        /* Grid Layouts */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-auto-rows: 200px;
+            gap: 1.5rem;
         }
 
-        .ba-container { position: relative; width: 100%; height: 400px; overflow: hidden; border-radius: 24px; }
-        .ba-after { position: absolute; inset: 0; background-image: url('https://images.unsplash.com/photo-1593526613712-7b4b9a707330?q=80&w=800'); background-size: cover; filter: grayscale(1); }
-        .ba-before { position: absolute; inset: 0; background-image: url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80&w=800'); background-size: cover; width: 50%; border-right: 4px solid var(--gold); z-index: 2; filter: grayscale(1) brightness(0.5); }
+        /* Hero Animation */
+        .hero-clip { clip-path: polygon(0 0, 100% 0, 100% 90%, 0% 100%); }
 
-        .reveal { opacity: 0; transform: translateY(50px); }
-        .typewriter-cursor { color: var(--gold); }
+        /* B&A Slider */
+        .ba-container { position: relative; width: 100%; height: 500px; overflow: hidden; border-radius: 8px; }
+        .ba-image { position: absolute; inset: 0; background-size: cover; background-position: center; }
+        .ba-before { width: 50%; border-right: 4px solid var(--accent-gold); z-index: 10; filter: grayscale(100%); }
+
+        .reveal { opacity: 0; transform: translateY(30px); }
     </style>
 </head>
 <body>
 
-    <header class="p-6 flex justify-between items-center fixed top-0 w-full z-[1000] mix-blend-difference">
-        <div class="text-3xl font-heavy italic">SVRGN.</div>
-        <button id="menuBtn" class="w-14 h-14 rounded-full bg-[#D4AF37] flex items-center justify-center">
-            <i data-lucide="menu" class="text-black"></i>
-        </button>
+    <header class="fixed top-0 w-full z-[1000] bg-white/90 backdrop-blur-md border-b border-black/5 p-4 flex justify-between items-center">
+        <div class="text-2xl font-heavy tracking-tighter text-black">THE CUT <span class="text-[--accent-gold]">ESTATE.</span></div>
+        <button id="navOpen" class="p-2 bg-black text-white rounded-lg"><i data-lucide="menu"></i></button>
     </header>
 
-    <div id="fullMenu" class="fixed inset-0 bg-black z-[2000] hidden flex-col justify-center p-12">
-        <button id="closeMenu" class="absolute top-10 right-10"><i data-lucide="x" class="w-12 h-12"></i></button>
-        <nav class="space-y-6 text-6xl font-heavy uppercase">
-            <a href="#services" class="block hover:text-[#D4AF37] transition">Rituals</a>
-            <a href="#armory" class="block hover:text-[#D4AF37] transition">Armory</a>
-            <a href="#contact" class="block hover:text-[#D4AF37] transition">Location</a>
-        </nav>
-    </div>
+    <nav id="mobileNav" class="fixed inset-0 bg-[--deep-bourbon] z-[2000] hidden flex-col items-center justify-center space-y-8 text-4xl font-heavy text-white">
+        <button id="navClose" class="absolute top-6 right-6"><i data-lucide="x" class="w-10 h-10"></i></button>
+        <a href="#services">The Rites</a>
+        <a href="#armory">Products</a>
+        <a href="#reviews">Testimonials</a>
+        <a href="#contact">Find Us</a>
+    </nav>
 
-    <section class="hero-bg flex items-center px-8">
-        <div class="max-w-6xl">
-            <h1 class="text-7xl md:text-[10rem] font-heavy tracking-tighter" id="typewriter"></h1>
-            <h2 class="text-2xl font-black mt-10 opacity-60 uppercase tracking-[0.5em]">The Architecture of the Gentleman.</h2>
+    <section class="hero-clip bg-[--deep-bourbon] pt-32 pb-40 px-6 text-white text-center">
+        <div class="max-w-4xl mx-auto">
+            <h1 class="text-5xl md:text-8xl font-heavy leading-none mb-6" id="typewriter"></h1>
+            <p class="text-xl md:text-2xl opacity-80 max-w-2xl mx-auto mb-10">High-fidelity grooming for the modern professional. Precision engineering meet traditional craftsmanship.</p>
         </div>
     </section>
 
-    <section class="px-6 -mt-20 relative z-10">
-        <div class="app-shell p-10 max-w-5xl mx-auto">
-            <div class="grid md:grid-cols-3 gap-8">
+    <section class="max-w-6xl mx-auto px-6 -mt-20 relative z-50">
+        <div class="bg-white p-8 md:p-12 shadow-2xl rounded-2xl border-t-8 border-[--accent-gold]">
+            <div class="grid md:grid-cols-4 gap-6">
                 <div class="space-y-2">
-                    <label class="text-[10px] font-black uppercase text-[#D4AF37] tracking-widest">Select Protocol</label>
-                    <select class="w-full bg-transparent border-b-2 border-white/10 py-3 font-heavy text-xl outline-none appearance-none cursor-pointer">
-                        <option>Signature Sculpt</option>
-                        <option>Beard Architecture</option>
-                        <option>The Full Ritual</option>
+                    <label class="text-xs font-bold uppercase opacity-50">Service</label>
+                    <select class="w-full p-4 bg-gray-50 border rounded-xl font-bold">
+                        <option>Executive Fade (£45)</option>
+                        <option>Beard Sculpt (£25)</option>
+                        <option>The Full Protocol (£65)</option>
                     </select>
                 </div>
                 <div class="space-y-2">
-                    <label class="text-[10px] font-black uppercase text-[#D4AF37] tracking-widest">Calendar</label>
-                    <input type="date" class="w-full bg-transparent border-b-2 border-white/10 py-3 font-heavy text-xl outline-none cursor-pointer">
+                    <label class="text-xs font-bold uppercase opacity-50">Barber</label>
+                    <select class="w-full p-4 bg-gray-50 border rounded-xl font-bold">
+                        <option>First Available</option>
+                        <option>Senior Architect</option>
+                        <option>Master Tech</option>
+                    </select>
                 </div>
-                <button class="bg-[#D4AF37] text-black font-heavy text-xl rounded-xl hover:bg-white transition-all transform hover:scale-105">RESERVE CHAIR</button>
+                <div class="space-y-2">
+                    <label class="text-xs font-bold uppercase opacity-50">Date</label>
+                    <input type="date" class="w-full p-4 bg-gray-50 border rounded-xl font-bold">
+                </div>
+                <button class="bg-black text-white font-heavy text-lg py-4 rounded-xl hover:bg-[--accent-gold] transition-colors self-end">CHECK SLOTS</button>
             </div>
         </div>
     </section>
 
-    <section class="py-24 px-8">
-        <h3 class="text-4xl font-heavy mb-12 italic">TECHNICAL FILMS.</h3>
+    <section class="py-24 max-w-7xl mx-auto px-6">
+        <h2 class="text-4xl font-heavy mb-12">The Process / <span class="text-[--accent-gold]">Visuals</span></h2>
         <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-            <div class="reveal app-shell aspect-square overflow-hidden bg-stone-900/50 flex items-center justify-center">
-                <i data-lucide="play" class="w-12 h-12 text-[#D4AF37]/30"></i>
+            <div class="reveal aspect-[9/16] bg-black rounded-2xl overflow-hidden relative group">
+                <div class="absolute inset-0 flex items-center justify-center"><i data-lucide="play" class="w-12 h-12 text-white/50"></i></div>
+                <div class="absolute bottom-4 left-4 text-white font-bold text-xs">SKIN FADE ENGINEERING</div>
             </div>
-            <div class="reveal app-shell aspect-square overflow-hidden bg-stone-800/50 flex items-center justify-center"><i data-lucide="play" class="w-12 h-12 text-[#D4AF37]/30"></i></div>
-            <div class="reveal app-shell aspect-square overflow-hidden bg-stone-900/50 flex items-center justify-center"><i data-lucide="play" class="w-12 h-12 text-[#D4AF37]/30"></i></div>
-            <div class="reveal app-shell aspect-square overflow-hidden bg-stone-800/50 flex items-center justify-center"><i data-lucide="play" class="w-12 h-12 text-[#D4AF37]/30"></i></div>
-            <div class="reveal app-shell aspect-square overflow-hidden bg-stone-900/50 flex items-center justify-center"><i data-lucide="play" class="w-12 h-12 text-[#D4AF37]/30"></i></div>
-            <div class="reveal app-shell aspect-square overflow-hidden bg-stone-800/50 flex items-center justify-center"><i data-lucide="play" class="w-12 h-12 text-[#D4AF37]/30"></i></div>
+            <div class="reveal aspect-[9/16] bg-zinc-900 rounded-2xl"></div>
+            <div class="reveal aspect-[9/16] bg-zinc-800 rounded-2xl"></div>
+            <div class="reveal aspect-[9/16] bg-zinc-900 rounded-2xl"></div>
+            <div class="reveal aspect-[9/16] bg-zinc-800 rounded-2xl"></div>
+            <div class="reveal aspect-[9/16] bg-zinc-900 rounded-2xl"></div>
         </div>
     </section>
 
-    <div class="h-px bg-gradient-to-r from-transparent via-[#D4AF37]/30 to-transparent my-20"></div>
+    <section class="bg-[--accent-gold] py-16 px-6 text-center">
+        <h2 class="text-3xl md:text-5xl font-heavy text-black mb-8">Ready for a structural upgrade?</h2>
+        <button class="bg-black text-white px-12 py-5 rounded-full font-heavy hover:scale-105 transition">GET 20% OFF YOUR FIRST VISIT</button>
+    </section>
 
-    <section id="services" class="py-24 px-8 grid md:grid-cols-2 gap-20">
-        <div class="reveal">
-            <h2 class="text-7xl font-heavy mb-12 text-[#D4AF37]">THE PRICE<br>OF POWER.</h2>
-            <div class="space-y-12">
-                <div class="group border-b border-white/5 pb-6">
-                    <div class="flex justify-between items-end mb-2">
-                        <h4 class="text-3xl font-heavy group-hover:text-[#D4AF37] transition">SIGNATURE SCULPT</h4>
-                        <span class="text-2xl font-heavy">£35</span>
+    <section id="services" class="py-24 bg-white px-6">
+        <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-16">
+            <div class="reveal">
+                <h3 class="text-5xl font-heavy mb-8">The Menu</h3>
+                <div class="space-y-8">
+                    <div class="flex justify-between items-start border-b-2 border-black/5 pb-4">
+                        <div><h4 class="text-xl font-bold">The Executive Cut</h4><p class="opacity-60 text-sm">45 mins / Wash / Cut / Finish</p></div>
+                        <span class="text-2xl font-heavy">£40</span>
                     </div>
-                    <p class="text-sm opacity-50">Precision fade, steam towel, and architectural styling.</p>
+                    <div class="flex justify-between items-start border-b-2 border-black/5 pb-4">
+                        <div><h4 class="text-xl font-bold">Beard Architecture</h4><p class="opacity-60 text-sm">Hot towel / Straight razor line</p></div>
+                        <span class="text-2xl font-heavy">£25</span>
+                    </div>
                 </div>
-                </div>
-        </div>
-        <div class="reveal app-shell p-2">
-            <img src="https://images.unsplash.com/photo-1592647420148-bfcc1a3ed291?q=80&w=800" class="rounded-2xl grayscale">
+            </div>
+            <div class="reveal app-shell p-2 bg-[--vintage-tan] rounded-2xl">
+                 <img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?q=80&w=800" class="rounded-xl grayscale" alt="Barber Chair">
+            </div>
         </div>
     </section>
 
-    <section class="py-24 px-8 max-w-5xl mx-auto">
-        <h3 class="text-center text-[10px] font-black tracking-[0.5em] mb-12 uppercase text-[#D4AF37]">The Evolution</h3>
-        <div class="ba-container reveal">
-            <div class="ba-after"></div>
-            <div class="ba-before" id="baHandle"></div>
+    <section class="py-24 bg-gray-50 px-6">
+        <div class="max-w-4xl mx-auto text-center mb-12">
+            <h2 class="text-4xl font-heavy">Evolution</h2>
+            <p class="opacity-60 uppercase tracking-widest text-xs font-bold mt-2">Slide to reveal the protocol</p>
+        </div>
+        <div class="ba-container max-w-5xl mx-auto reveal">
+            <div class="ba-image" style="background-image: url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=1200')"></div>
+            <div class="ba-image ba-before" id="baHandle" style="background-image: url('https://images.unsplash.com/photo-1512690118299-444732007827?q=80&w=1200')"></div>
         </div>
     </section>
 
-    <section id="armory" class="py-24 px-8 bg-black/10">
-        <h2 class="text-6xl font-heavy mb-16 italic">ARMORY/01.</h2>
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-8">
-            <div class="reveal app-shell p-8 group">
-                <div class="aspect-square bg-[#1A0F0D] rounded-2xl mb-6 flex items-center justify-center">
-                    <i data-lucide="flask-round" class="w-16 h-16 text-[#D4AF37] group-hover:scale-110 transition"></i>
-                </div>
-                <h4 class="font-heavy text-xl uppercase">Matte Clay</h4>
-                <p class="text-[#D4AF37] font-heavy text-2xl">£22</p>
+    <section class="py-24 max-w-7xl mx-auto px-6">
+        <h2 class="text-4xl font-heavy mb-12 italic">THE SPECIALISTS</h2>
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="reveal border-4 border-black p-8 rounded-2xl hover:bg-black hover:text-white transition group">
+                <div class="w-12 h-12 bg-[--accent-gold] rounded-full mb-6"></div>
+                <h4 class="text-2xl font-heavy">CHAIR 01</h4>
+                <p class="opacity-60 mb-6 italic">Senior Fade Architect</p>
+                <ul class="text-sm space-y-2 opacity-80">
+                    <li>• Specialized in Razor work</li>
+                    <li>• 12 Years Craft Exp.</li>
+                </ul>
             </div>
+            <div class="reveal border-4 border-black p-8 rounded-2xl">
+                 <div class="w-12 h-12 bg-gray-200 rounded-full mb-6"></div>
+                 <h4 class="text-2xl font-heavy text-black">CHAIR 02</h4>
+                 <p class="opacity-60 mb-6 italic">Beard Master</p>
             </div>
-    </section>
-
-    <section class="py-24 px-8 grid md:grid-cols-3 gap-8">
-        <div class="reveal app-shell p-10 border-l-4 border-l-[#D4AF37]">
-            <h4 class="text-3xl font-heavy mb-4">THE CHAIR 01</h4>
-            <p class="opacity-50 text-sm italic mb-6">Master Fade Technician</p>
-            <div class="flex gap-2">
-                <div class="w-2 h-2 rounded-full bg-[#D4AF37]"></div>
-                <div class="w-2 h-2 rounded-full bg-[#D4AF37]"></div>
-                <div class="w-2 h-2 rounded-full bg-[#D4AF37]"></div>
+            <div class="reveal border-4 border-black p-8 rounded-2xl">
+                 <div class="w-12 h-12 bg-gray-200 rounded-full mb-6"></div>
+                 <h4 class="text-2xl font-heavy text-black">CHAIR 03</h4>
+                 <p class="opacity-60 mb-6 italic">Texture Tech</p>
             </div>
         </div>
-        </section>
+    </section>
 
-    <section id="contact" class="py-24 px-8 grid md:grid-cols-2 gap-12">
-        <div class="reveal app-shell p-12">
-            <h3 class="text-4xl font-heavy mb-10 text-[#D4AF37]">CONTACT PROTOCOL.</h3>
-            <div class="space-y-8 mb-12">
-                <div>
-                    <p class="text-[10px] font-black uppercase opacity-40 mb-2 tracking-widest">Base of Operations</p>
-                    <p class="text-3xl font-heavy uppercase">44 Savile Row<br>London, W1S 3QD</p>
+    <section id="reviews" class="py-24 bg-[--deep-bourbon] text-white px-6">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-16">
+            <div class="md:w-1/3">
+                <div class="text-6xl font-heavy text-[--accent-gold] mb-4">4.9/5</div>
+                <div class="flex gap-1 mb-4"><i data-lucide="star" class="fill-[--accent-gold]"></i><i data-lucide="star" class="fill-[--accent-gold]"></i><i data-lucide="star" class="fill-[--accent-gold]"></i><i data-lucide="star" class="fill-[--accent-gold]"></i><i data-lucide="star" class="fill-[--accent-gold]"></i></div>
+                <p class="opacity-60">Based on 1,200+ Google Reviews</p>
+            </div>
+            <div class="md:w-2/3 grid gap-6">
+                <div class="bg-white/5 p-8 rounded-2xl border border-white/10">
+                    <p class="text-xl italic">"Best booking experience I've had. The interface is simple, and the service is even better. Truly elite."</p>
+                    <p class="mt-4 font-bold">— DAVID K.</p>
                 </div>
-                <div class="grid grid-cols-2 gap-4 text-xl font-heavy">
-                    <div class="opacity-40">M-F</div><div>10:00 - 21:00</div>
-                    <div class="opacity-40">SAT</div><div>09:00 - 18:00</div>
-                    <div class="text-[#D4AF37]">SUN</div><div class="text-[#D4AF37]">CLOSED</div>
-                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="py-24 max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16">
+        <div class="reveal space-y-12">
+            <div>
+                <h3 class="text-5xl font-heavy mb-6">HQ / LONDON</h3>
+                <p class="text-2xl opacity-60 font-medium">44 SAVILE ROW<br>MAYFAIR, W1S 3QD</p>
+            </div>
+            <div class="grid grid-cols-2 gap-4 text-sm font-bold uppercase tracking-widest">
+                <div class="opacity-40">Monday - Friday</div><div>09:00 — 21:00</div>
+                <div class="opacity-40">Saturday</div><div>09:00 — 18:00</div>
+                <div class="text-[--accent-gold]">Sunday</div><div class="text-[--accent-gold]">Closed</div>
             </div>
             <div class="flex gap-4">
-                <a href="tel:020" class="flex-1 bg-white/5 py-6 rounded-2xl flex items-center justify-center hover:bg-[#D4AF37] hover:text-black transition"><i data-lucide="phone"></i></a>
-                <a href="#" class="flex-1 bg-white/5 py-6 rounded-2xl flex items-center justify-center hover:bg-green-600 transition"><i data-lucide="message-circle"></i></a>
+                <a href="tel:020" class="flex-1 bg-black text-white py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-[--accent-gold] transition"><i data-lucide="phone"></i> CALL</a>
+                <a href="#" class="flex-1 border-2 border-black py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-black hover:text-white transition"><i data-lucide="message-square"></i> WHATSAPP</a>
             </div>
+            <form class="space-y-4 pt-8">
+                <input type="text" placeholder="FULL NAME" class="w-full p-4 border rounded-xl outline-none focus:border-[--accent-gold]">
+                <textarea placeholder="INQUIRY" class="w-full p-4 border rounded-xl h-32 outline-none focus:border-[--accent-gold]"></textarea>
+                <button class="w-full bg-black text-white font-heavy py-4 rounded-xl">TRANSMIT</button>
+            </form>
         </div>
-        <div class="reveal app-shell overflow-hidden grayscale brightness-50">
-            <iframe src="https://www.google.com/maps/embed?..." width="100%" height="100%" style="border:0;" loading="lazy"></iframe>
+        <div class="reveal bg-gray-200 rounded-3xl overflow-hidden min-h-[500px] grayscale">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2483.1!2d-0.14!" width="100%" height="100%" style="border:0;" loading="lazy"></iframe>
         </div>
     </section>
 
-    <section class="py-24 px-8 bg-white/5">
-        <div class="flex flex-col items-center text-center max-w-3xl mx-auto reveal">
-            <div class="flex text-[#D4AF37] gap-1 mb-6">
-                <i data-lucide="star" class="fill-[#D4AF37]"></i><i data-lucide="star" class="fill-[#D4AF37]"></i><i data-lucide="star" class="fill-[#D4AF37]"></i><i data-lucide="star" class="fill-[#D4AF37]"></i><i data-lucide="star" class="fill-[#D4AF37]"></i>
+    <footer class="bg-white py-20 px-6 border-t">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-12">
+            <div>
+                <div class="text-3xl font-heavy mb-4">THE CUT ESTATE.</div>
+                <p class="max-w-xs opacity-60">Architectural grooming and technical hair engineering based in London.</p>
             </div>
-            <p class="text-3xl font-heavy italic">"The most precise fade in the capital. The environment feels like a modern fortress."</p>
-            <p class="mt-8 font-black uppercase tracking-widest opacity-40">— JAMES W.</p>
-        </div>
-    </section>
-
-    <footer class="py-20 px-8 border-t border-white/5">
-        <div class="flex flex-wrap justify-between gap-12">
-            <div class="text-4xl font-heavy italic">SVRGN.</div>
-            <div class="flex gap-20">
+            <div class="grid grid-cols-2 gap-12">
                 <div class="space-y-4">
-                    <p class="font-black text-[10px] uppercase opacity-40">Rituals</p>
-                    <a href="#" class="block hover:text-[#D4AF37]">Signature Sculpt</a>
-                    <a href="#" class="block hover:text-[#D4AF37]">Beard Architecture</a>
+                    <p class="font-bold text-xs uppercase tracking-widest text-[--accent-gold]">Navigation</p>
+                    <a href="#" class="block font-medium hover:underline">Book Now</a>
+                    <a href="#" class="block font-medium hover:underline">Services</a>
                 </div>
                 <div class="space-y-4">
-                    <p class="font-black text-[10px] uppercase opacity-40">Social</p>
-                    <a href="#" class="block hover:text-[#D4AF37]">Instagram</a>
-                    <a href="#" class="block hover:text-[#D4AF37]">Twitter</a>
+                    <p class="font-bold text-xs uppercase tracking-widest text-[--accent-gold]">Legal</p>
+                    <a href="#" class="block font-medium hover:underline">Privacy</a>
+                    <a href="#" class="block font-medium hover:underline">Terms</a>
                 </div>
             </div>
         </div>
-        <p class="mt-20 text-[10px] font-black opacity-20 uppercase tracking-[1em]">©2026 Sovereign Grooming Studio London</p>
+        <div class="mt-20 pt-8 border-t text-[10px] font-bold opacity-30 text-center uppercase tracking-[1em]">©2026 CUT ESTATE INTERNATIONAL</div>
     </footer>
 
     <script>
         lucide.createIcons();
         gsap.registerPlugin(ScrollTrigger);
 
-        // 1. Typewriter Animation
+        // 1. Typewriter
         new Typewriter('#typewriter', {
-            strings: ['PRECISION.', 'ENGINEERED.', 'SOVEREIGN.'],
-            autoStart: true, loop: true, delay: 75,
+            strings: ['ELITE CUTS.', 'ARCHITECTURAL.', 'LONDON BUILT.'],
+            autoStart: true, loop: true, delay: 50,
         });
 
-        // 19. Scroll Reveal
-        gsap.utils.toArray(".reveal").forEach((el) => {
-            gsap.to(el, {
-                scrollTrigger: { trigger: el, start: "top 90%" },
-                opacity: 1, y: 0, duration: 1, ease: "power3.out"
+        // 5. Menu Logic
+        const nav = document.getElementById('mobileNav');
+        document.getElementById('navOpen').onclick = () => nav.style.display = 'flex';
+        document.getElementById('navClose').onclick = () => nav.style.display = 'none';
+
+        // 19. Reveal on Scroll
+        gsap.utils.toArray(".reveal").forEach((box) => {
+            gsap.to(box, {
+                scrollTrigger: { trigger: box, start: "top 90%" },
+                opacity: 1, y: 0, duration: 1, ease: "power2.out"
             });
         });
 
@@ -239,11 +260,6 @@
             const x = ((e.clientX - rect.left) / rect.width) * 100;
             handle.style.width = `${x}%`;
         });
-
-        // 5. Menu
-        const menu = document.getElementById('fullMenu');
-        document.getElementById('menuBtn').onclick = () => menu.style.display = 'flex';
-        document.getElementById('closeMenu').onclick = () => menu.style.display = 'none';
     </script>
 </body>
 </html>
