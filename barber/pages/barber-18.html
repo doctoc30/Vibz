@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SVRGN | THE APP</title>
+    <title>SVRGN | ARCHITECTURAL GROOMING</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/typewriter-effect@latest/dist/core.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -15,6 +16,7 @@
             --gold: #D4AF37;
             --matte-white: #E5E1DA;
             --matte-black: #0A0A0A;
+            --industrial-gray: #2A2A2A;
         }
         body { 
             background-color: var(--dark-walnut); 
@@ -24,213 +26,354 @@
         }
         .font-heavy { font-family: 'Archivo Black', sans-serif; line-height: 0.8; letter-spacing: -0.05em; }
         
-        /* APP UI ELEMENTS */
         .app-shell {
             background: #251614;
-            border: 4px solid #331E1B;
-            border-radius: 40px;
-            box-shadow: 0 40px 100px rgba(0,0,0,0.6);
+            border: 2px solid #331E1B;
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            transition: all 0.4s ease;
+        }
+        .app-shell:hover { border-color: var(--gold); }
+
+        /* B&A Slider */
+        .ba-container { position: relative; width: 100%; height: 400px; overflow: hidden; border-radius: 20px; }
+        .ba-after { position: absolute; inset: 0; background-size: cover; background-position: center; }
+        .ba-before { 
+            position: absolute; inset: 0; 
+            background-size: cover; background-position: center; 
+            width: 50%; border-right: 4px solid var(--gold); z-index: 2;
         }
 
-        /* HERO MANNEQUIN PANELS */
-        .hero-split {
-            display: flex;
-            height: 70vh;
-            gap: 12px;
-            padding: 12px;
-        }
-        .pane {
-            flex: 1;
-            border-radius: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-        }
-        .mannequin-bust {
-            width: 80%;
-            height: 80%;
-            border-radius: 140px 140px 20px 20px;
-            position: relative;
-            transform: translateY(20px);
-        }
+        /* Hero */
+        .hero-split { display: flex; height: 60vh; gap: 12px; padding: 12px; }
+        .pane { flex: 1; border-radius: 32px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+        .mannequin-bust { width: 60%; height: 80%; border-radius: 120px 120px 20px 20px; position: relative; }
 
-        /* ANIMATION */
-        .pop-in { opacity: 0; transform: scale(0.8) translateY(100px); }
+        /* Scroll Animations */
+        .reveal { opacity: 0; transform: translateY(40px); }
         
-        /* NAVIGATION DOCK */
+        /* Floating Dock */
         .dock {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-            width: 90%; max-width: 450px; height: 85px;
-            background: rgba(40, 25, 22, 0.8);
-            backdrop-filter: blur(30px);
-            border-radius: 100px;
-            border: 1px solid rgba(211, 175, 55, 0.3);
-            z-index: 1000;
-            display: flex; justify-content: space-around; align-items: center;
+            width: 90%; max-width: 500px; height: 75px;
+            background: rgba(26, 15, 13, 0.9); backdrop-filter: blur(20px);
+            border-radius: 100px; border: 1px solid rgba(212, 175, 55, 0.2);
+            z-index: 1000; display: flex; justify-content: space-around; align-items: center;
         }
+
+        .typewriter-cursor { color: var(--gold); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body>
 
-    <header class="p-8 flex justify-between items-center fixed top-0 w-full z-[100]">
+    <header class="p-6 flex justify-between items-center fixed top-0 w-full z-[100] mix-blend-difference">
         <div class="text-3xl font-heavy italic">SVRGN<span class="text-[#D4AF37]">.</span></div>
-        <button id="menuTrigger" class="w-16 h-16 app-shell flex items-center justify-center border-none bg-[#D4AF37]">
+        <button id="menuTrigger" class="w-14 h-14 rounded-full flex items-center justify-center bg-[#D4AF37]">
             <i data-lucide="menu" class="text-black stroke-[3]"></i>
         </button>
     </header>
 
     <div id="fullMenu" class="fixed inset-0 bg-black z-[200] hidden flex-col justify-center p-12">
         <button id="closeMenu" class="absolute top-10 right-10"><i data-lucide="x" class="w-12 h-12"></i></button>
-        <nav class="space-y-4">
-            <a href="#" class="block text-7xl font-heavy hover:text-[#D4AF37] transition">RITUALS</a>
-            <a href="#" class="block text-7xl font-heavy hover:text-[#D4AF37] transition">SHOP</a>
-            <a href="#" class="block text-7xl font-heavy hover:text-[#D4AF37] transition">ESTATE</a>
-            <a href="#" class="block text-7xl font-heavy hover:text-[#D4AF37] transition">JOIN</a>
+        <nav class="space-y-6">
+            <a href="#services" class="block text-5xl font-heavy hover:text-[#D4AF37] transition">SERVICES</a>
+            <a href="#shop" class="block text-5xl font-heavy hover:text-[#D4AF37] transition">ARMORY</a>
+            <a href="#gallery" class="block text-5xl font-heavy hover:text-[#D4AF37] transition">GALLERY</a>
+            <a href="#contact" class="block text-5xl font-heavy hover:text-[#D4AF37] transition">CONTACT</a>
         </nav>
     </div>
 
     <section class="pt-32">
         <div class="hero-split">
-            <div class="pane bg-[#0A0A0A] border border-white/5">
-                <div class="mannequin-bust bg-[#151515] shadow-[inset_0_0_60px_rgba(212,175,55,0.1)]">
-                    <div class="absolute -top-10 left-1/2 -translate-x-1/2 w-[110%] h-40 bg-black rounded-full border-b-4 border-[#D4AF37]"></div>
-                </div>
-                <div class="absolute bottom-6 left-6 font-heavy text-xs opacity-30 tracking-widest">PHASE.01</div>
-            </div>
-            <div class="pane bg-[#E5E1DA]">
-                <div class="mannequin-bust bg-white shadow-2xl">
-                    <div class="absolute -top-10 left-1/2 -translate-x-1/2 w-[110%] h-40 bg-white rounded-full border-b-4 border-black"></div>
-                </div>
-                <div class="absolute bottom-6 right-6 font-heavy text-xs text-black tracking-widest">PHASE.02</div>
-            </div>
+            <div class="pane bg-zinc-900"><div class="mannequin-bust bg-zinc-800 border-b-8 border-[#D4AF37]"></div></div>
+            <div class="pane bg-[#E5E1DA]"><div class="mannequin-bust bg-white border-b-8 border-black"></div></div>
         </div>
-
         <div class="p-8">
-            <h1 class="text-8xl md:text-[14rem] font-heavy tracking-tighter">ELITE<br><span class="text-[#D4AF37]">AF.</span></h1>
-            <p class="text-xl font-black mt-6 opacity-40 uppercase">Architectural Grooming 2026</p>
+            <h1 class="text-6xl md:text-[10rem] font-heavy tracking-tighter" id="hero-title"></h1>
+            <p class="text-xl font-black mt-4 opacity-40 uppercase tracking-[0.3em]">Precision Engineering for the Modern Mane</p>
         </div>
     </section>
 
-    <section class="p-6">
-        <div class="app-shell p-10 pop-in">
-            <h2 class="text-4xl font-heavy mb-8">SECURE<br>A SEAT</h2>
-            <div class="space-y-8">
-                <div class="group">
-                    <label class="text-[10px] font-black text-[#D4AF37] tracking-[0.4em] uppercase">Selection</label>
-                    <select class="w-full bg-transparent text-3xl font-heavy py-4 border-b-4 border-[#331E1B] outline-none appearance-none group-focus-within:border-[#D4AF37]">
-                        <option>The Sculpt</option>
-                        <option>The Shave</option>
-                        <option>The Full Ritual</option>
+    <section class="px-6 -mt-10 relative z-10">
+        <div class="app-shell p-8 max-w-4xl mx-auto shadow-2xl">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                    <label class="text-[10px] font-black text-[#D4AF37] tracking-widest uppercase mb-2 block">Service</label>
+                    <select class="w-full bg-transparent border-b-2 border-white/10 py-3 font-heavy text-xl outline-none focus:border-[#D4AF37]">
+                        <option>The Sculpt (£35)</option>
+                        <option>The Architecture (£50)</option>
+                        <option>The Ritual (£70)</option>
                     </select>
                 </div>
-                <div class="group">
-                    <label class="text-[10px] font-black text-[#D4AF37] tracking-[0.4em] uppercase">Arrival</label>
-                    <input type="datetime-local" class="w-full bg-transparent text-2xl font-heavy py-4 border-b-4 border-[#331E1B] outline-none">
+                <div>
+                    <label class="text-[10px] font-black text-[#D4AF37] tracking-widest uppercase mb-2 block">Date</label>
+                    <input type="date" class="w-full bg-transparent border-b-2 border-white/10 py-3 font-heavy text-xl outline-none">
                 </div>
-                <button class="w-full bg-[#D4AF37] text-black h-24 rounded-3xl font-heavy text-3xl hover:bg-white transition-all">RESERVE</button>
+                <button class="bg-[#D4AF37] text-black font-heavy text-xl py-4 rounded-xl hover:bg-white transition">SECURE SEAT</button>
+            </div>
+        </div>
+    </section>
+
+    <div class="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent my-20"></div>
+
+    <section id="services" class="py-20 px-8">
+        <div class="grid md:grid-cols-2 gap-16">
+            <div class="reveal">
+                <h2 class="text-7xl font-heavy mb-8 text-[#D4AF37]">RITES.</h2>
+                <div class="space-y-8">
+                    <div class="flex justify-between items-end border-b border-white/5 pb-4 group">
+                        <div><h4 class="text-2xl font-heavy group-hover:text-[#D4AF37]">SIGNATURE SCULPT</h4><p class="text-xs opacity-50">Precision wash, cut, and thermal finish</p></div>
+                        <span class="text-2xl font-heavy">£35</span>
+                    </div>
+                    <div class="flex justify-between items-end border-b border-white/5 pb-4 group">
+                        <div><h4 class="text-2xl font-heavy group-hover:text-[#D4AF37]">BEARD BLUEPRINT</h4><p class="text-xs opacity-50">Architectural lining and conditioning</p></div>
+                        <span class="text-2xl font-heavy">£25</span>
+                    </div>
+                    <div class="flex justify-between items-end border-b border-white/5 pb-4 group">
+                        <div><h4 class="text-2xl font-heavy group-hover:text-[#D4AF37]">THE SVRGN RITUAL</h4><p class="text-xs opacity-50">Full head and beard overhaul + facial</p></div>
+                        <span class="text-2xl font-heavy">£75</span>
+                    </div>
+                </div>
+            </div>
+            <div class="reveal">
+                <p class="text-[10px] font-black tracking-widest text-[#D4AF37] mb-4 uppercase">Structural Evolution</p>
+                <div class="ba-container app-shell border-none">
+                    <div class="ba-after" style="background-image: url('https://images.unsplash.com/photo-1593702275677-f916c8c7604d?q=80&w=800&auto=format&fit=crop'); filter: grayscale(1);"></div>
+                    <div class="ba-before" id="ba-handle" style="background-image: url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=800&auto=format&fit=crop'); filter: grayscale(1);"></div>
+                </div>
             </div>
         </div>
     </section>
 
     <section class="py-20 px-6">
-        <h3 class="text-3xl font-heavy mb-10">FILMS<span class="text-[#D4AF37]">/</span></h3>
-        <div class="grid grid-cols-2 gap-4">
-            <div class="app-shell aspect-[9/16] overflow-hidden pop-in bg-stone-900 flex items-center justify-center"><i data-lucide="play" class="w-12 h-12 opacity-20"></i></div>
-            <div class="app-shell aspect-[9/16] overflow-hidden pop-in bg-stone-800 flex items-center justify-center"><i data-lucide="play" class="w-12 h-12 opacity-20"></i></div>
-        </div>
-    </section>
-
-    <section class="py-20 bg-black/30 rounded-[60px] mx-4 px-6">
-        <h2 class="text-6xl font-heavy mb-12">THE<br><span class="text-[#D4AF37]">GEAR.</span></h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="app-shell p-8 flex flex-col justify-between pop-in">
-                <div class="w-full aspect-square bg-[#1A0F0D] rounded-3xl mb-6 flex items-center justify-center">
-                    <i data-lucide="droplet" class="w-20 h-20 text-[#D4AF37]"></i>
-                </div>
-                <div>
-                    <h4 class="text-2xl font-heavy">MATTE OIL</h4>
-                    <p class="text-[#D4AF37] font-black text-xl">$45</p>
-                    <button class="mt-6 w-full py-4 border-2 border-white/10 rounded-2xl font-black text-xs">ADD TO CART</button>
-                </div>
+        <h3 class="text-3xl font-heavy mb-10 reveal tracking-tighter">TECHNICAL FILMS/</h3>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div class="reveal app-shell aspect-[9/16] bg-stone-900 flex items-center justify-center overflow-hidden">
+                <i data-lucide="play-circle" class="w-12 h-12 text-[#D4AF37] opacity-40"></i>
             </div>
-            <div class="app-shell p-8 flex flex-col justify-between pop-in">
-                <div class="w-full aspect-square bg-[#1A0F0D] rounded-3xl mb-6 flex items-center justify-center">
-                    <i data-lucide="scissors" class="w-20 h-20 text-[#D4AF37]"></i>
-                </div>
-                <div>
-                    <h4 class="text-2xl font-heavy">PRO CLIP</h4>
-                    <p class="text-[#D4AF37] font-black text-xl">$210</p>
-                    <button class="mt-6 w-full py-4 border-2 border-white/10 rounded-2xl font-black text-xs">ADD TO CART</button>
-                </div>
+            <div class="reveal app-shell aspect-[9/16] bg-stone-800 flex items-center justify-center overflow-hidden">
+                <i data-lucide="play-circle" class="w-12 h-12 text-[#D4AF37] opacity-40"></i>
+            </div>
+            <div class="reveal app-shell aspect-[9/16] bg-stone-900 flex items-center justify-center overflow-hidden">
+                <i data-lucide="play-circle" class="w-12 h-12 text-[#D4AF37] opacity-40"></i>
+            </div>
+            <div class="reveal app-shell aspect-[9/16] bg-stone-800 flex items-center justify-center overflow-hidden">
+                <i data-lucide="play-circle" class="w-12 h-12 text-[#D4AF37] opacity-40"></i>
+            </div>
+            <div class="reveal app-shell aspect-[9/16] bg-stone-900 flex items-center justify-center overflow-hidden">
+                <i data-lucide="play-circle" class="w-12 h-12 text-[#D4AF37] opacity-40"></i>
+            </div>
+            <div class="reveal app-shell aspect-[9/16] bg-stone-800 flex items-center justify-center overflow-hidden">
+                <i data-lucide="play-circle" class="w-12 h-12 text-[#D4AF37] opacity-40"></i>
             </div>
         </div>
     </section>
 
-    <section class="py-32 px-8 text-center">
-        <div class="app-shell p-12 inline-block w-full max-w-2xl pop-in">
-            <h3 class="text-4xl font-heavy mb-10 text-[#D4AF37]">OPEN RITES</h3>
-            <div class="space-y-6 text-2xl font-heavy">
-                <div class="flex justify-between border-b-2 border-white/5 pb-4"><span>M-F</span><span>10-21</span></div>
-                <div class="flex justify-between border-b-2 border-white/5 pb-4"><span>SAT</span><span>09-18</span></div>
-                <div class="flex justify-between text-white/30"><span>SUN</span><span>OFF</span></div>
+    <section class="py-20 px-8">
+        <div class="bg-[#D4AF37] rounded-[40px] p-12 text-black text-center reveal">
+            <h2 class="text-5xl md:text-8xl font-heavy mb-6">JOIN THE<br>ESTATE.</h2>
+            <button class="bg-black text-white px-10 py-6 rounded-full font-heavy text-2xl hover:scale-110 transition">RESERVE NOW</button>
+        </div>
+    </section>
+
+    <section id="shop" class="py-20 px-8 bg-black/20">
+        <h2 class="text-5xl font-heavy mb-12 reveal">ARMORY.</h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
+            <div class="app-shell p-6 reveal flex flex-col justify-between group">
+                <div class="aspect-square bg-[#1A0F0D] rounded-2xl mb-4 flex items-center justify-center">
+                    <i data-lucide="flask-conical" class="w-12 h-12 text-[#D4AF37] group-hover:scale-125 transition"></i>
+                </div>
+                <h4 class="font-heavy text-lg">VOID POMADE</h4>
+                <p class="text-[#D4AF37] font-heavy">£22</p>
             </div>
-            <div class="mt-16 text-left">
-                <p class="text-[10px] font-black tracking-[0.5em] text-[#D4AF37] mb-4">LOCATION</p>
-                <p class="text-3xl font-heavy">44 SAVILE ROW<br>LONDON, W1</p>
+            <div class="app-shell p-6 reveal flex flex-col justify-between group">
+                <div class="aspect-square bg-[#1A0F0D] rounded-2xl mb-4 flex items-center justify-center">
+                    <i data-lucide="droplets" class="w-12 h-12 text-[#D4AF37] group-hover:scale-125 transition"></i>
+                </div>
+                <h4 class="font-heavy text-lg">BLUEPRINT OIL</h4>
+                <p class="text-[#D4AF37] font-heavy">£18</p>
             </div>
+            <div class="app-shell p-6 reveal flex flex-col justify-between group">
+                <div class="aspect-square bg-[#1A0F0D] rounded-2xl mb-4 flex items-center justify-center">
+                    <i data-lucide="wind" class="w-12 h-12 text-[#D4AF37] group-hover:scale-125 transition"></i>
+                </div>
+                <h4 class="font-heavy text-lg">IONIC CLAY</h4>
+                <p class="text-[#D4AF37] font-heavy">£25</p>
+            </div>
+            <div class="app-shell p-6 reveal flex flex-col justify-between group">
+                <div class="aspect-square bg-[#1A0F0D] rounded-2xl mb-4 flex items-center justify-center">
+                    <i data-lucide="scissors" class="w-12 h-12 text-[#D4AF37] group-hover:scale-125 transition"></i>
+                </div>
+                <h4 class="font-heavy text-lg">PRO SHEARS</h4>
+                <p class="text-[#D4AF37] font-heavy">£140</p>
+            </div>
+            <div class="app-shell p-6 reveal flex flex-col justify-between group">
+                <div class="aspect-square bg-[#1A0F0D] rounded-2xl mb-4 flex items-center justify-center">
+                    <i data-lucide="zap" class="w-12 h-12 text-[#D4AF37] group-hover:scale-125 transition"></i>
+                </div>
+                <h4 class="font-heavy text-lg">ARC TRIMMER</h4>
+                <p class="text-[#D4AF37] font-heavy">£95</p>
+            </div>
+            <div class="app-shell p-6 reveal flex flex-col justify-between group">
+                <div class="aspect-square bg-[#1A0F0D] rounded-2xl mb-4 flex items-center justify-center">
+                    <i data-lucide="shield-check" class="w-12 h-12 text-[#D4AF37] group-hover:scale-125 transition"></i>
+                </div>
+                <h4 class="font-heavy text-lg">POST-RITE BALM</h4>
+                <p class="text-[#D4AF37] font-heavy">£20</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-20 px-8">
+        <h2 class="text-4xl font-heavy mb-12 reveal">TECHNICIANS.</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="app-shell p-8 reveal text-center">
+                <div class="w-32 h-32 bg-zinc-800 rounded-full mx-auto mb-6 border-4 border-[#D4AF37] flex items-center justify-center">
+                    <i data-lucide="fingerprint" class="w-12 h-12 text-[#D4AF37]"></i>
+                </div>
+                <h4 class="font-heavy text-2xl">MSTR. KANE</h4>
+                <p class="text-[10px] font-black tracking-widest opacity-40">LEAD ARCHITECT</p>
+            </div>
+            <div class="app-shell p-8 reveal text-center">
+                <div class="w-32 h-32 bg-zinc-800 rounded-full mx-auto mb-6 border-4 border-white/10 flex items-center justify-center">
+                    <i data-lucide="focus" class="w-12 h-12 text-white/20"></i>
+                </div>
+                <h4 class="font-heavy text-2xl">SNR. VANCE</h4>
+                <p class="text-[10px] font-black tracking-widest opacity-40">FADE ENGINEER</p>
+            </div>
+            <div class="app-shell p-8 reveal text-center">
+                <div class="w-32 h-32 bg-zinc-800 rounded-full mx-auto mb-6 border-4 border-white/10 flex items-center justify-center">
+                    <i data-lucide="layout-grid" class="w-12 h-12 text-white/20"></i>
+                </div>
+                <h4 class="font-heavy text-2xl">JNR. BLITZ</h4>
+                <p class="text-[10px] font-black tracking-widest opacity-40">DETAIL SPECIALIST</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="gallery" class="py-20 px-4">
+        <div class="grid grid-cols-4 md:grid-cols-4 gap-2 h-[600px]">
+            <div class="reveal col-span-2 row-span-2 bg-stone-900 rounded-3xl overflow-hidden"><img src="https://images.unsplash.com/photo-1599351431247-f5091e3d30e6?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover grayscale opacity-50"></div>
+            <div class="reveal bg-[#1A0F0D] rounded-3xl overflow-hidden border border-white/5"></div>
+            <div class="reveal bg-stone-800 rounded-3xl overflow-hidden border border-white/5"></div>
+            <div class="reveal bg-[#D4AF37] rounded-3xl flex items-center justify-center text-black font-heavy text-3xl">SVRGN</div>
+            <div class="reveal bg-stone-900 rounded-3xl overflow-hidden"></div>
+        </div>
+    </section>
+
+    <section class="py-20 px-8">
+        <div class="flex gap-6 overflow-x-auto no-scrollbar py-10">
+            <div class="min-w-[300px] app-shell p-8 reveal">
+                <div class="flex gap-1 mb-4"><i data-lucide="star" class="fill-[#D4AF37] text-[#D4AF37] w-4 h-4"></i><i data-lucide="star" class="fill-[#D4AF37] text-[#D4AF37] w-4 h-4"></i><i data-lucide="star" class="fill-[#D4AF37] text-[#D4AF37] w-4 h-4"></i><i data-lucide="star" class="fill-[#D4AF37] text-[#D4AF37] w-4 h-4"></i><i data-lucide="star" class="fill-[#D4AF37] text-[#D4AF37] w-4 h-4"></i></div>
+                <p class="italic opacity-80 mb-4">"The structural integrity of my fade has never been better. Truly elite."</p>
+                <p class="font-heavy text-[#D4AF37]">@J_WALKER</p>
+            </div>
+            <div class="min-w-[300px] app-shell p-8 reveal">
+                <div class="flex gap-1 mb-4"><i data-lucide="star" class="fill-[#D4AF37] text-[#D4AF37] w-4 h-4"></i><i data-lucide="star" class="fill-[#D4AF37] text-[#D4AF37] w-4 h-4"></i><i data-lucide="star" class="fill-[#D4AF37] text-[#D4AF37] w-4 h-4"></i><i data-lucide="star" class="fill-[#D4AF37] text-[#D4AF37] w-4 h-4"></i><i data-lucide="star" class="fill-[#D4AF37] text-[#D4AF37] w-4 h-4"></i></div>
+                <p class="italic opacity-80 mb-4">"No barbers, just engineers. The SVRGN Ritual is a monthly requirement."</p>
+                <p class="font-heavy text-[#D4AF37]">@TONY_STARK_LNDN</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="py-20 px-8">
+        <div class="grid md:grid-cols-2 gap-12">
+            <div class="app-shell p-10 reveal">
+                <h3 class="text-4xl font-heavy mb-8 text-[#D4AF37]">OPEN RITES</h3>
+                <div class="space-y-4 font-heavy text-xl mb-12">
+                    <div class="flex justify-between border-b border-white/5 pb-2"><span>M-F</span><span>10:00 - 21:00</span></div>
+                    <div class="flex justify-between border-b border-white/5 pb-2"><span>SAT</span><span>09:00 - 18:00</span></div>
+                    <div class="flex justify-between opacity-30"><span>SUN</span><span>OFFLINE</span></div>
+                </div>
+                <div class="mb-12">
+                    <p class="text-[10px] font-black tracking-widest text-[#D4AF37] mb-2">LOCATION</p>
+                    <p class="text-3xl font-heavy">44 SAVILE ROW<br>LONDON, W1S 3QD</p>
+                </div>
+                <form class="space-y-4">
+                    <input type="text" placeholder="IDENTITY" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl outline-none focus:border-[#D4AF37]">
+                    <textarea placeholder="MESSAGE" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl h-32 outline-none focus:border-[#D4AF37]"></textarea>
+                    <button class="w-full py-4 bg-white/10 font-heavy rounded-xl hover:bg-[#D4AF37] hover:text-black transition">TRANSMIT</button>
+                </form>
+            </div>
+            <div class="reveal h-full min-h-[500px] app-shell overflow-hidden grayscale">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2483.0560945648834!2d-0.1417532!3d51.51221!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x487604d502268421%3A0x6a7d65513d4cc7!2sSavile%20Row!5e0!3m2!1sen!2suk!4v1700000000000" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-20 text-center">
+        <h3 class="text-xl font-heavy mb-8 flex items-center justify-center gap-4"><i data-lucide="instagram"></i> FEED.RITUAL</h3>
+        <div class="grid grid-cols-3 md:grid-cols-6 gap-2 px-2">
+            <div class="aspect-square bg-white/5"></div><div class="aspect-square bg-white/5"></div><div class="aspect-square bg-white/5"></div>
+            <div class="aspect-square bg-white/5"></div><div class="aspect-square bg-white/5"></div><div class="aspect-square bg-white/5"></div>
         </div>
     </section>
 
     <footer class="pb-40 pt-20 px-8 text-center border-t border-white/5">
-        <div class="flex justify-center gap-10 mb-12">
-            <i data-lucide="instagram" class="w-8 h-8 text-[#D4AF37]"></i>
-            <i data-lucide="twitter" class="w-8 h-8 text-[#D4AF37]"></i>
-            <i data-lucide="youtube" class="w-8 h-8 text-[#D4AF37]"></i>
+        <div class="text-4xl font-heavy mb-8 italic">SVRGN.</div>
+        <div class="flex justify-center gap-8 mb-12 text-xs font-black tracking-widest uppercase opacity-40">
+            <a href="#" class="hover:text-[#D4AF37]">Rituals</a>
+            <a href="#" class="hover:text-[#D4AF37]">Terms</a>
+            <a href="#" class="hover:text-[#D4AF37]">Privacy</a>
+            <a href="#" class="hover:text-[#D4AF37]">Support</a>
         </div>
-        <p class="text-[10px] font-black tracking-[0.8em] opacity-20">©2026 SOVEREIGN ESTATE</p>
+        <p class="text-[10px] font-black tracking-[0.8em] opacity-20 uppercase">©2026 SOVEREIGN ESTATE LONDON</p>
     </footer>
 
     <div class="dock">
-        <button class="text-[#D4AF37]"><i data-lucide="home"></i></button>
-        <button class="text-white/40"><i data-lucide="search"></i></button>
-        <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center -mt-16 border-[8px] border-[#1A0F0D] shadow-2xl">
+        <a href="tel:02070000000" class="text-white/40 hover:text-[#D4AF37]"><i data-lucide="phone"></i></a>
+        <a href="https://wa.me/123" class="text-white/40 hover:text-[#D4AF37]"><i data-lucide="message-circle"></i></a>
+        <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center -mt-12 border-[6px] border-[#1A0F0D] shadow-2xl">
             <i data-lucide="calendar" class="text-black fill-black"></i>
         </div>
-        <button class="text-white/40"><i data-lucide="shopping-bag"></i></button>
-        <button class="text-white/40"><i data-lucide="map-pin"></i></button>
+        <button class="text-white/40 hover:text-[#D4AF37]"><i data-lucide="shopping-bag"></i></button>
+        <button class="text-white/40 hover:text-[#D4AF37]"><i data-lucide="map-pin"></i></button>
     </div>
 
     <script>
         lucide.createIcons();
         gsap.registerPlugin(ScrollTrigger);
 
-        // POP-UP ANIMATIONS
-        gsap.utils.toArray(".pop-in").forEach((box) => {
+        // 1. Typewriter Animation
+        new Typewriter('#hero-title', {
+            strings: ['ELITE AF.', 'FADE ARCHITECTS.', 'THE SVRGN RITUAL.'],
+            autoStart: true,
+            loop: true,
+            delay: 75,
+        });
+
+        // 19. Reveal on Scroll
+        gsap.utils.toArray(".reveal").forEach((box) => {
             gsap.to(box, {
                 scrollTrigger: {
                     trigger: box,
                     start: "top 90%",
-                    toggleActions: "play none none reverse"
                 },
                 opacity: 1,
-                scale: 1,
                 y: 0,
                 duration: 1,
-                ease: "power4.out"
+                ease: "power3.out"
             });
         });
 
-        // MENU LOGIC
+        // 9. Before/After Interaction
+        const handle = document.getElementById('ba-handle');
+        document.querySelector('.ba-container').addEventListener('mousemove', (e) => {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
+            handle.style.width = `${x}%`;
+        });
+
+        // 5. Menu Logic
         const menu = document.getElementById('fullMenu');
         document.getElementById('menuTrigger').onclick = () => menu.style.display = 'flex';
         document.getElementById('closeMenu').onclick = () => menu.style.display = 'none';
 
-        // MANNEQUIN PARALLAX
+        // Parallax Effect
         document.addEventListener('mousemove', (e) => {
-            const x = (e.clientX / window.innerWidth - 0.5) * 40;
-            const y = (e.clientY / window.innerHeight - 0.5) * 40;
+            const x = (e.clientX / window.innerWidth - 0.5) * 20;
+            const y = (e.clientY / window.innerHeight - 0.5) * 20;
             gsap.to(".mannequin-bust", { x: x, y: y, duration: 2, ease: "power2.out" });
         });
     </script>
