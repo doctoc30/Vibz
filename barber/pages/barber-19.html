@@ -3,239 +3,202 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE QUARTERS | 2026 Grooming Lab</title>
+    <title>THE QUARTERS | ELITE GENTLEMANS LAB</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;500&family=Bormioli:ital,wght@0,400;1,700&family=Space+Grotesk:wght@300;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Outfit:wght@300;600;900&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --canvas: #F9F7F2;      /* Rich Cream */
-            --ink: #1C1C1C;         /* Soft Black */
-            --accent: #A69177;      /* Muted Bronze */
-            --glass: rgba(255, 255, 255, 0.7);
+            --cream: #F5F2EB;
+            --bold-black: #0A0A0A;
+            --accent: #D4AF37;
         }
 
         body {
-            background-color: var(--canvas);
-            color: var(--ink);
-            font-family: 'DM Sans', sans-serif;
+            background-color: var(--cream);
+            color: var(--bold-black);
+            font-family: 'Outfit', sans-serif;
             overflow-x: hidden;
         }
 
-        .serif { font-family: 'Bormioli', serif; font-weight: 400; }
+        .bold-title { font-family: 'Archivo Black', sans-serif; text-transform: uppercase; line-height: 0.85; }
 
-        /* --- 2026 Welcome Reveal --- */
-        #loader {
-            position: fixed;
-            inset: 0;
-            background: var(--ink);
-            z-index: 999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: transform 1.2s cubic-bezier(0.87, 0, 0.13, 1);
+        /* --- Welcome Reveal --- */
+        #reveal-screen {
+            position: fixed; inset: 0; background: var(--bold-black);
+            z-index: 1000; display: flex; justify-content: center; align-items: center;
+            transition: transform 1s cubic-bezier(1, 0, 0, 1);
         }
-        #loader.reveal { transform: translateY(-100%); }
-        .loader-logo { color: var(--canvas); letter-spacing: 0.5em; overflow: hidden; }
-        .loader-text { display: block; transform: translateY(100%); animation: textRise 0.8s forwards 0.2s; }
-        
-        @keyframes textRise { to { transform: translateY(0); } }
+        #reveal-screen.hide { transform: translateY(-100%); }
 
-        /* --- Elite UI Components --- */
-        .glass-nav {
-            background: var(--glass);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255,255,255,0.4);
-            border-radius: 100px;
-            margin: 1.5rem auto;
-            width: 90%;
-            max-width: 1200px;
+        /* --- Floating Left Comm Bar --- */
+        .comm-bar {
+            position: fixed; left: 20px; top: 50%; transform: translateY(-50%);
+            display: flex; flex-direction: column; gap: 15px; z-index: 90;
         }
+        .comm-btn {
+            width: 50px; height: 50px; border-radius: 15px; background: var(--bold-black);
+            color: white; display: flex; justify-content: center; align-items: center;
+            font-size: 1.2rem; transition: 0.3s; box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .comm-btn:hover { background: var(--accent); transform: scale(1.1); }
 
-        .hero-title {
-            font-size: clamp(3rem, 12vw, 10rem);
-            line-height: 0.9;
-            letter-spacing: -0.02em;
+        /* --- Fullscreen Hamburger Menu --- */
+        #nav-overlay {
+            position: fixed; inset: 0; background: var(--bold-black);
+            z-index: 200; clip-path: circle(0% at 95% 5%);
+            transition: clip-path 0.8s cubic-bezier(0.85, 0, 0.15, 1);
+            display: flex; flex-direction: column; justify-content: center; padding: 10%;
         }
+        #nav-overlay.active { clip-path: circle(150% at 95% 5%); }
+        .nav-link { font-size: 12vw; color: var(--cream); transition: 0.4s; line-height: 1; }
+        .nav-link:hover { color: var(--accent); -webkit-text-stroke: 2px var(--cream); color: transparent; }
 
-        .btn-elite {
-            position: relative;
-            padding: 1.25rem 2.5rem;
-            background: var(--ink);
-            color: var(--canvas);
-            border-radius: 4px;
-            overflow: hidden;
-            transition: 0.4s;
+        /* --- 2026 UI Blocks --- */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--bold-black);
+            border-radius: 30px;
+            padding: 40px;
+            transition: 0.3s;
         }
-        .btn-elite:hover { transform: translateY(-3px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .glass-card:hover { background: var(--bold-black); color: var(--cream); }
 
-        /* App-like Grid */
-        .card-service {
-            background: white;
-            border: 1px solid #EAE6DF;
-            border-radius: 24px;
-            padding: 2.5rem;
-            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-        }
-        .card-service:hover {
-            border-color: var(--accent);
-            transform: scale(1.02) translateY(-10px);
+        .form-input {
+            background: transparent; border-bottom: 4px solid var(--bold-black);
+            padding: 15px 0; font-size: 1.2rem; width: 100%; outline: none;
+            font-weight: 900; text-transform: uppercase;
         }
 
-        /* Fluid Scrolling Shadows */
-        .scroll-reveal {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s ease-out;
-        }
-        .scroll-reveal.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        /* Review Slider Simulation */
+        .review-track { display: flex; gap: 20px; overflow-x: auto; padding-bottom: 20px; scrollbar-width: none; }
     </style>
 </head>
 <body>
 
-    <div id="loader">
-        <div class="loader-logo text-2xl font-light">
-            <span class="loader-text uppercase">The Quarters</span>
-        </div>
+    <div id="reveal-screen">
+        <h1 class="bold-title text-white text-4xl tracking-tighter animate-pulse">The Quarters</h1>
     </div>
 
-    <nav class="fixed top-0 left-0 right-0 z-50 transition-all duration-500">
-        <div class="glass-nav flex justify-between items-center px-8 py-4">
-            <div class="text-lg font-bold uppercase tracking-tighter">QTRS.26</div>
-            <div class="hidden md:flex gap-10 text-[11px] font-medium uppercase tracking-widest">
-                <a href="#" class="hover:text-accent transition">The Lab</a>
-                <a href="#" class="hover:text-accent transition">Services</a>
-                <a href="#" class="hover:text-accent transition">Apothecary</a>
-            </div>
-            <button class="text-xs font-bold uppercase border-b-2 border-ink">Reserve</button>
-        </div>
+    <div class="comm-bar hidden md:flex">
+        <a href="https://wa.me/yournumber" class="comm-btn"><i class="fab fa-whatsapp"></i></a>
+        <a href="tel:+123456789" class="comm-btn"><i class="fas fa-phone-alt"></i></a>
+        <a href="#" class="comm-btn"><i class="fas fa-calendar-check"></i></a>
+    </div>
+
+    <nav class="fixed top-0 w-full p-8 flex justify-between items-center z-[210]">
+        <div class="bold-title text-2xl tracking-tighter">QTRS.LAB</div>
+        <button onclick="toggleMenu()" class="w-12 h-12 bg-black rounded-full flex flex-col items-center justify-center gap-1 group">
+            <span class="w-6 h-1 bg-white transition-all group-hover:w-4"></span>
+            <span class="w-6 h-1 bg-white"></span>
+        </button>
     </nav>
 
-    <main class="pt-32">
-        <section class="px-6 md:px-20 mb-32">
-            <div class="max-w-7xl mx-auto">
-                <p class="uppercase text-[10px] tracking-[0.5em] text-accent mb-6" data-aos="fade-up">Elite Grooming Protocol</p>
-                <h1 class="hero-title serif mb-12" data-aos="fade-up" data-aos-delay="100">
-                    Quiet <br> <span class="italic text-accent">Confidence.</span>
-                </h1>
-                
-                <div class="flex flex-col md:flex-row items-end justify-between gap-12">
-                    <div class="max-w-md" data-aos="fade-right" data-aos-delay="300">
-                        <p class="text-lg leading-relaxed text-zinc-500 mb-8">
-                            A sanctuary of tactile luxury. In 2026, we've moved beyond barbering into the realm of architectural wellness.
-                        </p>
-                        <button class="btn-elite uppercase text-xs tracking-widest font-bold">Start Experience</button>
-                    </div>
-                    <div class="relative w-full md:w-1/3 aspect-[4/5] overflow-hidden rounded-3xl" data-aos="zoom-out-up">
-                        <img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover" alt="Elite Interior">
-                    </div>
+    <div id="nav-overlay">
+        <button onclick="toggleMenu()" class="absolute top-10 right-10 text-white text-xl uppercase font-black">Close X</button>
+        <a href="#lab" onclick="toggleMenu()" class="bold-title nav-link">LAB</a>
+        <a href="#reviews" onclick="toggleMenu()" class="bold-title nav-link">REVIEWS</a>
+        <a href="#visit" onclick="toggleMenu()" class="bold-title nav-link">VISIT</a>
+        <a href="#contact" onclick="toggleMenu()" class="bold-title nav-link">BOOK</a>
+    </div>
+
+    <main class="pt-40 px-6 md:px-24">
+        <section class="min-h-screen">
+            <span class="uppercase font-black text-sm mb-4 block" data-aos="fade-right">Est. 2026 / London</span>
+            <h1 class="bold-title text-[15vw] md:text-[12vw] mb-10" data-aos="fade-up">
+                Elite <br> <span class="text-white" style="-webkit-text-stroke: 3px black;">Precision</span>
+            </h1>
+            
+            <div class="grid md:grid-cols-2 gap-20 items-center">
+                <div class="space-y-8">
+                    <p class="text-2xl font-bold leading-tight">WE DON'T JUST CUT HAIR. WE ARCHITECT IDENTITIES USING MATHEMATICAL SYMMETRY AND JAPANESE STEEL.</p>
+                    <button class="bg-black text-white px-10 py-6 rounded-full font-black uppercase text-xl hover:bg-accent transition">Book Your Session</button>
+                </div>
+                <div class="rounded-[40px] overflow-hidden border-4 border-black" data-aos="zoom-in">
+                    <img src="https://images.unsplash.com/photo-1599351431247-f50940397ec2?auto=format&fit=crop&q=80&w=800" alt="Barber Tooling" class="w-full">
                 </div>
             </div>
         </section>
 
-        <section class="bg-white py-32 rounded-[3rem] md:rounded-[5rem] shadow-sm">
-            <div class="max-w-7xl mx-auto px-6">
-                <div class="flex flex-col md:flex-row justify-between items-baseline mb-20">
-                    <h2 class="serif text-5xl md:text-7xl">The Lab Menu</h2>
-                    <p class="text-accent uppercase tracking-widest text-xs">Scroll to Explore</p>
+        <section id="reviews" class="py-32">
+            <h2 class="bold-title text-6xl mb-12">Verified<br>Sentiments</h2>
+            <div class="review-track">
+                <div class="glass-card min-w-[300px] md:min-w-[450px]">
+                    <div class="flex text-accent mb-4"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <p class="text-xl font-bold mb-6">"The only place in London that understands bone structure. It's not a haircut, it's surgery."</p>
+                    <span class="font-black uppercase">— James V.</span>
                 </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div class="card-service" data-aos="fade-up">
-                        <span class="text-zinc-300 text-5xl font-light mb-10 block">01</span>
-                        <h3 class="serif text-3xl mb-4 italic">Sculptural Cut</h3>
-                        <p class="text-zinc-500 text-sm leading-relaxed mb-8">Using facial geometry mapping to create a silhouette that evolves with your lifestyle.</p>
-                        <div class="h-px w-full bg-zinc-100"></div>
-                        <div class="mt-6 flex justify-between items-center">
-                            <span class="font-bold text-lg">$95</span>
-                            <i class="fa-solid fa-arrow-right-long text-accent"></i>
-                        </div>
-                    </div>
-
-                    <div class="card-service" data-aos="fade-up" data-aos-delay="100">
-                        <span class="text-zinc-300 text-5xl font-light mb-10 block">02</span>
-                        <h3 class="serif text-3xl mb-4 italic">Ozone Therapy</h3>
-                        <p class="text-zinc-500 text-sm leading-relaxed mb-8">Cold-mist oxygen infusion combined with traditional straight-edge precision.</p>
-                        <div class="h-px w-full bg-zinc-100"></div>
-                        <div class="mt-6 flex justify-between items-center">
-                            <span class="font-bold text-lg">$60</span>
-                            <i class="fa-solid fa-arrow-right-long text-accent"></i>
-                        </div>
-                    </div>
-
-                    <div class="card-service" data-aos="fade-up" data-aos-delay="200">
-                        <span class="text-zinc-300 text-5xl font-light mb-10 block">03</span>
-                        <h3 class="serif text-3xl mb-4 italic">The Ritual</h3>
-                        <p class="text-zinc-500 text-sm leading-relaxed mb-8">Our signature 90-minute full reconstruction. Hair, beard, and cranial massage.</p>
-                        <div class="h-px w-full bg-zinc-100"></div>
-                        <div class="mt-6 flex justify-between items-center">
-                            <span class="font-bold text-lg">$140</span>
-                            <i class="fa-solid fa-arrow-right-long text-accent"></i>
-                        </div>
-                    </div>
+                <div class="glass-card min-w-[300px] md:min-w-[450px]">
+                    <div class="flex text-accent mb-4"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <p class="text-xl font-bold mb-6">"Elite atmosphere. The cream-bright studio is a refreshing change from dark, moody shops."</p>
+                    <span class="font-black uppercase">— Marcus Thorne</span>
                 </div>
             </div>
         </section>
 
-        <footer class="py-24 px-6">
-            <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-20">
-                <div>
-                    <h4 class="serif text-6xl italic mb-8">Stay Sharp.</h4>
-                    <div class="flex gap-4">
-                        <input type="email" placeholder="Join the private list" class="bg-white border border-zinc-200 rounded-full px-8 py-4 w-full outline-none focus:border-accent transition">
-                        <button class="bg-ink text-canvas rounded-full px-8">Submit</button>
-                    </div>
+        <section id="contact" class="py-32 grid md:grid-cols-2 gap-20">
+            <div>
+                <h2 class="bold-title text-7xl mb-10">Get In<br>The Chair.</h2>
+                <form class="space-y-10">
+                    <input type="text" placeholder="Your Name" class="form-input">
+                    <input type="email" placeholder="Email Address" class="form-input">
+                    <select class="form-input">
+                        <option>Full Reconstruction</option>
+                        <option>Beard Sculpt</option>
+                        <option>Ozone Therapy</option>
+                    </select>
+                    <button class="w-full py-8 bg-black text-white font-black uppercase text-2xl rounded-2xl">Send Request</button>
+                </form>
+            </div>
+            <div class="space-y-8">
+                <div class="h-[400px] rounded-[40px] overflow-hidden border-4 border-black grayscale hover:grayscale-0 transition-all duration-700">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2483.154830335345!2d-0.1417576!3d51.510357!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x487604d50361860b%3A0x280e8e6022e17180!2sSavile%20Row%2C%20London!5e0!3m2!1sen!2suk!4v1700000000000" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
                 </div>
-                <div class="grid grid-cols-2 text-xs uppercase tracking-widest leading-loose">
-                    <div>
-                        <p class="font-bold mb-4">Location</p>
-                        <p class="text-zinc-500">12 Savile Row<br>London, W1S 3PQ</p>
-                    </div>
-                    <div>
-                        <p class="font-bold mb-4">Inquiries</p>
-                        <p class="text-zinc-500">studio@quarters.com<br>+44 20 7946 0123</p>
-                    </div>
+                <div class="p-8 bg-white border-4 border-black rounded-[30px]">
+                    <p class="font-black text-2xl uppercase">HQ: 12 Savile Row, London</p>
+                    <p class="font-bold text-zinc-500">Mon-Sat: 09:00 - 21:00</p>
                 </div>
             </div>
-        </footer>
+        </section>
     </main>
 
-    <div class="fixed bottom-6 left-1/2 -translate-x-1/2 md:hidden z-50 w-[90%]">
-        <button class="w-full bg-ink text-canvas py-5 rounded-2xl font-bold uppercase tracking-widest shadow-2xl">
-            Book Appointment
-        </button>
+    <footer class="bg-black text-white py-20 px-6 md:px-24">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-10">
+            <div class="bold-title text-5xl">QTRS.</div>
+            <div class="flex gap-8 text-3xl">
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-tiktok"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+            </div>
+        </div>
+        <div class="mt-20 border-t border-zinc-800 pt-10 text-center text-xs font-bold tracking-widest opacity-50 uppercase">
+            © 2026 The Quarters Elite Lab • Design by Elite Systems
+        </div>
+    </footer>
+
+    <div class="fixed bottom-0 left-0 w-full flex md:hidden z-[100] border-t-4 border-black">
+        <a href="tel:+" class="flex-1 bg-white p-6 text-center font-black border-r-2 border-black">CALL</a>
+        <a href="https://wa.me/+" class="flex-1 bg-[#25D366] text-white p-6 text-center font-black">WHATSAPP</a>
     </div>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        // Init Animations
-        AOS.init({ 
-            duration: 1200, 
-            once: false,
-            mirror: true 
-        });
+        AOS.init({ duration: 1000, once: true });
 
-        // Welcome Reveal Handler
+        // Welcome Reveal
         window.addEventListener('load', () => {
             setTimeout(() => {
-                document.getElementById('loader').classList.add('reveal');
-            }, 1000);
+                document.getElementById('reveal-screen').classList.add('hide');
+            }, 1200);
         });
 
-        // Scroll Logic for Nav
-        window.addEventListener('scroll', () => {
-            const nav = document.querySelector('nav');
-            if (window.scrollY > 50) {
-                nav.style.transform = 'translateY(-10px)';
-            } else {
-                nav.style.transform = 'translateY(0)';
-            }
-        });
+        // Menu Toggle
+        function toggleMenu() {
+            document.getElementById('nav-overlay').classList.toggle('active');
+        }
     </script>
 </body>
 </html>
