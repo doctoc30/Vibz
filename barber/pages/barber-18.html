@@ -3,294 +3,259 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AUREUM | Premier Barbering 2026</title>
+    <title>THE SOVEREIGN | Premier Grooming</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@200;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Bodoni+Moda:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@300;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --gold: #D4AF37;
-            --dark-gold: #996515;
-            --matte-black: #0A0A0A;
+            --sofa-brown: #3E2723; /* Deep leather brown */
+            --cognac: #5D4037;
+            --vellum: #F5F2ED; /* Posh off-white paper color */
+            --antique-gold: #C5A059;
         }
         body { 
-            background-color: var(--matte-black); 
+            background-color: var(--vellum); 
             font-family: 'Montserrat', sans-serif;
-            color: #ffffff;
-            scroll-behavior: smooth;
+            color: var(--sofa-brown);
+            overflow-x: hidden;
         }
+        .font-serif { font-family: 'Bodoni Moda', serif; }
         .font-cinzel { font-family: 'Cinzel', serif; }
-        .gold-text { background: linear-gradient(to right, #BF953F, #FCF6BA, #AA771C); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .gold-border { border: 1px solid var(--gold); }
-        .reveal { opacity: 0; transform: translateY(30px); }
         
-        /* Side-by-Side Hero Concept */
-        .hero-split { display: flex; height: 85vh; overflow: hidden; }
-        .hero-side { flex: 1; position: relative; display: flex; align-items: center; justify-content: center; transition: flex 0.7s ease; }
-        .hero-side:hover { flex: 1.3; }
-        .mannequin-bust { width: 300px; height: 450px; border-radius: 150px 150px 0 0; position: relative; filter: drop-shadow(0 0 30px rgba(0,0,0,0.5)); }
+        /* Posh Textures */
+        .leather-texture {
+            background-color: var(--sofa-brown);
+            background-image: url("https://www.transparenttextures.com/patterns/leather.png");
+        }
+        
+        /* Asymmetrical Grid */
+        .posh-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 20px;
+        }
 
-        /* Mobile Menu */
-        #mobile-menu { transform: translateX(100%); transition: transform 0.4s ease-in-out; }
-        #mobile-menu.active { transform: translateX(0); }
+        /* Before/After Custom Slider */
+        .comparison-slider {
+            position: relative;
+            height: 600px;
+            width: 100%;
+            overflow: hidden;
+            border: 8px solid white;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
 
-        /* Before/After Slider */
-        .slider-container { position: relative; width: 100%; height: 500px; overflow: hidden; }
-        .slider-after { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-        .slider-before { position: absolute; top: 0; left: 0; width: 50%; height: 100%; border-right: 3px solid var(--gold); overflow: hidden; z-index: 2; }
+        .reveal-item { opacity: 0; transform: translateY(40px); transition: all 1s ease; }
+        .reveal-item.visible { opacity: 1; transform: translateY(0); }
+
+        .gold-leaf {
+            border: 1px solid var(--antique-gold);
+            position: relative;
+        }
+        .gold-leaf::after {
+            content: '';
+            position: absolute;
+            top: 2px; left: 2px; right: 2px; bottom: 2px;
+            border: 1px solid var(--antique-gold);
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
 
-    <nav class="fixed top-0 w-full z-[100] px-8 py-6 flex justify-between items-center bg-black/90 backdrop-blur-md border-b border-white/10">
-        <div class="text-2xl font-cinzel gold-text font-bold tracking-widest">AUREUM</div>
-        <div class="hidden lg:flex space-x-8 text-[10px] uppercase tracking-[0.3em]">
-            <a href="#services" class="hover:text-[#D4AF37]">Services</a>
-            <a href="#gallery" class="hover:text-[#D4AF37]">Gallery</a>
-            <a href="#contact" class="hover:text-[#D4AF37]">Contact</a>
+    <nav class="fixed top-0 w-full z-[100] px-12 py-8 flex justify-between items-center bg-[#F5F2ED]/90 backdrop-blur-sm border-b border-brown-100">
+        <div class="flex flex-col">
+            <span class="text-2xl font-cinzel tracking-[0.3em] font-bold">THE SOVEREIGN</span>
+            <span class="text-[9px] tracking-[0.5em] uppercase opacity-60">Est. 2026 • Private Member's Studio</span>
         </div>
-        <button id="menu-toggle" class="lg:hidden text-white"><i data-lucide="menu"></i></button>
+        <div class="hidden lg:flex space-x-12 text-[11px] uppercase tracking-[0.2em] font-medium">
+            <a href="#atelier" class="hover:text-[#C5A059] transition">Atelier</a>
+            <a href="#reserve" class="hover:text-[#C5A059] transition">Reservations</a>
+            <a href="#apothecary" class="hover:text-[#C5A059] transition">Apothecary</a>
+        </div>
+        <button id="navBtn" class="p-2 border border-brown-900 rounded-full hover:bg-[#3E2723] hover:text-white transition">
+            <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
     </nav>
 
-    <div id="mobile-menu" class="fixed inset-0 bg-black z-[101] flex flex-col items-center justify-center space-y-8 text-2xl font-cinzel">
-        <button id="menu-close" class="absolute top-8 right-8"><i data-lucide="x"></i></button>
-        <a href="#services">SERVICES</a>
-        <a href="#prices">PRICING</a>
-        <a href="#booking">RESERVE</a>
-    </div>
-
-    <section class="hero-split pt-20">
-        <div class="hero-side bg-[#111]">
-            <div class="mannequin-bust bg-[#050505] border border-white/10 flex flex-col items-center justify-start pt-10">
-                <div class="w-48 h-48 bg-black rounded-full border-t-4 border-[#D4AF37] mb-4"></div> <p class="font-cinzel text-xs tracking-widest mt-auto pb-10">THE SHADOW CUT</p>
+    <section class="h-screen flex flex-col md:flex-row pt-24">
+        <div class="flex-1 bg-white flex flex-col items-center justify-center p-12 border-r border-stone-100">
+            <div class="w-72 h-[450px] bg-stone-50 rounded-t-full shadow-inner border border-stone-200 flex flex-col items-center pt-20 overflow-hidden relative">
+                <div class="w-40 h-40 rounded-full bg-stone-200 mix-blend-multiply filter blur-sm"></div>
+                <div class="absolute bottom-10 text-center">
+                    <span class="font-serif italic text-2xl">The Aristocrat</span>
+                </div>
             </div>
         </div>
-        <div class="hero-side bg-[#fdfdfd]">
-            <div class="mannequin-bust bg-[#eee] flex flex-col items-center justify-start pt-10">
-                <div class="w-48 h-48 bg-white rounded-full border-t-4 border-black mb-4"></div> <p class="font-cinzel text-black text-xs tracking-widest mt-auto pb-10">THE IVORY TAPER</p>
+        <div class="flex-1 leather-texture flex flex-col items-center justify-center p-12 text-[#F5F2ED]">
+            <div class="w-72 h-[450px] bg-[#2D1B18] rounded-t-full shadow-2xl border border-white/5 flex flex-col items-center pt-20 overflow-hidden relative">
+                <div class="w-40 h-40 rounded-full bg-black/40"></div>
+                <div class="absolute bottom-10 text-center">
+                    <span class="font-serif italic text-2xl text-[#C5A059]">The Diplomat</span>
+                </div>
             </div>
         </div>
-        <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-            <h1 class="text-7xl md:text-9xl font-cinzel font-bold mix-blend-difference">ELITE</h1>
-            <p class="text-sm md:text-xl tracking-[0.8em] font-light mt-4">PREMIER GROOMING STUDIO</p>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none w-full">
+            <h1 class="text-7xl md:text-[10rem] font-serif italic text-[#3E2723] mix-blend-multiply opacity-10">Sovereign</h1>
+            <h2 class="text-3xl md:text-5xl font-cinzel mt-[-2rem] tracking-widest text-stone-800">CROWN & SCULPT</h2>
         </div>
     </section>
 
-    <section id="booking" class="relative z-10 -mt-12 px-6">
-        <div class="max-w-5xl mx-auto bg-[#151515] p-8 gold-border shadow-2xl">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div>
-                    <label class="text-[10px] uppercase tracking-widest opacity-50 block mb-2">Service</label>
-                    <select class="w-full bg-transparent border-b border-gold py-2 focus:outline-none">
-                        <option>Signature Fade</option>
-                        <option>Gold Leaf Facial</option>
-                        <option>Architectural Beard</option>
+    <section id="reserve" class="py-20 px-6 max-w-6xl mx-auto -mt-20 relative z-20">
+        <div class="bg-white p-12 shadow-2xl gold-leaf">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
+                <div class="space-y-2">
+                    <p class="text-[10px] uppercase tracking-widest font-bold">Select Rite</p>
+                    <select class="w-full border-b border-stone-300 py-3 bg-transparent font-serif italic text-lg outline-none">
+                        <option>The Full Sovereignty</option>
+                        <option>Executive Profile</option>
+                        <option>Signature Beard Craft</option>
                     </select>
                 </div>
-                <div>
-                    <label class="text-[10px] uppercase tracking-widest opacity-50 block mb-2">Master Barber</label>
-                    <select class="w-full bg-transparent border-b border-gold py-2 focus:outline-none">
-                        <option>Senior Artist</option>
+                <div class="space-y-2">
+                    <p class="text-[10px] uppercase tracking-widest font-bold">Barber Preference</p>
+                    <select class="w-full border-b border-stone-300 py-3 bg-transparent font-serif italic text-lg outline-none">
+                        <option>Master Architect</option>
                         <option>Creative Director</option>
                     </select>
                 </div>
-                <div>
-                    <label class="text-[10px] uppercase tracking-widest opacity-50 block mb-2">Preferred Date</label>
-                    <input type="date" class="w-full bg-transparent border-b border-gold py-2 focus:outline-none text-white">
+                <div class="space-y-2">
+                    <p class="text-[10px] uppercase tracking-widest font-bold">Appointment</p>
+                    <input type="datetime-local" class="w-full border-b border-stone-300 py-3 bg-transparent outline-none">
                 </div>
-                <button class="bg-[#D4AF37] text-black font-bold text-xs uppercase tracking-widest hover:bg-white transition">Reserve Seat</button>
+                <button class="leather-texture text-[#F5F2ED] py-4 px-8 text-[11px] font-bold tracking-[0.3em] hover:scale-105 transition">RESERVE SEAT</button>
             </div>
         </div>
     </section>
 
-    <section id="services" class="py-32 px-6 max-w-7xl mx-auto">
-        <h2 class="text-4xl font-cinzel text-center mb-20 reveal">THE <span class="gold-text">MENU</span></h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-20">
-            <div class="space-y-8 reveal">
-                <div class="flex justify-between items-end border-b border-white/10 pb-4">
-                    <div><h3 class="text-xl font-cinzel">SCULPTED TAPER</h3><p class="text-xs opacity-50">Precision fade with razor finish</p></div>
-                    <span class="gold-text font-bold">$65</span>
-                </div>
-                <div class="flex justify-between items-end border-b border-white/10 pb-4">
-                    <div><h3 class="text-xl font-cinzel">ROYAL SHAVE</h3><p class="text-xs opacity-50">Hot towel & gold oil treatment</p></div>
-                    <span class="gold-text font-bold">$50</span>
+    <section class="py-32 px-12 max-w-7xl mx-auto">
+        <div class="posh-grid">
+            <div class="col-span-12 md:col-span-5 mb-12 reveal-item">
+                <h3 class="text-[10px] uppercase tracking-[0.5em] text-[#C5A059] mb-4">The Atelier</h3>
+                <h2 class="text-5xl font-serif mb-8 italic">Curated Grooming <br>Services</h2>
+                <p class="leading-relaxed opacity-70 mb-12">Every session is an architectural consultation, focusing on the structural integrity of your profile.</p>
+                <div class="space-y-6">
+                    <div class="flex justify-between items-center border-b border-stone-200 pb-4">
+                        <span class="font-cinzel text-sm">Sculpted Taper</span>
+                        <span class="font-serif italic">$95</span>
+                    </div>
+                    <div class="flex justify-between items-center border-b border-stone-200 pb-4">
+                        <span class="font-cinzel text-sm">Hot Leather Shave</span>
+                        <span class="font-serif italic">$75</span>
+                    </div>
+                    <div class="flex justify-between items-center border-b border-stone-200 pb-4">
+                        <span class="font-cinzel text-sm">Profile Restoration</span>
+                        <span class="font-serif italic">$150</span>
+                    </div>
                 </div>
             </div>
-            <div class="space-y-8 reveal">
-                <div class="flex justify-between items-end border-b border-white/10 pb-4">
-                    <div><h3 class="text-xl font-cinzel">EXECUTIVE CUT</h3><p class="text-xs opacity-50">Shear work & style consultation</p></div>
-                    <span class="gold-text font-bold">$80</span>
-                </div>
-                <div class="flex justify-between items-end border-b border-white/10 pb-4">
-                    <div><h3 class="text-xl font-cinzel">BEARD ARCHITECTURE</h3><p class="text-xs opacity-50">Structural shaping</p></div>
-                    <span class="gold-text font-bold">$45</span>
+            <div class="col-span-12 md:col-span-6 md:col-start-8 reveal-item">
+                <div class="aspect-[4/5] leather-texture p-12 flex flex-col justify-end text-white gold-leaf">
+                    <h4 class="text-3xl font-serif italic mb-4">Membership Access</h4>
+                    <p class="text-sm opacity-60 mb-8 tracking-wide leading-relaxed">Unlimited grooming, priority booking, and private bar access. Limited to 50 residents per district.</p>
+                    <button class="border border-white/30 py-4 text-[10px] tracking-[0.4em] font-bold hover:bg-white hover:text-black transition">INQUIRE</button>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="py-24 bg-[#D4AF37] text-black text-center reveal">
-        <h2 class="text-4xl font-cinzel font-bold mb-6">BEYOND THE MIRROR</h2>
-        <p class="max-w-xl mx-auto mb-10 tracking-wide font-medium">Join our private registry for priority scheduling and exclusive masterclasses.</p>
-        <button class="border-2 border-black px-12 py-4 font-bold uppercase text-xs tracking-widest hover:bg-black hover:text-white transition">Join The Inner Circle</button>
+    <section class="py-32 bg-stone-100 px-6">
+        <h2 class="text-center font-cinzel text-2xl tracking-[0.4em] mb-20">FILM ARCHIVE</h2>
+        <div class="max-w-7xl mx-auto grid grid-cols-12 gap-4">
+            <div class="col-span-12 md:col-span-8 aspect-video bg-stone-200 shadow-xl overflow-hidden reveal-item"><div class="w-full h-full leather-texture opacity-20 flex items-center justify-center"><i data-lucide="play" class="w-20 h-20"></i></div></div>
+            <div class="col-span-6 md:col-span-4 aspect-square bg-stone-300 reveal-item"></div>
+            <div class="col-span-6 md:col-span-4 aspect-square bg-stone-300 reveal-item"></div>
+            <div class="col-span-12 md:col-span-4 aspect-video bg-stone-400 reveal-item"></div>
+            <div class="col-span-12 md:col-span-4 aspect-video bg-stone-200 reveal-item"></div>
+        </div>
     </section>
 
-    <section class="py-32 px-6 bg-[#050505]">
-        <h2 class="text-center font-cinzel text-3xl mb-16 reveal">THE ARCHITECTS</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <div class="gold-border p-8 text-center hover:bg-white/5 transition reveal">
-                <div class="w-20 h-20 border border-gold rounded-full mx-auto mb-6 flex items-center justify-center">
-                    <i data-lucide="scissors" class="text-gold"></i>
+    <section class="py-32 px-12 max-w-5xl mx-auto text-center">
+        <h2 class="font-serif italic text-4xl mb-12">The Metamorphosis</h2>
+        <div class="comparison-slider reveal-item">
+            <div class="absolute inset-0 bg-stone-200 flex items-center justify-center text-stone-400 font-cinzel tracking-widest">AFTER STYLE</div>
+            <div class="absolute inset-0 bg-[#3E2723] w-1/2 border-r-4 border-[#C5A059] flex items-center justify-center text-white/20 font-cinzel tracking-widest">BEFORE STYLE</div>
+        </div>
+    </section>
+
+    <section id="apothecary" class="py-32 px-12 bg-white">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="font-cinzel tracking-[0.3em] mb-20 text-center">THE APOTHECARY</h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
+                <div class="text-center group reveal-item">
+                    <div class="aspect-[3/4] bg-stone-50 border border-stone-100 mb-6 flex items-center justify-center group-hover:shadow-xl transition">
+                        <i data-lucide="droplet" class="text-stone-300"></i>
+                    </div>
+                    <p class="font-serif italic text-sm">Cognac Beard Oil</p>
+                    <span class="text-xs tracking-widest opacity-40">$42</span>
                 </div>
-                <h4 class="font-cinzel text-lg">STATION 01</h4>
-                <p class="text-xs opacity-50 mt-2">Specialist: Fade Artistry</p>
-            </div>
-            <div class="gold-border p-8 text-center hover:bg-white/5 transition reveal">
-                <div class="w-20 h-20 border border-gold rounded-full mx-auto mb-6 flex items-center justify-center">
-                    <i data-lucide="brush" class="text-gold"></i>
-                </div>
-                <h4 class="font-cinzel text-lg">STATION 02</h4>
-                <p class="text-xs opacity-50 mt-2">Specialist: Sculpting</p>
-            </div>
-            <div class="gold-border p-8 text-center hover:bg-white/5 transition reveal">
-                <div class="w-20 h-20 border border-gold rounded-full mx-auto mb-6 flex items-center justify-center">
-                    <i data-lucide="crown" class="text-gold"></i>
-                </div>
-                <h4 class="font-cinzel text-lg">STATION 03</h4>
-                <p class="text-xs opacity-50 mt-2">Specialist: Executive Design</p>
+                <div class="text-center group reveal-item"><div class="aspect-[3/4] bg-stone-50 border border-stone-100 mb-6 flex items-center justify-center group-hover:shadow-xl transition"><i data-lucide="flask-conical" class="text-stone-300"></i></div><p class="font-serif italic text-sm">Silk Pomade</p><span class="text-xs tracking-widest opacity-40">$38</span></div>
+                <div class="text-center group reveal-item"><div class="aspect-[3/4] bg-stone-50 border border-stone-100 mb-6 flex items-center justify-center group-hover:shadow-xl transition"><i data-lucide="scissors" class="text-stone-300"></i></div><p class="font-serif italic text-sm">Precision Shears</p><span class="text-xs tracking-widest opacity-40">$210</span></div>
+                <div class="text-center group reveal-item"><div class="aspect-[3/4] bg-stone-50 border border-stone-100 mb-6 flex items-center justify-center group-hover:shadow-xl transition"><i data-lucide="wind" class="text-stone-300"></i></div><p class="font-serif italic text-sm">Ozone Mist</p><span class="text-xs tracking-widest opacity-40">$35</span></div>
+                <div class="text-center group reveal-item"><div class="aspect-[3/4] bg-stone-50 border border-stone-100 mb-6 flex items-center justify-center group-hover:shadow-xl transition"><i data-lucide="brush" class="text-stone-300"></i></div><p class="font-serif italic text-sm">Badger Brush</p><span class="text-xs tracking-widest opacity-40">$85</span></div>
+                <div class="text-center group reveal-item"><div class="aspect-[3/4] bg-stone-50 border border-stone-100 mb-6 flex items-center justify-center group-hover:shadow-xl transition"><i data-lucide="sparkles" class="text-stone-300"></i></div><p class="font-serif italic text-sm">Gold Leaf Wax</p><span class="text-xs tracking-widest opacity-40">$40</span></div>
             </div>
         </div>
     </section>
 
-    <section class="py-20 grid grid-cols-2 lg:grid-cols-3 gap-2">
-        <div class="aspect-video bg-white/5 flex items-center justify-center border border-white/5"><i data-lucide="play-circle" class="opacity-20"></i></div>
-        <div class="aspect-video bg-white/5 flex items-center justify-center border border-white/5"><i data-lucide="play-circle" class="opacity-20"></i></div>
-        <div class="aspect-video bg-white/5 flex items-center justify-center border border-white/5"><i data-lucide="play-circle" class="opacity-20"></i></div>
-        <div class="aspect-video bg-white/5 flex items-center justify-center border border-white/5"><i data-lucide="play-circle" class="opacity-20"></i></div>
-        <div class="aspect-video bg-white/5 flex items-center justify-center border border-white/5"><i data-lucide="play-circle" class="opacity-20"></i></div>
-        <div class="aspect-video bg-white/5 flex items-center justify-center border border-white/5"><i data-lucide="play-circle" class="opacity-20"></i></div>
-    </section>
-
-    <section class="py-32 px-6 max-w-5xl mx-auto">
-        <h2 class="text-center font-cinzel text-3xl mb-12 reveal">TRANSFORMATIONS</h2>
-        <div class="slider-container gold-border reveal">
-            <div class="slider-after bg-[#111] flex items-center justify-center"><p class="font-cinzel text-4xl opacity-10">AFTER STYLE</p></div>
-            <div class="slider-before bg-[#222] flex items-center justify-center"><p class="font-cinzel text-4xl opacity-10">BEFORE STYLE</p></div>
-        </div>
-    </section>
-
-    <section class="py-32 px-6 bg-[#0a0a0a]">
-        <h2 class="text-center font-cinzel text-3xl mb-16">THE APOTHECARY</h2>
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-12 max-w-6xl mx-auto">
-            <div class="text-center group"><div class="aspect-square bg-white/5 mb-6 gold-border transition group-hover:bg-[#1a1a1a]"></div><p class="font-cinzel">MATTE CLAY</p><span class="text-gold">$28</span></div>
-            <div class="text-center group"><div class="aspect-square bg-white/5 mb-6 gold-border transition group-hover:bg-[#1a1a1a]"></div><p class="font-cinzel">GOLD SERUM</p><span class="text-gold">$45</span></div>
-            <div class="text-center group"><div class="aspect-square bg-white/5 mb-6 gold-border transition group-hover:bg-[#1a1a1a]"></div><p class="font-cinzel">SEA SALT MIST</p><span class="text-gold">$22</span></div>
-            <div class="text-center group"><div class="aspect-square bg-white/5 mb-6 gold-border transition group-hover:bg-[#1a1a1a]"></div><p class="font-cinzel">BEARD BALM</p><span class="text-gold">$32</span></div>
-            <div class="text-center group"><div class="aspect-square bg-white/5 mb-6 gold-border transition group-hover:bg-[#1a1a1a]"></div><p class="font-cinzel">TITANIUM COMB</p><span class="text-gold">$60</span></div>
-            <div class="text-center group"><div class="aspect-square bg-white/5 mb-6 gold-border transition group-hover:bg-[#1a1a1a]"></div><p class="font-cinzel">OAKWOOD BRUSH</p><span class="text-gold">$55</span></div>
-        </div>
-    </section>
-
-    <section class="grid grid-cols-1 lg:grid-cols-2 gap-0 border-t border-white/10">
-        <div class="p-20 space-y-12 bg-[#050505]">
-            <div class="reveal">
-                <h2 class="font-cinzel text-3xl mb-6">VISIT US</h2>
-                <p class="opacity-50 tracking-widest uppercase text-sm">44 Gold Street, Manhattan, NY</p>
-                <div class="flex gap-6 mt-6">
-                    <a href="tel:123" class="bg-white text-black px-6 py-2 text-xs font-bold uppercase tracking-widest hover:bg-gold transition">Call Now</a>
-                    <a href="#" class="border border-white/20 px-6 py-2 text-xs font-bold uppercase tracking-widest hover:border-gold transition">WhatsApp</a>
+    <section class="py-32 px-12 max-w-7xl mx-auto border-t border-stone-200">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-20">
+            <div class="reveal-item">
+                <h3 class="font-cinzel tracking-widest mb-10">THE ESTATE</h3>
+                <p class="font-serif italic text-2xl mb-4">Savile Row, No. 44</p>
+                <p class="opacity-60 text-sm leading-relaxed mb-8">Mayfair, London <br> United Kingdom</p>
+                <div class="flex flex-col space-y-4">
+                    <a href="tel:+" class="flex items-center gap-4 text-xs font-bold tracking-widest"><i data-lucide="phone" class="w-4 h-4"></i> CALL DIRECT</a>
+                    <a href="#" class="flex items-center gap-4 text-xs font-bold tracking-widest"><i data-lucide="message-square" class="w-4 h-4"></i> WHATSAPP</a>
                 </div>
             </div>
-            
-            <div class="reveal">
-                <h3 class="font-cinzel text-xl gold-text mb-4">OPENING HOURS</h3>
-                <div class="space-y-2 text-sm font-light">
-                    <div class="flex justify-between border-b border-white/5 pb-2"><span>MON - FRI</span><span>09:00 - 20:00</span></div>
-                    <div class="flex justify-between border-b border-white/5 pb-2"><span>SATURDAY</span><span>10:00 - 18:00</span></div>
-                    <div class="flex justify-between border-b border-white/5 pb-2"><span>SUNDAY</span><span>CLOSED</span></div>
+            <div class="reveal-item">
+                <h3 class="font-cinzel tracking-widest mb-10">OPENING RITES</h3>
+                <div class="space-y-4 text-sm">
+                    <div class="flex justify-between"><span>Mon — Fri</span><span class="font-serif">10:00 - 20:00</span></div>
+                    <div class="flex justify-between"><span>Saturday</span><span class="font-serif">10:00 - 18:00</span></div>
+                    <div class="flex justify-between border-t border-stone-100 pt-4 opacity-40 italic"><span>Sunday</span><span>By Appointment Only</span></div>
                 </div>
             </div>
-
-            <form class="space-y-4 reveal">
-                <input type="text" placeholder="NAME" class="w-full bg-transparent border-b border-white/20 py-3 focus:border-gold outline-none">
-                <textarea placeholder="MESSAGE" class="w-full bg-transparent border-b border-white/20 py-3 focus:border-gold outline-none h-24"></textarea>
-                <button class="gold-text font-bold tracking-[0.3em] text-xs uppercase">Send Inquiry</button>
-            </form>
-        </div>
-        <div class="h-[600px] lg:h-auto bg-[#111] grayscale invert">
-            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.472!2d-73.985!3d40.758!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDDCsDQ1JzI4LjgiTiA3M8KwNTknMDYuMCJX!5e0!3m2!1sen!2sus!4v123456789" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-        </div>
-    </section>
-
-    <section class="py-24 px-6 text-center reveal">
-        <h3 class="font-cinzel text-2xl mb-12">VOICES OF EXCELLENCE</h3>
-        <div class="max-w-4xl mx-auto italic opacity-70 text-lg">
-            "The attention to geometric detail is unmatched. It's not just a haircut, it's architectural design for the face."
-            <div class="flex justify-center mt-6 text-[#D4AF37]">
-                <i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i>
-            </div>
-        </div>
-        <div class="mt-24 border-t border-white/10 pt-16">
-            <p class="text-[10px] tracking-[0.5em] mb-8">FOLLOW THE FEED @AUREUM_STUDIO</p>
-            <div class="grid grid-cols-3 md:grid-cols-6 gap-2">
-                <div class="aspect-square bg-white/5 gold-border"></div>
-                <div class="aspect-square bg-white/5 gold-border"></div>
-                <div class="aspect-square bg-white/5 gold-border"></div>
-                <div class="aspect-square bg-white/5 gold-border"></div>
-                <div class="aspect-square bg-white/5 gold-border"></div>
-                <div class="aspect-square bg-white/5 gold-border"></div>
+            <div class="h-[300px] gold-leaf reveal-item">
+                <iframe src="http://googleusercontent.com/maps.google.com/2" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
             </div>
         </div>
     </section>
 
-    <footer class="py-12 border-t border-white/10 px-10 flex flex-col md:flex-row justify-between items-center text-[10px] tracking-widest opacity-50">
-        <div>&copy; 2026 AUREUM PREMIER STUDIO</div>
-        <div class="flex space-x-8 mt-6 md:mt-0">
+    <footer class="py-20 px-12 border-t border-stone-200 text-center">
+        <div class="font-cinzel tracking-[0.8em] text-stone-300 text-4xl mb-12">SOVEREIGN</div>
+        <div class="flex justify-center space-x-12 text-[10px] tracking-[0.3em] font-bold opacity-40 mb-12">
+            <a href="#">LEGALS</a>
             <a href="#">PRIVACY</a>
-            <a href="#">TERMS</a>
-            <a href="#">CAREERS</a>
+            <a href="#">MEMBERSHIP</a>
         </div>
+        <p class="text-[9px] tracking-[0.5em] opacity-30">© 2026 THE SOVEREIGN STUDIO. NO HUMANS WERE USED IN THIS ARTISTRY.</p>
     </footer>
-
-    <div class="fixed bottom-8 right-8 space-y-4 z-[99]">
-        <a href="https://wa.me/123" class="w-14 h-14 bg-green-600 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition"><i data-lucide="message-circle"></i></a>
-        <a href="tel:123" class="w-14 h-14 bg-gold rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition text-black"><i data-lucide="phone"></i></a>
-    </div>
 
     <script>
         lucide.createIcons();
 
-        // 5. Mobile Menu Toggle
-        const menuToggle = document.getElementById('menu-toggle');
-        const menuClose = document.getElementById('menu-close');
-        const mobileMenu = document.getElementById('mobile-menu');
-
-        menuToggle.onclick = () => mobileMenu.classList.add('active');
-        menuClose.onclick = () => mobileMenu.classList.remove('active');
-
-        // 19. Scroll Reveal Animations (GSAP)
-        gsap.registerPlugin(ScrollTrigger);
-        
-        gsap.utils.toArray(".reveal").forEach((elem) => {
-            gsap.to(elem, {
-                scrollTrigger: elem,
-                opacity: 1,
-                y: 0,
-                duration: 1,
-                ease: "power2.out",
-                stagger: 0.2
+        // 19. Scroll Reveal Logic
+        const observerOptions = { threshold: 0.1 };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
             });
-        });
+        }, observerOptions);
 
-        // Hero Parallax
-        gsap.to(".hero-side", {
-            scrollTrigger: {
-                trigger: ".hero-split",
-                scrub: true
-            },
-            y: -50
+        document.querySelectorAll('.reveal-item').forEach(el => observer.observe(el));
+
+        // Slider Interaction (Mockup)
+        document.querySelector('.comparison-slider').addEventListener('mousemove', (e) => {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
+            e.currentTarget.querySelector('.absolute.w-1/2').style.width = `${x}%`;
         });
     </script>
 </body>
