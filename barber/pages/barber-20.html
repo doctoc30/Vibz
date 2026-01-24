@@ -3,238 +3,316 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE OAK & CHAIR | Elite Grooming</title>
+    <title>BLADE & MATTE | Modern Barbering</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,700;1,9..144,700&display=swap" rel="stylesheet">
-    
+    <script src="https://unpkg.com/scrollreveal"></script>
     <style>
-        :root {
-            --oak: #b08d57;
-            --tobacco: #2a1f16; /* Darker for better contrast */
-            --parchment: #fdfaf5;
-            --sand: #e8dec9;
-        }
-
-        body { 
-            font-family: 'DM Sans', sans-serif; 
-            background-color: var(--parchment); 
-            color: var(--tobacco); 
-            overflow-x: hidden;
-            cursor: none; /* Custom cursor */
-        }
-
-        .serif { font-family: 'Fraunces', serif; }
-
-        /* Custom Cursor Widget */
-        #cursor {
-            width: 20px; height: 20px;
-            background: var(--oak);
-            border-radius: 50%;
-            position: fixed;
-            pointer-events: none;
-            z-index: 9999;
-            transition: transform 0.1s ease;
-        }
-
-        /* Barber Pole Animation */
-        .barber-pole {
-            background: repeating-linear-gradient(45deg, #fff, #fff 10px, #b08d57 10px, #b08d57 20px, #2a1f16 20px, #2a1f16 30px);
-            background-size: 200% 200%;
-            animation: movePole 3s linear infinite;
-        }
-        @keyframes movePole {
-            0% { background-position: 0 0; }
-            100% { background-position: 50px 50px; }
-        }
-
-        /* Glass Widget */
-        .glass {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(176, 141, 87, 0.2);
-        }
-
-        .app-card { 
-            background: white; 
-            border-radius: 40px; 
-            overflow: hidden;
-            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.05);
-        }
-
-        .reveal { opacity: 0; transform: translateY(30px); }
-
-        .ba-container { 
-            position: relative; width: 100%; height: 500px; 
-            border-radius: 30px; overflow: hidden; 
-        }
-        
-        /* Floating Widget Animation */
-        .float-widget {
-            animation: floating 3s ease-in-out infinite;
-        }
-        @keyframes floating {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #fafafa; }
+        .red-accent { color: #ff4d4d; }
+        .bg-red-accent { background-color: #ff4d4d; }
+        .mannequin-rotate { animation: rotateMannequin 20s linear infinite; }
+        @keyframes rotateMannequin { from { transform: rotateY(0deg); } to { transform: rotateY(360deg); } }
+        .glass-nav { backdrop-filter: blur(10px); background: rgba(255, 255, 255, 0.8); }
+        .mobile-menu { display: none; }
+        .mobile-menu.active { display: flex; }
     </style>
 </head>
-<body class="p-2 md:p-6">
+<body class="text-zinc-900 overflow-x-hidden">
 
-    <div id="cursor" class="hidden md:block"></div>
+    <div class="fixed left-4 bottom-1/2 translate-y-1/2 z-50 flex flex-col gap-4">
+        <a href="tel:123456789" class="bg-black text-white p-4 rounded-full shadow-xl hover:bg-red-accent transition-all">
+            <i data-lucide="phone"></i>
+        </a>
+        <a href="https://wa.me/123456789" class="bg-[#25D366] text-white p-4 rounded-full shadow-xl hover:scale-110 transition-all">
+            <i data-lucide="message-circle"></i>
+        </a>
+    </div>
 
-    <div class="fixed top-0 left-0 w-full h-1 z-[110] barber-pole"></div>
-
-    <nav class="glass sticky top-4 z-[100] p-4 rounded-3xl flex justify-between items-center mb-10 mx-auto max-w-7xl">
-        <div class="flex items-center gap-3 group cursor-pointer">
-            <div class="w-12 h-12 bg-[#2a1f16] rounded-2xl flex items-center justify-center text-white transition-transform group-hover:rotate-12">
-                <i data-lucide="scissors" class="w-6"></i>
+    <nav class="fixed top-0 w-full z-40 glass-nav border-b border-zinc-200">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-black tracking-tighter">BLADE<span class="red-accent">&</span>MATTE</h1>
+            
+            <div class="hidden md:flex gap-8 font-bold text-sm uppercase">
+                <a href="#services" class="hover:text-red-accent">Services</a>
+                <a href="#prices" class="hover:text-red-accent">Prices</a>
+                <a href="#gallery" class="hover:text-red-accent">Gallery</a>
+                <a href="#contact" class="hover:text-red-accent">Location</a>
             </div>
-            <div class="leading-none">
-                <span class="serif text-xl font-black block">OAK & CHAIR</span>
-                <span class="text-[8px] tracking-[0.4em] font-bold opacity-50">LONDON SW7</span>
-            </div>
-        </div>
-        
-        <div class="hidden lg:flex gap-10 text-[10px] font-bold uppercase tracking-widest">
-            <a href="#services" class="hover:text-[#b08d57] transition-all relative after:content-[''] after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-[#b08d57] hover:after:w-full after:transition-all">The Menu</a>
-            <a href="#process" class="hover:text-[#b08d57] transition-all">Experience</a>
-            <a href="#reviews" class="hover:text-[#b08d57] transition-all">Testimonials</a>
-        </div>
 
-        <a href="#booking" class="bg-[#b08d57] text-white px-8 py-4 rounded-2xl text-[10px] font-bold tracking-[0.2em] shadow-lg shadow-[#b08d5744] hover:scale-105 transition-all active:scale-95">BOOK SEAT</a>
+            <button id="menu-btn" class="md:hidden">
+                <i data-lucide="menu"></i>
+            </button>
+        </div>
     </nav>
 
-    <section class="max-w-7xl mx-auto grid lg:grid-cols-12 gap-6 mb-20">
-        <div class="lg:col-span-7 app-card p-8 md:p-16 flex flex-col justify-center relative overflow-hidden bg-white reveal">
-            <div class="absolute -top-10 -right-10 opacity-5 pointer-events-none">
-                <i data-lucide="comb" class="w-64 h-64 rotate-45"></i>
-            </div>
-            
-            <div class="inline-flex items-center gap-2 mb-6">
-                <span class="w-8 h-[1px] bg-[#b08d57]"></span>
-                <span class="text-[#b08d57] font-bold text-xs uppercase tracking-[0.5em]">The Art of Grooming</span>
-            </div>
-            
-            <h1 class="serif text-6xl md:text-[7rem] mb-8 leading-[0.85] tracking-tighter">
-                Refined <br><span class="italic text-[#b08d57]">Precision.</span>
-            </h1>
-            
-            <p class="text-xl text-stone-400 mb-10 max-w-lg">
-                South Kensington's exclusive one-chair studio. We don't just cut hair; we curate confidence.
-            </p>
-            
-            <div class="flex flex-wrap gap-6">
-                <button class="bg-[#2a1f16] text-white px-12 py-6 rounded-3xl font-bold flex items-center gap-3 hover:gap-5 transition-all">
-                    VIEW SERVICES <i data-lucide="arrow-right" class="w-5"></i>
-                </button>
-                <div class="flex -space-x-4 items-center">
-                    <img src="https://i.pravatar.cc/100?img=1" class="w-12 h-12 rounded-full border-4 border-white">
-                    <img src="https://i.pravatar.cc/100?img=2" class="w-12 h-12 rounded-full border-4 border-white">
-                    <img src="https://i.pravatar.cc/100?img=3" class="w-12 h-12 rounded-full border-4 border-white">
-                    <span class="pl-8 text-xs font-bold opacity-60 uppercase">Join 500+ regulars</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="lg:col-span-5 grid grid-rows-2 gap-6">
-            <div class="app-card relative group overflow-hidden reveal">
-                <img src="https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-8-image1.jpg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000">
-                <div class="absolute inset-0 bg-gradient-to-t from-[#2a1f16aa] to-transparent flex items-end p-8">
-                    <div class="text-white">
-                        <p class="text-[10px] font-bold tracking-[0.3em] uppercase opacity-70 mb-1">Interior</p>
-                        <h3 class="serif text-2xl italic">The Studio Aesthetic</h3>
-                    </div>
-                </div>
-            </div>
-            <div class="grid grid-cols-2 gap-6">
-                <div class="app-card bg-[#b08d57] p-8 text-white flex flex-col justify-between reveal">
-                    <i data-lucide="coffee" class="w-10 h-10 mb-4"></i>
-                    <div>
-                        <h4 class="serif text-3xl mb-1">Complimentary</h4>
-                        <p class="text-xs font-bold opacity-70 uppercase">Small Batch Coffee</p>
-                    </div>
-                </div>
-                <div class="app-card bg-[#e8dec9] p-8 reveal">
-                    <div class="float-widget">
-                         <i data-lucide="award" class="w-12 h-12 text-[#2a1f16] mb-4"></i>
-                         <h4 class="font-bold text-sm uppercase tracking-wider">Award Winning <br>Fade Artist</h4>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="max-w-7xl mx-auto mb-20 grid lg:grid-cols-2 gap-12 items-center">
-        <div class="reveal">
-            <h2 class="serif text-5xl md:text-7xl mb-6">The <span class="text-[#b08d57]">Sharpness</span> <br>Comparison.</h2>
-            <p class="text-lg text-stone-500 mb-8">Move the slider to see the difference between a standard cut and an Oak & Chair signature finish.</p>
-            <div class="flex gap-10">
-                <div>
-                    <h4 class="text-4xl serif text-[#b08d57]">99%</h4>
-                    <p class="text-[10px] font-bold uppercase tracking-widest opacity-60">Retention Rate</p>
-                </div>
-                <div class="w-[1px] bg-stone-200"></div>
-                <div>
-                    <h4 class="text-4xl serif text-[#b08d57]">45</h4>
-                    <p class="text-[10px] font-bold uppercase tracking-widest opacity-60">Minutes Per Session</p>
-                </div>
-            </div>
-        </div>
-        <div class="ba-container reveal" id="baSlider">
-            <img src="https://images.unsplash.com/photo-1599351431247-f50940243edc?w=1000" class="absolute inset-0 w-full h-full object-cover">
-            <img src="https://images.unsplash.com/photo-1621605815841-aa89780b67d2?w=1000" class="absolute inset-0 w-full h-full object-cover ba-after" style="clip-path: inset(0 0 0 50%);">
-            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 glass rounded-full flex items-center justify-center pointer-events-none z-10 border-2 border-white">
-                <i data-lucide="move-horizontal" class="w-5 text-[#2a1f16]"></i>
-            </div>
-        </div>
-    </section>
-
-    <div class="fixed bottom-10 left-10 z-[90] hidden xl:block reveal">
-        <div class="glass p-6 rounded-[32px] shadow-2xl border border-white/50 w-64">
-            <div class="flex items-center gap-3 mb-4">
-                <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-                <span class="text-[10px] font-bold uppercase tracking-widest">Available Today</span>
-            </div>
-            <p class="text-sm font-medium mb-4">Arthur has 2 slots remaining for this afternoon.</p>
-            <button class="w-full py-3 bg-[#2a1f16] text-white rounded-2xl text-[10px] font-bold uppercase tracking-widest">Grab Slot</button>
-        </div>
+    <div id="mobile-menu" class="mobile-menu fixed inset-0 bg-white z-[60] flex-col items-center justify-center gap-8 text-2xl font-bold">
+        <button id="close-menu" class="absolute top-6 right-6"><i data-lucide="x"></i></button>
+        <a href="#services">SERVICES</a>
+        <a href="#prices">PRICES</a>
+        <a href="#gallery">GALLERY</a>
+        <a href="#booking" class="bg-red-accent text-white px-8 py-3 rounded-full">BOOK NOW</a>
     </div>
+
+    <section class="pt-32 pb-20 px-6 bg-white overflow-hidden">
+        <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+            <div class="reveal">
+                <span class="bg-red-accent/10 text-red-accent px-4 py-1 rounded-full text-xs font-bold uppercase">Precision Craft</span>
+                <h1 class="text-6xl md:text-8xl font-black mt-4 leading-none uppercase italic">The New <br><span class="red-accent">Standard.</span></h1>
+                <p class="mt-6 text-zinc-500 text-lg max-w-md">Minimalist aesthetics. Maximum precision. Book your transformation today.</p>
+                <div class="mt-10 flex gap-4">
+                    <a href="#booking" class="bg-black text-white px-10 py-5 font-black hover:bg-red-accent transition-all">BOOK SESSION</a>
+                </div>
+            </div>
+            
+            <div class="relative flex justify-center items-center h-[500px]">
+                <div class="mannequin-rotate w-64 h-96 bg-zinc-100 rounded-t-full border-8 border-black flex items-center justify-center relative shadow-2xl">
+                   <div class="absolute -top-10 w-48 h-48 bg-black rounded-full opacity-10"></div>
+                   <div class="text-center font-black opacity-20 text-4xl">MATTE<br>WHITE</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="booking" class="bg-zinc-100 py-10 px-6">
+        <div class="max-w-5xl mx-auto bg-white p-8 rounded-2xl shadow-sm border border-zinc-200 grid md:grid-cols-4 gap-4">
+            <div>
+                <label class="block text-xs font-bold mb-2">SERVICE</label>
+                <select class="w-full border-none bg-zinc-50 p-3 rounded font-bold outline-none ring-1 ring-zinc-200">
+                    <option>Signature Fade</option>
+                    <option>Classic Scissor Cut</option>
+                    <option>Beard Sculpt</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-bold mb-2">BARBER</label>
+                <select class="w-full border-none bg-zinc-50 p-3 rounded font-bold outline-none ring-1 ring-zinc-200">
+                    <option>Master Barber Alex</option>
+                    <option>Style Lead Jordan</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-bold mb-2">DATE</label>
+                <input type="date" class="w-full border-none bg-zinc-50 p-3 rounded font-bold ring-1 ring-zinc-200">
+            </div>
+            <button class="bg-red-accent text-white font-black rounded h-full mt-6 md:mt-0 hover:bg-black transition-all">CHECK AVAILABILITY</button>
+        </div>
+    </section>
+
+    <section class="py-20 px-6 max-w-7xl mx-auto">
+        <h2 class="text-center text-4xl font-black mb-12 uppercase italic">Process <span class="red-accent">Videos</span></h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div class="aspect-video bg-zinc-200 rounded-xl overflow-hidden flex items-center justify-center group relative cursor-pointer">
+                <i data-lucide="play-circle" class="w-12 h-12 opacity-50"></i>
+                <div class="absolute inset-0 bg-red-accent/20 group-hover:opacity-0 transition-opacity"></div>
+            </div>
+            <div class="aspect-video bg-zinc-200 rounded-xl flex items-center justify-center"><i data-lucide="play-circle" class="w-12 h-12 opacity-50"></i></div>
+            <div class="aspect-video bg-zinc-200 rounded-xl flex items-center justify-center"><i data-lucide="play-circle" class="w-12 h-12 opacity-50"></i></div>
+            <div class="aspect-video bg-zinc-200 rounded-xl flex items-center justify-center"><i data-lucide="play-circle" class="w-12 h-12 opacity-50"></i></div>
+            <div class="aspect-video bg-zinc-200 rounded-xl flex items-center justify-center"><i data-lucide="play-circle" class="w-12 h-12 opacity-50"></i></div>
+            <div class="aspect-video bg-zinc-200 rounded-xl flex items-center justify-center"><i data-lucide="play-circle" class="w-12 h-12 opacity-50"></i></div>
+        </div>
+    </section>
+
+    <section id="services" class="py-20 bg-black text-white px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="p-8 border border-zinc-800 hover:border-red-accent transition-colors rounded-2xl">
+                    <i data-lucide="scissors" class="red-accent mb-6 h-10 w-10"></i>
+                    <h3 class="text-2xl font-bold mb-4">Precision Fade</h3>
+                    <p class="text-zinc-400">Advanced taper techniques using matte-finish styling products.</p>
+                </div>
+                <div class="p-8 border border-zinc-800 hover:border-red-accent transition-colors rounded-2xl">
+                    <i data-lucide="brush" class="red-accent mb-6 h-10 w-10"></i>
+                    <h3 class="text-2xl font-bold mb-4">Beard Sculpt</h3>
+                    <p class="text-zinc-400">Straight razor detailing and conditioning treatment.</p>
+                </div>
+                <div class="p-8 border border-zinc-800 hover:border-red-accent transition-colors rounded-2xl">
+                    <i data-lucide="zap" class="red-accent mb-6 h-10 w-10"></i>
+                    <h3 class="text-2xl font-bold mb-4">Full Service</h3>
+                    <p class="text-zinc-400">The ultimate experience including hot towel and wash.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="prices" class="py-20 px-6 max-w-4xl mx-auto">
+        <h2 class="text-center text-4xl font-black mb-12 uppercase italic">Menu <span class="red-accent">& Pricing</span></h2>
+        <div class="space-y-6">
+            <div class="flex justify-between items-end border-b-2 border-dotted border-zinc-300 pb-2">
+                <div>
+                    <h4 class="text-xl font-bold">The Signature Fade</h4>
+                    <p class="text-sm text-zinc-500 italic">45 Mins - Hot Towel Finish</p>
+                </div>
+                <span class="text-2xl font-black red-accent">$45</span>
+            </div>
+            <div class="flex justify-between items-end border-b-2 border-dotted border-zinc-300 pb-2">
+                <div>
+                    <h4 class="text-xl font-bold">Classic Cut & Style</h4>
+                    <p class="text-sm text-zinc-500 italic">30 Mins - Scissor Work</p>
+                </div>
+                <span class="text-2xl font-black red-accent">$35</span>
+            </div>
+            <div class="flex justify-between items-end border-b-2 border-dotted border-zinc-300 pb-2">
+                <div>
+                    <h4 class="text-xl font-bold">Beard Detail</h4>
+                    <p class="text-sm text-zinc-500 italic">20 Mins - Razor Clean</p>
+                </div>
+                <span class="text-2xl font-black red-accent">$25</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-20 bg-zinc-100 overflow-hidden">
+        <div class="max-w-5xl mx-auto px-6">
+            <h2 class="text-center text-4xl font-black mb-12 uppercase">Transformations</h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="relative rounded-2xl overflow-hidden shadow-2xl">
+                    <div class="bg-zinc-800 h-80 flex items-center justify-center text-zinc-500">Before Image Area</div>
+                    <div class="absolute inset-0 bg-red-accent/40 w-1/2 flex items-center justify-center text-white font-bold border-r-4 border-white">BEFORE</div>
+                    <div class="absolute inset-0 left-1/2 flex items-center justify-center text-white font-bold">AFTER</div>
+                </div>
+                <div class="flex flex-col justify-center">
+                    <h3 class="text-3xl font-black mb-4 italic">The <span class="red-accent">Matte</span> Texture.</h3>
+                    <p class="text-zinc-600 mb-6">Our signature style focuses on silhouette and texture, ensuring every angle is sharp.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-20 px-6 max-w-7xl mx-auto">
+        <h2 class="text-4xl font-black mb-12 text-center">SHOP ESSENTIALS</h2>
+        <div class="grid grid-cols-2 lg:grid-cols-6 gap-6">
+            <div class="text-center">
+                <div class="bg-zinc-200 aspect-square rounded-2xl mb-4 flex items-center justify-center font-bold text-zinc-400">MATTE CLAY</div>
+                <h5 class="font-bold text-sm uppercase">Matte Paste</h5>
+                <p class="red-accent font-black">$22</p>
+            </div>
+            <div class="text-center"><div class="bg-zinc-200 aspect-square rounded-2xl mb-4 flex items-center justify-center">HAIR OIL</div><h5 class="font-bold text-sm uppercase">Argan Oil</h5><p class="red-accent font-black">$18</p></div>
+            <div class="text-center"><div class="bg-zinc-200 aspect-square rounded-2xl mb-4 flex items-center justify-center">COMB</div><h5 class="font-bold text-sm uppercase">Carbon Comb</h5><p class="red-accent font-black">$12</p></div>
+            <div class="text-center"><div class="bg-zinc-200 aspect-square rounded-2xl mb-4 flex items-center justify-center">SPRAY</div><h5 class="font-bold text-sm uppercase">Sea Salt Spray</h5><p class="red-accent font-black">$20</p></div>
+            <div class="text-center"><div class="bg-zinc-200 aspect-square rounded-2xl mb-4 flex items-center justify-center">BALM</div><h5 class="font-bold text-sm uppercase">Beard Balm</h5><p class="red-accent font-black">$25</p></div>
+            <div class="text-center"><div class="bg-zinc-200 aspect-square rounded-2xl mb-4 flex items-center justify-center">WASH</div><h5 class="font-bold text-sm uppercase">Detox Shampoo</h5><p class="red-accent font-black">$24</p></div>
+        </div>
+    </section>
+
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid md:grid-cols-3 gap-8 text-center">
+                <div class="reveal p-8 bg-zinc-50 rounded-3xl border-2 border-transparent hover:border-red-accent transition-all">
+                    <div class="w-24 h-24 bg-zinc-300 rounded-full mx-auto mb-6 flex items-center justify-center text-white"><i data-lucide="user" class="w-12 h-12"></i></div>
+                    <h4 class="text-2xl font-black italic">M. ALEX</h4>
+                    <p class="text-red-accent font-bold uppercase text-xs tracking-widest mt-2">Master Barber</p>
+                </div>
+                <div class="reveal p-8 bg-zinc-50 rounded-3xl border-2 border-transparent hover:border-red-accent transition-all" style="transition-delay: 200ms;">
+                    <div class="w-24 h-24 bg-zinc-300 rounded-full mx-auto mb-6 flex items-center justify-center text-white"><i data-lucide="user" class="w-12 h-12"></i></div>
+                    <h4 class="text-2xl font-black italic">S. JORDAN</h4>
+                    <p class="text-red-accent font-bold uppercase text-xs tracking-widest mt-2">Fade Specialist</p>
+                </div>
+                <div class="reveal p-8 bg-zinc-50 rounded-3xl border-2 border-transparent hover:border-red-accent transition-all" style="transition-delay: 400ms;">
+                    <div class="w-24 h-24 bg-zinc-300 rounded-full mx-auto mb-6 flex items-center justify-center text-white"><i data-lucide="user" class="w-12 h-12"></i></div>
+                    <h4 class="text-2xl font-black italic">K. CHRIS</h4>
+                    <p class="text-red-accent font-bold uppercase text-xs tracking-widest mt-2">Texture Artist</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-20 px-6 bg-zinc-100">
+        <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-12">
+            <div class="bg-white p-10 rounded-3xl shadow-sm">
+                <h3 class="text-3xl font-black mb-8 italic uppercase">Opening Hours</h3>
+                <div class="space-y-4">
+                    <div class="flex justify-between font-bold"><span>Mon - Fri</span><span>09:00 - 20:00</span></div>
+                    <div class="flex justify-between font-bold"><span>Saturday</span><span>10:00 - 18:00</span></div>
+                    <div class="flex justify-between font-bold text-red-accent"><span>Sunday</span><span>Closed</span></div>
+                </div>
+                <div class="mt-12 p-6 bg-black text-white rounded-2xl flex items-center gap-4">
+                    <i data-lucide="map-pin" class="red-accent"></i>
+                    <div>
+                        <p class="font-bold">123 Street, London, UK</p>
+                        <p class="text-xs text-zinc-400">W1A 1AA</p>
+                    </div>
+                </div>
+            </div>
+            <div class="rounded-3xl overflow-hidden bg-zinc-300 h-[400px]">
+                <div class="w-full h-full flex items-center justify-center bg-zinc-300 italic font-bold text-zinc-500">GOOGLE MAPS EMBED</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-20 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col items-center mb-12">
+                <div class="flex gap-1 mb-4 text-red-accent">
+                    <i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i>
+                </div>
+                <h2 class="text-4xl font-black uppercase italic italic">Client Verdicts</h2>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8 italic text-lg">
+                <blockquote class="bg-zinc-50 p-8 rounded-2xl">"The sharpest fade I've ever had. Minimalist vibe, incredible skill."</blockquote>
+                <blockquote class="bg-zinc-50 p-8 rounded-2xl">"Professional service and great products. Love the red/black aesthetic."</blockquote>
+                <blockquote class="bg-zinc-50 p-8 rounded-2xl">"Finally a place that understands modern textures. 5 stars."</blockquote>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="py-20 px-6 max-w-3xl mx-auto">
+        <h2 class="text-center text-4xl font-black mb-12 uppercase italic">Get In <span class="red-accent">Touch</span></h2>
+        <form class="space-y-4">
+            <input type="text" placeholder="Full Name" class="w-full p-4 bg-zinc-100 border-none rounded-xl outline-none focus:ring-2 focus:ring-red-accent">
+            <input type="email" placeholder="Email Address" class="w-full p-4 bg-zinc-100 border-none rounded-xl outline-none focus:ring-2 focus:ring-red-accent">
+            <textarea placeholder="Message" rows="5" class="w-full p-4 bg-zinc-100 border-none rounded-xl outline-none focus:ring-2 focus:ring-red-accent"></textarea>
+            <button class="w-full py-5 bg-black text-white font-black text-xl hover:bg-red-accent transition-all rounded-xl uppercase">Send Message</button>
+        </form>
+    </section>
+
+    <footer class="bg-black text-white py-20 px-6">
+        <div class="max-w-7xl mx-auto grid md:grid-cols-4 gap-12">
+            <div class="col-span-2">
+                <h2 class="text-3xl font-black italic mb-6">BLADE<span class="red-accent">&</span>MATTE</h2>
+                <div class="flex gap-6">
+                    <i data-lucide="instagram" class="hover:text-red-accent cursor-pointer"></i>
+                    <i data-lucide="facebook" class="hover:text-red-accent cursor-pointer"></i>
+                    <i data-lucide="twitter" class="hover:text-red-accent cursor-pointer"></i>
+                </div>
+            </div>
+            <div>
+                <h4 class="font-bold mb-4 uppercase text-zinc-500">Navigation</h4>
+                <ul class="space-y-2 font-bold">
+                    <li><a href="#">Terms</a></li>
+                    <li><a href="#">Privacy</a></li>
+                    <li><a href="#">Careers</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-bold mb-4 uppercase text-zinc-500">Contact</h4>
+                <p class="font-bold">hello@bladematte.com</p>
+                <p class="font-bold">+1 (555) 000-111</p>
+            </div>
+        </div>
+        <div class="text-center mt-20 text-zinc-600 text-xs">© 2024 BLADE & MATTE BARBER CO.</div>
+    </footer>
 
     <script>
         lucide.createIcons();
-        gsap.registerPlugin(ScrollTrigger);
 
-        // Custom Cursor Movement
-        const cursor = document.getElementById('cursor');
-        document.addEventListener('mousemove', (e) => {
-            gsap.to(cursor, { x: e.clientX - 10, y: e.clientY - 10, duration: 0.1 });
-        });
+        // Mobile Menu Logic
+        const menuBtn = document.getElementById('menu-btn');
+        const closeBtn = document.getElementById('close-menu');
+        const mobileMenu = document.getElementById('mobile-menu');
 
-        // Scale cursor on hoverable elements
-        document.querySelectorAll('a, button, .app-card').forEach(el => {
-            el.addEventListener('mouseenter', () => gsap.to(cursor, { scale: 3, backgroundColor: 'rgba(176, 141, 87, 0.2)' }));
-            el.addEventListener('mouseleave', () => gsap.to(cursor, { scale: 1, backgroundColor: '#b08d57' }));
-        });
+        menuBtn.onclick = () => mobileMenu.classList.add('active');
+        closeBtn.onclick = () => mobileMenu.classList.remove('active');
 
-        // Entrance Animations
-        gsap.utils.toArray('.reveal').forEach((elem, i) => {
-            gsap.to(elem, { 
-                opacity: 1, y: 0, duration: 1.5, ease: "expo.out",
-                scrollTrigger: { trigger: elem, start: "top 85%" },
-                delay: i * 0.1
-            });
-        });
-
-        // Before/After Slider
-        const baSlider = document.getElementById('baSlider');
-        const afterImg = baSlider.querySelector('.ba-after');
-        baSlider.addEventListener('mousemove', (e) => {
-            const rect = baSlider.getBoundingClientRect();
-            const x = ((e.clientX - rect.left) / rect.width) * 100;
-            afterImg.style.clipPath = `inset(0 0 0 ${x}%)`;
+        // Scroll Reveal
+        ScrollReveal().reveal('.reveal', { 
+            delay: 200, 
+            distance: '50px',
+            origin: 'bottom',
+            duration: 800,
+            interval: 100
         });
     </script>
 </body>
