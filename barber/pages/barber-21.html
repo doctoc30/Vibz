@@ -3,211 +3,1082 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AURUM | Architectural Grooming</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600;800&display=swap" rel="stylesheet">
+    <title>The Gentleman's Cut | Luxury Barbershop</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --gold: #D4AF37;
-            --dark-gold: #996515;
-            --black: #0A0A0A;
-            --matte-grey: #1A1A1A;
-            --white: #F4F4F4;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background-color: var(--black); color: white; font-family: 'Montserrat', sans-serif; overflow-x: hidden; scroll-behavior: smooth; }
+        :root {
+            --primary-gold: #D4AF37;
+            --primary-dark: #0A0A0A;
+            --secondary-dark: #1A1A1A;
+            --light-beige: #F5F1E6;
+            --medium-gray: #8A8A8A;
+            --transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --border-radius: 12px;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
 
-        /* --- Navigation --- */
-        nav { position: fixed; width: 100%; padding: 20px 50px; display: flex; justify-content: space-between; align-items: center; background: rgba(10, 10, 10, 0.95); z-index: 1000; border-bottom: 1px solid var(--dark-gold); }
-        .logo { font-weight: 800; font-size: 1.5rem; color: var(--gold); letter-spacing: 5px; }
-        .nav-links { display: flex; list-style: none; }
-        .nav-links li { margin-left: 30px; }
-        .nav-links a { color: white; text-decoration: none; font-size: 0.8rem; letter-spacing: 2px; transition: 0.3s; }
-        .nav-links a:hover { color: var(--gold); }
-        .hamburger { display: none; cursor: pointer; color: var(--gold); font-size: 1.5rem; }
+        html {
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
 
-        /* --- Floating Actions --- */
-        .floating-actions { position: fixed; left: 20px; bottom: 100px; z-index: 999; display: flex; flex-direction: column; gap: 10px; }
-        .float-btn { background: var(--gold); color: black; padding: 12px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.7rem; writing-mode: vertical-rl; transform: rotate(180deg); transition: 0.3s; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--primary-dark);
+            color: var(--light-beige);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
 
-        /* --- Hero Section --- */
-        .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: radial-gradient(circle, #1a1a1a 0%, #000 100%); }
-        .hero h1 { font-size: clamp(3rem, 8vw, 6rem); color: var(--gold); margin-bottom: 10px; }
-        .hero p { letter-spacing: 5px; opacity: 0.7; }
-        
-        .mannequin-container { width: 300px; height: 400px; margin-top: 30px; position: relative; perspective: 1000px; }
-        .mannequin { width: 100%; height: 100%; background: var(--white); border-radius: 50% 50% 20% 20%; animation: float 6s ease-in-out infinite; box-shadow: 0 0 40px rgba(212, 175, 55, 0.2); }
-        @keyframes float { 0%, 100% { transform: translateY(0) rotateY(0deg); } 50% { transform: translateY(-20px) rotateY(10deg); } }
+        h1, h2, h3, h4 {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
 
-        /* --- Sections General --- */
-        section { padding: 100px 10%; }
-        .reveal { opacity: 0; transform: translateY(30px); transition: 1s all ease; }
-        .reveal.active { opacity: 1; transform: translateY(0); }
-        h2 { text-align: center; color: var(--gold); margin-bottom: 50px; letter-spacing: 3px; }
+        .container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
 
-        /* --- Booking Form --- */
-        .booking-section { background: var(--matte-grey); border: 1px solid var(--gold); margin: -50px 10% 50px; padding: 40px; }
-        .booking-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
-        select, input, button { padding: 15px; background: transparent; border: 1px solid #444; color: white; border-radius: 0; }
-        button { background: var(--gold); border: none; color: black; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        button:hover { background: white; }
+        /* Header & Navigation */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 25px 0;
+            transition: var(--transition);
+        }
 
-        /* --- Grids --- */
-        .video-grid, .gallery-grid, .product-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
-        .grid-item { aspect-ratio: 1; background: #222; border: 1px solid #333; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
-        .product-grid { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
-        .product-card { padding: 20px; border: 1px solid var(--gold); text-align: center; }
+        header.scrolled {
+            background-color: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 0;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
 
-        /* --- Before/After Slider --- */
-        .slider-container { width: 100%; max-width: 800px; margin: 0 auto; position: relative; height: 400px; overflow: hidden; }
-        .slider-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; }
-        .slider-after { border-left: 2px solid var(--gold); width: 50%; }
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-        /* --- Price List --- */
-        .price-list { max-width: 600px; margin: 0 auto; }
-        .price-item { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #333; }
-        .price-item span:last-child { color: var(--gold); font-weight: bold; }
+        .logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--primary-gold);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-        /* --- Footer --- */
-        footer { padding: 50px; border-top: 1px solid var(--gold); text-align: center; }
-        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; text-align: left; }
-        .social-icons { margin-top: 20px; }
-        .social-icons a { color: var(--gold); margin-right: 15px; font-size: 1.2rem; text-decoration: none; }
+        .logo-icon {
+            font-size: 1.8rem;
+        }
 
-        /* --- Mobile --- */
+        .nav-links {
+            display: flex;
+            gap: 40px;
+        }
+
+        .nav-link {
+            color: var(--light-beige);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.05rem;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .nav-link:hover {
+            color: var(--primary-gold);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary-gold);
+            transition: var(--transition);
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .cta-button {
+            background-color: var(--primary-gold);
+            color: var(--primary-dark);
+            padding: 14px 32px;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            border: 2px solid var(--primary-gold);
+            display: inline-block;
+        }
+
+        .cta-button:hover {
+            background-color: transparent;
+            color: var(--primary-gold);
+            transform: translateY(-3px);
+            box-shadow: var(--box-shadow);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--light-beige);
+            font-size: 1.8rem;
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(10, 10, 10, 0.8), rgba(10, 10, 10, 0.9)), url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1774&q=80') center/cover no-repeat;
+            z-index: -1;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+
+        .hero-content.animate {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .hero h1 {
+            font-size: 4.5rem;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            color: var(--light-beige);
+        }
+
+        .hero h1 span {
+            color: var(--primary-gold);
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 40px;
+            color: var(--medium-gray);
+            max-width: 600px;
+        }
+
+        /* About Section */
+        .section {
+            padding: 120px 0;
+            position: relative;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 70px;
+            position: relative;
+        }
+
+        .section-title h2 {
+            font-size: 3.5rem;
+            color: var(--light-beige);
+            display: inline-block;
+        }
+
+        .section-title h2::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 3px;
+            background-color: var(--primary-gold);
+            margin: 15px auto;
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .about-image {
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .about-image.animate {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .about-image img {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            transition: transform 0.8s ease;
+        }
+
+        .about-image:hover img {
+            transform: scale(1.05);
+        }
+
+        .about-text {
+            opacity: 0;
+            transform: translateX(50px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .about-text.animate {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .about-text h3 {
+            font-size: 2.5rem;
+            margin-bottom: 25px;
+            color: var(--light-beige);
+        }
+
+        .about-text p {
+            margin-bottom: 25px;
+            color: var(--medium-gray);
+            font-size: 1.1rem;
+        }
+
+        /* Services Section */
+        .services {
+            background-color: var(--secondary-dark);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+
+        .service-card {
+            background-color: var(--primary-dark);
+            border-radius: var(--border-radius);
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .service-card.animate {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .service-card:hover {
+            transform: translateY(-15px);
+            border-bottom: 4px solid var(--primary-gold);
+        }
+
+        .service-icon {
+            font-size: 3rem;
+            color: var(--primary-gold);
+            margin-bottom: 25px;
+        }
+
+        .service-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+
+        .service-card p {
+            color: var(--medium-gray);
+            margin-bottom: 20px;
+        }
+
+        .service-price {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-gold);
+        }
+
+        /* Gallery Section */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .gallery-item {
+            height: 350px;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .gallery-item.animate {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s ease;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to top, rgba(212, 175, 55, 0.9), transparent);
+            display: flex;
+            align-items: flex-end;
+            padding: 30px;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            opacity: 1;
+        }
+
+        /* Booking Section */
+        .booking {
+            background-color: var(--secondary-dark);
+        }
+
+        .booking-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .booking-form {
+            background-color: var(--primary-dark);
+            padding: 50px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .booking-form.animate {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: var(--light-beige);
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 15px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: var(--light-beige);
+            font-family: 'Inter', sans-serif;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-gold);
+        }
+
+        .booking-info {
+            opacity: 0;
+            transform: translateX(50px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .booking-info.animate {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .booking-info h3 {
+            font-size: 2.5rem;
+            margin-bottom: 25px;
+            color: var(--light-beige);
+        }
+
+        .booking-info p {
+            margin-bottom: 25px;
+            color: var(--medium-gray);
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info-icon {
+            width: 50px;
+            height: 50px;
+            background-color: var(--primary-dark);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-gold);
+            font-size: 1.3rem;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--primary-dark);
+            padding: 80px 0 30px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 50px;
+            margin-bottom: 50px;
+        }
+
+        .footer-logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-gold);
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .footer-about p {
+            color: var(--medium-gray);
+            margin-bottom: 25px;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 20px;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background-color: var(--secondary-dark);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--light-beige);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .social-icon:hover {
+            background-color: var(--primary-gold);
+            color: var(--primary-dark);
+            transform: translateY(-5px);
+        }
+
+        .footer-heading {
+            font-size: 1.5rem;
+            color: var(--light-beige);
+            margin-bottom: 25px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-heading::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background-color: var(--primary-gold);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 15px;
+        }
+
+        .footer-links a {
+            color: var(--medium-gray);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-gold);
+            padding-left: 5px;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--medium-gray);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero h1 {
+                font-size: 3.5rem;
+            }
+            
+            .about-content,
+            .booking-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .about-image,
+            .about-text,
+            .booking-form,
+            .booking-info {
+                transform: none !important;
+            }
+        }
+
         @media (max-width: 768px) {
-            .nav-links { display: none; position: absolute; top: 70px; left: 0; width: 100%; background: var(--black); flex-direction: column; text-align: center; padding: 20px; }
-            .nav-links.active { display: flex; }
-            .hamburger { display: block; }
-            .video-grid, .gallery-grid { grid-template-columns: 1fr; }
+            .container {
+                padding: 0 20px;
+            }
+            
+            .hero h1 {
+                font-size: 2.8rem;
+            }
+            
+            .section-title h2 {
+                font-size: 2.8rem;
+            }
+            
+            .section {
+                padding: 80px 0;
+            }
+            
+            .booking-form {
+                padding: 30px;
+            }
+        }
+
+        /* Animation classes */
+        .fade-in {
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+        }
+        
+        .slide-in-left {
+            transform: translateX(-50px);
+            opacity: 0;
+            transition: transform 0.8s ease, opacity 0.8s ease;
+        }
+        
+        .slide-in-left.visible {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        
+        .slide-in-right {
+            transform: translateX(50px);
+            opacity: 0;
+            transition: transform 0.8s ease, opacity 0.8s ease;
+        }
+        
+        .slide-in-right.visible {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        
+        .slide-in-bottom {
+            transform: translateY(50px);
+            opacity: 0;
+            transition: transform 0.8s ease, opacity 0.8s ease;
+        }
+        
+        .slide-in-bottom.visible {
+            transform: translateY(0);
+            opacity: 1;
         }
     </style>
 </head>
 <body>
-
-    <div class="floating-actions">
-        <a href="tel:+123456789" class="float-btn">CALL NOW</a>
-        <a href="https://wa.me/123456789" class="float-btn">WHATSAPP</a>
-    </div>
-
-    <nav>
-        <div class="logo">AURUM</div>
-        <div class="hamburger" id="menuBtn">☰</div>
-        <ul class="nav-links" id="navItems">
-            <li><a href="#services">SERVICES</a></li>
-            <li><a href="#products">PRODUCTS</a></li>
-            <li><a href="#gallery">GALLERY</a></li>
-            <li><a href="#contact">CONTACT</a></li>
-        </ul>
-    </nav>
-
-    <header class="hero">
-        <div class="reveal active">
-            <h1>GOLD STANDARD</h1>
-            <p>MATTE BLACK & METALLIC PRECISION</p>
-            <div class="mannequin-container">
-                <div class="mannequin"></div>
-            </div>
+    <!-- Header -->
+    <header id="header">
+        <div class="container nav-container">
+            <a href="#" class="logo">
+                <i class="fas fa-cut logo-icon"></i>
+                The Gentleman's Cut
+            </a>
+            
+            <nav class="nav-links">
+                <a href="#home" class="nav-link">Home</a>
+                <a href="#about" class="nav-link">About</a>
+                <a href="#services" class="nav-link">Services</a>
+                <a href="#gallery" class="nav-link">Gallery</a>
+                <a href="#booking" class="nav-link">Book Now</a>
+                <a href="#contact" class="nav-link">Contact</a>
+            </nav>
+            
+            <a href="#booking" class="cta-button">Book Appointment</a>
+            
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
         </div>
     </header>
 
-    <div class="booking-section reveal">
-        <form class="booking-form">
-            <select>
-                <option>SELECT SERVICE</option>
-                <option>Gold Tier Cut</option>
-                <option>Matte Finish Fade</option>
-                <option>Beard Sculpting</option>
-            </select>
-            <input type="date">
-            <input type="time">
-            <button type="button">BOOK APPOINTMENT</button>
-        </form>
-    </div>
-
-    <section>
-        <h2>THE CRAFT</h2>
-        <div class="video-grid">
-            <div class="grid-item">VIDEO PLAYBACK</div>
-            <div class="grid-item">VIDEO PLAYBACK</div>
-            <div class="grid-item">VIDEO PLAYBACK</div>
-            <div class="grid-item">VIDEO PLAYBACK</div>
-            <div class="grid-item">VIDEO PLAYBACK</div>
-            <div class="grid-item">VIDEO PLAYBACK</div>
-        </div>
-    </section>
-
-    <section class="reveal">
-        <h2>PRICE LIST</h2>
-        <div class="price-list">
-            <div class="price-item"><span>Signature Sculpt</span> <span>$55.00</span></div>
-            <div class="price-item"><span>Beard Architecture</span> <span>$35.00</span></div>
-            <div class="price-item"><span>Gold Treatment (Steam & Mask)</span> <span>$75.00</span></div>
-            <div class="price-item"><span>The Full Silhouette</span> <span>$110.00</span></div>
-        </div>
-    </section>
-
-    <section class="reveal">
-        <h2>THE TRANSFORMATION</h2>
-        <div class="slider-container">
-            <div class="slider-img" style="background-color: #333; display: flex; align-items: center; justify-content: center;">BEFORE DESIGN</div>
-            <div class="slider-img slider-after" style="background-color: var(--matte-grey); right: 0; display: flex; align-items: center; justify-content: center;">AFTER GOLD FINISH</div>
-        </div>
-    </section>
-
-    <section id="products" class="reveal">
-        <h2>AURUM PRODUCTS</h2>
-        <div class="product-grid">
-            <div class="product-card"><h3>Matte Pomade</h3><p>$24</p></div>
-            <div class="product-card"><h3>Gold Beard Oil</h3><p>$30</p></div>
-            <div class="product-card"><h3>Styling Clay</h3><p>$22</p></div>
-            <div class="product-card"><h3>Finishing Spray</h3><p>$18</p></div>
-            <div class="product-card"><h3>Shampoo Noir</h3><p>$28</p></div>
-            <div class="product-card"><h3>Conditioner Noir</h3><p>$28</p></div>
-        </div>
-    </section>
-
-    <section id="contact" class="reveal">
-        <div class="footer-grid">
-            <div>
-                <h3>AURUM STUDIO</h3>
-                <p>123 Golden Street<br>Design District, NY 10001</p>
-                <br>
-                <h3>HOURS</h3>
-                <p>MON-FRI: 9AM - 8PM<br>SAT: 10AM - 6PM</p>
-            </div>
-            <div>
-                <form class="booking-form" style="grid-template-columns: 1fr;">
-                    <input type="text" placeholder="Your Name">
-                    <input type="email" placeholder="Email">
-                    <button>SEND MESSAGE</button>
-                </form>
-            </div>
-            <div style="background: #222; height: 200px; display: flex; align-items: center; justify-content: center;">
-                MAP EMBED PREVIEW
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-background"></div>
+        <div class="container">
+            <div class="hero-content" id="heroContent">
+                <h1>Experience <span>Luxury</span> Grooming for the Modern Gentleman</h1>
+                <p>Step into our exclusive barbershop where traditional craftsmanship meets contemporary style. Our master barbers provide precision cuts, hot towel shaves, and premium grooming services.</p>
+                <a href="#booking" class="cta-button">Book Your Appointment</a>
             </div>
         </div>
     </section>
 
-    <footer>
-        <div class="logo">AURUM</div>
-        <div class="social-icons">
-            <a href="#">INSTAGRAM</a> <a href="#">FACEBOOK</a> <a href="#">TWITTER</a>
+    <!-- About Section -->
+    <section class="section" id="about">
+        <div class="container">
+            <div class="section-title fade-in">
+                <h2>Our Story</h2>
+            </div>
+            
+            <div class="about-content">
+                <div class="about-image slide-in-left">
+                    <img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1784&q=80" alt="Barber Shop Interior">
+                </div>
+                
+                <div class="about-text slide-in-right">
+                    <h3>Crafting Perfection Since 2010</h3>
+                    <p>Founded by master barber James Wellington, The Gentleman's Cut was born from a passion for the timeless art of barbering. Our mission is to provide an unparalleled grooming experience that combines traditional techniques with modern aesthetics.</p>
+                    <p>Each of our barbers undergoes extensive training in both classic and contemporary styles, ensuring that every client receives a personalized service tailored to their individual needs and preferences.</p>
+                    <p>We believe that a great haircut is more than just a service—it's an experience that boosts confidence and leaves you feeling refreshed and revitalized.</p>
+                    <a href="#services" class="cta-button" style="margin-top: 20px;">Our Services</a>
+                </div>
+            </div>
         </div>
-        <p style="margin-top: 20px; font-size: 0.7rem; opacity: 0.5;">&copy; 2026 AURUM BARBER CO. NO HUMANS, ONLY ART.</p>
+    </section>
+
+    <!-- Services Section -->
+    <section class="section services" id="services">
+        <div class="container">
+            <div class="section-title fade-in">
+                <h2>Premium Services</h2>
+            </div>
+            
+            <div class="services-grid">
+                <div class="service-card slide-in-bottom">
+                    <div class="service-icon">
+                        <i class="fas fa-cut"></i>
+                    </div>
+                    <h3>Classic Haircut</h3>
+                    <p>Precision cut with clippers and scissors, finished with styling and product application.</p>
+                    <div class="service-price">£35</div>
+                </div>
+                
+                <div class="service-card slide-in-bottom" style="transition-delay: 0.1s;">
+                    <div class="service-icon">
+                        <i class="fas fa-air-freshener"></i>
+                    </div>
+                    <h3>Hot Towel Shave</h3>
+                    <p>Traditional straight razor shave with hot towels, pre-shave oil, and luxury aftershave.</p>
+                    <div class="service-price">£45</div>
+                </div>
+                
+                <div class="service-card slide-in-bottom" style="transition-delay: 0.2s;">
+                    <div class="service-icon">
+                        <i class="fas fa-spa"></i>
+                    </div>
+                    <h3>Beard Trim & Shape</h3>
+                    <p>Expert beard grooming with precise shaping, conditioning, and hot towel treatment.</p>
+                    <div class="service-price">£25</div>
+                </div>
+                
+                <div class="service-card slide-in-bottom" style="transition-delay: 0.3s;">
+                    <div class="service-icon">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <h3>The Royal Treatment</h3>
+                    <p>Our signature package: haircut, hot towel shave, facial massage, and grooming consultation.</p>
+                    <div class="service-price">£85</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section class="section" id="gallery">
+        <div class="container">
+            <div class="section-title fade-in">
+                <h2>Our Work</h2>
+            </div>
+            
+            <div class="gallery-grid">
+                <div class="gallery-item slide-in-bottom">
+                    <img src="https://images.unsplash.com/photo-1567894340315-735d7c361db0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1774&q=80" alt="Barber at work">
+                    <div class="gallery-overlay">
+                        <h3>Precision Fade</h3>
+                    </div>
+                </div>
+                
+                <div class="gallery-item slide-in-bottom" style="transition-delay: 0.1s;">
+                    <img src="https://images.unsplash.com/photo-1580618672591-eb180b1a973f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1769&q=80" alt="Beard grooming">
+                    <div class="gallery-overlay">
+                        <h3>Beard Mastery</h3>
+                    </div>
+                </div>
+                
+                <div class="gallery-item slide-in-bottom" style="transition-delay: 0.2s;">
+                    <img src="https://images.unsplash.com/photo-1596703923338-48f1c07e4f2e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80" alt="Barbershop interior">
+                    <div class="gallery-overlay">
+                        <h3>Luxury Interior</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Section -->
+    <section class="section booking" id="booking">
+        <div class="container">
+            <div class="section-title fade-in">
+                <h2>Book Your Appointment</h2>
+            </div>
+            
+            <div class="booking-container">
+                <div class="booking-form slide-in-left">
+                    <h3 style="margin-bottom: 30px;">Reserve Your Session</h3>
+                    <form id="bookingForm">
+                        <div class="form-group">
+                            <label for="name">Full Name</label>
+                            <input type="text" id="name" placeholder="John Smith" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone" placeholder="+44 123 456 7890" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="service">Select Service</label>
+                            <select id="service" required>
+                                <option value="">Choose a service</option>
+                                <option value="haircut">Classic Haircut - £35</option>
+                                <option value="shave">Hot Towel Shave - £45</option>
+                                <option value="beard">Beard Trim & Shape - £25</option>
+                                <option value="royal">The Royal Treatment - £85</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="date">Preferred Date</label>
+                            <input type="date" id="date" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="time">Preferred Time</label>
+                            <select id="time" required>
+                                <option value="">Select a time</option>
+                                <option value="9:00">9:00 AM</option>
+                                <option value="10:30">10:30 AM</option>
+                                <option value="12:00">12:00 PM</option>
+                                <option value="14:00">2:00 PM</option>
+                                <option value="15:30">3:30 PM</option>
+                                <option value="17:00">5:00 PM</option>
+                            </select>
+                        </div>
+                        
+                        <button type="submit" class="cta-button" style="width: 100%; margin-top: 10px;">Book Now</button>
+                    </form>
+                </div>
+                
+                <div class="booking-info slide-in-right">
+                    <h3>Visit Our Shop</h3>
+                    <p>Located in the heart of London's Mayfair district, our barbershop offers a sanctuary for gentlemen seeking the finest grooming experience.</p>
+                    
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div>
+                            <h4>Address</h4>
+                            <p>47 Savile Row, Mayfair, London W1S 3PA</p>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div>
+                            <h4>Opening Hours</h4>
+                            <p>Mon-Fri: 9am-7pm | Sat: 9am-6pm | Sun: 10am-4pm</p>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div>
+                            <h4>Phone</h4>
+                            <p>+44 20 7123 4567</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-about">
+                    <a href="#" class="footer-logo">The Gentleman's Cut</a>
+                    <p>Experience the art of traditional barbering with modern sophistication. Our master barbers are dedicated to providing the highest quality grooming services in an atmosphere of luxury and comfort.</p>
+                    <div class="social-icons">
+                        <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="footer-heading">Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#about">About Us</a></li>
+                        <li><a href="#services">Services</a></li>
+                        <li><a href="#gallery">Gallery</a></li>
+                        <li><a href="#booking">Book Appointment</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="footer-heading">Services</h4>
+                    <ul class="footer-links">
+                        <li><a href="#services">Classic Haircut</a></li>
+                        <li><a href="#services">Hot Towel Shave</a></li>
+                        <li><a href="#services">Beard Trim & Shape</a></li>
+                        <li><a href="#services">The Royal Treatment</a></li>
+                        <li><a href="#services">Grooming Products</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="footer-heading">Contact Info</h4>
+                    <ul class="footer-links">
+                        <li><i class="fas fa-map-marker-alt" style="margin-right: 10px;"></i> 47 Savile Row, London</li>
+                        <li><i class="fas fa-phone" style="margin-right: 10px;"></i> +44 20 7123 4567</li>
+                        <li><i class="fas fa-envelope" style="margin-right: 10px;"></i> hello@gentlemanscut.com</li>
+                        <li><i class="fas fa-clock" style="margin-right: 10px;"></i> Mon-Sun: 9am-7pm</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; 2023 The Gentleman's Cut. All rights reserved. | Designed with elegance for the modern gentleman</p>
+            </div>
+        </div>
     </footer>
 
     <script>
-        // Hamburger Toggle
-        const menuBtn = document.getElementById('menuBtn');
-        const navItems = document.getElementById('navItems');
-        menuBtn.addEventListener('click', () => navItems.classList.toggle('active'));
-
-        // Reveal on Scroll
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const navLinks = document.querySelector('.nav-links');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
+        });
+        
+        // Header scroll effect
         window.addEventListener('scroll', () => {
-            document.querySelectorAll('.reveal').forEach(el => {
-                if (el.getBoundingClientRect().top < window.innerHeight - 100) {
-                    el.classList.add('active');
+            const header = document.getElementById('header');
+            if (window.scrollY > 100) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+        
+        // Hero content animation on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const heroContent = document.getElementById('heroContent');
+            setTimeout(() => {
+                heroContent.classList.add('animate');
+            }, 300);
+            
+            // Initialize animations for elements in view
+            initScrollAnimations();
+            
+            // Set min date for booking form to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('date').setAttribute('min', today);
+        });
+        
+        // Booking form submission
+        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form values
+            const name = document.getElementById('name').value;
+            const service = document.getElementById('service').options[document.getElementById('service').selectedIndex].text;
+            const date = document.getElementById('date').value;
+            const time = document.getElementById('time').options[document.getElementById('time').selectedIndex].text;
+            
+            // Show confirmation message
+            alert(`Thank you, ${name}! Your appointment for ${service} on ${date} at ${time} has been booked. We'll contact you shortly to confirm.`);
+            
+            // Reset form
+            this.reset();
+        });
+        
+        // Scroll animations
+        function initScrollAnimations() {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        
+                        // For elements with specific animation classes
+                        if (entry.target.classList.contains('slide-in-left') || 
+                            entry.target.classList.contains('slide-in-right') || 
+                            entry.target.classList.contains('slide-in-bottom') ||
+                            entry.target.classList.contains('fade-in')) {
+                            entry.target.classList.add('visible');
+                        }
+                        
+                        // For service cards
+                        if (entry.target.classList.contains('service-card')) {
+                            entry.target.classList.add('animate');
+                        }
+                        
+                        // For gallery items
+                        if (entry.target.classList.contains('gallery-item')) {
+                            entry.target.classList.add('animate');
+                        }
+                        
+                        // For about elements
+                        if (entry.target.classList.contains('about-image') || 
+                            entry.target.classList.contains('about-text') ||
+                            entry.target.classList.contains('booking-form') ||
+                            entry.target.classList.contains('booking-info')) {
+                            entry.target.classList.add('animate');
+                        }
+                    }
+                });
+            }, observerOptions);
+            
+            // Observe all elements with animation classes
+            document.querySelectorAll('.slide-in-left, .slide-in-right, .slide-in-bottom, .fade-in, .service-card, .gallery-item, .about-image, .about-text, .booking-form, .booking-info').forEach(el => {
+                observer.observe(el);
+            });
+        }
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                    
+                    // Close mobile menu if open
+                    if (window.innerWidth <= 992) {
+                        navLinks.style.display = 'none';
+                    }
                 }
             });
         });
