@@ -3,288 +3,325 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE QUARTERS | THE CHOP LAB 2026</title>
+    <title>THE QUARTERS | PRIVATE BARBER LAB 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@800&family=Public+Sans:wght@400;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,600&family=Plus+Jakarta+Sans:wght@300;500;800&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --burgundy: #800020;
-            --acid-cream: #FFFDF7;
-            --bold-black: #121212;
-            --white: #FFFFFF;
-            --shadow: 8px 8px 0px var(--bold-black);
+            --lime: #D4FF80;
+            --dark-ink: #0A0F0D;
+            --soft-cream: #F9FAF4;
+            --glass: rgba(255, 255, 255, 0.6);
         }
 
         body {
-            background-color: var(--acid-cream);
-            color: var(--bold-black);
-            font-family: 'Public Sans', sans-serif;
-            scroll-behavior: smooth;
+            background-color: var(--soft-cream);
+            color: var(--dark-ink);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
         }
 
-        .heavy-font { font-family: 'Syne', sans-serif; text-transform: uppercase; }
+        .serif-italic { font-family: 'Cormorant Garamond', serif; font-style: italic; }
 
-        /* --- 2026 Brutalist Components --- */
-        .brutal-card {
-            background: var(--white);
-            border: 4px solid var(--bold-black);
-            box-shadow: var(--shadow);
-            transition: 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .brutal-card:hover { 
-            transform: translate(-4px, -4px); 
-            box-shadow: 12px 12px 0px var(--burgundy); 
+        /* --- Elite Blurred Backgrounds --- */
+        .blur-blob {
+            position: fixed; width: 50vw; height: 50vw;
+            background: radial-gradient(circle, rgba(212, 255, 128, 0.4) 0%, rgba(212, 255, 128, 0) 70%);
+            filter: blur(80px); z-index: -1; pointer-events: none;
         }
 
-        .btn-burgundy {
-            background: var(--burgundy);
-            color: white;
-            padding: 1rem 2rem;
-            border: 3px solid var(--bold-black);
-            box-shadow: 4px 4px 0px var(--bold-black);
-            font-weight: 900;
-            text-transform: uppercase;
+        /* --- Glassmorphism UI --- */
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.03);
+            border-radius: 32px;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
         }
-        .btn-burgundy:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px var(--bold-black); }
+        .glass-card:hover { transform: translateY(-10px); background: rgba(255, 255, 255, 0.9); }
 
-        /* --- Welcome Reveal --- */
+        /* --- 2026 Welcome Reveal --- */
         #loader {
-            position: fixed; inset: 0; background: var(--burgundy); z-index: 1000;
+            position: fixed; inset: 0; background: var(--dark-ink); z-index: 1000;
             display: flex; justify-content: center; align-items: center;
-            transition: transform 0.8s cubic-bezier(1, 0, 0, 1);
+            transition: clip-path 1.2s cubic-bezier(0.8, 0, 0.2, 1);
+            clip-path: circle(150% at 50% 50%);
         }
-        #loader.off { transform: translateY(-100%); }
+        #loader.off { clip-path: circle(0% at 50% 50%); }
 
-        /* --- Left Side Comm Bar --- */
-        .comm-bar {
-            position: fixed; left: 0; top: 50%; transform: translateY(-50%);
-            display: flex; flex-direction: column; z-index: 100;
+        /* --- Left Floating Comm Bar --- */
+        .elite-comm {
+            position: fixed; left: 30px; top: 50%; transform: translateY(-50%);
+            display: flex; flex-direction: column; gap: 20px; z-index: 90;
         }
-        .comm-item {
-            background: var(--white); border: 3px solid var(--bold-black);
-            padding: 15px; margin-left: -3px; border-left: none;
-            transition: 0.3s;
+        .comm-circle {
+            width: 54px; height: 54px; border-radius: 50%; background: white;
+            display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05); transition: 0.4s;
+            border: 1px solid rgba(0,0,0,0.05);
         }
-        .comm-item:hover { background: var(--burgundy); color: white; padding-left: 25px; }
+        .comm-circle:hover { background: var(--lime); transform: scale(1.1) translateX(5px); }
 
-        /* Typewriter Animation */
-        .type-wrap { display: inline-block; overflow: hidden; border-right: .15em solid var(--burgundy); white-space: nowrap; animation: typing 3s steps(30, end), blink .75s step-end infinite; }
-        @keyframes typing { from { width: 0 } to { width: 100% } }
-        @keyframes blink { from, to { border-color: transparent } 50% { border-color: var(--burgundy); } }
+        /* --- Typewriter & Custom Text --- */
+        .typewriter-text { border-right: 2px solid var(--lime); animation: blink 0.8s infinite; }
+        @keyframes blink { 50% { border-color: transparent; } }
+
+        .btn-prime {
+            background: var(--dark-ink); color: white; border-radius: 50px;
+            padding: 1.2rem 2.5rem; font-weight: 700; overflow: hidden;
+            position: relative; z-index: 1; transition: 0.4s;
+        }
+        .btn-prime:hover { color: var(--dark-ink); }
+        .btn-prime::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 0; height: 100%;
+            background: var(--lime); z-index: -1; transition: 0.4s;
+        }
+        .btn-prime:hover::before { width: 100%; }
+
     </style>
 </head>
 <body>
 
+    <div class="blur-blob" style="top: -10%; right: -10%;"></div>
+    <div class="blur-blob" style="bottom: 10%; left: -10%;"></div>
+
     <div id="loader">
-        <h1 class="heavy-font text-white text-5xl italic animate-pulse">ESTABLISHING VIBE...</h1>
+        <div class="text-center">
+            <h1 class="text-white text-3xl font-light tracking-[0.5em] mb-4">THE QUARTERS</h1>
+            <div class="w-12 h-[1px] bg-lime-400 mx-auto"></div>
+        </div>
     </div>
 
-    <aside class="comm-bar hidden md:flex">
-        <a href="https://wa.me/+" class="comm-item"><i class="fab fa-whatsapp fa-xl"></i></a>
-        <a href="tel:+" class="comm-item text-burgundy"><i class="fas fa-phone-alt fa-xl"></i></a>
-        <a href="#contact" class="comm-item"><i class="fas fa-envelope fa-xl"></i></a>
+    <aside class="elite-comm hidden lg:flex">
+        <a href="https://wa.me/+" class="comm-circle"><i class="fab fa-whatsapp"></i></a>
+        <a href="tel:+" class="comm-circle"><i class="fas fa-phone-alt"></i></a>
+        <a href="#book" class="comm-circle bg-lime-200"><i class="fas fa-calendar-alt"></i></a>
     </aside>
 
-    <nav class="fixed top-0 w-full z-50 bg-white border-b-4 border-black p-4 md:px-12 flex justify-between items-center">
-        <div class="heavy-font text-3xl font-black">QTRS<span class="text-burgundy">.</span></div>
-        <div class="hidden lg:flex gap-8 font-black text-xs uppercase">
-            <a href="#about" class="hover:text-burgundy">History</a>
-            <a href="#pricing" class="hover:text-burgundy">Menu</a>
-            <a href="#shop" class="hover:text-burgundy">Shop</a>
-            <a href="#reviews" class="hover:text-burgundy">Reviews</a>
+    <nav class="fixed top-0 w-full z-50 p-6 md:px-16 flex justify-between items-center bg-white/30 backdrop-blur-md">
+        <div class="font-extrabold text-2xl tracking-tighter">QUARTERS<span class="text-lime-500">.</span></div>
+        <div class="hidden lg:flex gap-12 text-[10px] uppercase font-bold tracking-[0.2em]">
+            <a href="#about" class="hover:text-lime-600 transition">History</a>
+            <a href="#pricing" class="hover:text-lime-600 transition">Services</a>
+            <a href="#shop" class="hover:text-lime-600 transition">Apothecary</a>
+            <a href="#reviews" class="hover:text-lime-600 transition">Reviews</a>
         </div>
-        <button onclick="toggleMenu()" class="bg-black text-white px-4 py-2 heavy-font text-xs">Menu</button>
+        <button onclick="toggleMenu()" class="w-10 h-10 flex flex-col justify-center items-center gap-1.5 group">
+            <div class="w-6 h-[2px] bg-black group-hover:w-8 transition-all"></div>
+            <div class="w-8 h-[2px] bg-lime-500"></div>
+        </button>
     </nav>
 
-    <div id="mobile-menu" class="fixed inset-0 bg-burgundy z-[110] hidden flex-col justify-center items-center text-white">
-        <button onclick="toggleMenu()" class="absolute top-10 right-10 heavy-font text-2xl">CLOSE X</button>
-        <div class="flex flex-col gap-6 text-5xl heavy-font italic">
-            <a href="#about" onclick="toggleMenu()">STORY</a>
-            <a href="#pricing" onclick="toggleMenu()">PRICES</a>
-            <a href="#shop" onclick="toggleMenu()">GEAR</a>
-            <a href="#contact" onclick="toggleMenu()">VISIT</a>
+    <div id="mobile-menu" class="fixed inset-0 bg-zinc-950 z-[110] hidden flex-col justify-center p-12 text-white">
+        <button onclick="toggleMenu()" class="absolute top-10 right-10 uppercase tracking-widest text-xs">Close [x]</button>
+        <div class="space-y-8">
+            <a href="#about" onclick="toggleMenu()" class="block text-6xl serif-italic hover:text-lime-400">Our Story</a>
+            <a href="#pricing" onclick="toggleMenu()" class="block text-6xl serif-italic hover:text-lime-400">The Menu</a>
+            <a href="#shop" onclick="toggleMenu()" class="block text-6xl serif-italic hover:text-lime-400">The Gear</a>
+            <a href="#contact" onclick="toggleMenu()" class="block text-6xl serif-italic hover:text-lime-400">Visit Us</a>
         </div>
     </div>
 
-    <main class="mt-24 px-4 md:px-12">
-        <section class="min-h-[80vh] flex flex-col justify-center py-20">
-            <div class="max-w-5xl">
-                <p class="heavy-font text-burgundy mb-4 tracking-tighter">Local Legend • London SE1</p>
-                <h1 class="heavy-font text-6xl md:text-[9rem] leading-[0.85] mb-8">
-                    <span class="type-wrap">STAY SHARP.</span><br>NO EGO.
+    <main class="mt-40 px-6 md:px-24">
+        <section class="min-h-[70vh] flex flex-col justify-center">
+            <div class="max-w-6xl">
+                <p class="uppercase text-[10px] tracking-[0.6em] text-zinc-400 mb-8" data-aos="fade-up">Elite Grooming Infrastructure</p>
+                <h1 class="text-6xl md:text-[10rem] leading-[0.9] font-extrabold mb-12" data-aos="fade-up" data-aos-delay="100">
+                    Precision <br> <span class="serif-italic font-light text-lime-500 typewriter-text" id="hero-type">Refined</span>
                 </h1>
-                <div class="grid md:grid-cols-2 gap-10 items-end">
-                    <div class="brutal-card p-8 bg-white" id="book">
-                        <h3 class="heavy-font text-xl mb-4">Book A Session</h3>
+                
+                <div class="grid md:grid-cols-2 gap-20 items-end">
+                    <div class="glass-card p-10" id="book" data-aos="fade-right">
+                        <h3 class="font-extrabold text-xl mb-6">Reservation Lab</h3>
                         <div class="space-y-4">
-                            <select class="w-full p-4 border-2 border-black font-bold appearance-none bg-zinc-50">
-                                <option>Select Service</option>
-                                <option>The Signature Fade - $45</option>
-                                <option>Beard Sculpt - $30</option>
-                                <option>The Works - $70</option>
+                            <select class="w-full p-4 bg-white/50 border border-zinc-100 rounded-2xl outline-none focus:border-lime-400 transition">
+                                <option>Select Protocol</option>
+                                <option>Signature Fade — $45</option>
+                                <option>The Works — $70</option>
                             </select>
-                            <button class="btn-burgundy w-full text-xl">Confirm Time</button>
+                            <button class="btn-prime w-full">Request Session</button>
                         </div>
                     </div>
-                    <p class="text-xl font-bold uppercase leading-tight italic opacity-70">
-                        The Quarters is a high-volume, high-energy barber lab where we treat grooming like industrial design. 
+                    <p class="text-xl font-light leading-relaxed text-zinc-500 pb-4">
+                        A private sanctuary for the modern minimalist. We architect silhouettes through surgical barbering and light-touch wellness.
                     </p>
                 </div>
             </div>
         </section>
 
-        <section id="about" class="py-24 grid lg:grid-cols-2 gap-16 border-t-4 border-black">
-            <div data-aos="fade-right">
-                <h2 class="heavy-font text-6xl mb-8">Not Your<br><span class="text-burgundy">Grandpa's</span> Shop</h2>
-                <p class="text-xl font-medium mb-6">Founded in 2021 and evolved for 2026, we stripped away the mahogany and the "gentleman's club" cliché. We replaced it with industrial steel, loud music, and surgical precision.</p>
-                <div class="flex gap-4">
-                    <div class="brutal-card p-4 flex-1 text-center">
-                        <span class="heavy-font text-4xl block">12k</span>
-                        <span class="font-black text-[10px] uppercase">Fades Yearly</span>
+        <section id="about" class="py-32 grid lg:grid-cols-2 gap-24 items-center">
+            <div data-aos="fade-up">
+                <h2 class="text-5xl font-extrabold mb-8 leading-tight">The Modern <br><span class="serif-italic text-lime-600">Archives</span></h2>
+                <p class="text-lg text-zinc-500 mb-10 leading-relaxed">Established in 2021, The Quarters was born to eliminate the noise of traditional barbering. We prioritize the science of hair growth and the geometry of the face over the "old-school" gimmick.</p>
+                <div class="flex gap-12">
+                    <div>
+                        <span class="text-4xl font-extrabold block">12k+</span>
+                        <span class="text-[9px] uppercase tracking-widest font-bold text-zinc-400">Annual Procedures</span>
                     </div>
-                    <div class="brutal-card p-4 flex-1 text-center bg-burgundy text-white">
-                        <span class="heavy-font text-4xl block">0</span>
-                        <span class="font-black text-[10px] uppercase">Ego Policy</span>
+                    <div class="w-[1px] h-12 bg-zinc-200"></div>
+                    <div>
+                        <span class="text-4xl font-extrabold block">98%</span>
+                        <span class="text-[9px] uppercase tracking-widest font-bold text-zinc-400">Client Retention</span>
                     </div>
                 </div>
             </div>
-            <div class="grid grid-cols-2 gap-4" data-aos="zoom-in">
-                <div class="brutal-card overflow-hidden h-64 bg-zinc-200"><img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80&w=400" class="w-full h-full object-cover grayscale"></div>
-                <div class="brutal-card overflow-hidden h-64 bg-zinc-200 mt-12"><img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&q=80&w=400" class="w-full h-full object-cover grayscale"></div>
-            </div>
-        </section>
-
-        <section id="pricing" class="py-24 bg-white -mx-4 md:-mx-12 px-4 md:px-12 border-y-4 border-black">
-            <h2 class="heavy-font text-6xl text-center mb-16">The Service Menu</h2>
-            <div class="max-w-4xl mx-auto space-y-4">
-                <div class="brutal-card p-6 flex justify-between items-center hover:bg-zinc-50">
-                    <div><h4 class="heavy-font text-2xl">Skin Fade</h4><p class="text-xs font-bold opacity-50">Precision clippers + foil finish</p></div>
-                    <span class="heavy-font text-3xl">$45</span>
-                </div>
-                <div class="brutal-card p-6 flex justify-between items-center bg-zinc-900 text-white">
-                    <div><h4 class="heavy-font text-2xl text-burgundy">The Full Reconstruction</h4><p class="text-xs font-bold opacity-50">Haircut + Beard + Hot Towel + Scrub</p></div>
-                    <span class="heavy-font text-3xl">$85</span>
-                </div>
-                <div class="brutal-card p-6 flex justify-between items-center hover:bg-zinc-50">
-                    <div><h4 class="heavy-font text-2xl">Quick Buzz</h4><p class="text-xs font-bold opacity-50">Single grade all over</p></div>
-                    <span class="heavy-font text-3xl">$25</span>
-                </div>
-                <div class="brutal-card p-6 flex justify-between items-center hover:bg-zinc-50">
-                    <div><h4 class="heavy-font text-2xl">Beard Architect</h4><p class="text-xs font-bold opacity-50">Shape, line, and steam therapy</p></div>
-                    <span class="heavy-font text-3xl">$35</span>
+            <div class="relative" data-aos="zoom-out-up">
+                <div class="glass-card overflow-hidden aspect-[4/5] p-4">
+                    <img src="https://images.unsplash.com/photo-1512690196236-d4da7008d51a?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover rounded-[24px] grayscale hover:grayscale-0 transition-all duration-1000">
                 </div>
             </div>
         </section>
 
-        <section id="shop" class="py-24">
-            <h2 class="heavy-font text-6xl mb-12">Shop The Gear</h2>
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-8">
-                <div class="brutal-card p-4 group">
-                    <div class="bg-zinc-100 aspect-square mb-4 border-2 border-black overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1590159357004-919062961608?auto=format&fit=crop&q=80&w=400" class="w-full h-full object-cover group-hover:scale-110 transition">
+        <section id="pricing" class="py-32">
+            <div class="text-center mb-20">
+                <h2 class="text-5xl font-extrabold serif-italic">Protocol Pricing</h2>
+            </div>
+            <div class="max-w-4xl mx-auto grid gap-6">
+                <div class="glass-card p-8 flex justify-between items-center group">
+                    <div>
+                        <h4 class="font-bold text-xl group-hover:text-lime-600 transition">Skin Fade Architecture</h4>
+                        <p class="text-sm opacity-50">Precision clippers + ozonated hot towel</p>
                     </div>
-                    <h5 class="heavy-font text-lg">Matte Clay 01</h5>
-                    <p class="font-black text-burgundy">$22.00</p>
-                    <button class="w-full mt-4 p-2 bg-black text-white font-bold text-xs">ADD TO BOX</button>
+                    <span class="text-2xl font-extrabold">$45</span>
                 </div>
-                <div class="brutal-card p-4 group"><div class="bg-zinc-100 aspect-square mb-4 border-2 border-black"></div><h5 class="heavy-font text-lg">Ozone Spray</h5><p class="font-black text-burgundy">$18.00</p><button class="w-full mt-4 p-2 bg-black text-white font-bold text-xs">ADD TO BOX</button></div>
-                <div class="brutal-card p-4 group"><div class="bg-zinc-100 aspect-square mb-4 border-2 border-black"></div><h5 class="heavy-font text-lg">Carbon Comb</h5><p class="font-black text-burgundy">$12.00</p><button class="w-full mt-4 p-2 bg-black text-white font-bold text-xs">ADD TO BOX</button></div>
-                <div class="brutal-card p-4 group"><div class="bg-zinc-100 aspect-square mb-4 border-2 border-black"></div><h5 class="heavy-font text-lg">Post-Shave Oil</h5><p class="font-black text-burgundy">$28.00</p><button class="w-full mt-4 p-2 bg-black text-white font-bold text-xs">ADD TO BOX</button></div>
-                <div class="brutal-card p-4 group"><div class="bg-zinc-100 aspect-square mb-4 border-2 border-black"></div><h5 class="heavy-font text-lg">Texture Dust</h5><p class="font-black text-burgundy">$20.00</p><button class="w-full mt-4 p-2 bg-black text-white font-bold text-xs">ADD TO BOX</button></div>
-                <div class="brutal-card p-4 group"><div class="bg-zinc-100 aspect-square mb-4 border-2 border-black"></div><h5 class="heavy-font text-lg">Beard Balm</h5><p class="font-black text-burgundy">$19.00</p><button class="w-full mt-4 p-2 bg-black text-white font-bold text-xs">ADD TO BOX</button></div>
-            </div>
-        </section>
-
-        <section id="reviews" class="py-24 bg-zinc-900 text-white -mx-4 md:-mx-12 px-12">
-            <h2 class="heavy-font text-6xl mb-16 italic text-center">Wall of Fame</h2>
-            <div class="flex gap-8 overflow-x-auto pb-10 scrollbar-hide">
-                <div class="brutal-card bg-white text-black min-w-[320px] p-8">
-                    <div class="flex text-burgundy mb-4"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-                    <p class="font-bold text-lg mb-6">"Most aggressive fade in London. These guys don't miss."</p>
-                    <span class="heavy-font text-sm">— @jacks_gram</span>
+                <div class="glass-card p-8 flex justify-between items-center bg-zinc-950 text-white border-none">
+                    <div>
+                        <h4 class="font-bold text-xl text-lime-400">The Full Reconstruction</h4>
+                        <p class="text-sm opacity-50">Cut + Sculpt + Facial Scrub + Steam</p>
+                    </div>
+                    <span class="text-2xl font-extrabold">$85</span>
                 </div>
-                <div class="brutal-card bg-white text-black min-w-[320px] p-8">
-                    <div class="flex text-burgundy mb-4"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-                    <p class="font-bold text-lg mb-6">"Finally a shop that respects my time. In and out, perfect cut."</p>
-                    <span class="heavy-font text-sm">— Mike D.</span>
-                </div>
-                <div class="brutal-card bg-white text-black min-w-[320px] p-8">
-                    <div class="flex text-burgundy mb-4"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-                    <p class="font-bold text-lg mb-6">"The cream/burgundy aesthetic is fire. Best shop design I've seen."</p>
-                    <span class="heavy-font text-sm">— Leo T.</span>
+                <div class="glass-card p-8 flex justify-between items-center group">
+                    <div>
+                        <h4 class="font-bold text-xl group-hover:text-lime-600 transition">Beard Alignment</h4>
+                        <p class="text-sm opacity-50">Straight edge line-up + hydration balm</p>
+                    </div>
+                    <span class="text-2xl font-extrabold">$35</span>
                 </div>
             </div>
         </section>
 
-        <section id="contact" class="py-24 grid md:grid-cols-2 gap-12">
-            <div class="brutal-card p-10 bg-white">
-                <h2 class="heavy-font text-5xl mb-8">Visit The Lab</h2>
-                <div class="space-y-6 font-black uppercase">
-                    <div class="flex justify-between border-b-2 border-zinc-100 pb-2"><span>Monday</span><span>09:00 - 20:00</span></div>
-                    <div class="flex justify-between border-b-2 border-zinc-100 pb-2"><span>Tue-Fri</span><span>09:00 - 21:00</span></div>
-                    <div class="flex justify-between border-b-4 border-burgundy pb-2 text-burgundy"><span>Saturday</span><span>08:00 - 18:00</span></div>
+        <section id="shop" class="py-32">
+            <div class="flex justify-between items-end mb-16">
+                <h2 class="text-5xl font-extrabold">The <span class="serif-italic">Apothecary</span></h2>
+                <a href="#" class="text-xs font-bold border-b-2 border-lime-500 pb-1">VIEW ALL PRODUCTS</a>
+            </div>
+            <div class="grid grid-cols-2 lg:grid-cols-3 gap-10">
+                <div class="glass-card p-6 text-center group" data-aos="fade-up">
+                    <div class="aspect-square bg-white rounded-2xl mb-6 overflow-hidden flex items-center justify-center border border-zinc-50">
+                        <img src="https://images.unsplash.com/photo-1590159357004-919062961608?auto=format&fit=crop&q=80&w=400" class="w-32 opacity-80 group-hover:scale-110 transition duration-700">
+                    </div>
+                    <h5 class="font-bold uppercase text-xs tracking-widest mb-2">Matte Clay 0.1</h5>
+                    <p class="font-extrabold text-lg text-lime-600 mb-4">$22</p>
+                    <button class="text-[9px] font-black tracking-widest border-t border-zinc-100 pt-4 w-full">ADD TO BOX</button>
+                </div>
+                <div class="glass-card p-6 text-center group" data-aos="fade-up" data-aos-delay="100">
+                    <div class="aspect-square bg-white rounded-2xl mb-6 overflow-hidden flex items-center justify-center border border-zinc-50"></div>
+                    <h5 class="font-bold uppercase text-xs tracking-widest mb-2">Ozone Spray</h5><p class="font-extrabold text-lg text-lime-600 mb-4">$18</p><button class="text-[9px] font-black tracking-widest border-t border-zinc-100 pt-4 w-full">ADD TO BOX</button>
+                </div>
+                <div class="glass-card p-6 text-center group" data-aos="fade-up" data-aos-delay="200">
+                    <div class="aspect-square bg-white rounded-2xl mb-6 overflow-hidden flex items-center justify-center border border-zinc-50"></div>
+                    <h5 class="font-bold uppercase text-xs tracking-widest mb-2">Sea Salt Serum</h5><p class="font-extrabold text-lg text-lime-600 mb-4">$25</p><button class="text-[9px] font-black tracking-widest border-t border-zinc-100 pt-4 w-full">ADD TO BOX</button>
+                </div>
+                <div class="glass-card p-6 text-center group" data-aos="fade-up"><div class="aspect-square bg-white rounded-2xl mb-6 border border-zinc-50"></div><h5 class="font-bold uppercase text-xs tracking-widest mb-2">Carbon Comb</h5><p class="font-extrabold text-lg text-lime-600 mb-4">$15</p><button class="text-[9px] font-black tracking-widest border-t border-zinc-100 pt-4 w-full">ADD TO BOX</button></div>
+                <div class="glass-card p-6 text-center group" data-aos="fade-up"><div class="aspect-square bg-white rounded-2xl mb-6 border border-zinc-50"></div><h5 class="font-bold uppercase text-xs tracking-widest mb-2">Beard Oil</h5><p class="font-extrabold text-lg text-lime-600 mb-4">$30</p><button class="text-[9px] font-black tracking-widest border-t border-zinc-100 pt-4 w-full">ADD TO BOX</button></div>
+                <div class="glass-card p-6 text-center group" data-aos="fade-up"><div class="aspect-square bg-white rounded-2xl mb-6 border border-zinc-50"></div><h5 class="font-bold uppercase text-xs tracking-widest mb-2">Texture Dust</h5><p class="font-extrabold text-lg text-lime-600 mb-4">$20</p><button class="text-[9px] font-black tracking-widest border-t border-zinc-100 pt-4 w-full">ADD TO BOX</button></div>
+            </div>
+        </section>
+
+        <section id="reviews" class="py-32">
+            <div class="glass-card p-16 bg-zinc-950 text-white overflow-hidden relative">
+                <div class="relative z-10">
+                    <h2 class="text-4xl font-extrabold serif-italic mb-12">Verified Feedback</h2>
+                    <div class="flex gap-10 overflow-x-auto pb-10 scrollbar-hide">
+                        <div class="min-w-[300px] border-l border-lime-500/30 pl-8">
+                            <div class="flex text-lime-400 mb-4"><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i></div>
+                            <p class="text-lg italic opacity-80 mb-6">"Absolute mastery of the craft. The environment is sterile yet incredibly welcoming."</p>
+                            <span class="text-[10px] font-bold tracking-widest">— Julian R.</span>
+                        </div>
+                        <div class="min-w-[300px] border-l border-lime-500/30 pl-8">
+                            <div class="flex text-lime-400 mb-4"><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i></div>
+                            <p class="text-lg italic opacity-80 mb-6">"Finally, a barber that understands face geometry. 10/10."</p>
+                            <span class="text-[10px] font-bold tracking-widest">— Marcus Thorne</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="absolute top-0 right-0 w-64 h-64 bg-lime-500/10 blur-[100px]"></div>
+            </div>
+        </section>
+
+        <section id="contact" class="py-32 grid lg:grid-cols-2 gap-20">
+            <div class="glass-card p-12">
+                <h3 class="text-3xl font-extrabold mb-10">Visit The Lab</h3>
+                <div class="space-y-6 text-sm uppercase font-bold tracking-widest">
+                    <div class="flex justify-between border-b border-zinc-100 pb-4"><span>Mon - Fri</span><span>09:00 — 20:00</span></div>
+                    <div class="flex justify-between border-b border-zinc-100 pb-4 text-lime-600"><span>Saturday</span><span>08:00 — 18:00</span></div>
                     <div class="flex justify-between opacity-30"><span>Sunday</span><span>Closed</span></div>
                 </div>
-                <div class="mt-12">
-                    <p class="heavy-font text-2xl mb-2">12 Savile Row</p>
-                    <p class="font-bold opacity-60">London, W1S 3PQ • United Kingdom</p>
-                    <div class="flex gap-4 mt-6">
-                        <a href="#" class="btn-burgundy text-xs">Get Directions</a>
-                        <a href="tel:+" class="bg-black text-white p-4 px-6 border-2 border-black hover:bg-zinc-800"><i class="fas fa-phone"></i></a>
+                <div class="mt-16">
+                    <p class="text-xl font-bold mb-2">12 Savile Row, London</p>
+                    <p class="text-sm opacity-50 mb-10">Global HQ / Appointment Only</p>
+                    <div class="flex gap-4">
+                        <a href="tel:+" class="btn-prime">Call Studio</a>
+                        <a href="#" class="comm-circle"><i class="fas fa-map-marker-alt"></i></a>
                     </div>
                 </div>
             </div>
-            <div class="h-full min-h-[400px] border-4 border-black grayscale">
+            <div class="rounded-[32px] overflow-hidden border border-white shadow-2xl h-full min-h-[400px] grayscale brightness-110">
                 <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2483.1558284564283!2d-0.1420785!3d51.510344!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x487605151522238d%3A0xc609c91039860472!2sSavile%20Row%2C%20London!5e0!3m2!1sen!2suk!4v1675850000000" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
             </div>
         </section>
     </main>
 
-    <footer class="bg-black text-white py-20 px-4 md:px-12">
-        <div class="grid md:grid-cols-3 gap-16 mb-20">
-            <div>
-                <h2 class="heavy-font text-5xl mb-4">QTRS<span class="text-burgundy">.</span></h2>
-                <p class="font-bold opacity-40 uppercase text-xs tracking-widest">Architectural Barbering Laboratory</p>
+    <footer class="bg-white py-20 px-8 border-t border-zinc-100">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-10">
+            <div class="font-extrabold text-2xl tracking-tighter">QUARTERS<span class="text-lime-500">.</span></div>
+            <div class="flex gap-8">
+                <a href="#" class="text-xl hover:text-lime-500 transition"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="text-xl hover:text-lime-500 transition"><i class="fab fa-tiktok"></i></a>
+                <a href="#" class="text-xl hover:text-lime-500 transition"><i class="fab fa-whatsapp"></i></a>
             </div>
-            <div class="flex flex-col gap-4 font-black uppercase text-sm">
-                <a href="#" class="hover:text-burgundy">Privacy Policy</a>
-                <a href="#" class="hover:text-burgundy">Cookie Policy</a>
-                <a href="#" class="hover:text-burgundy">Booking Terms</a>
-            </div>
-            <div class="flex gap-6 text-3xl">
-                <a href="#" class="hover:text-burgundy"><i class="fab fa-instagram"></i></a>
-                <a href="#" class="hover:text-burgundy"><i class="fab fa-tiktok"></i></a>
-                <a href="#" class="hover:text-burgundy"><i class="fab fa-youtube"></i></a>
-            </div>
+            <p class="text-[9px] font-bold tracking-[0.4em] text-zinc-400 uppercase">© 2026 The Quarters Elite • All Rights Reserved</p>
         </div>
-        <p class="text-[10px] font-black opacity-20 text-center border-t border-white/10 pt-10">© 2026 THE QUARTERS • DESIGNED FOR THE ELITE • NO HUMANS WERE HARMED IN THE MAKING OF THIS SITE</p>
     </footer>
 
-    <div class="fixed bottom-0 w-full flex md:hidden z-[110] border-t-4 border-black">
-        <a href="tel:+" class="flex-1 bg-white p-6 text-center heavy-font border-r-4 border-black">CALL NOW</a>
-        <a href="#book" class="flex-1 bg-burgundy text-white p-6 text-center heavy-font">BOOK CHAIR</a>
+    <div class="fixed bottom-8 left-1/2 -translate-x-1/2 w-[90%] md:hidden z-[100]">
+        <div class="glass-card flex p-2 shadow-2xl">
+            <a href="tel:+" class="flex-1 text-center py-4 font-black text-xs uppercase border-r border-zinc-100">Call</a>
+            <a href="#book" class="flex-[2] text-center py-4 font-black text-xs uppercase bg-lime-500 rounded-2xl">Reserve Chair</a>
+        </div>
     </div>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        AOS.init({ duration: 800 });
+        AOS.init({ duration: 1000, once: true });
 
-        // Loader
-        window.onload = () => {
+        // Welcome Reveal
+        window.addEventListener('load', () => {
             setTimeout(() => {
                 document.getElementById('loader').classList.add('off');
             }, 1000);
-        };
+        });
 
-        // Menu
+        // Menu Toggle
         function toggleMenu() {
             const m = document.getElementById('mobile-menu');
             m.classList.toggle('hidden');
             m.classList.toggle('flex');
         }
+
+        // Simple Typewriter Simulation for Hero
+        const text = document.getElementById('hero-type');
+        const phrases = ["Refined.", "Evolved.", "Bespoke."];
+        let i = 0;
+        setInterval(() => {
+            text.innerText = phrases[i % phrases.length];
+            i++;
+        }, 3000);
     </script>
 </body>
 </html>
