@@ -2,247 +2,236 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VICE & VELVET | Modern Retro Barber</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>OAK & IRON | Retro-Futurist Barber</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Outfit:wght@300;400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Bebas+Neue&display=swap');
 
         :root {
-            --oak: #C5A059;
-            --mint: #BFFFD0;
-            --dark-wood: #2A1B12;
-            --off-white: #F5F2ED;
+            --bg: #121212;
+            --card: #1c1c1e;
+            --accent: #d4af37; /* Bronze/Gold */
+            --wood: #3d2b1f;
         }
 
-        body { 
-            font-family: 'Outfit', sans-serif; 
-            background-color: var(--off-white); 
-            color: var(--dark-wood);
-            overflow-x: hidden;
+        body {
+            background-color: var(--bg);
+            font-family: 'Space Grotesk', sans-serif;
+            color: #efefef;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        h1, h2, .retro-font { font-family: 'Syne', sans-serif; text-transform: uppercase; }
-
-        /* Modern Apple-esque Glassmorphism */
-        .glass-nav {
-            background: rgba(245, 242, 237, 0.7);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(42, 27, 18, 0.1);
-            border-radius: 50px;
+        /* App-Like Bottom Nav (Mobile Only) */
+        .mobile-nav {
+            display: none;
+        }
+        @media (max-width: 768px) {
+            .mobile-nav {
+                display: flex;
+                position: fixed;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 90%;
+                background: rgba(28, 28, 30, 0.85);
+                backdrop-filter: blur(20px);
+                border: 1px solid rgba(255,255,255,0.1);
+                border-radius: 30px;
+                padding: 12px 20px;
+                justify-content: space-around;
+                z-index: 1000;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            }
         }
 
-        /* Funky Wood Textures */
-        .wood-panel {
-            background: linear-gradient(45deg, #3d2b1f 25%, #4a3526 25%, #4a3526 50%, #3d2b1f 50%, #3d2b1f 75%, #4a3526 75%, #4a3526 100%);
-            background-size: 56.57px 56.57px;
-        }
-
-        .hero-split {
-            height: 100vh;
+        /* Bento Grid Segmenting */
+        .segment-grid {
             display: grid;
-            grid-template-columns: 1.2fr 0.8fr;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 16px;
         }
 
-        .bento-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            grid-template-rows: repeat(2, 300px);
-            gap: 1.5rem;
-        }
-
-        .bento-item {
-            border-radius: 2rem;
+        .card-segment {
+            background: var(--card);
+            border-radius: 24px;
             overflow: hidden;
             position: relative;
-            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .bento-item:hover { transform: scale(0.98); }
+        .card-segment:active { transform: scale(0.96); }
 
-        /* Marquee Animation */
-        .marquee {
-            white-space: nowrap;
-            overflow: hidden;
-            background: var(--dark-wood);
-            color: var(--mint);
-            padding: 10px 0;
-        }
-        .marquee-content {
-            display: inline-block;
-            animation: marquee 20s linear infinite;
-        }
-        @keyframes marquee {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(-50%, 0); }
+        .wood-overlay {
+            background: linear-gradient(to bottom, rgba(61, 43, 31, 0.1), rgba(61, 43, 31, 0.8)),
+                        url('https://www.transparenttextures.com/patterns/dark-wood.png');
         }
 
-        .custom-cursor {
-            width: 20px;
-            height: 20px;
-            background: var(--oak);
-            border-radius: 50%;
-            position: fixed;
-            pointer-events: none;
-            z-index: 9999;
-            mix-blend-mode: difference;
-            transition: transform 0.1s;
-        }
+        /* Hide Scrollbar */
+        ::-webkit-scrollbar { display: none; }
+
+        .h-80vh { height: 80vh; }
+        
+        /* Retro Typography */
+        .retro-title { font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; }
     </style>
 </head>
-<body>
+<body class="pb-24 md:pb-0">
 
-    <div class="custom-cursor hidden md:block"></div>
+    <header class="hidden md:flex justify-between items-center p-8 sticky top-0 z-50 bg-[#121212]/80 backdrop-blur-md">
+        <div class="text-3xl retro-title tracking-widest font-bold">OAK<span class="text-[#d4af37]">+</span>IRON</div>
+        <nav class="flex gap-10 text-xs uppercase tracking-[0.2em] font-medium">
+            <a href="#services" class="hover:text-[#d4af37]">Services</a>
+            <a href="#gallery" class="hover:text-[#d4af37]">Gallery</a>
+            <a href="#booking" class="bg-[#d4af37] text-black px-6 py-2 rounded-full font-bold">Book Now</a>
+        </nav>
+    </header>
 
-    <nav class="fixed top-6 left-1/2 -translate-x-1/2 z-[100] w-[90%] max-w-4xl px-8 py-4 glass-nav flex justify-between items-center">
-        <div class="text-xl font-extrabold tracking-tighter">VICE<span class="text-[#C5A059]">&</span>VELVET</div>
-        <div class="hidden md:flex gap-8 font-semibold text-sm uppercase tracking-widest">
-            <a href="#services" class="hover:text-[#C5A059] transition">The Menu</a>
-            <a href="#shop" class="hover:text-[#C5A059] transition">Goods</a>
-            <a href="#booking" class="hover:text-[#C5A059] transition text-orange-700 font-bold underline">Book Chair</a>
-        </div>
-        <button id="menuTrigger" class="bg-dark-wood text-white h-10 w-10 rounded-full flex items-center justify-center">
-            <i class="fas fa-bars-staggered"></i>
-        </button>
-    </nav>
-
-    <section class="hero-split h-screen overflow-hidden">
-        <div class="relative flex flex-col justify-center px-12 md:px-24 bg-white">
-            <span class="text-[#C5A059] font-bold tracking-[0.5em] mb-4">EST. 1954 // REBORN 2026</span>
-            <h1 class="text-6xl md:text-9xl leading-none mb-6">SHARP<br><span class="text-stone-300">STAY</span> SOUL</h1>
-            <p class="max-w-md text-lg text-stone-500 mb-8 font-light">Precision grooming meets retro-funk soul. We don't just cut hair; we curate your identity in a sanctuary of wood and warmth.</p>
-            <div class="flex gap-4">
-                <a href="#booking" class="bg-[#2A1B12] text-white px-10 py-5 rounded-full font-bold hover:bg-[#C5A059] transition-all">RESERVE A SLOT</a>
-                <button class="w-16 h-16 rounded-full border border-stone-200 flex items-center justify-center hover:bg-stone-100 transition"><i class="fas fa-play"></i></button>
-            </div>
-        </div>
-        <div class="hidden md:block relative overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1512690132624-995817299603?q=80&w=2070&auto=format&fit=crop" class="h-full w-full object-cover">
-            <div class="absolute inset-0 bg-[#C5A059]/10 mix-blend-multiply"></div>
-        </div>
-    </section>
-
-    <div class="marquee border-y border-stone-800">
-        <div class="marquee-content text-4xl font-black">
-            NO FACES • JUST STYLE • HOT TOWELS • COLD BEER • PREMIUM FADES • SCISSOR WORK • WOODEN DECOR • NO FACES • JUST STYLE • HOT TOWELS • COLD BEER • 
-        </div>
+    <div class="mobile-nav">
+        <a href="#" class="text-[#d4af37] flex flex-col items-center gap-1"><i class="fas fa-home text-lg"></i><span class="text-[10px]">Home</span></a>
+        <a href="#services" class="text-white/50 flex flex-col items-center gap-1"><i class="fas fa-cut text-lg"></i><span class="text-[10px]">Menu</span></a>
+        <a href="#booking" class="text-white/50 flex flex-col items-center gap-1"><i class="fas fa-calendar-check text-lg"></i><span class="text-[10px]">Book</span></a>
+        <a href="#location" class="text-white/50 flex flex-col items-center gap-1"><i class="fas fa-map-marker-alt text-lg"></i><span class="text-[10px]">Shop</span></a>
     </div>
 
-    <section id="booking" class="py-20 px-6">
-        <div class="max-w-6xl mx-auto bg-[#2A1B12] rounded-[3rem] p-8 md:p-16 text-white grid grid-cols-1 md:grid-cols-2 gap-12">
-            <div>
-                <h2 class="text-5xl mb-6 text-[#BFFFD0]">Step Into<br>The Chair</h2>
-                <p class="text-stone-400 mb-8">Select your treatment from our artisan menu. All services include a complementary wood-aged beverage.</p>
-                <div class="space-y-4">
-                    <div class="flex items-center gap-4"><i class="fas fa-check text-[#C5A059]"></i> <span>Instant Confirmation</span></div>
-                    <div class="flex items-center gap-4"><i class="fas fa-check text-[#C5A059]"></i> <span>Expert Master Barbers</span></div>
+    <main class="p-4 md:p-8 max-w-[1600px] mx-auto">
+        
+        <section class="segment-grid mb-4">
+            <div class="card-segment col-span-12 md:col-span-8 h-[60vh] md:h-[80vh]">
+                <img src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&q=80&w=1200" class="w-full h-full object-cover">
+                <div class="absolute inset-0 wood-overlay p-8 flex flex-col justify-end">
+                    <span class="bg-[#d4af37] text-black font-bold px-3 py-1 rounded-md text-xs w-fit mb-4">OPEN UNTIL 9PM</span>
+                    <h1 class="text-5xl md:text-8xl retro-title leading-none">THE CRAFT <br> OF CEDAR</h1>
+                    <p class="text-stone-300 mt-4 max-w-md">Mid-century warmth meets aggressive modern technique. No faces, just the steel and the wood.</p>
                 </div>
             </div>
-            <form class="space-y-6">
-                <div class="grid grid-cols-2 gap-4">
-                    <select class="col-span-2 bg-stone-800 border-none p-5 rounded-2xl outline-none focus:ring-2 ring-[#C5A059]">
-                        <option>The Signature Fade - $55</option>
-                        <option>Beard Architect - $30</option>
-                        <option>The Full Vintage - $80</option>
-                    </select>
-                    <input type="date" class="bg-stone-800 p-5 rounded-2xl outline-none">
-                    <input type="time" class="bg-stone-800 p-5 rounded-2xl outline-none">
-                    <input type="text" placeholder="Full Name" class="col-span-2 bg-stone-800 p-5 rounded-2xl outline-none">
+            
+            <div class="card-segment col-span-12 md:col-span-4 h-auto md:h-[80vh] flex flex-col gap-4 bg-transparent border-none">
+                <div class="card-segment flex-1 bg-[#d4af37] p-8 text-black flex flex-col justify-between">
+                    <i class="fas fa-phone-alt text-4xl"></i>
+                    <div>
+                        <h2 class="text-3xl retro-title leading-tight">Instant <br> Support</h2>
+                        <a href="tel:123456" class="text-lg font-bold underline mt-2 block">Call The Shop</a>
+                    </div>
                 </div>
-                <button class="w-full bg-[#BFFFD0] text-black py-6 rounded-2xl font-black text-xl hover:scale-[1.02] transition transform">LOCK IN YOUR TIME</button>
-            </form>
-        </div>
-    </section>
-
-    <section id="services" class="py-20 px-6 max-w-7xl mx-auto">
-        <h2 class="text-center text-4xl mb-16 uppercase tracking-widest">The Shop Menu</h2>
-        <div class="bento-grid">
-            <div class="bento-item col-span-2 bg-[#F3ECE4] p-10 flex flex-col justify-end">
-                <i class="fas fa-scissors text-5xl mb-6 text-[#C5A059]"></i>
-                <h3 class="text-3xl font-bold">Sculpted Cuts</h3>
-                <p class="text-stone-500">Hand-finished scissor work for the modern silhouette.</p>
-            </div>
-            <div class="bento-item bg-[#2A1B12] text-white flex items-center justify-center">
-                <div class="text-center">
-                    <div class="text-5xl font-black text-[#BFFFD0]">100%</div>
-                    <div class="text-xs uppercase">Organic Oils</div>
+                <div class="card-segment flex-1 bg-stone-800 p-8 border border-white/10">
+                    <h3 class="text-white/40 uppercase text-xs tracking-widest mb-4 font-bold">Quick Book</h3>
+                    <div class="space-y-4">
+                        <button class="w-full bg-white/5 hover:bg-white/10 p-4 rounded-xl flex justify-between items-center transition">
+                            <span>Haircut</span> <i class="fas fa-chevron-right text-[10px]"></i>
+                        </button>
+                        <button class="w-full bg-white/5 hover:bg-white/10 p-4 rounded-xl flex justify-between items-center transition">
+                            <span>Beard Sculpting</span> <i class="fas fa-chevron-right text-[10px]"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
-            <div class="bento-item bg-white">
-                <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80&w=600" class="h-full w-full object-cover">
-            </div>
-            <div class="bento-item bg-stone-200">
-                <img src="https://images.unsplash.com/photo-1593548330112-c4c31466a500?auto=format&fit=crop&q=80&w=600" class="h-full w-full object-cover">
-            </div>
-            <div class="bento-item col-span-2 wood-panel p-10 text-white">
-                <h3 class="text-3xl font-bold mb-4">Hot Towel Ritual</h3>
-                <p>A multi-stage relaxation process using cedar-infused steam and cold-press citrus.</p>
-            </div>
-            <div class="bento-item bg-[#BFFFD0] p-10 flex flex-col justify-between">
-                <span class="font-black text-4xl">$30</span>
-                <span class="font-bold uppercase tracking-tighter">Line Up & Detail</span>
-            </div>
-        </div>
-    </section>
+        </section>
 
-    <div class="fixed left-6 bottom-10 z-50 flex flex-col gap-4">
-        <a href="tel:123" class="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-xl border border-stone-100 hover:bg-[#BFFFD0] transition">
-            <i class="fas fa-phone"></i>
-        </a>
-        <a href="#" class="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-xl border border-stone-100 hover:bg-[#25D366] hover:text-white transition">
-            <i class="fab fa-whatsapp"></i>
-        </a>
-    </div>
+        <section id="services" class="segment-grid py-8">
+            <div class="col-span-12 md:col-span-4 card-segment p-8 bg-[#1c1c1e]">
+                <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-6">
+                    <i class="fas fa-scissors text-[#d4af37]"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-2">Artisan Cut</h3>
+                <p class="text-stone-400 text-sm mb-6">Full consultation, scissor finish, and neck shave. Includes hot towel wash.</p>
+                <div class="text-3xl font-bold">$65</div>
+            </div>
 
-    <section class="bg-white py-20 px-6 border-t border-stone-100">
-        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-20">
-            <div>
-                <h2 class="text-6xl mb-8">FIND THE<br><span class="text-[#C5A059]">GRAIN</span></h2>
-                <div class="space-y-6 text-xl">
-                    <p class="flex items-center gap-4"><i class="fas fa-map-marker-alt text-[#C5A059]"></i> 42 Retro Ave, Wood District</p>
-                    <p class="flex items-center gap-4"><i class="fas fa-clock text-[#C5A059]"></i> Tue - Sat: 10am - 9pm</p>
-                    <p class="flex items-center gap-4"><i class="fas fa-envelope text-[#C5A059]"></i> hello@vicevelvet.com</p>
+            <div class="col-span-12 md:col-span-4 card-segment">
+                <img src="https://images.unsplash.com/photo-1599351431247-f10b21ce5639?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover">
+            </div>
+
+            <div class="col-span-12 md:col-span-4 card-segment p-8 bg-[#3d2b1f] text-white">
+                <h3 class="text-2xl font-bold mb-2">Iron & Steam</h3>
+                <p class="text-white/60 text-sm mb-6">A 45-minute relaxation ritual. Cedar oils, steam, and a straight razor finish.</p>
+                <div class="text-3xl font-bold">$40</div>
+            </div>
+        </section>
+
+        <section class="py-12">
+            <div class="flex justify-between items-end mb-8">
+                <h2 class="text-3xl retro-title">Apothecary</h2>
+                <a href="#" class="text-[#d4af37] text-sm font-bold border-b border-[#d4af37]">View All Products</a>
+            </div>
+            <div class="flex md:grid md:grid-cols-4 gap-6 overflow-x-auto pb-4">
+                <div class="min-w-[280px] card-segment p-6 bg-[#1c1c1e]">
+                    <img src="https://images.unsplash.com/photo-1626285861696-9f0bf5a49c6d?auto=format&fit=crop&q=80&w=400" class="w-full aspect-square object-cover rounded-2xl mb-4">
+                    <h4 class="font-bold">Walnut Beard Balm</h4>
+                    <p class="text-stone-500 text-sm">$24.00</p>
+                </div>
+                <div class="min-w-[280px] card-segment p-6 bg-[#1c1c1e]">
+                    <img src="https://images.unsplash.com/photo-1512690132624-995817299603?auto=format&fit=crop&q=80&w=400" class="w-full aspect-square object-cover rounded-2xl mb-4">
+                    <h4 class="font-bold">Artisan Clay</h4>
+                    <p class="text-stone-500 text-sm">$18.00</p>
+                </div>
+                <div class="min-w-[280px] card-segment p-6 bg-[#1c1c1e]">
+                    <img src="https://images.unsplash.com/photo-1621607512214-68297480165e?auto=format&fit=crop&q=80&w=400" class="w-full aspect-square object-cover rounded-2xl mb-4">
+                    <h4 class="font-bold">Steel Razor Kit</h4>
+                    <p class="text-stone-500 text-sm">$115.00</p>
+                </div>
+                <div class="min-w-[280px] card-segment p-6 bg-[#1c1c1e]">
+                    <img src="https://images.unsplash.com/photo-1593548330112-c4c31466a500?auto=format&fit=crop&q=80&w=400" class="w-full aspect-square object-cover rounded-2xl mb-4">
+                    <h4 class="font-bold">Boar Bristle Brush</h4>
+                    <p class="text-stone-500 text-sm">$45.00</p>
                 </div>
             </div>
-            <div class="rounded-[2rem] overflow-hidden grayscale contrast-125 h-[400px]">
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3153.014324204555!2d-122.4194155!3d37.7749295!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8085809c6c8f4433%3A0x713101e4795368a!2sSan%20Francisco%2C%20CA!5e0!3m2!1sen!2sus!4v1614354911144!5m2!1sen!2sus" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-            </div>
-        </div>
-    </section>
+        </section>
 
-    <footer class="bg-[#2A1B12] text-white/50 py-20 px-6 text-center">
-        <div class="text-8xl md:text-[15vw] font-black opacity-10 leading-none mb-12">VICE&VELVET</div>
-        <div class="flex justify-center gap-12 text-white mb-12">
-            <a href="#" class="hover:text-[#C5A059]">INSTAGRAM</a>
-            <a href="#" class="hover:text-[#C5A059]">YOUTUBE</a>
-            <a href="#" class="hover:text-[#C5A059]">TIKTOK</a>
-        </div>
-        <p class="text-sm tracking-widest uppercase">© 2026 Vice & Velvet Artisan Barbers • No Faces, All Soul</p>
+        <section id="booking" class="segment-grid py-12">
+            <div class="col-span-12 md:col-span-6 card-segment p-8 bg-[#1c1c1e] border-2 border-[#d4af37]">
+                <h2 class="text-3xl retro-title mb-8">Secure A Chair</h2>
+                <div class="grid grid-cols-1 gap-6">
+                    <div class="bg-white/5 p-4 rounded-2xl">
+                        <label class="text-[10px] uppercase text-[#d4af37] font-bold block mb-2">Service</label>
+                        <select class="w-full bg-transparent outline-none">
+                            <option>The Full Executive</option>
+                            <option>Skin Fade</option>
+                            <option>Beard Alignment</option>
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-white/5 p-4 rounded-2xl">
+                            <label class="text-[10px] uppercase text-[#d4af37] font-bold block mb-2">Date</label>
+                            <input type="date" class="w-full bg-transparent outline-none">
+                        </div>
+                        <div class="bg-white/5 p-4 rounded-2xl">
+                            <label class="text-[10px] uppercase text-[#d4af37] font-bold block mb-2">Time</label>
+                            <select class="w-full bg-transparent outline-none">
+                                <option>10:00 AM</option>
+                                <option>11:30 AM</option>
+                                <option>02:00 PM</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="w-full bg-[#d4af37] text-black py-5 rounded-2xl font-black text-xl shadow-lg shadow-[#d4af37]/20 active:scale-95 transition">CONFIRM APPOINTMENT</button>
+                </div>
+            </div>
+            <div class="col-span-12 md:col-span-6 card-segment">
+                 <iframe src="https://www.google.com/maps/embed?pb=notreal" class="w-full h-full min-h-[400px] grayscale invert contrast-125" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="p-8 text-center text-white/20 text-xs uppercase tracking-widest border-t border-white/5">
+        &copy; 2026 OAK & IRON BARBERS • No Faces • All Soul
     </footer>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        AOS.init({ once: true });
+        AOS.init({ duration: 1000, once: true });
 
-        // Custom Cursor Logic
-        const cursor = document.querySelector('.custom-cursor');
-        document.addEventListener('mousemove', (e) => {
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
-        });
-
-        // Hover effect for cursor
-        document.querySelectorAll('a, button, input, select').forEach(item => {
-            item.addEventListener('mouseenter', () => cursor.style.transform = 'scale(3)');
-            item.addEventListener('mouseleave', () => cursor.style.transform = 'scale(1)');
-        });
-
-        // Simple Mobile Menu Toggle
-        const menuTrigger = document.getElementById('menuTrigger');
-        menuTrigger.addEventListener('click', () => {
-            alert("Menu system would open here. Designed with Apple-style blurring.");
+        // App-like interaction: Change tab color on click
+        const navLinks = document.querySelectorAll('.mobile-nav a');
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.forEach(l => l.classList.replace('text-[#d4af37]', 'text-white/50'));
+                link.classList.replace('text-white/50', 'text-[#d4af37]');
+            });
         });
     </script>
 </body>
