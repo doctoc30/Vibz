@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OAK & IRON | Modern Retro Barber</title>
+    <title>OAK & IRON | Artisan Retro-Modern Barber</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
@@ -14,22 +14,28 @@
             --bg: #0F0F0F;
             --card: #1A1A1C;
             --accent: #D4AF37;
-            --wood: #3D2B1F;
         }
 
-        body {
-            background-color: var(--bg);
-            font-family: 'Space Grotesk', sans-serif;
-            color: #EFEFEF;
-            overflow-x: hidden;
-        }
-
+        body { background-color: var(--bg); font-family: 'Space Grotesk', sans-serif; color: #EFEFEF; overflow-x: hidden; }
         .retro-title { font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; }
-
-        /* App-Like Mobile Navigation */
-        .mobile-dock {
-            display: none;
+        
+        /* Dynamic Island Pop-up */
+        #offerPop {
+            position: fixed;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            color: black;
+            padding: 10px 24px;
+            border-radius: 50px;
+            z-index: 2000;
+            transition: 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
         }
+        #offerPop.active { top: 20px; }
+
+        /* Mobile App Dock */
         @media (max-width: 768px) {
             .mobile-dock {
                 display: flex;
@@ -42,193 +48,151 @@
                 backdrop-filter: blur(20px);
                 border: 1px solid rgba(255,255,255,0.1);
                 border-radius: 40px;
-                padding: 10px 25px;
-                justify-content: space-between;
+                padding: 10px 20px;
+                justify-content: space-around;
                 align-items: center;
                 z-index: 1000;
-                box-shadow: 0 15px 35px rgba(0,0,0,0.6);
             }
         }
 
-        /* Pop-up Offer "Dynamic Island" */
-        #offerPop {
-            position: fixed;
-            top: -100px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--accent);
-            color: black;
-            padding: 12px 24px;
-            border-radius: 50px;
-            font-weight: 800;
-            z-index: 2000;
-            transition: 0.6s cubic-bezier(0.19, 1, 0.22, 1);
-            box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);
-        }
-        #offerPop.active { top: 20px; }
-
-        .card-module {
-            background: var(--card);
-            border-radius: 32px;
-            border: 1px solid rgba(255,255,255,0.05);
-            transition: 0.3s ease;
-        }
-        .card-module:hover { border-color: var(--accent); }
-
-        /* Custom Scrollbar for Horizontal Modules */
+        .segment-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px; }
+        .card-module { background: var(--card); border-radius: 32px; border: 1px solid rgba(255,255,255,0.05); overflow: hidden; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-
-        .wood-gradient {
-            background: linear-gradient(135deg, rgba(61,43,31,1) 0%, rgba(26,26,28,1) 100%);
-        }
     </style>
 </head>
 <body class="pb-24 md:pb-0">
 
-    <div id="offerPop" class="text-sm md:text-base">
-        ⚡ TUESDAY SPECIAL: 20% OFF BEARD TRIMS <button onclick="closeOffer()" class="ml-4 font-black">×</button>
+    <div id="offerPop" class="flex items-center gap-3">
+        <span class="font-black text-xs md:text-sm uppercase">First Visit? 20% Off With Code "OAK"</span>
+        <button onclick="this.parentElement.classList.remove('active')" class="text-xl leading-none">×</button>
     </div>
 
     <header class="hidden md:flex justify-between items-center p-8 sticky top-0 z-50 bg-[#0F0F0F]/90 backdrop-blur-xl">
-        <div class="text-3xl retro-title font-bold tracking-tighter">
-            <span class="text-white">OAK</span><span class="text-[#D4AF37]">&</span><span class="text-white">IRON</span>
-        </div>
+        <div class="text-3xl retro-title font-bold">OAK<span class="text-[#D4AF37]">&</span>IRON</div>
         <nav class="flex gap-10 text-xs uppercase tracking-widest font-bold items-center">
-            <a href="#about" class="hover:text-[#D4AF37] transition">About</a>
-            <a href="#services" class="hover:text-[#D4AF37] transition">Menu</a>
+            <a href="#about" class="hover:text-[#D4AF37] transition">The Story</a>
+            <a href="#services" class="hover:text-[#D4AF37] transition">Services</a>
             <a href="#reviews" class="hover:text-[#D4AF37] transition">Reviews</a>
             <a href="#booking" class="bg-[#D4AF37] text-black px-8 py-3 rounded-full hover:scale-105 transition active:scale-95">Book Chair</a>
         </nav>
     </header>
 
-    <div class="mobile-dock">
-        <a href="#" class="text-[#D4AF37]"><i class="fas fa-house-chimney text-xl"></i></a>
-        <a href="#services" class="text-white/40"><i class="fas fa-list text-xl"></i></a>
-        <a href="https://wa.me/123456789" class="bg-[#25D366] text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg"><i class="fab fa-whatsapp text-2xl"></i></a>
-        <a href="#booking" class="text-white/40"><i class="fas fa-calendar-alt text-xl"></i></a>
-        <a href="#contact" class="text-white/40"><i class="fas fa-message text-xl"></i></a>
+    <div class="mobile-dock hidden">
+        <a href="#" class="text-[#D4AF37]"><i class="fas fa-home-alt text-xl"></i></a>
+        <a href="#services" class="text-white/40"><i class="fas fa-cut text-xl"></i></a>
+        <a href="https://wa.me/123456789" target="_blank" class="bg-[#25D366] text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg"><i class="fab fa-whatsapp text-2xl"></i></a>
+        <a href="#booking" class="text-white/40"><i class="fas fa-calendar-check text-xl"></i></a>
+        <a href="#contact" class="text-white/40"><i class="fas fa-envelope text-xl"></i></a>
     </div>
 
-    <main class="p-4 md:p-10 space-y-6">
-
-        <section class="grid grid-cols-12 gap-6">
-            <div class="col-span-12 md:col-span-9 h-[70vh] card-module relative overflow-hidden group">
-                <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80&w=1400" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-1000">
-                <div class="absolute inset-0 bg-black/40 p-8 md:p-16 flex flex-col justify-end">
-                    <h1 class="text-6xl md:text-9xl retro-title leading-[0.85] mb-6" data-aos="fade-up">REFINING <br> THE GRAIN</h1>
+    <main class="p-4 md:p-10 max-w-[1600px] mx-auto space-y-4">
+        
+        <section class="segment-grid">
+            <div class="col-span-12 md:col-span-8 h-[60vh] md:h-[75vh] card-module relative">
+                <img src="https://images.unsplash.com/photo-1512690132624-995817299603?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover grayscale opacity-60">
+                <div class="absolute inset-0 p-8 md:p-16 flex flex-col justify-end">
+                    <h1 class="text-6xl md:text-9xl retro-title leading-[0.85] mb-6" data-aos="fade-up">BORN IN WOOD<br><span class="text-[#D4AF37]">FORGED IN STEEL</span></h1>
                     <div class="flex gap-4">
-                        <a href="#booking" class="bg-white text-black px-10 py-5 rounded-full font-black uppercase text-sm">Get Cut</a>
-                        <a href="tel:123" class="bg-white/10 backdrop-blur-md text-white border border-white/20 px-10 py-5 rounded-full font-black uppercase text-sm">Call Now</a>
+                        <a href="#booking" class="bg-white text-black px-8 py-4 rounded-full font-black uppercase text-xs">Reserve Spot</a>
+                        <a href="tel:123" class="bg-white/10 backdrop-blur-md text-white border border-white/20 px-8 py-4 rounded-full font-black uppercase text-xs">Call Shop</a>
                     </div>
                 </div>
             </div>
-            <div class="hidden md:flex md:col-span-3 card-module bg-[#D4AF37] p-8 flex-col justify-between text-black">
-                <div class="text-6xl font-black">5.0</div>
-                <div>
-                    <div class="flex gap-1 mb-2">
+            <div class="col-span-12 md:col-span-4 flex flex-col gap-4">
+                <div class="card-module flex-1 bg-[#D4AF37] p-8 text-black flex flex-col justify-between">
+                    <i class="fab fa-whatsapp text-5xl"></i>
+                    <h2 class="text-3xl retro-title leading-tight">Fast<br>Whatsapp<br>Booking</h2>
+                    <a href="https://wa.me/123" class="text-sm font-black underline">CHAT NOW</a>
+                </div>
+                <div class="card-module flex-1 p-8 border-stone-800 flex flex-col justify-center">
+                    <div class="flex gap-1 text-[#D4AF37] mb-2">
                         <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                     </div>
-                    <p class="font-bold text-sm uppercase">Top Rated in the District</p>
+                    <p class="text-white/60 text-sm italic font-light">"Best atmosphere in the city. The wooden textures and warm light make it feel like home."</p>
                 </div>
             </div>
         </section>
 
-        <section id="about" class="grid grid-cols-1 md:grid-cols-2 gap-6 py-10">
-            <div class="card-module p-10 flex flex-col justify-center wood-gradient">
-                <span class="text-[#D4AF37] font-bold tracking-[0.3em] mb-4">OUR STORY</span>
-                <h2 class="text-4xl md:text-5xl retro-title mb-6">Steel. Wood. <br> Tradition.</h2>
-                <p class="text-white/60 text-lg leading-relaxed">
-                    Oak & Iron was founded in 2012 with a single mission: to return barbering to its organic roots. No plastic chairs, no loud TVs—just the smell of cedarwood, the sound of shears, and the warmth of community.
+        <section id="about" class="segment-grid py-6">
+            <div class="col-span-12 md:col-span-5 card-module p-10 bg-stone-900/40 flex flex-col justify-center">
+                <span class="text-[#D4AF37] font-bold tracking-widest text-xs mb-4">ESTABLISHED 2012</span>
+                <h2 class="text-4xl retro-title mb-6 leading-tight">More than a haircut.<br>It's a ritual.</h2>
+                <p class="text-white/50 leading-relaxed text-sm md:text-base">
+                    We built Oak & Iron as a sanctuary from the digital noise. Our shop features reclaimed oak walls and vintage steel chairs, designed to provide a warm, tactile experience while we refine your style with surgical precision. No faces, no egos—just the craft.
                 </p>
             </div>
-            <div class="card-module h-[400px] md:h-auto overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover">
+            <div class="col-span-12 md:col-span-7 h-[400px] card-module">
+                <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80&w=1200" class="w-full h-full object-cover">
             </div>
         </section>
 
-        <section id="booking" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="md:col-span-2 card-module p-8 bg-[#1A1A1C]">
-                <h2 class="text-3xl retro-title mb-8">Reserve a Chair</h2>
-                <form class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="space-y-2">
-                        <label class="text-[10px] uppercase font-bold text-white/40">Treatment</label>
-                        <select class="w-full bg-white/5 p-4 rounded-2xl outline-none focus:ring-1 ring-[#D4AF37]">
-                            <option>The Heritage Cut</option>
-                            <option>Hot Towel Shave</option>
-                            <option>Beard Sculpt</option>
+        <section id="services" class="segment-grid">
+            <div class="col-span-12 md:col-span-4 card-module p-8 flex flex-col justify-between h-[300px]">
+                <h3 class="text-2xl font-bold">Artisan Cut</h3>
+                <p class="text-white/40 text-sm">Clipper and scissor work, hot towel finish.</p>
+                <div class="text-3xl font-bold text-[#D4AF37]">$55</div>
+            </div>
+            <div id="reviews" class="col-span-12 md:col-span-4 card-module p-8 bg-white text-black h-[300px] flex flex-col justify-between">
+                <div class="text-xs font-bold uppercase tracking-widest">Client Feedback</div>
+                <p class="text-xl leading-tight font-medium">"An absolute masterclass in grooming. The cedar-scented oils are a game changer."</p>
+                <div class="text-xs opacity-60">— MICHAEL R., GOOGLE REVIEWS</div>
+            </div>
+            <div class="col-span-12 md:col-span-4 card-module h-[300px]">
+                <img src="https://images.unsplash.com/photo-1593548330112-c4c31466a500?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover">
+            </div>
+        </section>
+
+        <section id="booking" class="segment-grid">
+            <div class="col-span-12 md:col-span-7 card-module p-8 md:p-12 border-2 border-[#D4AF37]">
+                <h2 class="text-4xl retro-title mb-10">Secure Your Session</h2>
+                <form class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <input type="text" placeholder="Full Name" class="bg-white/5 p-4 rounded-2xl outline-none focus:ring-1 ring-[#D4AF37]">
+                        <select class="bg-white/5 p-4 rounded-2xl outline-none">
+                            <option>The Signature Fade</option>
+                            <option>Beard Sculpting</option>
+                            <option>Hot Towel Ritual</option>
                         </select>
+                        <input type="date" class="bg-white/5 p-4 rounded-2xl outline-none">
+                        <input type="time" class="bg-white/5 p-4 rounded-2xl outline-none">
                     </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] uppercase font-bold text-white/40">Date</label>
-                        <input type="date" class="w-full bg-white/5 p-4 rounded-2xl outline-none">
-                    </div>
-                    <div class="md:col-span-2">
-                        <button class="w-full bg-[#D4AF37] text-black py-6 rounded-2xl font-black text-xl hover:bg-white transition">CONFIRM APPOINTMENT</button>
-                    </div>
+                    <button class="w-full bg-[#D4AF37] text-black py-5 rounded-2xl font-black text-xl active:scale-95 transition">CONFIRM BOOKING</button>
                 </form>
             </div>
-            <div id="reviews" class="card-module p-8 flex flex-col justify-between border-stone-800">
-                <i class="fas fa-quote-left text-4xl text-[#D4AF37] mb-6"></i>
-                <p class="text-xl font-light italic text-white/80">"Best fade in the city. The wooden interior makes it feel like a private club. Truly high-end experience."</p>
-                <div class="mt-8 flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-full bg-stone-700 flex items-center justify-center font-bold">JD</div>
-                    <div>
-                        <p class="font-bold">James Dalton</p>
-                        <p class="text-xs text-white/40">Google Review</p>
-                    </div>
+            <div id="contact" class="col-span-12 md:col-span-5 card-module p-8 bg-stone-900/60">
+                <h3 class="text-2xl retro-title mb-6">Drop a Message</h3>
+                <div class="space-y-4">
+                    <input type="email" placeholder="Email" class="w-full bg-black/40 p-4 rounded-2xl outline-none">
+                    <textarea placeholder="How can we help?" class="w-full bg-black/40 p-4 rounded-2xl h-24 outline-none"></textarea>
+                    <button class="w-full bg-white/10 hover:bg-white/20 text-white py-4 rounded-2xl font-bold transition">Send Message</button>
                 </div>
             </div>
         </section>
-
-        <section id="contact" class="grid grid-cols-1 md:grid-cols-2 gap-6 pb-20">
-            <div class="card-module p-8 bg-stone-900/50">
-                <h3 class="text-3xl retro-title mb-6">Message the Shop</h3>
-                <input type="text" placeholder="Your Name" class="w-full bg-black/30 p-4 rounded-xl mb-4 outline-none">
-                <textarea placeholder="How can we help?" class="w-full bg-black/30 p-4 rounded-xl mb-4 h-32 outline-none"></textarea>
-                <button class="bg-white text-black px-8 py-3 rounded-full font-bold">Send Message</button>
-            </div>
-            <div class="card-module overflow-hidden min-h-[300px]">
-                <iframe src="http://googleusercontent.com/maps.google.com/3" class="w-full h-full grayscale invert opacity-60" frameborder="0"></iframe>
-            </div>
-        </section>
-
     </main>
 
-    <footer class="bg-black p-12 text-center border-t border-white/5">
-        <div class="text-4xl retro-title mb-8">OAK <span class="text-[#D4AF37]">&</span> IRON</div>
-        <div class="flex justify-center gap-8 mb-12">
-            <a href="#" class="text-white/40 hover:text-[#D4AF37] text-2xl transition"><i class="fab fa-instagram"></i></a>
-            <a href="#" class="text-white/40 hover:text-[#D4AF37] text-2xl transition"><i class="fab fa-facebook"></i></a>
-            <a href="#" class="text-white/40 hover:text-[#D4AF37] text-2xl transition"><i class="fab fa-tiktok"></i></a>
+    <footer class="p-12 mt-10 border-t border-white/5 text-center bg-[#0a0a0a]">
+        <div class="text-3xl retro-title mb-6">OAK <span class="text-[#D4AF37]">&</span> IRON</div>
+        <div class="flex justify-center gap-8 mb-8">
+            <a href="#" class="text-white/20 hover:text-[#D4AF37] text-2xl"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="text-white/20 hover:text-[#D4AF37] text-2xl"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="text-white/20 hover:text-[#D4AF37] text-2xl"><i class="fab fa-yelp"></i></a>
+            <a href="https://wa.me/123" class="text-white/20 hover:text-[#25D366] text-2xl"><i class="fab fa-whatsapp"></i></a>
         </div>
-        <p class="text-white/20 text-xs tracking-widest uppercase">Est. 2012 • 123 Timber Lane, OK • No Faces, All Soul</p>
+        <p class="text-white/10 text-[10px] tracking-[0.3em] uppercase">123 Timber Lane, District 5 • No Faces, All Soul • © 2026</p>
     </footer>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         AOS.init({ once: true });
 
-        // Dynamic Island Pop-up Logic
-        window.onload = () => {
-            setTimeout(() => {
-                document.getElementById('offerPop').classList.add('active');
-            }, 2000);
-        };
+        // Show offer pop-up after 2 seconds
+        setTimeout(() => {
+            document.getElementById('offerPop').classList.add('active');
+        }, 2000);
 
-        function closeOffer() {
-            document.getElementById('offerPop').classList.remove('active');
-        }
-
-        // Active state for Mobile Dock
-        const dockLinks = document.querySelectorAll('.mobile-dock a');
-        dockLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                dockLinks.forEach(l => l.classList.replace('text-[#D4AF37]', 'text-white/40'));
-                if(!link.classList.contains('bg-[#25D366]')) {
-                    link.classList.replace('text-white/40', 'text-[#D4AF37]');
-                }
-            });
-        });
+        // Mobile Dock logic
+        const dock = document.querySelector('.mobile-dock');
+        if(window.innerWidth < 768) dock.classList.remove('hidden');
     </script>
 </body>
 </html>
