@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OAK & IRON | Retro-Futurist Barber</title>
+    <title>OAK & IRON | Modern Retro Barber</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
@@ -11,226 +11,222 @@
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Bebas+Neue&display=swap');
 
         :root {
-            --bg: #121212;
-            --card: #1c1c1e;
-            --accent: #d4af37; /* Bronze/Gold */
-            --wood: #3d2b1f;
+            --bg: #0F0F0F;
+            --card: #1A1A1C;
+            --accent: #D4AF37;
+            --wood: #3D2B1F;
         }
 
         body {
             background-color: var(--bg);
             font-family: 'Space Grotesk', sans-serif;
-            color: #efefef;
-            -webkit-tap-highlight-color: transparent;
+            color: #EFEFEF;
+            overflow-x: hidden;
         }
 
-        /* App-Like Bottom Nav (Mobile Only) */
-        .mobile-nav {
+        .retro-title { font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; }
+
+        /* App-Like Mobile Navigation */
+        .mobile-dock {
             display: none;
         }
         @media (max-width: 768px) {
-            .mobile-nav {
+            .mobile-dock {
                 display: flex;
                 position: fixed;
                 bottom: 20px;
                 left: 50%;
                 transform: translateX(-50%);
-                width: 90%;
-                background: rgba(28, 28, 30, 0.85);
+                width: 92%;
+                background: rgba(26, 26, 28, 0.9);
                 backdrop-filter: blur(20px);
                 border: 1px solid rgba(255,255,255,0.1);
-                border-radius: 30px;
-                padding: 12px 20px;
-                justify-content: space-around;
+                border-radius: 40px;
+                padding: 10px 25px;
+                justify-content: space-between;
+                align-items: center;
                 z-index: 1000;
-                box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+                box-shadow: 0 15px 35px rgba(0,0,0,0.6);
             }
         }
 
-        /* Bento Grid Segmenting */
-        .segment-grid {
-            display: grid;
-            grid-template-columns: repeat(12, 1fr);
-            gap: 16px;
+        /* Pop-up Offer "Dynamic Island" */
+        #offerPop {
+            position: fixed;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            color: black;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 800;
+            z-index: 2000;
+            transition: 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+            box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);
         }
+        #offerPop.active { top: 20px; }
 
-        .card-segment {
+        .card-module {
             background: var(--card);
-            border-radius: 24px;
-            overflow: hidden;
-            position: relative;
+            border-radius: 32px;
             border: 1px solid rgba(255,255,255,0.05);
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: 0.3s ease;
         }
+        .card-module:hover { border-color: var(--accent); }
 
-        .card-segment:active { transform: scale(0.96); }
+        /* Custom Scrollbar for Horizontal Modules */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
 
-        .wood-overlay {
-            background: linear-gradient(to bottom, rgba(61, 43, 31, 0.1), rgba(61, 43, 31, 0.8)),
-                        url('https://www.transparenttextures.com/patterns/dark-wood.png');
+        .wood-gradient {
+            background: linear-gradient(135deg, rgba(61,43,31,1) 0%, rgba(26,26,28,1) 100%);
         }
-
-        /* Hide Scrollbar */
-        ::-webkit-scrollbar { display: none; }
-
-        .h-80vh { height: 80vh; }
-        
-        /* Retro Typography */
-        .retro-title { font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; }
     </style>
 </head>
 <body class="pb-24 md:pb-0">
 
-    <header class="hidden md:flex justify-between items-center p-8 sticky top-0 z-50 bg-[#121212]/80 backdrop-blur-md">
-        <div class="text-3xl retro-title tracking-widest font-bold">OAK<span class="text-[#d4af37]">+</span>IRON</div>
-        <nav class="flex gap-10 text-xs uppercase tracking-[0.2em] font-medium">
-            <a href="#services" class="hover:text-[#d4af37]">Services</a>
-            <a href="#gallery" class="hover:text-[#d4af37]">Gallery</a>
-            <a href="#booking" class="bg-[#d4af37] text-black px-6 py-2 rounded-full font-bold">Book Now</a>
+    <div id="offerPop" class="text-sm md:text-base">
+        ⚡ TUESDAY SPECIAL: 20% OFF BEARD TRIMS <button onclick="closeOffer()" class="ml-4 font-black">×</button>
+    </div>
+
+    <header class="hidden md:flex justify-between items-center p-8 sticky top-0 z-50 bg-[#0F0F0F]/90 backdrop-blur-xl">
+        <div class="text-3xl retro-title font-bold tracking-tighter">
+            <span class="text-white">OAK</span><span class="text-[#D4AF37]">&</span><span class="text-white">IRON</span>
+        </div>
+        <nav class="flex gap-10 text-xs uppercase tracking-widest font-bold items-center">
+            <a href="#about" class="hover:text-[#D4AF37] transition">About</a>
+            <a href="#services" class="hover:text-[#D4AF37] transition">Menu</a>
+            <a href="#reviews" class="hover:text-[#D4AF37] transition">Reviews</a>
+            <a href="#booking" class="bg-[#D4AF37] text-black px-8 py-3 rounded-full hover:scale-105 transition active:scale-95">Book Chair</a>
         </nav>
     </header>
 
-    <div class="mobile-nav">
-        <a href="#" class="text-[#d4af37] flex flex-col items-center gap-1"><i class="fas fa-home text-lg"></i><span class="text-[10px]">Home</span></a>
-        <a href="#services" class="text-white/50 flex flex-col items-center gap-1"><i class="fas fa-cut text-lg"></i><span class="text-[10px]">Menu</span></a>
-        <a href="#booking" class="text-white/50 flex flex-col items-center gap-1"><i class="fas fa-calendar-check text-lg"></i><span class="text-[10px]">Book</span></a>
-        <a href="#location" class="text-white/50 flex flex-col items-center gap-1"><i class="fas fa-map-marker-alt text-lg"></i><span class="text-[10px]">Shop</span></a>
+    <div class="mobile-dock">
+        <a href="#" class="text-[#D4AF37]"><i class="fas fa-house-chimney text-xl"></i></a>
+        <a href="#services" class="text-white/40"><i class="fas fa-list text-xl"></i></a>
+        <a href="https://wa.me/123456789" class="bg-[#25D366] text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg"><i class="fab fa-whatsapp text-2xl"></i></a>
+        <a href="#booking" class="text-white/40"><i class="fas fa-calendar-alt text-xl"></i></a>
+        <a href="#contact" class="text-white/40"><i class="fas fa-message text-xl"></i></a>
     </div>
 
-    <main class="p-4 md:p-8 max-w-[1600px] mx-auto">
-        
-        <section class="segment-grid mb-4">
-            <div class="card-segment col-span-12 md:col-span-8 h-[60vh] md:h-[80vh]">
-                <img src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&q=80&w=1200" class="w-full h-full object-cover">
-                <div class="absolute inset-0 wood-overlay p-8 flex flex-col justify-end">
-                    <span class="bg-[#d4af37] text-black font-bold px-3 py-1 rounded-md text-xs w-fit mb-4">OPEN UNTIL 9PM</span>
-                    <h1 class="text-5xl md:text-8xl retro-title leading-none">THE CRAFT <br> OF CEDAR</h1>
-                    <p class="text-stone-300 mt-4 max-w-md">Mid-century warmth meets aggressive modern technique. No faces, just the steel and the wood.</p>
-                </div>
-            </div>
-            
-            <div class="card-segment col-span-12 md:col-span-4 h-auto md:h-[80vh] flex flex-col gap-4 bg-transparent border-none">
-                <div class="card-segment flex-1 bg-[#d4af37] p-8 text-black flex flex-col justify-between">
-                    <i class="fas fa-phone-alt text-4xl"></i>
-                    <div>
-                        <h2 class="text-3xl retro-title leading-tight">Instant <br> Support</h2>
-                        <a href="tel:123456" class="text-lg font-bold underline mt-2 block">Call The Shop</a>
-                    </div>
-                </div>
-                <div class="card-segment flex-1 bg-stone-800 p-8 border border-white/10">
-                    <h3 class="text-white/40 uppercase text-xs tracking-widest mb-4 font-bold">Quick Book</h3>
-                    <div class="space-y-4">
-                        <button class="w-full bg-white/5 hover:bg-white/10 p-4 rounded-xl flex justify-between items-center transition">
-                            <span>Haircut</span> <i class="fas fa-chevron-right text-[10px]"></i>
-                        </button>
-                        <button class="w-full bg-white/5 hover:bg-white/10 p-4 rounded-xl flex justify-between items-center transition">
-                            <span>Beard Sculpting</span> <i class="fas fa-chevron-right text-[10px]"></i>
-                        </button>
+    <main class="p-4 md:p-10 space-y-6">
+
+        <section class="grid grid-cols-12 gap-6">
+            <div class="col-span-12 md:col-span-9 h-[70vh] card-module relative overflow-hidden group">
+                <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80&w=1400" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-1000">
+                <div class="absolute inset-0 bg-black/40 p-8 md:p-16 flex flex-col justify-end">
+                    <h1 class="text-6xl md:text-9xl retro-title leading-[0.85] mb-6" data-aos="fade-up">REFINING <br> THE GRAIN</h1>
+                    <div class="flex gap-4">
+                        <a href="#booking" class="bg-white text-black px-10 py-5 rounded-full font-black uppercase text-sm">Get Cut</a>
+                        <a href="tel:123" class="bg-white/10 backdrop-blur-md text-white border border-white/20 px-10 py-5 rounded-full font-black uppercase text-sm">Call Now</a>
                     </div>
                 </div>
             </div>
-        </section>
-
-        <section id="services" class="segment-grid py-8">
-            <div class="col-span-12 md:col-span-4 card-segment p-8 bg-[#1c1c1e]">
-                <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-6">
-                    <i class="fas fa-scissors text-[#d4af37]"></i>
-                </div>
-                <h3 class="text-2xl font-bold mb-2">Artisan Cut</h3>
-                <p class="text-stone-400 text-sm mb-6">Full consultation, scissor finish, and neck shave. Includes hot towel wash.</p>
-                <div class="text-3xl font-bold">$65</div>
-            </div>
-
-            <div class="col-span-12 md:col-span-4 card-segment">
-                <img src="https://images.unsplash.com/photo-1599351431247-f10b21ce5639?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover">
-            </div>
-
-            <div class="col-span-12 md:col-span-4 card-segment p-8 bg-[#3d2b1f] text-white">
-                <h3 class="text-2xl font-bold mb-2">Iron & Steam</h3>
-                <p class="text-white/60 text-sm mb-6">A 45-minute relaxation ritual. Cedar oils, steam, and a straight razor finish.</p>
-                <div class="text-3xl font-bold">$40</div>
-            </div>
-        </section>
-
-        <section class="py-12">
-            <div class="flex justify-between items-end mb-8">
-                <h2 class="text-3xl retro-title">Apothecary</h2>
-                <a href="#" class="text-[#d4af37] text-sm font-bold border-b border-[#d4af37]">View All Products</a>
-            </div>
-            <div class="flex md:grid md:grid-cols-4 gap-6 overflow-x-auto pb-4">
-                <div class="min-w-[280px] card-segment p-6 bg-[#1c1c1e]">
-                    <img src="https://images.unsplash.com/photo-1626285861696-9f0bf5a49c6d?auto=format&fit=crop&q=80&w=400" class="w-full aspect-square object-cover rounded-2xl mb-4">
-                    <h4 class="font-bold">Walnut Beard Balm</h4>
-                    <p class="text-stone-500 text-sm">$24.00</p>
-                </div>
-                <div class="min-w-[280px] card-segment p-6 bg-[#1c1c1e]">
-                    <img src="https://images.unsplash.com/photo-1512690132624-995817299603?auto=format&fit=crop&q=80&w=400" class="w-full aspect-square object-cover rounded-2xl mb-4">
-                    <h4 class="font-bold">Artisan Clay</h4>
-                    <p class="text-stone-500 text-sm">$18.00</p>
-                </div>
-                <div class="min-w-[280px] card-segment p-6 bg-[#1c1c1e]">
-                    <img src="https://images.unsplash.com/photo-1621607512214-68297480165e?auto=format&fit=crop&q=80&w=400" class="w-full aspect-square object-cover rounded-2xl mb-4">
-                    <h4 class="font-bold">Steel Razor Kit</h4>
-                    <p class="text-stone-500 text-sm">$115.00</p>
-                </div>
-                <div class="min-w-[280px] card-segment p-6 bg-[#1c1c1e]">
-                    <img src="https://images.unsplash.com/photo-1593548330112-c4c31466a500?auto=format&fit=crop&q=80&w=400" class="w-full aspect-square object-cover rounded-2xl mb-4">
-                    <h4 class="font-bold">Boar Bristle Brush</h4>
-                    <p class="text-stone-500 text-sm">$45.00</p>
+            <div class="hidden md:flex md:col-span-3 card-module bg-[#D4AF37] p-8 flex-col justify-between text-black">
+                <div class="text-6xl font-black">5.0</div>
+                <div>
+                    <div class="flex gap-1 mb-2">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p class="font-bold text-sm uppercase">Top Rated in the District</p>
                 </div>
             </div>
         </section>
 
-        <section id="booking" class="segment-grid py-12">
-            <div class="col-span-12 md:col-span-6 card-segment p-8 bg-[#1c1c1e] border-2 border-[#d4af37]">
-                <h2 class="text-3xl retro-title mb-8">Secure A Chair</h2>
-                <div class="grid grid-cols-1 gap-6">
-                    <div class="bg-white/5 p-4 rounded-2xl">
-                        <label class="text-[10px] uppercase text-[#d4af37] font-bold block mb-2">Service</label>
-                        <select class="w-full bg-transparent outline-none">
-                            <option>The Full Executive</option>
-                            <option>Skin Fade</option>
-                            <option>Beard Alignment</option>
+        <section id="about" class="grid grid-cols-1 md:grid-cols-2 gap-6 py-10">
+            <div class="card-module p-10 flex flex-col justify-center wood-gradient">
+                <span class="text-[#D4AF37] font-bold tracking-[0.3em] mb-4">OUR STORY</span>
+                <h2 class="text-4xl md:text-5xl retro-title mb-6">Steel. Wood. <br> Tradition.</h2>
+                <p class="text-white/60 text-lg leading-relaxed">
+                    Oak & Iron was founded in 2012 with a single mission: to return barbering to its organic roots. No plastic chairs, no loud TVs—just the smell of cedarwood, the sound of shears, and the warmth of community.
+                </p>
+            </div>
+            <div class="card-module h-[400px] md:h-auto overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover">
+            </div>
+        </section>
+
+        <section id="booking" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="md:col-span-2 card-module p-8 bg-[#1A1A1C]">
+                <h2 class="text-3xl retro-title mb-8">Reserve a Chair</h2>
+                <form class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label class="text-[10px] uppercase font-bold text-white/40">Treatment</label>
+                        <select class="w-full bg-white/5 p-4 rounded-2xl outline-none focus:ring-1 ring-[#D4AF37]">
+                            <option>The Heritage Cut</option>
+                            <option>Hot Towel Shave</option>
+                            <option>Beard Sculpt</option>
                         </select>
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="bg-white/5 p-4 rounded-2xl">
-                            <label class="text-[10px] uppercase text-[#d4af37] font-bold block mb-2">Date</label>
-                            <input type="date" class="w-full bg-transparent outline-none">
-                        </div>
-                        <div class="bg-white/5 p-4 rounded-2xl">
-                            <label class="text-[10px] uppercase text-[#d4af37] font-bold block mb-2">Time</label>
-                            <select class="w-full bg-transparent outline-none">
-                                <option>10:00 AM</option>
-                                <option>11:30 AM</option>
-                                <option>02:00 PM</option>
-                            </select>
-                        </div>
+                    <div class="space-y-2">
+                        <label class="text-[10px] uppercase font-bold text-white/40">Date</label>
+                        <input type="date" class="w-full bg-white/5 p-4 rounded-2xl outline-none">
                     </div>
-                    <button class="w-full bg-[#d4af37] text-black py-5 rounded-2xl font-black text-xl shadow-lg shadow-[#d4af37]/20 active:scale-95 transition">CONFIRM APPOINTMENT</button>
+                    <div class="md:col-span-2">
+                        <button class="w-full bg-[#D4AF37] text-black py-6 rounded-2xl font-black text-xl hover:bg-white transition">CONFIRM APPOINTMENT</button>
+                    </div>
+                </form>
+            </div>
+            <div id="reviews" class="card-module p-8 flex flex-col justify-between border-stone-800">
+                <i class="fas fa-quote-left text-4xl text-[#D4AF37] mb-6"></i>
+                <p class="text-xl font-light italic text-white/80">"Best fade in the city. The wooden interior makes it feel like a private club. Truly high-end experience."</p>
+                <div class="mt-8 flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-full bg-stone-700 flex items-center justify-center font-bold">JD</div>
+                    <div>
+                        <p class="font-bold">James Dalton</p>
+                        <p class="text-xs text-white/40">Google Review</p>
+                    </div>
                 </div>
             </div>
-            <div class="col-span-12 md:col-span-6 card-segment">
-                 <iframe src="https://www.google.com/maps/embed?pb=notreal" class="w-full h-full min-h-[400px] grayscale invert contrast-125" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+        </section>
+
+        <section id="contact" class="grid grid-cols-1 md:grid-cols-2 gap-6 pb-20">
+            <div class="card-module p-8 bg-stone-900/50">
+                <h3 class="text-3xl retro-title mb-6">Message the Shop</h3>
+                <input type="text" placeholder="Your Name" class="w-full bg-black/30 p-4 rounded-xl mb-4 outline-none">
+                <textarea placeholder="How can we help?" class="w-full bg-black/30 p-4 rounded-xl mb-4 h-32 outline-none"></textarea>
+                <button class="bg-white text-black px-8 py-3 rounded-full font-bold">Send Message</button>
+            </div>
+            <div class="card-module overflow-hidden min-h-[300px]">
+                <iframe src="http://googleusercontent.com/maps.google.com/3" class="w-full h-full grayscale invert opacity-60" frameborder="0"></iframe>
             </div>
         </section>
 
     </main>
 
-    <footer class="p-8 text-center text-white/20 text-xs uppercase tracking-widest border-t border-white/5">
-        &copy; 2026 OAK & IRON BARBERS • No Faces • All Soul
+    <footer class="bg-black p-12 text-center border-t border-white/5">
+        <div class="text-4xl retro-title mb-8">OAK <span class="text-[#D4AF37]">&</span> IRON</div>
+        <div class="flex justify-center gap-8 mb-12">
+            <a href="#" class="text-white/40 hover:text-[#D4AF37] text-2xl transition"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="text-white/40 hover:text-[#D4AF37] text-2xl transition"><i class="fab fa-facebook"></i></a>
+            <a href="#" class="text-white/40 hover:text-[#D4AF37] text-2xl transition"><i class="fab fa-tiktok"></i></a>
+        </div>
+        <p class="text-white/20 text-xs tracking-widest uppercase">Est. 2012 • 123 Timber Lane, OK • No Faces, All Soul</p>
     </footer>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        AOS.init({ duration: 1000, once: true });
+        AOS.init({ once: true });
 
-        // App-like interaction: Change tab color on click
-        const navLinks = document.querySelectorAll('.mobile-nav a');
-        navLinks.forEach(link => {
+        // Dynamic Island Pop-up Logic
+        window.onload = () => {
+            setTimeout(() => {
+                document.getElementById('offerPop').classList.add('active');
+            }, 2000);
+        };
+
+        function closeOffer() {
+            document.getElementById('offerPop').classList.remove('active');
+        }
+
+        // Active state for Mobile Dock
+        const dockLinks = document.querySelectorAll('.mobile-dock a');
+        dockLinks.forEach(link => {
             link.addEventListener('click', () => {
-                navLinks.forEach(l => l.classList.replace('text-[#d4af37]', 'text-white/50'));
-                link.classList.replace('text-white/50', 'text-[#d4af37]');
+                dockLinks.forEach(l => l.classList.replace('text-[#D4AF37]', 'text-white/40'));
+                if(!link.classList.contains('bg-[#25D366]')) {
+                    link.classList.replace('text-white/40', 'text-[#D4AF37]');
+                }
             });
         });
     </script>
