@@ -3,241 +3,247 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Grain & Blade | Artisan Barber Shop</title>
+    <title>GRAIN | Premium Barber App</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #fdfbf7; color: #3d3d3d; }
-        h1, h2, h3 { font-family: 'Playfair Display', serif; }
-        .wood-gradient { background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://images.unsplash.com/photo-1512690196252-7c963ef2c9aa?auto=format&fit=crop&q=80&w=2000'); background-size: cover; background-position: center; }
-        .wood-texture { background-image: url('https://www.transparenttextures.com/patterns/wood-pattern.png'); }
-        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
-        .reveal.active { opacity: 1; transform: translateY(0); }
-        .mobile-menu { transition: transform 0.3s ease-in-out; transform: translateX(100%); }
-        .mobile-menu.open { transform: translateX(0); }
+        :root {
+            --oak: #c5a059;
+            --walnut: #3d2b1f;
+            --cream: #fcfaf7;
+            --forest: #1a2e26;
+        }
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: var(--cream); 
+            color: var(--walnut);
+            overflow-x: hidden;
+        }
+
+        /* App-like Left Menu */
+        #sideMenu {
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateX(-100%);
+            background: rgba(26, 46, 38, 0.98);
+            backdrop-filter: blur(10px);
+        }
+        #sideMenu.open { transform: translateX(0); }
+
+        /* Modern Pop-up Scroll Effect */
+        .pop-reveal {
+            opacity: 0;
+            transform: scale(0.9) translateY(40px);
+            transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+        }
+        .pop-reveal.active {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+
+        /* Glassmorphism */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .hero-zoom {
+            background: linear-gradient(to bottom, rgba(61,43,31,0.2), rgba(61,43,31,0.7)), 
+                        url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&q=80&w=2000');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        /* Custom Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--cream); }
+        ::-webkit-scrollbar-thumb { background: var(--oak); border-radius: 10px; }
     </style>
 </head>
-<body class="overflow-x-hidden">
+<body>
 
-    <div class="fixed left-0 top-1/2 -translate-y-1/2 z-50 flex flex-col gap-2">
-        <a href="tel:123456789" class="bg-[#8b5a2b] text-white p-3 rounded-r-lg shadow-lg hover:bg-[#6f4822] transition-colors flex items-center gap-2">
-            <i data-lucide="phone"></i> <span class="hidden md:inline text-sm font-semibold">Call Now</span>
-        </a>
-        <a href="#" class="bg-[#25D366] text-white p-3 rounded-r-lg shadow-lg hover:bg-[#128C7E] transition-colors flex items-center gap-2">
-            <i data-lucide="message-circle"></i> <span class="hidden md:inline text-sm font-semibold">WhatsApp</span>
-        </a>
-    </div>
-
-    <nav class="absolute top-0 w-full z-40 p-6 flex justify-between items-center text-white">
-        <div class="text-2xl font-bold tracking-tighter uppercase">Grain & Blade</div>
-        <div class="hidden md:flex gap-8 font-medium">
-            <a href="#services" class="hover:text-orange-200 transition">Services</a>
-            <a href="#products" class="hover:text-orange-200 transition">Products</a>
-            <a href="#gallery" class="hover:text-orange-200 transition">Gallery</a>
-            <a href="#contact" class="hover:text-orange-200 transition">Contact</a>
-        </div>
-        <button id="menuBtn" class="md:hidden p-2"><i data-lucide="menu"></i></button>
-    </nav>
-
-    <div id="mobileMenu" class="fixed inset-0 bg-[#3d2b1f] z-50 mobile-menu flex flex-col items-center justify-center gap-8 text-white text-2xl">
-        <button id="closeBtn" class="absolute top-6 right-6"><i data-lucide="x"></i></button>
-        <a href="#services" class="nav-link">Services</a>
-        <a href="#products" class="nav-link">Products</a>
-        <a href="#gallery" class="nav-link">Gallery</a>
-        <a href="#contact" class="nav-link">Contact</a>
-    </div>
-
-    <header class="h-screen flex items-center justify-center text-center text-white px-4 wood-gradient">
-        <div class="max-w-3xl">
-            <h1 class="text-5xl md:text-7xl mb-6">Crafted with Care, Carved in Wood.</h1>
-            <p class="text-lg md:text-xl mb-8 font-light text-orange-50/90">Experience a premium grooming ritual in the warmth of our natural cedar studio.</p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="#booking" class="bg-[#8b5a2b] hover:bg-[#6f4822] text-white px-8 py-4 rounded font-bold transition shadow-xl">Book Appointment</a>
-                <a href="tel:123456789" class="bg-white/10 backdrop-blur-md border border-white/30 hover:bg-white/20 px-8 py-4 rounded font-bold transition">Call Store</a>
+    <aside id="sideMenu" class="fixed inset-y-0 left-0 w-72 z-50 p-8 text-white flex flex-col">
+        <button id="closeMenu" class="self-end mb-12 p-2 hover:bg-white/10 rounded-full">
+            <i data-lucide="x"></i>
+        </button>
+        <nav class="space-y-8">
+            <a href="#hero" class="flex items-center gap-4 text-xl font-semibold hover:text-[#c5a059] transition"><i data-lucide="home"></i> Home</a>
+            <a href="#services" class="flex items-center gap-4 text-xl font-semibold hover:text-[#c5a059] transition"><i data-lucide="scissors"></i> Services</a>
+            <a href="#products" class="flex items-center gap-4 text-xl font-semibold hover:text-[#c5a059] transition"><i data-lucide="package"></i> Grooming Shop</a>
+            <a href="#booking" class="flex items-center gap-4 text-xl font-semibold hover:text-[#c5a059] transition"><i data-lucide="calendar"></i> Book Now</a>
+        </nav>
+        <div class="mt-auto pt-8 border-t border-white/10">
+            <p class="text-sm opacity-60">123 Timber Lane, CA</p>
+            <div class="flex gap-4 mt-4">
+                <i data-lucide="instagram" class="w-5"></i><i data-lucide="facebook" class="w-5"></i>
             </div>
         </div>
-    </header>
+    </aside>
 
-    <section id="booking" class="relative -mt-16 z-10 px-4 max-w-6xl mx-auto">
-        <div class="bg-white rounded-xl shadow-2xl p-8 border-t-4 border-[#8b5a2b]">
-            <h2 class="text-2xl mb-6 text-center">Secure Your Chair</h2>
-            <form class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                <select class="p-3 border rounded bg-gray-50 focus:outline-[#8b5a2b]">
-                    <option>Select Service</option>
-                    <option>The Signature Haircut</option>
-                    <option>Beard Sculpting</option>
-                    <option>Deluxe Skin Fade</option>
-                    <option>The Gentleman’s Refresh</option>
-                </select>
-                <input type="date" class="p-3 border rounded bg-gray-50">
-                <input type="time" class="p-3 border rounded bg-gray-50">
-                <input type="text" placeholder="Full Name" class="p-3 border rounded bg-gray-50">
-                <button type="submit" class="bg-[#2d4a3e] text-white rounded font-bold hover:bg-[#1e332a] transition uppercase tracking-wide">Confirm Booking</button>
+    <nav class="fixed top-0 w-full z-40 p-4 md:p-6 flex justify-between items-center transition-all duration-300" id="topNav">
+        <button id="openMenu" class="bg-white shadow-lg p-3 rounded-2xl hover:scale-105 transition active:scale-95">
+            <i data-lucide="align-left" class="text-slate-800"></i>
+        </button>
+        <div class="text-xl font-extrabold tracking-widest uppercase text-white drop-shadow-md">Grain</div>
+        <a href="#booking" class="bg-[#c5a059] text-white px-5 py-2.5 rounded-2xl font-bold shadow-lg hover:bg-opacity-90 transition text-sm">BOOK</a>
+    </nav>
+
+    <section id="hero" class="h-[92vh] m-2 md:m-4 rounded-[2rem] overflow-hidden relative hero-zoom flex items-end p-8 md:p-20">
+        <div class="max-w-2xl text-white">
+            <span class="bg-white/20 backdrop-blur-md px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-4 inline-block">Established 2026</span>
+            <h1 class="text-5xl md:text-8xl font-extrabold leading-tight mb-6">The New Standard of Grooming.</h1>
+            <div class="flex gap-4">
+                <button class="bg-white text-slate-900 px-8 py-4 rounded-2xl font-bold flex items-center gap-2 hover:bg-slate-100 transition">
+                    Get Started <i data-lucide="arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <section id="booking" class="py-20 px-4 max-w-5xl mx-auto">
+        <div class="glass-card rounded-[2.5rem] p-8 md:p-12 shadow-2xl pop-reveal">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold mb-2">Reserve Your Experience</h2>
+                <p class="text-slate-500">Select your preferences below</p>
+            </div>
+            <form class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="space-y-2">
+                    <label class="text-sm font-bold ml-1 uppercase tracking-wider text-slate-400">Service Category</label>
+                    <div class="relative">
+                        <select class="w-full p-4 bg-white/50 border-2 border-slate-100 rounded-2xl appearance-none focus:border-[#c5a059] outline-none transition">
+                            <option>Signature Haircut & Style</option>
+                            <option>Luxury Hot Towel Shave</option>
+                            <option>Beard Architecture</option>
+                            <option>The Full Restoration</option>
+                        </select>
+                        <i data-lucide="chevron-down" class="absolute right-4 top-1/2 -translate-y-1/2 w-5 text-slate-400"></i>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-sm font-bold ml-1 uppercase tracking-wider text-slate-400">Appointment Date</label>
+                    <input type="date" class="w-full p-4 bg-white/50 border-2 border-slate-100 rounded-2xl focus:border-[#c5a059] outline-none transition">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-sm font-bold ml-1 uppercase tracking-wider text-slate-400">Preferred Time</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button type="button" class="p-3 border-2 border-slate-100 rounded-xl hover:bg-[#c5a059] hover:text-white transition text-sm">09:00 AM</button>
+                        <button type="button" class="p-3 border-2 border-[#c5a059] bg-[#c5a059]/10 rounded-xl text-sm font-bold">11:30 AM</button>
+                        <button type="button" class="p-3 border-2 border-slate-100 rounded-xl hover:bg-[#c5a059] hover:text-white transition text-sm">02:00 PM</button>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-sm font-bold ml-1 uppercase tracking-wider text-slate-400">Client Details</label>
+                    <input type="text" placeholder="Full Name" class="w-full p-4 bg-white/50 border-2 border-slate-100 rounded-2xl focus:border-[#c5a059] outline-none transition mb-4">
+                    <input type="tel" placeholder="Phone Number" class="w-full p-4 bg-white/50 border-2 border-slate-100 rounded-2xl focus:border-[#c5a059] outline-none transition">
+                </div>
+                <button class="md:col-span-2 w-full bg-[#1a2e26] text-white py-5 rounded-2xl font-extrabold text-lg shadow-xl hover:shadow-[#1a2e26]/30 hover:-translate-y-1 transition-all">
+                    CONFIRM BOOKING
+                </button>
             </form>
         </div>
     </section>
 
-    <section id="services" class="py-24 px-4 bg-[#f9f5f0]">
-        <div class="max-w-6xl mx-auto">
-            <div class="text-center mb-16 reveal">
-                <span class="text-[#8b5a2b] uppercase tracking-widest text-sm font-bold">The Craft</span>
-                <h2 class="text-4xl mt-2">Expert Services</h2>
-            </div>
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="bg-white p-8 rounded-lg shadow-sm border-b-4 border-[#e5d3b3] reveal">
-                    <i data-lucide="scissors" class="text-[#8b5a2b] mb-4"></i>
-                    <h3 class="text-2xl mb-2">Classic Cut</h3>
-                    <p class="text-gray-600 mb-4">A precision cut tailored to your head shape and hair texture.</p>
-                    <p class="text-xl font-bold text-[#8b5a2b]">$45</p>
-                </div>
-                <div class="bg-white p-8 rounded-lg shadow-sm border-b-4 border-[#8b5a2b] reveal">
-                    <i data-lucide="razor" class="text-[#8b5a2b] mb-4"></i>
-                    <h3 class="text-2xl mb-2">Beard Sculpt</h3>
-                    <p class="text-gray-600 mb-4">Hot towel treatment followed by a precision straight-razor lineup.</p>
-                    <p class="text-xl font-bold text-[#8b5a2b]">$30</p>
-                </div>
-                <div class="bg-white p-8 rounded-lg shadow-sm border-b-4 border-[#e5d3b3] reveal">
-                    <i data-lucide="sparkles" class="text-[#8b5a2b] mb-4"></i>
-                    <h3 class="text-2xl mb-2">Full Service</h3>
-                    <p class="text-gray-600 mb-4">The works: Haircut, beard trim, and a cooling facial massage.</p>
-                    <p class="text-xl font-bold text-[#8b5a2b]">$70</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="products" class="py-24 px-4 bg-white wood-texture">
-        <div class="max-w-6xl mx-auto">
-            <h2 class="text-4xl text-center mb-16">The Grooming Kit</h2>
-            <div class="grid grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="text-center group reveal">
-                    <div class="bg-[#fdfbf7] p-8 rounded-xl mb-4 overflow-hidden shadow-inner">
-                        <img src="https://images.unsplash.com/photo-1626285861696-9f0bf5a49c6d?auto=format&fit=crop&q=80&w=400" alt="Beard Oil" class="group-hover:scale-105 transition duration-500 rounded">
-                    </div>
-                    <h4 class="font-bold">Organic Beard Oil</h4>
-                    <p class="text-[#8b5a2b] font-semibold">$24.00</p>
-                </div>
-                <div class="text-center group reveal">
-                    <div class="bg-[#fdfbf7] p-8 rounded-xl mb-4 overflow-hidden shadow-inner">
-                        <img src="https://images.unsplash.com/photo-1599351431247-f10b218939c4?auto=format&fit=crop&q=80&w=400" alt="Brush" class="group-hover:scale-105 transition duration-500 rounded">
-                    </div>
-                    <h4 class="font-bold">Boar Bristle Brush</h4>
-                    <p class="text-[#8b5a2b] font-semibold">$32.00</p>
-                </div>
-                <div class="text-center group reveal">
-                    <div class="bg-[#fdfbf7] p-8 rounded-xl mb-4 overflow-hidden shadow-inner">
-                        <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80&w=400" alt="Cream" class="group-hover:scale-105 transition duration-500 rounded">
-                    </div>
-                    <h4 class="font-bold">Matte Clay Pomade</h4>
-                    <p class="text-[#8b5a2b] font-semibold">$22.00</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="gallery" class="py-24 bg-[#2d4a3e] text-white">
+    <section id="services" class="py-20 bg-slate-50">
         <div class="max-w-7xl mx-auto px-4">
-            <h2 class="text-4xl text-center mb-12">Inside the Workshop</h2>
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                <img src="https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?auto=format&fit=crop&q=80&w=600" class="aspect-square object-cover rounded shadow-lg reveal" alt="Wood details">
-                <img src="https://images.unsplash.com/photo-1521444470432-be53805e3f41?auto=format&fit=crop&q=80&w=600" class="aspect-square object-cover rounded shadow-lg reveal" alt="Barber chair">
-                <img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&q=80&w=600" class="aspect-square object-cover rounded shadow-lg reveal" alt="Scissors">
-                <img src="https://images.unsplash.com/photo-1532710093739-9470acff878f?auto=format&fit=crop&q=80&w=600" class="aspect-square object-cover rounded shadow-lg reveal" alt="Clipper details">
-                <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80&w=600" class="aspect-square object-cover rounded shadow-lg reveal" alt="Shaving kit">
-                <img src="https://images.unsplash.com/photo-1593702275687-f8b402bf1fb5?auto=format&fit=crop&q=80&w=600" class="aspect-square object-cover rounded shadow-lg reveal" alt="Wood counter">
+            <h2 class="text-4xl font-extrabold mb-12 px-4 pop-reveal">Premium Services</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="group bg-white p-2 rounded-[2rem] shadow-sm hover:shadow-xl transition-all duration-500 pop-reveal">
+                    <img src="https://images.unsplash.com/photo-1593702295974-25a00269a13d?auto=format&fit=crop&q=80&w=600" class="w-full h-64 object-cover rounded-[1.5rem] mb-6" alt="Service">
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <h3 class="text-2xl font-bold">Master Fade</h3>
+                            <span class="text-[#c5a059] font-extrabold">$55</span>
+                        </div>
+                        <p class="text-slate-500 mb-6">A precision-engineered fade using artisanal wood-handled clippers.</p>
+                        <button class="w-full py-3 border-2 border-slate-100 rounded-xl font-bold group-hover:border-[#c5a059] transition">Select Service</button>
+                    </div>
+                </div>
+                <div class="group bg-white p-2 rounded-[2rem] shadow-sm hover:shadow-xl transition-all duration-500 pop-reveal" style="transition-delay: 0.1s">
+                    <img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&q=80&w=600" class="w-full h-64 object-cover rounded-[1.5rem] mb-6" alt="Service">
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <h3 class="text-2xl font-bold">Beard Sculpt</h3>
+                            <span class="text-[#c5a059] font-extrabold">$35</span>
+                        </div>
+                        <p class="text-slate-500 mb-6">Hot towel application with essential cedar oils and razor lining.</p>
+                        <button class="w-full py-3 border-2 border-slate-100 rounded-xl font-bold group-hover:border-[#c5a059] transition">Select Service</button>
+                    </div>
+                </div>
+                <div class="group bg-white p-2 rounded-[2rem] shadow-sm hover:shadow-xl transition-all duration-500 pop-reveal" style="transition-delay: 0.2s">
+                    <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80&w=600" class="w-full h-64 object-cover rounded-[1.5rem] mb-6" alt="Service">
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <h3 class="text-2xl font-bold">The Royal</h3>
+                            <span class="text-[#c5a059] font-extrabold">$90</span>
+                        </div>
+                        <p class="text-slate-500 mb-6">Full haircut, beard grooming, and organic facial charcoal mask.</p>
+                        <button class="w-full py-3 border-2 border-slate-100 rounded-xl font-bold group-hover:border-[#c5a059] transition">Select Service</button>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <section id="contact" class="py-24 bg-white px-4">
-        <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-16">
-            <div class="reveal">
-                <h2 class="text-4xl mb-8">Find Us</h2>
-                <div class="space-y-4 mb-8">
-                    <p class="flex items-center gap-4 text-lg"><i data-lucide="map-pin" class="text-[#8b5a2b]"></i> 123 Timber Lane, Woodside, CA 94062</p>
-                    <p class="flex items-center gap-4 text-lg"><i data-lucide="clock" class="text-[#8b5a2b]"></i> Mon - Sat: 9am - 8pm</p>
-                    <p class="flex items-center gap-4 text-lg"><i data-lucide="mail" class="text-[#8b5a2b]"></i> hello@grainblade.com</p>
+    <div class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-[#1a2e26]/90 backdrop-blur-xl border border-white/10 px-8 py-4 rounded-full shadow-2xl flex gap-10 text-white z-50 md:hidden">
+        <a href="#hero"><i data-lucide="home" class="w-6 h-6"></i></a>
+        <a href="#booking"><i data-lucide="calendar" class="w-6 h-6 text-[#c5a059]"></i></a>
+        <a href="tel:123456"><i data-lucide="phone" class="w-6 h-6"></i></a>
+    </div>
+
+    <section id="gallery" class="py-20 px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="col-span-2 row-span-2 rounded-[2rem] overflow-hidden pop-reveal">
+                    <img src="https://images.unsplash.com/photo-1512690196252-7c963ef2c9aa?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover">
                 </div>
-                <div class="h-64 bg-gray-200 rounded-lg overflow-hidden shadow-inner border border-gray-100">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3168.62829776402!2d-122.25846202358356!3d37.42226343285906!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x808fa39726857943%3A0x7d6c6691459a93e3!2sWoodside%2C%20CA!5e0!3m2!1sen!2sus!4v1700000000000!5m2!1sen!2sus" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                <div class="rounded-[2rem] overflow-hidden h-48 md:h-64 pop-reveal">
+                    <img src="https://images.unsplash.com/photo-1593702275687-f8b402bf1fb5?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover">
                 </div>
-            </div>
-            <div class="bg-[#fdfbf7] p-8 rounded-xl shadow-sm reveal">
-                <h3 class="text-2xl mb-6">Send a Message</h3>
-                <form class="space-y-4">
-                    <input type="text" placeholder="Your Name" class="w-full p-3 border rounded">
-                    <input type="email" placeholder="Your Email" class="w-full p-3 border rounded">
-                    <textarea placeholder="Message" rows="5" class="w-full p-3 border rounded"></textarea>
-                    <button class="w-full bg-[#8b5a2b] text-white py-4 rounded font-bold hover:bg-[#6f4822] transition">Send Message</button>
-                </form>
+                <div class="rounded-[2rem] overflow-hidden h-48 md:h-64 pop-reveal">
+                    <img src="https://images.unsplash.com/photo-1532710093739-9470acff878f?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover">
+                </div>
+                <div class="col-span-2 rounded-[2rem] overflow-hidden h-64 pop-reveal">
+                    <img src="https://images.unsplash.com/photo-1521444470432-be53805e3f41?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover">
+                </div>
             </div>
         </div>
     </section>
-
-    <footer class="bg-[#1e1e1e] text-gray-400 py-12 px-4 border-t-8 border-[#8b5a2b]">
-        <div class="max-w-6xl mx-auto grid md:grid-cols-4 gap-8">
-            <div>
-                <h4 class="text-white text-xl font-bold mb-4 uppercase">Grain & Blade</h4>
-                <p class="text-sm">Artisanal grooming for the modern individual. Respecting the tradition of the craft since 2012.</p>
-            </div>
-            <div>
-                <h4 class="text-white font-bold mb-4">Quick Links</h4>
-                <ul class="space-y-2 text-sm">
-                    <li><a href="#" class="hover:text-white transition">Privacy Policy</a></li>
-                    <li><a href="#" class="hover:text-white transition">Terms of Service</a></li>
-                    <li><a href="#" class="hover:text-white transition">Careers</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4 class="text-white font-bold mb-4">Social</h4>
-                <div class="flex gap-4">
-                    <i data-lucide="instagram" class="cursor-pointer hover:text-white"></i>
-                    <i data-lucide="facebook" class="cursor-pointer hover:text-white"></i>
-                    <i data-lucide="youtube" class="cursor-pointer hover:text-white"></i>
-                </div>
-            </div>
-            <div class="text-sm">
-                <h4 class="text-white font-bold mb-4">Hours</h4>
-                <p>Monday — Friday: 9am – 8pm</p>
-                <p>Saturday: 10am – 6pm</p>
-                <p>Sunday: Closed</p>
-            </div>
-        </div>
-        <div class="text-center mt-12 pt-8 border-t border-gray-800 text-xs">
-            &copy; 2026 Grain & Blade Barber Shop. Handcrafted by Design.
-        </div>
-    </footer>
 
     <script>
-        // Initialize Icons
         lucide.createIcons();
 
-        // Mobile Menu Logic
-        const menuBtn = document.getElementById('menuBtn');
-        const closeBtn = document.getElementById('closeBtn');
-        const mobileMenu = document.getElementById('mobileMenu');
-        const navLinks = document.querySelectorAll('.nav-link');
+        // Menu Controls
+        const openBtn = document.getElementById('openMenu');
+        const closeBtn = document.getElementById('closeMenu');
+        const sideMenu = document.getElementById('sideMenu');
 
-        menuBtn.addEventListener('click', () => mobileMenu.classList.add('open'));
-        closeBtn.addEventListener('click', () => mobileMenu.classList.remove('open'));
-        navLinks.forEach(link => link.addEventListener('click', () => mobileMenu.classList.remove('open')));
+        openBtn.addEventListener('click', () => sideMenu.classList.add('open'));
+        closeBtn.addEventListener('click', () => sideMenu.classList.remove('open'));
 
-        // Reveal on Scroll Animation
-        const reveal = () => {
-            const reveals = document.querySelectorAll('.reveal');
+        // Scroll Logic: Navbar Style & Pop-Reveal
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('topNav');
+            if (window.scrollY > 50) {
+                nav.classList.add('bg-white/80', 'backdrop-blur-md', 'shadow-sm');
+                nav.querySelector('.text-xl').classList.replace('text-white', 'text-slate-900');
+            } else {
+                nav.classList.remove('bg-white/80', 'backdrop-blur-md', 'shadow-sm');
+                nav.querySelector('.text-xl').classList.replace('text-slate-900', 'text-white');
+            }
+
+            // Pop Reveal Activation
+            const reveals = document.querySelectorAll('.pop-reveal');
             reveals.forEach(el => {
-                const windowHeight = window.innerHeight;
-                const revealTop = el.getBoundingClientRect().top;
-                const revealPoint = 150;
-                if (revealTop < windowHeight - revealPoint) {
+                const rect = el.getBoundingClientRect();
+                if (rect.top < window.innerHeight - 100) {
                     el.classList.add('active');
                 }
             });
-        };
+        });
 
-        window.addEventListener('scroll', reveal);
-        window.onload = reveal;
+        // Trigger reveal on load
+        window.dispatchEvent(new Event('scroll'));
     </script>
 </body>
 </html>
