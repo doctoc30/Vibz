@@ -3,243 +3,364 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SAGE & CEDAR | Modern Grooming</title>
+    <title>SAGE & OAK | Global Grooming Collective</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Instrument+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700;900&family=Public+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --sage: #b8d8be; /* Matching your uploaded image */
-            --dark-oak: #2a2621;
-            --off-white: #f4f7f2;
+            --sage: #b8d8be;
+            --charcoal: #1a1a1a;
+            --white: #ffffff;
         }
         body { 
-            font-family: 'Instrument Sans', sans-serif; 
-            background-color: var(--off-white);
-            transition: margin-left 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+            font-family: 'Public Sans', sans-serif; 
+            background-color: #f8faf8; 
+            color: var(--charcoal);
+            overflow-x: hidden;
         }
-        h1, h2, h3, .font-heavy { font-family: 'Unbounded', sans-serif; text-transform: uppercase; }
+        h1, h2, h3, .brutalist { font-family: 'Unbounded', sans-serif; text-transform: uppercase; }
 
-        /* Left Sidebar Menu Style */
-        #sideNav {
-            width: 320px;
-            left: -320px;
-            transition: left 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+        /* Left-Side App Menu */
+        #sideMenu {
+            transition: all 0.5s cubic-bezier(0.85, 0, 0.15, 1);
+            transform: translateX(-100%);
+            z-index: 100;
         }
-        body.menu-open { margin-left: 320px; overflow: hidden; }
-        body.menu-open #sideNav { left: 0; }
+        #sideMenu.open { transform: translateX(0); }
 
-        /* Pop-up Scroll Effect */
-        .scroll-pop {
+        /* Pop-up Scroll Logic */
+        .reveal {
             opacity: 0;
-            transform: translateY(60px) scale(0.95);
-            transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+            transform: translateY(50px) scale(0.9);
+            transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        .scroll-pop.visible {
+        .reveal.active {
             opacity: 1;
             transform: translateY(0) scale(1);
         }
 
-        .sage-bg { background-color: var(--sage); }
-        .hero-mask {
-            clip-path: polygon(0 0, 100% 0, 100% 90%, 0% 100%);
+        /* Neobrutalist UI elements */
+        .brutalist-card {
+            border: 3px solid var(--charcoal);
+            box-shadow: 8px 8px 0px var(--charcoal);
+            transition: 0.2s;
         }
-        .bento-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        .brutalist-card:hover {
+            transform: translate(-4px, -4px);
+            box-shadow: 12px 12px 0px var(--charcoal);
         }
-        .bento-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+
+        .sage-gradient {
+            background: linear-gradient(135deg, #b8d8be 0%, #a4c7aa 100%);
         }
+
+        /* Before/After Slider */
+        .slider-handle { cursor: ew-resize; }
     </style>
 </head>
-<body class="antialiased text-[#2a2621]">
+<body>
 
-    <nav id="sideNav" class="fixed inset-y-0 z-50 sage-bg border-r border-black/5 p-10 flex flex-col">
-        <div class="mb-20">
-            <h2 class="font-heavy text-2xl tracking-tighter">S&C</h2>
+    <aside id="sideMenu" class="fixed inset-y-0 left-0 w-80 bg-[#1a1a1a] text-white p-10 flex flex-col border-r-4 border-[#b8d8be]">
+        <button id="closeMenu" class="self-end mb-12 p-2 hover:bg-white/10 rounded-full transition">
+            <i data-lucide="x" class="w-8 h-8"></i>
+        </button>
+        <div class="space-y-6">
+            <div class="text-xs font-black text-[#b8d8be] tracking-widest uppercase mb-4">Navigation</div>
+            <a href="#locations" class="block text-2xl font-bold hover:text-[#b8d8be]">Locations</a>
+            <a href="#services" class="block text-2xl font-bold hover:text-[#b8d8be]">Services</a>
+            <a href="#products" class="block text-2xl font-bold hover:text-[#b8d8be]">Shop</a>
+            <a href="#reviews" class="block text-2xl font-bold hover:text-[#b8d8be]">Reviews</a>
         </div>
-        <div class="flex flex-col gap-8">
-            <a href="#services" class="text-3xl font-heavy hover:italic transition-all nav-link">Services</a>
-            <a href="#booking" class="text-3xl font-heavy hover:italic transition-all nav-link">Book</a>
-            <a href="#products" class="text-3xl font-heavy hover:italic transition-all nav-link">Shop</a>
-            <a href="#gallery" class="text-3xl font-heavy hover:italic transition-all nav-link">Inside</a>
+        <div class="mt-auto pt-10 border-t border-white/10">
+            <p class="text-xs opacity-50 mb-4 uppercase font-bold">Member Support</p>
+            <a href="tel:123" class="flex items-center gap-3 mb-2"><i data-lucide="phone" class="w-4"></i> Call Concierge</a>
+            <a href="#" class="flex items-center gap-3"><i data-lucide="message-circle" class="w-4"></i> WhatsApp</a>
         </div>
-        <div class="mt-auto">
-            <p class="text-sm font-bold uppercase mb-2">Location</p>
-            <p class="opacity-70">42 Greenhouse Blvd<br>London, UK</p>
+    </aside>
+
+    <div class="fixed left-0 top-1/2 -translate-y-1/2 z-40 hidden md:flex flex-col gap-2">
+        <a href="tel:123" class="bg-[#1a1a1a] text-white p-4 rounded-r-xl border-r-4 border-[#b8d8be] hover:translate-x-2 transition-transform flex gap-3 items-center">
+            <i data-lucide="phone"></i> <span class="text-xs font-black uppercase tracking-tighter">Call</span>
+        </a>
+        <a href="#" class="bg-[#25D366] text-white p-4 rounded-r-xl border-r-4 border-white hover:translate-x-2 transition-transform flex gap-3 items-center">
+            <i data-lucide="message-square"></i> <span class="text-xs font-black uppercase tracking-tighter">WhatsApp</span>
+        </a>
+    </div>
+
+    <nav class="p-6 flex justify-between items-center sticky top-0 bg-white/80 backdrop-blur-md z-30 border-b-2 border-slate-100">
+        <button id="openMenu" class="p-3 bg-[#b8d8be] brutalist-card rounded-xl">
+            <i data-lucide="align-left" class="text-black"></i>
+        </button>
+        <div class="text-2xl font-black tracking-tighter uppercase brutalist">Sage<span class="text-[#b8d8be]">&</span>Oak</div>
+        <div class="hidden md:flex gap-4">
+            <select class="bg-slate-100 px-4 py-2 rounded-xl text-xs font-bold border-none outline-none">
+                <option>London Soho</option>
+                <option>NYC Brooklyn</option>
+                <option>Tokyo Shibuya</option>
+            </select>
         </div>
     </nav>
 
-    <header class="fixed top-0 w-full z-40 p-6 flex justify-between items-center">
-        <button id="menuTrigger" class="bg-white p-4 rounded-full shadow-sm hover:scale-110 transition active:scale-95">
-            <i data-lucide="menu" id="menuIcon"></i>
-        </button>
-        <div class="font-heavy text-xl tracking-tighter mix-blend-difference text-white md:text-black">Sage & Cedar</div>
-        <a href="#booking" class="bg-black text-white px-6 py-3 rounded-full font-bold text-xs uppercase tracking-widest hover:bg-[#2a2621] transition">Book</a>
-    </header>
-
-    <section id="hero" class="relative min-h-screen flex flex-col md:flex-row items-stretch pt-24 px-4 gap-4">
-        <div class="flex-1 sage-bg rounded-[3rem] p-12 flex flex-col justify-center hero-mask">
-            <h1 class="text-5xl md:text-7xl font-heavy leading-[0.9] mb-8">Naturally<br>Refined.</h1>
-            <p class="max-w-md text-lg mb-10 opacity-80 leading-relaxed italic">The modern botanical barbershop. Light, airy, and focused on the craft of natural grooming.</p>
-            <div class="flex gap-4">
-                <a href="#booking" class="bg-black text-white px-10 py-5 rounded-full font-bold uppercase text-sm hover:px-12 transition-all">Book Now</a>
+    <section class="p-4 md:p-8">
+        <div class="sage-gradient rounded-[3rem] min-h-[85vh] relative overflow-hidden flex items-center p-8 md:p-20">
+            <div class="max-w-4xl z-10">
+                <div class="inline-block bg-black text-[#b8d8be] px-4 py-1 rounded-full text-[10px] font-black uppercase mb-6 tracking-widest">Global Barber Collective</div>
+                <h1 class="text-5xl md:text-8xl font-black leading-[0.85] mb-8 brutalist text-[#1a1a1a]">Precision<br>Meets Nature.</h1>
+                <p class="text-xl md:text-2xl font-medium text-[#1a1a1a]/70 mb-10 max-w-xl italic">Premium grooming services in 12 global locations. No chemicals. No stress. Just craft.</p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="#booking" class="bg-black text-white px-10 py-5 rounded-2xl font-black brutalist hover:scale-105 transition active:scale-95 shadow-2xl">Book Chair</a>
+                    <a href="#services" class="bg-white/30 backdrop-blur-md border-2 border-black/5 px-10 py-5 rounded-2xl font-black brutalist">Explore Services</a>
+                </div>
             </div>
-        </div>
-        <div class="flex-1 rounded-[3rem] overflow-hidden hidden md:block relative">
-            <img src="https://images.unsplash.com/photo-1512690196252-7c963ef2c9aa?auto=format&fit=crop&q=80&w=1000" class="w-full h-full object-cover grayscale-[20%] hover:scale-110 transition duration-[2s]" alt="Storefront">
+            <div class="absolute right-[-10%] bottom-[-5%] w-2/3 opacity-20 pointer-events-none hidden lg:block">
+                <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80&w=1200" class="rounded-full animate-pulse">
+            </div>
         </div>
     </section>
 
-    <section id="booking" class="py-32 px-6">
-        <div class="max-w-4xl mx-auto scroll-pop">
-            <div class="mb-16">
-                <h2 class="text-4xl font-heavy mb-4">Start Your Ritual</h2>
-                <div class="h-2 w-24 sage-bg"></div>
-            </div>
-            
-            <form class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
-                <div class="flex flex-col gap-3">
-                    <label for="service" class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">01. Service Selection</label>
-                    <select id="service" class="bg-transparent border-b-2 border-black/10 py-4 focus:border-[#b8d8be] outline-none transition text-xl font-semibold">
-                        <option>The Essential Cut</option>
-                        <option>Beard Architect</option>
-                        <option>Skin Fade Ritual</option>
-                        <option>Total Overhaul</option>
+    <section id="booking" class="max-w-7xl mx-auto px-4 -mt-16 relative z-20 reveal">
+        <div class="bg-white brutalist-card rounded-[2.5rem] p-8 md:p-12">
+            <h3 class="text-xl font-black mb-8 brutalist flex items-center gap-3">
+                <i data-lucide="calendar-check" class="text-[#b8d8be]"></i> Fast Booking
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 px-1">Location</label>
+                    <select class="w-full bg-slate-50 p-4 rounded-2xl border-2 border-slate-100 focus:border-[#b8d8be] outline-none font-bold text-sm">
+                        <option>Soho, London</option>
+                        <option>Chelsea, NYC</option>
+                        <option>Shibuya, Tokyo</option>
                     </select>
                 </div>
-                <div class="flex flex-col gap-3">
-                    <label for="date" class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">02. Preferred Date</label>
-                    <input type="date" id="date" class="bg-transparent border-b-2 border-black/10 py-4 focus:border-[#b8d8be] outline-none transition text-xl">
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 px-1">Service</label>
+                    <select class="w-full bg-slate-50 p-4 rounded-2xl border-2 border-slate-100 focus:border-[#b8d8be] outline-none font-bold text-sm">
+                        <option>The Sage Signature Cut</option>
+                        <option>Beard Architecture</option>
+                        <option>Skin Fade Ritual</option>
+                        <option>The Total Reset</option>
+                    </select>
                 </div>
-                <div class="flex flex-col gap-3">
-                    <label class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">03. Client Name</label>
-                    <input type="text" placeholder="Your Full Name" class="bg-transparent border-b-2 border-black/10 py-4 focus:border-[#b8d8be] outline-none transition text-xl">
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 px-1">Date</label>
+                    <input type="date" class="w-full bg-slate-50 p-4 rounded-2xl border-2 border-slate-100 focus:border-[#b8d8be] outline-none font-bold text-sm">
                 </div>
-                <div class="flex flex-col gap-3">
-                    <label class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">04. Contact</label>
-                    <input type="tel" placeholder="Phone Number" class="bg-transparent border-b-2 border-black/10 py-4 focus:border-[#b8d8be] outline-none transition text-xl">
+                <button class="bg-[#b8d8be] text-black rounded-2xl font-black brutalist self-end py-4 hover:bg-black hover:text-white transition-all">CHECK TIMES</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-24 max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8 reveal">
+        <div class="text-center">
+            <i data-lucide="cpu" class="w-10 h-10 mx-auto mb-4 text-[#b8d8be]"></i>
+            <div class="text-4xl font-black brutalist">4.9k</div>
+            <p class="text-xs font-bold uppercase tracking-widest opacity-40">AI-Optimized Fades</p>
+        </div>
+        <div class="text-center">
+            <i data-lucide="map" class="w-10 h-10 mx-auto mb-4 text-[#b8d8be]"></i>
+            <div class="text-4xl font-black brutalist">12</div>
+            <p class="text-xs font-bold uppercase tracking-widest opacity-40">Global Hubs</p>
+        </div>
+        <div class="text-center">
+            <i data-lucide="users" class="w-10 h-10 mx-auto mb-4 text-[#b8d8be]"></i>
+            <div class="text-4xl font-black brutalist">450k</div>
+            <p class="text-xs font-bold uppercase tracking-widest opacity-40">Happy Clients</p>
+        </div>
+        <div class="text-center">
+            <i data-lucide="zap" class="w-10 h-10 mx-auto mb-4 text-[#b8d8be]"></i>
+            <div class="text-4xl font-black brutalist">0</div>
+            <p class="text-xs font-bold uppercase tracking-widest opacity-40">BS Grooming</p>
+        </div>
+    </section>
+
+    <section id="services" class="py-20 px-4 bg-[#1a1a1a] text-white rounded-[4rem]">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-4xl brutalist mb-12 reveal">Specialized Rituals</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white/5 p-8 rounded-[2rem] border border-white/10 hover:border-[#b8d8be] transition reveal">
+                    <img src="https://images.unsplash.com/photo-1593702295974-25a00269a13d?auto=format&fit=crop&q=80&w=400" class="w-full h-48 object-cover rounded-2xl mb-6">
+                    <h3 class="text-2xl font-black brutalist mb-2">The Architecture</h3>
+                    <p class="opacity-50 text-sm mb-6">Precision engineered beard sculpting using laser-guided lines.</p>
+                    <div class="flex justify-between items-center font-black">
+                        <span>$45</span>
+                        <button class="text-[#b8d8be] flex items-center gap-2 uppercase text-xs">Add <i data-lucide="plus"></i></button>
+                    </div>
                 </div>
-                <div class="md:col-span-2 pt-10">
-                    <button class="w-full sage-bg py-8 rounded-2xl font-heavy text-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
-                        Confirm Appointment
-                    </button>
+                <div class="bg-white/5 p-8 rounded-[2rem] border border-white/10 hover:border-[#b8d8be] transition reveal" style="transition-delay: 0.1s">
+                    <img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&q=80&w=400" class="w-full h-48 object-cover rounded-2xl mb-6">
+                    <h3 class="text-2xl font-black brutalist mb-2">Skin Fade Pro</h3>
+                    <p class="opacity-50 text-sm mb-6">Traditional tapering with high-modernist finishing techniques.</p>
+                    <div class="flex justify-between items-center font-black">
+                        <span>$65</span>
+                        <button class="text-[#b8d8be] flex items-center gap-2 uppercase text-xs">Add <i data-lucide="plus"></i></button>
+                    </div>
                 </div>
+                <div class="bg-white/5 p-8 rounded-[2rem] border border-white/10 hover:border-[#b8d8be] transition reveal" style="transition-delay: 0.2s">
+                    <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80&w=400" class="w-full h-48 object-cover rounded-2xl mb-6">
+                    <h3 class="text-2xl font-black brutalist mb-2">The Restoration</h3>
+                    <p class="opacity-50 text-sm mb-6">Hair therapy using organic essential cedar oils and steam.</p>
+                    <div class="flex justify-between items-center font-black">
+                        <span>$90</span>
+                        <button class="text-[#b8d8be] flex items-center gap-2 uppercase text-xs">Add <i data-lucide="plus"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="products" class="py-24 max-w-7xl mx-auto px-4">
+        <h2 class="text-4xl brutalist text-center mb-16 reveal italic">Curated Essentials</h2>
+        <div class="grid grid-cols-2 lg:grid-cols-3 gap-12">
+            <div class="text-center reveal group">
+                <div class="bg-[#b8d8be] brutalist-card rounded-[2rem] p-12 mb-6 group-hover:scale-105 transition">
+                    <i data-lucide="fingerprint" class="w-20 h-20 mx-auto text-black"></i>
+                </div>
+                <h4 class="font-black brutalist text-lg">Cedar Clay</h4>
+                <p class="text-slate-400 font-bold">$32.00</p>
+            </div>
+            <div class="text-center reveal group" style="transition-delay: 0.1s">
+                <div class="bg-[#1a1a1a] brutalist-card rounded-[2rem] p-12 mb-6 group-hover:scale-105 transition">
+                    <i data-lucide="layers" class="w-20 h-20 mx-auto text-[#b8d8be]"></i>
+                </div>
+                <h4 class="font-black brutalist text-lg">Botanical Serum</h4>
+                <p class="text-slate-400 font-bold">$48.00</p>
+            </div>
+            <div class="text-center reveal group" style="transition-delay: 0.2s">
+                <div class="bg-white border-2 border-black brutalist-card rounded-[2rem] p-12 mb-6 group-hover:scale-105 transition">
+                    <i data-lucide="shield-check" class="w-20 h-20 mx-auto text-black"></i>
+                </div>
+                <h4 class="font-black brutalist text-lg">Post-Fade Balm</h4>
+                <p class="text-slate-400 font-bold">$24.00</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="gallery" class="py-20 bg-slate-100">
+        <div class="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-6 gap-2">
+            <div class="md:col-span-2 md:row-span-2 bg-slate-300 rounded-3xl overflow-hidden reveal">
+                <img src="https://images.unsplash.com/photo-1512690196252-7c963ef2c9aa?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover">
+            </div>
+            <div class="bg-[#b8d8be] rounded-3xl aspect-square flex items-center justify-center reveal">
+                <i data-lucide="play-circle" class="w-12 h-12"></i>
+            </div>
+            <div class="bg-slate-200 rounded-3xl overflow-hidden reveal">
+                <img src="https://images.unsplash.com/photo-1532710093739-9470acff878f?auto=format&fit=crop&q=80&w=400" class="w-full h-full object-cover">
+            </div>
+            <div class="md:col-span-2 bg-[#1a1a1a] rounded-3xl p-8 text-white flex flex-col justify-end reveal">
+                <div class="text-3xl font-black brutalist">Live Feed</div>
+                <p class="text-xs opacity-50 uppercase font-bold mt-2">@SAGEAND_OAK</p>
+            </div>
+            <div class="bg-slate-200 rounded-3xl overflow-hidden reveal">
+                <img src="https://images.unsplash.com/photo-1593702275687-f8b402bf1fb5?auto=format&fit=crop&q=80&w=400" class="w-full h-full object-cover">
+            </div>
+            <div class="bg-slate-200 rounded-3xl overflow-hidden reveal">
+                <img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&q=80&w=400" class="w-full h-full object-cover">
+            </div>
+        </div>
+    </section>
+
+    <section class="py-24 max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-20 reveal">
+        <div>
+            <h2 class="text-4xl brutalist mb-8">Reach Out</h2>
+            <form class="space-y-6">
+                <input type="text" placeholder="FULL NAME" class="w-full bg-transparent border-b-4 border-black p-4 brutalist outline-none focus:bg-[#b8d8be]/10">
+                <input type="email" placeholder="EMAIL ADDRESS" class="w-full bg-transparent border-b-4 border-black p-4 brutalist outline-none focus:bg-[#b8d8be]/10">
+                <textarea placeholder="HOW CAN WE HELP?" rows="4" class="w-full bg-transparent border-b-4 border-black p-4 brutalist outline-none focus:bg-[#b8d8be]/10"></textarea>
+                <button class="bg-[#b8d8be] brutalist-card px-12 py-5 font-black brutalist">Send Signal</button>
             </form>
         </div>
-    </section>
-
-    <section id="services" class="py-24 bg-white px-6">
-        <div class="max-w-7xl mx-auto">
-            <h2 class="text-3xl font-heavy mb-12 scroll-pop">Our Craft</h2>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div class="md:col-span-2 md:row-span-2 bento-card sage-bg rounded-[2.5rem] p-10 flex flex-col justify-between scroll-pop">
-                    <i data-lucide="scissors" class="w-12 h-12 mb-20"></i>
-                    <div>
-                        <h3 class="text-3xl font-heavy mb-4">Precision Cut</h3>
-                        <p class="opacity-70 text-lg">Custom tailoring for your hair. Includes consultation and wash.</p>
-                        <span class="text-4xl font-heavy mt-6 block">$60</span>
-                    </div>
-                </div>
-                <div class="md:col-span-2 bento-card bg-[#f1f1f1] rounded-[2.5rem] p-8 flex items-center justify-between scroll-pop">
-                    <div>
-                        <h3 class="text-xl font-heavy">Beard Trim</h3>
-                        <p class="opacity-60">Edge and condition.</p>
-                    </div>
-                    <span class="text-2xl font-heavy">$35</span>
-                </div>
-                <div class="md:col-span-1 bento-card border-2 border-[#b8d8be] rounded-[2.5rem] p-8 scroll-pop">
-                    <h3 class="text-lg font-heavy mb-4">Skin Fade</h3>
-                    <span class="text-xl font-heavy opacity-50">$45</span>
-                </div>
-                <div class="md:col-span-1 bento-card bg-black text-white rounded-[2.5rem] p-8 scroll-pop">
-                    <h3 class="text-lg font-heavy mb-4">Kids</h3>
-                    <span class="text-xl font-heavy">$25</span>
-                </div>
+        <div class="space-y-12">
+            <div class="bg-white brutalist-card rounded-[2rem] overflow-hidden h-96">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2482.903023247065!2d-0.126435!3d51.513511!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNTHCsDMwJzQ4LjYiTiAwwrAwNyczNS4yIlc!5e0!3m2!1sen!2suk!4v1600000000000" class="w-full h-full border-none"></iframe>
             </div>
-        </div>
-    </section>
-
-    <section id="gallery" class="py-24 px-6 overflow-hidden">
-        <div class="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-12 gap-6 items-center">
-            <div class="md:col-span-4 scroll-pop">
-                <img src="https://images.unsplash.com/photo-1593702275687-f8b402bf1fb5?auto=format&fit=crop&q=80&w=600" class="rounded-[2rem] h-[400px] w-full object-cover">
-            </div>
-            <div class="md:col-span-5 scroll-pop" style="transition-delay: 0.2s">
-                <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80&w=600" class="rounded-[2rem] h-[550px] w-full object-cover">
-            </div>
-            <div class="md:col-span-3 scroll-pop" style="transition-delay: 0.4s">
-                <img src="https://images.unsplash.com/photo-1521444470432-be53805e3f41?auto=format&fit=crop&q=80&w=600" class="rounded-[2rem] h-[300px] w-full object-cover">
-            </div>
-        </div>
-    </section>
-
-    <footer class="sage-bg mt-20 p-12 md:p-24 rounded-t-[4rem]">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between gap-20">
-            <div class="max-w-md">
-                <h2 class="text-6xl font-heavy tracking-tighter mb-8 leading-none">Stay Sharp.</h2>
-                <div class="flex gap-4 mb-8">
-                    <button class="bg-black text-white p-4 rounded-full"><i data-lucide="instagram"></i></button>
-                    <button class="bg-black text-white p-4 rounded-full"><i data-lucide="youtube"></i></button>
-                </div>
-            </div>
-            <div class="grid grid-cols-2 gap-12">
+            <div class="grid grid-cols-2 gap-8">
                 <div>
-                    <h4 class="font-heavy text-xs mb-6 opacity-40">Hours</h4>
-                    <ul class="font-bold space-y-2">
-                        <li>Mon-Fri / 09-20</li>
-                        <li>Sat / 10-18</li>
-                        <li>Sun / Closed</li>
-                    </ul>
+                    <h5 class="text-xs font-black uppercase mb-4 text-[#b8d8be]">London Flagship</h5>
+                    <p class="font-bold text-sm">42 Sage Street<br>Soho, W1D 3QL</p>
                 </div>
                 <div>
-                    <h4 class="font-heavy text-xs mb-6 opacity-40">Contact</h4>
-                    <p class="font-bold">hello@sagecedar.com</p>
-                    <p class="font-bold">+44 20 7946 0000</p>
+                    <h5 class="text-xs font-black uppercase mb-4 text-[#b8d8be]">Opening Hours</h5>
+                    <p class="font-bold text-sm">Mon - Sat: 09:00 - 20:00<br>Sun: 10:00 - 18:00</p>
                 </div>
             </div>
         </div>
-        <div class="text-center mt-24 border-t border-black/10 pt-10 text-[10px] font-heavy opacity-30">
-            Sage & Cedar © 2026 / All Rights Reserved
+    </section>
+
+    <section id="reviews" class="py-24 bg-[#b8d8be]/20">
+        <div class="max-w-7xl mx-auto px-4 overflow-hidden">
+            <h2 class="text-center text-3xl brutalist mb-16 italic">Voices from the Chair</h2>
+            <div class="flex gap-8 overflow-x-auto pb-10 px-4 snap-x">
+                <div class="min-w-[350px] bg-white brutalist-card p-10 rounded-3xl snap-center">
+                    <div class="flex gap-1 text-[#b8d8be] mb-6">
+                        <i data-lucide="star" class="fill-current"></i><i data-lucide="star" class="fill-current"></i><i data-lucide="star" class="fill-current"></i><i data-lucide="star" class="fill-current"></i><i data-lucide="star" class="fill-current"></i>
+                    </div>
+                    <p class="text-lg font-medium mb-6 italic">"The AI skin mapping they use for the initial consultation changed everything. Perfect every time."</p>
+                    <div class="font-black brutalist uppercase text-xs">— MARCUS V. (LONDON)</div>
+                </div>
+                <div class="min-w-[350px] bg-white brutalist-card p-10 rounded-3xl snap-center">
+                    <div class="flex gap-1 text-[#b8d8be] mb-6">
+                        <i data-lucide="star" class="fill-current"></i><i data-lucide="star" class="fill-current"></i><i data-lucide="star" class="fill-current"></i><i data-lucide="star" class="fill-current"></i><i data-lucide="star" class="fill-current"></i>
+                    </div>
+                    <p class="text-lg font-medium mb-6 italic">"No humans in the advertising was a bold choice. The interior is like a high-end spa."</p>
+                    <div class="font-black brutalist uppercase text-xs">— JAMES L. (NYC)</div>
+                </div>
+            </div>
         </div>
+    </section>
+
+    <footer class="bg-black text-white p-20 rounded-t-[5rem]">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-20">
+            <div class="md:col-span-2">
+                <div class="text-6xl font-black brutalist tracking-tighter mb-10 leading-none">SAGE<br>& OAK.</div>
+                <div class="flex gap-6">
+                    <i data-lucide="instagram" class="w-8 h-8 hover:text-[#b8d8be] cursor-pointer"></i>
+                    <i data-lucide="facebook" class="w-8 h-8 hover:text-[#b8d8be] cursor-pointer"></i>
+                    <i data-lucide="twitter" class="w-8 h-8 hover:text-[#b8d8be] cursor-pointer"></i>
+                </div>
+            </div>
+            <div>
+                <h5 class="text-[#b8d8be] font-black uppercase text-xs mb-8">Navigation</h5>
+                <ul class="space-y-4 font-bold text-sm">
+                    <li><a href="#" class="hover:underline">Home</a></li>
+                    <li><a href="#" class="hover:underline">Services</a></li>
+                    <li><a href="#" class="hover:underline">Gallery</a></li>
+                    <li><a href="#" class="hover:underline">Privacy</a></li>
+                </ul>
+            </div>
+            <div>
+                <h5 class="text-[#b8d8be] font-black uppercase text-xs mb-8">Newsletter</h5>
+                <p class="text-xs mb-6 opacity-50">Join the collective for weekly grooming tips and global priority booking.</p>
+                <div class="flex border-b-2 border-white pb-2">
+                    <input type="email" placeholder="EMAIL" class="bg-transparent outline-none flex-1 text-xs">
+                    <button class="text-[#b8d8be]"><i data-lucide="arrow-right"></i></button>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-32 text-[10px] opacity-30 font-black tracking-[0.4em]">SAGE & OAK © 2026 GLOBAL GROOMING INC.</div>
     </footer>
 
     <script>
         lucide.createIcons();
 
-        // Left Sidebar Push Logic
-        const body = document.body;
-        const menuTrigger = document.getElementById('menuTrigger');
-        const navLinks = document.querySelectorAll('.nav-link');
+        // Left Menu Logic
+        const sideMenu = document.getElementById('sideMenu');
+        const openBtn = document.getElementById('openMenu');
+        const closeBtn = document.getElementById('closeMenu');
 
-        menuTrigger.addEventListener('click', () => {
-            body.classList.toggle('menu-open');
-            const isOpen = body.classList.contains('menu-open');
-            document.getElementById('menuIcon').setAttribute('data-lucide', isOpen ? 'x' : 'menu');
-            lucide.createIcons();
-        });
+        openBtn.addEventListener('click', () => sideMenu.classList.add('open'));
+        closeBtn.addEventListener('click', () => sideMenu.classList.remove('open'));
 
-        // Close menu on link click
-        navLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                body.classList.remove('menu-open');
-                document.getElementById('menuIcon').setAttribute('data-lucide', 'menu');
-                lucide.createIcons();
-            });
-        });
-
-        // Modern Scroll Observer (Pop-up Effect)
-        const observerOptions = { threshold: 0.15 };
-        const observer = new IntersectionObserver((entries) => {
+        // Intersection Observer for Pop-up Reveal
+        const revealObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
+                    entry.target.classList.add('active');
                 }
             });
-        }, observerOptions);
+        }, { threshold: 0.1 });
 
-        document.querySelectorAll('.scroll-pop').forEach(el => observer.observe(el));
+        document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
     </script>
 </body>
 </html>
