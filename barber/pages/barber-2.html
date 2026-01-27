@@ -1,334 +1,270 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OXBLOOD & IRON | 2026 Elite Grooming</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&family=Unbounded:wght@900&display=swap" rel="stylesheet">
-    <style>
-        :root { --burgundy: #2d0a0a; --accent: #ff3e3e; --glass: rgba(45, 10, 10, 0.4); }
-        body { background-color: #0a0a0a; color: #fff; font-family: 'Space Grotesk', sans-serif; overflow-x: hidden; }
-        .font-huge { font-family: 'Unbounded', sans-serif; letter-spacing: -0.05em; }
-        
-        /* 2026 Grid: Non-Linear Layout */
-        .advanced-grid {
-            display: grid;
-            grid-template-columns: repeat(12, 1fr);
-            grid-template-rows: repeat(12, 5vw);
-            gap: 1rem;
-            padding: 1rem;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OXBLOOD & IRON | 2026 Elite Grooming</title>
 
-        /* The Blow-Up Intro */
-        #intro-shutter {
-            position: fixed; inset: 0; background: #000; z-index: 999;
-            display: flex; align-items: center; justify-content: center;
-        }
+<!-- Libraries -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
-        .glass-panel {
-            background: var(--glass);
-            backdrop-filter: blur(40px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 2px;
-            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-        }
-        
-        .glass-panel:hover { border-color: var(--accent); background: rgba(255, 62, 62, 0.1); }
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&family=Unbounded:wght@900&display=swap" rel="stylesheet">
 
-        .b-a-container { position: relative; width: 100%; height: 100%; overflow: hidden; }
-        .b-a-handle { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--accent); left: 50%; z-index: 10; }
-        
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: var(--accent); }
-    </style>
+<style>
+:root{
+    --burgundy:#2d0a0a;
+    --accent:#ff3e3e;
+    --glass:rgba(45,10,10,.4);
+}
+body{
+    background:#0a0a0a;
+    color:#fff;
+    font-family:'Space Grotesk',sans-serif;
+    overflow-x:hidden;
+}
+.font-huge{
+    font-family:'Unbounded',sans-serif;
+    letter-spacing:-.05em;
+}
+.advanced-grid{
+    display:grid;
+    grid-template-columns:repeat(12,1fr);
+    grid-auto-rows:5vw;
+    gap:1rem;
+    padding:1rem;
+}
+.glass-panel{
+    background:var(--glass);
+    backdrop-filter:blur(40px);
+    border:1px solid rgba(255,255,255,.05);
+    transition:.6s cubic-bezier(.23,1,.32,1);
+}
+.glass-panel:hover{
+    border-color:var(--accent);
+    background:rgba(255,62,62,.1);
+}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:var(--accent)}
+
+@keyframes marquee{
+    0%{transform:translateX(100%)}
+    100%{transform:translateX(-100%)}
+}
+.animate-marquee{
+    animation:marquee 20s linear infinite;
+}
+</style>
 </head>
+
 <body>
 
-    <div id="intro-shutter">
-        <div id="expander" class="w-1 h-1 bg-red-600 rounded-full"></div>
-        <h1 id="intro-text" class="absolute font-huge text-4xl opacity-0">OXBLOOD</h1>
+<!-- INTRO SHUTTER -->
+<div id="intro-shutter" class="fixed inset-0 bg-black z-[999] flex items-center justify-center">
+    <div id="expander" class="w-1 h-1 bg-red-600 rounded-full"></div>
+    <h1 id="intro-text" class="absolute font-huge text-4xl opacity-0">OXBLOOD</h1>
+</div>
+
+<!-- MENU BUTTON -->
+<div class="fixed top-8 right-8 z-[100]">
+    <button id="menu-btn" class="w-16 h-16 bg-white text-black rounded-full flex items-center justify-center hover:scale-110 transition">
+        <i data-lucide="layers"></i>
+    </button>
+</div>
+
+<!-- SIDE NAV -->
+<div id="side-nav" class="fixed inset-0 bg-black/95 z-[90] translate-x-full p-20">
+    <nav class="space-y-8 mt-20">
+        <a class="block text-6xl font-huge hover:text-red-600">RITUALS</a>
+        <a class="block text-6xl font-huge hover:text-red-600">ATELIER</a>
+        <a class="block text-6xl font-huge hover:text-red-600">ARCHIVE</a>
+    </nav>
+</div>
+
+<main id="content" class="opacity-0">
+
+<!-- HERO / BOOKING -->
+<section class="advanced-grid min-h-screen">
+    <div class="col-span-12 md:col-span-8 row-span-6 glass-panel relative overflow-hidden">
+        <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1512690199101-8d766a033339?q=80')] bg-cover opacity-30 grayscale"></div>
+        <div class="relative p-12 h-full flex flex-col justify-end">
+            <span class="text-red-600 font-bold tracking-[0.5em] mb-4">EST. 2026</span>
+            <h1 class="text-6xl md:text-9xl font-huge leading-none">
+                PRECISION<br>ANARCHY
+            </h1>
+        </div>
     </div>
 
-    <div class="fixed top-8 right-8 z-[100]">
-        <button id="menu-btn" class="w-16 h-16 bg-white text-black flex items-center justify-center rounded-full hover:scale-110 transition">
-            <i data-lucide="layers"></i>
-        </button>
-    </div>
-
-    <div id="side-nav" class="fixed inset-0 bg-black/95 z-[90] translate-x-full flex flex-col p-20">
-        <nav class="space-y-8 mt-20">
-            <a href="#" class="block text-6xl font-huge hover:text-red-600 transition">RITUALS</a>
-            <a href="#" class="block text-6xl font-huge hover:text-red-600 transition">ATELIER</a>
-            <a href="#" class="block text-6xl font-huge hover:text-red-600 transition">ARCHIVE</a>
-        </nav>
-    </div>
-
-    <main class="opacity-0" id="content">
-        
-        <section class="advanced-grid min-h-screen">
-            <div class="col-span-12 md:col-span-8 row-span-6 glass-panel relative overflow-hidden group">
-                <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1512690199101-8d766a033339?q=80')] bg-cover opacity-30 grayscale group-hover:scale-110 transition duration-1000"></div>
-                <div class="relative p-12 h-full flex flex-col justify-end">
-                    <span class="text-red-600 font-bold tracking-[0.5em] mb-4">EST. 2026</span>
-                    <h1 class="text-6xl md:text-9xl font-huge leading-none">PRECISION<br>ANARCHY</h1>
-                </div>
-            </div>
-
-            <div class="col-span-12 md:col-span-4 row-span-8 glass-panel p-8 flex flex-col justify-center">
-                <h3 class="font-huge text-xl mb-10 border-b border-red-600 pb-4">SECURE SLOT</h3>
-                <div class="space-y-8">
-                    <div class="group border-b border-white/10 pb-4">
-                        <label class="block text-[10px] text-white/40 mb-2 uppercase">Service Tier</label>
-                        <select class="w-full bg-transparent font-bold text-xl outline-none appearance-none">
-                            <option class="bg-black">Sculpt & Fade</option>
-                            <option class="bg-black">The Razor Ritual</option>
-                            <option class="bg-black">Industrial Shave</option>
-                        </select>
-                    </div>
-                    <div class="group border-b border-white/10 pb-4">
-                        <label class="block text-[10px] text-white/40 mb-2 uppercase">Artisan</label>
-                        <select class="w-full bg-transparent font-bold text-xl outline-none">
-                            <option class="bg-black">Lead Architect</option>
-                            <option class="bg-black">Senior Smith</option>
-                        </select>
-                    </div>
-                    <button class="w-full bg-red-600 p-6 font-huge text-xs tracking-widest hover:bg-white hover:text-black transition">INITIALIZE BOOKING</button>
-                </div>
-            </div>
-
-            <div class="col-span-6 md:col-span-4 row-span-4 glass-panel p-6">
-                <i data-lucide="clock" class="text-red-600 mb-4"></i>
-                <div class="text-xs space-y-2 opacity-60 font-bold uppercase">
-                    <div class="flex justify-between"><span>Tue-Sat</span> <span>10:00 - 22:00</span></div>
-                    <div class="flex justify-between text-red-600"><span>Sun-Mon</span> <span>Closed</span></div>
-                </div>
-            </div>
-
-            <div class="col-span-6 md:col-span-4 row-span-2 bg-white text-black p-4 flex items-center justify-between group cursor-pointer overflow-hidden">
-                <span class="font-huge text-xs">JOIN THE INNER CIRCLE</span>
-                <i data-lucide="arrow-right" class="group-hover:translate-x-4 transition"></i>
-            </div>
-        </section>
-
-        <div class="h-px w-full bg-gradient-to-r from-transparent via-red-600 to-transparent my-20"></div>
-
-        <section class="advanced-grid py-20">
-            <div class="col-span-12 md:col-span-2 flex items-center">
-                <h2 class="font-huge -rotate-90 text-4xl text-white/10 whitespace-nowrap">PRICE LIST</h2>
-            </div>
-            <div class="col-span-12 md:col-span-5 space-y-px">
-                <div class="glass-panel p-10 flex justify-between items-center group">
-                    <div class="flex items-center gap-6">
-                        <span class="text-white/20 font-huge text-2xl">01</span>
-                        <h4 class="text-2xl font-bold">THE EXECUTIVE</h4>
-                    </div>
-                    <span class="text-red-600 font-huge">$90</span>
-                </div>
-                <div class="glass-panel p-10 flex justify-between items-center">
-                    <div class="flex items-center gap-6">
-                        <span class="text-white/20 font-huge text-2xl">02</span>
-                        <h4 class="text-2xl font-bold">BEARD SMITHING</h4>
-                    </div>
-                    <span class="text-red-600 font-huge">$55</span>
-                </div>
-            </div>
-
-            
-            <div class="col-span-12 md:col-span-5 glass-panel p-10 bg-[url('https://images.unsplash.com/photo-1621605815841-aa897bd0f73d?q=80')] bg-cover grayscale contrast-125">
-                <div class="h-full bg-black/60 p-6 flex flex-col justify-end">
-                    <h3 class="font-huge text-2xl mb-4">THE ARCHIVE</h3>
-                    <p class="text-sm opacity-70">View our portfolio of precision-engineered styles.</p>
-                </div>
-            </div>
-        </section>
-
-        <section class="p-10">
-    <h2 class="font-huge text-3xl mb-12">ATELIER<span class="text-red-600">.</span></h2>
-    <div class="grid grid-cols-2 md:grid-cols-6 gap-4">
-
-        <!-- Product Card 1 -->
-        <div class="aspect-[3/4] glass-panel p-4 flex flex-col justify-between group hover:-translate-y-4 transition">
-            <div class="w-full aspect-square bg-cover bg-center" style="background-image: url('https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-2-image1.jpg');"></div>
-            <div>
-                <p class="text-[10px] opacity-40 uppercase">Product 1</p>
-                <p class="font-bold">$40</p>
-            </div>
+    <div class="col-span-12 md:col-span-4 row-span-8 glass-panel p-8 flex flex-col justify-center">
+        <h3 class="font-huge text-xl mb-10 border-b border-red-600 pb-4">SECURE SLOT</h3>
+        <div class="space-y-8">
+            <select class="w-full bg-transparent border-b border-white/10 text-xl outline-none">
+                <option class="bg-black">Sculpt & Fade</option>
+                <option class="bg-black">Razor Ritual</option>
+                <option class="bg-black">Industrial Shave</option>
+            </select>
+            <select class="w-full bg-transparent border-b border-white/10 text-xl outline-none">
+                <option class="bg-black">Lead Architect</option>
+                <option class="bg-black">Senior Smith</option>
+            </select>
+            <button class="bg-red-600 p-6 font-huge text-xs tracking-widest hover:bg-white hover:text-black transition">
+                INITIALIZE BOOKING
+            </button>
         </div>
-
-        <!-- Product Card 2 -->
-        <div class="aspect-[3/4] glass-panel p-4 flex flex-col justify-between group hover:-translate-y-4 transition">
-            <div class="w-full aspect-square bg-cover bg-center" style="background-image: url('https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-2-image2.jpg');"></div>
-            <div>
-                <p class="text-[10px] opacity-40 uppercase">Product 2</p>
-                <p class="font-bold">$40</p>
-            </div>
-        </div>
-
-        <!-- Product Card 3 -->
-        <div class="aspect-[3/4] glass-panel p-4 flex flex-col justify-between group hover:-translate-y-4 transition">
-            <div class="w-full aspect-square bg-cover bg-center" style="background-image: url('https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-2-image3.jpg');"></div>
-            <div>
-                <p class="text-[10px] opacity-40 uppercase">Product 3</p>
-                <p class="font-bold">$40</p>
-            </div>
-        </div>
-
-        <!-- Product Card 4 -->
-        <div class="aspect-[3/4] glass-panel p-4 flex flex-col justify-between group hover:-translate-y-4 transition">
-            <div class="w-full aspect-square bg-cover bg-center" style="background-image: url('https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-2-image4.jpg');"></div>
-            <div>
-                <p class="text-[10px] opacity-40 uppercase">Product 4</p>
-                <p class="font-bold">$40</p>
-            </div>
-        </div>
-
-        <!-- Product Card 5 -->
-        <div class="aspect-[3/4] glass-panel p-4 flex flex-col justify-between group hover:-translate-y-4 transition">
-            <div class="w-full aspect-square bg-cover bg-center" style="background-image: url('https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-2-image5.jpg');"></div>
-            <div>
-                <p class="text-[10px] opacity-40 uppercase">Product 5</p>
-                <p class="font-bold">$40</p>
-            </div>
-        </div>
-
-        <!-- Product Card 6 -->
-        <div class="aspect-[3/4] glass-panel p-4 flex flex-col justify-between group hover:-translate-y-4 transition">
-            <div class="w-full aspect-square bg-cover bg-center" style="background-image: url('https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-2-image6.jpg');"></div>
-            <div>
-                <p class="text-[10px] opacity-40 uppercase">Product 6</p>
-                <p class="font-bold">$40</p>
-            </div>
-        </div>
-
     </div>
 </section>
-                </div>
-                <script>for(let i=0; i<5; i++) document.write(document.querySelector('.aspect-\\[3\\/4\\]').outerHTML)</script>
-            </div>
-        </section>
 
-        <section class="py-40 px-10 max-w-5xl mx-auto">
-            <div class="b-a-container h-[500px] glass-panel cursor-ew-resize" id="ba-slider">
-                <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80')] bg-cover opacity-20"></div>
-                <div id="ba-after" class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80')] bg-cover border-r-2 border-red-600 w-1/2 overflow-hidden"></div>
-                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-huge text-9xl text-white/5 pointer-events-none uppercase">CHANGE</div>
-            </div>
-        </section>
+<!-- PRICE LIST -->
+<section class="advanced-grid py-20">
+    <div class="col-span-12 md:col-span-2 flex items-center">
+        <h2 class="font-huge -rotate-90 text-4xl text-white/10">PRICE LIST</h2>
+    </div>
 
-        <div class="w-full bg-red-600 py-4 overflow-hidden whitespace-nowrap mb-40">
-            <div class="flex gap-20 animate-marquee font-huge text-black text-xs">
-                <span>"ULTIMATE PRECISION" • 5.0 RATING</span>
-                <span>"THE NEW GOLD STANDARD" • ELITE ARTISANS</span>
-                <span>"UNMATCHED ATMOSPHERE" • 2026 DESIGN AWARD</span>
-            </div>
+    <div class="col-span-12 md:col-span-5 space-y-px">
+        <div class="glass-panel p-10 flex justify-between">
+            <h4 class="font-bold">THE EXECUTIVE</h4>
+            <span class="font-huge text-red-600">$90</span>
         </div>
+        <div class="glass-panel p-10 flex justify-between">
+            <h4 class="font-bold">BEARD SMITHING</h4>
+            <span class="font-huge text-red-600">$55</span>
+        </div>
+    </div>
 
-        <section class="grid grid-cols-1 md:grid-cols-3 gap-1 px-10">
-            <div class="glass-panel h-96 flex flex-col items-center justify-center grayscale hover:grayscale-0 transition duration-500">
-                <i data-lucide="shield" class="w-20 h-20 text-red-600 mb-6"></i>
-                <h4 class="font-huge">AXEL R.</h4>
-                <p class="text-[10px] tracking-widest text-white/40">HEAD ARCHITECT</p>
-            </div>
-            <div class="glass-panel h-96 flex flex-col items-center justify-center bg-red-600 text-black">
-                <i data-lucide="zap" class="w-20 h-20 mb-6"></i>
-                <h4 class="font-huge">KOEN V.</h4>
-                <p class="text-[10px] tracking-widest font-black uppercase">MASTER OF STEEL</p>
-            </div>
-            <div class="glass-panel h-96 flex flex-col items-center justify-center grayscale hover:grayscale-0 transition">
-                <i data-lucide="target" class="w-20 h-20 text-red-600 mb-6"></i>
-                <h4 class="font-huge">JUDE L.</h4>
-                <p class="text-[10px] tracking-widest text-white/40">TEXTURE ANALYST</p>
-            </div>
-        </section>
+    <div class="col-span-12 md:col-span-5 glass-panel bg-[url('https://images.unsplash.com/photo-1621605815841-aa897bd0f73d?q=80')] bg-cover grayscale">
+        <div class="h-full bg-black/60 p-6 flex flex-col justify-end">
+            <h3 class="font-huge text-2xl mb-4">THE ARCHIVE</h3>
+            <p class="opacity-70 text-sm">Precision-engineered styles.</p>
+        </div>
+    </div>
+</section>
 
-        <section class="advanced-grid py-40">
-            <div class="col-span-12 md:col-span-6 glass-panel p-12">
-                <h3 class="font-huge text-4xl mb-10">LOCATE US.</h3>
-                <div class="space-y-6 text-xl">
-                    <p class="opacity-50">STATION 04<br>NEO-VOK DISTRICT<br>LONDON, SE1</p>
-                    <div class="flex gap-4 pt-10">
-                        <a href="#" class="bg-white text-black p-4 rounded-full"><i data-lucide="phone"></i></a>
-                        <a href="#" class="bg-white text-black p-4 rounded-full"><i data-lucide="message-square"></i></a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-span-12 md:col-span-6 bg-red-950 grayscale invert h-full min-h-[400px]">
-                <iframe class="w-full h-full" src="http://googleusercontent.com/maps"></iframe>
-            </div>
-        </section>
+<!-- ATELIER PRODUCTS -->
+<section class="p-10">
+<h2 class="font-huge text-3xl mb-12">ATELIER<span class="text-red-600">.</span></h2>
+<div class="grid grid-cols-2 md:grid-cols-6 gap-4">
 
-        <section class="p-10 max-w-3xl mx-auto space-y-4">
-            <details class="group bg-white/5 p-8 transition-all duration-500">
-                <summary class="font-huge text-sm list-none cursor-pointer flex justify-between items-center">
-                    CANCELLATION POLICY
-                    <i data-lucide="chevron-down" class="group-open:rotate-180 transition"></i>
-                </summary>
-                <p class="pt-8 opacity-40 text-sm">24-hour notice required for all elite tier bookings.</p>
-            </details>
-        </section>
+<!-- 6 PRODUCT CARDS -->
+<script>
+const imgs=[
+'barber-2-image1.jpg','barber-2-image2.jpg','barber-2-image3.jpg',
+'barber-2-image4.jpg','barber-2-image5.jpg','barber-2-image6.jpg'
+];
+document.write(imgs.map(i=>`
+<div class="aspect-[3/4] glass-panel p-4 flex flex-col justify-between">
+<div class="aspect-square bg-cover" style="background-image:url('https://raw.githubusercontent.com/doctoc30/Vibz/main/images/${i}')"></div>
+<div>
+<p class="text-[10px] opacity-40 uppercase">Product</p>
+<p class="font-bold">$40</p>
+</div>
+</div>
+`).join(''));
+</script>
 
-        <footer class="p-20 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-10">
-            <div class="font-huge text-2xl">OXBLOOD & IRON</div>
-            <div class="flex gap-10 text-[10px] font-bold tracking-widest opacity-40">
-                <a href="#">INSTAGRAM</a>
-                <a href="#">TWITTER</a>
-                <a href="#">SYSTEM STATUS</a>
-            </div>
-            <p class="text-[10px] opacity-20 font-bold">BY GEMINI AI 2026</p>
-        </footer>
+</div>
+</section>
 
-    </main>
+<!-- BEFORE / AFTER -->
+<section class="py-40 px-10 max-w-5xl mx-auto">
+<div id="ba-slider" class="relative h-[500px] glass-panel cursor-ew-resize overflow-hidden">
+<div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80')] bg-cover opacity-30"></div>
+<div id="ba-after" class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80')] bg-cover border-r-2 border-red-600 w-1/2"></div>
+<div class="absolute inset-0 flex items-center justify-center font-huge text-9xl text-white/5">CHANGE</div>
+</div>
+</section>
 
-    <script>
-        lucide.createIcons();
-        gsap.registerPlugin(ScrollTrigger);
+<!-- MARQUEE -->
+<div class="bg-red-600 py-4 overflow-hidden whitespace-nowrap">
+<div class="flex gap-20 animate-marquee font-huge text-black text-xs">
+<span>ULTIMATE PRECISION • 5.0 RATING</span>
+<span>NEW GOLD STANDARD • ELITE ARTISANS</span>
+<span>2026 DESIGN AWARD</span>
+</div>
+</div>
 
-        // BLOW-UP INTRO LOGIC
-        const tl = gsap.timeline();
-        tl.to("#expander", { scale: 1000, duration: 2, ease: "power4.in" })
-          .to("#intro-text", { opacity: 1, duration: 0.5 }, "-=1")
-          .to("#intro-shutter", { opacity: 0, pointerEvents: "none", duration: 1 })
-          .to("#content", { opacity: 1, duration: 1 }, "-=1");
+<!-- TEAM -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-1 px-10 py-20">
+<div class="glass-panel h-96 flex flex-col items-center justify-center">
+<i data-lucide="shield" class="w-20 h-20 text-red-600 mb-6"></i>
+<h4 class="font-huge">AXEL R.</h4>
+<p class="text-[10px] opacity-40">HEAD ARCHITECT</p>
+</div>
+<div class="glass-panel h-96 flex flex-col items-center justify-center bg-red-600 text-black">
+<i data-lucide="zap" class="w-20 h-20 mb-6"></i>
+<h4 class="font-huge">KOEN V.</h4>
+<p class="text-[10px] font-black">MASTER OF STEEL</p>
+</div>
+<div class="glass-panel h-96 flex flex-col items-center justify-center">
+<i data-lucide="target" class="w-20 h-20 text-red-600 mb-6"></i>
+<h4 class="font-huge">JUDE L.</h4>
+<p class="text-[10px] opacity-40">TEXTURE ANALYST</p>
+</div>
+</section>
 
-        // 19. 2025/2026 UX POP ANIMATIONS
-        gsap.utils.toArray('.glass-panel').forEach(el => {
-            gsap.from(el, {
-                scrollTrigger: { trigger: el, start: "top 95%" },
-                y: 100, opacity: 0, scale: 0.9,
-                duration: 1.5, ease: "expo.out"
-            });
-        });
+<!-- LOCATION -->
+<section class="advanced-grid py-40">
+<div class="col-span-12 md:col-span-6 glass-panel p-12">
+<h3 class="font-huge text-4xl mb-10">LOCATE US.</h3>
+<p class="opacity-50">LONDON, SE1</p>
+</div>
+<div class="col-span-12 md:col-span-6 h-[400px]">
+<iframe class="w-full h-full grayscale invert"
+src="https://maps.google.com/maps?q=London%20SE1&t=&z=13&ie=UTF8&iwloc=&output=embed">
+</iframe>
+</div>
+</section>
 
-        // Hamburger
-        const btn = document.getElementById('menu-btn');
-        const nav = document.getElementById('side-nav');
-        btn.addEventListener('click', () => {
-            nav.classList.toggle('translate-x-full');
-        });
+<!-- FAQ -->
+<section class="p-10 max-w-3xl mx-auto">
+<details class="bg-white/5 p-8">
+<summary class="font-huge text-sm cursor-pointer flex justify-between">
+CANCELLATION POLICY
+<i data-lucide="chevron-down"></i>
+</summary>
+<p class="pt-6 opacity-40 text-sm">24-hour notice required.</p>
+</details>
+</section>
 
-        // B&A Slider
-        const baSlider = document.getElementById('ba-slider');
-        const baAfter = document.getElementById('ba-after');
-        baSlider.addEventListener('mousemove', (e) => {
-            const rect = baSlider.getBoundingClientRect();
-            const x = ((e.clientX - rect.left) / rect.width) * 100;
-            baAfter.style.width = x + '%';
-        });
+<!-- FOOTER -->
+<footer class="p-20 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-10">
+<div class="font-huge text-2xl">OXBLOOD & IRON</div>
+<div class="flex gap-10 text-[10px] opacity-40">
+<a>INSTAGRAM</a>
+<a>TWITTER</a>
+<a>SYSTEM STATUS</a>
+</div>
+<p class="text-[10px] opacity-20">© 2026 OXBLOOD & IRON</p>
+</footer>
 
-    </script>
+</main>
 
-    <style>
-        @keyframes marquee {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
-        }
-        .animate-marquee {
-            animation: marquee 20s linear infinite;
-        }
-    </style>
+<script>
+lucide.createIcons();
+gsap.registerPlugin(ScrollTrigger);
+
+// Intro
+gsap.timeline()
+.to("#expander",{scale:1000,duration:2,ease:"power4.in"})
+.to("#intro-text",{opacity:1,duration:.5},"-=1")
+.to("#intro-shutter",{opacity:0,pointerEvents:"none",duration:1})
+.to("#content",{opacity:1,duration:1},"-=1");
+
+// Menu
+document.getElementById("menu-btn").onclick=()=>{
+document.getElementById("side-nav").classList.toggle("translate-x-full");
+};
+
+// Before / After
+const ba=document.getElementById("ba-slider");
+const after=document.getElementById("ba-after");
+ba.addEventListener("mousemove",e=>{
+const r=ba.getBoundingClientRect();
+after.style.width=((e.clientX-r.left)/r.width*100)+"%";
+});
+</script>
+
 </body>
 </html>
