@@ -1,317 +1,283 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AETHER | Elite Grooming Studio</title>
+    <title>OXBLOOD & IRON | 2026 Elite Grooming</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Plus+Jakarta+Sans:wght@200;400;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&family=Unbounded:wght@900&display=swap" rel="stylesheet">
     <style>
-        :root { --sky-primary: #0ea5e9; --sky-dark: #0c4a6e; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #0f172a; overflow-x: hidden; }
-        .font-bold-title { font-family: 'Syncopate', sans-serif; text-transform: uppercase; letter-spacing: -2px; }
-        .hero-video-bg { background: linear-gradient(to bottom, rgba(14, 165, 233, 0.2), #f8fafc), url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80&w=2000'); background-size: cover; background-position: center; }
-        .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(14, 165, 233, 0.1); }
-        .b-a-slider { position: relative; width: 100%; height: 400px; overflow: hidden; border-radius: 24px; }
-        .divider-line { height: 1px; background: linear-gradient(90deg, transparent, #0ea5e9, transparent); }
+        :root { --burgundy: #2d0a0a; --accent: #ff3e3e; --glass: rgba(45, 10, 10, 0.4); }
+        body { background-color: #0a0a0a; color: #fff; font-family: 'Space Grotesk', sans-serif; overflow-x: hidden; }
+        .font-huge { font-family: 'Unbounded', sans-serif; letter-spacing: -0.05em; }
+        
+        /* 2026 Grid: Non-Linear Layout */
+        .advanced-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            grid-template-rows: repeat(12, 5vw);
+            gap: 1rem;
+            padding: 1rem;
+        }
+
+        /* The Blow-Up Intro */
+        #intro-shutter {
+            position: fixed; inset: 0; background: #000; z-index: 999;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .glass-panel {
+            background: var(--glass);
+            backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 2px;
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        
+        .glass-panel:hover { border-color: var(--accent); background: rgba(255, 62, 62, 0.1); }
+
+        .b-a-container { position: relative; width: 100%; height: 100%; overflow: hidden; }
+        .b-a-handle { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--accent); left: 50%; z-index: 10; }
+        
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: var(--accent); }
     </style>
 </head>
 <body>
 
-    <nav class="fixed w-full z-[100] px-6 py-4">
-        <div class="max-w-7xl mx-auto flex justify-between items-center glass rounded-2xl px-8 py-4 shadow-2xl shadow-sky-100">
-            <div class="font-bold-title text-2xl font-bold text-sky-600">AETHER</div>
-            <div class="hidden lg:flex space-x-10 font-extrabold uppercase text-xs tracking-widest text-slate-600">
-                <a href="#services" class="hover:text-sky-500 transition">Services</a>
-                <a href="#products" class="hover:text-sky-500 transition">Atelier</a>
-                <a href="#contact" class="hover:text-sky-500 transition">Contact</a>
-            </div>
-            <div class="flex items-center gap-4">
-                <a href="tel:123456789" class="hidden md:block bg-sky-600 text-white px-6 py-2 rounded-full font-bold text-sm">BOOK CALL</a>
-                <button id="menuTrigger" class="text-sky-900"><i data-lucide="menu" class="w-8 h-8"></i></button>
-            </div>
-        </div>
-    </nav>
-
-    <div id="mobileMenu" class="fixed inset-0 bg-sky-900 z-[110] flex flex-col items-center justify-center space-y-8 text-white translate-x-full transition-transform duration-500">
-        <button id="closeMenu" class="absolute top-10 right-10"><i data-lucide="x" class="w-10 h-10"></i></button>
-        <a href="#services" class="font-bold-title text-4xl hover:text-sky-400 transition">Services</a>
-        <a href="#booking" class="font-bold-title text-4xl hover:text-sky-400 transition">Booking</a>
-        <a href="#contact" class="font-bold-title text-4xl hover:text-sky-400 transition">Location</a>
+    <div id="intro-shutter">
+        <div id="expander" class="w-1 h-1 bg-red-600 rounded-full"></div>
+        <h1 id="intro-text" class="absolute font-huge text-4xl opacity-0">OXBLOOD</h1>
     </div>
 
-    <section class="min-h-screen hero-video-bg flex items-center justify-center pt-20 px-6">
-        <div class="text-center">
-            <h1 class="font-bold-title text-5xl md:text-9xl text-sky-950 leading-none mb-6 reveal">Architects<br><span class="text-sky-500">of Style</span></h1>
-            <p class="text-sky-800 text-lg md:text-xl font-light tracking-[0.3em] uppercase mb-12 reveal">Premium Grooming • Modern Interior</p>
-        </div>
-    </section>
+    <div class="fixed top-8 right-8 z-[100]">
+        <button id="menu-btn" class="w-16 h-16 bg-white text-black flex items-center justify-center rounded-full hover:scale-110 transition">
+            <i data-lucide="layers"></i>
+        </button>
+    </div>
 
-    <section id="booking" class="max-w-6xl mx-auto -mt-32 px-6 relative z-50 reveal">
-        <div class="glass p-10 rounded-[40px] shadow-3xl flex flex-col lg:flex-row gap-6 items-end">
-            <div class="flex-1 w-full">
-                <label class="block text-xs font-black uppercase text-sky-600 mb-2 ml-2">Service</label>
-                <select class="w-full bg-white border-2 border-sky-50 p-5 rounded-2xl font-bold focus:border-sky-500 outline-none appearance-none">
-                    <option>Select Tier-1 Service</option>
-                    <option>The Executive Fade</option>
-                    <option>Royal Beard Ritual</option>
-                    <option>Sculpting & Scalp Therapy</option>
-                </select>
-            </div>
-            <div class="flex-1 w-full">
-                <label class="block text-xs font-black uppercase text-sky-600 mb-2 ml-2">Preferred Barber</label>
-                <select class="w-full bg-white border-2 border-sky-50 p-5 rounded-2xl font-bold focus:border-sky-500 outline-none">
-                    <option>Any Master Barber</option>
-                    <option>Lead Director</option>
-                    <option>Senior Stylist</option>
-                </select>
-            </div>
-            <button class="w-full lg:w-auto bg-sky-600 text-white px-12 py-5 rounded-2xl font-black uppercase tracking-tighter hover:bg-sky-700 transition transform hover:-translate-y-1 shadow-xl">Secure Appointment</button>
-        </div>
-    </section>
+    <div id="side-nav" class="fixed inset-0 bg-black/95 z-[90] translate-x-full flex flex-col p-20">
+        <nav class="space-y-8 mt-20">
+            <a href="#" class="block text-6xl font-huge hover:text-red-600 transition">RITUALS</a>
+            <a href="#" class="block text-6xl font-huge hover:text-red-600 transition">ATELIER</a>
+            <a href="#" class="block text-6xl font-huge hover:text-red-600 transition">ARCHIVE</a>
+        </nav>
+    </div>
 
-    <div class="py-20 flex justify-center"><div class="divider-line w-64"></div></div>
-
-    <section id="services" class="max-w-7xl mx-auto px-6 py-20">
-        <h2 class="font-bold-title text-4xl mb-20 text-center">The Menu</h2>
-        <div class="grid lg:grid-cols-2 gap-20">
-            <div class="space-y-12 reveal-left">
-                <div class="flex justify-between items-end border-b-2 border-sky-100 pb-4 group cursor-pointer">
-                    <div>
-                        <h4 class="text-2xl font-black group-hover:text-sky-500 transition">Signature Cut</h4>
-                        <p class="text-slate-400 font-medium">Precision scissor work & taper</p>
-                    </div>
-                    <span class="text-3xl font-black text-sky-600">$65</span>
-                </div>
-                <div class="flex justify-between items-end border-b-2 border-sky-100 pb-4 group cursor-pointer">
-                    <div>
-                        <h4 class="text-2xl font-black group-hover:text-sky-500 transition">The Royal Shave</h4>
-                        <p class="text-slate-400 font-medium">Straight razor & 3-step hot towel</p>
-                    </div>
-                    <span class="text-3xl font-black text-sky-600">$50</span>
+    <main class="opacity-0" id="content">
+        
+        <section class="advanced-grid min-h-screen">
+            <div class="col-span-12 md:col-span-8 row-span-6 glass-panel relative overflow-hidden group">
+                <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1512690199101-8d766a033339?q=80')] bg-cover opacity-30 grayscale group-hover:scale-110 transition duration-1000"></div>
+                <div class="relative p-12 h-full flex flex-col justify-end">
+                    <span class="text-red-600 font-bold tracking-[0.5em] mb-4">EST. 2026</span>
+                    <h1 class="text-6xl md:text-9xl font-huge leading-none">PRECISION<br>ANARCHY</h1>
                 </div>
             </div>
-            <div class="bg-sky-900 rounded-[40px] p-12 text-white reveal-right relative overflow-hidden">
-                <i data-lucide="crown" class="absolute -right-10 -bottom-10 w-64 h-64 text-sky-800 opacity-20"></i>
-                <h3 class="text-3xl font-bold-title mb-6">Platinum Membership</h3>
-                <p class="text-sky-200 mb-8 font-light leading-relaxed">Unlimited cuts, priority booking, and complimentary drinks from our private bar.</p>
-                <button class="border-2 border-sky-400 text-sky-400 px-8 py-3 rounded-full font-bold hover:bg-sky-400 hover:text-white transition">Inquire Now</button>
-            </div>
-        </div>
-    </section>
 
-    <section class="bg-sky-500 py-24 my-20">
-        <div class="max-w-5xl mx-auto px-6 text-center">
-            <h2 class="font-bold-title text-4xl text-white mb-8">Refinement is a Choice.</h2>
-            <a href="#booking" class="bg-white text-sky-600 px-12 py-5 rounded-full font-black text-xl hover:scale-110 transition inline-block">JOIN THE ELITE</a>
-        </div>
-    </section>
-
-    <section id="products" class="max-w-7xl mx-auto px-6 py-20">
-        <h2 class="font-bold-title text-4xl mb-16">The Atelier</h2>
-        <div class="grid grid-cols-2 lg:grid-cols-3 gap-10">
-            <div class="reveal-up group">
-                <div class="aspect-square bg-white rounded-[32px] mb-6 flex items-center justify-center shadow-lg group-hover:shadow-sky-200 transition">
-                    <i data-lucide="droplets" class="w-20 h-20 text-sky-100 group-hover:text-sky-500 transition duration-500"></i>
-                </div>
-                <h4 class="font-black text-xl mb-1">AETHER CLAY</h4>
-                <p class="text-sky-600 font-bold">$34.00</p>
-            </div>
-            <div class="reveal-up group" style="transition-delay: 100ms;"><div class="aspect-square bg-white rounded-[32px] mb-6 flex items-center justify-center shadow-lg"><i data-lucide="wind" class="w-20 h-20 text-sky-100"></i></div><h4 class="font-black text-xl">SALT MIST</h4><p class="text-sky-600 font-bold">$28.00</p></div>
-            <div class="reveal-up group" style="transition-delay: 200ms;"><div class="aspect-square bg-white rounded-[32px] mb-6 flex items-center justify-center shadow-lg"><i data-lucide="flask-conical" class="w-20 h-20 text-sky-100"></i></div><h4 class="font-black text-xl">ELIXIR OIL</h4><p class="text-sky-600 font-bold">$42.00</p></div>
-            <div class="reveal-up group"><div class="aspect-square bg-white rounded-[32px] mb-6 flex items-center justify-center shadow-lg"><i data-lucide="sparkle" class="w-20 h-20 text-sky-100"></i></div><h4 class="font-black text-xl">BALM PRO</h4><p class="text-sky-600 font-bold">$30.00</p></div>
-            <div class="reveal-up group"><div class="aspect-square bg-white rounded-[32px] mb-6 flex items-center justify-center shadow-lg"><i data-lucide="gem" class="w-20 h-20 text-sky-100"></i></div><h4 class="font-black text-xl">CHROME COMB</h4><p class="text-sky-600 font-bold">$55.00</p></div>
-            <div class="reveal-up group"><div class="aspect-square bg-white rounded-[32px] mb-6 flex items-center justify-center shadow-lg"><i data-lucide="zap" class="w-20 h-20 text-sky-100"></i></div><h4 class="font-black text-xl">SHAVE GEL</h4><p class="text-sky-600 font-bold">$24.00</p></div>
-        </div>
-    </section>
-
-    <section class="max-w-4xl mx-auto px-6 py-20">
-        <h2 class="font-bold-title text-3xl mb-10 text-center">The Transformation</h2>
-        <div class="b-a-slider shadow-2xl border-8 border-white reveal">
-            <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&q=80&w=1000')] bg-cover"></div>
-            <div id="slider-overlay" class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&q=80&w=1000')] bg-cover border-r-4 border-sky-400 w-1/2 overflow-hidden"></div>
-            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <span class="bg-sky-500 text-white px-4 py-1 rounded text-xs font-bold uppercase">Slide to Compare</span>
-            </div>
-        </div>
-    </section>
-
-    <section id="gallery" class="py-20 bg-white px-6">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-7xl mx-auto">
-            <div class="h-64 bg-sky-200 rounded-2xl overflow-hidden reveal-up"><img src="https://images.unsplash.com/photo-1621605815841-aa897bd0f73d?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover grayscale hover:grayscale-0 transition duration-700"></div>
-            <div class="h-96 md:col-span-2 bg-sky-100 rounded-2xl overflow-hidden reveal-up"><img src="https://images.unsplash.com/photo-1512690199101-8d766a033339?auto=format&fit=crop&q=80&w=1200" class="w-full h-full object-cover grayscale hover:grayscale-0 transition duration-700"></div>
-            <div class="h-64 bg-sky-200 rounded-2xl overflow-hidden reveal-up"><img src="https://images.unsplash.com/photo-1634449571010-02389ed0f9b0?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover grayscale hover:grayscale-0 transition duration-700"></div>
-        </div>
-    </section>
-
-    <section class="max-w-7xl mx-auto px-6 py-20">
-        <h2 class="font-bold-title text-4xl mb-16 text-center">Master Artisans</h2>
-        <div class="grid md:grid-cols-3 gap-12">
-            <div class="text-center reveal-up">
-                <div class="w-48 h-48 bg-sky-100 rounded-full mx-auto mb-6 flex items-center justify-center overflow-hidden grayscale hover:grayscale-0 transition duration-500 border-4 border-sky-200">
-                    <i data-lucide="user" class="w-20 h-20 text-sky-300"></i>
-                </div>
-                <h4 class="text-2xl font-black">JULIAN S.</h4>
-                <p class="text-sky-600 font-bold uppercase tracking-widest text-xs">Director of Style</p>
-            </div>
-            <div class="text-center reveal-up"><div class="w-48 h-48 bg-sky-100 rounded-full mx-auto mb-6 flex items-center justify-center border-4 border-sky-200"><i data-lucide="user" class="w-20 h-20 text-sky-300"></i></div><h4 class="text-2xl font-black">MARCUS V.</h4><p class="text-sky-600 font-bold uppercase text-xs">Texture Specialist</p></div>
-            <div class="text-center reveal-up"><div class="w-48 h-48 bg-sky-100 rounded-full mx-auto mb-6 flex items-center justify-center border-4 border-sky-200"><i data-lucide="user" class="w-20 h-20 text-sky-300"></i></div><h4 class="text-2xl font-black">ELIAS K.</h4><p class="text-sky-600 font-bold uppercase text-xs">Classic Sculptor</p></div>
-        </div>
-    </section>
-
-    <section id="contact" class="max-w-7xl mx-auto px-6 py-24">
-        <div class="grid lg:grid-cols-2 gap-20">
-            <div class="reveal-left">
-                <h2 class="font-bold-title text-5xl mb-10">Connect.</h2>
-                <div class="space-y-6 mb-12">
-                    <div class="flex gap-4 items-start">
-                        <i data-lucide="map-pin" class="text-sky-500"></i>
-                        <p class="font-bold text-xl">101 Skyline Boulevard,<br>Downtown Azure, NY 10012</p>
-                    </div>
-                    <div class="flex gap-4 pt-4">
-                        <a href="tel:123" class="bg-sky-600 text-white p-5 rounded-2xl flex items-center gap-3 font-black uppercase text-xs"><i data-lucide="phone"></i> Call Now</a>
-                        <a href="https://wa.me/123" class="bg-green-500 text-white p-5 rounded-2xl flex items-center gap-3 font-black uppercase text-xs"><i data-lucide="message-circle"></i> WhatsApp</a>
-                    </div>
-                </div>
-                <form class="space-y-4">
-                    <input type="text" placeholder="Full Name" class="w-full bg-sky-50 p-4 rounded-xl border-none">
-                    <textarea placeholder="Your Message" rows="4" class="w-full bg-sky-50 p-4 rounded-xl border-none"></textarea>
-                    <button class="bg-sky-950 text-white w-full py-4 rounded-xl font-black uppercase tracking-widest">Send Transmission</button>
-                </form>
-            </div>
-            <div class="reveal-right">
-                <div class="bg-white p-10 rounded-[40px] shadow-xl mb-8">
-                    <h4 class="font-bold-title text-xl mb-6 flex items-center gap-3"><i data-lucide="clock" class="text-sky-500"></i> Studio Hours</h4>
-                    <div class="space-y-3 font-bold">
-                        <div class="flex justify-between border-b pb-2"><span>MON - FRI</span> <span>09:00 — 21:00</span></div>
-                        <div class="flex justify-between border-b pb-2"><span>SATURDAY</span> <span>10:00 — 18:00</span></div>
-                        <div class="flex justify-between text-red-400"><span>SUNDAY</span> <span>CLOSED</span></div>
-                    </div>
-                </div>
-                <div class="h-64 bg-sky-200 rounded-[40px] overflow-hidden shadow-inner grayscale">
-                    <iframe class="w-full h-full border-none" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d193595.9147703055!2d-74.11976373946229!3d40.69740344223377!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c24fa5d33f083b%3A0xc80b8f06e177fe62!2sNew%20York%2C%20NY!5e0!3m2!1sen!2sus!4v1689264240000!5m2!1sen!2sus"></iframe>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="bg-sky-950 text-white py-24 px-6">
-        <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-20">
-            <div>
-                <h3 class="font-bold-title text-3xl mb-12">Critically Acclaimed</h3>
+            <div class="col-span-12 md:col-span-4 row-span-8 glass-panel p-8 flex flex-col justify-center">
+                <h3 class="font-huge text-xl mb-10 border-b border-red-600 pb-4">SECURE SLOT</h3>
                 <div class="space-y-8">
-                    <div class="reveal-up">
-                        <div class="flex text-sky-400 mb-2"><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i></div>
-                        <p class="text-xl italic font-light">"The most precise architectural fade I've ever received. The sky-blue interior creates a sense of calm you won't find anywhere else."</p>
-                        <p class="mt-4 font-bold text-sky-400">— JAMES W., CEO</p>
+                    <div class="group border-b border-white/10 pb-4">
+                        <label class="block text-[10px] text-white/40 mb-2 uppercase">Service Tier</label>
+                        <select class="w-full bg-transparent font-bold text-xl outline-none appearance-none">
+                            <option class="bg-black">Sculpt & Fade</option>
+                            <option class="bg-black">The Razor Ritual</option>
+                            <option class="bg-black">Industrial Shave</option>
+                        </select>
+                    </div>
+                    <div class="group border-b border-white/10 pb-4">
+                        <label class="block text-[10px] text-white/40 mb-2 uppercase">Artisan</label>
+                        <select class="w-full bg-transparent font-bold text-xl outline-none">
+                            <option class="bg-black">Lead Architect</option>
+                            <option class="bg-black">Senior Smith</option>
+                        </select>
+                    </div>
+                    <button class="w-full bg-red-600 p-6 font-huge text-xs tracking-widest hover:bg-white hover:text-black transition">INITIALIZE BOOKING</button>
+                </div>
+            </div>
+
+            <div class="col-span-6 md:col-span-4 row-span-4 glass-panel p-6">
+                <i data-lucide="clock" class="text-red-600 mb-4"></i>
+                <div class="text-xs space-y-2 opacity-60 font-bold uppercase">
+                    <div class="flex justify-between"><span>Tue-Sat</span> <span>10:00 - 22:00</span></div>
+                    <div class="flex justify-between text-red-600"><span>Sun-Mon</span> <span>Closed</span></div>
+                </div>
+            </div>
+
+            <div class="col-span-6 md:col-span-4 row-span-2 bg-white text-black p-4 flex items-center justify-between group cursor-pointer overflow-hidden">
+                <span class="font-huge text-xs">JOIN THE INNER CIRCLE</span>
+                <i data-lucide="arrow-right" class="group-hover:translate-x-4 transition"></i>
+            </div>
+        </section>
+
+        <div class="h-px w-full bg-gradient-to-r from-transparent via-red-600 to-transparent my-20"></div>
+
+        <section class="advanced-grid py-20">
+            <div class="col-span-12 md:col-span-2 flex items-center">
+                <h2 class="font-huge -rotate-90 text-4xl text-white/10 whitespace-nowrap">PRICE LIST</h2>
+            </div>
+            <div class="col-span-12 md:col-span-5 space-y-px">
+                <div class="glass-panel p-10 flex justify-between items-center group">
+                    <div class="flex items-center gap-6">
+                        <span class="text-white/20 font-huge text-2xl">01</span>
+                        <h4 class="text-2xl font-bold">THE EXECUTIVE</h4>
+                    </div>
+                    <span class="text-red-600 font-huge">$90</span>
+                </div>
+                <div class="glass-panel p-10 flex justify-between items-center">
+                    <div class="flex items-center gap-6">
+                        <span class="text-white/20 font-huge text-2xl">02</span>
+                        <h4 class="text-2xl font-bold">BEARD SMITHING</h4>
+                    </div>
+                    <span class="text-red-600 font-huge">$55</span>
+                </div>
+            </div>
+            <div class="col-span-12 md:col-span-5 glass-panel p-10 bg-[url('https://images.unsplash.com/photo-1621605815841-aa897bd0f73d?q=80')] bg-cover grayscale contrast-125">
+                <div class="h-full bg-black/60 p-6 flex flex-col justify-end">
+                    <h3 class="font-huge text-2xl mb-4">THE ARCHIVE</h3>
+                    <p class="text-sm opacity-70">View our portfolio of precision-engineered styles.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="p-10">
+            <h2 class="font-huge text-3xl mb-12">ATELIER<span class="text-red-600">.</span></h2>
+            <div class="grid grid-cols-2 md:grid-cols-6 gap-4">
+                <div class="aspect-[3/4] glass-panel p-4 flex flex-col justify-between group hover:-translate-y-4 transition">
+                    <div class="w-full aspect-square bg-white/5 flex items-center justify-center">
+                        <i data-lucide="test-tube" class="text-red-600 w-10 h-10"></i>
+                    </div>
+                    <div>
+                        <p class="text-[10px] opacity-40 uppercase">Iron Pomade</p>
+                        <p class="font-bold">$40</p>
+                    </div>
+                </div>
+                <script>for(let i=0; i<5; i++) document.write(document.querySelector('.aspect-\\[3\\/4\\]').outerHTML)</script>
+            </div>
+        </section>
+
+        <section class="py-40 px-10 max-w-5xl mx-auto">
+            <div class="b-a-container h-[500px] glass-panel cursor-ew-resize" id="ba-slider">
+                <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80')] bg-cover opacity-20"></div>
+                <div id="ba-after" class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80')] bg-cover border-r-2 border-red-600 w-1/2 overflow-hidden"></div>
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-huge text-9xl text-white/5 pointer-events-none uppercase">CHANGE</div>
+            </div>
+        </section>
+
+        <div class="w-full bg-red-600 py-4 overflow-hidden whitespace-nowrap mb-40">
+            <div class="flex gap-20 animate-marquee font-huge text-black text-xs">
+                <span>"ULTIMATE PRECISION" • 5.0 RATING</span>
+                <span>"THE NEW GOLD STANDARD" • ELITE ARTISANS</span>
+                <span>"UNMATCHED ATMOSPHERE" • 2026 DESIGN AWARD</span>
+            </div>
+        </div>
+
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-1 px-10">
+            <div class="glass-panel h-96 flex flex-col items-center justify-center grayscale hover:grayscale-0 transition duration-500">
+                <i data-lucide="shield" class="w-20 h-20 text-red-600 mb-6"></i>
+                <h4 class="font-huge">AXEL R.</h4>
+                <p class="text-[10px] tracking-widest text-white/40">HEAD ARCHITECT</p>
+            </div>
+            <div class="glass-panel h-96 flex flex-col items-center justify-center bg-red-600 text-black">
+                <i data-lucide="zap" class="w-20 h-20 mb-6"></i>
+                <h4 class="font-huge">KOEN V.</h4>
+                <p class="text-[10px] tracking-widest font-black uppercase">MASTER OF STEEL</p>
+            </div>
+            <div class="glass-panel h-96 flex flex-col items-center justify-center grayscale hover:grayscale-0 transition">
+                <i data-lucide="target" class="w-20 h-20 text-red-600 mb-6"></i>
+                <h4 class="font-huge">JUDE L.</h4>
+                <p class="text-[10px] tracking-widest text-white/40">TEXTURE ANALYST</p>
+            </div>
+        </section>
+
+        <section class="advanced-grid py-40">
+            <div class="col-span-12 md:col-span-6 glass-panel p-12">
+                <h3 class="font-huge text-4xl mb-10">LOCATE US.</h3>
+                <div class="space-y-6 text-xl">
+                    <p class="opacity-50">STATION 04<br>NEO-VOK DISTRICT<br>LONDON, SE1</p>
+                    <div class="flex gap-4 pt-10">
+                        <a href="#" class="bg-white text-black p-4 rounded-full"><i data-lucide="phone"></i></a>
+                        <a href="#" class="bg-white text-black p-4 rounded-full"><i data-lucide="message-square"></i></a>
                     </div>
                 </div>
             </div>
-            <div>
-                <h3 class="font-bold-title text-3xl mb-12">FAQ</h3>
-                <div class="space-y-4">
-                    <details class="group glass rounded-2xl p-6 transition">
-                        <summary class="font-black text-lg cursor-pointer flex justify-between items-center list-none">
-                            Do you accept walk-ins?
-                            <i data-lucide="plus" class="group-open:rotate-45 transition"></i>
-                        </summary>
-                        <p class="mt-4 text-sky-200 font-light">We are a strictly appointment-only studio to ensure each client receives our full attention.</p>
-                    </details>
-                    <details class="group glass rounded-2xl p-6 transition">
-                        <summary class="font-black text-lg cursor-pointer flex justify-between items-center list-none">
-                            Parking availability?
-                            <i data-lucide="plus" class="group-open:rotate-45 transition"></i>
-                        </summary>
-                        <p class="mt-4 text-sky-200 font-light">Complimentary valet parking is provided for all Platinum Members.</p>
-                    </details>
-                </div>
+            <div class="col-span-12 md:col-span-6 bg-red-950 grayscale invert h-full min-h-[400px]">
+                <iframe class="w-full h-full" src="http://googleusercontent.com/maps"></iframe>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <footer class="bg-sky-50 py-20 px-6">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-12">
-            <div>
-                <div class="font-bold-title text-3xl text-sky-600 mb-6">AETHER</div>
-                <p class="text-slate-500 max-w-xs">Elevating the craft of grooming through architectural precision and sky-high standards.</p>
+        <section class="p-10 max-w-3xl mx-auto space-y-4">
+            <details class="group bg-white/5 p-8 transition-all duration-500">
+                <summary class="font-huge text-sm list-none cursor-pointer flex justify-between items-center">
+                    CANCELLATION POLICY
+                    <i data-lucide="chevron-down" class="group-open:rotate-180 transition"></i>
+                </summary>
+                <p class="pt-8 opacity-40 text-sm">24-hour notice required for all elite tier bookings.</p>
+            </details>
+        </section>
+
+        <footer class="p-20 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-10">
+            <div class="font-huge text-2xl">OXBLOOD & IRON</div>
+            <div class="flex gap-10 text-[10px] font-bold tracking-widest opacity-40">
+                <a href="#">INSTAGRAM</a>
+                <a href="#">TWITTER</a>
+                <a href="#">SYSTEM STATUS</a>
             </div>
-            <div class="grid grid-cols-2 gap-12">
-                <div class="flex flex-col gap-4 font-bold text-xs uppercase tracking-widest text-sky-900">
-                    <a href="#services">Services</a>
-                    <a href="#gallery">Gallery</a>
-                    <a href="#contact">Contact</a>
-                </div>
-                <div class="flex flex-col gap-4 font-bold text-xs uppercase tracking-widest text-sky-900">
-                    <a href="#">Instagram</a>
-                    <a href="#">LinkedIn</a>
-                    <a href="#">Twitter</a>
-                </div>
-            </div>
-        </div>
-        <div class="max-w-7xl mx-auto border-t border-sky-200 mt-20 pt-8 flex justify-between text-[10px] font-black uppercase text-sky-400">
-            <span>© 2026 AETHER STUDIO</span>
-            <span>PRIVACY / TERMS</span>
-        </div>
-    </footer>
+            <p class="text-[10px] opacity-20 font-bold">BY GEMINI AI 2026</p>
+        </footer>
+
+    </main>
 
     <script>
-        // Init Lucide
         lucide.createIcons();
-
-        // 5. Mobile Menu Toggle
-        const menuTrigger = document.getElementById('menuTrigger');
-        const mobileMenu = document.getElementById('mobileMenu');
-        const closeMenu = document.getElementById('closeMenu');
-
-        menuTrigger.addEventListener('click', () => {
-            mobileMenu.classList.remove('translate-x-full');
-        });
-        closeMenu.addEventListener('click', () => {
-            mobileMenu.classList.add('translate-x-full');
-        });
-
-        // 19. GSAP Scroll Animations
         gsap.registerPlugin(ScrollTrigger);
 
-        gsap.utils.toArray('.reveal').forEach(el => {
+        // BLOW-UP INTRO LOGIC
+        const tl = gsap.timeline();
+        tl.to("#expander", { scale: 1000, duration: 2, ease: "power4.in" })
+          .to("#intro-text", { opacity: 1, duration: 0.5 }, "-=1")
+          .to("#intro-shutter", { opacity: 0, pointerEvents: "none", duration: 1 })
+          .to("#content", { opacity: 1, duration: 1 }, "-=1");
+
+        // 19. 2025/2026 UX POP ANIMATIONS
+        gsap.utils.toArray('.glass-panel').forEach(el => {
             gsap.from(el, {
-                scrollTrigger: el,
-                y: 50, opacity: 0, duration: 1.2, ease: "power4.out"
+                scrollTrigger: { trigger: el, start: "top 95%" },
+                y: 100, opacity: 0, scale: 0.9,
+                duration: 1.5, ease: "expo.out"
             });
         });
 
-        gsap.utils.toArray('.reveal-left').forEach(el => {
-            gsap.from(el, {
-                scrollTrigger: el,
-                x: -100, opacity: 0, duration: 1.5, ease: "power4.out"
-            });
+        // Hamburger
+        const btn = document.getElementById('menu-btn');
+        const nav = document.getElementById('side-nav');
+        btn.addEventListener('click', () => {
+            nav.classList.toggle('translate-x-full');
         });
 
-        gsap.utils.toArray('.reveal-right').forEach(el => {
-            gsap.from(el, {
-                scrollTrigger: el,
-                x: 100, opacity: 0, duration: 1.5, ease: "power4.out"
-            });
+        // B&A Slider
+        const baSlider = document.getElementById('ba-slider');
+        const baAfter = document.getElementById('ba-after');
+        baSlider.addEventListener('mousemove', (e) => {
+            const rect = baSlider.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
+            baAfter.style.width = x + '%';
         });
 
-        gsap.utils.toArray('.reveal-up').forEach(el => {
-            gsap.from(el, {
-                scrollTrigger: el,
-                y: 100, opacity: 0, duration: 1, stagger: 0.2
-            });
-        });
-
-        // 9. Before/After Slider Logic
-        const slider = document.querySelector('.b-a-slider');
-        const overlay = document.getElementById('slider-overlay');
-        slider.addEventListener('mousemove', (e) => {
-            let rect = slider.getBoundingClientRect();
-            let x = e.clientX - rect.left;
-            overlay.style.width = x + 'px';
-        });
     </script>
+
+    <style>
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+        .animate-marquee {
+            animation: marquee 20s linear infinite;
+        }
+    </style>
 </body>
 </html>
