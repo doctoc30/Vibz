@@ -3,244 +3,273 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE VINTAGE CHAIR | App Experience</title>
+    <title>ESTATE GROOMING | The New Standard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --cream: #F2EBE3; --onyx: #121212; --accent: #96897B; }
-        body { background-color: var(--onyx); color: var(--cream); font-family: 'Outfit', sans-serif; overflow-x: hidden; }
-        .serif { font-family: 'Playfair Display', serif; }
+        :root {
+            --bg: #121212;
+            --cream: #E8E2D6;
+            --cream-dark: #C4BEB1;
+            --accent: #D4AF37;
+        }
+        body { 
+            background-color: var(--bg); 
+            color: var(--cream); 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+        }
+        .serif { font-family: 'DM Serif Display', serif; }
         
-        /* Bento Grid Layout */
-        .bento-container { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 100px; gap: 12px; padding: 16px; }
-        .bento-item { background: #1A1A1A; border-radius: 24px; border: 1px solid rgba(242, 235, 227, 0.05); overflow: hidden; position: relative; }
+        /* Layout Grids */
+        .magazine-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1rem; }
+        .span-full { grid-column: span 6; }
+        .span-4 { grid-column: span 4; }
+        .span-2 { grid-column: span 2; }
+        .span-3 { grid-column: span 3; }
+
+        /* Oversized Typography */
+        .hero-text { font-size: clamp(3.5rem, 12vw, 6rem); line-height: 0.9; letter-spacing: -0.04em; }
         
-        /* Custom Sizing for Asymmetry */
-        .col-2 { grid-column: span 2; }
-        .col-4 { grid-column: span 4; }
-        .row-2 { grid-row: span 2; }
-        .row-3 { grid-row: span 3; }
+        /* Custom Sections */
+        .glass-card { background: rgba(232, 226, 214, 0.03); border: 1px solid rgba(232, 226, 214, 0.1); border-radius: 2rem; }
+        .cream-card { background: var(--cream); color: var(--bg); border-radius: 2rem; }
 
-        /* Smooth Reveal */
-        .reveal { opacity: 0; transform: scale(0.95); transition: 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
-        .reveal.visible { opacity: 1; transform: scale(1); }
+        /* Before/After Custom Slider */
+        .ba-slider { position: relative; height: 350px; border-radius: 2rem; overflow: hidden; }
+        .ba-handle { position: absolute; top: 0; left: 50%; width: 2px; height: 100%; background: var(--cream); z-index: 10; }
 
-        /* Interactive Menu */
-        #side-drawer { transform: translateX(100%); transition: 0.5s cubic-bezier(0.7, 0, 0.3, 1); }
-        #side-drawer.active { transform: translateX(0); }
+        /* Animation */
+        .reveal { opacity: 0; transform: translateY(40px); transition: 1s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
 
-        /* Hide scrollbars */
         .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="pb-24">
+<body class="pb-20">
 
-    <div id="side-drawer" class="fixed inset-0 z-[100] bg-[#0A0A0A] p-10 flex flex-col justify-between">
-        <div class="flex justify-between items-center">
-            <span class="serif text-2xl">Menu</span>
-            <button id="close-btn" class="p-3 bg-white/5 rounded-full"><i data-lucide="x"></i></button>
-        </div>
-        <nav class="space-y-8">
-            <a href="#" class="block text-5xl serif italic border-b border-white/10 pb-4">Style Menu</a>
-            <a href="#" class="block text-5xl serif italic border-b border-white/10 pb-4">Our Gallery</a>
-            <a href="#" class="block text-5xl serif italic border-b border-white/10 pb-4">Shop Care</a>
-            <a href="#" class="block text-5xl serif italic border-b border-white/10 pb-4">Locations</a>
+    <div id="menu" class="fixed inset-0 z-[100] bg-[#1a1a1a] p-8 hidden flex-col justify-center">
+        <button id="close" class="absolute top-8 right-8"><i data-lucide="x" class="w-10 h-10"></i></button>
+        <nav class="space-y-4">
+            <a href="#" class="serif text-6xl block hover:italic transition-all">Booking</a>
+            <a href="#" class="serif text-6xl block hover:italic transition-all">Menu</a>
+            <a href="#" class="serif text-6xl block hover:italic transition-all">Apothecary</a>
+            <a href="#" class="serif text-6xl block hover:italic transition-all">Society</a>
         </nav>
-        <div class="flex gap-4">
-            <button class="flex-1 py-4 bg-white/5 rounded-2xl flex items-center justify-center gap-2"><i data-lucide="instagram"></i> IG</button>
-            <button class="flex-1 py-4 bg-white/5 rounded-2xl flex items-center justify-center gap-2"><i data-lucide="facebook"></i> FB</button>
-        </div>
     </div>
 
-    <header class="p-6 flex justify-between items-center">
-        <div class="flex flex-col">
-            <span class="text-[10px] uppercase tracking-widest opacity-40">Good Morning</span>
-            <span class="serif text-xl italic">Vintage Chair</span>
+    <header class="p-6 flex justify-between items-center fixed top-0 w-full z-50 bg-[#121212]/80 backdrop-blur-lg">
+        <button id="open"><i data-lucide="menu-alt-2" class="w-8 h-8"></i></button>
+        <div class="serif text-2xl uppercase tracking-tighter">Estate <span class="opacity-50 font-light">Grooming</span></div>
+        <div class="w-10 h-10 bg-cream rounded-full flex items-center justify-center text-black">
+            <i data-lucide="plus" class="w-6 h-6"></i>
         </div>
-        <button id="menu-trigger" class="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center border border-white/10">
-            <i data-lucide="align-right"></i>
-        </button>
     </header>
 
-    <main class="bento-container">
-        
-        <div class="bento-item col-4 row-3 reveal">
-            <img src="https://images.unsplash.com/photo-1593702275677-f916c8c7604d?q=80" class="absolute inset-0 w-full h-full object-cover opacity-60">
-            <div class="relative h-full p-6 flex flex-col justify-end bg-gradient-to-t from-black">
-                <h2 class="serif text-4xl leading-none italic mb-2">Modern<br>Apothecary</h2>
-                <p class="text-[10px] uppercase tracking-widest opacity-60">Est. 2026 • London</p>
+    <section class="pt-32 px-6 reveal">
+        <h1 class="serif hero-text italic mb-8">Sharpness<br>Redefined.</h1>
+        <div class="magazine-grid">
+            <div class="span-4 h-48 rounded-[2rem] overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1512690199101-837494639967?q=80" class="w-full h-full object-cover grayscale">
+            </div>
+            <div class="span-2 cream-card p-4 flex flex-col justify-end">
+                <i data-lucide="arrow-down-right" class="w-8 h-8 mb-4"></i>
+                <p class="text-[10px] font-bold uppercase leading-tight">Scroll for<br>The Society</p>
             </div>
         </div>
+    </section>
 
-        <div class="bento-item col-4 flex items-center px-6 gap-4 bg-white text-black reveal">
-            <div class="w-10 h-10 bg-black rounded-full flex items-center justify-center">
-                <i data-lucide="percent" class="text-white w-5 h-5"></i>
-            </div>
-            <div class="flex-1">
-                <p class="text-[10px] font-bold uppercase">First Visit Offer</p>
-                <p class="text-xs font-light">Claim 25% off signature cuts</p>
-            </div>
-            <i data-lucide="chevron-right" class="opacity-30"></i>
-        </div>
-
-        <div class="bento-item col-2 row-2 p-6 flex flex-col justify-between bg-[#96897B] text-black reveal">
-            <i data-lucide="calendar" class="w-8 h-8"></i>
-            <div>
-                <p class="font-bold text-lg leading-tight">Book A<br>Chair</p>
-                <select class="mt-2 w-full bg-black/10 border-none text-[10px] font-bold uppercase p-1">
-                    <option>Select Treatment</option>
-                    <option>Haircut</option>
-                    <option>Hot Shave</option>
-                </select>
+    <section class="p-6 reveal">
+        <div class="glass-card p-8">
+            <h2 class="serif text-4xl mb-6">Claim Your Seat</h2>
+            <div class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <select class="col-span-2 bg-transparent border-b border-cream/20 py-4 text-xl serif outline-none">
+                        <option class="bg-black">The Signature Cut</option>
+                        <option class="bg-black">Beard Sculpting</option>
+                        <option class="bg-black">The Full Ritual</option>
+                    </select>
+                    <input type="date" class="bg-transparent border-b border-cream/20 py-4 text-sm outline-none invert">
+                    <input type="time" class="bg-transparent border-b border-cream/20 py-4 text-sm outline-none invert">
+                </div>
+                <button class="w-full py-6 cream-card font-bold text-lg uppercase tracking-tighter mt-4">Confirm Reservation</button>
             </div>
         </div>
+    </section>
 
-        <div class="bento-item col-2 row-2 p-5 flex flex-col justify-between reveal">
-            <span class="text-[10px] uppercase tracking-widest opacity-40">Hours</span>
-            <div class="text-[10px] space-y-1">
-                <div class="flex justify-between"><span>M-F</span><span>9-8</span></div>
-                <div class="flex justify-between"><span>SAT</span><span>10-6</span></div>
-                <div class="flex justify-between text-white/20"><span>SUN</span><span>OFF</span></div>
+    <section class="p-6 reveal">
+        <div class="flex justify-between items-end mb-8">
+            <h3 class="serif text-5xl">Menu</h3>
+            <p class="text-xs opacity-40 uppercase tracking-widest">Pricing 2026</p>
+        </div>
+        <div class="space-y-4">
+            <div class="flex justify-between items-center border-b border-cream/10 pb-4">
+                <div>
+                    <h4 class="serif text-2xl italic">Master Cut</h4>
+                    <p class="text-[10px] opacity-40 uppercase">60 MIN • SENIOR BARBER</p>
+                </div>
+                <span class="text-3xl serif">$65</span>
             </div>
-            <div class="w-full h-1 bg-white/10 rounded-full overflow-hidden">
-                <div class="w-3/4 h-full bg-[#96897B]"></div>
+            <div class="flex justify-between items-center border-b border-cream/10 pb-4">
+                <div>
+                    <h4 class="serif text-2xl italic">Classic Taper</h4>
+                    <p class="text-[10px] opacity-40 uppercase">45 MIN • WASH & STYLE</p>
+                </div>
+                <span class="text-3xl serif">$45</span>
             </div>
         </div>
+    </section>
 
-        <div class="bento-item col-2 p-5 flex items-center gap-3 reveal">
-            <div class="p-2 bg-white/5 rounded-lg"><i data-lucide="scissors" class="w-4 h-4 opacity-40"></i></div>
-            <span class="text-xs font-bold">$40</span>
+    <section class="px-6 reveal">
+        <div class="relative rounded-[3rem] overflow-hidden p-10 bg-gradient-to-br from-cream to-cream-dark text-black">
+            <div class="relative z-10">
+                <h3 class="serif text-6xl leading-none mb-6">Mid-Week<br>Elegance.</h3>
+                <p class="font-bold text-xs uppercase mb-8">20% Off all Shaves Tuesday - Thursday</p>
+                <div class="flex items-center gap-4">
+                    <span class="text-4xl serif font-bold underline">Apply</span>
+                    <i data-lucide="arrow-right" class="w-8 h-8"></i>
+                </div>
+            </div>
+            <i data-lucide="scissors" class="absolute -right-10 -bottom-10 w-64 h-64 opacity-10 rotate-12"></i>
         </div>
+    </section>
 
-        <div class="bento-item col-2 p-5 flex items-center gap-3 reveal">
-            <div class="p-2 bg-white/5 rounded-lg"><i data-lucide="wind" class="w-4 h-4 opacity-40"></i></div>
-            <span class="text-xs font-bold">$35</span>
-        </div>
-
-        <div class="col-4 py-4 reveal">
-            <h3 class="px-2 text-[10px] uppercase tracking-[0.2em] opacity-30 mb-4">The Apothecary</h3>
-            <div class="flex gap-4 overflow-x-auto no-scrollbar">
-                <script>
-                    for(let i=1; i<=6; i++){
-                        document.write(`
-                        <div class="min-w-[140px] aspect-square bg-[#1A1A1A] rounded-[32px] p-6 border border-white/5 flex flex-col justify-between">
-                            <i data-lucide="package" class="w-6 h-6 opacity-20"></i>
+    <section class="py-12 reveal">
+        <h3 class="serif text-4xl px-6 mb-8 italic">The Apothecary</h3>
+        <div class="flex gap-4 overflow-x-auto px-6 no-scrollbar">
+            <script>
+                for(let i=1; i<=6; i++){
+                    document.write(`
+                        <div class="min-w-[280px] glass-card p-8 flex flex-col justify-between h-[350px]">
+                            <div class="w-full h-40 bg-cream/5 rounded-2xl flex items-center justify-center">
+                                <i data-lucide="beaker" class="w-12 h-12 opacity-10"></i>
+                            </div>
                             <div>
-                                <p class="text-[10px] font-bold">POMADE v${i}</p>
-                                <p class="text-[10px] opacity-40">$18</p>
+                                <h5 class="serif text-2xl">Formula No. 0${i}</h5>
+                                <p class="text-xs opacity-40 mb-4">Matte Finish Clay</p>
+                                <div class="flex justify-between items-center">
+                                    <span class="font-bold">$28.00</span>
+                                    <button class="w-10 h-10 rounded-full border border-cream/20 flex items-center justify-center"><i data-lucide="shopping-bag" class="w-4 h-4"></i></button>
+                                </div>
                             </div>
                         </div>
-                        `);
-                    }
-                </script>
+                    `);
+                }
+            </script>
+        </div>
+    </section>
+
+    <section class="p-6 reveal">
+        <h3 class="serif text-4xl mb-8">Craftsmanship</h3>
+        <div class="ba-slider">
+            <div class="absolute inset-0 bg-cover bg-center grayscale" style="background-image: url('https://images.unsplash.com/photo-1599351431247-f50940aa6113?q=80');"></div>
+            <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1599351431247-f50940aa6113?q=80'); clip-path: inset(0 50% 0 0);"></div>
+            <div class="ba-handle"></div>
+            <div class="absolute bottom-6 left-6 text-[10px] font-bold tracking-widest bg-black/50 px-4 py-2 rounded-full">Slide to Compare</div>
+        </div>
+    </section>
+
+    <section class="p-6 reveal">
+        <h3 class="serif text-4xl mb-8 italic">The Society</h3>
+        <div class="grid grid-cols-2 gap-4">
+            <div class="text-center">
+                <div class="aspect-[4/5] glass-card mb-4 flex items-center justify-center overflow-hidden">
+                    <i data-lucide="user" class="w-20 h-20 opacity-5"></i>
+                </div>
+                <h4 class="serif text-2xl italic">Vance Reed</h4>
+                <p class="text-[10px] opacity-40">Creative Lead</p>
+            </div>
+            <div class="text-center">
+                <div class="aspect-[4/5] glass-card mb-4 flex items-center justify-center overflow-hidden">
+                    <i data-lucide="user" class="w-20 h-20 opacity-5"></i>
+                </div>
+                <h4 class="serif text-2xl italic">Arthur Hall</h4>
+                <p class="text-[10px] opacity-40">Master Barber</p>
             </div>
         </div>
+    </section>
 
-        <div class="bento-item col-4 row-3 reveal">
-            <div class="absolute inset-0 flex">
-                <div class="w-1/2 h-full bg-cover grayscale" style="background-image:url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80')"></div>
-                <div class="w-1/2 h-full bg-cover border-l border-white/20" style="background-image:url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80')"></div>
+    <section class="p-6 reveal">
+        <div class="magazine-grid">
+            <div class="span-3 h-64 glass-card overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80" class="w-full h-full object-cover grayscale opacity-50">
             </div>
-            <div class="absolute inset-0 flex items-center justify-center">
-                <div class="bg-black/50 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 text-[10px] uppercase font-bold tracking-widest">
-                    Swipe Comparison
+            <div class="span-3 h-40 glass-card self-end"></div>
+            <div class="span-6 h-48 glass-card overflow-hidden mt-[-4rem]">
+                <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80" class="w-full h-full object-cover grayscale opacity-30">
+            </div>
+        </div>
+    </section>
+
+    <section class="p-6 reveal">
+        <div class="magazine-grid">
+            <div class="span-full glass-card p-8">
+                <h3 class="serif text-4xl mb-2">Location</h3>
+                <p class="text-xs opacity-40 mb-8 uppercase tracking-[0.2em]">Mayfair, London</p>
+                <div class="h-64 bg-white/5 rounded-3xl mb-8 flex items-center justify-center italic text-cream/10">Interactive Map Interface</div>
+                <div class="grid grid-cols-2 gap-4">
+                    <button class="flex items-center justify-center gap-3 py-4 border border-cream/20 rounded-2xl text-[10px] font-bold uppercase tracking-widest"><i data-lucide="phone" class="w-4 h-4"></i> Call</button>
+                    <button class="flex items-center justify-center gap-3 py-4 bg-[#25D366] text-black rounded-2xl text-[10px] font-bold uppercase tracking-widest"><i data-lucide="message-circle" class="w-4 h-4"></i> WhatsApp</button>
                 </div>
             </div>
         </div>
+    </section>
 
-        <div class="col-4 flex justify-between px-2 py-4 reveal">
-            <div class="flex flex-col items-center gap-2">
-                <div class="w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center"><i data-lucide="user" class="opacity-20"></i></div>
-                <span class="text-[10px] font-bold">Julian</span>
-            </div>
-            <div class="flex flex-col items-center gap-2">
-                <div class="w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center"><i data-lucide="user" class="opacity-20"></i></div>
-                <span class="text-[10px] font-bold">Marcus</span>
-            </div>
-            <div class="flex flex-col items-center gap-2">
-                <div class="w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center"><i data-lucide="user" class="opacity-20"></i></div>
-                <span class="text-[10px] font-bold">Silas</span>
-            </div>
-            <div class="flex flex-col items-center gap-2">
-                <div class="w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center"><i data-lucide="plus" class="opacity-20"></i></div>
-                <span class="text-[10px] font-bold">Join Us</span>
-            </div>
-        </div>
-
-        <div class="bento-item col-2 row-2 reveal">
-            <img src="https://images.unsplash.com/photo-1512690199101-837494639967?q=80" class="w-full h-full object-cover grayscale opacity-40">
-        </div>
-        <div class="bento-item col-2 row-1 reveal">
-            <div class="w-full h-full bg-white/5 flex items-center justify-center"><i data-lucide="camera" class="opacity-20"></i></div>
-        </div>
-        <div class="bento-item col-2 row-1 reveal">
-             <div class="w-full h-full bg-white/5 flex items-center justify-center"><i data-lucide="instagram" class="opacity-20"></i></div>
-        </div>
-
-        <div class="bento-item col-4 p-6 reveal">
-            <div class="flex justify-between items-center">
-                <div>
-                    <h4 class="font-bold text-sm">Main Studio</h4>
-                    <p class="text-[10px] opacity-40">24b Regent St, London</p>
+    <section class="p-6 reveal">
+        <div class="magazine-grid">
+            <div class="span-3 glass-card p-6">
+                <h4 class="serif text-xl mb-4">Hours</h4>
+                <div class="text-[10px] space-y-2 opacity-60">
+                    <p class="flex justify-between"><span>Mon-Fri</span><span>09-20</span></p>
+                    <p class="flex justify-between"><span>Sat</span><span>10-18</span></p>
+                    <p class="flex justify-between italic"><span>Sun</span><span>Closed</span></p>
                 </div>
-                <button class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center"><i data-lucide="map-pin" class="w-4 h-4"></i></button>
+            </div>
+            <div class="span-3 glass-card p-6 flex items-center justify-center">
+                <i data-lucide="star" class="w-12 h-12 opacity-10"></i>
+            </div>
+            <div class="span-full mt-4">
+                <details class="glass-card p-6 group">
+                    <summary class="list-none serif text-xl flex justify-between items-center cursor-pointer">
+                        Our Cancellation Policy <i data-lucide="chevron-right" class="w-5 h-5 group-open:rotate-90 transition-all"></i>
+                    </summary>
+                    <p class="mt-4 text-xs opacity-40 leading-relaxed">Appointments cancelled within 24 hours will incur a 50% service charge to support our craftsmen.</p>
+                </details>
             </div>
         </div>
+    </section>
 
-        <div class="bento-item col-2 row-2 p-6 flex flex-col justify-between bg-white text-black reveal">
-            <p class="text-xs font-bold uppercase">Questions?</p>
-            <button class="w-full py-3 bg-black text-white rounded-xl text-[10px] font-bold">CONTACT</button>
+    <footer class="p-12 text-center border-t border-cream/5 mt-20">
+        <h2 class="serif text-4xl mb-8 italic">Estate Society</h2>
+        <div class="flex justify-center gap-8 text-[10px] font-bold opacity-30 uppercase tracking-[0.3em] mb-12">
+            <span>Instagram</span><span>Twitter</span><span>LinkedIn</span>
         </div>
-        
-        <div class="bento-item col-2 row-1 p-4 flex items-center justify-center bg-[#25D366] text-black reveal">
-            <i data-lucide="message-circle"></i>
-        </div>
-        <div class="bento-item col-2 row-1 p-4 flex items-center justify-center bg-blue-500 text-white reveal">
-            <i data-lucide="phone"></i>
-        </div>
-
-        <div class="bento-item col-4 p-2 reveal">
-            <details class="w-full p-4 text-[10px]">
-                <summary class="list-none flex justify-between items-center font-bold uppercase tracking-widest">
-                    Booking Policy <i data-lucide="chevron-down" class="w-3 h-3"></i>
-                </summary>
-                <p class="mt-4 opacity-40">Cancellations must be made 24h prior.</p>
-            </details>
-        </div>
-    </main>
-
-    <footer class="p-10 text-center opacity-30">
-        <p class="serif italic text-2xl mb-4">The Vintage Chair</p>
-        <div class="flex justify-center gap-4 text-[10px] font-bold uppercase mb-10">
-            <span>Home</span><span>Privacy</span><span>Terms</span>
-        </div>
+        <p class="text-[8px] opacity-20 uppercase tracking-widest">© 2026 Estate Grooming Co. • London • UK</p>
     </footer>
 
-    <nav class="fixed bottom-6 left-6 right-6 h-16 bg-[#1A1A1A]/90 backdrop-blur-2xl border border-white/10 rounded-[32px] flex justify-around items-center z-[90] shadow-2xl">
-        <button class="text-white"><i data-lucide="layout-grid"></i></button>
-        <button class="opacity-30"><i data-lucide="calendar"></i></button>
-        <button class="w-12 h-12 bg-white text-black rounded-full flex items-center justify-center -mt-6 shadow-lg shadow-white/10"><i data-lucide="plus"></i></button>
-        <button class="opacity-30"><i data-lucide="search"></i></button>
-        <button class="opacity-30"><i data-lucide="user"></i></button>
+    <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] h-16 bg-[#1a1a1a]/95 backdrop-blur-2xl border border-white/5 rounded-full flex justify-around items-center px-4 z-[100] shadow-2xl">
+        <button class="p-3"><i data-lucide="home" class="w-5 h-5 text-cream"></i></button>
+        <button class="p-3 opacity-30"><i data-lucide="scissors" class="w-5 h-5"></i></button>
+        <div class="w-12 h-12 bg-cream rounded-full flex items-center justify-center -mt-8 shadow-lg shadow-cream/10">
+            <i data-lucide="calendar" class="w-6 h-6 text-black"></i>
+        </div>
+        <button class="p-3 opacity-30"><i data-lucide="package" class="w-5 h-5"></i></button>
+        <button class="p-3 opacity-30"><i data-lucide="map-pin" class="w-5 h-5"></i></button>
     </nav>
 
     <script>
         lucide.createIcons();
 
-        // Drawer Logic
-        const drawer = document.getElementById('side-drawer');
-        document.getElementById('menu-trigger').onclick = () => drawer.classList.add('active');
-        document.getElementById('close-btn').onclick = () => drawer.classList.remove('active');
+        // Menu Toggle
+        const menu = document.getElementById('menu');
+        document.getElementById('open').onclick = () => { menu.style.display = 'flex'; };
+        document.getElementById('close').onclick = () => { menu.style.display = 'none'; };
 
-        // Bento Animation
+        // Reveal Animation
         const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry, i) => {
-                if (entry.isIntersecting) {
-                    setTimeout(() => {
-                        entry.target.classList.add('visible');
-                    }, i * 50);
-                }
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('active');
             });
         }, { threshold: 0.1 });
 
