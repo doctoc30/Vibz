@@ -3,197 +3,249 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VOID | 2030 Grooming Lab</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <title>VOID 2030 | Spatial Grooming</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&family=Instrument+Serif&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #F2F0EB;
-            --sienna: #A0522D;
-            --glass: rgba(255, 255, 255, 0.4);
+            --bg: #F9F8F6;
+            --sienna: #5C3D2E;
             --accent: #D4AF37;
+            --glass: rgba(255, 255, 255, 0.6);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Space Grotesk', sans-serif; }
-
-        body { 
-            background: var(--bg); 
-            color: #1a1a1a; 
-            overflow: hidden; 
-            height: 100vh;
-            perspective: 1000px;
-        }
-
-        /* 3D Canvas Background */
-        #canvas-container {
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg); font-family: 'Space Grotesk', sans-serif; color: var(--sienna); overflow-x: hidden; }
+        
+        /* --- HEADER & NAV --- */
+        header {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            opacity: 0.6;
-        }
-
-        /* Spatial UI Overlay */
-        .interface {
-            display: flex;
-            height: 100vh;
-            padding: 4rem;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .brand-core {
-            transform-style: preserve-3d;
-            animation: float 6s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateZ(0px) rotateY(0deg); }
-            50% { transform: translateZ(50px) rotateY(5deg); }
-        }
-
-        h1 {
-            font-size: 12vw;
-            font-weight: 200;
-            line-height: 0.8;
-            letter-spacing: -0.05em;
-            text-transform: lowercase;
-        }
-
-        .booking-pod {
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
             background: var(--glass);
-            backdrop-filter: blur(40px) saturate(150%);
-            border: 1px solid rgba(255,255,255,0.8);
-            padding: 3rem;
-            border-radius: 100px 100px 20px 20px;
-            width: 400px;
-            text-align: center;
-            box-shadow: 0 40px 100px rgba(160, 82, 45, 0.1);
-            transform: rotateX(10deg);
-        }
-
-        /* The "Scan" Button */
-        .scan-trigger {
-            width: 100%;
-            height: 80px;
-            background: var(--sienna);
-            color: white;
-            border: none;
-            border-radius: 40px;
-            font-weight: 600;
-            font-size: 1rem;
-            margin-top: 2rem;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            transition: 0.3s;
-        }
-
-        .scan-line {
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            animation: scan 2s infinite;
-        }
-
-        @keyframes scan {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
-
-        /* Top Nav - Spatial */
-        nav {
-            position: fixed;
-            top: 40px;
-            width: 100%;
+            backdrop-filter: blur(20px);
+            padding: 1rem 2rem;
+            border-radius: 50px;
             display: flex;
             justify-content: space-between;
-            padding: 0 4rem;
-            z-index: 10;
-        }
-
-        .availability {
-            background: white;
-            padding: 0.5rem 1.5rem;
-            border-radius: 30px;
-            font-size: 0.8rem;
-            display: flex;
             align-items: center;
-            gap: 10px;
+            z-index: 1000;
+            border: 1px solid rgba(255,255,255,0.3);
         }
+        .nav-links a { text-decoration: none; color: var(--sienna); margin-left: 2rem; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; }
+
+        /* --- HERO SECTION --- */
+        .hero { height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; padding-top: 100px; }
+        h1 { font-family: 'Instrument Serif', serif; font-size: 10vw; line-height: 0.8; margin-bottom: 2rem; }
+
+        /* --- ROTATING CHAIRS SECTION (WOW FACTOR) --- */
+        .chairs-showcase { height: 80vh; perspective: 1000px; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .carousel { display: flex; gap: 40px; transform-style: preserve-3d; animation: rotate 20s linear infinite; }
+        .chair-card {
+            width: 300px;
+            height: 400px;
+            background: white;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+            border: 1px solid var(--accent);
+        }
+        @keyframes rotate { from { transform: rotateY(0deg); } to { transform: rotateY(360deg); } }
+
+        /* --- BENTO PRICE LIST --- */
+        .section-padding { padding: 100px 5%; }
+        .bento-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .bento-item { background: white; padding: 2rem; border-radius: 30px; border: 1px solid rgba(176, 137, 104, 0.2); }
+        .bento-item.large { grid-column: span 2; grid-row: span 2; background: var(--sienna); color: var(--bg); }
+
+        /* --- BOOKING SYSTEM --- */
+        .booking-container { background: white; border-radius: 40px; padding: 3rem; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        select, input { width: 100%; padding: 1.5rem; border-radius: 15px; border: 1px solid #ddd; margin-bottom: 1rem; font-family: inherit; }
+        .btn-main { background: var(--sienna); color: white; padding: 1.5rem 3rem; border: none; border-radius: 15px; cursor: pointer; font-weight: 700; width: 100%; }
+
+        /* --- FAQ TOGGLE --- */
+        .faq-item { border-bottom: 1px solid #ddd; padding: 1.5rem 0; cursor: pointer; }
+        .faq-answer { height: 0; overflow: hidden; transition: 0.3s; opacity: 0; }
+        .faq-item.active .faq-answer { height: auto; padding-top: 1rem; opacity: 1; }
+
+        /* --- SCAN OVERLAY --- */
+        #scan-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); z-index: 2000; display: none; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .laser { width: 300px; height: 2px; background: var(--accent); box-shadow: 0 0 15px var(--accent); position: absolute; animation: sweep 2s infinite; }
+        @keyframes sweep { 0%, 100% { top: 30%; } 50% { top: 70%; } }
+
+        .stats { display: flex; justify-content: space-around; text-align: center; }
+        .stat-number { font-size: 4rem; font-weight: 700; color: var(--accent); }
     </style>
 </head>
 <body>
 
-    <div id="canvas-container"></div>
-
-    <nav>
-        <div style="font-weight: 900; letter-spacing: 5px;">VOID™</div>
-        <div class="availability">
-            <span style="color: #22c55e;">●</span> NEURAL-LINK ACTIVE // SLOTS: 04
+    <div id="scan-overlay">
+        <div style="border: 2px solid var(--sienna); width: 300px; height: 400px; border-radius: 150px; position: relative;">
+            <div class="laser"></div>
         </div>
-    </nav>
+        <p class="data-text" style="margin-top: 2rem; font-weight: 700;">ANALYZING FACIAL GEOMETRY...</p>
+    </div>
 
-    <main class="interface">
-        <div class="brand-core">
-            <p style="letter-spacing: 1em; opacity: 0.4; margin-bottom: 1rem;">FUTURE PROOF</p>
-            <h1>the<br><span style="color: var(--sienna)">void.</span></h1>
+    <header>
+        <div style="font-weight: 900; letter-spacing: 2px;">VOID // 2030</div>
+        <nav class="nav-links">
+            <a href="#about">About</a>
+            <a href="#services">Prices</a>
+            <a href="#book">Book</a>
+            <a href="#faq">FAQ</a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div>
+            <p style="letter-spacing: 5px; margin-bottom: 1rem;">ELITE GROOMING LAB</p>
+            <h1>Beyond<br>The Blade</h1>
+            <button class="btn-main" style="width: auto; margin-top: 2rem;" onclick="runScan()">INITIALIZE NEURAL BOOKING</button>
         </div>
+    </section>
 
-        <div class="booking-pod">
-            <div style="margin-bottom: 2rem;">
-                <p style="font-size: 0.9rem; opacity: 0.6; text-transform: uppercase;">Aesthetic Engine 9.0</p>
-                <h2 style="font-weight: 400;">Initialize Profile</h2>
+    <section class="chairs-showcase">
+        <h2 style="margin-bottom: 3rem;">SELECT YOUR THRONE</h2>
+        <div class="carousel">
+            <div class="chair-card">
+                <i data-lucide="armchair" size="64"></i>
+                <h3 style="margin-top: 1rem;">THE EXECUTIVE</h3>
+                <p>Cognac Leather</p>
             </div>
-            
-            <div style="border: 1px dashed var(--sienna); padding: 2rem; border-radius: 50%; width: 150px; height: 150px; margin: 0 auto; display: grid; place-items: center;">
-                <span style="font-size: 0.7rem; color: var(--sienna);">BIOMETRIC FOCUS</span>
+            <div class="chair-card" style="transform: translateZ(100px) rotateY(120deg);">
+                <i data-lucide="armchair" size="64"></i>
+                <h3 style="margin-top: 1rem;">THE MINIMALIST</h3>
+                <p>White Alabaster</p>
             </div>
-
-            <button class="scan-trigger">
-                <div class="scan-line"></div>
-                START STYLE SCAN
-            </button>
+            <div class="chair-card" style="transform: translateZ(100px) rotateY(240deg);">
+                <i data-lucide="armchair" size="64"></i>
+                <h3 style="margin-top: 1rem;">THE VINTAGE</h3>
+                <p>Oxblood Suede</p>
+            </div>
         </div>
-    </main>
+    </section>
+
+    <section id="about" class="section-padding">
+        <div class="stats">
+            <div><div class="stat-number">12k</div><p>Cuts Performed</p></div>
+            <div><div class="stat-number">2030</div><p>Tech Standard</p></div>
+            <div><div class="stat-number">99%</div><p>Precision Rate</p></div>
+        </div>
+    </section>
+
+    <section id="services" class="section-padding">
+        <h2 style="font-size: 3rem; margin-bottom: 2rem;">SERVICE MENU</h2>
+        <div class="bento-grid">
+            <div class="bento-item large">
+                <h3>THE FULL REBOOT</h3>
+                <p>Signature Cut, Hot Towel, Neural Scan Styling.</p>
+                <h2 style="font-size: 4rem; margin-top: 2rem;">$85</h2>
+            </div>
+            <div class="bento-item">
+                <h3>BEARD SCULPT</h3>
+                <p>$40</p>
+            </div>
+            <div class="bento-item">
+                <h3>SKIN FADE</h3>
+                <p>$55</p>
+            </div>
+            <div class="bento-item" style="grid-column: span 2;">
+                <h3>THE 2030 SPECIAL</h3>
+                <p>Full face treatment + Haircut.</p>
+                <p>$120</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="book" class="section-padding">
+        <div class="booking-container">
+            <div>
+                <h2>SECURE ACCESS</h2>
+                <p style="margin-bottom: 2rem;">Pick your master barber and time slot.</p>
+                <select id="barber">
+                    <option>Choose Barber</option>
+                    <option>Marcus (Master)</option>
+                    <option>Julian (Creative Director)</option>
+                    <option>AI-Synthesizer (Perfect Fade)</option>
+                </select>
+                <input type="date">
+                <select>
+                    <option>Available Slots</option>
+                    <option>10:00 AM</option>
+                    <option>02:30 PM</option>
+                    <option>05:00 PM</option>
+                </select>
+            </div>
+            <div style="background: var(--bg); border-radius: 20px; padding: 2rem; display: flex; flex-direction: column; justify-content: center;">
+                <h3>CONTACT DETAILS</h3>
+                <input type="text" placeholder="Full Name">
+                <input type="tel" placeholder="Neural ID / Phone">
+                <button class="btn-main">CONFIRM BOOKING</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="faq" class="section-padding">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 50px;">
+            <div>
+                <h2 style="margin-bottom: 2rem;">FREQUENT QUERIES</h2>
+                <div class="faq-item" onclick="this.classList.toggle('active')">
+                    <strong>What is Neural Styling?</strong>
+                    <div class="faq-answer">Our AI analyzes your head shape to suggest the mathematically perfect cut for your features.</div>
+                </div>
+                <div class="faq-item" onclick="this.classList.toggle('active')">
+                    <strong>Do you accept crypto?</strong>
+                    <div class="faq-answer">We accept Ethereum, Bitcoin, and VOID-tokens.</div>
+                </div>
+            </div>
+            <div style="background: #e0e0e0; border-radius: 30px; height: 300px; display: grid; place-items: center;">
+                <p><i data-lucide="map-pin"></i> 22 BAKER ST, LONDON 2030</p>
+            </div>
+        </div>
+    </section>
 
     <script>
-        // Simple 2030 Spatial Background using Three.js
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.getElementById('canvas-container').appendChild(renderer.domElement);
+        lucide.createIcons();
 
-        // Create a "Liquid Leather" Torus
-        const geometry = new THREE.TorusKnotGeometry(10, 3, 100, 16);
-        const material = new THREE.MeshNormalMaterial({ wireframe: true });
-        const torus = new THREE.Mesh(geometry, material);
-        scene.add(torus);
-
-        camera.position.z = 30;
-
-        function animate() {
-            requestAnimationFrame(animate);
-            torus.rotation.x += 0.005;
-            torus.rotation.y += 0.005;
-            renderer.render(scene, camera);
-        }
-        animate();
-
-        // Parallax Effect
-        document.addEventListener('mousemove', (e) => {
-            const x = (e.clientX - window.innerWidth / 2) / 100;
-            const y = (e.clientY - window.innerHeight / 2) / 100;
+        // Neural Scan Effect
+        function runScan() {
+            const overlay = document.getElementById('scan-overlay');
+            overlay.style.display = 'flex';
+            const logs = ["LOCATING FEATURES...", "MAPPING STRUCTURE...", "STYLE LOCKED."];
+            let i = 0;
+            const text = document.querySelector('.data-text');
             
-            gsap.to(".brand-core", { x: x * 2, y: y * 2, rotationY: x, rotationX: -y });
-            gsap.to(".booking-pod", { x: -x, y: -y, rotationY: -x * 2 });
-            gsap.to(torus.position, { x: x * 0.5, y: -y * 0.5 });
+            const timer = setInterval(() => {
+                text.innerText = logs[i];
+                i++;
+                if(i === logs.length) {
+                    clearInterval(timer);
+                    setTimeout(() => { 
+                        overlay.style.display = 'none';
+                        document.getElementById('book').scrollIntoView({behavior: 'smooth'});
+                    }, 1000);
+                }
+            }, 1000);
+        }
+
+        // GSAP Scroll Animations
+        gsap.registerPlugin(ScrollTrigger);
+        gsap.from(".bento-item", {
+            scrollTrigger: ".bento-grid",
+            y: 50,
+            opacity: 0,
+            stagger: 0.2,
+            duration: 1
         });
     </script>
 </body>
