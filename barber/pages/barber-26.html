@@ -3,231 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CHRONOS | Flagship Terminal</title>
+    <title>THE LOCAL FLAGSHIP | Elite Grooming</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@200;900&family=Bricolage+Grotesque:wght@200;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;800&family=Unbounded:wght@900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --alabaster: #F4F4F1;
-            --cobalt: #002BFF;
-            --smoke: #E8E8E1;
+            --cream-bg: #FDFCF8;
+            --elite-blue: #0A2EE2;
+            --soft-border: rgba(10, 46, 226, 0.08);
         }
         body { 
-            background-color: var(--alabaster); 
-            color: #000; 
-            font-family: 'Bricolage Grotesque', sans-serif;
-            overflow-x: hidden;
+            background-color: var(--cream-bg); 
+            color: #1a1a1a; 
+            font-family: 'Plus Jakarta Sans', sans-serif;
         }
         .unbounded { font-family: 'Unbounded', sans-serif; }
-        
-        /* Kinetic Sidebar Menu */
-        .sidebar {
-            position: fixed;
-            left: 0; top: 0; bottom: 0;
-            width: 80px;
-            background: #fff;
-            border-right: 1px solid rgba(0,0,0,0.05);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            padding: 2rem 0;
-            z-index: 100;
+
+        /* Responsive Sidebar/Header Logic */
+        .app-shell { display: flex; flex-direction: column; }
+        @media (min-width: 1024px) {
+            .app-shell { flex-direction: row; }
+            .side-nav { width: 100px; height: 100vh; position: fixed; border-right: 1px solid var(--soft-border); }
+            .main-content { margin-left: 100px; width: calc(100% - 100px); }
         }
 
-        /* Viewport Grid System */
-        .v-grid {
-            margin-left: 80px;
+        /* Funky Grid Layout */
+        .feature-grid {
             display: grid;
-            grid-template-columns: repeat(12, 1fr);
-            min-height: 100vh;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 1.5rem;
+        }
+        @media (min-width: 768px) {
+            .feature-grid { grid-template-columns: repeat(12, 1fr); }
+            .span-8 { grid-column: span 8; }
+            .span-4 { grid-column: span 4; }
         }
 
-        /* Stat Animation */
-        .stat-bar {
-            height: 4px; background: var(--cobalt);
-            width: 0; transition: width 2s cubic-bezier(0.16, 1, 0.3, 1);
+        /* Animations */
+        .stat-glow { filter: drop-shadow(0 0 10px rgba(10, 46, 226, 0.2)); }
+        .pop-in { animation: pop 0.6s cubic-bezier(0.17, 0.67, 0.83, 0.67); }
+        @keyframes pop {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
         }
 
-        /* Wow Pop-up & Interactive Iframe */
-        .map-frame {
-            filter: grayscale(1) invert(0.1);
-            border-radius: 40px;
-            transition: 0.5s;
-        }
-        .map-frame:hover { filter: grayscale(0) invert(0); }
+        .reveal { opacity: 0; transform: translateY(20px); transition: 0.8s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
 
-        /* Asymmetrical "Funky" Sections */
-        .diagonal-box { clip-path: polygon(0 0, 100% 10%, 100% 100%, 0 90%); }
-
-        /* Reveal */
-        .reveal { opacity: 0; transform: translateX(-30px); transition: 1s ease-out; }
-        .reveal.active { opacity: 1; transform: translateX(0); }
-
-        .no-scrollbar::-webkit-scrollbar { display: none; }
+        /* Custom Scroll */
+        ::-webkit-scrollbar { width: 0px; }
     </style>
 </head>
-<body class="no-scrollbar">
+<body class="antialiased">
 
-    <aside class="sidebar">
-        <div class="unbounded font-black text-2xl text-blue-700">C.</div>
-        <nav class="flex flex-col gap-10">
-            <button class="hover:text-blue-600 transition"><i data-lucide="home"></i></button>
-            <button class="hover:text-blue-600 transition"><i data-lucide="scissors"></i></button>
-            <button class="hover:text-blue-600 transition"><i data-lucide="shopping-cart"></i></button>
-            <button id="hamburger" class="w-10 h-10 bg-black text-white rounded-full flex items-center justify-center">
-                <i data-lucide="plus"></i>
-            </button>
-        </nav>
-        <div class="rotate-[-90deg] text-[10px] font-bold tracking-[0.5em] opacity-20 whitespace-nowrap">CHRONOS EST. 2026</div>
-    </aside>
-
-    <main class="v-grid">
+    <div class="app-shell">
         
-        <section class="col-span-12 md:col-span-8 p-10 flex flex-col justify-center reveal">
-            <span class="unbounded text-xs font-black text-blue-600 mb-6 uppercase tracking-widest">Flagship Terminal</span>
-            <h1 class="unbounded text-7xl md:text-9xl font-black leading-[0.8] mb-12">
-                FAST <br> <span class="text-white bg-blue-600 px-4">ELITE</span> <br> CUTS.
-            </h1>
+        <nav class="side-nav bg-white z-50 flex lg:flex-col justify-between items-center p-6 lg:py-12 border-b lg:border-b-0 border-blue-50">
+            <div class="unbounded text-2xl text-blue-600">L.F.</div>
+            <div class="flex lg:flex-col gap-8 text-slate-400">
+                <button class="text-blue-600"><i data-lucide="home"></i></button>
+                <button class="hover:text-blue-600"><i data-lucide="calendar"></i></button>
+                <button class="hover:text-blue-600"><i data-lucide="package"></i></button>
+                <button class="hover:text-blue-600"><i data-lucide="map-pin"></i></button>
+            </div>
+            <div class="hidden lg:block rotate-[-90deg] text-[10px] font-bold opacity-20 whitespace-nowrap">LOCAL FLAGSHIP CO.</div>
+        </nav>
+
+        <main class="main-content w-full">
             
-            <div class="flex gap-4 items-center">
-                <div class="bg-white p-6 rounded-[30px] border border-black/5 shadow-xl flex gap-6 items-center">
+            <section class="p-6 lg:p-12 feature-grid mt-4">
+                <div class="span-8 flex flex-col justify-center reveal active">
+                    <div class="inline-block bg-blue-50 text-blue-600 px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-6">Local Barber • Flagship Quality</div>
+                    <h1 class="unbounded text-5xl md:text-8xl leading-none mb-8">THE <br><span class="text-blue-600">NEW</span> LOCAL.</h1>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <input type="text" placeholder="Your Phone Number" class="bg-white border border-blue-100 px-6 py-4 rounded-2xl w-full sm:max-w-xs outline-none focus:ring-2 ring-blue-600">
+                        <button class="bg-blue-600 text-white px-10 py-4 rounded-2xl font-bold hover:bg-black transition">GET NOTIFIED</button>
+                    </div>
+                </div>
+
+                <div class="span-4 bg-white border border-blue-50 p-10 rounded-[40px] flex flex-col justify-between shadow-sm reveal">
                     <div>
-                        <p class="text-[10px] font-black opacity-30 uppercase">Member Access</p>
-                        <p class="font-bold">Join the Queue</p>
+                        <p class="text-[10px] font-black opacity-30 uppercase mb-8">Real-time Wait</p>
+                        <h2 class="text-6xl font-black text-blue-600 count" data-target="12">0</h2>
+                        <p class="font-bold">Minutes</p>
                     </div>
-                    <button class="w-12 h-12 bg-blue-600 text-white rounded-2xl flex items-center justify-center wow-popup">
-                        <i data-lucide="chevron-right"></i>
-                    </button>
+                    <div class="mt-8 flex items-center gap-2">
+                        <span class="flex h-3 w-3 relative">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                        </span>
+                        <span class="text-xs font-bold opacity-40">Live Shop Pulse</span>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <section class="col-span-12 md:col-span-4 bg-white border-l border-black/5 p-10 flex flex-col justify-between">
-            <div class="reveal">
-                <h3 class="unbounded text-3xl font-black mb-10">THE <br>METRICS.</h3>
-                <div class="space-y-12">
+            <section class="p-6 lg:p-12 reveal">
+                <div class="bg-blue-600 rounded-[50px] p-8 lg:p-16 text-white feature-grid">
+                    <div class="span-4 flex flex-col justify-center">
+                        <h3 class="unbounded text-3xl mb-4">LOCK YOUR <br>CHAIR.</h3>
+                        <p class="opacity-60 text-sm">Select your local barber and preferred ritual below.</p>
+                    </div>
+                    <div class="span-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-bold opacity-50 ml-2">SERVICE</label>
+                            <select class="w-full bg-white/10 border border-white/20 p-5 rounded-3xl outline-none text-white appearance-none">
+                                <option class="text-black">Standard Taper</option>
+                                <option class="text-black">Flagship Skin Fade</option>
+                                <option class="text-black">Beard Sculpt</option>
+                            </select>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-bold opacity-50 ml-2">PREFERED BARBER</label>
+                            <select class="w-full bg-white/10 border border-white/20 p-5 rounded-3xl outline-none text-white appearance-none">
+                                <option class="text-black">Next Available</option>
+                                <option class="text-black">Marcus (Master)</option>
+                                <option class="text-black">Julian (Senior)</option>
+                            </select>
+                        </div>
+                        <button class="sm:col-span-2 bg-white text-blue-600 py-6 rounded-3xl font-black text-xs uppercase tracking-[0.2em] hover:scale-[0.98] transition">Confirm Reservation</button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="p-6 lg:p-12 feature-grid reveal">
+                <div class="span-8 bg-white border border-blue-50 p-8 lg:p-12 rounded-[50px]">
+                    <h3 class="unbounded text-2xl mb-10">THE MENU.</h3>
+                    <div class="space-y-8">
+                        <div class="flex justify-between items-center group">
+                            <div>
+                                <h4 class="font-bold text-lg">Flagship Cut</h4>
+                                <p class="text-xs opacity-40">45 Minutes • Wash & Hot Towel</p>
+                            </div>
+                            <span class="unbounded text-xl text-blue-600">$45</span>
+                        </div>
+                        <div class="flex justify-between items-center group">
+                            <div>
+                                <h4 class="font-bold text-lg">Junior Cut</h4>
+                                <p class="text-xs opacity-40">30 Minutes • Under 16s</p>
+                            </div>
+                            <span class="unbounded text-xl text-blue-600">$30</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="span-4 bg-slate-100 p-8 rounded-[50px] flex flex-col justify-between">
+                    <div class="flex -space-x-4 mb-8">
+                        <div class="w-16 h-16 rounded-full bg-blue-200 border-4 border-white flex items-center justify-center"><i data-lucide="user"></i></div>
+                        <div class="w-16 h-16 rounded-full bg-blue-300 border-4 border-white flex items-center justify-center"><i data-lucide="user"></i></div>
+                        <div class="w-16 h-16 rounded-full bg-blue-400 border-4 border-white flex items-center justify-center text-white font-bold text-xs">+3</div>
+                    </div>
+                    <p class="font-bold text-lg leading-tight italic">"The local shop vibe, with high-end tools and talent."</p>
+                </div>
+            </section>
+
+            <section class="p-6 lg:p-12 reveal">
+                <div class="w-full bg-white border border-blue-50 rounded-[50px] overflow-hidden">
+                    <div class="p-8 flex justify-between items-center flex-wrap gap-4">
+                        <div>
+                            <h4 class="unbounded text-xl">VISIT US.</h4>
+                            <p class="text-sm opacity-40">24 Heritage Square, London</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button class="bg-green-500 text-white p-4 rounded-2xl shadow-lg"><i data-lucide="message-circle"></i></button>
+                            <button class="bg-blue-600 text-white p-4 rounded-2xl shadow-lg px-8 font-bold text-xs">DIRECTIONS</button>
+                        </div>
+                    </div>
+                    <div class="h-[300px] lg:h-[450px] bg-blue-50 flex items-center justify-center grayscale opacity-50">
+                        <div class="text-center">
+                            <i data-lucide="map" class="w-12 h-12 mx-auto mb-4 text-blue-600 opacity-20"></i>
+                            <p class="text-[10px] font-black uppercase opacity-20">Interactive Map Interface</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <footer class="p-12 lg:p-24 bg-white border-t border-blue-50 mt-12">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-12">
                     <div>
-                        <div class="flex justify-between text-xs font-black mb-2"><span>CLIENT SATISFACTION</span><span>99%</span></div>
-                        <div class="w-full bg-slate-100"><div class="stat-bar" style="width: 99%"></div></div>
+                        <h2 class="unbounded text-3xl mb-4">LOCAL FLAGSHIP.</h2>
+                        <div class="flex gap-6 text-sm font-bold opacity-30">
+                            <a href="#">Privacy</a><a href="#">Terms</a><a href="#">Careers</a>
+                        </div>
                     </div>
-                    <div>
-                        <div class="flex justify-between text-xs font-black mb-2"><span>MASTER BARBERS</span><span>14</span></div>
-                        <div class="w-full bg-slate-100"><div class="stat-bar" style="width: 70%"></div></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="reveal delay-200">
-                <div class="w-full aspect-square bg-blue-50 rounded-[40px] flex items-center justify-center relative overflow-hidden">
-                    <svg viewBox="0 0 100 100" class="w-32 h-32 animate-spin-slow">
-                        <circle cx="50" cy="50" r="45" fill="none" stroke="#002BFF" stroke-width="0.5" stroke-dasharray="10 5" />
-                    </svg>
-                    <i data-lucide="scissors" class="absolute w-12 h-12 text-blue-600 animate-bounce"></i>
-                </div>
-            </div>
-        </section>
-
-        <section class="col-span-12 py-24 bg-black text-white reveal">
-            <div class="px-10 mb-12 flex justify-between items-end">
-                <h2 class="unbounded text-5xl font-black">RESERVE <br>YOUR CHAIR.</h2>
-                <p class="max-w-xs text-xs opacity-50">Instant confirmation. Synced with your Apple or Google Calendar.</p>
-            </div>
-            
-            <div class="px-10 grid grid-cols-1 md:grid-cols-3 gap-10">
-                <div class="space-y-4">
-                    <label class="text-[10px] font-black text-blue-500 uppercase">1. Selection</label>
-                    <select class="w-full bg-white/5 border-b-2 border-white/20 p-4 font-bold text-2xl outline-none focus:border-blue-600 transition-all">
-                        <option>Skin Fade</option>
-                        <option>Executive Shave</option>
-                        <option>Beard Architect</option>
-                    </select>
-                </div>
-                <div class="space-y-4">
-                    <label class="text-[10px] font-black text-blue-500 uppercase">2. Appointment</label>
-                    <input type="date" class="w-full bg-white/5 border-b-2 border-white/20 p-4 font-bold text-2xl outline-none invert">
-                </div>
-                <div class="flex items-end">
-                    <button class="w-full py-8 bg-blue-600 rounded-[20px] unbounded font-black text-xs hover:bg-white hover:text-blue-600 transition-all">BOOK IMMEDIATELY</button>
-                </div>
-            </div>
-        </section>
-
-        <section class="col-span-12 p-10 bg-white reveal">
-            <h2 class="unbounded text-2xl font-black mb-10">THE SHOP.</h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="col-span-2 row-span-2 bg-blue-50 rounded-[40px] p-10 flex flex-col justify-between">
-                    <i data-lucide="package" class="w-20 h-20 opacity-10"></i>
-                    <h4 class="unbounded text-3xl font-black">CHRONOS <br>CLAY.</h4>
-                </div>
-                <div class="bg-slate-50 rounded-[30px] p-6">
-                    <div class="w-10 h-10 bg-blue-600 rounded-lg mb-10"></div>
-                    <p class="font-black text-xs">$24</p>
-                </div>
-                <div class="bg-slate-50 rounded-[30px] p-6">
-                    <div class="w-10 h-10 bg-black rounded-lg mb-10"></div>
-                    <p class="font-black text-xs">$32</p>
-                </div>
-                <div class="col-span-2 bg-blue-600 text-white rounded-[30px] p-8 flex justify-between items-center">
-                    <span class="unbounded font-black">KIT BUNDLE</span>
-                    <i data-lucide="arrow-right"></i>
-                </div>
-            </div>
-        </section>
-
-        <section class="col-span-12 md:col-span-6 p-10 reveal">
-            <div class="w-full h-full min-h-[400px] relative">
-                <div class="absolute inset-0 bg-slate-200 map-frame flex items-center justify-center p-10">
-                    <div class="text-center">
-                        <i data-lucide="map" class="w-10 h-10 mx-auto mb-4 opacity-20"></i>
-                        <p class="unbounded font-black text-xs opacity-20">FLAGSHIP MAP IFRAME</p>
+                    <div class="text-left md:text-right">
+                        <p class="text-xs font-black opacity-20 uppercase tracking-[0.3em] mb-4">Operational Hours</p>
+                        <div class="space-y-1 font-bold">
+                            <p>Mon - Fri: 08:00 - 20:00</p>
+                            <p>Sat: 09:00 - 18:00</p>
+                            <p class="text-blue-600 italic">Sun: Appointment Only</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </section>
-
-        <section class="col-span-12 md:col-span-6 p-10 flex flex-col justify-center reveal">
-            <div class="space-y-12">
-                <div>
-                    <h3 class="unbounded text-5xl font-black tracking-tighter">FIND US.</h3>
-                    <p class="mt-4 font-bold text-xl">32 Terminal Row, Elite District <br>London, UK</p>
+                <div class="mt-20 pt-10 border-t border-blue-50 text-[10px] font-bold opacity-20 text-center uppercase tracking-widest">
+                    Established 2026 • Premier Grooming Union
                 </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <button class="py-6 border-2 border-black rounded-[20px] font-black text-xs flex justify-center items-center gap-2"><i data-lucide="phone"></i> CALL</button>
-                    <button class="py-6 bg-[#25D366] text-white rounded-[20px] font-black text-xs flex justify-center items-center gap-2"><i data-lucide="message-square"></i> WHATSAPP</button>
-                </div>
-            </div>
-        </section>
+            </footer>
 
-        <footer class="col-span-12 p-10 bg-slate-100 rounded-t-[80px] mt-20 reveal">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-20">
-                <div class="unbounded text-6xl font-black italic">CHRONOS.</div>
-                <div class="space-y-4">
-                    <p class="text-[10px] font-black opacity-30 uppercase">Hours</p>
-                    <div class="font-bold space-y-2">
-                        <p class="flex justify-between"><span>WEEKDAYS</span><span>08 - 22</span></p>
-                        <p class="flex justify-between text-blue-600"><span>WEEKENDS</span><span>10 - 18</span></p>
-                    </div>
-                </div>
-                <div class="flex flex-wrap gap-4">
-                    <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm"><i data-lucide="instagram"></i></div>
-                    <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm"><i data-lucide="twitter"></i></div>
-                </div>
-            </div>
-            <div class="mt-20 pt-10 border-t border-black/5 text-center text-[10px] font-bold opacity-20">
-                ALL RIGHTS RESERVED © 2026 CHRONOS FLAGSHIP
-            </div>
-        </footer>
-
-    </main>
-
-    <nav class="fixed bottom-6 left-[100px] right-6 h-16 bg-black text-white rounded-[20px] flex justify-around items-center px-10 z-[100] shadow-2xl">
-        <button class="text-blue-500"><i data-lucide="zap"></i></button>
-        <button class="opacity-40"><i data-lucide="calendar"></i></button>
-        <button class="opacity-40"><i data-lucide="map-pin"></i></button>
-        <button class="opacity-40"><i data-lucide="help-circle"></i></button>
-    </nav>
+        </main>
+    </div>
 
     <script>
         lucide.createIcons();
@@ -237,9 +212,20 @@
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('active');
-                    // Trigger stat bars inside the section
-                    const bars = entry.target.querySelectorAll('.stat-bar');
-                    bars.forEach(bar => bar.style.width = bar.style.width);
+                    // Stat Count
+                    if(entry.target.querySelector('.count')) {
+                        const countEl = entry.target.querySelector('.count');
+                        const target = +countEl.getAttribute('data-target');
+                        let count = 0;
+                        const update = () => {
+                            if(count < target) {
+                                count++;
+                                countEl.innerText = count;
+                                setTimeout(update, 50);
+                            }
+                        }
+                        update();
+                    }
                 }
             });
         }, { threshold: 0.1 });
