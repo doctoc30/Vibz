@@ -2,149 +2,308 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gentry | Premium Grooming</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GENTRY | Advanced Grooming Terminal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/scrollreveal"></script>
     <style>
-        body { background-color: #0f0f17; color: #ffffff; font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; }
-        .app-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 28px; }
+        :root { --accent: #ff007a; --glass: rgba(255, 255, 255, 0.03); --border: rgba(255, 255, 255, 0.1); }
+        body { background-color: #05050a; color: #e2e2e2; font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; }
         
-        /* Full Screen Menu Animation */
-        #mobile-menu {
-            transition: transform 0.6s cubic-bezier(0.85, 0, 0.15, 1);
-            transform: translateY(-100%);
-        }
-        #mobile-menu.open { transform: translateY(0); }
+        /* Techno Textures */
+        .bg-grid { background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 40px 40px; }
+        .leather-texture { background: radial-gradient(circle at 50% 50%, #1a1a1a 0%, #050505 100%); position: relative; }
+        .leather-texture::before { content: ""; position: absolute; inset: 0; opacity: 0.05; background-image: url('https://www.transparenttextures.com/patterns/black-linen.png'); }
 
-        /* Rotating Barber Chair Animation */
-        .chair-container {
-            perspective: 1000px;
-            animation: float 3s ease-in-out infinite;
-        }
-        .rotating-chair {
-            width: 120px;
-            animation: rotateChair 8s linear infinite;
-            filter: drop-shadow(0 20px 30px rgba(255, 0, 122, 0.3));
-        }
-        @keyframes rotateChair {
-            from { transform: rotateY(0deg); }
-            to { transform: rotateY(360deg); }
-        }
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
-        }
+        /* Component Styles */
+        .glass-panel { background: var(--glass); backdrop-filter: blur(12px); border: 1px solid var(--border); border-radius: 24px; transition: all 0.3s ease; }
+        .glass-panel:hover { border-color: var(--accent); box-shadow: 0 0 20px rgba(255, 0, 122, 0.1); }
+        .neon-glow { text-shadow: 0 0 10px var(--accent); }
+        
+        /* Mobile Menu */
+        #ham-menu { transform: translateY(-100%); transition: transform 0.5s cubic-bezier(0.77, 0, 0.175, 1); }
+        #ham-menu.active { transform: translateY(0); }
 
-        .input-field {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 16px;
-            width: 100%;
-            color: white;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-        .input-field:focus { border-color: #ff007a; }
+        /* Slider Logic */
+        .comparison-slider { position: relative; width: 100%; height: 300px; overflow: hidden; border-radius: 20px; }
+        .before-img { position: absolute; inset: 0; background: url('https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?auto=format&fit=crop&q=80&w=800') center; background-size: cover; }
+        .after-img { position: absolute; inset: 0; width: 50%; border-right: 3px solid var(--accent); background: url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&q=80&w=800') center; background-size: cover; z-index: 10; }
+
+        /* Animated Rotating Chair Icon */
+        .chair-spin { animation: spin 15s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="pb-24">
+<body class="bg-grid">
 
-    <div id="mobile-menu" class="fixed inset-0 z-[100] bg-[#0f0f17]/95 backdrop-blur-2xl p-10 flex flex-col justify-center items-center">
-        <button onclick="toggleMenu()" class="absolute top-8 right-8 text-gray-400">
-            <i data-lucide="x" class="w-10 h-10"></i>
-        </button>
-        <nav class="space-y-8 text-center">
-            <a href="#" onclick="toggleMenu()" class="block text-4xl font-black hover:text-[#ff007a] transition">HOME</a>
-            <a href="#services" onclick="toggleMenu()" class="block text-4xl font-black hover:text-[#ff007a] transition">SERVICES</a>
-            <a href="#gallery" onclick="toggleMenu()" class="block text-4xl font-black hover:text-[#ff007a] transition">GALLERY</a>
-            <a href="#contact" onclick="toggleMenu()" class="block text-4xl font-black hover:text-[#ff007a] transition">CONTACT</a>
+    <div id="ham-menu" class="fixed inset-0 z-[100] bg-[#05050a] p-10 flex flex-col justify-center">
+        <button onclick="toggleMenu()" class="absolute top-10 right-10"><i data-lucide="x" class="w-10 h-10 text-white"></i></button>
+        <nav class="space-y-6 text-5xl font-black italic uppercase">
+            <a href="#services" class="block hover:text-[#ff007a]">Services</a>
+            <a href="#prices" class="block hover:text-[#ff007a]">Pricing</a>
+            <a href="#products" class="block hover:text-[#ff007a]">Supply</a>
+            <a href="#contact" class="block hover:text-[#ff007a]">Terminal</a>
         </nav>
     </div>
 
-    <header class="fixed top-0 w-full z-50 px-6 py-6 flex justify-between items-center bg-[#0f0f17]/50 backdrop-blur-lg">
-        <div class="flex items-center gap-2">
-            <svg width="40" height="40" viewBox="0 0 100 100" class="fill-[#ff007a]">
-                <path d="M50 5L20 40H80 L50 5Z M20 45H80V55H20V45Z M20 60H80V95L50 75L20 95V60Z"/>
-            </svg>
-            <span class="text-2xl font-black tracking-tighter uppercase">Gentry</span>
+    <nav class="sticky top-0 z-50 p-6 flex justify-between items-center bg-[#05050a]/80 backdrop-blur-md border-b border-white/5">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-[#ff007a] rounded-lg flex items-center justify-center chair-spin">
+                <i data-lucide="crosshair" class="text-white w-6 h-6"></i>
+            </div>
+            <span class="text-2xl font-black italic tracking-tighter uppercase">Gentry<span class="text-[#ff007a]">OS</span></span>
         </div>
-        <button onclick="toggleMenu()" class="w-12 h-12 app-card flex items-center justify-center border-[#ff007a]/40">
-            <i data-lucide="menu" class="w-6 h-6 text-[#ff007a]"></i>
-        </button>
+        <button onclick="toggleMenu()" class="p-3 glass-panel rounded-xl"><i data-lucide="menu" class="text-[#ff007a]"></i></button>
+    </nav>
+
+    <header class="relative pt-20 pb-32 px-6 leather-texture overflow-hidden">
+        <div class="max-w-4xl mx-auto relative z-10">
+            <h1 class="text-7xl md:text-9xl font-black italic uppercase leading-none mb-6">Master <br><span class="text-[#ff007a] neon-glow">Grooming.</span></h1>
+            
+            <div class="glass-panel p-2 mt-12 flex flex-col md:flex-row gap-2">
+                <select class="bg-transparent p-4 outline-none flex-1 font-bold">
+                    <option class="bg-[#05050a]">Select System (Service)</option>
+                    <option class="bg-[#05050a]">Signature Fade</option>
+                    <option class="bg-[#05050a]">Blade & Steam</option>
+                </select>
+                <input type="date" class="bg-transparent p-4 outline-none flex-1 border-l border-white/10 font-bold">
+                <button class="bg-[#ff007a] px-8 py-4 rounded-xl font-black uppercase italic">Initialize Booking</button>
+            </div>
+        </div>
     </header>
 
-    <section class="pt-32 pb-16 px-6 text-center overflow-hidden">
-        <div class="chair-container mb-8 flex justify-center">
-            <div class="rotating-chair">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#ff007a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M7 18V6a5 5 0 0 1 10 0v12" />
-                    <path d="M18 18h1a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h1" />
-                    <path d="M8 21h8" />
-                    <circle cx="12" cy="18" r="3" />
-                </svg>
-            </div>
-        </div>
-        <h1 class="text-5xl font-black tracking-tighter mb-4 animate__animated animate__zoomIn">
-            THE CHAIR <br>IS <span class="text-[#ff007a]">WAITING.</span>
-        </h1>
-        <p class="text-gray-400 max-w-xs mx-auto mb-8">Modern craftsmanship for the urban gentleman.</p>
-        <button class="bg-[#ff007a] px-10 py-4 rounded-2xl font-black shadow-lg shadow-[#ff007a]/30">BOOK NOW</button>
-    </section>
+    <div class="h-px bg-gradient-to-r from-transparent via-[#ff007a] to-transparent opacity-30"></div>
 
-    <main class="px-6 space-y-16">
-        
-        <section id="gallery">
-            <h3 class="font-bold text-xl mb-6">Masterpieces</h3>
-            <div class="flex gap-4 overflow-x-auto no-scrollbar py-2">
-                <img src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=format&fit=crop&w=400" class="w-64 h-80 object-cover rounded-[32px] flex-shrink-0">
-                <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=400" class="w-64 h-80 object-cover rounded-[32px] flex-shrink-0">
+    <main class="max-w-6xl mx-auto px-6 py-20 space-y-32">
+
+        <section id="services" class="reveal">
+            <h2 class="text-xs font-black text-[#ff007a] uppercase tracking-[0.5em] mb-12">System.Operations</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="glass-panel p-8 group">
+                    <i data-lucide="scissors" class="w-12 h-12 text-[#ff007a] mb-6 group-hover:scale-110 transition"></i>
+                    <h3 class="text-2xl font-bold mb-4">Precision Blade</h3>
+                    <p class="text-gray-500 mb-6 text-sm">Engineered fades using calibrated clippers and steel blades.</p>
+                </div>
+                <div class="glass-panel p-8 group border-[#ff007a]/40">
+                    <i data-lucide="flame" class="w-12 h-12 text-[#ff007a] mb-6"></i>
+                    <h3 class="text-2xl font-bold mb-4">Thermal Shave</h3>
+                    <p class="text-gray-500 mb-6 text-sm">Dual-stage steam treatment with straight-razor precision.</p>
+                </div>
+                <div class="glass-panel p-8 group">
+                    <i data-lucide="zap" class="w-12 h-12 text-[#ff007a] mb-6"></i>
+                    <h3 class="text-2xl font-bold mb-4">Express Sync</h3>
+                    <p class="text-gray-500 mb-6 text-sm">30-minute rapid maintenance for high-frequency clients.</p>
+                </div>
             </div>
         </section>
 
-        <section id="contact" class="app-card p-8">
-            <h3 class="text-2xl font-black mb-2">Get In Touch</h3>
-            <p class="text-gray-400 text-sm mb-8">Questions? Custom group bookings? Drop us a line.</p>
-            <form class="space-y-4" onsubmit="event.preventDefault(); alert('Message Sent!');">
-                <input type="text" placeholder="Your Name" class="input-field">
-                <input type="email" placeholder="Email Address" class="input-field">
-                <textarea placeholder="How can we help?" rows="4" class="input-field"></textarea>
-                <button type="submit" class="w-full bg-white text-black py-4 rounded-2xl font-black hover:bg-[#ff007a] hover:text-white transition-colors">
-                    SEND MESSAGE
-                </button>
+        <section id="prices" class="reveal app-card p-10 border border-white/5 rounded-[40px] bg-black/40">
+            <h2 class="text-4xl font-black italic mb-10">Rate <span class="text-[#ff007a]">Manifest.</span></h2>
+            <div class="space-y-6">
+                <div class="flex justify-between items-end border-b border-white/10 pb-4">
+                    <div><h4 class="text-xl font-bold uppercase">Techno Fade</h4><p class="text-xs text-gray-500">Wash, Cut, Style</p></div>
+                    <span class="text-2xl font-black text-[#ff007a]">$45.00</span>
+                </div>
+                <div class="flex justify-between items-end border-b border-white/10 pb-4">
+                    <div><h4 class="text-xl font-bold uppercase">Beard Calibration</h4><p class="text-xs text-gray-500">Shape, Line-up</p></div>
+                    <span class="text-2xl font-black text-[#ff007a]">$30.00</span>
+                </div>
+                <div class="flex justify-between items-end border-b border-white/10 pb-4">
+                    <div><h4 class="text-xl font-bold uppercase">Full Reset</h4><p class="text-xs text-gray-500">Hair + Beard + Facial</p></div>
+                    <span class="text-2xl font-black text-[#ff007a]">$85.00</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="reveal">
+            <h2 class="text-xl font-bold mb-6 italic">Visual <span class="text-[#ff007a]">Calibration</span></h2>
+            <div class="comparison-slider">
+                <div class="before-img"></div>
+                <div class="after-img" id="after-img"></div>
+                <div class="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
+                    <span class="bg-[#ff007a] px-4 py-2 text-[10px] font-black uppercase">Result: 100% Sharpness</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="products" class="reveal">
+            <h2 class="text-3xl font-black italic mb-10 uppercase">Product <span class="text-[#ff007a]">Supply</span></h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                <div class="glass-panel p-4 text-center">
+                    <div class="w-full h-32 bg-white/5 rounded-xl mb-4 flex items-center justify-center">
+                        <i data-lucide="cylinder" class="w-12 h-12 text-gray-600"></i>
+                    </div>
+                    <p class="text-[10px] font-bold uppercase">Matte Clay</p>
+                    <p class="text-[#ff007a] font-black">$22</p>
+                </div>
+                <div class="glass-panel p-4 text-center opacity-60">
+                    <div class="w-full h-32 bg-white/5 rounded-xl mb-4 flex items-center justify-center"><i data-lucide="droplet" class="w-12 h-12 text-gray-600"></i></div>
+                    <p class="text-[10px] font-bold uppercase">Beard Oil</p><p class="text-[#ff007a] font-black">$18</p>
+                </div>
+                <div class="glass-panel p-4 text-center">
+                    <div class="w-full h-32 bg-white/5 rounded-xl mb-4 flex items-center justify-center"><i data-lucide="spray-can" class="w-12 h-12 text-gray-600"></i></div>
+                    <p class="text-[10px] font-bold uppercase">Sea Salt Spray</p><p class="text-[#ff007a] font-black">$20</p>
+                </div>
+                <div class="glass-panel p-4 text-center">
+                    <div class="w-full h-32 bg-white/5 rounded-xl mb-4 flex items-center justify-center"><i data-lucide="box" class="w-12 h-12 text-gray-600"></i></div>
+                    <p class="text-[10px] font-bold uppercase">Styling Powder</p><p class="text-[#ff007a] font-black">$25</p>
+                </div>
+                <div class="glass-panel p-4 text-center opacity-60">
+                    <div class="w-full h-32 bg-white/5 rounded-xl mb-4 flex items-center justify-center"><i data-lucide="scissors" class="w-12 h-12 text-gray-600"></i></div>
+                    <p class="text-[10px] font-bold uppercase">Metal Comb</p><p class="text-[#ff007a] font-black">$15</p>
+                </div>
+                <div class="glass-panel p-4 text-center">
+                    <div class="w-full h-32 bg-white/5 rounded-xl mb-4 flex items-center justify-center"><i data-lucide="thermometer" class="w-12 h-12 text-gray-600"></i></div>
+                    <p class="text-[10px] font-bold uppercase">Aftershave</p><p class="text-[#ff007a] font-black">$28</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="reveal">
+            <h2 class="text-3xl font-black italic mb-10 uppercase text-center">The <span class="text-[#ff007a]">Artisans</span></h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="glass-panel p-8 flex gap-6 items-center border-l-4 border-l-[#ff007a]">
+                    <div class="w-20 h-20 bg-gradient-to-tr from-[#ff007a] to-blue-500 rounded-full flex items-center justify-center">
+                        <i data-lucide="user-cog" class="w-10 h-10 text-white"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-2xl font-black">SYNTX-01</h4>
+                        <p class="text-[#ff007a] text-xs font-bold uppercase mb-2">Master Stylist</p>
+                        <div class="flex text-yellow-500 gap-1"><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 fill-current"></i></div>
+                    </div>
+                </div>
+                <div class="glass-panel p-8 flex gap-6 items-center">
+                    <div class="w-20 h-20 bg-gradient-to-tr from-gray-700 to-gray-900 rounded-full flex items-center justify-center">
+                        <i data-lucide="user-cog" class="w-10 h-10 text-white"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-2xl font-black">LOGIC-B</h4>
+                        <p class="text-gray-500 text-xs font-bold uppercase mb-2">Senior Barber</p>
+                        <div class="flex text-yellow-500 gap-1"><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star-half" class="w-3 h-3 fill-current"></i></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-8 reveal">
+            <div class="glass-panel p-10">
+                <h3 class="text-xl font-bold mb-8 uppercase tracking-widest text-[#ff007a]">Operating Window</h3>
+                <div class="space-y-4 font-mono text-sm">
+                    <div class="flex justify-between border-b border-white/5 pb-2"><span>MON - FRI</span><span>09:00 - 20:00</span></div>
+                    <div class="flex justify-between border-b border-white/5 pb-2"><span>SATURDAY</span><span>10:00 - 18:00</span></div>
+                    <div class="flex justify-between text-[#ff007a]"><span>SUNDAY</span><span>OFFLINE</span></div>
+                </div>
+                <div class="mt-10 p-4 bg-[#ff007a]/10 rounded-xl flex items-center gap-4">
+                    <i data-lucide="info" class="text-[#ff007a]"></i>
+                    <p class="text-xs">Live Status: Currently Accepting Clients</p>
+                </div>
+            </div>
+            <div class="glass-panel overflow-hidden grayscale contrast-125 border-[#ff007a]/20">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.215132338243!2d-73.98784412424422!3d40.75797877138599!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25855c6480293%3A0x51f14c0228a1c893!2sTimes%20Square!5e0!3m2!1sen!2sus!4v1700000000000!5m2!1sen!2sus" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+        </section>
+
+        <section class="reveal max-w-2xl mx-auto">
+            <h2 class="text-center text-4xl font-black italic mb-10 uppercase">F.A.Q<span class="text-[#ff007a]">.</span></h2>
+            <div class="space-y-4">
+                <details class="glass-panel p-4 cursor-pointer group">
+                    <summary class="font-bold uppercase text-sm flex justify-between items-center list-none">
+                        Do you accept walk-ins?
+                        <i data-lucide="plus" class="w-4 h-4 group-open:rotate-45 transition"></i>
+                    </summary>
+                    <p class="text-gray-500 text-xs mt-4">We prefer bookings through the terminal, but walk-ins are integrated based on live barber capacity.</p>
+                </details>
+                <details class="glass-panel p-4 cursor-pointer group">
+                    <summary class="font-bold uppercase text-sm flex justify-between items-center list-none">
+                        What is your cancellation policy?
+                        <i data-lucide="plus" class="w-4 h-4 group-open:rotate-45 transition"></i>
+                    </summary>
+                    <p class="text-gray-500 text-xs mt-4">Cancellations must be logged 12 hours prior to the slot to avoid a 50% system fee.</p>
+                </details>
+            </div>
+        </section>
+
+        <section id="contact" class="reveal app-card p-12 bg-black">
+            <h2 class="text-4xl font-black italic mb-2 uppercase">Connect <span class="text-[#ff007a]">Direct.</span></h2>
+            <p class="text-gray-600 mb-10 text-sm">Send a transmission to the head technician.</p>
+            <form class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <input type="text" placeholder="Identity" class="bg-white/5 border border-white/10 p-4 rounded-xl outline-none focus:border-[#ff007a]">
+                <input type="email" placeholder="Signal (Email)" class="bg-white/5 border border-white/10 p-4 rounded-xl outline-none focus:border-[#ff007a]">
+                <textarea placeholder="Message Transmission..." class="bg-white/5 border border-white/10 p-4 rounded-xl outline-none focus:border-[#ff007a] md:col-span-2 h-32"></textarea>
+                <button class="bg-[#ff007a] py-4 rounded-xl font-black uppercase italic md:col-span-2">Send Transmission</button>
             </form>
-        </section>
-
-        <section class="text-center py-6">
-            <div class="flex justify-center mb-4 text-[#ff007a]">
-                <i data-lucide="star" class="fill-current"></i>
-                <i data-lucide="star" class="fill-current"></i>
-                <i data-lucide="star" class="fill-current"></i>
-                <i data-lucide="star" class="fill-current"></i>
-                <i data-lucide="star" class="fill-current"></i>
-            </div>
-            <p class="italic text-gray-300">"The best vibe in the city, hands down."</p>
         </section>
 
     </main>
 
-    <nav class="fixed bottom-0 left-0 right-0 bg-[#0f0f17]/90 backdrop-blur-xl border-t border-white/5 px-10 py-6 flex justify-between items-center z-40">
-        <i data-lucide="home" class="text-[#ff007a] w-6 h-6"></i>
-        <i data-lucide="calendar" class="text-gray-500 w-6 h-6"></i>
-        <i data-lucide="instagram" class="text-gray-500 w-6 h-6"></i>
-        <i data-lucide="map-pin" class="text-gray-500 w-6 h-6"></i>
-    </nav>
+    <footer class="bg-black border-t border-white/5 pt-20 pb-32 px-6">
+        <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
+            <div class="space-y-6">
+                <span class="text-2xl font-black italic tracking-tighter uppercase">Gentry<span class="text-[#ff007a]">OS</span></span>
+                <p class="text-gray-600 text-xs leading-relaxed">Advanced grooming terminal utilizing high-craft traditional barbering and modern architectural design.</p>
+            </div>
+            <div>
+                <h5 class="font-bold text-[#ff007a] mb-6 text-xs uppercase tracking-widest">Protocol</h5>
+                <ul class="text-xs space-y-4 text-gray-400">
+                    <li><a href="#" class="hover:text-white transition">Privacy Policy</a></li>
+                    <li><a href="#" class="hover:text-white transition">Terms of Service</a></li>
+                    <li><a href="#" class="hover:text-white transition">Cookie Control</a></li>
+                </ul>
+            </div>
+            <div>
+                <h5 class="font-bold text-[#ff007a] mb-6 text-xs uppercase tracking-widest">Connect</h5>
+                <div class="flex gap-4">
+                    <a href="#" class="w-10 h-10 glass-panel rounded-lg flex items-center justify-center hover:bg-[#ff007a] transition"><i data-lucide="instagram" class="w-4 h-4"></i></a>
+                    <a href="#" class="w-10 h-10 glass-panel rounded-lg flex items-center justify-center hover:bg-[#ff007a] transition"><i data-lucide="twitter" class="w-4 h-4"></i></a>
+                </div>
+            </div>
+            <div>
+                <h5 class="font-bold text-[#ff007a] mb-6 text-xs uppercase tracking-widest">Terminal Location</h5>
+                <p class="text-xs text-gray-400 leading-relaxed">Sector 7, 42nd Ave<br>Neo-Downtown, NY 10036</p>
+                <div class="mt-4 flex gap-4">
+                    <a href="tel:123456789" class="text-[#ff007a]"><i data-lucide="phone" class="w-5 h-5"></i></a>
+                    <a href="https://wa.me/123456789" class="text-[#ff007a]"><i data-lucide="message-square" class="w-5 h-5"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <div class="fixed bottom-0 left-0 right-0 p-4 z-50 md:hidden">
+        <div class="glass-panel bg-[#05050a]/90 flex justify-between p-4 px-8 items-center border-[#ff007a]/30">
+            <a href="tel:123456789" class="text-gray-400"><i data-lucide="phone"></i></a>
+            <button class="bg-[#ff007a] px-6 py-2 rounded-lg font-black italic uppercase text-sm">Book</button>
+            <a href="#contact" class="text-gray-400"><i data-lucide="mail"></i></a>
+        </div>
+    </div>
 
     <script>
         lucide.createIcons();
-
+        
+        // Mobile Menu Toggle
         function toggleMenu() {
-            const menu = document.getElementById('mobile-menu');
-            menu.classList.toggle('open');
+            document.getElementById('ham-menu').classList.toggle('active');
         }
+
+        // 19. Scroll Reveal Implementation
+        ScrollReveal().reveal('.reveal', { 
+            delay: 200, 
+            distance: '50px',
+            origin: 'bottom',
+            duration: 800,
+            interval: 100
+        });
+
+        // Comparison Slider simple mouse follow
+        const sliderContainer = document.querySelector('.comparison-slider');
+        const afterImg = document.querySelector('.after-img');
+        
+        sliderContainer.addEventListener('mousemove', (e) => {
+            const rect = sliderContainer.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
+            afterImg.style.width = x + '%';
+        });
     </script>
 </body>
 </html>
