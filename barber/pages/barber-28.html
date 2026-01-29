@@ -3,91 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VELVET BLADE | High-Craft Terminal</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>VELVET BLADE | Mobile Terminal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Orbitron:wght@400;700&family=Inter:wght@300;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --velvet-main: #c74b67; /* Dusty Rosewood */
-            --velvet-glow: #e06c88; 
-            --gold-leaf: #f0d082;
-            --bg-terminal: #120b0d;
-            --surface: #1e1416;
-            --glass: rgba(255, 255, 255, 0.05);
-            --transition: 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            --velvet-light: #e8d5d8; /* Soft Lighter Velvet Background */
+            --velvet-rose: #b56b78;  /* Muted Rosewood */
+            --gold-accent: #c4a456;
+            --whatsapp-green: #25D366;
+            --text-dark: #2d1b1e;
+            --surface-white: #ffffff;
+            --glass-blur: rgba(255, 255, 255, 0.8);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { 
-            background: var(--bg-terminal); color: #fdfdfd; font-family: 'Inter', sans-serif; 
-            overflow-x: hidden; line-height: 1.6;
-        }
+        body { background: var(--velvet-light); color: var(--text-dark); font-family: 'Inter', sans-serif; overflow-x: hidden; }
 
-        /* --- THEATRICAL CURTAIN --- */
-        .curtain-container { position: fixed; inset: 0; z-index: 10000; display: flex; transition: var(--transition); pointer-events: none; }
-        .curtain { flex: 1; background: var(--velvet-main); transition: transform 1.2s cubic-bezier(0.7, 0, 0.3, 1); box-shadow: inset 0 0 80px rgba(0,0,0,0.6); position: relative; }
-        .curtain.left { border-right: 1px solid var(--gold-leaf); transform-origin: left; }
-        .curtain.right { border-left: 1px solid var(--gold-leaf); transform-origin: right; }
+        /* --- 1. CURTAIN INTRO --- */
+        .curtain-container { position: fixed; inset: 0; z-index: 10000; display: flex; pointer-events: none; }
+        .curtain { flex: 1; background: var(--velvet-rose); transition: transform 1.2s cubic-bezier(0.7, 0, 0.3, 1); box-shadow: inset 0 0 50px rgba(0,0,0,0.2); }
+        .curtain.left { transform-origin: left; border-right: 1px solid var(--gold-accent); }
+        .curtain.right { transform-origin: right; border-left: 1px solid var(--gold-accent); }
         .loaded .left { transform: scaleX(0); } .loaded .right { transform: scaleX(0); }
 
-        /* --- APP NAVIGATION --- */
+        /* --- APP NAVIGATION (BOTTOM) --- */
         nav {
-            position: fixed; bottom: 0; width: 100%; height: 70px; z-index: 900;
-            background: rgba(18, 11, 13, 0.95); border-top: 1px solid var(--gold-leaf);
-            display: flex; justify-content: space-around; align-items: center; backdrop-filter: blur(10px);
+            position: fixed; bottom: 0; width: 100%; height: 75px; z-index: 900;
+            background: var(--glass-blur); backdrop-filter: blur(15px); border-top: 1px solid rgba(0,0,0,0.05);
+            display: flex; justify-content: space-around; align-items: center; padding-bottom: 10px;
         }
-        .nav-item { color: #888; text-decoration: none; font-size: 0.7rem; text-align: center; font-family: 'Orbitron'; }
-        .nav-item i { display: block; font-size: 1.2rem; margin-bottom: 4px; }
-        .nav-item.active { color: var(--gold-leaf); }
-
-        /* --- POPUP OFFER --- */
-        #offerPopup {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8);
-            width: 90%; max-width: 400px; background: var(--surface); border: 2px solid var(--gold-leaf);
-            z-index: 10001; padding: 40px; text-align: center; opacity: 0; pointer-events: none; transition: 0.4s;
-        }
-        #offerPopup.active { opacity: 1; transform: translate(-50%, -50%) scale(1); pointer-events: all; }
+        .nav-link { text-decoration: none; color: #888; font-size: 0.7rem; text-align: center; font-family: 'Orbitron'; }
+        .nav-link i { display: block; font-size: 1.4rem; margin-bottom: 5px; color: var(--velvet-rose); }
+        .nav-link.active { color: var(--text-dark); border-top: 2px solid var(--gold-accent); padding-top: 5px; }
 
         /* --- HERO & BOOKING --- */
-        header { height: 60vh; background: radial-gradient(circle at center, var(--velvet-main) 0%, var(--bg-terminal) 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
-        header h1 { font-family: 'Cinzel'; font-size: 2.5rem; color: var(--gold-leaf); }
+        .hero { height: 50vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: linear-gradient(to bottom, #fdf4f5, var(--velvet-light)); }
+        .hero h1 { font-family: 'Cinzel'; font-size: 2.2rem; color: var(--velvet-rose); margin-bottom: 10px; }
 
-        .booking-terminal {
-            width: 95%; max-width: 600px; background: var(--surface); margin: -40px auto 40px;
-            padding: 25px; border-radius: 12px; border: 1px solid var(--gold-leaf); box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        .booking-form {
+            width: 90%; max-width: 500px; background: var(--surface-white); margin: -50px auto 40px;
+            padding: 25px; border-radius: 20px; box-shadow: 0 15px 35px rgba(181, 107, 120, 0.15);
+            display: flex; flex-direction: column; gap: 12px; z-index: 10; position: relative;
         }
-        .input-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; }
-        select, input { background: #000; border: 1px solid #333; color: white; padding: 12px; border-radius: 6px; }
-        .btn-confirm { background: var(--gold-leaf); color: #000; border: none; padding: 15px; font-weight: bold; font-family: 'Orbitron'; border-radius: 6px; cursor: pointer; }
+        select, input, .btn-primary { padding: 14px; border-radius: 12px; border: 1px solid #eee; font-family: 'Inter'; font-size: 0.9rem; }
+        .btn-primary { background: var(--text-dark); color: white; font-family: 'Orbitron'; border: none; cursor: pointer; transition: 0.3s; }
+        .btn-primary:active { transform: scale(0.95); }
 
         /* --- SECTIONS --- */
-        section { padding: 60px 20px; margin-bottom: 20px; opacity: 0; transform: translateY(20px); transition: 0.8s; }
+        section { padding: 40px 20px; opacity: 0; transform: translateY(20px); transition: 0.8s; }
         section.reveal { opacity: 1; transform: translateY(0); }
-        .section-title { font-family: 'Orbitron'; color: var(--gold-leaf); margin-bottom: 30px; border-left: 3px solid var(--velvet-main); padding-left: 15px; }
+        .title-block { font-family: 'Orbitron'; color: var(--velvet-rose); font-size: 1.1rem; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .title-block::after { content: ''; flex: 1; height: 1px; background: var(--gold-accent); opacity: 0.3; }
 
-        /* --- GRID STYLES --- */
-        .app-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 15px; }
-        .product-card { background: var(--surface); border-radius: 10px; padding: 20px; text-align: center; border: 1px solid rgba(255,255,255,0.05); }
-        .product-icon { height: 100px; background: #000; margin-bottom: 15px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--velvet-main); font-size: 2.5rem; }
+        /* --- ABOUT US --- */
+        .about-box { background: var(--surface-white); padding: 25px; border-radius: 20px; line-height: 1.8; color: #666; font-size: 0.95rem; }
 
-        .barber-card { background: var(--surface); padding: 20px; border-radius: 12px; text-align: center; border-bottom: 4px solid var(--velvet-main); }
-        .barber-svg { width: 70px; height: 70px; background: var(--gold-leaf); border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; }
+        /* --- 6 PHOTO GRID --- */
+        .photo-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .grid-item { aspect-ratio: 1; background: #ddd; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; color: #999; border: 1px solid rgba(0,0,0,0.05); }
 
-        /* --- FAQ TOGGLE --- */
-        .faq-box { background: var(--surface); margin-bottom: 10px; border-radius: 8px; overflow: hidden; }
-        .faq-box summary { padding: 15px; cursor: pointer; color: var(--gold-leaf); font-weight: 600; list-style: none; display: flex; justify-content: space-between; }
+        /* --- 6 AI PRODUCT GRAPHICS --- */
+        .product-scroll { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 15px; scroll-snap-type: x mandatory; }
+        .product-card { min-width: 140px; background: var(--surface-white); padding: 15px; border-radius: 15px; text-align: center; scroll-snap-align: start; }
+        .ai-graphic { height: 100px; background: #f9f9f9; border-radius: 10px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: var(--gold-accent); }
 
-        /* --- FLOATING COMMS --- */
-        .quick-contact { position: fixed; right: 20px; bottom: 90px; display: flex; flex-direction: column; gap: 10px; z-index: 100; }
-        .comm-circle { width: 55px; height: 55px; border-radius: 50%; background: var(--gold-leaf); color: #000; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; box-shadow: 0 5px 15px rgba(0,0,0,0.4); text-decoration: none; }
-        .whatsapp { background: #25d366; color: white; }
+        /* --- BARBERS (NO FACES) --- */
+        .barber-grid { display: flex; gap: 20px; overflow-x: auto; }
+        .barber-icon-card { min-width: 100px; text-align: center; }
+        .barber-avatar { width: 80px; height: 80px; background: var(--velvet-rose); border-radius: 50%; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.8rem; }
 
-        @media (min-width: 992px) {
-            nav { top: 0; bottom: auto; height: 80px; padding: 0 10%; justify-content: flex-end; gap: 40px; }
-            .nav-item { font-size: 0.8rem; }
-            .nav-item i { display: none; }
-            .booking-terminal { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 15px; align-items: end; max-width: 1000px; }
-        }
+        /* --- FAQ --- */
+        .faq-item { background: var(--surface-white); margin-bottom: 8px; border-radius: 12px; }
+        .faq-item summary { padding: 15px; font-weight: 600; cursor: pointer; list-style: none; display: flex; justify-content: space-between; }
+
+        /* --- MAP & CONTACT --- */
+        .map-placeholder { width: 100%; height: 200px; background: #e0e0e0; border-radius: 20px; margin-bottom: 15px; border: 4px solid var(--surface-white); display: flex; align-items: center; justify-content: center; }
+
+        /* --- WHATSAPP BUTTON --- */
+        .wa-float { position: fixed; right: 20px; bottom: 100px; background: var(--whatsapp-green); color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; box-shadow: 0 10px 20px rgba(37, 211, 102, 0.3); z-index: 999; text-decoration: none; }
+
+        /* --- FOOTER --- */
+        footer { padding: 40px 20px 120px; text-align: center; background: var(--surface-white); border-radius: 30px 30px 0 0; }
+        .socials { display: flex; justify-content: center; gap: 20px; margin: 20px 0; font-size: 1.5rem; color: var(--velvet-rose); }
     </style>
 </head>
 <body>
@@ -97,102 +95,99 @@
         <div class="curtain right"></div>
     </div>
 
-    <div id="offerPopup">
-        <h2 class="section-title">SYSTEM ACCESS</h2>
-        <p>First-time sync detected. Claim 20% discount on any <b>Neural Fade</b> protocol.</p>
-        <button class="btn-confirm" style="width:100%; margin-top:20px;" onclick="closePopup()">ACKNOWLEDGE</button>
-    </div>
-
     <nav>
-        <a href="#services" class="nav-item active"><i class="fas fa-cut"></i>Services</a>
-        <a href="#products" class="nav-item"><i class="fas fa-flask"></i>Products</a>
-        <a href="#barbers" class="nav-item"><i class="fas fa-user-shield"></i>Artisans</a>
-        <a href="#faq" class="nav-item"><i class="fas fa-info-circle"></i>Intel</a>
+        <a href="#services" class="nav-link active"><i class="fas fa-scissors"></i>Menu</a>
+        <a href="#products" class="nav-link"><i class="fas fa-shopping-bag"></i>Shop</a>
+        <a href="#about" class="nav-link"><i class="fas fa-info-circle"></i>About</a>
+        <a href="#contact" class="nav-link"><i class="fas fa-map-marker-alt"></i>Visit</a>
     </nav>
 
-    <header>
+    <header class="hero">
         <h1 class="tech-font">VELVET BLADE</h1>
-        <p style="letter-spacing:4px; opacity:0.6; font-size:0.8rem;">EST. 2026 | SECTOR 09</p>
+        <p style="font-size:0.7rem; font-family:'Orbitron'; opacity:0.6;">CRAFTED IN SECTOR 09</p>
     </header>
 
-    <div class="booking-terminal reveal">
-        <div class="input-group"><label>Protocol</label><select><option>The Velvet Cut</option><option>Blade Ritual</option></select></div>
-        <div class="input-group"><label>Artisan</label><select><option>Artisan Alpha</option><option>Artisan Sigma</option></select></div>
-        <div class="input-group"><label>Cycle Date</label><input type="date"></div>
-        <button class="btn-confirm">SYNC NOW</button>
+    <div class="booking-form reveal">
+        <select><option>Select Protocol</option><option>The Velvet Fade</option><option>Straight Blade</option></select>
+        <select><option>Assigned Artisan</option><option>Unit Alpha</option><option>Unit Sigma</option></select>
+        <input type="date">
+        <button class="btn-primary">INITIALIZE BOOKING</button>
     </div>
 
-    <section id="services">
-        <h2 class="section-title">Service Modules</h2>
-        <div class="app-grid">
-            <div class="product-card"><h3>Signature</h3><p>$65</p></div>
-            <div class="product-card"><h3>Blade</h3><p>$45</p></div>
-            <div class="product-card"><h3>Sovereign</h3><p>$110</p></div>
+    <section id="about">
+        <div class="title-block">THE PHILOSOPHY</div>
+        <div class="about-box">
+            <p>Velvet Blade is an advanced grooming terminal blending high-tech precision with high-craft luxury. We focus on structural geometry and scalp wellness using botanical chemistry.</p>
+        </div>
+    </section>
+
+    <section>
+        <div class="title-block">THE GALLERY</div>
+        <div class="photo-grid">
+            <div class="grid-item">PROTO-01</div>
+            <div class="grid-item">PROTO-02</div>
+            <div class="grid-item">PROTO-03</div>
+            <div class="grid-item">PROTO-04</div>
+            <div class="grid-item">PROTO-05</div>
+            <div class="grid-item">PROTO-06</div>
         </div>
     </section>
 
     <section id="products">
-        <h2 class="section-title">The Apothecary</h2>
-        <div class="app-grid">
-            <div class="product-card"><div class="product-icon"><i class="fas fa-vial"></i></div><span>Serum V1</span></div>
-            <div class="product-card"><div class="product-icon"><i class="fas fa-cube"></i></div><span>Matte Clay</span></div>
-            <div class="product-card"><div class="product-icon"><i class="fas fa-droplet"></i></div><span>Silk Oil</span></div>
-            <div class="product-card"><div class="product-icon"><i class="fas fa-wind"></i></div><span>Tonic Mist</span></div>
-            <div class="product-card"><div class="product-icon"><i class="fas fa-leaf"></i></div><span>Detox wash</span></div>
-            <div class="product-card"><div class="product-icon"><i class="fas fa-shield-alt"></i></div><span>Scalp Pro</span></div>
+        <div class="title-block">APOTHECARY SHOP</div>
+        <div class="product-scroll">
+            <div class="product-card"><div class="ai-graphic"><i class="fas fa-flask"></i></div><p>Serum V1</p></div>
+            <div class="product-card"><div class="ai-graphic"><i class="fas fa-cube"></i></div><p>Matte Clay</p></div>
+            <div class="product-card"><div class="ai-graphic"><i class="fas fa-droplet"></i></div><p>Silk Oil</p></div>
+            <div class="product-card"><div class="ai-graphic"><i class="fas fa-wind"></i></div><p>Tonic Mist</p></div>
+            <div class="product-card"><div class="ai-graphic"><i class="fas fa-leaf"></i></div><p>Detox wash</p></div>
+            <div class="product-card"><div class="ai-graphic"><i class="fas fa-shield-alt"></i></div><p>Scalp Pro</p></div>
         </div>
     </section>
 
-    <section id="barbers">
-        <h2 class="section-title">The Artisans</h2>
-        <div class="app-grid">
-            <div class="barber-card">
-                <div class="barber-svg"><i class="fas fa-robot" style="font-size:2rem;"></i></div>
-                <h4>Unit Alpha</h4>
-                <p style="font-size:0.7rem; opacity:0.6;">FADE SPECIALIST</p>
-            </div>
-            <div class="barber-card">
-                <div class="barber-svg"><i class="fas fa-user-secret" style="font-size:2rem;"></i></div>
-                <h4>Unit Sigma</h4>
-                <p style="font-size:0.7rem; opacity:0.6;">BLADE SPECIALIST</p>
-            </div>
+    <section>
+        <div class="title-block">THE ARTISANS</div>
+        <div class="barber-grid">
+            <div class="barber-icon-card"><div class="barber-avatar"><i class="fas fa-microchip"></i></div><p>Alpha</p></div>
+            <div class="barber-icon-card"><div class="barber-avatar"><i class="fas fa-compass"></i></div><p>Sigma</p></div>
+            <div class="barber-icon-card"><div class="barber-avatar"><i class="fas fa-atom"></i></div><p>Delta</p></div>
         </div>
     </section>
 
     <section id="faq">
-        <h2 class="section-title">System Intel</h2>
-        <div class="faq-box"><details><summary>Is parking available? <i class="fas fa-chevron-down"></i></summary><p>Underground secure parking in Sector 09.</p></details></div>
-        <div class="faq-box"><details><summary>Accepting Walk-ins? <i class="fas fa-chevron-down"></i></summary><p>Terminal prioritizes synced appointments.</p></details></div>
+        <div class="title-block">INTEL (FAQ)</div>
+        <details class="faq-item"><summary>Parking Status? <i class="fas fa-chevron-down"></i></summary><p style="padding:15px; font-size:0.8rem; opacity:0.7;">Secure parking in basement Level 01.</p></details>
+        <details class="faq-item"><summary>Sync Policy? <i class="fas fa-chevron-down"></i></summary><p style="padding:15px; font-size:0.8rem; opacity:0.7;">Cancellations must be indexed 24h prior.</p></details>
     </section>
 
-    <div class="quick-contact">
-        <a href="https://wa.me/12345" class="comm-circle whatsapp"><i class="fab fa-whatsapp"></i></a>
-        <a href="tel:12345" class="comm-circle"><i class="fas fa-phone"></i></a>
-    </div>
+    <section id="contact">
+        <div class="title-block">TERMINAL COORDINATES</div>
+        <div class="map-placeholder">
+            <p style="font-size:0.7rem; opacity:0.5;">[INTERACTIVE GOOGLE MAP DATA STREAM]</p>
+        </div>
+        <p style="text-align:center; font-weight:bold;">101 Rosewood Blvd, Sector 9</p>
+    </section>
 
-    <footer style="padding: 40px 20px 100px; text-align: center; border-top: 1px solid var(--gold-leaf);">
-        <h3 class="tech-font">VELVET BLADE</h3>
-        <p style="font-size:0.8rem; opacity:0.5; margin-top:10px;">101 Rosewood Blvd, Sector 9 Terminal.<br>&copy; 2026 ALL RIGHTS RESERVED.</p>
+    <a href="https://wa.me/12345678" class="wa-float"><i class="fab fa-whatsapp"></i></a>
+
+    <footer>
+        <div class="socials">
+            <i class="fab fa-instagram"></i>
+            <i class="fab fa-facebook"></i>
+            <i class="fab fa-tiktok"></i>
+        </div>
+        <p style="font-size:0.8rem; opacity:0.5;">&copy; 2026 VELVET BLADE SYSTEM</p>
     </footer>
 
     <script>
-        // Init Curtain & Popup
         window.addEventListener('load', () => {
-            setTimeout(() => {
-                document.body.classList.add('loaded');
-                setTimeout(() => {
-                    document.getElementById('offerPopup').classList.add('active');
-                }, 2000);
-            }, 500);
+            setTimeout(() => document.body.classList.add('loaded'), 500);
         });
 
-        function closePopup() { document.getElementById('offerPopup').classList.remove('active'); }
-
-        // Reveal Observer
-        const obs = new IntersectionObserver((e) => {
+        const observer = new IntersectionObserver((e) => {
             e.forEach(entry => { if(entry.isIntersecting) entry.target.classList.add('reveal'); });
         }, { threshold: 0.1 });
-        document.querySelectorAll('section, .booking-terminal').forEach(s => obs.observe(s));
+        document.querySelectorAll('section, .booking-form').forEach(s => observer.observe(s));
     </script>
 </body>
 </html>
