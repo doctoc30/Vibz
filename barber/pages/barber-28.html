@@ -3,319 +3,314 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AXIS AETHER | PRECISION TERMINAL 2026</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100;400;700;900&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    <title>AXIS GEN-3 | 2026 ULTRA-TERMINAL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Inter:wght@300;500;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <style>
         :root {
-            --bg: #ffffff;
-            --surface: #f8fafc;
-            --accent: #000000;
-            --steel: #e2e8f0;
-            --glass: rgba(255, 255, 255, 0.85);
-            --border-thick: 2px solid #000;
-            --border-thin: 1px solid rgba(0,0,0,0.1);
-            --shadow-hp: 0 40px 100px rgba(0,0,0,0.1);
+            --bg: #0a0a0a;
+            --ui-white: #ffffff;
+            --ui-gray: #1a1a1a;
+            --accent-green: #00ff41; /* Terminal Green hint */
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: 1px solid rgba(255,255,255,0.1);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; } /* Custom cursor for 2026 feel */
+        
         body { 
             background: var(--bg); 
-            color: var(--accent); 
-            font-family: 'Space Grotesk', sans-serif; 
-            line-height: 1.2;
+            color: var(--ui-white); 
+            font-family: 'Inter', sans-serif;
             overflow-x: hidden;
         }
 
-        /* REVEAL SYSTEM */
-        .reveal { opacity: 0; transform: translateY(40px); transition: 1s cubic-bezier(0.16, 1, 0.3, 1); }
-        .reveal.active { opacity: 1; transform: translateY(0); }
+        /* CUSTOM CURSOR */
+        #cursor {
+            width: 20px; height: 20px; border: 1px solid var(--ui-white);
+            position: fixed; border-radius: 50%; pointer-events: none; z-index: 9999;
+            transition: transform 0.1s;
+        }
 
-        /* HEADER & NAVIGATION */
+        /* NAVIGATION PILL */
         nav {
-            position: fixed; top: 0; width: 100%; height: 90px;
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 0 50px; z-index: 1000; background: var(--glass);
-            backdrop-filter: blur(20px); border-bottom: var(--border-thin);
+            position: fixed; top: 30px; left: 50%; transform: translateX(-50%);
+            width: 95%; max-width: 1400px; height: 60px;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(20px);
+            border: var(--border); border-radius: 100px;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 30px; z-index: 1000;
         }
-        .logo { font-family: 'Outfit'; font-weight: 900; font-size: 1.8rem; letter-spacing: -2px; }
-        
-        /* HAMBURGER */
-        .ham-wrap { cursor: pointer; display: flex; align-items: center; gap: 15px; }
-        .ham-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 2px; }
-        .mobile-nav {
-            position: fixed; top: 0; right: -100%; width: 400px; height: 100vh;
-            background: #fff; z-index: 2000; transition: 0.6s cubic-bezier(0.8, 0, 0.2, 1);
-            padding: 100px 50px; border-left: var(--border-thick);
-        }
-        .mobile-nav.open { right: 0; }
-        .nav-close { position: absolute; top: 35px; right: 50px; font-size: 2rem; cursor: pointer; }
 
-        /* HERO STOREFRONT ANIMATION */
-        .hero {
+        /* HERO: THE 2026 STOREFRONT ANIMATION */
+        .hero-viewport {
             height: 100vh; width: 100%; position: relative;
-            background: #000; overflow: hidden; display: flex; align-items: center; padding: 0 10%;
+            display: flex; align-items: flex-end; padding: 100px;
+            overflow: hidden;
         }
-        .hero-bg-anim {
+        
+        .store-anim-bg {
             position: absolute; inset: 0;
-            background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.6)), 
-                        url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=2000&q=100');
+            background: url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&w=1920&q=100');
             background-size: cover; background-position: center;
-            animation: kenBurns 30s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
-            filter: saturate(0.2) contrast(1.1);
+            filter: grayscale(1) brightness(0.4);
+            transform: scale(1.1);
+            animation: spatialMove 20s infinite alternate cubic-bezier(0.45, 0, 0.55, 1);
         }
-        @keyframes kenBurns { 
-            0% { transform: scale(1.1) translate(0, 0); } 
-            100% { transform: scale(1.3) translate(-2%, -2%); } 
-        }
-        .hero-ui {
-            position: relative; z-index: 10; color: #fff; max-width: 800px;
-        }
-        .hero-ui h1 { font-family: 'Outfit'; font-size: clamp(4rem, 12vw, 10rem); line-height: 0.8; margin-bottom: 20px; }
 
-        /* BOOKING COMPONENT */
-        .booking-terminal {
-            max-width: 1300px; margin: -100px auto 50px; background: #fff;
-            padding: 60px; border: var(--border-thick); position: relative; z-index: 20;
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px;
+        @keyframes spatialMove {
+            0% { transform: scale(1.1) rotate(0deg); }
+            100% { transform: scale(1.2) rotate(1deg); }
         }
-        .form-unit label { font-size: 0.6rem; font-weight: 900; letter-spacing: 3px; display: block; margin-bottom: 10px; }
-        .form-unit select, .form-unit input { 
-            width: 100%; border: none; border-bottom: 2px solid #eee; padding: 15px 0;
-            font-family: 'Space Grotesk'; font-size: 1.1rem; outline: none; transition: 0.3s;
-        }
-        .form-unit select:focus { border-color: #000; }
 
-        /* SERVICES & PRICING */
-        .section-header { border-top: var(--border-thick); padding-top: 20px; margin-bottom: 80px; }
-        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
+        .hero-text h1 {
+            font-family: 'Syncopate', sans-serif;
+            font-size: clamp(4rem, 15vw, 12rem);
+            line-height: 0.8; letter-spacing: -5px;
+            mix-blend-mode: difference;
+        }
+
+        /* 2. DENSE BOOKING HUD */
+        .booking-hud {
+            background: var(--ui-gray);
+            border: var(--border);
+            margin: -50px 50px 50px;
+            display: grid; grid-template-columns: repeat(4, 1fr);
+            position: relative; z-index: 10;
+        }
+        .hud-cell {
+            padding: 40px; border-right: var(--border);
+            display: flex; flex-direction: column; gap: 15px;
+        }
+        .hud-cell label { font-size: 10px; letter-spacing: 3px; color: #666; font-weight: 900; }
+        .hud-cell select, .hud-cell input {
+            background: transparent; border: none; color: white; font-size: 1.2rem; outline: none;
+        }
+
+        /* 6. SERVICE BLOCKS: ASYMMETRIC GRID */
+        .section-label { padding: 100px 50px 20px; font-size: 12px; letter-spacing: 10px; color: #444; }
         
-        .service-block { border: var(--border-thin); padding: 50px; background: var(--surface); transition: 0.5s; }
-        .service-block:hover { background: #000; color: #fff; }
-        .price-tag { font-family: 'Outfit'; font-size: 3rem; margin: 30px 0; }
+        .services-container {
+            display: grid; grid-template-columns: 2fr 1fr 1fr;
+            gap: 1px; background: rgba(255,255,255,0.1); border: var(--border);
+        }
+        .s-card {
+            background: var(--bg); padding: 80px 40px;
+            transition: 0.5s; position: relative;
+        }
+        .s-card:hover { background: #fff; color: #000; }
+        .s-card h3 { font-family: 'Syncopate'; font-size: 2rem; margin-bottom: 20px; }
 
-        /* PRODUCTS ARCHIVE */
-        .product-shelf { display: grid; grid-template-columns: repeat(3, 2fr); gap: 20px; }
-        .product-card { background: #f1f5f9; padding: 60px; text-align: center; border-radius: 4px; }
-        .product-visual { height: 150px; margin-bottom: 30px; display: flex; align-items: center; justify-content: center; font-size: 5rem; color: #000; }
+        /* 9. BEFORE & AFTER: CLINICAL SLIDER */
+        .ba-slider {
+            height: 70vh; width: 100%; position: relative;
+            background: #000; overflow: hidden;
+        }
+        #after-layer {
+            position: absolute; inset: 0;
+            background: url('https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&w=1400') center/cover;
+        }
+        #before-layer {
+            position: absolute; inset: 0; width: 50%;
+            background: url('https://images.unsplash.com/photo-1593702295094-ada74bc4a39d?auto=format&fit=crop&w=1400') center/cover;
+            border-right: 2px solid var(--accent-green);
+        }
 
-        /* SLIDER & GALLERY */
-        .slider-wrap { height: 600px; position: relative; overflow: hidden; border: var(--border-thick); }
-        .slide-overlay { position: absolute; bottom: 40px; left: 40px; background: #000; color: #fff; padding: 20px; z-index: 10; }
-        
-        .gallery-grid { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, 300px); gap: 10px; }
-        .gallery-item { background-size: cover; background-position: center; filter: grayscale(1); transition: 0.5s; }
-        .gallery-item:hover { filter: grayscale(0); transform: scale(0.98); }
+        /* 8. PRODUCTS: BENTO BOX STYLE */
+        .bento-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(2, 300px); gap: 20px; padding: 50px;
+        }
+        .bento-item {
+            background: var(--ui-gray); border: var(--border);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            border-radius: 20px; transition: 0.3s;
+        }
+        .bento-item:nth-child(1) { grid-column: span 2; }
+        .bento-item:hover { border-color: #fff; transform: translateY(-5px); }
+        .product-icon { font-size: 3rem; margin-bottom: 20px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.2)); }
 
-        /* CONTACT & MAP */
-        .contact-layout { display: grid; grid-template-columns: 1fr 1.5fr; gap: 0; border: var(--border-thick); }
-        .info-side { padding: 80px; background: #000; color: #fff; }
-        .form-side { padding: 80px; background: #fff; }
+        /* 18. FAQ TERMINAL STYLE */
+        .faq-terminal { padding: 100px 50px; max-width: 900px; }
+        details { border-bottom: var(--border); padding: 30px 0; }
+        summary { 
+            list-style: none; font-family: 'Syncopate'; font-size: 1.2rem; 
+            cursor: pointer; display: flex; justify-content: space-between;
+        }
+        summary::after { content: "->"; color: var(--accent-green); }
 
-        /* ACTION PILLS */
-        .pills-container { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; z-index: 1000; }
-        .pill { background: #000; color: #fff; padding: 15px 30px; border-radius: 100px; text-decoration: none; font-weight: 700; font-size: 0.8rem; display: flex; align-items: center; gap: 10px; }
+        /* FLOATING ACTION PILL */
+        .cta-float {
+            position: fixed; bottom: 40px; right: 40px;
+            background: #fff; color: #000; padding: 20px 40px;
+            border-radius: 100px; font-weight: 900; text-decoration: none;
+            display: flex; align-items: center; gap: 15px; z-index: 1000;
+        }
 
-        footer { padding: 100px 50px; background: var(--surface); border-top: var(--border-thick); display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 50px; }
+        footer {
+            background: #000; border-top: var(--border);
+            padding: 100px 50px; display: grid; grid-template-columns: 2fr 1fr 1fr;
+        }
 
-        @media (max-width: 1024px) {
-            .booking-terminal, .grid-3 { grid-template-columns: 1fr; }
-            .hero-ui h1 { font-size: 5rem; }
+        /* MOBILE OPTIMIZATION */
+        @media (max-width: 1000px) {
+            .booking-hud, .services-container, .bento-grid { grid-template-columns: 1fr; }
+            .hero-text h1 { font-size: 5rem; }
         }
     </style>
 </head>
 <body>
 
+    <div id="cursor"></div>
+
     <nav>
-        <div class="logo">AXIS AETHER // 2026</div>
-        <div class="ham-wrap" onclick="toggleNav()">
-            <span class="ham-label">INDEX</span>
-            <i class="fa-solid fa-bars-staggered"></i>
+        <div style="font-family: 'Syncopate'; font-weight: 700;">AXIS // 2026</div>
+        <div style="display: flex; gap: 40px; font-size: 10px; letter-spacing: 2px;">
+            <span>01 ARCHIVE</span>
+            <span>02 PROTOCOLS</span>
+            <span>03 TERMINAL</span>
         </div>
+        <div onclick="toggleMenu()" style="cursor: pointer;"><i class="fa-solid fa-bars-staggered"></i></div>
     </nav>
 
-    <div class="mobile-nav" id="mNav">
-        <span class="nav-close" onclick="toggleNav()">&times;</span>
-        <div style="display: grid; gap: 30px;">
-            <a href="#services" style="font-size: 2.5rem; font-weight: 900; color: #000; text-decoration: none;">PROTOCOLS</a>
-            <a href="#tools" style="font-size: 2.5rem; font-weight: 900; color: #000; text-decoration: none;">ARCHIVE</a>
-            <a href="#location" style="font-size: 2.5rem; font-weight: 900; color: #000; text-decoration: none;">TERMINAL</a>
-        </div>
-    </div>
-
-    <section class="hero">
-        <div class="hero-bg-anim"></div>
-        <div class="hero-ui">
-            <p class="reveal" style="letter-spacing: 5px; font-weight: 700; font-size: 0.8rem; margin-bottom: 20px;">SYSTEM STATUS: ONLINE // LONDON HQ</p>
-            <h1 class="reveal">NEURAL<br>PRECISION</h1>
-            <button class="pill" style="background: #fff; color: #000; border: none; padding: 25px 50px; font-size: 1rem;">INITIATE SCAN</button>
+    <section class="hero-viewport">
+        <div class="store-anim-bg"></div>
+        <div class="hero-text">
+            <h1 class="reveal">HIGH<br>CRAFT</h1>
         </div>
     </section>
 
-    <section class="booking-terminal reveal">
-        <div class="form-unit">
-            <label>PROTOCOL TYPE</label>
-            <select><option>FULL ARCHITECTURE</option><option>LINEAR FADE</option><option>SCULPTING</option></select>
+    <section class="booking-hud reveal">
+        <div class="hud-cell">
+            <label>01 // PROTOCOL</label>
+            <select><option>SCULPT_SYSTEM</option><option>LINEAR_FADE</option></select>
         </div>
-        <div class="form-unit">
-            <label>OPERATIVE</label>
-            <select><option>ANY AVAILABLE</option><option>VANCE - MASTER</option><option>KANE - SENIOR</option></select>
+        <div class="hud-cell">
+            <label>02 // ARTISAN</label>
+            <select><option>KANE [SENIOR]</option><option>VANCE [MASTER]</option></select>
         </div>
-        <div class="form-unit">
-            <label>TEMPORAL WINDOW</label>
-            <input type="datetime-local">
+        <div class="hud-cell">
+            <label>03 // TEMPORAL</label>
+            <input type="date">
         </div>
-        <div class="form-unit" style="display: flex; align-items: flex-end;">
-            <button class="btn-black" style="width: 100%; padding: 20px; font-size: 0.8rem; letter-spacing: 2px;">SECURE SLOT</button>
-        </div>
-    </section>
-
-    <section class="section reveal" style="padding: 100px 50px;" id="services">
-        <div class="section-header">
-            <p style="font-weight: 900; font-size: 0.7rem;">SECTION 01</p>
-            <h2 style="font-size: 5rem; font-weight: 900;">PROTOCOLS</h2>
-        </div>
-        <div class="grid-3">
-            <div class="service-block">
-                <h3>LINEAR CUT</h3>
-                <div class="price-tag">$55</div>
-                <p>Advanced taper using 3D growth mapping. Includes neural scalp massage.</p>
-            </div>
-            <div class="service-block">
-                <h3>BEARD SCULPT</h3>
-                <div class="price-tag">$40</div>
-                <p>Architectural edge alignment based on skeletal jawline symmetry.</p>
-            </div>
-            <div class="service-block">
-                <h3>THE AXIS</h3>
-                <div class="price-tag">$90</div>
-                <p>Full head and facial restoration protocol. The 2026 flagship service.</p>
-            </div>
+        <div class="hud-cell" style="background: var(--accent-green); color: #000;">
+            <label style="color: #000;">04 // EXECUTE</label>
+            <button style="background:none; border:none; font-weight: 900; font-size: 1.2rem; text-align: left; cursor: pointer;">CONFIRM_SESSION</button>
         </div>
     </section>
 
-    <section class="reveal" style="padding: 50px;">
-        <div class="slider-wrap" onmousemove="handleSlider(event)">
-            <div class="slide-overlay">TRANSFORMATION LOG // ID-8821</div>
-            <div style="position: absolute; inset: 0; background: url('https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&w=1200') center/cover;"></div>
-            <div id="before" style="position: absolute; inset: 0; width: 50%; border-right: 3px solid #000; background: url('https://images.unsplash.com/photo-1517832207067-4db24a2ae47c?auto=format&fit=crop&w=1200') center/cover; z-index: 2;"></div>
+    <div class="section-label">PROTOCOL LISTING</div>
+    <section class="services-container reveal">
+        <div class="s-card">
+            <h3>THE SCULPT</h3>
+            <p>Advanced facial architecture reconstruction.</p>
+            <div style="margin-top: 40px; font-weight: 900;">$65.00</div>
+        </div>
+        <div class="s-card">
+            <h3>LINEAR</h3>
+            <p>Precise taper protocol.</p>
+            <div style="margin-top: 40px; font-weight: 900;">$45.00</div>
+        </div>
+        <div class="s-card">
+            <h3>REBOOT</h3>
+            <p>Full head restoration.</p>
+            <div style="margin-top: 40px; font-weight: 900;">$95.00</div>
         </div>
     </section>
 
-    <section class="section reveal" style="padding: 100px 50px;">
-        <div class="section-header"><h2>ARTISANS</h2></div>
-        <div class="grid-3">
-            <div style="border: var(--border-thin); padding: 40px; text-align: center;">
-                <div style="width: 200px; height: 200px; background: #eee; margin: 0 auto 30px; border-radius: 4px;"></div>
-                <h3>OPERATIVE VANCE</h3>
-                <p style="font-size: 0.7rem; color: #666; margin-top: 10px;">LEVEL 5 // FADE SPECIALIST</p>
-            </div>
-            <div style="border: var(--border-thin); padding: 40px; text-align: center;">
-                <div style="width: 200px; height: 200px; background: #eee; margin: 0 auto 30px; border-radius: 4px;"></div>
-                <h3>OPERATIVE KANE</h3>
-                <p style="font-size: 0.7rem; color: #666; margin-top: 10px;">LEVEL 4 // SCULPTOR</p>
-            </div>
-            <div style="border: var(--border-thin); padding: 40px; text-align: center;">
-                <div style="width: 200px; height: 200px; background: #eee; margin: 0 auto 30px; border-radius: 4px;"></div>
-                <h3>OPERATIVE LEX</h3>
-                <p style="font-size: 0.7rem; color: #666; margin-top: 10px;">LEVEL 4 // TEXTURE EXPERT</p>
-            </div>
+    <div class="section-label">VISUAL LOGS // TRANSFORMATIONS</div>
+    <section class="ba-slider" onmousemove="handleSlider(event)">
+        <div id="after-layer"></div>
+        <div id="before-layer"></div>
+    </section>
+
+    <div class="section-label">EQUIPMENT // RETAIL ARCHIVE</div>
+    <section class="bento-grid">
+        <div class="bento-item">
+            <div class="product-icon"><i class="fa-solid fa-flask-vial"></i></div>
+            <p>NEURAL OIL [v2.1]</p>
+        </div>
+        <div class="bento-item">
+            <div class="product-icon"><i class="fa-solid fa-wind"></i></div>
+            <p>IONIC DRYER</p>
+        </div>
+        <div class="bento-item">
+            <div class="product-icon"><i class="fa-solid fa-dna"></i></div>
+            <p>FIBER PASTE</p>
+        </div>
+        <div class="bento-item" style="grid-column: span 2;">
+            <div class="product-icon"><i class="fa-solid fa-microchip"></i></div>
+            <p>PRECISION CLIPPER [GEN-3]</p>
+        </div>
+        <div class="bento-item">
+            <div class="product-icon"><i class="fa-solid fa-spray-can"></i></div>
+            <p>FINISH MIST</p>
         </div>
     </section>
 
-    <section class="section reveal" style="padding: 100px 50px;" id="tools">
-        <div class="section-header"><h2>TOOLS</h2></div>
-        <div class="product-shelf">
-            <div class="product-card"><div class="product-visual"><i class="fa-solid fa-vial"></i></div><p>MATTE SERUM</p></div>
-            <div class="product-card"><div class="product-visual"><i class="fa-solid fa-spray-can-sparkles"></i></div><p>STATIC HOLD</p></div>
-            <div class="product-card"><div class="product-visual"><i class="fa-solid fa-flask"></i></div><p>GROWTH OIL</p></div>
-            <div class="product-card"><div class="product-visual"><i class="fa-solid fa-wind"></i></div><p>IONIC DRYER</p></div>
-            <div class="product-card"><div class="product-visual"><i class="fa-solid fa-shield-halved"></i></div><p>SCALP GUARD</p></div>
-            <div class="product-card"><div class="product-visual"><i class="fa-solid fa-dna"></i></div><p>FIBER PASTE</p></div>
+    <section class="faq-terminal">
+        <div class="section-label" style="padding:0 0 40px 0;">SYSTEM FAQ</div>
+        <details>
+            <summary>LATE ARRIVAL POLICY</summary>
+            <p style="padding-top: 20px; color: #888;">Sessions are locked. 10-minute grace period before system reset.</p>
+        </details>
+        <details>
+            <summary>MEMBERSHIP TIERS</summary>
+            <p style="padding-top: 20px; color: #888;">Access the Axis Black tier for priority booking.</p>
+        </details>
+    </section>
+
+    <section style="display: grid; grid-template-columns: 1fr 1fr; border-top: var(--border);">
+        <div style="padding: 80px; border-right: var(--border);">
+            <h2 style="font-family: 'Syncopate'; margin-bottom: 40px;">TERMINAL_LOC</h2>
+            <p>22 BAKER ST, LONDON</p>
+            <p style="color: var(--accent-green);">08:00 - 22:00 DAILY</p>
+        </div>
+        <div style="background: #111; display: flex; align-items: center; justify-content: center;">
+            <span style="font-size: 10px; color: #444;">[MAP_DATA_STREAM_ACTIVE]</span>
         </div>
     </section>
 
-    <section class="reveal" style="padding: 10px;">
-        <div class="gallery-grid">
-            <div class="gallery-item" style="grid-column: span 2; background-image: url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&w=800');"></div>
-            <div class="gallery-item" style="background-image: url('https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&w=800');"></div>
-            <div class="gallery-item" style="background-image: url('https://images.unsplash.com/photo-1512690118275-830b2e5d02cb?auto=format&fit=crop&w=800');"></div>
-            <div class="gallery-item" style="background-image: url('https://images.unsplash.com/photo-1593702295094-ada74bc4a39d?auto=format&fit=crop&w=800');"></div>
-            <div class="gallery-item" style="grid-column: span 3; background-image: url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=1200');"></div>
-        </div>
-    </section>
-
-    <section class="section reveal" style="padding: 100px 50px;">
-        <div class="grid-3">
-            <div style="grid-column: span 2;">
-                <h3>FREQUENT QUERIES</h3><br>
-                <details style="border-bottom: 1px solid #eee; padding: 20px 0;"><summary style="font-weight: 700; cursor: pointer;">HOW DO I CANCEL?</summary><p style="padding-top: 10px; color: #666;">Cancellations must be made 24h prior via the terminal.</p></details>
-                <details style="border-bottom: 1px solid #eee; padding: 20px 0;"><summary style="font-weight: 700; cursor: pointer;">DO YOU ACCEPT CASH?</summary><p style="padding-top: 10px; color: #666;">We are a digital-only currency terminal.</p></details>
-            </div>
-            <div style="background: #000; color: #fff; padding: 40px;">
-                <div style="font-size: 2rem;">"AXIS IS THE ONLY LOGICAL CHOICE FOR PRECISION."</div>
-                <div style="margin-top: 20px; color: #fbbf24;"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-            </div>
-        </div>
-    </section>
-
-    <section class="contact-layout reveal" id="location">
-        <div class="info-side">
-            <h2 style="font-size: 4rem; font-weight: 900; margin-bottom: 40px;">LOCATE</h2>
-            <p>22 BAKER ST, LONDON NW1 6XE</p><br>
-            <p><strong>MON - FRI:</strong> 08:00 - 20:00</p>
-            <p><strong>SAT:</strong> 10:00 - 18:00</p>
-            <p><strong>SUN:</strong> CLOSED</p><br>
-            <div style="height: 200px; background: #222; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; border: 1px solid #333;">[GOOGLE MAPS EMBED - 2026 API]</div>
-        </div>
-        <div class="form-side" id="contact">
-            <h3>TRANSMIT MESSAGE</h3><br>
-            <form style="display: grid; gap: 30px;">
-                <input type="text" placeholder="GUEST NAME" style="border-bottom: 2px solid #000; padding: 20px 0; border-top: 0; border-left: 0; border-right: 0; outline: none;">
-                <input type="email" placeholder="EMAIL ADDRESS" style="border-bottom: 2px solid #000; padding: 20px 0; border-top: 0; border-left: 0; border-right: 0; outline: none;">
-                <textarea placeholder="INQUIRY" style="height: 100px; border-bottom: 2px solid #000; border-top: 0; border-left: 0; border-right: 0; padding: 20px 0; outline: none; font-family: inherit;"></textarea>
-                <button style="background: #000; color: #fff; border: none; padding: 25px; cursor: pointer; font-weight: 700;">SEND TRANSMISSION</button>
-            </form>
-        </div>
-    </section>
-
-    <div class="pills-container">
-        <a href="tel:12345678" class="pill"><i class="fa-solid fa-phone"></i> CALL</a>
-        <a href="#" class="pill" style="background: #25d366;"><i class="fa-brands fa-whatsapp"></i> MESSAGE</a>
-    </div>
+    <a href="#" class="cta-float">
+        <i class="fa-solid fa-phone"></i>
+        <span>INITIALIZE VOICE CALL</span>
+    </a>
 
     <footer>
-        <div class="footer-logo">AXIS AETHER</div>
-        <div class="quick-links">
-            <h4>PAGES</h4><br>
-            <a href="#">SYSTEMS</a><a href="#">ARCHIVE</a><a href="#">ARTISANS</a>
+        <div style="font-family: 'Syncopate'; font-size: 2rem;">AXIS</div>
+        <div>
+            <p style="color: #444; margin-bottom: 20px;">SOCIALS</p>
+            <p>INSTAGRAM</p><p>TWITTER</p>
         </div>
-        <div class="quick-links">
-            <h4>SOCIAL</h4><br>
-            <a href="#">INSTAGRAM</a><a href="#">TIKTOK</a><a href="#">YOUTUBE</a>
-        </div>
-        <div class="quick-links">
-            <h4>LEGAL</h4><br>
-            <a href="#">PRIVACY</a><a href="#">TERMS</a><a href="#">LICENSE</a>
+        <div>
+            <p style="color: #444; margin-bottom: 20px;">LEGAL</p>
+            <p>PRIVACY</p><p>TERMS</p>
         </div>
     </footer>
 
     <script>
-        function toggleNav() { document.getElementById('mNav').classList.toggle('open'); }
-
-        window.addEventListener('scroll', () => {
-            document.querySelectorAll('.reveal').forEach(el => {
-                if (el.getBoundingClientRect().top < window.innerHeight * 0.9) el.classList.add('active');
-            });
+        // Custom Cursor Logic
+        const cursor = document.getElementById('cursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
         });
 
+        // 9. Before/After Slider
         function handleSlider(e) {
             const rect = e.currentTarget.getBoundingClientRect();
             const x = e.clientX - rect.left;
-            document.getElementById('before').style.width = (x / rect.width) * 100 + "%";
+            document.getElementById('before-layer').style.width = (x / rect.width) * 100 + "%";
         }
 
-        window.dispatchEvent(new Event('scroll'));
+        // Scroll Reveal
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.style.opacity = 1;
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
     </script>
 </body>
 </html>
