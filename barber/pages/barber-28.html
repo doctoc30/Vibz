@@ -4,19 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VELVET BLADE | Elite Barbering</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@200;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --velvet: #8B0000;
-            --gold: #D4AF37;
-            --charcoal: #1a1a1a;
-            --cream: #F5F1E8;
-            --light-gold: #E8D49A;
-            --transition-slow: all 1s cubic-bezier(0.77, 0, 0.175, 1);
-            --transition-fast: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            --shadow-strong: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            --shadow-subtle: 0 10px 30px rgba(0, 0, 0, 0.15);
+            --velvet-deep: #4A0404;
+            --velvet-mid: #8B0000;
+            --gold-leaf: #D4AF37;
+            --gold-glow: #FFD700;
+            --silk-cream: #F9F4E8;
+            --night-matte: #120101;
+            --glass: rgba(255, 255, 255, 0.03);
+            --transition-luxe: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
         * {
@@ -25,239 +24,86 @@
             box-sizing: border-box;
         }
 
-        html {
-            scroll-behavior: smooth;
-        }
-
         body {
-            font-family: 'Inter', sans-serif;
-            background: var(--charcoal);
-            color: var(--cream);
+            background-color: var(--night-matte);
+            color: var(--silk-cream);
+            font-family: 'Montserrat', sans-serif;
             overflow-x: hidden;
-            opacity: 0;
-            transition: opacity 1s ease;
+            /* Crushed Velvet Texture Overlay */
+            background-image: url("https://www.transparenttextures.com/patterns/dark-leather.png");
         }
 
-        body.loaded {
-            opacity: 1;
-        }
-
-        h1, h2, h3, h4, .logo, .cinzel {
-            font-family: 'Cinzel', serif;
-            font-weight: 700;
-            letter-spacing: 0.05em;
-        }
-
-        .playfair {
-            font-family: 'Playfair Display', serif;
-        }
-
-        /* ========== CURTAIN OPENING ANIMATION ========== */
-        .curtain-opening {
+        /* ========== VELVET CURTAIN REVEAL ========== */
+        .curtain-container {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
+            inset: 0;
             z-index: 10000;
             display: flex;
+            transition: var(--transition-luxe);
             pointer-events: none;
         }
 
-        .curtain {
-            width: 50%;
-            height: 100%;
-            background: var(--velvet);
+        .curtain-panel {
+            flex: 1;
+            background: linear-gradient(90deg, #3d0101, var(--velvet-mid), #3d0101);
             position: relative;
-            transition: var(--transition-slow);
-            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+            transition: transform 1.5s cubic-bezier(0.7, 0, 0.3, 1);
+            box-shadow: inset 0 0 100px rgba(0,0,0,0.5);
         }
 
-        .curtain-left {
-            left: 0;
-            transform-origin: left center;
-        }
-
-        .curtain-right {
-            right: 0;
-            transform-origin: right center;
-        }
-
-        .curtain.open .curtain-left {
-            transform: perspective(1000px) rotateY(-90deg) translateX(-50%);
-        }
-
-        .curtain.open .curtain-right {
-            transform: perspective(1000px) rotateY(90deg) translateX(50%);
-        }
-
-        .curtain-stitching {
+        .curtain-panel::after {
+            content: '';
             position: absolute;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: repeating-linear-gradient(
-                to right,
-                transparent,
-                transparent 20px,
-                rgba(212, 175, 55, 0.2) 20px,
-                rgba(212, 175, 55, 0.2) 40px
-            );
+            top: 0; width: 100%; height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+            opacity: 0.2;
         }
 
-        .curtain-tassel {
-            position: absolute;
-            bottom: 0;
-            width: 30px;
-            height: 100px;
-            background: linear-gradient(to bottom, var(--gold), #8B4513);
-            border-radius: 15px 15px 0 0;
-        }
+        .curtain-panel.left { transform-origin: left; }
+        .curtain-panel.right { transform-origin: right; }
 
-        .curtain-left .curtain-tassel {
-            right: -15px;
-        }
+        .curtain-container.open .left { transform: scaleX(0); }
+        .curtain-container.open .right { transform: scaleX(0); }
 
-        .curtain-right .curtain-tassel {
-            left: -15px;
-        }
-
-        /* ========== ROCKET REVEAL ANIMATION ========== */
-        .rocket-reveal {
+        /* ========== SILK RIBBON REVEAL (Replaces Rocket) ========== */
+        .ribbon-loader {
             position: fixed;
-            top: 50%;
-            left: 50%;
+            top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            z-index: 9999;
-            opacity: 0;
-            pointer-events: none;
+            z-index: 10001;
+            text-align: center;
+            transition: opacity 0.5s ease;
         }
 
-        .rocket-container {
-            position: relative;
-            width: 120px;
-            height: 200px;
-            transform: scale(0);
-            transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        .rocket {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #ff6b6b, var(--velvet));
-            clip-path: polygon(50% 0%, 30% 20%, 70% 20%, 85% 40%, 15% 40%, 30% 60%, 70% 60%, 85% 80%, 15% 80%, 30% 100%, 70% 100%);
-            animation: rocketFloat 2s infinite alternate ease-in-out;
-        }
-
-        @keyframes rocketFloat {
-            0% { transform: translateY(0) rotate(0deg); }
-            100% { transform: translateY(-20px) rotate(2deg); }
-        }
-
-        .rocket-flame {
-            position: absolute;
-            bottom: -40px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 100px;
-            background: linear-gradient(to bottom, var(--gold), #ff4500, transparent);
-            border-radius: 50% 50% 0 0;
-            filter: blur(10px);
-            animation: flameBurn 0.5s infinite alternate;
-        }
-
-        @keyframes flameBurn {
-            0% { height: 80px; opacity: 0.8; }
-            100% { height: 120px; opacity: 1; }
-        }
-
-        .spark {
-            position: absolute;
-            width: 6px;
-            height: 6px;
-            background: var(--gold);
-            border-radius: 50%;
-            filter: blur(1px);
-            animation: sparkFloat 2s infinite;
-        }
-
-        @keyframes sparkFloat {
-            0% { transform: translateY(0) translateX(0); opacity: 1; }
-            100% { transform: translateY(-100px) translateX(var(--spark-x)); opacity: 0; }
+        .silk-logo {
+            font-family: 'Cinzel', serif;
+            font-size: 3rem;
+            color: var(--gold-leaf);
+            letter-spacing: 10px;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+            margin-bottom: 20px;
         }
 
         /* ========== HEADER & NAVIGATION ========== */
         header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 1000;
-            padding: 30px 0;
-            transition: var(--transition-fast);
-            backdrop-filter: blur(10px);
-            background: rgba(26, 26, 26, 0.9);
-            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
-        }
-
-        header.scrolled {
-            padding: 20px 0;
-            background: rgba(26, 26, 26, 0.95);
-            box-shadow: var(--shadow-strong);
-        }
-
-        .header-container {
+            padding: 25px 50px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            width: 90%;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .logo {
-            font-size: 2.2rem;
-            color: var(--cream);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            position: relative;
-        }
-
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            background: var(--gold);
-            margin-right: 15px;
-            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-            animation: logoSpin 20s infinite linear;
-        }
-
-        @keyframes logoSpin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .logo-text {
-            display: flex;
-            flex-direction: column;
-            line-height: 1;
+            position: fixed;
+            width: 100%;
+            z-index: 900;
+            background: linear-gradient(to bottom, rgba(18,1,1,0.9), transparent);
+            backdrop-filter: blur(5px);
         }
 
         .logo-main {
-            font-size: 1.8rem;
+            font-family: 'Cinzel', serif;
             font-weight: 900;
-            letter-spacing: 3px;
-        }
-
-        .logo-sub {
-            font-size: 0.7rem;
-            font-family: 'Inter', sans-serif;
-            letter-spacing: 8px;
-            color: var(--gold);
-            margin-top: 5px;
+            letter-spacing: 4px;
+            color: var(--gold-leaf);
+            text-decoration: none;
+            font-size: 1.5rem;
         }
 
         .nav-links {
@@ -267,1416 +113,184 @@
         }
 
         .nav-link {
-            color: var(--cream);
             text-decoration: none;
-            font-weight: 500;
-            font-size: 1rem;
-            position: relative;
-            padding: 10px 0;
-            transition: var(--transition-fast);
+            color: var(--silk-cream);
+            font-size: 0.8rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .nav-link:before {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--gold);
-            transition: var(--transition-fast);
+            letter-spacing: 2px;
+            transition: var(--transition-luxe);
+            opacity: 0.7;
         }
 
         .nav-link:hover {
-            color: var(--gold);
+            opacity: 1;
+            color: var(--gold-leaf);
+            text-shadow: 0 0 10px var(--gold-glow);
         }
 
-        .nav-link:hover:before {
-            width: 100%;
-        }
-
-        .nav-cta {
-            background: linear-gradient(135deg, var(--velvet), #5a0000);
-            color: var(--cream);
-            padding: 14px 32px;
-            border-radius: 0;
-            border: 1px solid var(--gold);
-            font-weight: 600;
-            letter-spacing: 1.5px;
-            transition: var(--transition-fast);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .nav-cta:before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.2), transparent);
-            transition: left 0.7s ease;
-        }
-
-        .nav-cta:hover:before {
-            left: 100%;
-        }
-
-        .nav-cta:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(139, 0, 0, 0.3);
-        }
-
-        .menu-toggle {
-            display: none;
-            font-size: 1.8rem;
-            color: var(--cream);
-            background: none;
-            border: none;
-            cursor: pointer;
-            z-index: 1001;
-        }
-
-        /* ========== HERO SECTION ========== */
+        /* ========== HERO SECTION (Velvet Redesign) ========== */
         .hero {
-            min-height: 100vh;
+            height: 100vh;
             display: flex;
             align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at center, var(--velvet-mid) 0%, var(--night-matte) 100%);
             position: relative;
-            overflow: hidden;
-            padding-top: 120px;
-        }
-
-        .hero-bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 20% 50%, rgba(139, 0, 0, 0.2) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 20%, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
-                        linear-gradient(135deg, #0a0a0a 0%, var(--charcoal) 100%);
-            z-index: -1;
-        }
-
-        .hero-container {
-            width: 90%;
-            max-width: 1400px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 80px;
-            align-items: center;
+            padding: 0 10%;
         }
 
         .hero-content {
-            position: relative;
-        }
-
-        .hero-pre-title {
-            font-size: 1rem;
-            letter-spacing: 5px;
-            color: var(--gold);
-            text-transform: uppercase;
-            margin-bottom: 30px;
-            display: block;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeUp 0.8s 0.5s forwards;
+            text-align: center;
+            z-index: 10;
         }
 
         .hero-title {
-            font-size: clamp(3.5rem, 8vw, 6rem);
+            font-family: 'Cinzel', serif;
+            font-size: clamp(3rem, 10vw, 7rem);
             line-height: 1;
-            margin-bottom: 30px;
-            color: var(--cream);
-            position: relative;
-            opacity: 0;
-            transform: translateY(30px);
-            animation: fadeUp 0.8s 0.7s forwards;
-        }
-
-        .hero-title:after {
-            content: '';
-            position: absolute;
-            bottom: -15px;
-            left: 0;
-            width: 100px;
-            height: 3px;
-            background: var(--gold);
+            margin-bottom: 20px;
+            background: linear-gradient(to bottom, #fff, var(--gold-leaf));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .hero-subtitle {
-            font-size: 1.3rem;
-            line-height: 1.6;
-            color: var(--light-gold);
-            margin-bottom: 50px;
-            max-width: 500px;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeUp 0.8s 0.9s forwards;
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 1.5rem;
+            color: var(--silk-cream);
+            margin-bottom: 40px;
+            opacity: 0.8;
         }
 
-        @keyframes fadeUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .hero-buttons {
-            display: flex;
-            gap: 25px;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeUp 0.8s 1.1s forwards;
-        }
-
-        .btn {
-            padding: 18px 40px;
-            text-decoration: none;
-            font-weight: 600;
-            letter-spacing: 1.5px;
-            border-radius: 0;
-            transition: var(--transition-fast);
-            text-transform: uppercase;
-            display: inline-block;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--velvet), #5a0000);
-            color: var(--cream);
-            border: 1px solid var(--gold);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(139, 0, 0, 0.3);
-        }
-
-        .btn-secondary {
-            background: transparent;
-            color: var(--cream);
-            border: 1px solid rgba(212, 175, 55, 0.5);
-        }
-
-        .btn-secondary:hover {
-            background: rgba(212, 175, 55, 0.1);
-            transform: translateY(-5px);
-        }
-
-        /* 3D Barber Chair Visualization */
-        .barber-visualization {
-            position: relative;
-            height: 600px;
-            perspective: 1000px;
-        }
-
-        .chair-3d {
-            position: absolute;
-            width: 400px;
-            height: 400px;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotateX(15deg) rotateY(-25deg);
-            transform-style: preserve-3d;
-            animation: chairRotate 30s infinite linear;
-        }
-
-        @keyframes chairRotate {
-            0% { transform: translate(-50%, -50%) rotateX(15deg) rotateY(0deg); }
-            100% { transform: translate(-50%, -50%) rotateX(15deg) rotateY(360deg); }
-        }
-
-        .chair-base {
-            position: absolute;
-            width: 250px;
-            height: 50px;
-            background: linear-gradient(to bottom, #333, #222);
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%) translateZ(50px);
-            border-radius: 10px;
-        }
-
-        .chair-pole {
-            position: absolute;
-            width: 20px;
-            height: 300px;
-            background: linear-gradient(to bottom, var(--gold), #8B4513);
-            bottom: 50px;
-            left: 50%;
-            transform: translateX(-50%) translateZ(60px);
-        }
-
-        .chair-seat {
-            position: absolute;
-            width: 180px;
-            height: 180px;
-            background: linear-gradient(135deg, var(--velvet), #5a0000);
-            bottom: 350px;
-            left: 50%;
-            transform: translateX(-50%) translateZ(60px) rotateX(90deg);
-            border-radius: 10px;
-            border: 2px solid var(--gold);
-        }
-
-        .chair-back {
-            position: absolute;
-            width: 200px;
-            height: 300px;
-            background: linear-gradient(to right, var(--velvet), #5a0000);
-            bottom: 350px;
-            left: 50%;
-            transform: translateX(-50%) translateZ(50px) translateY(-150px);
-            border-radius: 10px 10px 0 0;
-            border: 2px solid var(--gold);
-            border-bottom: none;
-        }
-
-        /* ========== SERVICES SECTION ========== */
-        .services-section {
-            padding: 150px 0;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .services-bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, rgba(26, 26, 26, 0.9) 0%, rgba(10, 10, 10, 1) 100%);
-            z-index: -1;
-        }
-
-        .section-title {
-            text-align: center;
-            margin-bottom: 100px;
-            position: relative;
-        }
-
-        .section-title h2 {
-            font-size: 3.5rem;
-            color: var(--cream);
-            margin-bottom: 20px;
-            display: inline-block;
-            position: relative;
-        }
-
-        .section-title h2:after {
-            content: '';
-            position: absolute;
-            bottom: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 150px;
-            height: 3px;
-            background: var(--gold);
-        }
-
-        .section-title p {
-            color: var(--light-gold);
-            max-width: 600px;
-            margin: 0 auto;
-            font-size: 1.2rem;
-            line-height: 1.6;
-        }
-
+        /* ========== VELVET CARDS ========== */
         .services-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 40px;
-            margin-top: 50px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 100px 10%;
+            background: var(--night-matte);
         }
 
         .service-card {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 5px;
-            padding: 50px 40px;
+            background: linear-gradient(145deg, #1e0202, #3d0101);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            padding: 40px;
             text-align: center;
-            transition: var(--transition-fast);
-            border: 1px solid rgba(212, 175, 55, 0.1);
             position: relative;
+            transition: var(--transition-luxe);
             overflow: hidden;
-            backdrop-filter: blur(10px);
         }
 
-        .service-card:before {
+        .service-card::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: linear-gradient(90deg, var(--velvet), var(--gold));
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.5s ease;
-        }
-
-        .service-card:hover:before {
-            transform: scaleX(1);
+            inset: 0;
+            background: url('https://www.transparenttextures.com/patterns/crissxcross.png');
+            opacity: 0.05;
         }
 
         .service-card:hover {
-            transform: translateY(-15px);
-            border-color: rgba(212, 175, 55, 0.3);
-            box-shadow: var(--shadow-strong);
-        }
-
-        .service-icon {
-            width: 80px;
-            height: 80px;
-            background: rgba(212, 175, 55, 0.1);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 30px;
-            color: var(--gold);
-            font-size: 2.5rem;
-            border: 1px solid rgba(212, 175, 55, 0.3);
-        }
-
-        .service-card h3 {
-            font-size: 1.8rem;
-            margin-bottom: 20px;
-            color: var(--cream);
-        }
-
-        .service-card p {
-            color: var(--light-gold);
-            margin-bottom: 30px;
-            line-height: 1.6;
+            transform: translateY(-10px) scale(1.02);
+            border-color: var(--gold-leaf);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 20px rgba(139, 0, 0, 0.3);
         }
 
         .service-price {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--gold);
+            display: block;
             font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            color: var(--gold-leaf);
+            margin-top: 20px;
         }
 
-        /* ========== INTERACTIVE STORYTELLING ========== */
-        .story-section {
-            padding: 150px 0;
-            position: relative;
-        }
-
-        .story-container {
-            display: flex;
-            align-items: center;
-            gap: 80px;
-            width: 90%;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .story-visual {
-            flex: 1;
-            height: 500px;
-            position: relative;
-        }
-
-        .story-timeline {
-            position: absolute;
-            top: 50%;
-            left: 0;
-            transform: translateY(-50%);
-            width: 100%;
-            height: 2px;
-            background: rgba(212, 175, 55, 0.3);
-        }
-
-        .timeline-marker {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 20px;
-            height: 20px;
-            background: var(--gold);
-            border-radius: 50%;
-            cursor: pointer;
-            transition: var(--transition-fast);
-            box-shadow: 0 0 20px var(--gold);
-        }
-
-        .timeline-marker:hover {
-            transform: translateY(-50%) scale(1.5);
-        }
-
-        .timeline-marker.active {
-            background: var(--velvet);
-            box-shadow: 0 0 30px var(--velvet);
-        }
-
-        .story-content {
-            flex: 1;
-            opacity: 0;
-            transform: translateX(50px);
-            transition: var(--transition-slow);
-        }
-
-        .story-content.active {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        .story-year {
-            font-size: 5rem;
-            color: var(--gold);
-            font-weight: 900;
-            margin-bottom: 20px;
-            line-height: 1;
-        }
-
-        .story-title {
-            font-size: 2.5rem;
-            margin-bottom: 30px;
-            color: var(--cream);
-        }
-
-        .story-text {
-            color: var(--light-gold);
-            line-height: 1.8;
-            font-size: 1.1rem;
-        }
-
-        /* ========== VOICE & ADAPTIVE INTERFACE ========== */
-        .voice-control {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            z-index: 999;
-        }
-
-        .voice-btn {
-            width: 70px;
-            height: 70px;
-            background: linear-gradient(135deg, var(--velvet), var(--gold));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--cream);
-            font-size: 1.5rem;
-            cursor: pointer;
-            box-shadow: var(--shadow-strong);
-            transition: var(--transition-fast);
-            border: none;
-        }
-
-        .voice-btn:hover {
-            transform: scale(1.1);
-        }
-
-        .voice-btn.listening {
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7); }
-            70% { box-shadow: 0 0 0 20px rgba(212, 175, 55, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
-        }
-
-        .voice-feedback {
-            position: absolute;
-            bottom: 80px;
-            right: 0;
-            background: rgba(26, 26, 26, 0.95);
-            padding: 20px;
-            border-radius: 10px;
-            width: 300px;
-            border: 1px solid var(--gold);
-            transform: translateY(20px);
-            opacity: 0;
-            transition: var(--transition-fast);
-            pointer-events: none;
-        }
-
-        .voice-feedback.active {
-            transform: translateY(0);
-            opacity: 1;
-        }
-
-        .adaptive-controls {
-            position: fixed;
-            bottom: 30px;
-            left: 30px;
-            z-index: 999;
-            display: flex;
-            gap: 15px;
-        }
-
-        .adaptive-btn {
-            width: 50px;
-            height: 50px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--cream);
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: var(--transition-fast);
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            backdrop-filter: blur(10px);
-        }
-
-        .adaptive-btn:hover {
-            background: rgba(212, 175, 55, 0.2);
-            transform: translateY(-5px);
-        }
-
-        /* ========== FOOTER ========== */
-        footer {
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
-            padding: 100px 0 50px;
-            border-top: 1px solid rgba(212, 175, 55, 0.1);
-        }
-
-        .footer-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 60px;
-            width: 90%;
-            max-width: 1400px;
-            margin: 0 auto 80px;
-        }
-
-        .footer-logo .logo {
-            font-size: 1.8rem;
-            margin-bottom: 30px;
-        }
-
-        .footer-about {
-            color: var(--light-gold);
-            line-height: 1.8;
-            margin-bottom: 30px;
-        }
-
-        .footer-social {
-            display: flex;
-            gap: 20px;
-        }
-
-        .social-link {
-            width: 45px;
-            height: 45px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--cream);
+        /* ========== CTA BUTTONS ========== */
+        .btn-velvet {
+            padding: 15px 40px;
+            background: var(--velvet-mid);
+            color: white;
             text-decoration: none;
-            transition: var(--transition-fast);
-            border: 1px solid rgba(212, 175, 55, 0.1);
-        }
-
-        .social-link:hover {
-            background: var(--gold);
-            color: var(--charcoal);
-            transform: translateY(-5px);
-        }
-
-        .footer-column h3 {
-            font-size: 1.3rem;
-            color: var(--cream);
-            margin-bottom: 30px;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 2px;
+            border: 1px solid var(--gold-leaf);
             position: relative;
-            padding-bottom: 15px;
+            transition: var(--transition-luxe);
+            box-shadow: 0 0 15px rgba(139, 0, 0, 0.4);
         }
 
-        .footer-column h3:after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 50px;
-            height: 2px;
-            background: var(--gold);
+        .btn-velvet:hover {
+            background: var(--gold-leaf);
+            color: var(--night-matte);
+            box-shadow: 0 0 30px var(--gold-glow);
         }
 
-        .footer-links {
-            list-style: none;
-        }
-
-        .footer-links li {
-            margin-bottom: 15px;
-        }
-
-        .footer-links a {
-            color: var(--light-gold);
-            text-decoration: none;
-            transition: var(--transition-fast);
-            display: flex;
-            align-items: center;
-        }
-
-        .footer-links a:hover {
-            color: var(--gold);
-            padding-left: 10px;
-        }
-
-        .footer-links i {
-            margin-right: 10px;
-            width: 20px;
-        }
-
-        .copyright {
-            text-align: center;
-            padding-top: 50px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            color: var(--light-gold);
-            font-size: 0.9rem;
-        }
-
-        /* ========== RESPONSIVE DESIGN ========== */
-        @media (max-width: 1200px) {
-            .hero-container {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
-            
-            .barber-visualization {
-                height: 400px;
-                margin-top: 50px;
-            }
-            
-            .story-container {
-                flex-direction: column;
-            }
-        }
-
-        @media (max-width: 992px) {
-            .nav-links {
-                position: fixed;
-                top: 0;
-                right: -100%;
-                width: 300px;
-                height: 100vh;
-                background: rgba(26, 26, 26, 0.98);
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                gap: 40px;
-                transition: var(--transition-slow);
-                backdrop-filter: blur(20px);
-                z-index: 1000;
-                border-left: 1px solid rgba(212, 175, 55, 0.1);
-            }
-            
-            .nav-links.active {
-                right: 0;
-            }
-            
-            .menu-toggle {
-                display: block;
-            }
-            
-            .section-title h2 {
-                font-size: 2.8rem;
-            }
-            
-            .services-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .hero-title {
-                font-size: clamp(2.8rem, 8vw, 4rem);
-            }
-            
-            .hero-buttons {
-                flex-direction: column;
-                gap: 15px;
-            }
-            
-            .btn {
-                width: 100%;
-                text-align: center;
-            }
-            
-            .chair-3d {
-                width: 300px;
-                height: 300px;
-            }
-            
-            .voice-control, .adaptive-controls {
-                bottom: 20px;
-                right: 20px;
-                left: 20px;
-                justify-content: center;
-            }
-            
-            .voice-feedback {
-                width: calc(100vw - 40px);
-                right: 0;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .logo {
-                font-size: 1.8rem;
-            }
-            
-            .logo-icon {
-                width: 30px;
-                height: 30px;
-                margin-right: 10px;
-            }
-            
-            .hero-pre-title {
-                font-size: 0.8rem;
-            }
-            
-            .section-title h2 {
-                font-size: 2.2rem;
-            }
-            
-            .story-year {
-                font-size: 3.5rem;
-            }
-            
-            .story-title {
-                font-size: 2rem;
-            }
-        }
+        /* Custom scrollbar for velvet theme */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--night-matte); }
+        ::-webkit-scrollbar-thumb { background: var(--velvet-mid); border-radius: 10px; }
     </style>
 </head>
 <body>
-    <!-- Curtain Opening Animation -->
-    <div class="curtain-opening" id="curtainOpening">
-        <div class="curtain curtain-left">
-            <div class="curtain-stitching"></div>
-            <div class="curtain-tassel"></div>
-        </div>
-        <div class="curtain curtain-right">
-            <div class="curtain-stitching"></div>
-            <div class="curtain-tassel"></div>
-        </div>
+
+    <div class="curtain-container" id="curtain">
+        <div class="curtain-panel left"></div>
+        <div class="curtain-panel right"></div>
     </div>
 
-    <!-- Rocket Reveal Animation -->
-    <div class="rocket-reveal" id="rocketReveal">
-        <div class="rocket-container">
-            <div class="rocket"></div>
-            <div class="rocket-flame"></div>
-        </div>
+    <div class="ribbon-loader" id="loader">
+        <div class="silk-logo">VELVET BLADE</div>
+        <div style="width: 100px; height: 1px; background: var(--gold-leaf); margin: auto;"></div>
     </div>
 
-    <!-- Header -->
-    <header id="header">
-        <div class="header-container">
-            <a href="#" class="logo">
-                <div class="logo-icon"></div>
-                <div class="logo-text">
-                    <div class="logo-main">VELVET BLADE</div>
-                    <div class="logo-sub">ELITE BARBERING</div>
-                </div>
-            </a>
-            
-            <button class="menu-toggle" id="menuToggle">
-                <i class="fas fa-bars"></i>
-            </button>
-            
-            <ul class="nav-links" id="navLinks">
-                <li><a href="#home" class="nav-link">Home</a></li>
-                <li><a href="#services" class="nav-link">Services</a></li>
-                <li><a href="#story" class="nav-link">Our Story</a></li>
-                <li><a href="#barbers" class="nav-link">Masters</a></li>
-                <li><a href="#contact" class="nav-link">Contact</a></li>
-                <li><a href="#booking" class="nav-cta">Reserve</a></li>
-            </ul>
-        </div>
+    <header>
+        <a href="#" class="logo-main">VELVET BLADE</a>
+        <ul class="nav-links">
+            <li><a href="#" class="nav-link">Artistry</a></li>
+            <li><a href="#" class="nav-link">Services</a></li>
+            <li><a href="#" class="nav-link">The Studio</a></li>
+            <li><a href="#" class="btn-velvet">Book Appointment</a></li>
+        </ul>
     </header>
 
-    <!-- Hero Section -->
-    <section class="hero" id="home">
-        <div class="hero-bg"></div>
-        <div class="hero-container">
-            <div class="hero-content">
-                <span class="hero-pre-title cinzel">Since 1926</span>
-                <h1 class="hero-title cinzel">The Art of <br><span style="color: var(--gold)">Precision</span></h1>
-                <p class="hero-subtitle playfair">Where timeless barbering tradition meets modern luxury. Experience the pinnacle of grooming craftsmanship in an atmosphere of refined elegance.</p>
-                <div class="hero-buttons">
-                    <a href="#booking" class="btn btn-primary">Book Experience</a>
-                    <a href="#services" class="btn btn-secondary">Explore Services</a>
-                </div>
-            </div>
-            
-            <div class="barber-visualization">
-                <div class="chair-3d">
-                    <div class="chair-base"></div>
-                    <div class="chair-pole"></div>
-                    <div class="chair-seat"></div>
-                    <div class="chair-back"></div>
-                </div>
-            </div>
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Refined <br> Masculinity</h1>
+            <p class="hero-subtitle">The legacy of the blade meets the luxury of velvet.</p>
+            <a href="#services" class="btn-velvet">Experience Luxury</a>
         </div>
     </section>
 
-    <!-- Services Section -->
-    <section class="services-section" id="services">
-        <div class="services-bg"></div>
-        <div class="container">
-            <div class="section-title">
-                <h2 class="cinzel">Signature Services</h2>
-                <p class="playfair">Each service is meticulously crafted, from traditional techniques to modern innovations</p>
-            </div>
-            
-            <div class="services-grid">
-                <div class="service-card">
-                    <div class="service-icon">
-                        <i class="fas fa-cut"></i>
-                    </div>
-                    <h3 class="cinzel">The Velvet Cut</h3>
-                    <p class="playfair">90-minute precision haircut with consultation, shampoo, hot towel treatment, and finishing products.</p>
-                    <div class="service-price">$85</div>
-                </div>
-                
-                <div class="service-card">
-                    <div class="service-icon">
-                        <i class="fas fa-fire"></i>
-                    </div>
-                    <h3 class="cinzel">Royal Shave</h3>
-                    <p class="playfair">Traditional straight razor shave with pre-shave oil, hot towels, and premium aftershave balm.</p>
-                    <div class="service-price">$65</div>
-                </div>
-                
-                <div class="service-card">
-                    <div class="service-icon">
-                        <i class="fas fa-crown"></i>
-                    </div>
-                    <h3 class="cinzel">Crown Experience</h3>
-                    <p class="playfair">Full grooming package: haircut, beard design, facial treatment, and shoulder massage.</p>
-                    <div class="service-price">$150</div>
-                </div>
-                
-                <div class="service-card">
-                    <div class="service-icon">
-                        <i class="fas fa-gem"></i>
-                    </div>
-                    <h3 class="cinzel">Diamond Beard</h3>
-                    <p class="playfair">Beard shaping, conditioning, and styling with artisanal beard oils and waxes.</p>
-                    <div class="service-price">$45</div>
-                </div>
-            </div>
+    <section class="services-grid" id="services">
+        <div class="service-card">
+            <h3 class="cinzel">The Signature Cut</h3>
+            <p>A masterclass in precision, tailored to your unique structure.</p>
+            <span class="service-price">$95</span>
+        </div>
+        <div class="service-card">
+            <h3 class="cinzel">Velvet Shave</h3>
+            <p>A multi-stage ritual including 24k gold infused oils and hot towels.</p>
+            <span class="service-price">$75</span>
+        </div>
+        <div class="service-card">
+            <h3 class="cinzel">The Emperor</h3>
+            <p>The full suite. Hair, beard, facial, and hand grooming.</p>
+            <span class="service-price">$180</span>
         </div>
     </section>
-
-    <!-- Interactive Storytelling Section -->
-    <section class="story-section" id="story">
-        <div class="story-container">
-            <div class="story-visual">
-                <div class="story-timeline"></div>
-                <div class="timeline-marker" data-year="1926" style="left: 10%;"></div>
-                <div class="timeline-marker" data-year="1950" style="left: 30%;"></div>
-                <div class="timeline-marker active" data-year="1978" style="left: 50%;"></div>
-                <div class="timeline-marker" data-year="2005" style="left: 70%;"></div>
-                <div class="timeline-marker" data-year="2023" style="left: 90%;"></div>
-            </div>
-            
-            <div class="story-content active" id="story1978">
-                <div class="story-year">1978</div>
-                <h2 class="story-title cinzel">The Renaissance</h2>
-                <p class="story-text playfair">Under Giovanni's leadership, Velvet Blade transformed from a neighborhood barber shop into a destination for discerning gentlemen. We introduced the first "appointment-only" model in the city, focusing on quality over quantity. The signature Royal Shave was born, combining Italian barbering techniques with Japanese precision.</p>
-                <p class="story-text playfair">Our chairs were imported from Milan, our tools handcrafted in Solingen, and our ethos solidified: every client leaves not just groomed, but transformed.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Voice & Adaptive Controls -->
-    <div class="voice-control">
-        <button class="voice-btn" id="voiceBtn">
-            <i class="fas fa-microphone"></i>
-        </button>
-        <div class="voice-feedback" id="voiceFeedback">
-            <p style="margin-bottom: 10px; color: var(--gold); font-weight: 600;">Voice Commands Available:</p>
-            <p style="font-size: 0.9rem; margin-bottom: 5px;">"Book appointment"</p>
-            <p style="font-size: 0.9rem; margin-bottom: 5px;">"Show services"</p>
-            <p style="font-size: 0.9rem; margin-bottom: 5px;">"Contact information"</p>
-            <p style="font-size: 0.9rem;">"Navigate to [section]"</p>
-        </div>
-    </div>
-
-    <div class="adaptive-controls">
-        <button class="adaptive-btn" id="contrastBtn" title="Toggle Contrast">
-            <i class="fas fa-adjust"></i>
-        </button>
-        <button class="adaptive-btn" id="fontBtn" title="Adjust Font Size">
-            <i class="fas fa-text-height"></i>
-        </button>
-        <button class="adaptive-btn" id="motionBtn" title="Reduce Motion">
-            <i class="fas fa-running"></i>
-        </button>
-    </div>
-
-    <!-- Footer -->
-    <footer id="contact">
-        <div class="footer-container">
-            <div class="footer-column">
-                <a href="#" class="logo">
-                    <div class="logo-icon"></div>
-                    <div class="logo-text">
-                        <div class="logo-main">VELVET BLADE</div>
-                        <div class="logo-sub">ELITE BARBERING</div>
-                    </div>
-                </a>
-                <p class="footer-about playfair">For nearly a century, we have perfected the art of men's grooming. Each cut, shave, and style is a testament to our commitment to excellence.</p>
-                <div class="footer-social">
-                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
-                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
-                    <a href="#" class="social-link"><i class="fab fa-tiktok"></i></a>
-                    <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
-                </div>
-            </div>
-            
-            <div class="footer-column">
-                <h3 class="cinzel">Visit Us</h3>
-                <ul class="footer-links">
-                    <li><a href="#"><i class="fas fa-map-marker-alt"></i> 26 Velvet Avenue</a></li>
-                    <li><a href="#"><i class="fas fa-phone"></i> (555) 123-VELVET</a></li>
-                    <li><a href="#"><i class="fas fa-envelope"></i> reserve@velvetblade.com</a></li>
-                    <li><a href="#"><i class="fas fa-clock"></i> Tue-Sat: 9AM-8PM</a></li>
-                    <li><a href="#"><i class="fas fa-clock"></i> Sun-Mon: 10AM-6PM</a></li>
-                </ul>
-            </div>
-            
-            <div class="footer-column">
-                <h3 class="cinzel">Experience</h3>
-                <ul class="footer-links">
-                    <li><a href="#services"><i class="fas fa-cut"></i> Signature Services</a></li>
-                    <li><a href="#story"><i class="fas fa-history"></i> Our Story</a></li>
-                    <li><a href="#"><i class="fas fa-users"></i> Master Barbers</a></li>
-                    <li><a href="#"><i class="fas fa-gift"></i> Gift Cards</a></li>
-                    <li><a href="#"><i class="fas fa-book"></i> The Velvet Journal</a></li>
-                </ul>
-            </div>
-            
-            <div class="footer-column">
-                <h3 class="cinzel">Reservations</h3>
-                <ul class="footer-links">
-                    <li><a href="#booking"><i class="fas fa-calendar-check"></i> Book Appointment</a></li>
-                    <li><a href="#"><i class="fas fa-concierge-bell"></i> Private Events</a></li>
-                    <li><a href="#"><i class="fas fa-star"></i> Membership</a></li>
-                    <li><a href="#"><i class="fas fa-question-circle"></i> FAQ</a></li>
-                    <li><a href="#"><i class="fas fa-headset"></i> Concierge Service</a></li>
-                </ul>
-            </div>
-        </div>
-        
-        <div class="copyright">
-            <p>&copy; 2023 VELVET BLADE ELITE BARBERING. All rights reserved. | Craftsmanship since 1926</p>
-            <p style="margin-top: 10px; font-size: 0.8rem;">This website features adaptive interface technology. Use voice commands or accessibility controls.</p>
-        </div>
-    </footer>
 
     <script>
-        // ========== CURTAIN & ROCKET ANIMATION ==========
-        document.addEventListener('DOMContentLoaded', function() {
-            const curtain = document.getElementById('curtainOpening');
-            const rocket = document.getElementById('rocketReveal');
-            const body = document.body;
-            
-            // Initial state
-            rocket.style.opacity = '1';
-            
-            // Sequence: Rocket flies in, curtains open
+        window.addEventListener('load', () => {
+            const curtain = document.getElementById('curtain');
+            const loader = document.getElementById('loader');
+
             setTimeout(() => {
-                // Rocket flies in
-                rocket.querySelector('.rocket-container').style.transform = 'scale(1)';
+                loader.style.opacity = '0';
+                curtain.classList.add('open');
                 
-                // Create sparks
-                for (let i = 0; i < 20; i++) {
-                    const spark = document.createElement('div');
-                    spark.className = 'spark';
-                    spark.style.setProperty('--spark-x', `${Math.random() * 100 - 50}px`);
-                    spark.style.left = `${Math.random() * 100}%`;
-                    spark.style.top = `${Math.random() * 100}%`;
-                    spark.style.animationDelay = `${Math.random() * 2}s`;
-                    rocket.appendChild(spark);
-                }
-                
-                // Rocket flies away after 2 seconds
                 setTimeout(() => {
-                    rocket.style.transition = 'opacity 1s ease, transform 2s cubic-bezier(0.34, 1.56, 0.64, 1)';
-                    rocket.style.opacity = '0';
-                    rocket.style.transform = 'translate(-50%, -150vh) scale(0.5)';
-                    
-                    // Open curtains after rocket disappears
-                    setTimeout(() => {
-                        curtain.classList.add('open');
-                        
-                        // Show main content
-                        setTimeout(() => {
-                            body.classList.add('loaded');
-                            curtain.style.display = 'none';
-                            rocket.style.display = 'none';
-                        }, 1000);
-                    }, 500);
-                }, 2000);
-            }, 500);
-            
-            // ========== INTERACTIVE STORYTELLING ==========
-            const timelineMarkers = document.querySelectorAll('.timeline-marker');
-            const storyContent = document.querySelector('.story-content');
-            const stories = {
-                '1926': {
-                    year: '1926',
-                    title: 'The Beginning',
-                    text: 'Giovanni Rossi opened the first Velvet Blade barbershop in Little Italy. With just two chairs and a dream, he established the principles that would define us for generations: precision, respect, and artistry.'
-                },
-                '1950': {
-                    year: '1950',
-                    title: 'The Golden Era',
-                    text: 'Post-war prosperity brought new sophistication. We became the preferred groomer for politicians, artists, and businessmen. Our signature pomade was formulated during this period.'
-                },
-                '1978': {
-                    year: '1978',
-                    title: 'The Renaissance',
-                    text: 'Under Giovanni\'s leadership, Velvet Blade transformed from a neighborhood barber shop into a destination for discerning gentlemen. We introduced the first "appointment-only" model in the city.'
-                },
-                '2005': {
-                    year: '2005',
-                    title: 'Modern Legacy',
-                    text: 'The third generation of the Rossi family took over, blending tradition with contemporary luxury. We expanded to include grooming products and opened our academy to train the next generation.'
-                },
-                '2023': {
-                    year: '2023',
-                    title: 'The Future',
-                    text: 'Today, Velvet Blade stands as an institution. We\'ve embraced technology while preserving craftsmanship, introducing virtual consultations and adaptive interfaces while maintaining our core values.'
-                }
-            };
-            
-            timelineMarkers.forEach(marker => {
-                marker.addEventListener('click', function() {
-                    const year = this.dataset.year;
-                    
-                    // Update active marker
-                    timelineMarkers.forEach(m => m.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    // Update story content
-                    storyContent.classList.remove('active');
-                    
-                    setTimeout(() => {
-                        storyContent.querySelector('.story-year').textContent = stories[year].year;
-                        storyContent.querySelector('.story-title').textContent = stories[year].title;
-                        storyContent.querySelector('.story-text').textContent = stories[year].text;
-                        storyContent.classList.add('active');
-                    }, 300);
-                });
-            });
-            
-            // ========== VOICE CONTROL SYSTEM ==========
-            const voiceBtn = document.getElementById('voiceBtn');
-            const voiceFeedback = document.getElementById('voiceFeedback');
-            let isListening = false;
-            
-            // Check for browser support
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            let recognition;
-            
-            if (SpeechRecognition) {
-                recognition = new SpeechRecognition();
-                recognition.continuous = false;
-                recognition.interimResults = false;
-                recognition.lang = 'en-US';
-                
-                recognition.onstart = function() {
-                    isListening = true;
-                    voiceBtn.classList.add('listening');
-                    voiceFeedback.classList.add('active');
-                    voiceFeedback.innerHTML = '<p style="color: var(--gold); font-weight: 600;">Listening... Speak now.</p>';
-                };
-                
-                recognition.onresult = function(event) {
-                    const transcript = event.results[0][0].transcript.toLowerCase();
-                    voiceFeedback.innerHTML = `<p style="color: var(--gold); font-weight: 600;">Command: "${transcript}"</p>`;
-                    
-                    // Process voice commands
-                    if (transcript.includes('book') || transcript.includes('appointment')) {
-                        setTimeout(() => {
-                            window.location.href = '#booking';
-                            voiceFeedback.innerHTML += '<p style="margin-top: 10px;">Navigating to booking...</p>';
-                        }, 500);
-                    } else if (transcript.includes('service')) {
-                        setTimeout(() => {
-                            window.location.href = '#services';
-                            voiceFeedback.innerHTML += '<p style="margin-top: 10px;">Showing services...</p>';
-                        }, 500);
-                    } else if (transcript.includes('contact') || transcript.includes('information')) {
-                        setTimeout(() => {
-                            window.location.href = '#contact';
-                            voiceFeedback.innerHTML += '<p style="margin-top: 10px;">Showing contact information...</p>';
-                        }, 500);
-                    } else if (transcript.includes('navigate to')) {
-                        const section = transcript.split('navigate to ')[1];
-                        if (section) {
-                            setTimeout(() => {
-                                window.location.href = `#${section}`;
-                                voiceFeedback.innerHTML += `<p style="margin-top: 10px;">Navigating to ${section}...</p>`;
-                            }, 500);
-                        }
-                    } else if (transcript.includes('story') || transcript.includes('history')) {
-                        setTimeout(() => {
-                            window.location.href = '#story';
-                            voiceFeedback.innerHTML += '<p style="margin-top: 10px;">Showing our story...</p>';
-                        }, 500);
-                    } else {
-                        voiceFeedback.innerHTML += '<p style="margin-top: 10px; color: #ff6b6b;">Command not recognized. Try: "book appointment", "show services", or "contact information"</p>';
-                    }
-                    
-                    setTimeout(() => {
-                        voiceFeedback.classList.remove('active');
-                    }, 3000);
-                };
-                
-                recognition.onerror = function() {
-                    voiceFeedback.innerHTML = '<p style="color: #ff6b6b;">Voice recognition error. Please try again.</p>';
-                    setTimeout(() => {
-                        voiceFeedback.classList.remove('active');
-                    }, 3000);
-                };
-                
-                recognition.onend = function() {
-                    isListening = false;
-                    voiceBtn.classList.remove('listening');
-                };
-                
-                voiceBtn.addEventListener('click', function() {
-                    if (!isListening) {
-                        recognition.start();
-                    } else {
-                        recognition.stop();
-                    }
-                });
-                
-                // Show available commands on hover
-                voiceBtn.addEventListener('mouseenter', function() {
-                    voiceFeedback.classList.add('active');
-                });
-                
-                voiceBtn.addEventListener('mouseleave', function() {
-                    if (!isListening) {
-                        voiceFeedback.classList.remove('active');
-                    }
-                });
-            } else {
-                // Fallback for browsers without speech recognition
-                voiceBtn.addEventListener('click', function() {
-                    voiceFeedback.innerHTML = '<p style="color: #ff6b6b;">Voice recognition not supported in your browser. Try Chrome or Edge.</p>';
-                    voiceFeedback.classList.add('active');
-                    setTimeout(() => {
-                        voiceFeedback.classList.remove('active');
-                    }, 3000);
-                });
-                
-                voiceBtn.addEventListener('mouseenter', function() {
-                    voiceFeedback.classList.add('active');
-                });
-                
-                voiceBtn.addEventListener('mouseleave', function() {
-                    voiceFeedback.classList.remove('active');
-                });
-            }
-            
-            // ========== ADAPTIVE CONTROLS ==========
-            const contrastBtn = document.getElementById('contrastBtn');
-            const fontBtn = document.getElementById('fontBtn');
-            const motionBtn = document.getElementById('motionBtn');
-            
-            let highContrast = false;
-            let fontSizeLevel = 1; // 1 = normal, 2 = large, 3 = extra large
-            let reducedMotion = false;
-            
-            // Contrast toggle
-            contrastBtn.addEventListener('click', function() {
-                highContrast = !highContrast;
-                if (highContrast) {
-                    document.documentElement.style.setProperty('--cream', '#FFFFFF');
-                    document.documentElement.style.setProperty('--charcoal', '#000000');
-                    document.documentElement.style.setProperty('--light-gold', '#FFFF00');
-                    this.innerHTML = '<i class="fas fa-adjust"></i>';
-                    this.title = 'Normal Contrast';
-                } else {
-                    document.documentElement.style.setProperty('--cream', '#F5F1E8');
-                    document.documentElement.style.setProperty('--charcoal', '#1a1a1a');
-                    document.documentElement.style.setProperty('--light-gold', '#E8D49A');
-                    this.innerHTML = '<i class="fas fa-adjust"></i>';
-                    this.title = 'High Contrast';
-                }
-            });
-            
-            // Font size adjustment
-            fontBtn.addEventListener('click', function() {
-                fontSizeLevel = fontSizeLevel === 3 ? 1 : fontSizeLevel + 1;
-                
-                let scale = 1;
-                if (fontSizeLevel === 2) scale = 1.2;
-                if (fontSizeLevel === 3) scale = 1.4;
-                
-                document.body.style.fontSize = `${scale}rem`;
-                
-                // Update icon
-                const icons = ['fa-text-height', 'fa-text-width', 'fa-font'];
-                this.innerHTML = `<i class="fas ${icons[fontSizeLevel - 1]}"></i>`;
-                
-                // Update title
-                const titles = ['Normal Font', 'Large Font', 'Extra Large Font'];
-                this.title = titles[fontSizeLevel - 1];
-            });
-            
-            // Motion reduction
-            motionBtn.addEventListener('click', function() {
-                reducedMotion = !reducedMotion;
-                
-                if (reducedMotion) {
-                    // Disable animations
-                    const style = document.createElement('style');
-                    style.id = 'reduced-motion';
-                    style.textContent = `
-                        *, *::before, *::after {
-                            animation-duration: 0.01ms !important;
-                            animation-iteration-count: 1 !important;
-                            transition-duration: 0.01ms !important;
-                        }
-                    `;
-                    document.head.appendChild(style);
-                    
-                    this.innerHTML = '<i class="fas fa-walking"></i>';
-                    this.title = 'Normal Motion';
-                } else {
-                    // Re-enable animations
-                    const style = document.getElementById('reduced-motion');
-                    if (style) style.remove();
-                    
-                    this.innerHTML = '<i class="fas fa-running"></i>';
-                    this.title = 'Reduce Motion';
-                }
-            });
-            
-            // ========== SCROLL EFFECTS ==========
-            window.addEventListener('scroll', function() {
-                const header = document.getElementById('header');
-                if (window.scrollY > 50) {
-                    header.classList.add('scrolled');
-                } else {
-                    header.classList.remove('scrolled');
-                }
-                
-                // Parallax effect for hero background
-                const heroBg = document.querySelector('.hero-bg');
-                if (heroBg) {
-                    heroBg.style.transform = `translateY(${window.scrollY * 0.5}px)`;
-                }
-                
-                // Animate service cards on scroll
-                const serviceCards = document.querySelectorAll('.service-card');
-                serviceCards.forEach(card => {
-                    const cardTop = card.getBoundingClientRect().top;
-                    const windowHeight = window.innerHeight;
-                    
-                    if (cardTop < windowHeight * 0.8) {
-                        card.style.opacity = '1';
-                        card.style.transform = 'translateY(0)';
-                    }
-                });
-            });
-            
-            // ========== MOBILE MENU ==========
-            const menuToggle = document.getElementById('menuToggle');
-            const navLinks = document.getElementById('navLinks');
-            
-            menuToggle.addEventListener('click', function() {
-                navLinks.classList.toggle('active');
-                this.innerHTML = navLinks.classList.contains('active') 
-                    ? '<i class="fas fa-times"></i>' 
-                    : '<i class="fas fa-bars"></i>';
-            });
-            
-            // Close mobile menu when clicking a link
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.addEventListener('click', function() {
-                    navLinks.classList.remove('active');
-                    menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
-                });
-            });
-            
-            // ========== SMOOTH SCROLLING ==========
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    
-                    const targetId = this.getAttribute('href');
-                    if (targetId === '#') return;
-                    
-                    const targetElement = document.querySelector(targetId);
-                    if (targetElement) {
-                        window.scrollTo({
-                            top: targetElement.offsetTop - 80,
-                            behavior: 'smooth'
-                        });
-                    }
-                });
-            });
-            
-            // ========== INITIAL ANIMATIONS ==========
-            // Animate service cards on load
-            const serviceCards = document.querySelectorAll('.service-card');
-            serviceCards.forEach((card, index) => {
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(30px)';
-                card.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
-                card.style.transitionDelay = `${index * 0.1}s`;
-            });
-            
-            setTimeout(() => {
-                serviceCards.forEach(card => {
-                    const cardTop = card.getBoundingClientRect().top;
-                    const windowHeight = window.innerHeight;
-                    
-                    if (cardTop < windowHeight * 0.8) {
-                        card.style.opacity = '1';
-                        card.style.transform = 'translateY(0)';
-                    }
-                });
-            }, 1000);
-            
-            // 3D chair interaction
-            const chair3d = document.querySelector('.chair-3d');
-            if (chair3d) {
-                chair3d.addEventListener('mouseenter', function() {
-                    if (!reducedMotion) {
-                        this.style.animationPlayState = 'paused';
-                    }
-                });
-                
-                chair3d.addEventListener('mouseleave', function() {
-                    if (!reducedMotion) {
-                        this.style.animationPlayState = 'running';
-                    }
-                });
-                
-                chair3d.addEventListener('click', function() {
-                    this.style.animationDuration = '10s';
-                    setTimeout(() => {
-                        this.style.animationDuration = '30s';
-                    }, 10000);
-                });
-            }
+                    loader.style.display = 'none';
+                }, 1000);
+            }, 2000);
         });
     </script>
 </body>
