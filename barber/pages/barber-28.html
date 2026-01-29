@@ -2,170 +2,222 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VELVET BLADE | Elite Terminal</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VELVET BLADE | High-Resolution Terminal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Syncopate:wght@400;700&family=Plus+Jakarta+Sans:wght@300;500;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --v-bg: #f9f4f5; /* Lighter Velvet Theme */
-            --v-rose: #b56b78; 
-            --v-gold: #c4a456;
-            --wa-green: #25D366; /* WhatsApp Brand */
-            --v-dark: #2d1b1e;
-            --v-glass: rgba(255, 255, 255, 0.95);
+            --velvet-deep: #4a1d24;
+            --velvet-light: #fdf6f7;
+            --rosewood: #9e4a5a;
+            --gold-liquid: #d4af37;
+            --wa-green: #25D366;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --blur: blur(25px);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background: var(--v-bg); color: var(--v-dark); overflow-x: hidden; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+        body { 
+            background: var(--velvet-light); 
+            color: var(--velvet-deep); 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at 10% 20%, rgba(158, 74, 90, 0.05) 0%, transparent 40%),
+                              radial-gradient(circle at 90% 80%, rgba(212, 175, 55, 0.05) 0%, transparent 40%);
+        }
 
-        /* --- CURTAIN INTRO --- */
-        .curtain-container { position: fixed; inset: 0; z-index: 10000; display: flex; pointer-events: none; }
-        .curtain { flex: 1; background: var(--v-rose); transition: transform 1.2s cubic-bezier(0.7, 0, 0.3, 1); }
-        .curtain.left { border-right: 1px solid var(--v-gold); transform-origin: left; }
-        .curtain.right { border-left: 1px solid var(--v-gold); transform-origin: right; }
-        .loaded .left { transform: scaleX(0); } .loaded .right { transform: scaleX(0); }
+        /* --- APERTURE BLADE INTRO --- */
+        .aperture-overlay {
+            position: fixed; inset: 0; z-index: 10000; display: flex;
+            pointer-events: none; transition: 1.2s cubic-bezier(0.85, 0, 0.15, 1);
+        }
+        .blade { 
+            flex: 1; background: var(--velvet-deep); 
+            transition: transform 1.2s cubic-bezier(0.85, 0, 0.15, 1);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .blade-logo { font-family: 'Cinzel Decorative'; color: var(--gold-liquid); font-size: 2rem; opacity: 1; transition: 0.5s; }
+        .loaded .left-blade { transform: translateX(-100%); }
+        .loaded .right-blade { transform: translateX(100%); }
+        .loaded .blade-logo { opacity: 0; }
 
-        /* --- APP NAVIGATION --- */
-        nav {
-            position: fixed; bottom: 0; width: 100%; height: 75px; z-index: 1000;
-            background: var(--v-glass); backdrop-filter: blur(10px); border-top: 1px solid rgba(0,0,0,0.05);
+        /* --- HIGH-IMPACT HERO --- */
+        .hero {
+            height: 90vh; display: flex; flex-direction: column; justify-content: center;
+            align-items: center; text-align: center; padding: 20px;
+            background: url('https://www.transparenttextures.com/patterns/natural-paper.png');
+        }
+        .hero h1 { 
+            font-family: 'Syncopate', sans-serif; font-size: clamp(2rem, 12vw, 6rem); 
+            line-height: 0.9; text-transform: uppercase; font-weight: 800;
+            background: linear-gradient(to bottom, var(--velvet-deep), var(--rosewood));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        /* --- DYNAMIC APP NAVIGATION --- */
+        .app-nav {
+            position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 450px; height: 70px; 
+            background: var(--glass-bg); backdrop-filter: var(--blur);
+            border-radius: 40px; border: 1px solid rgba(255,255,255,0.5);
             display: flex; justify-content: space-around; align-items: center;
+            box-shadow: 0 15px 35px rgba(74, 29, 36, 0.15); z-index: 1000;
         }
-        .nav-btn { background: none; border: none; cursor: pointer; color: #888; font-family: 'Orbitron'; font-size: 0.65rem; text-align: center; }
-        .nav-btn i { display: block; font-size: 1.4rem; margin-bottom: 4px; color: var(--v-rose); }
-        .nav-btn.active { color: var(--v-dark); }
-
-        /* --- MODAL SYSTEM (APP-LIKE) --- */
-        .app-modal {
-            position: fixed; top: 100%; left: 0; width: 100%; height: 90vh; 
-            background: var(--v-bg); z-index: 2000; transition: transform 0.5s cubic-bezier(0.32, 1, 0.23, 1);
-            border-radius: 30px 30px 0 0; box-shadow: 0 -10px 40px rgba(0,0,0,0.1);
-            padding: 30px 20px; overflow-y: auto;
+        .nav-icon { 
+            background: none; border: none; font-size: 1.2rem; color: var(--rosewood); 
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+            font-family: 'Syncopate'; font-size: 0.5rem; font-weight: 700; cursor: pointer;
         }
-        .app-modal.open { transform: translateY(-100%); }
-        .close-bar { width: 40px; height: 5px; background: #ddd; border-radius: 10px; margin: -15px auto 20px; }
+        .nav-icon i { font-size: 1.4rem; transition: 0.3s; }
+        .nav-icon:hover i { transform: translateY(-5px); color: var(--gold-liquid); }
 
-        /* --- GRID STYLES --- */
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .card { background: #fff; padding: 20px; border-radius: 15px; text-align: center; border: 1px solid rgba(0,0,0,0.03); }
-        .icon-box { height: 80px; background: #fdf4f5; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: var(--v-gold); margin-bottom: 10px; }
+        /* --- MODAL SYSTEM --- */
+        .modal {
+            position: fixed; inset: 0; background: var(--velvet-light);
+            z-index: 2000; transform: translateY(100%); transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow-y: auto; padding: 40px 20px;
+        }
+        .modal.active { transform: translateY(0); }
+        .close-btn { 
+            position: sticky; top: 0; float: right; width: 40px; height: 40px;
+            border-radius: 50%; background: var(--velvet-deep); color: #fff;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+        }
 
-        /* --- CONTACT FORM --- */
-        .form-group { margin-bottom: 15px; text-align: left; }
-        input, textarea { width: 100%; padding: 15px; border-radius: 10px; border: 1px solid #eee; background: #fff; }
-        .submit-btn { width: 100%; padding: 15px; background: var(--v-dark); color: #fff; border: none; border-radius: 10px; font-family: 'Orbitron'; cursor: pointer; }
+        /* --- PHOTO GRID & PRODUCT DISPLAY --- */
+        .section-header { font-family: 'Syncopate'; font-size: 0.7rem; letter-spacing: 5px; margin-bottom: 30px; opacity: 0.6; }
+        .grid-6 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .grid-item { 
+            aspect-ratio: 1; border-radius: 20px; background: #fff; 
+            box-shadow: 10px 10px 20px rgba(0,0,0,0.02); display: flex; 
+            align-items: center; justify-content: center; border: 1px solid rgba(0,0,0,0.05);
+        }
+        .product-card { 
+            background: #fff; border-radius: 24px; padding: 25px; text-align: center;
+            transition: 0.3s; border: 1px solid transparent;
+        }
+        .product-card:hover { border-color: var(--gold-liquid); transform: translateY(-10px); }
+        .product-visual { height: 120px; background: var(--velvet-light); border-radius: 15px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; color: var(--gold-liquid); font-size: 3rem; }
 
-        /* --- WHATSAPP --- */
-        .wa-btn { position: fixed; right: 20px; bottom: 95px; background: var(--wa-green); color: #fff; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; box-shadow: 0 10px 20px rgba(37,211,102,0.3); z-index: 999; }
+        /* --- WHATSAPP & CONTACT --- */
+        .wa-float {
+            position: fixed; right: 25px; bottom: 110px; width: 60px; height: 60px;
+            background: var(--wa-green); color: white; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-size: 1.8rem;
+            box-shadow: 0 10px 25px rgba(37, 211, 102, 0.4); z-index: 999; text-decoration: none;
+        }
 
-        /* --- CONTENT WRAPPER --- */
-        .hero { height: 60vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
-        .hero h1 { font-family: 'Cinzel'; font-size: 2.5rem; color: var(--v-rose); }
-        .booking-bar { width: 90%; background: #fff; padding: 25px; border-radius: 20px; margin: -50px auto 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .form-terminal { display: flex; flex-direction: column; gap: 15px; }
+        .form-terminal input, .form-terminal textarea {
+            padding: 20px; border-radius: 15px; border: 1px solid #eee; background: white;
+            font-size: 1rem; color: var(--velvet-deep);
+        }
+        .btn-gold { 
+            background: var(--gold-liquid); color: white; padding: 20px; border-radius: 15px;
+            border: none; font-family: 'Syncopate'; font-weight: 700; cursor: pointer;
+        }
 
-        .title-sec { font-family: 'Orbitron'; font-size: 1rem; margin-bottom: 20px; color: var(--v-rose); display: flex; align-items: center; gap: 10px; }
-        .title-sec::after { content: ''; flex: 1; height: 1px; background: var(--v-gold); opacity: 0.3; }
+        /* --- FOOTER --- */
+        .social-bar { display: flex; gap: 20px; justify-content: center; padding: 40px; font-size: 1.5rem; color: var(--rosewood); }
+
+        @media (min-width: 768px) {
+            .grid-6 { grid-template-columns: repeat(3, 1fr); }
+        }
     </style>
 </head>
 <body>
 
-    <div class="curtain-container" id="curtain">
-        <div class="curtain left"></div>
-        <div class="curtain right"></div>
+    <div class="aperture-overlay" id="aperture">
+        <div class="blade left-blade"><div class="blade-logo">VELVET</div></div>
+        <div class="blade right-blade"><div class="blade-logo">BLADE</div></div>
     </div>
 
-    <div class="hero">
-        <h1 class="tech-font">VELVET BLADE</h1>
-        <p style="font-family:'Orbitron'; font-size:0.7rem; opacity:0.6; letter-spacing:2px;">TERMINAL v3.0</p>
-    </div>
+    <header class="hero">
+        <p class="section-header">Precision Terminal</p>
+        <h1>Pure<br>Velvet<br>Blade</h1>
+        <div style="margin-top: 40px; width: 1px; height: 100px; background: var(--gold-liquid);"></div>
+    </header>
 
-    <div class="booking-bar">
-        <div class="form-group"><select><option>Select Protocol</option><option>Neural Fade</option></select></div>
-        <button class="submit-btn" style="background:var(--v-gold)">SYNC APPOINTMENT</button>
-    </div>
-
-    <section style="padding: 20px;">
-        <div class="title-sec">VISUAL INDEX</div>
-        <div class="grid-2">
-            <div class="card" style="aspect-ratio:1;">G-01</div><div class="card" style="aspect-ratio:1;">G-02</div>
-            <div class="card" style="aspect-ratio:1;">G-03</div><div class="card" style="aspect-ratio:1;">G-04</div>
-            <div class="card" style="aspect-ratio:1;">G-05</div><div class="card" style="aspect-ratio:1;">G-06</div>
-        </div>
-    </section>
-
-    <nav>
-        <button class="nav-btn" onclick="openModal('about')"><i class="fas fa-info-circle"></i>ABOUT</button>
-        <button class="nav-btn" onclick="openModal('shop')"><i class="fas fa-shopping-bag"></i>SHOP</button>
-        <button class="nav-btn" onclick="openModal('contact')"><i class="fas fa-envelope"></i>CONTACT</button>
+    <nav class="app-nav">
+        <button class="nav-icon" onclick="toggleModal('about')"><i class="fas fa-fingerprint"></i>About</button>
+        <button class="nav-icon" onclick="toggleModal('shop')"><i class="fas fa-microchip"></i>Shop</button>
+        <button class="nav-icon" onclick="toggleModal('contact')"><i class="fas fa-terminal"></i>Contact</button>
     </nav>
 
-    <div id="modal-about" class="app-modal">
-        <div class="close-bar" onclick="closeModals()"></div>
-        <h2 class="title-sec">THE PHILOSOPHY</h2>
-        <div class="card" style="text-align:left; line-height:1.6;">
-            <p>Velvet Blade is a specialized grooming terminal where luxury velvet aesthetics meet surgical precision. We treat barbering as high-craft engineering.</p>
-        </div>
-        <br>
-        <h2 class="title-sec">TERMINAL HOURS</h2>
-        <div class="card">
-            <p>MON - FRI: 09:00 - 20:00</p>
-            <p>SAT - SUN: 10:00 - 18:00</p>
-        </div>
-    </section>
-
-    <div id="modal-shop" class="app-modal">
-        <div class="close-bar" onclick="closeModals()"></div>
-        <h2 class="title-sec">APOTHECARY SHOP</h2>
-        <div class="grid-2">
-            <div class="card"><div class="icon-box"><i class="fas fa-flask"></i></div><p>Serum V1</p></div>
-            <div class="card"><div class="icon-box"><i class="fas fa-cube"></i></div><p>Matte Clay</p></div>
-            <div class="card"><div class="icon-box"><i class="fas fa-droplet"></i></div><p>Silk Oil</p></div>
-            <div class="card"><div class="icon-box"><i class="fas fa-wind"></i></div><p>Tonic Mist</p></div>
-            <div class="card"><div class="icon-box"><i class="fas fa-leaf"></i></div><p>Detox Wash</p></div>
-            <div class="card"><div class="icon-box"><i class="fas fa-shield-alt"></i></div><p>Scalp Pro</p></div>
+    <div id="modal-about" class="modal">
+        <div class="close-btn" onclick="toggleModal('about')"><i class="fas fa-times"></i></div>
+        <p class="section-header">The Philosophy</p>
+        <h2 style="font-family: 'Syncopate'; font-size: 2rem; margin-bottom: 20px;">High Craft<br>Engineering</h2>
+        <p style="font-size: 1.1rem; line-height: 1.8; opacity: 0.8; margin-bottom: 40px;">
+            We have redesigned the barbering experience into a high-resolution service terminal. 
+            Blending organic rosewood oils with surgical blade geometry.
+        </p>
+        
+        <p class="section-header">Style Index (Gallery)</p>
+        <div class="grid-6">
+            <div class="grid-item"><i class="fas fa-vector-square"></i></div>
+            <div class="grid-item"><i class="fas fa-layer-group"></i></div>
+            <div class="grid-item"><i class="fas fa-bezier-curve"></i></div>
+            <div class="grid-item"><i class="fas fa-expand"></i></div>
+            <div class="grid-item"><i class="fas fa-dice-d6"></i></div>
+            <div class="grid-item"><i class="fas fa-draw-polygon"></i></div>
         </div>
     </div>
 
-    <div id="modal-contact" class="app-modal">
-        <div class="close-bar" onclick="closeModals()"></div>
-        <h2 class="title-sec">SYNC TERMINAL</h2>
-        <form>
-            <div class="form-group"><input type="text" placeholder="Name"></div>
-            <div class="form-group"><input type="email" placeholder="Email"></div>
-            <div class="form-group"><textarea rows="4" placeholder="How can we assist your style?"></textarea></div>
-            <button type="button" class="submit-btn">TRANSMIT MESSAGE</button>
+    <div id="modal-shop" class="modal">
+        <div class="close-btn" onclick="toggleModal('shop')"><i class="fas fa-times"></i></div>
+        <p class="section-header">Apothecary Lab</p>
+        <div class="grid-6" style="grid-template-columns: 1fr;">
+            <div class="product-card">
+                <div class="product-visual"><i class="fas fa-flask-vial"></i></div>
+                <h3 class="tech-font">Molecular Oil v.01</h3>
+                <p>$45.00</p>
+            </div>
+            <div class="product-card">
+                <div class="product-visual"><i class="fas fa-dna"></i></div>
+                <h3 class="tech-font">Structure Clay</h3>
+                <p>$38.00</p>
+            </div>
+            <div class="product-card"><div class="product-visual"><i class="fas fa-atom"></i></div><h3 class="tech-font">Scalp Serum</h3><p>$55.00</p></div>
+             <div class="product-card"><div class="product-visual"><i class="fas fa-wind"></i></div><h3 class="tech-font">Oxygen Mist</h3><p>$32.00</p></div>
+             <div class="product-card"><div class="product-visual"><i class="fas fa-seedling"></i></div><h3 class="tech-font">Root Detox</h3><p>$40.00</p></div>
+             <div class="product-card"><div class="product-visual"><i class="fas fa-shield-virus"></i></div><h3 class="tech-font">Shield Wax</h3><p>$35.00</p></div>
+        </div>
+    </div>
+
+    <div id="modal-contact" class="modal">
+        <div class="close-btn" onclick="toggleModal('contact')"><i class="fas fa-times"></i></div>
+        <p class="section-header">Communication Terminal</p>
+        <form class="form-terminal">
+            <input type="text" placeholder="Full Identity">
+            <input type="email" placeholder="Digital Address">
+            <textarea rows="5" placeholder="Specify Style Protocol..."></textarea>
+            <button class="btn-gold">TRANSMIT DATA</button>
         </form>
         <br>
-        <h2 class="title-sec">COORDINATES</h2>
-        <div style="height:150px; background:#eee; border-radius:15px; display:flex; align-items:center; justify-content:center; border:2px solid #fff;">
-            [GOOGLE MAPS STREAM]
+        <p class="section-header">Physical Coordinates</p>
+        <div style="width: 100%; height: 200px; background: #eee; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: #999;">
+            [GOOGLE MAPS HIGH-RES RENDER]
         </div>
-        <div class="social-footer" style="text-align:center; padding:30px; font-size:1.5rem; color:var(--v-rose);">
-            <i class="fab fa-instagram" style="margin:10px;"></i>
-            <i class="fab fa-facebook" style="margin:10px;"></i>
-            <i class="fab fa-tiktok" style="margin:10px;"></i>
+        <div class="social-bar">
+            <i class="fab fa-instagram"></i>
+            <i class="fab fa-facebook"></i>
+            <i class="fab fa-tiktok"></i>
         </div>
     </div>
 
-    <a href="https://wa.me/123456" class="wa-btn"><i class="fab fa-whatsapp"></i></a>
+    <a href="https://wa.me/1234567" class="wa-float"><i class="fab fa-whatsapp"></i></a>
 
     <script>
-        // Intro Curtain Logic
         window.addEventListener('load', () => {
-            setTimeout(() => document.body.classList.add('loaded'), 500);
+            setTimeout(() => document.body.classList.add('loaded'), 800);
         });
 
-        // App Modal Logic
-        function openModal(id) {
-            closeModals();
-            document.getElementById('modal-' + id).classList.add('open');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeModals() {
-            document.querySelectorAll('.app-modal').forEach(m => m.classList.remove('open'));
-            document.body.style.overflow = 'auto';
+        function toggleModal(id) {
+            const modal = document.getElementById('modal-' + id);
+            modal.classList.toggle('active');
+            document.body.style.overflow = modal.classList.contains('active') ? 'hidden' : 'auto';
         }
     </script>
 </body>
