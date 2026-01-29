@@ -3,154 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gentry | Premium Grooming App</title>
+    <title>Gentry | Premium Grooming</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #0f0f17; color: #ffffff; font-family: 'Plus Jakarta Sans', sans-serif; padding-bottom: 100px; }
+        body { background-color: #0f0f17; color: #ffffff; font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; }
         .app-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 28px; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
         
-        .pole-line {
-            width: 100%; height: 6px;
-            background: repeating-linear-gradient(90deg, #ff007a, #ff007a 15px, #fff 15px, #fff 30px, #1a1a2e 30px, #1a1a2e 45px);
-            background-size: 90px 100%;
-            animation: move 2s linear infinite;
+        /* Full Screen Menu Animation */
+        #mobile-menu {
+            transition: transform 0.6s cubic-bezier(0.85, 0, 0.15, 1);
+            transform: translateY(-100%);
         }
-        @keyframes move { from { background-position: 0 0; } to { background-position: 90px 0; } }
+        #mobile-menu.open { transform: translateY(0); }
 
-        .loyalty-dot { width: 45px; height: 45px; border-radius: 12px; border: 2px dashed rgba(255, 255, 255, 0.1); display: flex; align-items: center; justify-content: center; }
-        .loyalty-dot.active { border: none; background: #ff007a; box-shadow: 0 0 15px rgba(255, 0, 122, 0.4); }
+        /* Rotating Barber Chair Animation */
+        .chair-container {
+            perspective: 1000px;
+            animation: float 3s ease-in-out infinite;
+        }
+        .rotating-chair {
+            width: 120px;
+            animation: rotateChair 8s linear infinite;
+            filter: drop-shadow(0 20px 30px rgba(255, 0, 122, 0.3));
+        }
+        @keyframes rotateChair {
+            from { transform: rotateY(0deg); }
+            to { transform: rotateY(360deg); }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .input-field {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 16px;
+            width: 100%;
+            color: white;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .input-field:focus { border-color: #ff007a; }
     </style>
 </head>
-<body>
+<body class="pb-24">
 
-    <section class="relative h-[75vh] flex items-end px-8 pb-12 overflow-hidden">
-        <div class="absolute inset-0 z-0">
-            <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80&w=1000" class="w-full h-full object-cover opacity-50 scale-105">
-            <div class="absolute inset-0 bg-gradient-to-t from-[#0f0f17] via-[#0f0f17]/20 to-transparent"></div>
+    <div id="mobile-menu" class="fixed inset-0 z-[100] bg-[#0f0f17]/95 backdrop-blur-2xl p-10 flex flex-col justify-center items-center">
+        <button onclick="toggleMenu()" class="absolute top-8 right-8 text-gray-400">
+            <i data-lucide="x" class="w-10 h-10"></i>
+        </button>
+        <nav class="space-y-8 text-center">
+            <a href="#" onclick="toggleMenu()" class="block text-4xl font-black hover:text-[#ff007a] transition">HOME</a>
+            <a href="#services" onclick="toggleMenu()" class="block text-4xl font-black hover:text-[#ff007a] transition">SERVICES</a>
+            <a href="#gallery" onclick="toggleMenu()" class="block text-4xl font-black hover:text-[#ff007a] transition">GALLERY</a>
+            <a href="#contact" onclick="toggleMenu()" class="block text-4xl font-black hover:text-[#ff007a] transition">CONTACT</a>
+        </nav>
+    </div>
+
+    <header class="fixed top-0 w-full z-50 px-6 py-6 flex justify-between items-center bg-[#0f0f17]/50 backdrop-blur-lg">
+        <div class="flex items-center gap-2">
+            <svg width="40" height="40" viewBox="0 0 100 100" class="fill-[#ff007a]">
+                <path d="M50 5L20 40H80 L50 5Z M20 45H80V55H20V45Z M20 60H80V95L50 75L20 95V60Z"/>
+            </svg>
+            <span class="text-2xl font-black tracking-tighter uppercase">Gentry</span>
         </div>
-        
-        <div class="relative z-10 w-full animate__animated animate__fadeInUp">
-            <div class="pole-line mb-6 rounded-full"></div>
-            <h1 class="text-6xl font-extrabold leading-[0.9] tracking-tighter mb-4">
-                THE <br><span class="text-[#ff007a]">GENTRY</span>
-            </h1>
-            <p class="text-gray-300 text-lg font-medium opacity-80">Refining legacies, one blade at a time.</p>
+        <button onclick="toggleMenu()" class="w-12 h-12 app-card flex items-center justify-center border-[#ff007a]/40">
+            <i data-lucide="menu" class="w-6 h-6 text-[#ff007a]"></i>
+        </button>
+    </header>
+
+    <section class="pt-32 pb-16 px-6 text-center overflow-hidden">
+        <div class="chair-container mb-8 flex justify-center">
+            <div class="rotating-chair">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#ff007a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M7 18V6a5 5 0 0 1 10 0v12" />
+                    <path d="M18 18h1a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h1" />
+                    <path d="M8 21h8" />
+                    <circle cx="12" cy="18" r="3" />
+                </svg>
+            </div>
         </div>
+        <h1 class="text-5xl font-black tracking-tighter mb-4 animate__animated animate__zoomIn">
+            THE CHAIR <br>IS <span class="text-[#ff007a]">WAITING.</span>
+        </h1>
+        <p class="text-gray-400 max-w-xs mx-auto mb-8">Modern craftsmanship for the urban gentleman.</p>
+        <button class="bg-[#ff007a] px-10 py-4 rounded-2xl font-black shadow-lg shadow-[#ff007a]/30">BOOK NOW</button>
     </section>
 
-    <main class="px-6 space-y-12 -mt-6 relative z-20">
+    <main class="px-6 space-y-16">
         
-        <section class="app-card p-6 bg-[#1a1a2e] shadow-2xl">
-            <div class="flex justify-between items-center mb-6">
-                <div>
-                    <h2 class="text-xl font-bold">Main St. Studio</h2>
-                    <p class="text-green-500 text-sm font-bold flex items-center gap-1">
-                        <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> Open Now
-                    </p>
-                </div>
-                <div class="text-right">
-                    <p class="text-xs text-gray-500 uppercase tracking-widest">Next Slot</p>
-                    <p class="font-bold text-[#ff007a]">2:45 PM</p>
-                </div>
-            </div>
-            <button class="w-full bg-[#ff007a] py-5 rounded-2xl font-black text-lg shadow-xl active:scale-[0.97] transition-all">
-                BOOK YOUR CHAIR
-            </button>
-        </section>
-
-        <section class="space-y-4">
-            <h3 class="text-xs font-black text-[#ff007a] uppercase tracking-[0.3em]">The Shop</h3>
-            <p class="text-xl font-semibold leading-snug">
-                We believe a haircut should be an experience, not a chore. 
-            </p>
-            <p class="text-gray-400">
-                Premium grooming meets local culture. From classic tapers to modern creative cuts, our master barbers ensure you leave sharper than you entered.
-            </p>
-        </section>
-
-        <section>
-            <div class="flex justify-between items-end mb-4">
-                <h3 class="font-bold text-xl">Recent Cuts</h3>
-                <span class="text-[#ff007a] text-sm font-bold">@gentrybarber</span>
-            </div>
+        <section id="gallery">
+            <h3 class="font-bold text-xl mb-6">Masterpieces</h3>
             <div class="flex gap-4 overflow-x-auto no-scrollbar py-2">
-                <img src="https://images.unsplash.com/photo-1621605815844-8355ad536965?auto=format&fit=crop&w=400" class="w-48 h-64 object-cover rounded-[32px] flex-shrink-0 border border-white/10">
-                <img src="https://images.unsplash.com/photo-1593702295094-ada444115f11?auto=format&fit=crop&w=400" class="w-48 h-64 object-cover rounded-[32px] flex-shrink-0 border border-white/10">
-                <img src="https://images.unsplash.com/photo-1622286332613-f24bc907249c?auto=format&fit=crop&w=400" class="w-48 h-64 object-cover rounded-[32px] flex-shrink-0 border border-white/10">
+                <img src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=format&fit=crop&w=400" class="w-64 h-80 object-cover rounded-[32px] flex-shrink-0">
+                <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=400" class="w-64 h-80 object-cover rounded-[32px] flex-shrink-0">
             </div>
         </section>
 
-        <section class="app-card p-6 border-[#ff007a]/30 bg-gradient-to-br from-[#ff007a]/5 to-transparent">
-            <h3 class="font-bold mb-1">Loyalty Rewards</h3>
-            <p class="text-xs text-gray-400 mb-6">10th Haircut is on the house</p>
-            <div class="grid grid-cols-5 gap-3">
-                <div class="loyalty-dot active"><i data-lucide="scissors" class="w-5 h-5"></i></div>
-                <div class="loyalty-dot active"><i data-lucide="scissors" class="w-5 h-5"></i></div>
-                <div class="loyalty-dot active"><i data-lucide="scissors" class="w-5 h-5"></i></div>
-                <div class="loyalty-dot"></div>
-                <div class="loyalty-dot"></div>
-                <div class="loyalty-dot"></div>
-                <div class="loyalty-dot"></div>
-                <div class="loyalty-dot"></div>
-                <div class="loyalty-dot"></div>
-                <div class="loyalty-dot border-solid border-[#ff007a]/50"><i data-lucide="gift" class="text-[#ff007a] w-5 h-5"></i></div>
-            </div>
+        <section id="contact" class="app-card p-8">
+            <h3 class="text-2xl font-black mb-2">Get In Touch</h3>
+            <p class="text-gray-400 text-sm mb-8">Questions? Custom group bookings? Drop us a line.</p>
+            <form class="space-y-4" onsubmit="event.preventDefault(); alert('Message Sent!');">
+                <input type="text" placeholder="Your Name" class="input-field">
+                <input type="email" placeholder="Email Address" class="input-field">
+                <textarea placeholder="How can we help?" rows="4" class="input-field"></textarea>
+                <button type="submit" class="w-full bg-white text-black py-4 rounded-2xl font-black hover:bg-[#ff007a] hover:text-white transition-colors">
+                    SEND MESSAGE
+                </button>
+            </form>
         </section>
 
-        <section>
-            <h3 class="font-bold text-xl mb-6 text-center">What the Locals Say</h3>
-            <div class="app-card p-8 text-center space-y-4">
-                <div class="flex justify-center text-yellow-500 gap-1">
-                    <i data-lucide="star" class="fill-current w-4 h-4"></i>
-                    <i data-lucide="star" class="fill-current w-4 h-4"></i>
-                    <i data-lucide="star" class="fill-current w-4 h-4"></i>
-                    <i data-lucide="star" class="fill-current w-4 h-4"></i>
-                    <i data-lucide="star" class="fill-current w-4 h-4"></i>
-                </div>
-                <p class="text-lg italic leading-relaxed text-gray-200">
-                    "Hands down the best shop in the city. The vibe is unmatched and the hot towel shave is a game changer."
-                </p>
-                <p class="text-[#ff007a] font-bold uppercase text-xs tracking-widest">— David K.</p>
+        <section class="text-center py-6">
+            <div class="flex justify-center mb-4 text-[#ff007a]">
+                <i data-lucide="star" class="fill-current"></i>
+                <i data-lucide="star" class="fill-current"></i>
+                <i data-lucide="star" class="fill-current"></i>
+                <i data-lucide="star" class="fill-current"></i>
+                <i data-lucide="star" class="fill-current"></i>
             </div>
+            <p class="italic text-gray-300">"The best vibe in the city, hands down."</p>
         </section>
 
-        <footer class="pt-10 pb-6 text-center space-y-8">
-            <div class="flex justify-center gap-8">
-                <i data-lucide="instagram" class="w-6 h-6 text-gray-400 hover:text-[#ff007a]"></i>
-                <i data-lucide="facebook" class="w-6 h-6 text-gray-400 hover:text-[#ff007a]"></i>
-                <i data-lucide="phone" class="w-6 h-6 text-gray-400 hover:text-[#ff007a]"></i>
-            </div>
-            <div class="text-[10px] text-gray-600 font-bold uppercase tracking-[0.4em]">
-                Gentry Grooming Co. © 2026
-            </div>
-        </footer>
     </main>
 
-    <nav class="fixed bottom-0 left-0 right-0 bg-[#0f0f17]/80 backdrop-blur-2xl border-t border-white/5 px-8 py-6 flex justify-between items-center z-50">
-        <div class="flex flex-col items-center gap-1 text-[#ff007a]">
-            <i data-lucide="home" class="w-6 h-6"></i>
-            <span class="text-[9px] font-bold uppercase">Home</span>
-        </div>
-        <div class="flex flex-col items-center gap-1 text-gray-500">
-            <i data-lucide="calendar" class="w-6 h-6"></i>
-            <span class="text-[9px] font-bold uppercase">Book</span>
-        </div>
-        <div class="flex flex-col items-center gap-1 text-gray-500">
-            <i data-lucide="map-pin" class="w-6 h-6"></i>
-            <span class="text-[9px] font-bold uppercase">Find</span>
-        </div>
-        <div class="flex flex-col items-center gap-1 text-gray-500">
-            <i data-lucide="user" class="w-6 h-6"></i>
-            <span class="text-[9px] font-bold uppercase">Profile</span>
-        </div>
+    <nav class="fixed bottom-0 left-0 right-0 bg-[#0f0f17]/90 backdrop-blur-xl border-t border-white/5 px-10 py-6 flex justify-between items-center z-40">
+        <i data-lucide="home" class="text-[#ff007a] w-6 h-6"></i>
+        <i data-lucide="calendar" class="text-gray-500 w-6 h-6"></i>
+        <i data-lucide="instagram" class="text-gray-500 w-6 h-6"></i>
+        <i data-lucide="map-pin" class="text-gray-500 w-6 h-6"></i>
     </nav>
 
     <script>
         lucide.createIcons();
+
+        function toggleMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('open');
+        }
     </script>
 </body>
 </html>
