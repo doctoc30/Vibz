@@ -4,19 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>THE AXIS | 2026 BARBER RITUAL</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;800&family=Outfit:wght@300;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
 :root {
-    --light-orange: #FFEDD5;     /* Main background - soft warm light orange */
-    --deep-orange: #E07A5F;      /* Accent - vibrant yet sophisticated orange-coral */
-    --dark-base: #0F0F0F;        /* Deep almost-black for contrast & premium feel */
-    --text-light: #FDFBF4;       /* Cream-white for light text */
-    --text-dark: #1A1A1A;        /* Dark text on light bg */
-    --shadow: rgba(224, 122, 95, 0.18);  /* Orange-tinted shadow for glow */
-    --card-bg: #FFF8F0;          /* Very light peach for cards */
+    --light-orange: #FFEDD5;     /* Warm light orange base */
+    --deep-orange: #E07A5F;      /* Vibrant coral-orange accent */
+    --dark-base: #0A0A0A;        /* Near-black for high-tech contrast */
+    --text-light: #FDFBF4;
+    --text-dark: #111111;
+    --glow: rgba(224, 122, 95, 0.4);
+    --card-bg: rgba(255, 255, 255, 0.08);
+    --blur: blur(12px);
 }
 
-/* --- GLOBAL --- */
+/* GLOBAL */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
     font-family: 'Outfit', sans-serif;
@@ -25,180 +26,146 @@ body {
     overflow-x: hidden;
     scroll-behavior: smooth;
 }
-h1,h2,h3 { font-family:'Syne',sans-serif; text-transform:uppercase; }
-p { font-weight: 300; }
-section { position: relative; }
+h1, h2, h3 { font-family: 'Syne', sans-serif; text-transform: uppercase; letter-spacing: -1px; }
+section { position: relative; padding: 120px 6%; }
 
-/* --- STICKY HEADER / NAV --- */
+/* ANIMATIONS */
+@keyframes gradient { 0% {background-position:0% 50%;} 50% {background-position:100% 50%;} 100% {background-position:0% 50%;} }
+@keyframes pulse { 0%,100% {transform:scale(1);} 50% {transform:scale(1.03);} }
+@keyframes cut { 0%,100% {transform:rotate(0deg) scale(1);} 50% {transform:rotate(35deg) scale(1.1);} }
+@keyframes fall { 0% {transform:translateY(-100%) rotate(0deg); opacity:0.8;} 100% {transform:translateY(100vh) rotate(720deg); opacity:0;} }
+
+/* NAV */
 .nav-top {
-    display: flex; justify-content: space-between; align-items:center;
-    padding: 20px 5%; position: sticky; top:0; z-index:1000;
-    background: var(--dark-base); color: var(--text-light);
-    font-weight: 800; box-shadow: 0 5px 25px var(--shadow);
+    position: fixed; top:0; left:0; right:0;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 20px 5%; z-index: 1000;
+    background: rgba(10,10,10,0.7); backdrop-filter: var(--blur);
+    color: var(--text-light); font-weight: 800; box-shadow: 0 4px 30px var(--glow);
 }
-.hamburger { cursor:pointer; font-size:1.5rem; user-select:none; }
+.hamburger { font-size: 2rem; cursor: pointer; }
 .nav-menu {
-    position: fixed; top:0; right:-100%; width:80%; height:100%;
-    background: var(--dark-base); color: var(--text-light); z-index:999;
-    display:flex; flex-direction:column; padding:80px 30px;
-    gap:30px; transition: right 0.3s ease;
+    position: fixed; top:0; right: -100%; width: 80%; max-width: 400px; height: 100%;
+    background: var(--dark-base); backdrop-filter: var(--blur);
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    gap: 40px; transition: right 0.5s cubic-bezier(0.77,0,0.175,1);
+    z-index: 999;
 }
-.nav-menu a { color: var(--text-light); text-decoration:none; font-size:1.5rem; }
+.nav-menu a { color: var(--text-light); font-size: 2.2rem; text-decoration: none; transition: color 0.3s; }
 .nav-menu a:hover { color: var(--deep-orange); }
-.nav-menu.open { right:0; }
+.nav-menu.open { right: 0; }
 
-/* --- HERO --- */
+/* HERO - Funky + Animated */
 .hero {
-    height: 100vh;
-    position: relative;
-    background: url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80&w=2000') no-repeat center center;
-    background-size: cover;
-    display: flex; align-items:center; justify-content:center;
-    overflow:hidden;
+    height: 100vh; min-height: 800px;
+    background: linear-gradient(-45deg, #FFEDD5, #FFDAB9, #FF9A8B, #FFEDD5);
+    background-size: 400% 400%;
+    animation: gradient 20s ease infinite;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
 }
 .hero-overlay {
-    position:absolute; inset:0;
-    background: linear-gradient(to bottom, rgba(255,237,213,0.92), rgba(255,237,213,0.75));
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    text-align:center; padding:0 10px;
+    position: absolute; inset: 0;
+    background: rgba(255,237,213,0.65); backdrop-filter: blur(4px);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 0 5%;
 }
 .hero-title {
-    font-size: clamp(4.5rem, 16vw, 14rem);
-    line-height:0.85; letter-spacing:-4px;
-    color: var(--text-dark);
-    text-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    font-size: clamp(6rem, 18vw, 16rem);
+    line-height: 0.8; font-weight: 800;
+    animation: pulse 3s infinite ease-in-out;
+    text-shadow: 0 0 40px var(--glow), 0 0 80px var(--deep-orange);
 }
-.hero-title span { color: var(--deep-orange); }
-.hero-subtitle { 
-    margin-top:24px; 
-    letter-spacing:10px; 
-    font-weight:300; 
-    font-size:1.4rem; 
-    color: var(--text-dark); 
+.hero-title span { color: var(--deep-orange); display: block; }
+.hero-subtitle { font-size: clamp(1.8rem, 5vw, 3.5rem); font-weight: 300; margin: 20px 0; letter-spacing: 6px; }
+
+/* Animated Barber Elements (Abstract) */
+.hero-animation { position: absolute; inset: 0; pointer-events: none; }
+.clipper {
+    position: absolute; top: 40%; font-size: 6rem; color: var(--deep-orange);
+    animation: cut 6s infinite ease-in-out var(--delay, 0s);
+    text-shadow: 0 0 20px var(--glow);
+}
+.hair-strand {
+    position: absolute; width: 3px; height: 80px; background: linear-gradient(transparent, var(--deep-orange), transparent);
+    left: var(--left); animation: fall 8s linear infinite var(--delay);
+    opacity: 0.7;
 }
 
-/* --- BOOKING FORM --- */
+/* BOOKING - Native App Feel */
 .booking-container {
-    background: var(--dark-base);
-    color: var(--text-light);
-    width: 90%; max-width:1200px;
-    margin:-80px auto 120px;
-    padding:50px; border-radius:30px;
-    display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-    gap:25px; box-shadow:0 15px 40px var(--shadow);
-    z-index:100;
-    border: 1px solid rgba(224,122,95,0.15);
+    background: var(--card-bg); backdrop-filter: var(--blur);
+    border: 1px solid rgba(224,122,95,0.2); border-radius: 32px;
+    padding: 50px; margin: -100px auto 100px; max-width: 1100px;
+    box-shadow: 0 20px 60px var(--glow);
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 30px;
 }
-.booking-container:hover{transform:translateY(-6px); transition:0.4s;}
-.booking-field { display:flex; flex-direction:column; gap:12px; }
-.booking-field select, .booking-field input {
-    background:rgba(255,255,255,0.08); border:1px solid rgba(224,122,95,0.3); color:var(--text-light);
-    padding:16px; border-radius:12px; font-family:inherit;
+.booking-field label { font-weight: 600; margin-bottom: 10px; display: block; }
+.booking-field input, .booking-field select {
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(224,122,95,0.3);
+    color: var(--text-dark); padding: 18px; border-radius: 16px; font-size: 1.1rem;
 }
-.booking-container button{
-    grid-column:1/-1; padding:18px;
-    font-weight:bold; background:var(--deep-orange);
-    border:none; color:white; border-radius:12px; cursor:pointer;
-    transition:0.4s ease; font-size:1.1rem;
+.booking-container button {
+    grid-column: 1/-1; background: var(--deep-orange); color: white;
+    border: none; padding: 20px; font-size: 1.3rem; font-weight: bold;
+    border-radius: 16px; cursor: pointer; transition: all 0.4s;
 }
-.booking-container button:hover{transform:scale(1.06); background:#d96b50;}
+.booking-container button:hover { transform: scale(1.06); box-shadow: 0 0 40px var(--glow); }
 
-/* --- SECTION TITLES --- */
-.section-title { 
-    font-size: clamp(2.8rem, 6vw, 4rem); 
-    margin-bottom:50px; 
-    text-align:center; 
-    color: var(--text-dark);
-    position:relative;
+/* SECTIONS */
+.section-title {
+    font-size: clamp(3rem, 8vw, 6rem); text-align: center; margin-bottom: 60px;
+    color: var(--text-dark); position: relative;
 }
-.section-title::after {
-    content:''; display:block; width:120px; height:5px; 
-    background:var(--deep-orange); margin:20px auto; border-radius:3px;
-}
-.section-padding { padding:140px 8%; }
+.section-title::after { content: ''; display: block; width: 140px; height: 6px; background: var(--deep-orange); margin: 20px auto; border-radius: 3px; }
 
-/* --- SERVICES / PRICE CARDS --- */
-.services-grid {
-    display:grid; grid-template-columns:repeat(auto-fit, minmax(280px,1fr)); gap:30px;
+/* CARDS */
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 40px; }
+.card {
+    background: var(--card-bg); backdrop-filter: var(--blur);
+    border-radius: 28px; padding: 40px; text-align: center;
+    box-shadow: 0 15px 50px rgba(0,0,0,0.1); transition: all 0.5s cubic-bezier(0.175,0.885,0.32,1.275);
 }
-.service-item {
-    background:var(--card-bg);
-    padding:50px 30px; border-radius:24px;
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    text-align:center; transition:0.4s ease; box-shadow:0 10px 30px rgba(0,0,0,0.08);
-}
-.service-item:hover{
-    background:var(--deep-orange); color:white; transform:translateY(-10px);
-    box-shadow:0 20px 50px var(--shadow);
-}
-.service-item h3{margin-bottom:12px; font-size:1.6rem;}
+.card:hover { transform: translateY(-20px) scale(1.03); box-shadow: 0 30px 80px var(--glow); }
 
-/* --- PRODUCTS GRID --- */
-.product-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(260px,1fr)); gap:35px; }
-.product-card {
-    padding:45px 25px; border-radius:24px; background:var(--card-bg);
-    text-align:center; box-shadow:0 12px 35px rgba(0,0,0,0.1);
-    transition:0.4s ease;
+/* GALLERY */
+.gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+.gallery-item {
+    height: 400px; border-radius: 28px; overflow: hidden; background-size: cover;
+    background-position: center; transition: all 0.6s;
 }
-.product-card:hover{transform:translateY(-12px); box-shadow:0 25px 60px var(--shadow);}
-.product-icon { font-size:4rem; margin-bottom:25px; color:var(--deep-orange); }
+.gallery-item:hover { transform: scale(1.06) rotate(1deg); }
 
-/* --- IMAGE GALLERY --- */
-.gallery-grid {
-    display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:25px;
+/* BEFORE/AFTER SLIDER */
+.comparison-slider {
+    position: relative; height: 500px; max-width: 900px; margin: 0 auto;
+    border-radius: 28px; overflow: hidden; box-shadow: 0 20px 60px var(--glow);
 }
-.gallery-item { 
-    border-radius:24px; overflow:hidden; height:320px; 
-    background-size:cover; background-position:center;
-    transition:0.4s; box-shadow:0 8px 25px rgba(0,0,0,0.1);
+.before, .after { position: absolute; inset: 0; background-size: cover; background-position: center; }
+.after { clip-path: inset(0 50% 0 0); }
+.handle {
+    position: absolute; top: 0; bottom: 0; width: 6px; background: var(--deep-orange);
+    left: 50%; transform: translateX(-50%); cursor: ew-resize; z-index: 2;
 }
-.gallery-item:hover{transform:scale(1.04);}
+.handle::before { content: '↔'; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 2rem; color: white; }
 
-/* (Replace placeholders with real Unsplash / Pexels URLs for barber images) */
-.gallery-item:nth-child(1) { background-image: url('https://images.unsplash.com/photo-1519415942403-46e1f8a6d0e4?auto=format&fit=crop&q=80'); }
-.gallery-item:nth-child(2) { background-image: url('https://images.unsplash.com/photo-1621605816030-6ded6b0a0f2a?auto=format&fit=crop&q=80'); }
-/* Add more... */
-
-/* --- BARBER PROFILES --- */
-.profile-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:35px; }
-.profile-card { 
-    background:var(--card-bg); padding:40px 25px; border-radius:24px; 
-    text-align:center; box-shadow:0 12px 35px rgba(0,0,0,0.1); transition:0.4s;
-}
-.profile-card:hover{transform:translateY(-12px);}
-.profile-avatar { 
-    width:140px; height:140px; margin:auto; 
-    background:var(--deep-orange); border-radius:50%; margin-bottom:25px;
-    background-size:cover; 
+/* FOOTER */
+footer {
+    background: var(--dark-base); color: var(--text-light); padding: 80px 6%;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 50px;
 }
 
-/* --- CONTACT / CTA --- */
-.floating-contact { position:fixed; right:40px; bottom:120px; display:flex; flex-direction:column; gap:18px; z-index:999; }
-.btn-circle { 
-    width:70px; height:70px; border-radius:50%; 
-    background:var(--dark-base); color:var(--text-light); 
-    display:flex; align-items:center; justify-content:center; font-size:1.5rem; 
-    text-decoration:none; box-shadow:0 12px 30px var(--shadow); transition:0.4s;
-}
-.btn-circle:hover{transform:scale(1.15); background:var(--deep-orange);}
+/* REVEAL ANIMATIONS */
+.reveal { opacity: 0; transform: translateY(80px); transition: all 1.2s ease-out; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-left { transform: translateX(-100px); }
+.reveal-right { transform: translateX(100px); }
 
-/* --- FOOTER --- */
-footer { 
-    background:var(--dark-base); color:var(--text-light); 
-    padding:80px 8%; display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:40px; 
-}
-footer a { color:var(--text-light); text-decoration:none; }
-footer a:hover { color:var(--deep-orange); }
-
-/* --- SCROLL REVEAL --- */
-.reveal { opacity:0; transform:translateY(60px); transition:all 1.2s ease-out; }
-.reveal.visible{opacity:1; transform:translateY(0);}
-
-/* --- RESPONSIVE --- */
-@media(max-width:768px){
-    .section-padding { padding:100px 6%; }
-    .hero-title{font-size:clamp(3.5rem, 20vw, 10rem);}
-    .booking-container { padding:35px; margin:-50px auto 80px; }
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    section { padding: 80px 5%; }
+    .hero-title { font-size: clamp(4rem, 20vw, 10rem); }
 }
 </style>
 </head>
@@ -207,115 +174,208 @@ footer a:hover { color:var(--deep-orange); }
 <!-- NAV -->
 <nav class="nav-top">
     <div>THE AXIS</div>
-    <div class="hamburger" onclick="toggleMenu()">☰</div>
+    <div class="hamburger" onclick="document.getElementById('navMenu').classList.toggle('open')">☰</div>
 </nav>
 <div class="nav-menu" id="navMenu">
     <a href="#services">Services</a>
     <a href="#gallery">Gallery</a>
-    <a href="#profiles">Artisans</a>
+    <a href="#artisans">Artisans</a>
     <a href="#contact">Contact</a>
 </div>
 
 <!-- HERO -->
 <header class="hero">
     <div class="hero-overlay">
-        <h1 class="hero-title">PRECISION<br><span>2026</span></h1>
-        <p class="hero-subtitle">ARTISAN GROOMING RITUAL</p>
+        <h1 class="hero-title">PRECISION<span>2026</span></h1>
+        <p class="hero-subtitle">HIGH-TECH RITUAL CRAFT</p>
+    </div>
+    <div class="hero-animation">
+        <!-- Abstract Clippers -->
+        <div class="clipper" style="--delay:0s; left:20%;">✂️</div>
+        <div class="clipper" style="--delay:1.5s; left:50%;">✂️</div>
+        <div class="clipper" style="--delay:3s; left:80%;">✂️</div>
+        <!-- Falling Hair Strands -->
+        <div class="hair-strand" style="--left:15%; --delay:0.5s;"></div>
+        <div class="hair-strand" style="--left:35%; --delay:2s;"></div>
+        <div class="hair-strand" style="--left:55%; --delay:3.5s;"></div>
+        <div class="hair-strand" style="--left:75%; --delay:1s;"></div>
+        <div class="hair-strand" style="--left:25%; --delay:4s;"></div>
     </div>
 </header>
 
 <!-- BOOKING -->
 <section class="booking-container reveal">
-    <div class="booking-field">
-        <label>THE ARTISAN</label>
-        <select><option>Unit 01 - Master Barber</option><option>Unit 02 - Stylist</option></select>
-    </div>
-    <div class="booking-field">
-        <label>THE SERVICE</label>
-        <select><option>The Standard Cut ($45)</option><option>The Ritual ($90)</option></select>
-    </div>
-    <div class="booking-field">
-        <label>THE SESSION</label>
-        <input type="datetime-local">
-    </div>
-    <button>INITIALIZE BOOKING</button>
+    <div class="booking-field"><label>ARTISAN</label><select><option>Master Unit 01</option><option>Stylist Unit 02</option></select></div>
+    <div class="booking-field"><label>SERVICE</label><select><option>Executive Fade ($45)</option><option>Ritual Overhaul ($110)</option></select></div>
+    <div class="booking-field"><label>SESSION</label><input type="datetime-local"></div>
+    <button>INITIALIZE RITUAL</button>
+</section>
+
+<!-- PHILOSOPHY -->
+<section id="philosophy" class="reveal">
+    <h2 class="section-title">The Philosophy</h2>
+    <p style="max-width:800px;margin:0 auto;font-size:1.4rem;line-height:1.7;text-align:center;">In 2026, THE AXIS is where high-craft meets high-tech. Precision isn't just a cut—it's a ritual. Leather textures, steel precision, and digital glow fuse in a luxury terminal for modern grooming. Every session is intentional, every line code-like in its accuracy.</p>
 </section>
 
 <!-- SERVICES -->
-<section class="section-padding reveal" id="services">
+<section id="services" class="reveal">
     <h2 class="section-title">Services</h2>
-    <div class="services-grid">
-        <div class="service-item"><h3>Executive Fade</h3><p>30 min // $45</p></div>
-        <div class="service-item"><h3>Hot Shave Ritual</h3><p>45 min // $60</p></div>
-        <div class="service-item"><h3>Beard Sculpt</h3><p>20 min // $30</p></div>
-        <div class="service-item"><h3>Full Overhaul</h3><p>75 min // $110</p></div>
+    <div class="card-grid">
+        <div class="card"><h3>Executive Fade</h3><p>30 min // $45</p></div>
+        <div class="card"><h3>Hot Shave Ritual</h3><p>45 min // $60</p></div>
+        <div class="card"><h3>Beard Sculpt</h3><p>20 min // $30</p></div>
+        <div class="card"><h3>Full Overhaul</h3><p>75 min // $110</p></div>
     </div>
 </section>
 
-<!-- PRODUCTS (example - update icons/emojis or use SVGs) -->
-<section class="section-padding reveal">
+<!-- CTA MID -->
+<section class="reveal" style="text-align:center;background:rgba(224,122,95,0.1);border-radius:32px;margin:60px auto;max-width:1100px;padding:80px 20px;">
+    <h2 class="section-title" style="margin-bottom:30px;">Ready for Your Ritual?</h2>
+    <button style="background:var(--deep-orange);color:white;padding:20px 50px;font-size:1.5rem;border:none;border-radius:20px;cursor:pointer;">Book Now</button>
+</section>
+
+<!-- PRODUCTS -->
+<section class="reveal">
     <h2 class="section-title">Provisions</h2>
-    <div class="product-grid">
-        <div class="product-card"><div class="product-icon">🧴</div><h3>Fiber Pomade</h3><p>$22</p></div>
-        <div class="product-card"><div class="product-icon">🪒</div><h3>Steel Razor</h3><p>$85</p></div>
-        <div class="product-card"><div class="product-icon">🧪</div><h3>Beard Oil 01</h3><p>$30</p></div>
-        <!-- Add more as needed -->
+    <div class="card-grid">
+        <div class="card"><div style="font-size:5rem;margin-bottom:20px;">🧴</div><h3>Fiber Pomade</h3><p>$22</p></div>
+        <div class="card"><div style="font-size:5rem;margin-bottom:20px;">🪒</div><h3>Steel Razor</h3><p>$85</p></div>
+        <div class="card"><div style="font-size:5rem;margin-bottom:20px;">🧪</div><h3>Beard Oil 01</h3><p>$30</p></div>
+        <div class="card"><div style="font-size:5rem;margin-bottom:20px;">🧴</div><h3>Matte Clay</h3><p>$22</p></div>
+        <div class="card"><div style="font-size:5rem;margin-bottom:20px;">🧳</div><h3>Travel Kit</h3><p>$120</p></div>
+        <div class="card"><div style="font-size:5rem;margin-bottom:20px;">🌊</div><h3>Sea Salt Spray</h3><p>$18</p></div>
     </div>
 </section>
 
-<!-- GALLERY (now with real background images - add more) -->
-<section class="section-padding reveal" id="gallery">
+<!-- GALLERY -->
+<section id="gallery" class="reveal">
     <h2 class="section-title">The Gallery</h2>
     <div class="gallery-grid">
-        <div class="gallery-item"></div>
-        <div class="gallery-item"></div>
-        <div class="gallery-item"></div>
-        <div class="gallery-item"></div>
-        <!-- Extend with more gallery-items -->
+        <div class="gallery-item" style="background-image:url('https://lifestyle.sustainability-directory.com/wp-content/uploads/2025/07/macro-view-of-intertwined-dried-botanical-fibers-adorned-with-spherical-microbial-clusters.jpg');"></div>
+        <div class="gallery-item" style="background-image:url('https://energy.sustainability-directory.com/wp-content/uploads/2025/11/Microscopic-Visualization-Of-Rotational-Actuator-Bladed-Assembly-Powering-Sustainable-Energy-Systems.jpg');"></div>
+        <div class="gallery-item" style="background-image:url('https://lifestyle.sustainability-directory.com/wp-content/uploads/2025/07/wabi-sabi-textures-organic-forms-for-a-mindful-biophilic-sanctuary.jpg');"></div>
+        <div class="gallery-item" style="background-image:url('https://images.pexels.com/photos/7317282/pexels-photo-7317282.jpeg');"></div>
+        <div class="gallery-item" style="background-image:url('https://energy.sustainability-directory.com/wp-content/uploads/2025/11/Deconstructed-Robotic-Subsystems-Revealing-Integrated-Circuitry-for-Sustainable-Energy-Harvesting-Mechanisms.jpg');"></div>
+        <div class="gallery-item" style="background-image:url('https://lifestyle.sustainability-directory.com/wp-content/uploads/2025/07/abstract-architectural-render-with-curved-peach-toned-concrete-and-a-small-flowering-bush.jpg');"></div>
     </div>
 </section>
 
-<!-- BARBER PROFILES (add real photos via background-image) -->
-<section class="section-padding reveal" id="profiles">
+<!-- BEFORE / AFTER -->
+<section class="reveal">
+    <h2 class="section-title">Before / After</h2>
+    <div class="comparison-slider" id="slider">
+        <div class="before" style="background-image:url('https://lifestyle.sustainability-directory.com/wp-content/uploads/2025/07/macro-view-of-intertwined-dried-botanical-fibers-adorned-with-spherical-microbial-clusters.jpg');"></div>
+        <div class="after" style="background-image:url('https://energy.sustainability-directory.com/wp-content/uploads/2025/11/Microscopic-Visualization-Of-Rotational-Actuator-Bladed-Assembly-Powering-Sustainable-Energy-Systems.jpg');"></div>
+        <span class="handle"></span>
+    </div>
+</section>
+
+<!-- ARTISANS -->
+<section id="artisans" class="reveal">
     <h2 class="section-title">The Artisans</h2>
-    <div class="profile-grid">
-        <div class="profile-card"><div class="profile-avatar" style="background-image:url('https://images.unsplash.com/photo-...barber1...');"></div><h3>Master Barber</h3></div>
-        <!-- Add more -->
+    <div class="card-grid">
+        <div class="card"><div style="width:140px;height:140px;margin:0 auto 20px;background:var(--deep-orange);border-radius:50%;"></div><h3>Master Unit</h3><p>Precision Engineer</p></div>
+        <div class="card"><div style="width:140px;height:140px;margin:0 auto 20px;background:var(--deep-orange);border-radius:50%;"></div><h3>Senior Craft</h3><p>Texture Specialist</p></div>
+        <div class="card"><div style="width:140px;height:140px;margin:0 auto 20px;background:var(--deep-orange);border-radius:50%;"></div><h3>Digital Apprentice</h3><p>Innovation Fusion</p></div>
+    </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="reveal">
+    <h2 class="section-title">Ritual Reviews</h2>
+    <div class="card-grid">
+        <div class="card"><p>★★★★★</p><p>"Transformative. Felt like stepping into the future of grooming."</p><small>— Alex K.</small></div>
+        <div class="card"><p>★★★★★</p><p>"The precision is unreal. High-tech meets old-school craft perfectly."</p><small>— Jordan L.</small></div>
+        <div class="card"><p>★★★★★</p><p>"Best ritual in London 2026. Booking again immediately."</p><small>— Sam R.</small></div>
+    </div>
+</section>
+
+<!-- FAQ -->
+<section class="reveal">
+    <h2 class="section-title">FAQ</h2>
+    <div style="max-width:800px;margin:0 auto;">
+        <div class="faq-item" onclick="this.nextElementSibling.style.maxHeight = this.nextElementSibling.style.maxHeight ? null : this.nextElementSibling.scrollHeight + 'px';">
+            <h3>What makes THE AXIS different in 2026?</h3>
+        </div>
+        <div style="max-height:0;overflow:hidden;transition:0.5s;background:var(--card-bg);padding:0 20px;border-radius:16px;">
+            <p>We fuse high-craft textures with high-tech precision for a ritual experience.</p>
+        </div>
+        <!-- Add more FAQ items -->
     </div>
 </section>
 
 <!-- CONTACT -->
-<section class="section-padding reveal" id="contact">
+<section id="contact" class="reveal">
     <h2 class="section-title">Contact & Visit</h2>
-    <!-- Your contact content here - same structure -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(400px,1fr));gap:50px;max-width:1200px;margin:0 auto;">
+        <div>
+            <h3>AXIS HQ</h3>
+            <p>Sector 7-G, Industrial District, London, GB</p>
+            <p><strong>Hours:</strong><br>Mon-Fri: 09:00-21:00<br>Sat: 10:00-20:00<br>Sun: Closed</p>
+            <div style="height:400px;border-radius:28px;overflow:hidden;margin-top:30px;">
+                <!-- Google Maps Embed Placeholder -->
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2483.317!2d-0.127!3d51.507!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x48761b2d8b4b2b2b%3A0x2b2b2b2b2b2b2b2b!2sLondon!5e0!3m2!1sen!2suk!4v1738170000000" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+        </div>
+        <form style="display:grid;gap:20px;">
+            <input type="text" placeholder="Name" style="padding:18px;border-radius:16px;border:1px solid rgba(224,122,95,0.3);background:transparent;">
+            <input type="email" placeholder="Email" style="padding:18px;border-radius:16px;border:1px solid rgba(224,122,95,0.3);background:transparent;">
+            <textarea placeholder="Message" rows="6" style="padding:18px;border-radius:16px;border:1px solid rgba(224,122,95,0.3);background:transparent;"></textarea>
+            <button type="submit" style="background:var(--deep-orange);color:white;padding:18px;font-weight:bold;border:none;border-radius:16px;">Transmit</button>
+        </form>
+    </div>
 </section>
 
-<!-- FLOATING CONTACT -->
-<div class="floating-contact">
-    <a href="tel:5550192" class="btn-circle">📞</a>
-    <a href="https://wa.me/123" class="btn-circle" style="background:#25D366;">💬</a>
+<!-- FLOATING CTAs -->
+<div style="position:fixed;bottom:40px;right:40px;display:flex;gap:20px;z-index:999;">
+    <a href="tel:+445550192" style="width:70px;height:70px;background:var(--dark-base);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;box-shadow:0 10px 30px var(--glow);transition:0.3s;">📞</a>
+    <a href="https://wa.me/447" style="width:70px;height:70px;background:#25D366;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;box-shadow:0 10px 30px var(--glow);transition:0.3s;">💬</a>
 </div>
 
 <!-- FOOTER -->
 <footer>
     <div>
-        <h3>Quick Links</h3>
-        <a href="#services">Services</a><br>
-        <a href="#gallery">Gallery</a><br>
-        <!-- ... -->
+        <h3>THE AXIS</h3>
+        <p>Precision 2026</p>
     </div>
-    <!-- ... -->
+    <div>
+        <h3>Quick Links</h3>
+        <a href="#services" style="color:var(--text-light);display:block;margin:10px 0;">Services</a>
+        <a href="#gallery" style="color:var(--text-light);display:block;margin:10px 0;">Gallery</a>
+        <a href="#artisans" style="color:var(--text-light);display:block;margin:10px 0;">Artisans</a>
+        <a href="#contact" style="color:var(--text-light);display:block;margin:10px 0;">Contact</a>
+    </div>
 </footer>
 
 <script>
-// Hamburger toggle
-function toggleMenu(){document.getElementById('navMenu').classList.toggle('open');}
+// Hamburger (already in onclick)
+function toggleMenu() { document.getElementById('navMenu').classList.toggle('open'); }
 
 // Scroll Reveal
-const observer = new IntersectionObserver((entries)=>{
-    entries.forEach(entry=>{if(entry.isIntersecting)entry.target.classList.add('visible');});
-},{threshold:0.15});
-document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Simple Before/After Drag (basic)
+const slider = document.getElementById('slider');
+if (slider) {
+    const handle = slider.querySelector('.handle');
+    const after = slider.querySelector('.after');
+    let isDragging = false;
+    handle.addEventListener('mousedown', () => isDragging = true);
+    window.addEventListener('mouseup', () => isDragging = false);
+    window.addEventListener('mousemove', e => {
+        if (!isDragging) return;
+        const rect = slider.getBoundingClientRect();
+        const x = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
+        const percent = (x / rect.width) * 100;
+        after.style.clipPath = `inset(0 ${100 - percent}% 0 0)`;
+        handle.style.left = `${percent}%`;
+    });
+}
 </script>
 </body>
 </html>
