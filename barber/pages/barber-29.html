@@ -1,210 +1,312 @@
+B
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SOVEREIGN | Elite Grooming Terminal</title>
+    <title>GENTRY | Advanced Grooming Terminal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
     <script src="https://unpkg.com/scrollreveal"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Montserrat:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --gold: #D4AF37; --platinum: #E5E4E2; --obsidian: #0a0a0b; }
-        body { background-color: var(--obsidian); color: var(--platinum); font-family: 'Montserrat', sans-serif; overflow-x: hidden; }
-        h1, h2, h3, .font-prestige { font-family: 'Cinzel', serif; }
-
-        /* Complex Gold Texture */
-        .gold-gradient { background: linear-gradient(135deg, #8A6E2F 0%, #D4AF37 50%, #F1E2A4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .gold-border { border: 1px solid; border-image: linear-gradient(to right, #8A6E2F, #F1E2A4, #8A6E2F) 1; }
+        :root { --accent: #ff007a; --glass: rgba(255, 255, 255, 0.03); --border: rgba(255, 255, 255, 0.1); }
+        body { background-color: #05050a; color: #e2e2e2; font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; }
         
-        /* Premium Blur & Glass */
-        .sovereign-card { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(20px); border: 1px solid rgba(212, 175, 55, 0.15); border-radius: 0px; position: relative; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
-        .sovereign-card:hover { border-color: var(--gold); background: rgba(212, 175, 55, 0.05); transform: translateY(-10px); }
+        /* Techno Textures */
+        .bg-grid { background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 40px 40px; }
+        .leather-texture { background: radial-gradient(circle at 50% 50%, #1a1a1a 0%, #050505 100%); position: relative; }
+        .leather-texture::before { content: ""; position: absolute; inset: 0; opacity: 0.05; background-image: url('https://www.transparenttextures.com/patterns/black-linen.png'); }
 
-        /* 3D Rotating Platinum Chair */
-        .chair-prestige { animation: rotateSovereign 12s linear infinite; filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.3)); }
-        @keyframes rotateSovereign {
-            0% { transform: rotateY(0deg) scale(1); }
-            50% { transform: rotateY(180deg) scale(1.1); }
-            100% { transform: rotateY(360deg) scale(1); }
-        }
+        /* Component Styles */
+        .glass-panel { background: var(--glass); backdrop-filter: blur(12px); border: 1px solid var(--border); border-radius: 24px; transition: all 0.3s ease; }
+        .glass-panel:hover { border-color: var(--accent); box-shadow: 0 0 20px rgba(255, 0, 122, 0.1); }
+        .neon-glow { text-shadow: 0 0 10px var(--accent); }
+        
+        /* Mobile Menu */
+        #ham-menu { transform: translateY(-100%); transition: transform 0.5s cubic-bezier(0.77, 0, 0.175, 1); }
+        #ham-menu.active { transform: translateY(0); }
 
-        /* Bento Grid Custom Layout */
-        .bento-grid { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 200px; gap: 1.5rem; }
-        @media (max-width: 768px) { .bento-grid { grid-template-columns: repeat(2, 1fr); } }
+        /* Slider Logic */
+        .comparison-slider { position: relative; width: 100%; height: 300px; overflow: hidden; border-radius: 20px; }
+        .before-img { position: absolute; inset: 0; background: url('https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?auto=format&fit=crop&q=80&w=800') center; background-size: cover; }
+        .after-img { position: absolute; inset: 0; width: 50%; border-right: 3px solid var(--accent); background: url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&q=80&w=800') center; background-size: cover; z-index: 10; }
 
-        /* Section Reveal Effect */
-        .reveal-gold { position: relative; overflow: hidden; }
-        .reveal-gold::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--gold); transform: translateX(-101%); transition: transform 0.8s ease-in-out; }
-        .reveal-gold.active::after { transform: translateX(101%); }
-
-        /* Scroll Progress Bar */
-        #progress { position: fixed; top: 0; left: 0; height: 3px; background: var(--gold); z-index: 1000; transition: width 0.1s; }
+        /* Animated Rotating Chair Icon */
+        .chair-spin { animation: spin 15s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     </style>
 </head>
-<body>
+<body class="bg-grid">
 
-    <div id="progress"></div>
+    <div id="ham-menu" class="fixed inset-0 z-[100] bg-[#05050a] p-10 flex flex-col justify-center">
+        <button onclick="toggleMenu()" class="absolute top-10 right-10"><i data-lucide="x" class="w-10 h-10 text-white"></i></button>
+        <nav class="space-y-6 text-5xl font-black italic uppercase">
+            <a href="#services" class="block hover:text-[#ff007a]">Services</a>
+            <a href="#prices" class="block hover:text-[#ff007a]">Pricing</a>
+            <a href="#products" class="block hover:text-[#ff007a]">Supply</a>
+            <a href="#contact" class="block hover:text-[#ff007a]">Terminal</a>
+        </nav>
+    </div>
 
-    <nav class="fixed top-0 w-full z-50 p-6 flex justify-between items-center bg-black/80 backdrop-blur-2xl border-b border-[#D4AF37]/20">
-        <div class="flex items-center gap-4">
-            <div class="chair-prestige w-12 h-12">
-                <svg viewBox="0 0 24 24" fill="none" stroke="url(#gold-grad)" stroke-width="1.5">
-                    <defs><linearGradient id="gold-grad"><stop offset="0%" stop-color="#8A6E2F"/><stop offset="100%" stop-color="#F1E2A4"/></linearGradient></defs>
-                    <path d="M7 18V6a5 5 0 0 1 10 0v12M18 18h1a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h1M8 21h8"/><circle cx="12" cy="18" r="3"/>
-                </svg>
+    <nav class="sticky top-0 z-50 p-6 flex justify-between items-center bg-[#05050a]/80 backdrop-blur-md border-b border-white/5">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-[#ff007a] rounded-lg flex items-center justify-center chair-spin">
+                <i data-lucide="crosshair" class="text-white w-6 h-6"></i>
             </div>
-            <span class="text-2xl font-black tracking-[0.3em] uppercase gold-gradient">Sovereign</span>
+            <span class="text-2xl font-black italic tracking-tighter uppercase">Gentry<span class="text-[#ff007a]">OS</span></span>
         </div>
-        <button onclick="toggleMenu()" class="group flex flex-col gap-1.5 items-end">
-            <div class="w-8 h-0.5 bg-gold group-hover:w-10 transition-all"></div>
-            <div class="w-10 h-0.5 bg-white"></div>
-            <div class="w-6 h-0.5 bg-gold group-hover:w-10 transition-all"></div>
-        </button>
+        <button onclick="toggleMenu()" class="p-3 glass-panel rounded-xl"><i data-lucide="menu" class="text-[#ff007a]"></i></button>
     </nav>
 
-    <header class="relative min-h-screen flex items-center justify-center pt-32 pb-20 px-6 overflow-hidden">
-        <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80&w=2000')] bg-cover bg-center opacity-20 scale-110"></div>
-        
-        <div class="relative z-10 text-center max-w-5xl mx-auto">
-            <h4 class="text-gold tracking-[0.5em] uppercase text-sm mb-6 animate__animated animate__fadeIn">The Pinnacle of Craft</h4>
-            <h1 class="text-6xl md:text-8xl font-black uppercase mb-12 leading-tight">Elite <br><span class="gold-gradient">Architects</span> <br>of Style</h1>
+    <header class="relative pt-20 pb-32 px-6 leather-texture overflow-hidden">
+        <div class="max-w-4xl mx-auto relative z-10">
+            <h1 class="text-7xl md:text-9xl font-black italic uppercase leading-none mb-6">Master <br><span class="text-[#ff007a] neon-glow">Grooming.</span></h1>
             
-            <div class="sovereign-card p-1 mt-12 flex flex-col md:flex-row items-stretch border-gold/30">
-                <select class="bg-transparent p-6 outline-none flex-1 font-semibold text-platinum uppercase tracking-tighter">
-                    <option class="bg-black">Protocol I: The Crown Fade</option>
-                    <option class="bg-black">Protocol II: Platinum Shave</option>
-                    <option class="bg-black">Protocol III: Beard Sculpting</option>
-                    <option class="bg-black">Protocol IV: The Sovereign Set</option>
+            <div class="glass-panel p-2 mt-12 flex flex-col md:flex-row gap-2">
+                <select class="bg-transparent p-4 outline-none flex-1 font-bold">
+                    <option class="bg-[#05050a]">Select System (Service)</option>
+                    <option class="bg-[#05050a]">Signature Fade</option>
+                    <option class="bg-[#05050a]">Blade & Steam</option>
                 </select>
-                <input type="date" class="bg-transparent p-6 outline-none border-x border-gold/20 font-bold uppercase">
-                <button class="bg-gradient-to-r from-[#8A6E2F] to-[#D4AF37] px-12 py-6 text-black font-black uppercase tracking-widest hover:brightness-125 transition">Book Session</button>
+                <input type="date" class="bg-transparent p-4 outline-none flex-1 border-l border-white/10 font-bold">
+                <button class="bg-[#ff007a] px-8 py-4 rounded-xl font-black uppercase italic">Initialize Booking</button>
             </div>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-6 py-32 space-y-40">
+    <div class="h-px bg-gradient-to-r from-transparent via-[#ff007a] to-transparent opacity-30"></div>
+
+    <main class="max-w-6xl mx-auto px-6 py-20 space-y-32">
+
+        <section id="services" class="reveal">
+            <h2 class="text-xs font-black text-[#ff007a] uppercase tracking-[0.5em] mb-12">System.Operations</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="glass-panel p-8 group">
+                    <i data-lucide="scissors" class="w-12 h-12 text-[#ff007a] mb-6 group-hover:scale-110 transition"></i>
+                    <h3 class="text-2xl font-bold mb-4">Precision Blade</h3>
+                    <p class="text-gray-500 mb-6 text-sm">Engineered fades using calibrated clippers and steel blades.</p>
+                </div>
+                <div class="glass-panel p-8 group border-[#ff007a]/40">
+                    <i data-lucide="flame" class="w-12 h-12 text-[#ff007a] mb-6"></i>
+                    <h3 class="text-2xl font-bold mb-4">Thermal Shave</h3>
+                    <p class="text-gray-500 mb-6 text-sm">Dual-stage steam treatment with straight-razor precision.</p>
+                </div>
+                <div class="glass-panel p-8 group">
+                    <i data-lucide="zap" class="w-12 h-12 text-[#ff007a] mb-6"></i>
+                    <h3 class="text-2xl font-bold mb-4">Express Sync</h3>
+                    <p class="text-gray-500 mb-6 text-sm">30-minute rapid maintenance for high-frequency clients.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="prices" class="reveal app-card p-10 border border-white/5 rounded-[40px] bg-black/40">
+            <h2 class="text-4xl font-black italic mb-10">Rate <span class="text-[#ff007a]">Manifest.</span></h2>
+            <div class="space-y-6">
+                <div class="flex justify-between items-end border-b border-white/10 pb-4">
+                    <div><h4 class="text-xl font-bold uppercase">Techno Fade</h4><p class="text-xs text-gray-500">Wash, Cut, Style</p></div>
+                    <span class="text-2xl font-black text-[#ff007a]">$45.00</span>
+                </div>
+                <div class="flex justify-between items-end border-b border-white/10 pb-4">
+                    <div><h4 class="text-xl font-bold uppercase">Beard Calibration</h4><p class="text-xs text-gray-500">Shape, Line-up</p></div>
+                    <span class="text-2xl font-black text-[#ff007a]">$30.00</span>
+                </div>
+                <div class="flex justify-between items-end border-b border-white/10 pb-4">
+                    <div><h4 class="text-xl font-bold uppercase">Full Reset</h4><p class="text-xs text-gray-500">Hair + Beard + Facial</p></div>
+                    <span class="text-2xl font-black text-[#ff007a]">$85.00</span>
+                </div>
+            </div>
+        </section>
 
         <section class="reveal">
-            <div class="flex justify-between items-end mb-12">
-                <h2 class="text-4xl font-bold uppercase italic">Visual <span class="gold-gradient">Asset</span> Library</h2>
-                <p class="text-gold text-xs tracking-widest uppercase">Scroll to explore</p>
-            </div>
-            <div class="bento-grid">
-                <div class="sovereign-card col-span-2 row-span-2 overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1621605815841-aa89794b975f?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover grayscale hover:grayscale-0 transition duration-700">
-                </div>
-                <div class="sovereign-card col-span-2 row-span-1 p-8 flex flex-col justify-end border-gold/40">
-                    <h3 class="text-2xl font-bold uppercase gold-gradient">Platinum Standards</h3>
-                    <p class="text-xs text-gray-500 mt-2">Every tool is medical-grade platinum steel.</p>
-                </div>
-                <div class="sovereign-card col-span-1 row-span-2 overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1593702295094-ada74342990e?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover grayscale">
-                </div>
-                <div class="sovereign-card col-span-1 row-span-1 flex items-center justify-center">
-                    <i data-lucide="crown" class="w-12 h-12 text-gold animate-pulse"></i>
+            <h2 class="text-xl font-bold mb-6 italic">Visual <span class="text-[#ff007a]">Calibration</span></h2>
+            <div class="comparison-slider">
+                <div class="before-img"></div>
+                <div class="after-img" id="after-img"></div>
+                <div class="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
+                    <span class="bg-[#ff007a] px-4 py-2 text-[10px] font-black uppercase">Result: 100% Sharpness</span>
                 </div>
             </div>
         </section>
 
-        <section class="grid grid-cols-1 md:grid-cols-3 gap-0">
-            <div class="p-12 border border-gold/20 hover:bg-gold/5 transition-colors group">
-                <span class="text-gold font-bold text-4xl mb-8 block">01</span>
-                <h3 class="text-2xl font-bold uppercase mb-4">Precision Engineering</h3>
-                <p class="text-gray-400 leading-relaxed text-sm">Micro-calibrated fades using artisan Japanese steel. Not just a cut, but a structural realignment.</p>
-                <div class="mt-8 w-10 h-0.5 bg-gold group-hover:w-full transition-all"></div>
-            </div>
-            <div class="p-12 border-y md:border-y-0 md:border-x border-gold/20 hover:bg-gold/5 transition-colors group">
-                <span class="text-gold font-bold text-4xl mb-8 block">02</span>
-                <h3 class="text-2xl font-bold uppercase mb-4">Thermal Alchemy</h3>
-                <p class="text-gray-400 leading-relaxed text-sm">Multi-stage steam infusion using infused essential oils and 24k gold-flecked post-shave balm.</p>
-                <div class="mt-8 w-10 h-0.5 bg-gold group-hover:w-full transition-all"></div>
-            </div>
-            <div class="p-12 border border-gold/20 hover:bg-gold/5 transition-colors group">
-                <span class="text-gold font-bold text-4xl mb-8 block">03</span>
-                <h3 class="text-2xl font-bold uppercase mb-4">The VIP Lounge</h3>
-                <p class="text-gray-400 leading-relaxed text-sm">Complimentary top-shelf whiskey and private terminal for elite clientele synchronization.</p>
-                <div class="mt-8 w-10 h-0.5 bg-gold group-hover:w-full transition-all"></div>
-            </div>
-        </section>
-
-        <section class="sovereign-card p-20 text-center border-gold overflow-hidden">
-            <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
-            <h2 class="text-5xl font-black uppercase mb-8 tracking-tighter">Enter the <span class="gold-gradient">Sanctum</span></h2>
-            <p class="text-gray-400 max-w-xl mx-auto mb-12 uppercase tracking-widest text-xs">Experience our 360° architectural marvel from your terminal.</p>
-            <button class="gold-border px-12 py-5 font-bold uppercase hover:bg-gold hover:text-black transition">Launch 360 Experience</button>
-        </section>
-
-        <section class="grid grid-cols-1 lg:grid-cols-2 gap-20">
-            <div class="space-y-12">
-                <h2 class="text-5xl font-bold uppercase leading-none">The <br><span class="gold-gradient">Protocol</span> <br>Inquiry</h2>
-                <div class="space-y-6">
-                    <div class="flex gap-6 items-start">
-                        <i data-lucide="map-pin" class="text-gold"></i>
-                        <div><p class="font-bold uppercase">Grand Plaza Terminal</p><p class="text-gray-500 text-sm">1120 Obsidian Way, Manhattan</p></div>
+        <section id="products" class="reveal">
+            <h2 class="text-3xl font-black italic mb-10 uppercase">Product <span class="text-[#ff007a]">Supply</span></h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                <div class="glass-panel p-4 text-center">
+                    <div class="w-full h-32 bg-white/5 rounded-xl mb-4 flex items-center justify-center">
+                        <i data-lucide="cylinder" class="w-12 h-12 text-gray-600"></i>
                     </div>
-                    <div class="flex gap-6 items-start">
-                        <i data-lucide="phone-call" class="text-gold"></i>
-                        <div><p class="font-bold uppercase">Private Line</p><p class="text-gray-500 text-sm">+1 (888) SOV-GOLD</p></div>
+                    <p class="text-[10px] font-bold uppercase">Matte Clay</p>
+                    <p class="text-[#ff007a] font-black">$22</p>
+                </div>
+                <div class="glass-panel p-4 text-center opacity-60">
+                    <div class="w-full h-32 bg-white/5 rounded-xl mb-4 flex items-center justify-center"><i data-lucide="droplet" class="w-12 h-12 text-gray-600"></i></div>
+                    <p class="text-[10px] font-bold uppercase">Beard Oil</p><p class="text-[#ff007a] font-black">$18</p>
+                </div>
+                <div class="glass-panel p-4 text-center">
+                    <div class="w-full h-32 bg-white/5 rounded-xl mb-4 flex items-center justify-center"><i data-lucide="spray-can" class="w-12 h-12 text-gray-600"></i></div>
+                    <p class="text-[10px] font-bold uppercase">Sea Salt Spray</p><p class="text-[#ff007a] font-black">$20</p>
+                </div>
+                <div class="glass-panel p-4 text-center">
+                    <div class="w-full h-32 bg-white/5 rounded-xl mb-4 flex items-center justify-center"><i data-lucide="box" class="w-12 h-12 text-gray-600"></i></div>
+                    <p class="text-[10px] font-bold uppercase">Styling Powder</p><p class="text-[#ff007a] font-black">$25</p>
+                </div>
+                <div class="glass-panel p-4 text-center opacity-60">
+                    <div class="w-full h-32 bg-white/5 rounded-xl mb-4 flex items-center justify-center"><i data-lucide="scissors" class="w-12 h-12 text-gray-600"></i></div>
+                    <p class="text-[10px] font-bold uppercase">Metal Comb</p><p class="text-[#ff007a] font-black">$15</p>
+                </div>
+                <div class="glass-panel p-4 text-center">
+                    <div class="w-full h-32 bg-white/5 rounded-xl mb-4 flex items-center justify-center"><i data-lucide="thermometer" class="w-12 h-12 text-gray-600"></i></div>
+                    <p class="text-[10px] font-bold uppercase">Aftershave</p><p class="text-[#ff007a] font-black">$28</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="reveal">
+            <h2 class="text-3xl font-black italic mb-10 uppercase text-center">The <span class="text-[#ff007a]">Artisans</span></h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="glass-panel p-8 flex gap-6 items-center border-l-4 border-l-[#ff007a]">
+                    <div class="w-20 h-20 bg-gradient-to-tr from-[#ff007a] to-blue-500 rounded-full flex items-center justify-center">
+                        <i data-lucide="user-cog" class="w-10 h-10 text-white"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-2xl font-black">SYNTX-01</h4>
+                        <p class="text-[#ff007a] text-xs font-bold uppercase mb-2">Master Stylist</p>
+                        <div class="flex text-yellow-500 gap-1"><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 fill-current"></i></div>
+                    </div>
+                </div>
+                <div class="glass-panel p-8 flex gap-6 items-center">
+                    <div class="w-20 h-20 bg-gradient-to-tr from-gray-700 to-gray-900 rounded-full flex items-center justify-center">
+                        <i data-lucide="user-cog" class="w-10 h-10 text-white"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-2xl font-black">LOGIC-B</h4>
+                        <p class="text-gray-500 text-xs font-bold uppercase mb-2">Senior Barber</p>
+                        <div class="flex text-yellow-500 gap-1"><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star-half" class="w-3 h-3 fill-current"></i></div>
                     </div>
                 </div>
             </div>
-            <div class="sovereign-card p-12">
-                <form class="space-y-6">
-                    <div class="grid grid-cols-2 gap-6">
-                        <input type="text" placeholder="Identity" class="bg-transparent border-b border-gold/20 p-4 outline-none focus:border-gold transition">
-                        <input type="email" placeholder="Signal" class="bg-transparent border-b border-gold/20 p-4 outline-none focus:border-gold transition">
-                    </div>
-                    <textarea placeholder="Message Protocol..." rows="4" class="bg-transparent border-b border-gold/20 w-full p-4 outline-none focus:border-gold transition"></textarea>
-                    <button class="w-full gold-border py-6 uppercase font-black tracking-widest hover:bg-gold hover:text-black transition">Transmit Request</button>
-                </form>
+        </section>
+
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-8 reveal">
+            <div class="glass-panel p-10">
+                <h3 class="text-xl font-bold mb-8 uppercase tracking-widest text-[#ff007a]">Operating Window</h3>
+                <div class="space-y-4 font-mono text-sm">
+                    <div class="flex justify-between border-b border-white/5 pb-2"><span>MON - FRI</span><span>09:00 - 20:00</span></div>
+                    <div class="flex justify-between border-b border-white/5 pb-2"><span>SATURDAY</span><span>10:00 - 18:00</span></div>
+                    <div class="flex justify-between text-[#ff007a]"><span>SUNDAY</span><span>OFFLINE</span></div>
+                </div>
+                <div class="mt-10 p-4 bg-[#ff007a]/10 rounded-xl flex items-center gap-4">
+                    <i data-lucide="info" class="text-[#ff007a]"></i>
+                    <p class="text-xs">Live Status: Currently Accepting Clients</p>
+                </div>
             </div>
+            <div class="glass-panel overflow-hidden grayscale contrast-125 border-[#ff007a]/20">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.215132338243!2d-73.98784412424422!3d40.75797877138599!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25855c6480293%3A0x51f14c0228a1c893!2sTimes%20Square!5e0!3m2!1sen!2sus!4v1700000000000!5m2!1sen!2sus" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+        </section>
+
+        <section class="reveal max-w-2xl mx-auto">
+            <h2 class="text-center text-4xl font-black italic mb-10 uppercase">F.A.Q<span class="text-[#ff007a]">.</span></h2>
+            <div class="space-y-4">
+                <details class="glass-panel p-4 cursor-pointer group">
+                    <summary class="font-bold uppercase text-sm flex justify-between items-center list-none">
+                        Do you accept walk-ins?
+                        <i data-lucide="plus" class="w-4 h-4 group-open:rotate-45 transition"></i>
+                    </summary>
+                    <p class="text-gray-500 text-xs mt-4">We prefer bookings through the terminal, but walk-ins are integrated based on live barber capacity.</p>
+                </details>
+                <details class="glass-panel p-4 cursor-pointer group">
+                    <summary class="font-bold uppercase text-sm flex justify-between items-center list-none">
+                        What is your cancellation policy?
+                        <i data-lucide="plus" class="w-4 h-4 group-open:rotate-45 transition"></i>
+                    </summary>
+                    <p class="text-gray-500 text-xs mt-4">Cancellations must be logged 12 hours prior to the slot to avoid a 50% system fee.</p>
+                </details>
+            </div>
+        </section>
+
+        <section id="contact" class="reveal app-card p-12 bg-black">
+            <h2 class="text-4xl font-black italic mb-2 uppercase">Connect <span class="text-[#ff007a]">Direct.</span></h2>
+            <p class="text-gray-600 mb-10 text-sm">Send a transmission to the head technician.</p>
+            <form class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <input type="text" placeholder="Identity" class="bg-white/5 border border-white/10 p-4 rounded-xl outline-none focus:border-[#ff007a]">
+                <input type="email" placeholder="Signal (Email)" class="bg-white/5 border border-white/10 p-4 rounded-xl outline-none focus:border-[#ff007a]">
+                <textarea placeholder="Message Transmission..." class="bg-white/5 border border-white/10 p-4 rounded-xl outline-none focus:border-[#ff007a] md:col-span-2 h-32"></textarea>
+                <button class="bg-[#ff007a] py-4 rounded-xl font-black uppercase italic md:col-span-2">Send Transmission</button>
+            </form>
         </section>
 
     </main>
 
-    <footer class="bg-black py-20 px-6 border-t border-gold/10">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
-            <div class="text-center md:text-left">
-                <span class="text-4xl font-black gold-gradient tracking-[0.2em] uppercase">Sovereign</span>
-                <p class="text-gray-600 text-xs mt-4 tracking-widest uppercase">The world's most exclusive grooming architecture.</p>
+    <footer class="bg-black border-t border-white/5 pt-20 pb-32 px-6">
+        <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
+            <div class="space-y-6">
+                <span class="text-2xl font-black italic tracking-tighter uppercase">Gentry<span class="text-[#ff007a]">OS</span></span>
+                <p class="text-gray-600 text-xs leading-relaxed">Advanced grooming terminal utilizing high-craft traditional barbering and modern architectural design.</p>
             </div>
-            <div class="flex gap-8 text-gold uppercase text-[10px] font-black tracking-[0.3em]">
-                <a href="#" class="hover:text-white transition">Instagram</a>
-                <a href="#" class="hover:text-white transition">Privacy Protocol</a>
-                <a href="#" class="hover:text-white transition">Terminal Status</a>
+            <div>
+                <h5 class="font-bold text-[#ff007a] mb-6 text-xs uppercase tracking-widest">Protocol</h5>
+                <ul class="text-xs space-y-4 text-gray-400">
+                    <li><a href="#" class="hover:text-white transition">Privacy Policy</a></li>
+                    <li><a href="#" class="hover:text-white transition">Terms of Service</a></li>
+                    <li><a href="#" class="hover:text-white transition">Cookie Control</a></li>
+                </ul>
+            </div>
+            <div>
+                <h5 class="font-bold text-[#ff007a] mb-6 text-xs uppercase tracking-widest">Connect</h5>
+                <div class="flex gap-4">
+                    <a href="#" class="w-10 h-10 glass-panel rounded-lg flex items-center justify-center hover:bg-[#ff007a] transition"><i data-lucide="instagram" class="w-4 h-4"></i></a>
+                    <a href="#" class="w-10 h-10 glass-panel rounded-lg flex items-center justify-center hover:bg-[#ff007a] transition"><i data-lucide="twitter" class="w-4 h-4"></i></a>
+                </div>
+            </div>
+            <div>
+                <h5 class="font-bold text-[#ff007a] mb-6 text-xs uppercase tracking-widest">Terminal Location</h5>
+                <p class="text-xs text-gray-400 leading-relaxed">Sector 7, 42nd Ave<br>Neo-Downtown, NY 10036</p>
+                <div class="mt-4 flex gap-4">
+                    <a href="tel:123456789" class="text-[#ff007a]"><i data-lucide="phone" class="w-5 h-5"></i></a>
+                    <a href="https://wa.me/123456789" class="text-[#ff007a]"><i data-lucide="message-square" class="w-5 h-5"></i></a>
+                </div>
             </div>
         </div>
     </footer>
 
-    <div class="fixed bottom-0 left-0 right-0 p-6 z-50 md:hidden bg-gradient-to-t from-black to-transparent">
-        <div class="sovereign-card bg-black/90 p-4 flex justify-between items-center px-10 border-gold/30">
-            <i data-lucide="home" class="text-gold w-6 h-6"></i>
-            <button class="bg-gold px-8 py-3 text-black font-black uppercase text-xs">Book</button>
-            <i data-lucide="user" class="text-gray-500 w-6 h-6"></i>
+    <div class="fixed bottom-0 left-0 right-0 p-4 z-50 md:hidden">
+        <div class="glass-panel bg-[#05050a]/90 flex justify-between p-4 px-8 items-center border-[#ff007a]/30">
+            <a href="tel:123456789" class="text-gray-400"><i data-lucide="phone"></i></a>
+            <button class="bg-[#ff007a] px-6 py-2 rounded-lg font-black italic uppercase text-sm">Book</button>
+            <a href="#contact" class="text-gray-400"><i data-lucide="mail"></i></a>
         </div>
     </div>
 
     <script>
         lucide.createIcons();
+        
+        // Mobile Menu Toggle
+        function toggleMenu() {
+            document.getElementById('ham-menu').classList.toggle('active');
+        }
 
-        // Scroll Progress
-        window.onscroll = function() {
-            let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            let scrolled = (winScroll / height) * 100;
-            document.getElementById("progress").style.width = scrolled + "%";
-        };
-
-        // Scroll Reveal
+        // 19. Scroll Reveal Implementation
         ScrollReveal().reveal('.reveal', { 
-            delay: 300, 
-            distance: '80px',
+            delay: 200, 
+            distance: '50px',
             origin: 'bottom',
-            duration: 1000,
-            opacity: 0,
-            easing: 'cubic-bezier(0.5, 0, 0, 1)'
+            duration: 800,
+            interval: 100
+        });
+
+        // Comparison Slider simple mouse follow
+        const sliderContainer = document.querySelector('.comparison-slider');
+        const afterImg = document.querySelector('.after-img');
+        
+        sliderContainer.addEventListener('mousemove', (e) => {
+            const rect = sliderContainer.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
+            afterImg.style.width = x + '%';
         });
     </script>
 </body>
