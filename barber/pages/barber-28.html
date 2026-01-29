@@ -11,9 +11,10 @@
     --ink: #1A1A1A;
     --accent: #D4AF37;
     --steel: #2C2C2C;
+    --shadow: rgba(0,0,0,0.25);
 }
 
-/* --- GLOBAL RESET & BODY --- */
+/* --- GLOBAL --- */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
     font-family: 'Outfit', sans-serif;
@@ -21,240 +22,175 @@ body {
     color: var(--ink);
     overflow-x: hidden;
     scroll-behavior: smooth;
-    -webkit-font-smoothing: antialiased;
-    -webkit-overflow-scrolling: touch;
 }
+h1,h2,h3 { font-family:'Syne',sans-serif; text-transform:uppercase; }
+p { font-weight: 300; }
+section { position: relative; }
 
-/* --- HEADINGS --- */
-h1, h2, h3 { font-family: 'Syne', sans-serif; text-transform: uppercase; }
-
-/* --- TOP NAV --- */
+/* --- STICKY HEADER / NAV --- */
 .nav-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 5%;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    background: var(--ink);
-    color: var(--cream);
-    font-weight: 800;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    display: flex; justify-content: space-between; align-items:center;
+    padding: 20px 5%; position: sticky; top:0; z-index:1000;
+    background: var(--ink); color: var(--cream);
+    font-weight: 800; box-shadow: 0 5px 15px var(--shadow);
 }
-.hamburger { cursor: pointer; font-size: 1.5rem; user-select: none; }
+.hamburger { cursor:pointer; font-size:1.5rem; user-select:none; }
+.nav-menu {
+    position: fixed; top:0; right:-100%; width:80%; height:100%;
+    background: var(--ink); color: var(--cream); z-index:999;
+    display:flex; flex-direction:column; padding:80px 30px;
+    gap:30px; transition: right 0.3s ease;
+}
+.nav-menu a { color: var(--cream); text-decoration:none; font-size:1.5rem; }
+.nav-menu.open { right:0; }
 
-/* --- HERO SECTION --- */
+/* --- HERO --- */
 .hero {
     height: 100vh;
     position: relative;
     background: url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80&w=2000') no-repeat center center;
     background-size: cover;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
+    display: flex; align-items:center; justify-content:center;
+    overflow:hidden;
 }
 .hero-overlay {
-    position: absolute;
-    inset: 0;
-    background: rgba(253, 251, 244, 0.85);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 0 10px;
+    position:absolute; inset:0;
+    background: rgba(253,251,244,0.85);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:0 10px;
 }
 .hero-title {
-    font-size: clamp(4rem, 18vw, 12rem);
-    line-height: 0.85;
-    letter-spacing: -5px;
+    font-size: clamp(4rem, 15vw, 12rem);
+    line-height:0.85; letter-spacing:-3px;
 }
-.hero p {
-    margin-top: 20px;
-    letter-spacing: 10px;
-    font-weight: 300;
-}
+.hero-subtitle { margin-top:20px; letter-spacing:8px; font-weight:300; }
 
 /* --- BOOKING FORM --- */
 .booking-container {
     background: var(--ink);
     color: var(--cream);
-    width: 90%;
-    max-width: 1100px;
-    margin: -60px auto 100px;
-    padding: 40px;
-    border-radius: 20px;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    box-shadow: 0 10px 0 var(--accent);
-    transition: transform 0.3s ease;
+    width: 90%; max-width:1100px;
+    margin:-60px auto 100px;
+    padding:40px; border-radius:20px;
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:20px; box-shadow:0 10px 0 var(--accent);
+    z-index:100;
 }
-.booking-container:hover { transform: translateY(-5px); }
-.booking-field { display: flex; flex-direction: column; gap: 10px; }
+.booking-container:hover{transform:translateY(-3px);}
+.booking-field { display:flex; flex-direction:column; gap:10px; }
 .booking-field select, .booking-field input {
-    background: transparent;
-    border: 1px solid #444;
-    color: var(--cream);
-    padding: 15px;
-    font-family: inherit;
-    border-radius: 10px;
+    background:transparent; border:1px solid #444; color:var(--cream);
+    padding:15px; border-radius:10px; font-family:inherit;
 }
-.booking-container button {
-    grid-column: 1/-1;
-    padding: 15px;
-    font-weight: bold;
-    background: var(--accent);
-    border: none;
-    color: var(--ink);
-    border-radius: 10px;
-    cursor: pointer;
-    transition: 0.3s ease;
+.booking-container button{
+    grid-column:1/-1; padding:15px;
+    font-weight:bold; background:var(--accent);
+    border:none; color:var(--ink); border-radius:10px; cursor:pointer;
+    transition:0.3s ease;
 }
-.booking-container button:hover { transform: scale(1.05); }
+.booking-container button:hover{transform:scale(1.05);}
 
-/* --- SECTIONS --- */
-.section-padding {
-    padding: 120px 8%;
-}
+/* --- SECTION TITLES --- */
+.section-title { font-size:2.5rem; margin-bottom:40px; text-align:center; }
+.section-padding { padding:120px 8%; }
+
+/* --- SERVICES / PRICE CARDS --- */
 .services-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2px;
-    background: #e0e0e0;
-    border: 2px solid #e0e0e0;
+    display:grid; grid-template-columns:1fr 1fr; gap:2px; background:#e0e0e0; border:2px solid #e0e0e0;
 }
 .service-item {
-    background: var(--cream);
-    padding: 60px;
-    border-radius: 20px;
-    transition: 0.4s;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
+    background:var(--cream); padding:60px; border-radius:20px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    transition:0.4s; cursor:pointer;
 }
-.service-item:hover { background: var(--accent); color: var(--ink); }
-.service-item h3 { margin-bottom: 10px; }
+.service-item:hover{background:var(--accent); color:var(--ink);}
+.service-item h3{margin-bottom:10px;}
 
-/* --- COMPARISON SLIDER --- */
-.comparison-slider {
-    width: 100%;
-    height: 500px;
-    position: relative;
-    overflow: hidden;
-    background: #eee;
-    border-radius: 20px;
-}
-.slider-handle {
-    position: absolute;
-    height: 100%;
-    width: 6px;
-    background: var(--ink);
-    left: 50%;
-    cursor: ew-resize;
-    border-radius: 3px;
-}
-
-/* --- PRODUCT GRID --- */
-.product-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 30px;
-}
+/* --- PRODUCTS GRID --- */
+.product-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:30px; }
 .product-card {
-    padding: 40px;
-    border-radius: 20px;
-    background: var(--cream);
-    text-align: center;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-    transition: 0.3s ease;
+    padding:40px; border-radius:20px; background:var(--cream);
+    text-align:center; box-shadow:0 10px 20px var(--shadow);
+    transition:0.3s ease; cursor:pointer;
 }
-.product-card:hover { transform: translateY(-5px); }
-.product-icon { font-size: 3rem; margin-bottom: 20px; filter: grayscale(1); }
+.product-card:hover{transform:translateY(-5px);}
+.product-icon { font-size:3rem; margin-bottom:20px; filter:grayscale(1); }
 
-/* --- CONTACT FLOAT BUTTONS --- */
-.floating-contact {
-    position: fixed;
-    right: 30px;
-    bottom: 100px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    z-index: 999;
+/* --- IMAGE GALLERY --- */
+.gallery-grid {
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:20px;
 }
-.btn-circle {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: var(--ink);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    font-size: 1.2rem;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-    transition: 0.3s ease;
-}
-.btn-circle:hover { transform: scale(1.1); }
+.gallery-item { border-radius:20px; overflow:hidden; background:#ccc; height:200px; display:flex; align-items:center; justify-content:center; font-size:1rem; color:var(--ink); font-weight:bold; }
 
-/* --- FOOTER DOCKED NAV --- */
-.docked-nav {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    background: var(--ink);
-    padding: 20px;
-    display: flex;
-    justify-content: space-around;
-    z-index: 1000;
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
-}
-.docked-nav a {
-    color: var(--cream);
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-}
-.docked-nav a.active { color: var(--accent); }
+/* --- BEFORE / AFTER SLIDER --- */
+.comparison-slider { width:100%; height:500px; position:relative; overflow:hidden; background:#eee; border-radius:20px; }
+.slider-handle { position:absolute; height:100%; width:6px; background:var(--ink); left:50%; cursor:ew-resize; border-radius:3px; }
+
+/* --- BARBER PROFILES --- */
+.profile-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:30px; }
+.profile-card { background:var(--cream); padding:30px; border-radius:20px; text-align:center; box-shadow:0 10px 20px var(--shadow); transition:0.3s; }
+.profile-card:hover{transform:translateY(-5px);}
+.profile-avatar { width:100px; height:100px; margin:auto; background:#bbb; border-radius:50%; margin-bottom:20px; }
+
+/* --- CONTACT / CTA --- */
+.floating-contact { position:fixed; right:30px; bottom:100px; display:flex; flex-direction:column; gap:15px; z-index:999; }
+.btn-circle { width:60px; height:60px; border-radius:50%; background:var(--ink); color:white; display:flex; align-items:center; justify-content:center; font-size:1.2rem; text-decoration:none; box-shadow:0 10px 20px var(--shadow); transition:0.3s ease; }
+.btn-circle:hover{transform:scale(1.1);}
+
+/* --- CONTACT FORM --- */
+.contact-form { display:grid; grid-template-columns:1fr 1fr; gap:20px; background:var(--ink); padding:40px; border-radius:20px; color:var(--cream); max-width:900px; margin:0 auto; }
+.contact-form input, .contact-form textarea { padding:15px; border-radius:10px; border:1px solid #444; background:transparent; color:var(--cream); }
+.contact-form button{grid-column:1/-1; background:var(--accent); color:var(--ink); font-weight:bold; padding:15px; border:none; border-radius:10px; cursor:pointer;}
+.contact-form button:hover{transform:scale(1.05);}
+
+/* --- REVIEWS / FAQ --- */
+.review { background:var(--cream); padding:30px; border-radius:20px; box-shadow:0 5px 15px var(--shadow); margin-bottom:20px; }
+.faq-item { margin-bottom:10px; cursor:pointer; }
+.faq-answer { max-height:0; overflow:hidden; transition:0.3s; background:#efebe0; padding:0 20px; border-radius:10px; }
+
+/* --- VISUAL DIVIDERS --- */
+.divider { height:4px; background:var(--accent); width:100px; margin:60px auto; border-radius:2px; }
+
+/* --- FOOTER --- */
+footer { background:var(--ink); color:var(--cream); padding:60px 8%; display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:30px; }
+footer a { color:var(--cream); text-decoration:none; }
+footer h3 { margin-bottom:15px; }
 
 /* --- SCROLL REVEAL --- */
-.reveal { opacity: 0; transform: translateY(50px); transition: all 1s ease-out; }
-.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal { opacity:0; transform:translateY(50px); transition:all 1s ease-out; }
+.reveal.visible{opacity:1; transform:translateY(0);}
 
 /* --- RESPONSIVE --- */
-@media (max-width: 768px) {
-    .services-grid, .product-grid { grid-template-columns: 1fr; }
-    .hero-title { font-size: 5rem; }
-    .booking-container { padding: 30px; }
+@media(max-width:768px){
+    .services-grid,.product-grid,.profile-grid,.contact-form{grid-template-columns:1fr;}
+    .hero-title{font-size:clamp(3rem, 18vw, 10rem);}
 }
 </style>
 </head>
 <body>
 
-<!-- TOP NAV -->
+<!-- NAV -->
 <nav class="nav-top">
     <div>THE AXIS</div>
-    <div class="hamburger">☰</div>
+    <div class="hamburger" onclick="toggleMenu()">☰</div>
 </nav>
+<div class="nav-menu" id="navMenu">
+    <a href="#services">Services</a>
+    <a href="#gallery">Gallery</a>
+    <a href="#profiles">Artisans</a>
+    <a href="#contact">Contact</a>
+</div>
 
 <!-- HERO -->
 <header class="hero">
     <div class="hero-overlay">
         <h1 class="hero-title">PRECISION<br><span style="color:var(--accent);">2026</span></h1>
-        <p>ARTISAN GROOMING COLLECTIVE</p>
+        <p class="hero-subtitle">ARTISAN GROOMING COLLECTIVE</p>
     </div>
 </header>
 
 <!-- BOOKING -->
-<section class="booking-container">
+<section class="booking-container reveal">
     <div class="booking-field">
         <label>THE ARTISAN</label>
         <select><option>Unit 01 - Master Barber</option><option>Unit 02 - Stylist</option></select>
@@ -271,8 +207,8 @@ h1, h2, h3 { font-family: 'Syne', sans-serif; text-transform: uppercase; }
 </section>
 
 <!-- SERVICES -->
-<section class="section-padding reveal">
-    <h2>01 / Services</h2>
+<section class="section-padding reveal" id="services">
+    <h2 class="section-title">01 / Services</h2>
     <div class="services-grid">
         <div class="service-item"><h3>Executive Fade</h3><p>30 min // $45</p></div>
         <div class="service-item"><h3>Hot Shave Ritual</h3><p>45 min // $60</p></div>
@@ -281,19 +217,9 @@ h1, h2, h3 { font-family: 'Syne', sans-serif; text-transform: uppercase; }
     </div>
 </section>
 
-<!-- COMPARISON -->
-<section class="section-padding reveal">
-    <h2>02 / The Evolution</h2>
-    <div class="comparison-slider">
-        <div style="position: absolute; width: 50%; height: 100%; background: #dcdcdc; display: flex; align-items: center; justify-content: center;">RAW STATE</div>
-        <div style="position: absolute; right: 0; width: 50%; height: 100%; background: #bbb; display: flex; align-items: center; justify-content: center;">REFINED</div>
-        <div class="slider-handle"></div>
-    </div>
-</section>
-
 <!-- PRODUCTS -->
 <section class="section-padding reveal">
-    <h2>03 / Provisions</h2>
+    <h2 class="section-title">03 / Provisions</h2>
     <div class="product-grid">
         <div class="product-card"><div class="product-icon">🧴</div><h3>Fiber Pomade</h3><p>$22</p></div>
         <div class="product-card"><div class="product-icon">🪒</div><h3>Steel Razor</h3><p>$85</p></div>
@@ -304,44 +230,94 @@ h1, h2, h3 { font-family: 'Syne', sans-serif; text-transform: uppercase; }
     </div>
 </section>
 
-<!-- VISIT US -->
-<section class="section-padding reveal" style="background: #efebe0;">
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 50px;">
-        <div>
-            <h2>04 / Visit Us</h2>
-            <p style="margin: 20px 0; font-size: 1.5rem;">Sector 7-G, Industrial District<br>AXIS HQ, Floor 1</p>
-            <p><strong>MON - FRI:</strong> 09:00 - 21:00</p>
-            <p><strong>SAT - SUN:</strong> 10:00 - 18:00</p>
-        </div>
-        <div style="height: 300px; background: #ccc; border: 1px solid var(--ink); display:flex; align-items:center; justify-content:center;">
-            MAP_ENGINE_LOADED
-        </div>
+<!-- GALLERY -->
+<section class="section-padding reveal" id="gallery">
+    <h2 class="section-title">04 / The Gallery</h2>
+    <div class="gallery-grid">
+        <div class="gallery-item">HAIR CLOSE-UP 1</div>
+        <div class="gallery-item">LEATHER TEXTURE</div>
+        <div class="gallery-item">STEEL CLIPPERS</div>
+        <div class="gallery-item">HAIR CLOSE-UP 2</div>
+        <div class="gallery-item">PRODUCT DISPLAY</div>
+        <div class="gallery-item">HAIR CLOSE-UP 3</div>
     </div>
 </section>
 
-<!-- CONTACT BUTTONS -->
+<!-- BARBER PROFILES -->
+<section class="section-padding reveal" id="profiles">
+    <h2 class="section-title">05 / The Artisans</h2>
+    <div class="profile-grid">
+        <div class="profile-card"><div class="profile-avatar"></div><h3>Master Barber</h3></div>
+        <div class="profile-card"><div class="profile-avatar"></div><h3>Senior Stylist</h3></div>
+        <div class="profile-card"><div class="profile-avatar"></div><h3>Apprentice</h3></div>
+    </div>
+</section>
+
+<!-- CONTACT -->
+<section class="section-padding reveal" id="contact">
+    <h2 class="section-title">06 / Contact & Visit</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:40px;">
+        <div>
+            <p><strong>Address:</strong> Sector 7-G, Industrial District, AXIS HQ, Floor 1</p>
+            <p><strong>Opening Hours:</strong><br>Mon-Fri: 09:00-21:00<br>Sat-Sun:10:00-18:00</p>
+            <div style="height:250px;background:#ccc;border-radius:20px;display:flex;align-items:center;justify-content:center;">MAP PLACEHOLDER</div>
+        </div>
+        <form class="contact-form">
+            <input type="text" placeholder="Your Name">
+            <input type="email" placeholder="Email">
+            <textarea placeholder="Message"></textarea>
+            <button>Send Message</button>
+        </form>
+    </div>
+</section>
+
+<!-- FLOATING CONTACT -->
 <div class="floating-contact">
     <a href="tel:5550192" class="btn-circle">📞</a>
-    <a href="https://wa.me/123" class="btn-circle" style="background: #25D366;">💬</a>
+    <a href="https://wa.me/123" class="btn-circle" style="background:#25D366;">💬</a>
 </div>
 
-<!-- FOOTER NAV -->
+<!-- DIVIDER -->
+<div class="divider"></div>
+
+<!-- FOOTER -->
+<footer>
+    <div>
+        <h3>Quick Links</h3>
+        <a href="#services">Services</a><br>
+        <a href="#gallery">Gallery</a><br>
+        <a href="#profiles">Artisans</a><br>
+        <a href="#contact">Contact</a>
+    </div>
+    <div>
+        <h3>Follow Us</h3>
+        <a href="#">Instagram</a><br>
+        <a href="#">TikTok</a>
+    </div>
+</footer>
+
+<!-- DOCKED NAV -->
 <nav class="docked-nav">
     <a href="#services">Services</a>
-    <a href="#">Shop</a>
-    <a href="#" style="color: var(--accent);">Book Now</a>
+    <a href="#gallery">Gallery</a>
+    <a href="#contact" style="color:var(--accent)">Book Now</a>
     <a href="#contact">Contact</a>
 </nav>
 
 <script>
+// Hamburger toggle
+function toggleMenu(){document.getElementById('navMenu').classList.toggle('open');}
+
 // Scroll Reveal
-const observerOptions = { threshold: 0.2 };
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) entry.target.classList.add('visible');
-    });
-}, observerOptions);
-document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+const observer = new IntersectionObserver((entries)=>{
+entries.forEach(entry=>{if(entry.isIntersecting)entry.target.classList.add('visible');});
+},{threshold:0.2});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+// FAQ toggle (example)
+document.querySelectorAll('.faq-item').forEach(item=>{
+    item.addEventListener('click',()=>{const ans=item.nextElementSibling; ans.style.maxHeight = ans.style.maxHeight ? null : ans.scrollHeight+"px";});
+});
 </script>
 </body>
 </html>
