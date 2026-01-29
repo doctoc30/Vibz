@@ -3,288 +3,267 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Azure & Edge | Premium Grooming Terminal</title>
+    <title>The Local Cut | Premium Barbering</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
+        
         :root {
-            --sky-soft: #e0f2fe;
-            --sky-bold: #0ea5e9;
-            --cream: #f8fafc;
-            --steel: #64748b;
+            --sky-bg: #f0f9ff;
+            --sky-accent: #0ea5e9;
+            --cream: #fdfcf9;
+            --slate: #334155;
         }
 
         body { 
             background-color: var(--cream); 
-            color: #1e293b; 
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            overflow-x: hidden;
+            color: var(--slate); 
+            font-family: 'Outfit', sans-serif;
+            scroll-behavior: smooth;
         }
 
-        /* App-like Native Feel */
-        .app-card {
+        /* App-Like UI Elements */
+        .native-card {
             background: white;
-            border-radius: 24px;
-            box-shadow: 0 10px 25px -5px rgba(14, 165, 233, 0.1);
-            border: 1px solid rgba(14, 165, 233, 0.05);
-            transition: transform 0.3s ease;
+            border-radius: 28px;
+            box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease;
+            border: 1px solid #f1f5f9;
         }
 
-        .hero-animation {
-            background: linear-gradient(135deg, #e0f2fe 0%, #ffffff 100%);
-            border-radius: 0 0 40px 40px;
+        .hero-gradient {
+            background: linear-gradient(180deg, #e0f2fe 0%, #fdfcf9 100%);
         }
 
-        /* Mobile Menu Overlay */
-        #mobile-menu {
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            transform: translateX(100%);
+        /* Animation: Floating Storefront Items */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
         }
-        #mobile-menu.active { transform: translateX(0); }
+        .float-icon { animation: float 4s ease-in-out infinite; }
 
-        /* Scroller Reveals */
-        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
+        .reveal { opacity: 0; transform: translateY(20px); transition: all 0.7s ease-out; }
         .reveal.active { opacity: 1; transform: translateY(0); }
 
-        /* Custom Before/After Slider */
-        .slider-handle {
-            width: 4px; background: var(--sky-bold); position: absolute; top: 0; bottom: 0; left: 50%;
-            cursor: ew-resize;
-        }
-
-        /* Hide Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        /* Custom Mobile Menu */
+        #mobileMenu { transition: transform 0.3s ease-in-out; transform: translateX(100%); }
+        #mobileMenu.open { transform: translateX(0); }
     </style>
 </head>
 <body>
 
-    <nav class="fixed w-full z-50 bg-white/80 backdrop-blur-md px-6 py-4 flex justify-between items-center border-b border-sky-100">
+    <nav class="fixed w-full z-50 px-6 py-4 flex justify-between items-center bg-white/70 backdrop-blur-lg border-b border-sky-100">
         <div class="flex items-center gap-2">
-            <div class="w-8 h-8 bg-sky-500 rounded-lg flex items-center justify-center text-white">
-                <i data-lucide="scissors" size="18"></i>
+            <div class="p-2 bg-sky-500 rounded-xl text-white">
+                <i data-lucide="scissors" size="20"></i>
             </div>
-            <span class="font-bold tracking-tight text-xl">AZURE<span class="text-sky-500">EDGE</span></span>
+            <span class="font-bold text-xl tracking-tight">CITY<span class="text-sky-500">BLADE</span></span>
         </div>
         
-        <div class="hidden md:flex space-x-6 font-medium text-sm text-slate-600">
-            <a href="#services" class="hover:text-sky-500 transition">Services</a>
-            <a href="#gallery" class="hover:text-sky-500 transition">Gallery</a>
-            <a href="#products" class="hover:text-sky-500 transition">Tech</a>
+        <div class="hidden md:flex space-x-8 font-semibold text-sm">
+            <a href="#services" class="hover:text-sky-500">Services</a>
+            <a href="#prices" class="hover:text-sky-500">Price List</a>
+            <a href="#gallery" class="hover:text-sky-500">Gallery</a>
+            <a href="#find-us" class="hover:text-sky-500">Location</a>
         </div>
 
-        <button onclick="toggleMenu()" class="p-2 bg-sky-50 rounded-xl text-sky-600 md:hidden">
-            <i data-lucide="menu"></i>
-        </button>
-        <button class="hidden md:block bg-sky-500 text-white px-6 py-2 rounded-2xl font-bold shadow-lg shadow-sky-200">Book Appt</button>
+        <button onclick="toggleMenu()" class="md:hidden p-2 text-slate-600"><i data-lucide="menu"></i></button>
+        <button class="hidden md:block bg-sky-500 text-white px-6 py-2 rounded-2xl font-bold shadow-lg shadow-sky-100 hover:bg-sky-600">Book Visit</button>
     </nav>
 
-    <div id="mobile-menu" class="fixed inset-0 bg-white z-[60] p-10 flex flex-col space-y-8 text-2xl font-bold">
-        <button onclick="toggleMenu()" class="self-end p-2 bg-slate-100 rounded-full"><i data-lucide="x"></i></button>
-        <a href="#services" onclick="toggleMenu()">Services</a>
+    <div id="mobileMenu" class="fixed inset-0 bg-white z-[60] p-10 flex flex-col space-y-8 text-2xl font-bold md:hidden">
+        <button onclick="toggleMenu()" class="self-end"><i data-lucide="x" size="32"></i></button>
+        <a href="#services" onclick="toggleMenu()">The Menu</a>
         <a href="#prices" onclick="toggleMenu()">Pricing</a>
         <a href="#products" onclick="toggleMenu()">Shop</a>
-        <a href="#contact" onclick="toggleMenu()">Contact</a>
+        <a href="#find-us" onclick="toggleMenu()">Contact</a>
+        <button class="bg-sky-500 text-white p-5 rounded-3xl text-lg">Book Appointment</button>
     </div>
 
-    <section class="hero-animation min-h-screen pt-32 pb-20 px-6 text-center overflow-hidden">
+    <section class="hero-gradient pt-32 pb-20 px-6 text-center">
         <div class="max-w-4xl mx-auto">
-            <span class="bg-sky-100 text-sky-600 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-6 inline-block animate__animated animate__fadeIn">The Future of Craft</span>
-            <h1 class="text-5xl md:text-8xl font-black text-slate-900 mb-6 leading-tight">High-Tech <br><span class="text-sky-500 underline decoration-sky-200">High-Craft.</span></h1>
+            <h1 class="text-5xl md:text-7xl font-extrabold text-slate-900 mb-6">Your Neighborhood <br><span class="text-sky-500">Master Barbers.</span></h1>
+            <p class="text-lg text-slate-500 mb-10">Premium grooming made simple. Walk in as you are, walk out as your best self.</p>
             
-            <div class="relative w-full h-64 bg-white rounded-[40px] shadow-2xl mt-12 mb-12 flex items-center justify-center overflow-hidden border-8 border-white">
-                <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
-                <div class="flex gap-8 animate__animated animate__pulse animate__infinite">
-                     <i data-lucide="warehouse" size="80" class="text-sky-200"></i>
-                     <i data-lucide="zap" size="80" class="text-sky-400"></i>
+            <div class="relative w-full max-w-2xl mx-auto h-64 bg-white rounded-[40px] shadow-2xl flex items-center justify-center overflow-hidden border-4 border-white mb-12">
+                <div class="absolute inset-0 bg-sky-50/50"></div>
+                <div class="flex gap-12 relative z-10">
+                    <div class="float-icon"><i data-lucide="door-open" size="64" class="text-sky-200"></i></div>
+                    <div class="float-icon" style="animation-delay: 1s;"><i data-lucide="armchair" size="64" class="text-sky-400"></i></div>
+                    <div class="float-icon" style="animation-delay: 2s;"><i data-lucide="spray-can" size="64" class="text-sky-300"></i></div>
                 </div>
-                <p class="absolute bottom-4 text-slate-400 font-mono text-xs uppercase tracking-tighter">Terminal 01 // Shoreditch Studio</p>
             </div>
 
-            <div class="app-card p-6 md:p-8 max-w-3xl mx-auto -mt-20 relative z-20 flex flex-col md:flex-row gap-4 items-center">
-                <div class="w-full">
-                    <label class="block text-left text-xs font-bold text-slate-400 uppercase mb-2 ml-2">Select Service</label>
-                    <select class="w-full bg-slate-50 border-none rounded-xl p-4 text-slate-700 outline-none ring-2 ring-transparent focus:ring-sky-500 transition">
-                        <option>Precision Fade + Tech Wash</option>
-                        <option>Sculpted Beard Terminal</option>
-                        <option>The Full System Reset</option>
+            <div class="native-card p-6 md:p-8 flex flex-col md:flex-row gap-4 items-end">
+                <div class="w-full text-left">
+                    <label class="block text-xs font-bold text-slate-400 uppercase mb-2 ml-1">Service Needed</label>
+                    <select class="w-full bg-slate-50 rounded-2xl p-4 outline-none border-none ring-2 ring-transparent focus:ring-sky-500">
+                        <option>Full Haircut & Style</option>
+                        <option>Beard Grooming</option>
+                        <option>The Father & Son Duo</option>
                     </select>
                 </div>
-                <button class="w-full md:w-auto bg-slate-900 text-white px-10 py-4 rounded-2xl font-black hover:bg-sky-500 transition-all whitespace-nowrap">CHECK AVAILABILITY</button>
+                <div class="w-full text-left">
+                    <label class="block text-xs font-bold text-slate-400 uppercase mb-2 ml-1">Preferred Day</label>
+                    <select class="w-full bg-slate-50 rounded-2xl p-4 outline-none border-none ring-2 ring-transparent focus:ring-sky-500">
+                        <option>Today</option>
+                        <option>Tomorrow</option>
+                        <option>Pick a date</option>
+                    </select>
+                </div>
+                <button class="w-full bg-slate-900 text-white p-4 rounded-2xl font-bold hover:bg-sky-500 transition-colors">Find a Slot</button>
             </div>
         </div>
     </section>
 
-    <div class="h-24 flex items-center justify-center">
-        <div class="w-px h-full bg-gradient-to-b from-sky-200 to-transparent"></div>
-    </div>
-
-    <section id="services" class="py-20 px-6 max-w-7xl mx-auto">
-        <h2 class="text-center text-3xl font-black mb-16 uppercase tracking-tight">The Services</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="app-card p-8 reveal">
-                <div class="w-14 h-14 bg-sky-50 rounded-2xl flex items-center justify-center text-sky-500 mb-6">
-                    <i data-lucide="layers"></i>
+    <section id="services" class="py-20 px-6 max-w-6xl mx-auto">
+        <h2 class="text-3xl font-extrabold text-center mb-12">Our Services</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="native-card p-8 reveal">
+                <div class="w-12 h-12 bg-sky-100 rounded-2xl flex items-center justify-center text-sky-600 mb-6">
+                    <i data-lucide="scissors"></i>
                 </div>
-                <h3 class="text-xl font-bold mb-3">Architectural Cut</h3>
-                <p class="text-slate-500 text-sm leading-relaxed">Structural precision using laser-leveled techniques for the perfect silhouette.</p>
+                <h3 class="text-xl font-bold mb-2">Classic Haircut</h3>
+                <p class="text-slate-500 text-sm">Precision cutting, neck shave, and a hot towel finish to keep you sharp.</p>
             </div>
-            <div class="app-card p-8 reveal" style="transition-delay: 0.1s;">
-                <div class="w-14 h-14 bg-sky-50 rounded-2xl flex items-center justify-center text-sky-500 mb-6">
-                    <i data-lucide="wind"></i>
+            <div class="native-card p-8 reveal" style="transition-delay: 0.1s;">
+                <div class="w-12 h-12 bg-sky-100 rounded-2xl flex items-center justify-center text-sky-600 mb-6">
+                    <i data-lucide="flame"></i>
                 </div>
-                <h3 class="text-xl font-bold mb-3">Oxygen Therapy</h3>
-                <p class="text-slate-500 text-sm leading-relaxed">High-pressure steam and oxygen infused towels to rejuvenate skin post-shave.</p>
+                <h3 class="text-xl font-bold mb-2">Beard Sculpting</h3>
+                <p class="text-slate-500 text-sm">Tailored beard shaping with razor line-up and organic balm treatment.</p>
             </div>
-            <div class="app-card p-8 reveal" style="transition-delay: 0.2s;">
-                <div class="w-14 h-14 bg-sky-50 rounded-2xl flex items-center justify-center text-sky-500 mb-6">
-                    <i data-lucide="cpu"></i>
+            <div class="native-card p-8 reveal" style="transition-delay: 0.2s;">
+                <div class="w-12 h-12 bg-sky-100 rounded-2xl flex items-center justify-center text-sky-600 mb-6">
+                    <i data-lucide="coffee"></i>
                 </div>
-                <h3 class="text-xl font-bold mb-3">Digital Consultation</h3>
-                <p class="text-slate-500 text-sm leading-relaxed">AI-driven face shape analysis to determine your mathematically optimal style.</p>
+                <h3 class="text-xl font-bold mb-2">The Full Refresh</h3>
+                <p class="text-slate-500 text-sm">Full haircut, beard trim, and facial massage while you enjoy a fresh brew.</p>
             </div>
         </div>
     </section>
 
-    <section class="py-20 bg-sky-50/50 px-6">
-        <div class="max-w-3xl mx-auto">
-            <h2 class="text-center text-2xl font-bold mb-12">Program Pricing</h2>
+    <section id="prices" class="py-20 bg-white px-6">
+        <div class="max-w-2xl mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-extrabold">Price List</h2>
+                <p class="text-slate-400">Simple, honest pricing. No hidden extras.</p>
+            </div>
             <div class="space-y-4">
-                <div class="app-card p-6 flex justify-between items-center reveal">
-                    <div>
-                        <span class="font-bold">Standard Logic</span>
-                        <p class="text-xs text-slate-400">Cut + Style</p>
+                <div class="flex justify-between items-center p-4 border-b border-slate-50 reveal">
+                    <span class="font-semibold">Gentleman's Cut</span>
+                    <span class="font-bold text-sky-600">$35</span>
+                </div>
+                <div class="flex justify-between items-center p-4 border-b border-slate-50 reveal">
+                    <span class="font-semibold">Skin Fade Special</span>
+                    <span class="font-bold text-sky-600">$40</span>
+                </div>
+                <div class="flex justify-between items-center p-4 border-b border-slate-50 reveal">
+                    <span class="font-semibold">Beard Trim & Shape</span>
+                    <span class="font-bold text-sky-600">$20</span>
+                </div>
+                <div class="flex justify-between items-center p-4 border-b border-slate-50 reveal">
+                    <span class="font-semibold">Senior & Kids</span>
+                    <span class="font-bold text-sky-600">$25</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-20 px-6 max-w-6xl mx-auto">
+        <h2 class="text-3xl font-extrabold text-center mb-12">Meet the Team</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div class="text-center reveal">
+                <div class="w-full aspect-square bg-sky-50 rounded-[40px] mb-4 flex items-center justify-center">
+                    <i data-lucide="user" size="48" class="text-sky-200"></i>
+                </div>
+                <h4 class="font-bold">Leo</h4>
+                <p class="text-xs text-slate-400 uppercase">Shop Owner</p>
+            </div>
+            <div class="text-center reveal" style="transition-delay: 0.1s;">
+                <div class="w-full aspect-square bg-sky-50 rounded-[40px] mb-4 flex items-center justify-center">
+                    <i data-lucide="user" size="48" class="text-sky-200"></i>
+                </div>
+                <h4 class="font-bold">Sam</h4>
+                <p class="text-xs text-slate-400 uppercase">Fade Specialist</p>
+            </div>
+            <div class="text-center reveal" style="transition-delay: 0.2s;">
+                <div class="w-full aspect-square bg-sky-50 rounded-[40px] mb-4 flex items-center justify-center">
+                    <i data-lucide="user" size="48" class="text-sky-200"></i>
+                </div>
+                <h4 class="font-bold">Jordan</h4>
+                <p class="text-xs text-slate-400 uppercase">Beard Master</p>
+            </div>
+            <div class="text-center reveal" style="transition-delay: 0.3s;">
+                <div class="w-full aspect-square bg-sky-50 rounded-[40px] mb-4 flex items-center justify-center">
+                    <i data-lucide="user" size="48" class="text-sky-200"></i>
+                </div>
+                <h4 class="font-bold">Alex</h4>
+                <p class="text-xs text-slate-400 uppercase">Stylist</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="find-us" class="py-20 px-6 bg-slate-900 text-white rounded-[60px] mx-4 mb-10">
+        <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div>
+                <h2 class="text-3xl font-extrabold mb-8">Visit the Studio</h2>
+                <div class="space-y-6">
+                    <div class="flex gap-4">
+                        <i data-lucide="map-pin" class="text-sky-400"></i>
+                        <p>123 High Street, Your City, ST 12345</p>
                     </div>
-                    <span class="text-sky-600 font-black">$45</span>
-                </div>
-                <div class="app-card p-6 flex justify-between items-center reveal">
-                    <div>
-                        <span class="font-bold">Beard Interface</span>
-                        <p class="text-xs text-slate-400">Trim + Lineup</p>
+                    <div class="flex gap-4">
+                        <i data-lucide="clock" class="text-sky-400"></i>
+                        <div>
+                            <p>Mon - Fri: 9am - 7pm</p>
+                            <p>Sat: 9am - 5pm</p>
+                            <p class="text-slate-500">Sun: Closed</p>
+                        </div>
                     </div>
-                    <span class="text-sky-600 font-black">$30</span>
-                </div>
-                <div class="app-card p-6 flex justify-between items-center reveal border-2 border-sky-200">
-                    <div>
-                        <span class="font-bold text-sky-600">The Grand Master</span>
-                        <p class="text-xs text-slate-400">The Full Works</p>
+                    <div class="flex gap-4 pt-4">
+                        <a href="tel:000" class="bg-sky-500 text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-2">
+                            <i data-lucide="phone"></i> Call Now
+                        </a>
+                        <a href="#" class="bg-green-500 text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-2">
+                            <i data-lucide="message-circle"></i> WhatsApp
+                        </a>
                     </div>
-                    <span class="text-sky-600 font-black">$95</span>
                 </div>
+            </div>
+            <div class="bg-slate-800 h-64 rounded-[40px] flex items-center justify-center border border-slate-700">
+                <span class="text-slate-500 italic">[Google Maps Embed Here]</span>
             </div>
         </div>
     </section>
 
-    <section class="py-20 px-6 max-w-4xl mx-auto">
-        <h2 class="text-center text-2xl font-bold mb-10">Precision Results</h2>
-        <div class="relative h-96 w-full rounded-[40px] overflow-hidden shadow-xl reveal">
-            <div class="absolute inset-0 bg-slate-200 flex items-center justify-center text-slate-400 font-bold uppercase italic">Before (Structural)</div>
-            <div class="absolute inset-0 bg-sky-100 flex items-center justify-center text-sky-500 font-bold uppercase italic transition-all" style="clip-path: inset(0 0 0 50%);">After (Finished)</div>
-            <div class="slider-handle"></div>
-        </div>
-    </section>
-
-    <section id="products" class="py-20 px-6 max-w-7xl mx-auto">
-        <div class="flex justify-between items-end mb-12">
-            <h2 class="text-3xl font-black uppercase">Grooming Gear</h2>
-            <button class="text-sky-500 font-bold text-sm">View All Labs -></button>
-        </div>
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            <div class="app-card p-4 text-center group cursor-pointer reveal">
-                <div class="bg-slate-50 rounded-2xl h-32 flex items-center justify-center mb-4 group-hover:bg-sky-50 transition">
-                    <i data-lucide="droplet" class="text-sky-300"></i>
-                </div>
-                <p class="font-bold text-xs uppercase tracking-tight">Matte Clay 01</p>
-                <p class="text-sky-500 font-black mt-2">$24</p>
-            </div>
-            <div class="app-card p-4 text-center reveal"><div class="bg-slate-50 rounded-2xl h-32 flex items-center justify-center mb-4"><i data-lucide="spray-can" class="text-sky-300"></i></div><p class="font-bold text-xs">Vapor Spray</p><p class="text-sky-500 font-black mt-2">$18</p></div>
-            <div class="app-card p-4 text-center reveal"><div class="bg-slate-50 rounded-2xl h-32 flex items-center justify-center mb-4"><i data-lucide="sparkles" class="text-sky-300"></i></div><p class="font-bold text-xs">Beard Bio-Oil</p><p class="text-sky-500 font-black mt-2">$32</p></div>
-            <div class="app-card p-4 text-center reveal"><div class="bg-slate-50 rounded-2xl h-32 flex items-center justify-center mb-4"><i data-lucide="cog" class="text-sky-300"></i></div><p class="font-bold text-xs">Steel Comb</p><p class="text-sky-500 font-black mt-2">$15</p></div>
-            <div class="app-card p-4 text-center reveal"><div class="bg-slate-50 rounded-2xl h-32 flex items-center justify-center mb-4"><i data-lucide="flask-conical" class="text-sky-300"></i></div><p class="font-bold text-xs">Scalp Serum</p><p class="text-sky-500 font-black mt-2">$45</p></div>
-            <div class="app-card p-4 text-center reveal"><div class="bg-slate-50 rounded-2xl h-32 flex items-center justify-center mb-4"><i data-lucide="wind" class="text-sky-300"></i></div><p class="font-bold text-xs">Ionic Dryer</p><p class="text-sky-500 font-black mt-2">$120</p></div>
-        </div>
-    </section>
-
-    <section class="py-20 bg-slate-900 text-white px-6">
-        <div class="max-w-7xl mx-auto">
-            <h2 class="text-3xl font-black uppercase mb-12">The Artisans</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="p-8 bg-white/5 rounded-3xl border border-white/10 hover:border-sky-500 transition reveal">
-                    <div class="w-16 h-16 bg-sky-500 rounded-full mb-6 flex items-center justify-center font-black text-2xl">M</div>
-                    <h3 class="text-xl font-bold">Master Marcus</h3>
-                    <p class="text-sky-400 text-xs font-mono uppercase mt-1">Lead Architect // 12yr Exp</p>
-                    <p class="mt-4 text-slate-400 text-sm italic">"Precision is the intersection of math and art."</p>
-                </div>
-                </div>
-        </div>
-    </section>
-
-    <section class="py-20 px-6 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
-        <div class="space-y-8">
-            <div class="app-card p-8 reveal">
-                <h3 class="text-2xl font-black mb-6 flex items-center gap-2"><i data-lucide="clock" class="text-sky-500"></i> Terminal Hours</h3>
-                <div class="space-y-4 font-medium">
-                    <div class="flex justify-between border-b border-slate-50 pb-2"><span>Mon - Fri</span><span class="text-sky-600">09:00 - 20:00</span></div>
-                    <div class="flex justify-between border-b border-slate-50 pb-2"><span>Saturday</span><span class="text-sky-600">10:00 - 18:00</span></div>
-                    <div class="flex justify-between text-slate-400"><span>Sunday</span><span>Offline</span></div>
-                </div>
-            </div>
-            <div class="flex gap-4">
-                <a href="tel:123" class="flex-1 bg-sky-500 text-white p-6 rounded-3xl flex flex-col items-center justify-center gap-2 font-black shadow-lg shadow-sky-200">
-                    <i data-lucide="phone-call"></i> CALL STUDIO
-                </a>
-                <a href="#" class="flex-1 bg-green-500 text-white p-6 rounded-3xl flex flex-col items-center justify-center gap-2 font-black shadow-lg shadow-green-100">
-                    <i data-lucide="message-circle"></i> WHATSAPP
-                </a>
-            </div>
-        </div>
-        <div class="app-card overflow-hidden h-full min-h-[400px] reveal">
-            <div class="w-full h-full bg-sky-100 flex items-center justify-center">
-                <div class="text-center">
-                    <i data-lucide="map-pin" size="48" class="text-sky-500 mx-auto mb-4"></i>
-                    <p class="font-bold">123 Tech Avenue, Shoreditch</p>
-                    <p class="text-xs text-slate-500 uppercase tracking-widest">London, UK</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="py-20 px-6 max-w-3xl mx-auto">
-        <h2 class="text-center text-2xl font-bold mb-10">Common Queries</h2>
+    <section class="py-20 px-6 max-w-2xl mx-auto">
+        <h2 class="text-center text-2xl font-extrabold mb-10">Common Questions</h2>
         <div class="space-y-4">
-            <details class="app-card p-4 cursor-pointer group">
+            <details class="native-card p-6 cursor-pointer group">
                 <summary class="font-bold flex justify-between items-center list-none">
-                    Do you accept walk-ins?
-                    <i data-lucide="chevron-down" class="group-open:rotate-180 transition"></i>
+                    Do I need an appointment?
+                    <i data-lucide="plus" class="group-open:rotate-45 transition text-sky-500"></i>
                 </summary>
-                <p class="pt-4 text-slate-500 text-sm">We are a booking-first studio to ensure the highest quality of service. However, if a terminal is free, we welcome you.</p>
+                <p class="pt-4 text-slate-500 text-sm">We recommend booking online to guarantee your slot, but we always try to fit in walk-ins if there's a chair free!</p>
             </details>
-            <details class="app-card p-4 cursor-pointer group">
+            <details class="native-card p-6 cursor-pointer group">
                 <summary class="font-bold flex justify-between items-center list-none">
-                    Parking availability?
-                    <i data-lucide="chevron-down" class="group-open:rotate-180 transition"></i>
+                    What payment methods do you take?
+                    <i data-lucide="plus" class="group-open:rotate-45 transition text-sky-500"></i>
                 </summary>
-                <p class="pt-4 text-slate-500 text-sm">Validated parking is available at the "Sky-Point" garage 2 blocks East.</p>
+                <p class="pt-4 text-slate-500 text-sm">We accept all major credit cards, Apple Pay, and cash.</p>
             </details>
         </div>
     </section>
 
-    <footer class="bg-white border-t border-sky-100 py-12 px-6">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-            <div class="text-center md:text-left">
-                <span class="font-black text-2xl">AZURE<span class="text-sky-500">EDGE</span></span>
-                <p class="text-slate-400 text-xs mt-2 italic">Refining the Modern Terminal Experience.</p>
-            </div>
-            <div class="flex gap-8 text-xs font-bold uppercase tracking-widest text-slate-500">
-                <a href="#">Privacy</a>
-                <a href="#">Terms</a>
-                <a href="#">Career</a>
-            </div>
-            <div class="flex gap-4">
-                <div class="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center"><i data-lucide="instagram" size="18"></i></div>
-                <div class="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center"><i data-lucide="twitter" size="18"></i></div>
-            </div>
+    <footer class="py-12 px-6 text-center border-t border-slate-100">
+        <p class="font-bold text-slate-300">© 2026 CITYBLADE BARBER STUDIO</p>
+        <div class="flex justify-center gap-6 mt-4 text-slate-400">
+            <i data-lucide="instagram" size="20"></i>
+            <i data-lucide="facebook" size="20"></i>
         </div>
     </footer>
 
@@ -292,18 +271,18 @@
         lucide.createIcons();
 
         function toggleMenu() {
-            document.getElementById('mobile-menu').classList.toggle('active');
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('open');
         }
 
-        // Scroll Animation Logic
-        const observerOptions = { threshold: 0.1 };
+        // Reveal animations
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('active');
                 }
             });
-        }, observerOptions);
+        }, { threshold: 0.1 });
 
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
     </script>
