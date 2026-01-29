@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE CUT | 2026 Luxury Barber</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
+    <style>
+        :root {
+            --accent: #d4af37; /* Gold */
+            --bg: #0a0a0a;
+            --glass: rgba(20, 20, 20, 0.7);
+        }
+
+        body, html { margin: 0; padding: 0; background: var(--bg); font-family: 'Inter', -apple-system, sans-serif; color: white; overflow-x: hidden; }
+        
+        /* 3D Canvas Background */
+        #canvas-container { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: 1; }
+
+        /* Luxury UI Overlay */
+        .interface {
+            position: relative;
+            z-index: 10;
+            min-height: 200vh;
+            pointer-events: none; /* Let clicks pass to 3D if needed */
+        }
+
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 { font-size: 5rem; letter-spacing: -2px; margin: 0; font-weight: 800; text-transform: uppercase; }
+        p { font-size: 1.2rem; opacity: 0.6; letter-spacing: 2px; }
+
+        /* Glassmorphic Booking Card */
+        .booking-card {
+            pointer-events: auto;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 40px;
+            width: 90%;
+            max-width: 500px;
+            margin-top: 50px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .btn-premium {
+            background: white;
+            color: black;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 12px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .btn-premium:hover { background: var(--accent); transform: scale(1.02); }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: #333; }
+    </style>
+</head>
+<body>
+
+    <div id="canvas-container"></div>
+
+    <div class="interface">
+        <section class="hero">
+            <p>TRADITION × PRECISION</p>
+            <h1>THE ARTISAN</h1>
+            
+            <div class="booking-card">
+                <div style="margin-bottom: 20px; text-align: left;">
+                    <label style="font-size: 0.8rem; opacity: 0.5;">SELECT CRAFT</label>
+                    <div style="font-size: 1.2rem; padding: 10px 0; border-bottom: 1px solid #333;">Signature Sculpt & Steam</div>
+                </div>
+                <button class="btn-premium">Initialize Booking</button>
+            </div>
+        </section>
+
+        <section style="height: 100vh; padding: 100px; display: flex; align-items: center;">
+            <div style="max-width: 600px; pointer-events: auto;">
+                <h2 style="font-size: 3rem;">The Philosophy</h2>
+                <p style="line-height: 1.8; opacity: 0.8;">In 2026, grooming is no longer a chore—it’s a digital-physical ritual. We blend high-tech terminal precision with the timeless heritage of the razor.</p>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // THREE.JS SCENE SETUP
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+        // 3D BARBER POLE (Abstract Geometry)
+        const poleGroup = new THREE.Group();
+        const geometry = new THREE.CylinderGeometry(1, 1, 10, 32);
+        const material = new THREE.MeshStandardMaterial({ 
+            color: 0x111111, 
+            metalness: 1, 
+            roughness: 0.1 
+        });
+        const pole = new THREE.Mesh(geometry, material);
+        poleGroup.add(pole);
+
+        // Add "Chrome" Rings
+        const ringGeo = new THREE.TorusGeometry(1.1, 0.1, 16, 100);
+        const ringMat = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 1 });
+        const ringTop = new THREE.Mesh(ringGeo, ringMat);
+        ringTop.position.y = 4.5;
+        ringTop.rotation.x = Math.PI / 2;
+        poleGroup.add(ringTop);
+
+        scene.add(poleGroup);
+        poleGroup.position.x = 5; // Move to the right for layout
+
+        // LIGHTING
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
+        scene.add(ambientLight);
+
+        const pointLight = new THREE.PointLight(0xff0000, 100); // Red Neon Glow
+        pointLight.position.set(2, 0, 5);
+        scene.add(pointLight);
+
+        const goldLight = new THREE.PointLight(0xd4af37, 50); // Gold Accent
+        goldLight.position.set(-5, 5, 2);
+        scene.add(goldLight);
+
+        camera.position.z = 10;
+
+        // ANIMATION LOOP
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            // Subtle pole rotation
+            poleGroup.rotation.y += 0.005;
+            
+            // "Breathing" light effect
+            const time = Date.now() * 0.001;
+            pointLight.intensity = 50 + Math.sin(time) * 30;
+            
+            // Mouse Parallax (Gentle)
+            camera.position.x += (mouseX - camera.position.x) * 0.05;
+            camera.position.y += (-mouseY - camera.position.y) * 0.05;
+            camera.lookAt(scene.position);
+
+            renderer.render(scene, camera);
+        }
+
+        // INTERACTIVITY
+        let mouseX = 0, mouseY = 0;
+        window.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+            mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+        });
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        animate();
+    </script>
+</body>
+</html>
