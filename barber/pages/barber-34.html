@@ -3,425 +3,335 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE GENTRY | Premium Barbering</title>
+    <title>GENTRY OS | 2026 Barbering Interface</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Outfit:wght@100;400;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
         :root {
-            --brand-red: #D32F2F;
-            --bg-light: #FDFDFD;
-            --bg-dark: #111111;
-            --text-main: #0F0F0F;
-            --text-muted: #555555;
-            --accent-metal: linear-gradient(135deg, #e0e0e0, #a0a0a0);
-            --shadow-soft: 0 20px 60px rgba(211,47,47,0.12);
-            --transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+            --accent-red: #FF4D4D;
+            --soft-red: #FFF5F5;
+            --tech-black: #0A0A0A;
+            --glass: rgba(255, 255, 255, 0.8);
+            --border: rgba(255, 77, 77, 0.15);
+            --card-shadow: 0 30px 60px rgba(0,0,0,0.12);
         }
 
-        * { margin:0; padding:0; box-sizing:border-box; }
+        * { margin:0; padding:0; box-sizing:border-box; cursor: crosshair; }
         body { 
-            font-family: 'Montserrat', sans-serif; 
-            background: var(--bg-light); 
-            color: var(--text-main); 
-            overflow-x: hidden; 
-            scroll-behavior: smooth; 
+            font-family: 'Outfit', sans-serif; 
+            background: #fff; 
+            color: var(--tech-black); 
+            overflow-x: hidden;
+            line-height: 1.4;
         }
 
-        /* Barber Pole Enhanced */
-        .pole-wrap { 
-            width: 50px; height: 160px; 
-            border: 2px solid var(--text-main); border-radius: 30px; 
-            overflow: hidden; position: relative; background: white; 
-            box-shadow: var(--shadow-soft); 
-        }
-        .pole-stripes { 
-            height: 300%; width: 100%; 
-            background: repeating-linear-gradient(35deg, var(--brand-red) 0px, var(--brand-red) 25px, white 25px, white 50px, #000 50px, #000 75px); 
-            animation: spinPole 4s linear infinite; 
-        }
-        @keyframes spinPole { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
-
-        /* Nav - App-like sticky with blur */
-        nav { 
-            position: fixed; top: 0; left: 0; width: 100%; 
-            padding: 1.5rem 5%; 
-            display: flex; justify-content: space-between; align-items: center; 
-            background: rgba(253,253,253,0.85); backdrop-filter: blur(20px); 
-            z-index: 2000; border-bottom: 1px solid rgba(0,0,0,0.08); 
-            transition: var(--transition); 
-        }
-        .nav-links { display: flex; gap: 3rem; align-items: center; }
-        .nav-links a { 
-            text-decoration: none; color: var(--text-main); font-weight: 600; 
-            font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; 
-            transition: var(--transition); 
-        }
-        .nav-links a:hover { color: var(--brand-red); transform: translateY(-2px); }
-
-        .btn-book { 
-            background: var(--brand-red); color: white; 
-            padding: 1rem 2.5rem; border-radius: 50px; 
-            font-weight: 700; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1.5px; 
-            border: none; cursor: pointer; transition: var(--transition); 
-            box-shadow: var(--shadow-soft); 
-        }
-        .btn-book:hover { transform: scale(1.08) translateY(-3px); box-shadow: 0 25px 50px rgba(211,47,47,0.25); }
-
-        .hamburger { display: none; cursor: pointer; font-size: 1.8rem; color: var(--text-main); }
-
-        /* Hero - Parallax background */
-        .hero { 
-            height: 100vh; min-height: 800px; 
-            display: flex; align-items: center; justify-content: center; 
-            position: relative; overflow: hidden; 
-            background: linear-gradient(to right, var(--bg-light) 40%, transparent), url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&q=80') center/cover no-repeat; 
-        }
-        .hero::before { 
-            content: ''; position: absolute; inset: 0; 
-            background: linear-gradient(to bottom, rgba(211,47,47,0.08), transparent); 
-            z-index: 1; 
-        }
-        .hero-content { max-width: 800px; padding: 0 5%; text-align: center; position: relative; z-index: 2; }
-
-        .hero h1 { 
-            font-family: 'Playfair Display', serif; font-size: clamp(5rem, 12vw, 9rem); 
-            line-height: 0.9; margin-bottom: 1.5rem; font-weight: 700; font-style: italic; 
-            color: var(--text-main); 
+        /* --- HYPER-REALISTIC LAYOUT (NATIVE APP FEEL) --- */
+        
+        .app-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            position: relative;
         }
 
-        /* Booking Form Dropdown */
-        .booking-dropdown { 
-            margin: 3rem auto 0; max-width: 600px; background: white; 
-            padding: 2.5rem; border-radius: 20px; box-shadow: var(--shadow-soft); 
-            display: none; 
-        }
-        .booking-toggle { cursor: pointer; font-weight: 700; color: var(--brand-red); text-transform: uppercase; letter-spacing: 2px; }
-
-        /* Sections */
-        .section { padding: 140px 8%; position: relative; }
-        .section h2 { 
-            font-family: 'Playfair Display', serif; font-size: 4.5rem; 
-            text-align: center; margin-bottom: 4rem; 
-        }
-
-        /* Advanced Grid - Services/Products/Barbers */
-        .grid-container { 
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
-            gap: 3rem; 
-        }
-        .card { 
-            background: white; padding: 2.5rem; border-radius: 20px; 
-            box-shadow: var(--shadow-soft); transition: var(--transition); 
-            position: relative; overflow: hidden; 
-        }
-        .card:hover { transform: translateY(-15px); border: 1px solid var(--brand-red); }
-
-        /* Gallery - Masonry-like with Grid */
-        .gallery-grid { 
-            column-count: 3; column-gap: 2rem; 
-        }
-        .gallery-item { 
-            break-inside: avoid; margin-bottom: 2rem; 
-            border-radius: 16px; overflow: hidden; box-shadow: var(--shadow-soft); 
-        }
-        @media (max-width: 900px) { .gallery-grid { column-count: 2; } }
-        @media (max-width: 600px) { .gallery-grid { column-count: 1; } }
-
-        /* Before & After - Enhanced Slider */
-        .ba-container { 
-            position: relative; height: 600px; border-radius: 24px; overflow: hidden; 
-            box-shadow: var(--shadow-soft); 
-        }
-        .ba-img { position: absolute; inset: 0; background-size: cover; background-position: center; }
-        .ba-after { width: 50%; overflow: hidden; border-right: 6px solid var(--brand-red); }
-
-        /* Reviews */
-        .review-card { background: white; padding: 2rem; border-radius: 16px; box-shadow: var(--shadow-soft); }
-        .stars { color: var(--brand-red); font-size: 1.5rem; }
-
-        /* FAQ Accordion */
-        .faq-item { margin-bottom: 1.5rem; }
-        .faq-question { cursor: pointer; font-weight: 600; padding: 1.2rem; background: #f8f8f8; border-radius: 12px; display: flex; justify-content: space-between; }
-
-        /* Map */
-        .map-embed { height: 450px; border-radius: 20px; overflow: hidden; box-shadow: var(--shadow-soft); }
-
-        /* CTA Mid-Page */
-        .cta-mid { 
-            background: var(--brand-red); color: white; text-align: center; 
-            padding: 100px 10%; border-radius: 40px; margin: 80px 0; 
+        /* Floating Nav */
+        nav {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 1200px;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            padding: 15px 30px;
+            border-radius: 100px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            border: 1px solid var(--border);
+            box-shadow: var(--card-shadow);
         }
 
-        /* Footer */
-        footer { background: var(--bg-dark); color: white; padding: 80px 8% 40px; }
-        .footer-links { display: flex; gap: 2rem; flex-wrap: wrap; justify-content: center; }
+        .nav-links { display: flex; gap: 2rem; }
+        .nav-links a { text-decoration: none; color: var(--tech-black); font-weight: 500; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* Mobile */
-        @media (max-width: 992px) {
-            .nav-links { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; width: 100%; background: rgba(253,253,253,0.95); backdrop-filter: blur(20px); padding: 2rem; }
-            .nav-links.active { display: flex; }
+        /* Mobile Menu */
+        .hamburger { display: none; background: var(--accent-red); color: white; padding: 10px; border-radius: 50%; }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            height: 100vh;
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            align-items: center;
+            padding: 0 5%;
+            background: radial-gradient(circle at top right, var(--soft-red), #fff);
+        }
+
+        .hero-text h1 {
+            font-size: clamp(4rem, 10vw, 8rem);
+            font-weight: 900;
+            line-height: 0.9;
+            letter-spacing: -4px;
+            margin-bottom: 20px;
+        }
+
+        .hero-text h1 span { color: var(--accent-red); }
+
+        /* Advanced Booking Strip */
+        .booking-strip {
+            background: var(--tech-black);
+            color: white;
+            padding: 30px;
+            border-radius: 24px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr) auto;
+            gap: 20px;
+            margin-top: 50px;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.3);
+        }
+
+        .booking-field select {
+            background: transparent;
+            border: none;
+            color: white;
+            font-family: inherit;
+            font-size: 1rem;
+            width: 100%;
+            outline: none;
+        }
+
+        /* --- PRODUCT GRID (ABSTRACT) --- */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 100px 5%;
+        }
+
+        .product-card {
+            background: var(--soft-red);
+            aspect-ratio: 1/1.2;
+            border-radius: 40px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .product-card:hover { transform: scale(0.98); }
+
+        .abstract-obj {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60%;
+            height: 60%;
+            background: linear-gradient(45deg, var(--accent-red), #ff8e8e);
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            filter: blur(40px);
+            animation: morph 8s ease-in-out infinite;
+        }
+
+        /* --- BEFORE/AFTER SLIDER --- */
+        .slider-section { padding: 100px 5%; }
+        .ba-container {
+            width: 100%;
+            height: 600px;
+            position: relative;
+            border-radius: 40px;
+            overflow: hidden;
+        }
+        .ba-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; }
+        .ba-overlay { 
+            position: absolute; top: 0; left: 0; width: 50%; height: 100%; 
+            border-right: 4px solid white; background-image: url('https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&q=80&w=2000');
+            z-index: 2;
+        }
+
+        /* --- FAQ SECTION --- */
+        .faq-item {
+            border-bottom: 1px solid var(--border);
+            padding: 20px 0;
+            cursor: pointer;
+        }
+        .faq-answer { height: 0; overflow: hidden; opacity: 0; transition: 0.4s; }
+        .faq-item.active .faq-answer { height: auto; opacity: 1; padding-top: 15px; }
+
+        /* --- UTILS --- */
+        .reveal { opacity: 0; transform: translateY(50px); }
+        .btn-primary { 
+            background: var(--accent-red); color: white; border: none; 
+            padding: 15px 40px; border-radius: 50px; font-weight: 700; 
+            text-transform: uppercase; cursor: pointer; transition: 0.3s;
+        }
+        .btn-primary:hover { box-shadow: 0 0 30px var(--accent-red); }
+
+        @keyframes morph {
+            0% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+            50% { border-radius: 50% 50% 20% 80% / 25% 80% 20% 75%; }
+            100% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+        }
+
+        @media (max-width: 900px) {
+            .hero { grid-template-columns: 1fr; text-align: center; }
+            .booking-strip { grid-template-columns: 1fr; }
+            .nav-links { display: none; }
             .hamburger { display: block; }
-            .grid-container, .contact-container { grid-template-columns: 1fr; }
-            .section { padding: 100px 5%; }
-        }
-
-        .reveal { opacity: 0; transform: translateY(60px); }
-        .texture-overlay { 
-            position: absolute; inset: 0; pointer-events: none; 
-            background: url('leather-texture-subtle.jpg') repeat; opacity: 0.05; mix-blend-mode: overlay; 
         }
     </style>
 </head>
 <body>
 
-    <div class="promo-bar" style="background:var(--brand-red); color:white; padding:1rem; text-align:center; font-weight:600;">
-        COMPLIMENTARY WHISKEY WITH SIGNATURE CUT — <a href="#" style="color:white; text-decoration:underline;">BOOK NOW</a>
-    </div>
-
     <nav>
-        <div style="display:flex; align-items:center; gap:1.2rem;">
-            <div class="pole-wrap"><div class="pole-stripes"></div></div>
-            <span style="font-family:'Playfair Display'; font-size:2rem; font-weight:700; letter-spacing:4px;">GENTRY</span>
+        <div style="font-weight:900; font-size:1.5rem; color:var(--accent-red)">GENTRY.OS</div>
+        <div class="nav-links">
+            <a href="#services">Architecture</a>
+            <a href="#products">Apothecary</a>
+            <a href="#contact">Studio</a>
         </div>
-        <div class="nav-links" id="navLinks">
-            <a href="#services">Services</a>
-            <a href="#gallery">Gallery</a>
-            <a href="#artisans">Artisans</a>
-            <a href="#philosophy">Philosophy</a>
-            <a href="#contact">Contact</a>
-            <button class="btn-book">Book Now</button>
-        </div>
-        <div class="hamburger" id="hamburger"><i data-lucide="menu"></i></div>
+        <button class="btn-primary" style="padding: 10px 25px;">Book</button>
+        <div class="hamburger" id="menuToggle"><i data-lucide="menu"></i></div>
     </nav>
 
     <section class="hero">
-        <div class="hero-content reveal">
-            <p style="text-transform:uppercase; letter-spacing:6px; color:var(--brand-red); font-weight:700; margin-bottom:1rem;">Est. 2012 • London</p>
-            <h1>The Pinnacle of Precision Grooming.</h1>
-            <p style="font-size:1.4rem; color:var(--text-muted); max-width:700px; margin:2rem auto;">A fusion of high-craft mastery and high-tech sanctuary for the discerning gentleman.</p>
-            <button class="btn-book booking-toggle" style="margin:2rem 0;">Book Your Ritual</button>
-            <div class="booking-dropdown" id="bookingForm">
-                <h3 style="text-align:center; margin-bottom:1.5rem;">Select Service</h3>
-                <select style="width:100%; padding:1rem; margin-bottom:1rem; border:1px solid #ddd; border-radius:12px;">
-                    <option>Signature Haircut - £55</option>
-                    <option>Beard Sculpting - £35</option>
-                    <option>The Gentry Ritual - £110</option>
-                </select>
-                <input type="date" style="width:100%; padding:1rem; margin-bottom:1rem; border:1px solid #ddd; border-radius:12px;">
-                <input type="time" style="width:100%; padding:1rem; margin-bottom:1rem; border:1px solid #ddd; border-radius:12px;">
-                <button class="btn-book" style="width:100%;">Confirm Booking</button>
+        <div class="hero-text">
+            <p class="reveal" style="text-transform:uppercase; letter-spacing:5px;">2026 High-Craft Grooming</p>
+            <h1 class="reveal">The <span>Precision</span> Standard.</h1>
+            
+            <div class="booking-strip reveal">
+                <div class="booking-field">
+                    <label style="font-size: 0.6rem; opacity: 0.5;">SERVICE</label>
+                    <select>
+                        <option>Signature Fade</option>
+                        <option>Beard Sculpt</option>
+                        <option>The Gentry Ritual</option>
+                    </select>
+                </div>
+                <div class="booking-field">
+                    <label style="font-size: 0.6rem; opacity: 0.5;">BARBER</label>
+                    <select>
+                        <option>James Sinclair</option>
+                        <option>Leo Rossi</option>
+                        <option>AI Assistant (Flash)</option>
+                    </select>
+                </div>
+                <div class="booking-field">
+                    <label style="font-size: 0.6rem; opacity: 0.5;">DATE</label>
+                    <input type="date" style="background:transparent; color:white; border:none; outline:none;">
+                </div>
+                <button class="btn-primary">Verify Slot</button>
             </div>
+        </div>
+        <div class="hero-visual reveal" style="position:relative;">
+            <div class="abstract-obj" style="width:100%; height:100%; border-radius: 50%; filter:blur(80px);"></div>
+            <img src="https://img.freepik.com/free-vector/barber-tools-set_1284-18858.jpg" alt="Barber Tools" style="width:100%; filter:grayscale(1) invert(1); mix-blend-mode: color-burn;">
         </div>
     </section>
 
-    <section class="section" id="services">
-        <h2 class="reveal">Crafted Services</h2>
-        <div class="grid-container">
-            <div class="card reveal">
-                <h3>Signature Haircut</h3>
-                <p>Precision engineering with scalp ritual.</p>
-                <p style="font-weight:700; color:var(--brand-red);">45 mins • £55</p>
-            </div>
-            <!-- Add more cards similarly -->
-            <div class="card reveal">
-                <h3>Beard Sculpting</h3>
-                <p>Hot towel, linework, premium oil.</p>
-                <p style="font-weight:700; color:var(--brand-red);">30 mins • £35</p>
-            </div>
-            <div class="card reveal">
-                <h3>The Gentry Ritual</h3>
-                <p>Full haircut, shave, botanical facial.</p>
-                <p style="font-weight:700; color:var(--brand-red);">90 mins • £110</p>
-            </div>
+    <section class="product-grid" id="products">
+        <div class="reveal" style="grid-column: 1 / -1; margin-bottom: 50px;">
+            <h2 style="font-size:3rem; font-weight:900;">The Apothecary.</h2>
+            <p>Techno-organic formulas for the modern scalp.</p>
         </div>
+        <div class="product-card reveal"><div class="abstract-obj"></div><div style="position:absolute; bottom:30px; left:30px;"><b>V01 Matte Clay</b><br>£28</div></div>
+        <div class="product-card reveal" style="background:var(--tech-black); color:white;"><div class="abstract-obj" style="background:white;"></div><div style="position:absolute; bottom:30px; left:30px;"><b>V02 Sea Salt</b><br>£24</div></div>
+        <div class="product-card reveal"><div class="abstract-obj"></div><div style="position:absolute; bottom:30px; left:30px;"><b>V03 Beard Oil</b><br>£32</div></div>
+        <div class="product-card reveal"><div class="abstract-obj"></div><div style="position:absolute; bottom:30px; left:30px;"><b>V04 Tonic</b><br>£20</div></div>
+        <div class="product-card reveal"><div class="abstract-obj"></div><div style="position:absolute; bottom:30px; left:30px;"><b>V05 Shampoo</b><br>£18</div></div>
+        <div class="product-card reveal"><div class="abstract-obj"></div><div style="position:absolute; bottom:30px; left:30px;"><b>V06 Conditioner</b><br>£18</div></div>
     </section>
 
-    <div class="cta-mid reveal">
-        <h2 style="margin-bottom:1.5rem;">Elevate Your Presence</h2>
-        <p style="max-width:700px; margin:0 auto 2rem;">Experience grooming as an art form in our Mayfair sanctuary.</p>
-        <button class="btn-book" style="background:white; color:var(--brand-red);">Reserve Your Spot</button>
-    </div>
-
-    <section class="section" style="background:#f8f8f8;">
-        <h2 class="reveal">The Transformation</h2>
+    <section class="slider-section">
         <div class="ba-container reveal">
             <div class="ba-img" style="background-image:url('https://images.unsplash.com/photo-1599351431247-f10b218163e9?auto=format&fit=crop&q=80&w=2000');"></div>
-            <div class="ba-img ba-after" style="background-image:url('https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&q=80&w=2000');"></div>
+            <div class="ba-overlay" id="sliderHand"></div>
+            <div style="position:absolute; bottom:40px; right:40px; color:white; z-index:5; font-weight:900; font-size:2rem;">TRANSFORMATION.</div>
         </div>
     </section>
 
-    <section class="section" id="gallery">
-        <h2 class="reveal">The Gallery</h2>
-        <div class="gallery-grid">
-            <!-- Use searched images for close-ups, textures -->
-            <div class="gallery-item reveal"><img src="[image:14]" alt="Hyper-realistic barber scissors" style="width:100%;"></div>
-            <div class="gallery-item reveal"><img src="[image:15]" alt="Metallic tool detail" style="width:100%;"></div>
-            <div class="gallery-item reveal"><img src="[image:0]" alt="Luxury barber pole" style="width:100%;"></div>
-            <!-- Add 3 more from product/gallery searches -->
-            <div class="gallery-item reveal"><img src="[image:4]" alt="Beard oil elixir" style="width:100%;"></div>
-            <div class="gallery-item reveal"><img src="[image:5]" alt="Grooming products display" style="width:100%;"></div>
-            <div class="gallery-item reveal"><img src="[image:6]" alt="Luxury chair setup" style="width:100%;"></div>
+    <section class="product-grid" style="background: var(--tech-black); color:white;">
+        <div class="reveal">
+            <h3>Opening Cycles</h3>
+            <p>TUE - FRI: 10AM - 9PM</p>
+            <p>SAT: 9AM - 6PM</p>
+            <p>SUN/MON: RESET</p>
         </div>
-    </section>
-
-    <section class="section" id="products">
-        <h2 class="reveal">Signature Products</h2>
-        <div class="grid-container">
-            <!-- 6 product cards with AI images -->
-            <div class="card reveal">
-                <img src="[image:4]" alt="Beard Elixir" style="width:100%; border-radius:12px; margin-bottom:1rem;">
-                <h3>Beard Growth Elixir</h3>
-                <p>Premium botanical blend.</p>
-                <p style="font-weight:700; color:var(--brand-red);">$45</p>
-            </div>
-            <!-- Repeat for 5 more using [image:5], [image:6], etc. -->
+        <div class="reveal">
+            <h3>The Studio</h3>
+            <p>12A Savile Row, Mayfair</p>
+            <p>London, W1S 3PR</p>
+            <button class="btn-primary" style="margin-top:20px;">Open Maps</button>
         </div>
-    </section>
-
-    <section class="section" id="artisans">
-        <h2 class="reveal">The Artisans</h2>
-        <div class="grid-container">
-            <div class="card reveal">
-                <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=800" alt="James" style="width:100%; border-radius:50%; aspect-ratio:1/1; object-fit:cover; filter:grayscale(50%);">
-                <h3>James Sinclair</h3>
-                <p style="color:var(--brand-red);">Founder & Master</p>
-            </div>
-            <!-- Add two more -->
-        </div>
-    </section>
-
-    <section class="section" style="background:var(--bg-dark); color:white;">
-        <h2 class="reveal">Our Philosophy</h2>
-        <p style="max-width:900px; margin:0 auto; font-size:1.3rem; line-height:1.8; text-align:center;">Precision meets innovation. Every cut is an engineered masterpiece, blending timeless craft with modern luxury in the heart of London.</p>
-    </section>
-
-    <section class="section" id="reviews">
-        <h2 class="reveal">Client Testimonials</h2>
-        <div class="grid-container">
-            <div class="review-card reveal">
-                <div class="stars">★★★★★</div>
-                <p>"Transformative experience. The ritual is unmatched."</p>
-                <p><strong>- Alex R.</strong></p>
-            </div>
-            <!-- Add 2-3 more -->
-        </div>
-    </section>
-
-    <section class="section" id="faq">
-        <h2 class="reveal">Frequently Asked Questions</h2>
-        <div style="max-width:800px; margin:0 auto;">
-            <div class="faq-item reveal">
-                <div class="faq-question">What is the Gentry Ritual? <span>+</span></div>
-                <div style="display:none; padding:1.5rem;">Full service including haircut, shave, and facial.</div>
-            </div>
-            <!-- Add more toggles -->
-        </div>
-    </section>
-
-    <section class="section" id="contact" style="background:#f8f8f8;">
-        <div class="contact-container" style="display:grid; grid-template-columns:1fr 1fr; gap:6rem;">
-            <div class="reveal">
-                <h2>Visit Us</h2>
-                <p><strong>12A Savile Row, Mayfair<br>London, W1S 3PR</strong></p>
-                <p>Tue-Fri: 10:00 - 20:00<br>Sat: 09:00 - 18:00<br>Closed Sun/Mon</p>
-                <a href="tel:+442071234567" class="btn-book" style="margin:1rem 0;">Call Now</a>
-                <a href="https://wa.me/442071234567" class="btn-book" style="background:#25D366; margin-left:1rem;">WhatsApp</a>
-            </div>
-            <div class="reveal">
-                <form>
-                    <input type="text" placeholder="Name" required>
-                    <input type="email" placeholder="Email" required>
-                    <textarea placeholder="Message" rows="5" required></textarea>
-                    <button class="btn-book">Send</button>
-                </form>
+        <div class="reveal">
+            <h3>Digital Reach</h3>
+            <div style="display:flex; gap:20px; font-size:1.5rem; margin-top:10px;">
+                <i data-lucide="instagram"></i>
+                <i data-lucide="message-circle"></i>
+                <i data-lucide="phone"></i>
             </div>
         </div>
-        <div class="map-embed reveal" style="margin-top:4rem;">
-            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2483.123!2d-0.140!3d51.511!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x487604cc!5e0!3m2!1sen!2suk!4v1690000000000" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+    </section>
+
+    <section style="padding: 100px 5%;">
+        <h2 style="font-size:3rem; margin-bottom:40px;">FAQs</h2>
+        <div class="faq-item reveal">
+            <div style="display:flex; justify-content:space-between; font-weight:700;"><span>Do I need to book?</span><i data-lucide="chevron-down"></i></div>
+            <div class="faq-answer">While we accept walk-ins, our 2026 digital queue prioritizes appointments confirmed via the Gentry app.</div>
+        </div>
+        <div class="faq-item reveal">
+            <div style="display:flex; justify-content:space-between; font-weight:700;"><span>Subscription plans?</span><i data-lucide="chevron-down"></i></div>
+            <div class="faq-answer">Yes, we offer the 'Master' tier which includes bi-weekly trims and unlimited apothecary refills.</div>
         </div>
     </section>
 
-    <footer>
-        <div style="text-align:center; margin-bottom:2rem;">
-            <p>© 2026 THE GENTRY BARBER CO. All Rights Reserved.</p>
-        </div>
-        <div class="footer-links">
-            <a href="#services" style="color:white;">Services</a>
-            <a href="#gallery" style="color:white;">Gallery</a>
-            <a href="#artisans" style="color:white;">Artisans</a>
-            <a href="#contact" style="color:white;">Contact</a>
-        </div>
+    <footer style="padding: 50px 5%; border-top: 1px solid var(--border); text-align: center;">
+        <p>© 2026 GENTRY OPERATING SYSTEM. ENGINEERED FOR STYLE.</p>
     </footer>
 
     <script>
         lucide.createIcons();
-
         gsap.registerPlugin(ScrollTrigger);
 
-        // Reveal animations
-        gsap.utils.toArray(".reveal").forEach((el, i) => {
-            gsap.from(el, {
-                y: 80,
-                opacity: 0,
-                duration: 1.8,
-                ease: "power4.out",
+        // Reveal Animations
+        gsap.utils.toArray(".reveal").forEach((elem) => {
+            gsap.to(elem, {
                 scrollTrigger: {
-                    trigger: el,
+                    trigger: elem,
                     start: "top 85%",
-                    toggleActions: "play none none reverse"
-                }
+                },
+                opacity: 1,
+                y: 0,
+                duration: 1.2,
+                ease: "expo.out",
+                stagger: 0.1
             });
         });
 
-        // Parallax on hero
-        gsap.to(".hero", {
-            backgroundPosition: "50% 100%",
-            ease: "none",
-            scrollTrigger: {
-                trigger: ".hero",
-                scrub: true
-            }
+        // B/A Slider Logic
+        const slider = document.getElementById('sliderHand');
+        document.querySelector('.ba-container').addEventListener('mousemove', (e) => {
+            let rect = e.currentTarget.getBoundingClientRect();
+            let x = ((e.clientX - rect.left) / rect.width) * 100;
+            slider.style.width = x + "%";
         });
 
-        // Hamburger
-        const ham = document.getElementById('hamburger');
-        const links = document.getElementById('navLinks');
-        ham.addEventListener('click', () => links.classList.toggle('active'));
-
-        // Booking toggle
-        document.querySelector('.booking-toggle').addEventListener('click', () => {
-            document.getElementById('bookingForm').style.display = document.getElementById('bookingForm').style.display === 'block' ? 'none' : 'block';
+        // FAQ Toggle
+        document.querySelectorAll('.faq-item').forEach(item => {
+            item.addEventListener('click', () => {
+                item.classList.toggle('active');
+            });
         });
 
-        // BA Slider
-        const baCont = document.querySelector('.ba-container');
-        const baAfter = document.querySelector('.ba-after');
-        if (baCont) {
-            baCont.addEventListener('mousemove', (e) => {
-                let rect = baCont.getBoundingClientRect();
-                let percent = ((e.clientX - rect.left) / rect.width) * 100;
-                baAfter.style.width = percent + '%';
-            });
-            baCont.addEventListener('touchmove', (e) => {
-                let rect = baCont.getBoundingClientRect();
-                let x = e.touches[0].clientX - rect.left;
-                let percent = (x / rect.width) * 100;
-                baAfter.style.width = percent + '%';
-            });
-        }
-
-        // FAQ toggle
-        document.querySelectorAll('.faq-question').forEach(q => {
-            q.addEventListener('click', () => {
-                const ans = q.nextElementSibling;
-                ans.style.display = ans.style.display === 'block' ? 'none' : 'block';
-                q.lastChild.textContent = ans.style.display === 'block' ? '-' : '+';
-            });
+        // Mobile Menu Simulation
+        document.getElementById('menuToggle').addEventListener('click', () => {
+            alert("2026 Mobile UI Layer Activated: Navigation Stack unfolding...");
         });
     </script>
 </body>
-</html> 
+</html>
