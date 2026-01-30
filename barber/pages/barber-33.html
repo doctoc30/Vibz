@@ -1,1 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hyper Elite Barbers — Luxury Grooming Terminal 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    :root {
+      --primary: #87CEEB;
+      --primary-dark: #5FA8D3;
+      --bg-dark: #0A0A0A;
+      --bg-darker: #000;
+      --text: #E0E0E0;
+      --accent: #FFD700;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    h1, h2, h3 { font-family: 'Orbitron', sans-serif; font-weight: 900; }
+    .container { max-width: 1400px; margin: 0 auto; padding: 0 2rem; }
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      background: rgba(10,10,10,0.85);
+      backdrop-filter: blur(10px);
+      padding: 1.5rem 0;
+      transition: all 0.3s;
+    }
+    header.scrolled { padding: 1rem 0; box-shadow: 0 4px 20px rgba(0,0,0,0.6); }
+    nav { display: flex; justify-content: space-between; align-items: center; }
+    .logo {
+      font-size: 2rem;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 4px;
+    }
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--primary); }
+    .hamburger { display: none; font-size: 2rem; cursor: pointer; color: white; }
+    @media (max-width: 768px) {
+      .hamburger { display: block; }
+      .nav-links {
+        position: fixed; top: 0; right: -100%;
+        height: 100vh; width: 300px;
+        background: var(--bg-darker);
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        transition: right 0.4s ease;
+      }
+      .nav-links.active { right: 0; }
+    }
+    .hero {
+      height: 100vh;
+      background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)),
+                  url('https://thumbs.dreamstime.com/b/modern-barbershop-exterior-featuring-sleek-glass-storefront-barber-pole-sign-sign-reads-cuts-transparent-424586126.jpg') center/cover no-repeat fixed;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+    }
+    .hero-content {
+      max-width: 900px;
+      padding: 2rem;
+    }
+    .hero h1 {
+      font-size: 6rem;
+      margin-bottom: 1rem;
+      color: white;
+      text-shadow: 0 0 30px var(--primary);
+      letter-spacing: 8px;
+    }
+    .hero p { font-size: 1.8rem; margin-bottom: 2rem; color: var(--primary); }
+    .btn {
+      display: inline-block;
+      background: var(--primary);
+      color: black;
+      padding: 1rem 2.5rem;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.2rem;
+      transition: all 0.3s;
+      box-shadow: 0 0 20px rgba(135,206,235,0.5);
+    }
+    .btn:hover { transform: scale(1.05); box-shadow: 0 0 40px rgba(135,206,235,0.8); }
+    section { padding: 8rem 0; }
+    .section-title {
+      text-align: center;
+      font-size: 3.5rem;
+      margin-bottom: 4rem;
+      color: var(--primary);
+      text-shadow: 0 0 20px var(--primary-dark);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+    .card {
+      background: rgba(20,20,20,0.7);
+      border: 1px solid var(--primary-dark);
+      border-radius: 15px;
+      overflow: hidden;
+      transition: all 0.4s;
+      backdrop-filter: blur(5px);
+    }
+    .card:hover { transform: translateY(-15px); box-shadow: 0 20px 40px rgba(135,206,235,0.2); }
+    .card img { width: 100%; height: 220px; object-fit: cover; }
+    .card-content { padding: 1.8rem; text-align: center; }
+    .card h3 { color: var(--primary); margin-bottom: 1rem; }
+    .booking-form {
+      background: rgba(10,10,10,0.9);
+      padding: 4rem;
+      border-radius: 20px;
+      max-width: 700px;
+      margin: 0 auto;
+      border: 1px solid var(--primary);
+    }
+    form input, form select, form button {
+      width: 100%;
+      padding: 1rem;
+      margin: 1rem 0;
+      border: none;
+      border-radius: 8px;
+      background: #111;
+      color: white;
+      font-size: 1.1rem;
+    }
+    form button { background: var(--primary); color: black; cursor: pointer; }
+    .products-grid { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 1rem;
+    }
+    .gallery-grid img {
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+      border-radius: 12px;
+      transition: transform 0.5s;
+    }
+    .gallery-grid img:hover { transform: scale(1.05); }
+    .before-after {
+      display: flex;
+      justify-content: center;
+      gap: 4rem;
+      flex-wrap: wrap;
+    }
+    .ba-card {
+      width: 400px;
+      text-align: center;
+    }
+    .ba-card img { border-radius: 15px; box-shadow: 0 0 30px rgba(0,0,0,0.8); }
+    .reviews-grid { grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); }
+    .review-card { padding: 2rem; background: rgba(20,20,20,0.8); border-radius: 15px; border: 1px solid var(--primary-dark); }
+    .stars { color: gold; font-size: 1.5rem; margin-bottom: 1rem; }
+    details { margin: 1.5rem 0; background: #111; padding: 1.5rem; border-radius: 10px; border: 1px solid var(--primary-dark); }
+    summary { cursor: pointer; font-weight: bold; color: var(--primary); }
+    .floating-btns {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      z-index: 999;
+    }
+    .fab {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      color: white;
+      text-decoration: none;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+      transition: all 0.3s;
+    }
+    .call { background: #25D366; }
+    .whatsapp { background: #25D366; }
+    .call { background: var(--primary); }
+    .fab:hover { transform: scale(1.15); }
+    footer {
+      background: #000;
+      padding: 4rem 0 2rem;
+      text-align: center;
+      border-top: 1px solid var(--primary-dark);
+    }
+    .footer-links { display: flex; justify-content: center; gap: 2rem; margin: 2rem 0; flex-wrap: wrap; }
+    .footer-links a { color: var(--primary); text-decoration: none; }
+  </style>
+</head>
+<body>
 
+  <header id="header">
+    <div class="container">
+      <nav>
+        <div class="logo">HYPER ELITE</div>
+        <ul class="nav-links" id="navLinks">
+          <li><a href="#services">Services</a></li>
+          <li><a href="#price">Pricing</a></li>
+          <li><a href="#products">Products</a></li>
+          <li><a href="#gallery">Gallery</a></li>
+          <li><a href="#artisans">Artisans</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+        <div class="hamburger" id="hamburger"><i class="fas fa-bars"></i></div>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero" data-aos="fade">
+    <div class="hero-content">
+      <h1>THE TERMINAL</h1>
+      <p>Luxury Grooming • Precision Craft • 2026 Elite Experience</p>
+      <a href="#booking" class="btn">Secure Your Session</a>
+    </div>
+  </section>
+
+  <section id="booking" class="booking-section">
+    <div class="container">
+      <h2 class="section-title" data-aos="fade-up">Instant Booking Terminal</h2>
+      <div class="booking-form" data-aos="zoom-in">
+        <form>
+          <input type="text" placeholder="Full Name" required>
+          <input type="email" placeholder="Email Address" required>
+          <input type="tel" placeholder="Phone Number" required>
+          <select required>
+            <option value="">Select Service</option>
+            <option>Signature Fade + Beard Sculpt</option>
+            <option>Executive Hot Towel Shave</option>
+            <option>Ultimate Luxury Grooming Package</option>
+            <option>Precision Line-Up Only</option>
+          </select>
+          <input type="date" required>
+          <input type="time" required>
+          <button type="submit" class="btn">Confirm Reservation</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section id="services">
+    <div class="container">
+      <h2 class="section-title" data-aos="fade-up">The Craft</h2>
+      <div class="grid">
+        <div class="card" data-aos="fade-up" data-aos-delay="100">
+          <img src="https://thumbs.dreamstime.com/b/empty-modern-barber-shop-interior-vintage-design-featuring-round-mirror-luxurious-no-people-showcasing-aesthetic-accents-336893245.jpg" alt="Signature Fade">
+          <div class="card-content">
+            <h3>Signature Fade</h3>
+            <p>Zero to skin precision with metallic edge finish.</p>
+          </div>
+        </div>
+        <div class="card" data-aos="fade-up" data-aos-delay="200">
+          <img src="https://media.istockphoto.com/id/1007175522/photo/modern-stylish-empty-barber-shop-interior-with-mirrors.jpg?s=1024x1024&w=is&k=20&c=U3vA2tnFUDPvSGJig5kk5-TA2yVNdvBo9MwjwVjYup8=" alt="Hot Towel Shave">
+          <div class="card-content">
+            <h3>Hot Towel Shave</h3>
+            <p>Leather-strap straight razor ritual with premium oils.</p>
+          </div>
+        </div>
+        <div class="card" data-aos="fade-up" data-aos-delay="300">
+          <img src="https://thumbs.dreamstime.com/b/barbershop-armchair-barber-shop-men-empty-chairs-retro-styled-hair-salon-interior-place-text-advertising-168397913.jpg" alt="Ultimate Package">
+          <div class="card-content">
+            <h3>Ultimate Package</h3>
+            <p>Full terminal experience: cut, shave, treatment, style.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-mid" style="background: linear-gradient(135deg, #111, #000); text-align:center; padding:6rem 0;">
+    <div class="container" data-aos="zoom-in">
+      <h2 style="font-size:4rem; margin-bottom:1.5rem;">Elevate Your Presence</h2>
+      <p style="font-size:1.5rem; max-width:800px; margin:0 auto 2rem;">Enter the elite grooming dimension. Precision engineered for the modern executive.</p>
+      <a href="#booking" class="btn">Initiate Protocol</a>
+    </div>
+  </section>
+
+  <section id="price">
+    <div class="container">
+      <h2 class="section-title" data-aos="fade-up">Pricing Matrix</h2>
+      <div class="grid">
+        <div class="card" data-aos="fade-right">
+          <div class="card-content">
+            <h3>Precision Line-Up</h3>
+            <p style="font-size:2.5rem; color:var(--primary);">$65</p>
+            <p>Edge definition & clean-up</p>
+          </div>
+        </div>
+        <div class="card" data-aos="fade-up">
+          <div class="card-content">
+            <h3>Signature Fade</h3>
+            <p style="font-size:2.5rem; color:var(--primary);">$95</p>
+            <p>Full fade + styling</p>
+          </div>
+        </div>
+        <div class="card" data-aos="fade-left">
+          <div class="card-content">
+            <h3>Executive Ritual</h3>
+            <p style="font-size:2.5rem; color:var(--primary);">$180</p>
+            <p>Shave + treatment + massage</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="products">
+    <div class="container">
+      <h2 class="section-title" data-aos="fade-up">Elite Product Line</h2>
+      <div class="grid products-grid">
+        <div class="card" data-aos="fade-up"><img src="https://thumbs.dreamstime.com/b/indulge-luxurious-shave-premium-shaving-brushes-accessories-complete-grooming-kit-experience-timeless-tradition-355138704.jpg" alt="Shaving Kit"><div class="card-content"><h3>Premium Brush Kit</h3><p>$120</p></div></div>
+        <div class="card" data-aos="fade-up" data-aos-delay="100"><img src="https://thumbs.dreamstime.com/b/detailed-watercolor-illustration-barber-tools-including-shaving-brushes-combs-razors-barber-tools-brushes-combs-420270101.jpg" alt="Tool Set"><div class="card-content"><h3>Steel Tool Collection</h3><p>$220</p></div></div>
+        <div class="card" data-aos="fade-up" data-aos-delay="200"><img src="https://thumbs.dreamstime.com/b/detailed-watercolor-painting-showcasing-collection-classic-barber-tools-including-shaving-brushes-razors-scissors-420272284.jpg" alt="Scissors"><div class="card-content"><h3>Artisan Scissors</h3><p>$350</p></div></div>
+        <div class="card" data-aos="fade-up" data-aos-delay="300"><img src="https://thumbs.dreamstime.com/b/detailed-closeup-antique-shaving-brushes-used-razors-timeless-still-life-exploration-grooming-tools-captivating-354796322.jpg" alt="Razors"><div class="card-content"><h3>Timeless Razors</h3><p>$180</p></div></div>
+        <div class="card" data-aos="fade-up" data-aos-delay="400"><img src="https://thumbs.dreamstime.com/b/barbers-tools-mens-haircuts-laid-out-table-close-up-set-scissors-dangerous-razor-haircuts-close-up-barbers-312432422.jpg" alt="Clippers"><div class="card-content"><h3>Precision Clippers</h3><p>$280</p></div></div>
+        <div class="card" data-aos="fade-up" data-aos-delay="500"><img src="https://thumbs.dreamstime.com/b/barbers-tools-mens-haircuts-laid-out-table-close-up-set-scissors-dangerous-razor-321004239.jpg" alt="Pomade"><div class="card-content"><h3>Matte Pomade</h3><p>$55</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="gallery">
+    <div class="container">
+      <h2 class="section-title" data-aos="fade-up">The Gallery</h2>
+      <div class="gallery-grid">
+        <img src="https://thumbs.dreamstime.com/b/empty-modern-barber-shop-interior-vintage-design-featuring-round-mirror-luxurious-no-people-showcasing-aesthetic-accents-336893245.jpg" alt="Interior 1" data-aos="zoom-in">
+        <img src="https://media.istockphoto.com/id/1007175522/photo/modern-stylish-empty-barber-shop-interior-with-mirrors.jpg?s=1024x1024&w=is&k=20&c=U3vA2tnFUDPvSGJig5kk5-TA2yVNdvBo9MwjwVjYup8=" alt="Interior 2" data-aos="zoom-in" data-aos-delay="100">
+        <img src="https://thumbs.dreamstime.com/b/barbershop-armchair-barber-shop-men-empty-chairs-retro-styled-hair-salon-interior-place-text-advertising-168397913.jpg" alt="Chairs" data-aos="zoom-in" data-aos-delay="200">
+        <img src="https://thumbs.dreamstime.com/b/barbers-tools-mens-haircuts-laid-out-table-close-up-set-scissors-dangerous-razor-haircuts-close-up-barbers-312432422.jpg" alt="Tools" data-aos="zoom-in" data-aos-delay="300">
+      </div>
+    </div>
+  </section>
+
+  <section id="before-after">
+    <div class="container">
+      <h2 class="section-title" data-aos="fade-up">Transformation Engine</h2>
+      <div class="before-after">
+        <div class="ba-card" data-aos="fade-right">
+          <img src="https://thumbs.dreamstime.com/b/barbers-tools-mens-haircuts-laid-out-table-close-up-set-scissors-dangerous-razor-haircuts-close-up-barbers-312432422.jpg" alt="Before">
+          <h3>Raw State</h3>
+        </div>
+        <div class="ba-card" data-aos="fade-left">
+          <img src="https://thumbs.dreamstime.com/b/indulge-luxurious-shave-premium-shaving-brushes-accessories-complete-grooming-kit-experience-timeless-tradition-355138704.jpg" alt="After">
+          <h3>Elite Execution</h3>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="artisans">
+    <div class="container">
+      <h2 class="section-title" data-aos="fade-up">The Artisans</h2>
+      <div class="grid">
+        <div class="card" data-aos="fade-up">
+          <div class="card-content">
+            <h3>Master Blade</h3>
+            <p>Specialist in straight razor geometry & steel forging techniques.</p>
+          </div>
+        </div>
+        <div class="card" data-aos="fade-up" data-aos-delay="100">
+          <div class="card-content">
+            <h3>Precision Architect</h3>
+            <p>Fade engineering & symmetry calibration expert.</p>
+          </div>
+        </div>
+        <div class="card" data-aos="fade-up" data-aos-delay="200">
+          <div class="card-content">
+            <h3>Texture Alchemist</h3>
+            <p>Product formulation & finish chemistry specialist.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="philosophy">
+    <div class="container" data-aos="fade-up">
+      <h2 class="section-title">The Philosophy</h2>
+      <p style="max-width:900px; margin:0 auto; font-size:1.4rem; text-align:center;">In 2026, grooming transcends function. It is a ritual of self-mastery, precision engineering, and timeless craft fused with futuristic execution. We are not barbers. We are architects of presence.</p>
+    </div>
+  </section>
+
+  <section id="hours">
+    <div class="container">
+      <h2 class="section-title" data-aos="fade-up">Terminal Hours</h2>
+      <div class="grid" style="max-width:600px; margin:auto;">
+        <div class="card">
+          <div class="card-content">
+            <h3>Monday - Friday</h3>
+            <p>10:00 — 20:00</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-content">
+            <h3>Saturday</h3>
+            <p>09:00 — 18:00</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-content">
+            <h3>Sunday</h3>
+            <p>Closed — Maintenance Protocol</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="location">
+    <div class="container">
+      <h2 class="section-title" data-aos="fade-up">Location Terminal</h2>
+      <div style="text-align:center;">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2483.345!2d-0.127!3d51.507!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x487604c9f!5e0!3m2!1sen!2suk!4v1690000000000" width="100%" height="450" style="border:0; border-radius:15px;" allowfullscreen="" loading="lazy"></iframe>
+        <p style="margin-top:2rem; font-size:1.3rem;">Hyper Elite Barbers<br>Central London, England, GB</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="container">
+      <h2 class="section-title" data-aos="fade-up">Contact Protocol</h2>
+      <div style="max-width:700px; margin:0 auto;">
+        <form class="booking-form">
+          <input type="text" placeholder="Name" required>
+          <input type="email" placeholder="Email" required>
+          <textarea placeholder="Message" rows="6" required></textarea>
+          <button type="submit" class="btn">Transmit</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section id="reviews">
+    <div class="container">
+      <h2 class="section-title" data-aos="fade-up">Elite Feedback Matrix</h2>
+      <div class="grid reviews-grid">
+        <div class="review-card" data-aos="fade-up">
+          <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+          <p>"The most advanced grooming experience in the city. Precision unmatched."</p>
+          <p><strong>— Executive Client</strong></p>
+        </div>
+        <div class="review-card" data-aos="fade-up" data-aos-delay="100">
+          <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+          <p>"Feels like stepping into the future of barbering. Highly recommended."</p>
+          <p><strong>— Tech Leader</strong></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="container">
+      <h2 class="section-title" data-aos="fade-up">Protocol FAQ</h2>
+      <details data-aos="fade-up"><summary>What is the cancellation policy?</summary><p>24-hour notice required. Late cancellations incur full charge.</p></details>
+      <details data-aos="fade-up"><summary>Do you offer walk-ins?</summary><p>Priority is reservation-based. Walk-ins accepted subject to availability.</p></details>
+      <details data-aos="fade-up"><summary>What products do you use?</summary><p>Only elite-tier, ethically sourced materials and proprietary blends.</p></details>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <div class="footer-links">
+        <a href="#services">Services</a>
+        <a href="#price">Pricing</a>
+        <a href="#products">Products</a>
+        <a href="#gallery">Gallery</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <p>&copy; 2026 Hyper Elite Barbers. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <div class="floating-btns">
+    <a href="tel:+442012345678" class="fab call"><i class="fas fa-phone"></i></a>
+    <a href="https://wa.me/442012345678" class="fab whatsapp"><i class="fab fa-whatsapp"></i></a>
+  </div>
+
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init({ duration: 1200, once: true });
+    window.addEventListener('scroll', () => {
+      document.getElementById('header').classList.toggle('scrolled', window.scrollY > 50);
+    });
+    document.getElementById('hamburger').addEventListener('click', () => {
+      document.getElementById('navLinks').classList.toggle('active');
+    });
+  </script>
+</body>
+</html>
