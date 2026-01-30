@@ -2,319 +2,275 @@
 <html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AETHER & IRON | Luxury Grooming Terminal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AETHER & IRON | Native Terminal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=JetBrains+Mono:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@500&display=swap');
         
         :root {
-            --cream: #F5F5F0;
-            --ink: #0A0A0A;
-            --steel: #71717A;
+            --brand-cream: #F2F0EB;
+            --brand-black: #0A0A0A;
+            --brand-gray: #71717A;
         }
 
         body {
-            background-color: var(--cream);
-            color: var(--ink);
-            font-family: 'Space Grotesk', sans-serif;
+            background-color: var(--brand-cream);
+            color: var(--brand-black);
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .mono { font-family: 'JetBrains Mono', monospace; }
 
-        /* Bold App-Like Borders */
-        .app-card {
-            border: 2px solid var(--ink);
-            box-shadow: 4px 4px 0px var(--ink);
-            background: white;
-            transition: all 0.2s ease;
+        /* Top Sliding Menu */
+        #topMenu {
+            transform: translateY(-100%);
+            transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
         }
-        .app-card:hover {
-            transform: translate(-2px, -2px);
-            box-shadow: 8px 8px 0px var(--ink);
+        #topMenu.open { transform: translateY(0); }
+
+        /* Native App Feel Components */
+        .app-card {
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.05);
         }
 
-        /* Reveal Animation */
+        .bottom-nav {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(0,0,0,0.1);
+        }
+
+        /* Before/After Slider */
+        .slider-handle {
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
         .reveal {
             opacity: 0;
             transform: translateY(20px);
-            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 0.6s ease-out;
         }
         .reveal.active {
             opacity: 1;
             transform: translateY(0);
         }
 
-        /* Slider Styles */
-        .ba-slider {
-            position: relative;
-            overflow: hidden;
-            border: 2px solid var(--ink);
-        }
+        /* Hide scrollbar for clean UI */
+        ::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="antialiased">
+<body class="pb-24">
 
-    <nav class="fixed w-full z-50 bg-[#F5F5F0]/80 backdrop-blur-md border-b-2 border-black px-6 py-4 flex justify-between items-center">
-        <div class="text-2xl font-bold tracking-tighter uppercase italic">Aether&Iron</div>
-        <div class="hidden md:flex space-x-8 mono text-xs font-bold uppercase">
-            <a href="#services">Services</a>
-            <a href="#artisans">Artisans</a>
-            <a href="#contact">Contact</a>
-        </div>
-        <button id="menuBtn" class="p-2 border-2 border-black bg-white active:bg-black active:text-white transition-colors">
-            <i data-lucide="menu"></i>
+    <nav class="fixed top-0 w-full z-[100] px-6 py-4 flex justify-between items-center bg-white/70 backdrop-blur-md border-b border-black/5">
+        <div class="font-extrabold text-xl tracking-tighter uppercase italic">Aether&Iron</div>
+        <button id="menuTrigger" class="flex items-center gap-2 bg-black text-white px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest">
+            <span>Menu</span>
+            <i data-lucide="chevron-down" class="w-4 h-4"></i>
         </button>
     </nav>
 
-    <div id="mobileMenu" class="fixed inset-0 z-[60] bg-white translate-x-full transition-transform duration-500 p-8 flex flex-col justify-center space-y-8 text-4xl font-bold uppercase italic">
-        <button onclick="toggleMenu()" class="absolute top-8 right-8"><i data-lucide="x" class="w-10 h-10"></i></button>
-        <a href="#services" onclick="toggleMenu()">Services</a>
-        <a href="#artisans" onclick="toggleMenu()">Artisans</a>
-        <a href="#gallery" onclick="toggleMenu()">Gallery</a>
-        <a href="#booking" onclick="toggleMenu()" class="text-zinc-400">Book Slot</a>
-    </div>
-
-    <section class="pt-24 min-h-screen flex flex-col items-center justify-center px-6 relative">
-        <div class="w-full max-w-6xl overflow-hidden border-2 border-black h-[60vh] relative group">
-            <img src="https://images.unsplash.com/photo-1512690196236-407135084998?q=80&w=2000" 
-                 class="w-full h-full object-cover grayscale transition-transform duration-[10s] ease-linear transform group-hover:scale-110" alt="Shopfront">
-            <div class="absolute inset-0 bg-black/20 flex items-center justify-center">
-                <h1 class="text-white text-7xl md:text-[12rem] font-bold tracking-tighter uppercase mix-blend-difference">A&I</h1>
-            </div>
-        </div>
-        
-        <div id="booking" class="w-full max-w-4xl -mt-12 z-10 app-card p-6 md:p-10">
-            <form class="grid md:grid-cols-4 gap-4">
-                <div class="flex flex-col">
-                    <span class="mono text-[10px] font-bold mb-1">SERVICE</span>
-                    <select class="border-2 border-black p-3 bg-transparent font-bold">
-                        <option>Structural Cut</option>
-                        <option>Beard Sculpt</option>
-                        <option>Full Refit</option>
-                    </select>
-                </div>
-                <div class="flex flex-col">
-                    <span class="mono text-[10px] font-bold mb-1">DATE</span>
-                    <input type="date" class="border-2 border-black p-3 bg-transparent font-bold">
-                </div>
-                <div class="flex flex-col">
-                    <span class="mono text-[10px] font-bold mb-1">BARBER</span>
-                    <select class="border-2 border-black p-3 bg-transparent font-bold">
-                        <option>Master: Elias</option>
-                        <option>Lead: Julian</option>
-                    </select>
-                </div>
-                <button class="bg-black text-white font-bold uppercase h-[52px] mt-auto hover:bg-zinc-800 transition">Initialize</button>
-            </form>
-        </div>
-    </section>
-
-    <div class="py-20 flex justify-center overflow-hidden whitespace-nowrap border-y-2 border-black bg-white my-12">
-        <div class="mono font-bold text-xs tracking-[1em] uppercase animate-marquee">
-            PRECISION • ARCHITECTURE • CRAFT • PRECISION • ARCHITECTURE • CRAFT •
-        </div>
-    </div>
-
-    <section id="services" class="py-24 px-6 max-w-7xl mx-auto">
-        <h2 class="text-5xl font-bold uppercase tracking-tighter mb-12 italic underline underline-offset-8 decoration-4">The Menu</h2>
-        <div class="grid md:grid-cols-2 gap-12">
-            <div class="space-y-6">
-                <div class="flex justify-between items-end border-b-2 border-black pb-2 reveal">
-                    <div>
-                        <h3 class="text-xl font-bold uppercase">Executive Recalibration</h3>
-                        <p class="text-zinc-500 text-sm italic">Precision fade + hot towel + style</p>
-                    </div>
-                    <span class="mono font-bold text-xl">$75</span>
-                </div>
-                <div class="flex justify-between items-end border-b-2 border-black pb-2 reveal">
-                    <div>
-                        <h3 class="text-xl font-bold uppercase">Beard Architecture</h3>
-                        <p class="text-zinc-500 text-sm italic">Sculpting + line work + oil</p>
-                    </div>
-                    <span class="mono font-bold text-xl">$45</span>
-                </div>
-            </div>
-            <div class="app-card p-8 flex flex-col justify-between bg-zinc-100 reveal">
-                <i data-lucide="zap" class="w-12 h-12 mb-6"></i>
-                <h3 class="text-2xl font-bold uppercase mb-4">First-Time Deployment</h3>
-                <p class="mb-6 italic">Our signature introductory service for new clients. Includes consultation and profile mapping.</p>
-                <button class="border-2 border-black p-3 font-bold uppercase hover:bg-black hover:text-white transition">Details</button>
-            </div>
-        </div>
-    </section>
-
-    <section class="py-24 bg-white border-y-2 border-black">
-        <div class="max-w-4xl mx-auto px-6 text-center">
-            <h2 class="text-xs mono font-bold uppercase mb-8 tracking-widest">Visual Evidence: Before/After</h2>
-            <div class="ba-slider aspect-video">
-                <img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?q=80&w=1200" class="absolute inset-0 w-full h-full object-cover">
-                <div id="after-img" class="absolute inset-0 w-1/2 overflow-hidden border-r-4 border-black">
-                    <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=1200" class="absolute inset-0 h-full w-[800px] object-cover max-w-none grayscale">
-                </div>
-                <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <span class="bg-black text-white px-4 py-1 mono text-[10px]">SLIDE TO COMPARE</span>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="py-24 px-6 max-w-7xl mx-auto">
-        <h2 class="text-3xl font-bold uppercase italic mb-12">Apothecary</h2>
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
-            <div class="app-card p-4 text-center reveal">
-                <div class="bg-zinc-100 aspect-square mb-4 border border-zinc-200"></div>
-                <h4 class="font-bold uppercase text-sm">Matte Clay 01</h4>
-                <p class="mono text-xs text-zinc-500">$28.00</p>
-            </div>
-            <div class="app-card p-4 text-center reveal"><div class="bg-zinc-100 aspect-square mb-4 border border-zinc-200"></div><h4 class="font-bold uppercase text-sm">Beard Tonic</h4><p class="mono text-xs text-zinc-500">$32.00</p></div>
-            <div class="app-card p-4 text-center reveal"><div class="bg-zinc-100 aspect-square mb-4 border border-zinc-200"></div><h4 class="font-bold uppercase text-sm">Steel Comb</h4><p class="mono text-xs text-zinc-500">$45.00</p></div>
-            <div class="app-card p-4 text-center reveal"><div class="bg-zinc-100 aspect-square mb-4 border border-zinc-200"></div><h4 class="font-bold uppercase text-sm">Pre-Shave Oil</h4><p class="mono text-xs text-zinc-500">$24.00</p></div>
-            <div class="app-card p-4 text-center reveal"><div class="bg-zinc-100 aspect-square mb-4 border border-zinc-200"></div><h4 class="font-bold uppercase text-sm">Texture Mist</h4><p class="mono text-xs text-zinc-500">$19.00</p></div>
-            <div class="app-card p-4 text-center reveal"><div class="bg-zinc-100 aspect-square mb-4 border border-zinc-200"></div><h4 class="font-bold uppercase text-sm">Post-Blade Balm</h4><p class="mono text-xs text-zinc-500">$30.00</p></div>
-        </div>
-    </section>
-
-    <section id="artisans" class="py-24 bg-black text-white px-6">
-        <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-16">
-            <div class="app-card bg-white text-black p-8 reveal">
-                <div class="flex justify-between items-start mb-6">
-                    <img src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?q=80&w=200" class="w-32 h-32 object-cover border-2 border-black grayscale">
-                    <div class="text-right">
-                        <p class="mono text-[10px] text-zinc-400">UID: 0982</p>
-                        <h3 class="text-3xl font-bold uppercase italic">ELIAS</h3>
-                        <p class="text-zinc-500 italic">Master Barber</p>
-                    </div>
-                </div>
-                <div class="border-t-2 border-black pt-4 grid grid-cols-2 gap-4 mono text-xs">
-                    <div>FADE SKILL: <span class="font-bold">99%</span></div>
-                    <div>CLIENTS: <span class="font-bold">2.4K</span></div>
-                </div>
-            </div>
-            <div class="app-card bg-white text-black p-8 reveal">
-                <div class="flex justify-between items-start mb-6">
-                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200" class="w-32 h-32 object-cover border-2 border-black grayscale">
-                    <div class="text-right">
-                        <p class="mono text-[10px] text-zinc-400">UID: 0741</p>
-                        <h3 class="text-3xl font-bold uppercase italic">JULIAN</h3>
-                        <p class="text-zinc-500 italic">Senior Artisan</p>
-                    </div>
-                </div>
-                <div class="border-t-2 border-black pt-4 grid grid-cols-2 gap-4 mono text-xs">
-                    <div>BLADE SKILL: <span class="font-bold">95%</span></div>
-                    <div>CLIENTS: <span class="font-bold">1.8K</span></div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="py-24 px-6 max-w-3xl mx-auto reveal">
-        <h2 class="text-3xl font-bold uppercase italic mb-8">Intelligence</h2>
-        <div class="space-y-4">
-            <details class="app-card p-4 group cursor-pointer">
-                <summary class="flex justify-between items-center font-bold uppercase list-none">
-                    Late Arrival Policy <i data-lucide="plus" class="group-open:rotate-45 transition"></i>
-                </summary>
-                <p class="mt-4 text-zinc-500 italic">We hold slots for 10 minutes. Beyond that, the deployment is cancelled.</p>
-            </details>
-            <details class="app-card p-4 group cursor-pointer">
-                <summary class="flex justify-between items-center font-bold uppercase list-none">
-                    Walk-in Protocols <i data-lucide="plus" class="group-open:rotate-45 transition"></i>
-                </summary>
-                <p class="mt-4 text-zinc-500 italic">Subject to artisan availability. Scheduled bookings take priority.</p>
-            </details>
-        </div>
-    </section>
-
-    <section class="bg-zinc-100 py-24 px-6 border-y-2 border-black overflow-hidden">
-        <div class="flex animate-marquee-slow whitespace-nowrap space-x-12">
-            <div class="app-card p-6 min-w-[300px]">
-                <div class="flex text-black mb-2"><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i></div>
-                <p class="italic">"The engineering of my fade was flawless."</p>
-                <p class="mono text-[10px] mt-2 font-bold">— RYAN K.</p>
-            </div>
-            </div>
-    </section>
-
-    <section class="bg-black text-white py-20 text-center px-6">
-        <h2 class="text-4xl md:text-6xl font-bold uppercase italic tracking-tighter mb-8">Ready for deployment?</h2>
-        <a href="#booking" class="inline-block bg-white text-black px-12 py-4 font-bold uppercase border-4 border-white hover:bg-black hover:text-white transition">Book Now</a>
-    </section>
-
-    <section id="contact" class="py-24 px-6 max-w-7xl mx-auto grid md:grid-cols-2 gap-12">
-        <div class="space-y-8">
-            <h2 class="text-4xl font-bold uppercase italic tracking-tighter">Coordinates</h2>
-            <div class="app-card p-6">
-                <h4 class="mono text-[10px] font-bold text-zinc-500 uppercase">LOCATION</h4>
-                <p class="text-xl font-bold italic">47 INDUSTRIAL DRIVE, SUITE 8</p>
-                <p class="mb-6">NEW YORK, NY 10001</p>
-                <div class="flex gap-4">
-                    <a href="tel:12345678" class="flex-1 bg-black text-white p-3 text-center mono text-xs font-bold uppercase">Call Shop</a>
-                    <a href="#" class="flex-1 border-2 border-black p-3 text-center mono text-xs font-bold uppercase flex items-center justify-center gap-2"><i data-lucide="message-circle" class="w-4"></i> WhatsApp</a>
-                </div>
-            </div>
-            <div class="app-card p-6 mono text-xs">
-                <h4 class="font-bold text-zinc-500 mb-4">OPERATIONAL HOURS</h4>
-                <div class="space-y-2">
-                    <div class="flex justify-between border-b border-zinc-200"><span>MON-FRI</span> <span>09:00 - 21:00</span></div>
-                    <div class="flex justify-between border-b border-zinc-200"><span>SAT-SUN</span> <span>10:00 - 18:00</span></div>
-                </div>
-            </div>
-        </div>
+    <div id="topMenu" class="fixed inset-0 z-[90] bg-white pt-24 px-8 pb-12 flex flex-col justify-between">
         <div class="space-y-6">
-            <form class="app-card p-8 space-y-4">
-                <input type="text" placeholder="FULL NAME" class="w-full border-b-2 border-black p-2 focus:outline-none bg-transparent font-bold">
-                <input type="email" placeholder="EMAIL ADDRESS" class="w-full border-b-2 border-black p-2 focus:outline-none bg-transparent font-bold">
-                <textarea placeholder="MESSAGE" class="w-full border-b-2 border-black p-2 h-32 focus:outline-none bg-transparent font-bold"></textarea>
-                <button class="w-full bg-black text-white p-4 font-bold uppercase italic hover:bg-zinc-800 transition">Send Signal</button>
-            </form>
-            <div class="border-2 border-black h-48 bg-zinc-200 flex items-center justify-center italic">
-                [ Google Maps API Embed ]
+            <a href="#services" class="block text-5xl font-extrabold tracking-tighter uppercase">The Menu</a>
+            <a href="#artisans" class="block text-5xl font-extrabold tracking-tighter uppercase">Artisans</a>
+            <a href="#philosophy" class="block text-5xl font-extrabold tracking-tighter uppercase">Philosophy</a>
+            <a href="#contact" class="block text-5xl font-extrabold tracking-tighter uppercase">Contact</a>
+        </div>
+        <div class="flex gap-4">
+            <a href="#" class="p-4 bg-zinc-100 rounded-full"><i data-lucide="instagram"></i></a>
+            <a href="#" class="p-4 bg-zinc-100 rounded-full"><i data-lucide="facebook"></i></a>
+            <a href="#" class="p-4 bg-zinc-100 rounded-full"><i data-lucide="twitter"></i></a>
+        </div>
+    </div>
+
+    <section class="mt-20 px-4">
+        <div class="relative h-[70vh] rounded-[40px] overflow-hidden group">
+            <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=2000" class="w-full h-full object-cover grayscale">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-8 text-white">
+                <span class="mono text-xs uppercase tracking-[0.3em] mb-2 opacity-70">A&I Terminal • NYC</span>
+                <h1 class="text-5xl font-extrabold tracking-tighter uppercase leading-none mb-4">Precision<br>Overhaul</h1>
+                <p class="text-zinc-300 max-w-xs text-sm mb-6">Advanced grooming services engineered for the modern industrialist.</p>
             </div>
         </div>
     </section>
 
-    <footer class="bg-white border-t-4 border-black py-12 px-6">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-            <div class="text-3xl font-bold italic">AETHER&IRON</div>
-            <div class="flex gap-8 mono text-[10px] font-bold uppercase">
-                <a href="#">Privacy</a>
-                <a href="#">Terms</a>
-                <a href="#">Instagram</a>
-                <a href="#">Twitter</a>
+    <section id="booking" class="px-4 -mt-10 relative z-10">
+        <div class="app-card p-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-zinc-400 uppercase ml-2">Procedure</label>
+                    <select class="w-full bg-zinc-50 border-none rounded-2xl p-4 text-sm font-bold focus:ring-2 ring-black">
+                        <option>Structural Haircut</option>
+                        <option>Beard Architecture</option>
+                        <option>Full Refit Package</option>
+                    </select>
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-zinc-400 uppercase ml-2">Artisan</label>
+                    <select class="w-full bg-zinc-50 border-none rounded-2xl p-4 text-sm font-bold">
+                        <option>Master: Elias</option>
+                        <option>Senior: Julian</option>
+                    </select>
+                </div>
+                <button class="bg-black text-white rounded-2xl font-bold uppercase text-sm tracking-widest hover:scale-[0.98] transition-transform">Initialize</button>
             </div>
-            <p class="mono text-[10px] text-zinc-400">© 2026 SYSTEM REFINED</p>
+        </div>
+    </section>
+
+    <section id="services" class="py-20 px-6">
+        <div class="flex justify-between items-end mb-10">
+            <h2 class="text-4xl font-extrabold tracking-tighter uppercase">Menu</h2>
+            <span class="mono text-[10px] text-zinc-400">VER. 2026.04</span>
+        </div>
+        <div class="space-y-4">
+            <div class="app-card p-6 flex justify-between items-center reveal">
+                <div>
+                    <h3 class="font-bold text-lg uppercase">The Industrial Fade</h3>
+                    <p class="text-xs text-zinc-500 italic">Wash, precision cut, hot towel</p>
+                </div>
+                <span class="text-xl font-extrabold">$65</span>
+            </div>
+            <div class="app-card p-6 flex justify-between items-center reveal">
+                <div>
+                    <h3 class="font-bold text-lg uppercase">Damascus Shave</h3>
+                    <p class="text-xs text-zinc-500 italic">Straight razor, 3-step oil infusion</p>
+                </div>
+                <span class="text-xl font-extrabold">$50</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="mx-4 my-12 bg-black rounded-[32px] p-12 text-center text-white reveal">
+        <h2 class="text-3xl font-extrabold uppercase tracking-tighter mb-4">Join the Collective</h2>
+        <p class="text-zinc-400 text-sm mb-8 max-w-xs mx-auto">Get 15% off your first deployment when you register your profile.</p>
+        <button class="bg-white text-black px-8 py-3 rounded-full font-extrabold uppercase text-xs">Create Profile</button>
+    </section>
+
+    <section class="py-20 px-6">
+        <h2 class="text-xs mono font-bold text-zinc-400 uppercase tracking-widest mb-8 text-center">Outcome Verification</h2>
+        <div class="relative h-[400px] rounded-[32px] overflow-hidden border-4 border-white shadow-xl">
+            <img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?q=80&w=800" class="absolute inset-0 w-full h-full object-cover">
+            <div id="after-slider" class="absolute inset-0 w-1/2 overflow-hidden border-r-2 border-white shadow-2xl">
+                <img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?q=80&w=800" class="absolute inset-0 w-[100vw] h-full object-cover grayscale">
+            </div>
+            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div class="bg-black/80 backdrop-blur-md text-white px-4 py-2 rounded-full text-[10px] font-bold">DRAG TO COMPARE</div>
+            </div>
+        </div>
+    </section>
+
+    <section id="artisans" class="py-20 px-6">
+        <h2 class="text-4xl font-extrabold tracking-tighter uppercase mb-8">The Artisans</h2>
+        <div class="flex gap-4 overflow-x-auto pb-8 snap-x">
+            <div class="min-w-[280px] app-card p-6 snap-center">
+                <img src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?q=80&w=400" class="w-full h-48 object-cover rounded-2xl grayscale mb-4">
+                <h4 class="font-extrabold uppercase">Elias Vane</h4>
+                <p class="text-xs text-zinc-500 italic mb-4">Master of Architecture</p>
+                <div class="flex text-black mb-2"><i data-lucide="star" class="w-3 fill-current"></i><i data-lucide="star" class="w-3 fill-current"></i><i data-lucide="star" class="w-3 fill-current"></i><i data-lucide="star" class="w-3 fill-current"></i><i data-lucide="star" class="w-3 fill-current"></i></div>
+            </div>
+            </div>
+    </section>
+
+    <section class="py-20 px-6 bg-white border-y border-black/5">
+        <h2 class="text-2xl font-extrabold uppercase tracking-tighter mb-8">Intelligence</h2>
+        <div class="space-y-4">
+            <details class="group bg-zinc-50 rounded-2xl p-4">
+                <summary class="flex justify-between items-center font-bold cursor-pointer list-none">
+                    Late Protocols <i data-lucide="plus" class="group-open:rotate-45 transition"></i>
+                </summary>
+                <p class="pt-4 text-sm text-zinc-500 italic">We allow a 10-minute grace period before slot forfeiture.</p>
+            </details>
+        </div>
+    </section>
+
+    <section id="contact" class="py-20 px-6">
+        <div class="app-card p-8 space-y-8">
+            <div class="h-48 rounded-2xl bg-zinc-200 overflow-hidden relative border border-black/5">
+                <div class="absolute inset-0 flex items-center justify-center font-bold text-zinc-400 italic">GOOGLE MAPS EMBED</div>
+            </div>
+            <div class="space-y-4">
+                <h3 class="text-2xl font-extrabold uppercase tracking-tighter">Connect</h3>
+                <form class="space-y-4">
+                    <input type="text" placeholder="Identity" class="w-full p-4 bg-zinc-50 rounded-xl focus:outline-none focus:ring-1 ring-black">
+                    <textarea placeholder="Message" class="w-full p-4 bg-zinc-50 rounded-xl h-32"></textarea>
+                    <button class="w-full bg-black text-white p-4 rounded-xl font-bold uppercase tracking-widest">Transmit</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-20 px-8 text-center space-y-6">
+        <div class="text-4xl font-extrabold italic tracking-tighter">AETHER&IRON</div>
+        <p class="text-xs text-zinc-400 mono">47 INDUSTRIAL DR • NEW YORK • NY 10001</p>
+        <div class="flex justify-center gap-6 text-[10px] font-bold uppercase tracking-widest opacity-40">
+            <a href="#">Privacy</a>
+            <a href="#">Terms</a>
+            <a href="#">Security</a>
         </div>
     </footer>
+
+    <div class="fixed bottom-0 w-full z-[100] px-4 pb-6">
+        <div class="bottom-nav rounded-[32px] p-3 flex justify-between items-center max-w-md mx-auto shadow-2xl">
+            <a href="https://wa.me/12345" class="flex-1 flex flex-col items-center justify-center text-[10px] font-bold uppercase">
+                <i data-lucide="message-circle" class="w-5 h-5 mb-1"></i> WhatsApp
+            </a>
+            <a href="#booking" class="flex-[2] bg-black text-white py-3 rounded-2xl flex items-center justify-center gap-2 font-bold uppercase text-xs tracking-tighter">
+                <i data-lucide="calendar" class="w-4 h-4"></i> Book Now
+            </a>
+            <a href="tel:123456" class="flex-1 flex flex-col items-center justify-center text-[10px] font-bold uppercase">
+                <i data-lucide="phone" class="w-5 h-5 mb-1"></i> Call
+            </a>
+        </div>
+    </div>
 
     <script>
         lucide.createIcons();
 
-        // 19. SCROLL REVEAL
+        // Top Sliding Menu Logic
+        const menuTrigger = document.getElementById('menuTrigger');
+        const topMenu = document.getElementById('topMenu');
+        let menuOpen = false;
+
+        menuTrigger.addEventListener('click', () => {
+            menuOpen = !menuOpen;
+            topMenu.classList.toggle('open');
+            menuTrigger.querySelector('span').innerText = menuOpen ? 'Close' : 'Menu';
+            menuTrigger.querySelector('i').style.transform = menuOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+        });
+
+        // Close menu on link click
+        document.querySelectorAll('#topMenu a').forEach(link => {
+            link.addEventListener('click', () => {
+                topMenu.classList.remove('open');
+                menuOpen = false;
+                menuTrigger.querySelector('span').innerText = 'Menu';
+            });
+        });
+
+        // Before/After Slider Control
+        const slider = document.getElementById('after-slider');
+        window.addEventListener('mousemove', (e) => {
+            if (e.target.closest('.relative.h-\\[400px\\]')) {
+                const rect = e.target.closest('.relative.h-\\[400px\\]').getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const percent = (x / rect.width) * 100;
+                slider.style.width = percent + '%';
+            }
+        });
+
+        // Reveal on Scroll
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) entry.target.classList.add('active');
             });
         }, { threshold: 0.1 });
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-        // MOBILE MENU TOGGLE
-        const mobileMenu = document.getElementById('mobileMenu');
-        function toggleMenu() {
-            mobileMenu.classList.toggle('translate-x-full');
-        }
-        document.getElementById('menuBtn').addEventListener('click', toggleMenu);
-
-        // 9. BEFORE & AFTER SLIDER INTERACTION
-        const slider = document.querySelector('.ba-slider');
-        const afterImg = document.getElementById('after-img');
-        slider.addEventListener('mousemove', (e) => {
-            const rect = slider.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const percent = (x / rect.width) * 100;
-            afterImg.style.width = percent + '%';
-        });
     </script>
 </body>
 </html>
