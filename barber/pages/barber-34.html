@@ -13,11 +13,11 @@
     <style>
         :root {
             --accent-red: #FF4D4D;
-            --soft-red: #FFF5F5;
+            --steel: #2A2A2A;
+            --leather: #1A1A1A;
             --tech-black: #0A0A0A;
-            --glass: rgba(255, 255, 255, 0.8);
+            --glass: rgba(255, 255, 255, 0.9);
             --border: rgba(255, 77, 77, 0.15);
-            --card-shadow: 0 30px 60px rgba(0,0,0,0.12);
         }
 
         * { margin:0; padding:0; box-sizing:border-box; cursor: crosshair; }
@@ -26,18 +26,9 @@
             background: #fff; 
             color: var(--tech-black); 
             overflow-x: hidden;
-            line-height: 1.4;
         }
 
-        /* --- HYPER-REALISTIC LAYOUT (NATIVE APP FEEL) --- */
-        
-        .app-container {
-            max-width: 1440px;
-            margin: 0 auto;
-            position: relative;
-        }
-
-        /* Floating Nav */
+        /* --- NAVIGATION --- */
         nav {
             position: fixed;
             top: 20px;
@@ -54,136 +45,81 @@
             align-items: center;
             z-index: 1000;
             border: 1px solid var(--border);
-            box-shadow: var(--card-shadow);
         }
 
         .nav-links { display: flex; gap: 2rem; }
-        .nav-links a { text-decoration: none; color: var(--tech-black); font-weight: 500; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
+        .nav-links a { text-decoration: none; color: var(--tech-black); font-weight: 500; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* Mobile Menu */
-        .hamburger { display: none; background: var(--accent-red); color: white; padding: 10px; border-radius: 50%; }
+        .hamburger { display: none; background: var(--tech-black); color: white; padding: 10px; border-radius: 50%; border:none; }
 
-        /* --- HERO SECTION --- */
+        /* --- HERO & BOOKING --- */
         .hero {
-            height: 100vh;
-            display: grid;
-            grid-template-columns: 1.2fr 0.8fr;
-            align-items: center;
-            padding: 0 5%;
-            background: radial-gradient(circle at top right, var(--soft-red), #fff);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 120px 5% 50px;
+            background: radial-gradient(circle at top right, #fff5f5, #fff);
         }
 
-        .hero-text h1 {
-            font-size: clamp(4rem, 10vw, 8rem);
-            font-weight: 900;
-            line-height: 0.9;
-            letter-spacing: -4px;
-            margin-bottom: 20px;
-        }
+        .hero-text h1 { font-size: clamp(3rem, 8vw, 7rem); font-weight: 900; line-height: 0.85; letter-spacing: -3px; }
+        .hero-text span { color: var(--accent-red); }
 
-        .hero-text h1 span { color: var(--accent-red); }
-
-        /* Advanced Booking Strip */
         .booking-strip {
             background: var(--tech-black);
             color: white;
             padding: 30px;
             border-radius: 24px;
             display: grid;
-            grid-template-columns: repeat(4, 1fr) auto;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) auto;
             gap: 20px;
-            margin-top: 50px;
-            box-shadow: 0 40px 80px rgba(0,0,0,0.3);
+            margin-top: 40px;
         }
 
-        .booking-field select {
-            background: transparent;
-            border: none;
-            color: white;
-            font-family: inherit;
-            font-size: 1rem;
-            width: 100%;
-            outline: none;
-        }
+        /* --- SECTIONS --- */
+        section { padding: 100px 5%; }
+        .section-title { font-size: 3rem; font-weight: 900; margin-bottom: 50px; text-transform: uppercase; border-left: 8px solid var(--accent-red); padding-left: 20px; }
 
-        /* --- PRODUCT GRID (ABSTRACT) --- */
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            padding: 100px 5%;
-        }
+        /* --- SERVICE CARDS --- */
+        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .service-card { padding: 40px; border: 1px solid #eee; border-radius: 24px; transition: 0.4s; }
+        .service-card:hover { background: var(--tech-black); color: white; }
 
-        .product-card {
-            background: var(--soft-red);
-            aspect-ratio: 1/1.2;
-            border-radius: 40px;
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-        }
+        /* --- PRICE LIST --- */
+        .price-row { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #eee; font-size: 1.2rem; }
+        .price-row b { color: var(--accent-red); }
 
-        .product-card:hover { transform: scale(0.98); }
+        /* --- GALLERY GRID --- */
+        .gallery-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; height: 600px; }
+        .gallery-item { background: #eee; border-radius: 12px; overflow: hidden; position: relative; }
+        .gallery-item:nth-child(1) { grid-area: 1 / 1 / 3 / 3; }
 
-        .abstract-obj {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 60%;
-            height: 60%;
-            background: linear-gradient(45deg, var(--accent-red), #ff8e8e);
-            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
-            filter: blur(40px);
-            animation: morph 8s ease-in-out infinite;
-        }
+        /* --- ARTISANS (BARBERS) --- */
+        .artisan-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; }
+        .artisan-card { text-align: center; }
+        .artisan-img { width: 100%; aspect-ratio: 1/1; background: var(--steel); border-radius: 20px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; color: white; }
 
-        /* --- BEFORE/AFTER SLIDER --- */
-        .slider-section { padding: 100px 5%; }
-        .ba-container {
-            width: 100%;
-            height: 600px;
-            position: relative;
-            border-radius: 40px;
-            overflow: hidden;
-        }
-        .ba-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; }
-        .ba-overlay { 
-            position: absolute; top: 0; left: 0; width: 50%; height: 100%; 
-            border-right: 4px solid white; background-image: url('https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&q=80&w=2000');
-            z-index: 2;
-        }
+        /* --- CONTACT & FOOTER --- */
+        .contact-container { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; }
+        .map-box { height: 400px; background: #eee; border-radius: 24px; overflow: hidden; }
+        
+        .cta-box { background: var(--accent-red); color: white; padding: 60px; border-radius: 40px; text-align: center; margin: 50px 0; }
 
-        /* --- FAQ SECTION --- */
-        .faq-item {
-            border-bottom: 1px solid var(--border);
-            padding: 20px 0;
-            cursor: pointer;
-        }
-        .faq-answer { height: 0; overflow: hidden; opacity: 0; transition: 0.4s; }
-        .faq-item.active .faq-answer { height: auto; opacity: 1; padding-top: 15px; }
-
-        /* --- UTILS --- */
-        .reveal { opacity: 0; transform: translateY(50px); }
-        .btn-primary { 
-            background: var(--accent-red); color: white; border: none; 
-            padding: 15px 40px; border-radius: 50px; font-weight: 700; 
-            text-transform: uppercase; cursor: pointer; transition: 0.3s;
-        }
-        .btn-primary:hover { box-shadow: 0 0 30px var(--accent-red); }
-
-        @keyframes morph {
-            0% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
-            50% { border-radius: 50% 50% 20% 80% / 25% 80% 20% 75%; }
-            100% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
-        }
-
+        /* --- MOBILE --- */
         @media (max-width: 900px) {
-            .hero { grid-template-columns: 1fr; text-align: center; }
-            .booking-strip { grid-template-columns: 1fr; }
             .nav-links { display: none; }
             .hamburger { display: block; }
+            .contact-container { grid-template-columns: 1fr; }
+            .booking-strip { grid-template-columns: 1fr; }
+            .gallery-grid { grid-template-columns: repeat(2, 1fr); height: auto; }
         }
+
+        /* Utils */
+        .reveal { opacity: 0; transform: translateY(30px); }
+        .btn-primary { background: var(--accent-red); color: white; border: none; padding: 15px 35px; border-radius: 50px; font-weight: 700; cursor: pointer; text-transform: uppercase; }
+        .divider { height: 1px; background: var(--border); margin: 50px 0; }
+        
+        select, input { background: #222; border: 1px solid #333; color: white; padding: 10px; border-radius: 8px; width: 100%; }
     </style>
 </head>
 <body>
@@ -192,106 +128,202 @@
         <div style="font-weight:900; font-size:1.5rem; color:var(--accent-red)">GENTRY.OS</div>
         <div class="nav-links">
             <a href="#services">Architecture</a>
-            <a href="#products">Apothecary</a>
-            <a href="#contact">Studio</a>
+            <a href="#artisans">Artisans</a>
+            <a href="#apothecary">Apothecary</a>
+            <a href="#studio">The Studio</a>
         </div>
-        <button class="btn-primary" style="padding: 10px 25px;">Book</button>
-        <div class="hamburger" id="menuToggle"><i data-lucide="menu"></i></div>
+        <div style="display:flex; gap:10px;">
+            <a href="tel:0123456789" class="btn-primary" style="padding: 10px 15px;"><i data-lucide="phone"></i></a>
+            <button class="hamburger" id="menuToggle"><i data-lucide="menu"></i></button>
+        </div>
     </nav>
 
     <section class="hero">
         <div class="hero-text">
-            <p class="reveal" style="text-transform:uppercase; letter-spacing:5px;">2026 High-Craft Grooming</p>
-            <h1 class="reveal">The <span>Precision</span> Standard.</h1>
+            <p class="reveal" style="text-transform:uppercase; letter-spacing:5px; font-weight:700;">Local Craft / Global Standard</p>
+            <h1 class="reveal">The <span>Art</span> of<br>The Blade.</h1>
             
             <div class="booking-strip reveal">
-                <div class="booking-field">
-                    <label style="font-size: 0.6rem; opacity: 0.5;">SERVICE</label>
+                <div>
+                    <label style="font-size: 0.7rem; opacity: 0.6; display: block; margin-bottom: 5px;">ARCHITECTURE</label>
                     <select>
-                        <option>Signature Fade</option>
-                        <option>Beard Sculpt</option>
-                        <option>The Gentry Ritual</option>
+                        <option>Zero-Fade Profile</option>
+                        <option>Executive Scissor Cut</option>
+                        <option>Beard Sculpture</option>
                     </select>
                 </div>
-                <div class="booking-field">
-                    <label style="font-size: 0.6rem; opacity: 0.5;">BARBER</label>
+                <div>
+                    <label style="font-size: 0.7rem; opacity: 0.6; display: block; margin-bottom: 5px;">ARTISAN</label>
                     <select>
-                        <option>James Sinclair</option>
-                        <option>Leo Rossi</option>
-                        <option>AI Assistant (Flash)</option>
+                        <option>Senior: Sinclair</option>
+                        <option>Senior: Rossi</option>
+                        <option>Junior: Miller</option>
                     </select>
                 </div>
-                <div class="booking-field">
-                    <label style="font-size: 0.6rem; opacity: 0.5;">DATE</label>
-                    <input type="date" style="background:transparent; color:white; border:none; outline:none;">
-                </div>
-                <button class="btn-primary">Verify Slot</button>
-            </div>
-        </div>
-        <div class="hero-visual reveal" style="position:relative;">
-            <div class="abstract-obj" style="width:100%; height:100%; border-radius: 50%; filter:blur(80px);"></div>
-            <img src="https://img.freepik.com/free-vector/barber-tools-set_1284-18858.jpg" alt="Barber Tools" style="width:100%; filter:grayscale(1) invert(1); mix-blend-mode: color-burn;">
-        </div>
-    </section>
-
-    <section class="product-grid" id="products">
-        <div class="reveal" style="grid-column: 1 / -1; margin-bottom: 50px;">
-            <h2 style="font-size:3rem; font-weight:900;">The Apothecary.</h2>
-            <p>Techno-organic formulas for the modern scalp.</p>
-        </div>
-        <div class="product-card reveal"><div class="abstract-obj"></div><div style="position:absolute; bottom:30px; left:30px;"><b>V01 Matte Clay</b><br>£28</div></div>
-        <div class="product-card reveal" style="background:var(--tech-black); color:white;"><div class="abstract-obj" style="background:white;"></div><div style="position:absolute; bottom:30px; left:30px;"><b>V02 Sea Salt</b><br>£24</div></div>
-        <div class="product-card reveal"><div class="abstract-obj"></div><div style="position:absolute; bottom:30px; left:30px;"><b>V03 Beard Oil</b><br>£32</div></div>
-        <div class="product-card reveal"><div class="abstract-obj"></div><div style="position:absolute; bottom:30px; left:30px;"><b>V04 Tonic</b><br>£20</div></div>
-        <div class="product-card reveal"><div class="abstract-obj"></div><div style="position:absolute; bottom:30px; left:30px;"><b>V05 Shampoo</b><br>£18</div></div>
-        <div class="product-card reveal"><div class="abstract-obj"></div><div style="position:absolute; bottom:30px; left:30px;"><b>V06 Conditioner</b><br>£18</div></div>
-    </section>
-
-    <section class="slider-section">
-        <div class="ba-container reveal">
-            <div class="ba-img" style="background-image:url('https://images.unsplash.com/photo-1599351431247-f10b218163e9?auto=format&fit=crop&q=80&w=2000');"></div>
-            <div class="ba-overlay" id="sliderHand"></div>
-            <div style="position:absolute; bottom:40px; right:40px; color:white; z-index:5; font-weight:900; font-size:2rem;">TRANSFORMATION.</div>
-        </div>
-    </section>
-
-    <section class="product-grid" style="background: var(--tech-black); color:white;">
-        <div class="reveal">
-            <h3>Opening Cycles</h3>
-            <p>TUE - FRI: 10AM - 9PM</p>
-            <p>SAT: 9AM - 6PM</p>
-            <p>SUN/MON: RESET</p>
-        </div>
-        <div class="reveal">
-            <h3>The Studio</h3>
-            <p>12A Savile Row, Mayfair</p>
-            <p>London, W1S 3PR</p>
-            <button class="btn-primary" style="margin-top:20px;">Open Maps</button>
-        </div>
-        <div class="reveal">
-            <h3>Digital Reach</h3>
-            <div style="display:flex; gap:20px; font-size:1.5rem; margin-top:10px;">
-                <i data-lucide="instagram"></i>
-                <i data-lucide="message-circle"></i>
-                <i data-lucide="phone"></i>
+                <button class="btn-primary">Initialize Booking</button>
             </div>
         </div>
     </section>
 
-    <section style="padding: 100px 5%;">
-        <h2 style="font-size:3rem; margin-bottom:40px;">FAQs</h2>
-        <div class="faq-item reveal">
-            <div style="display:flex; justify-content:space-between; font-weight:700;"><span>Do I need to book?</span><i data-lucide="chevron-down"></i></div>
-            <div class="faq-answer">While we accept walk-ins, our 2026 digital queue prioritizes appointments confirmed via the Gentry app.</div>
-        </div>
-        <div class="faq-item reveal">
-            <div style="display:flex; justify-content:space-between; font-weight:700;"><span>Subscription plans?</span><i data-lucide="chevron-down"></i></div>
-            <div class="faq-answer">Yes, we offer the 'Master' tier which includes bi-weekly trims and unlimited apothecary refills.</div>
+    <div class="divider"></div>
+
+    <section id="services">
+        <h2 class="section-title reveal">The Architecture.</h2>
+        <div class="services-grid">
+            <div class="service-card reveal">
+                <i data-lucide="scissors" style="margin-bottom:20px;"></i>
+                <h3>Precision Fade</h3>
+                <p>High-tech taper using carbon-fiber blades for a seamless transition.</p>
+            </div>
+            <div class="service-card reveal">
+                <i data-lucide="droplet" style="margin-bottom:20px;"></i>
+                <h3>Steam Ritual</h3>
+                <p>Ozone steam and hot towel treatment followed by a straight-razor finish.</p>
+            </div>
+            <div class="service-card reveal">
+                <i data-lucide="zap" style="margin-bottom:20px;"></i>
+                <h3>The Full OS</h3>
+                <p>Haircut, beard sculpt, and charcoal mask facial reset.</p>
+            </div>
         </div>
     </section>
 
-    <footer style="padding: 50px 5%; border-top: 1px solid var(--border); text-align: center;">
-        <p>© 2026 GENTRY OPERATING SYSTEM. ENGINEERED FOR STYLE.</p>
+    <section style="background: #fdfdfd;">
+        <h2 class="section-title reveal">System Credits.</h2>
+        <div style="max-width: 800px;">
+            <div class="price-row reveal"><span>Signature Architecture (Cut)</span><b>£35.00</b></div>
+            <div class="price-row reveal"><span>Beard Alignment</span><b>£20.00</b></div>
+            <div class="price-row reveal"><span>The Gentry Ritual (Full)</span><b>£50.00</b></div>
+            <div class="price-row reveal"><span>Under 16 Logic</span><b>£25.00</b></div>
+        </div>
+    </section>
+
+    <section>
+        <div style="position:relative; height:500px; border-radius:30px; overflow:hidden;" class="reveal">
+            <div style="position:absolute; width:100%; height:100%; background:url('https://images.unsplash.com/photo-1512690118275-39a9c76d0bf3?auto=format&fit=crop&w=1500') center/cover;"></div>
+            <div id="ba-slider" style="position:absolute; width:50%; height:100%; background:url('https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&w=1500') center/cover; border-right: 4px solid var(--accent-red);"></div>
+            <div style="position:absolute; bottom:20px; left:20px; background:black; color:white; padding:10px 20px; border-radius:50px;">SLIDE TO COMPARE</div>
+        </div>
+    </section>
+
+    <section id="apothecary">
+        <h2 class="section-title reveal">The Apothecary.</h2>
+        <div class="services-grid">
+            <div class="service-card reveal" style="text-align:center;">
+                <div style="height:150px; background:var(--soft-red); margin-bottom:20px; border-radius:20px; display:flex; align-items:center; justify-content:center;"><i data-lucide="container" size="48"></i></div>
+                <h4>V.01 Matte Fiber</h4><p>£22.00</p>
+            </div>
+            <div class="service-card reveal" style="text-align:center;">
+                <div style="height:150px; background:var(--soft-red); margin-bottom:20px; border-radius:20px; display:flex; align-items:center; justify-content:center;"><i data-lucide="flask-conical" size="48"></i></div>
+                <h4>V.02 Tonic Oil</h4><p>£18.00</p>
+            </div>
+            <div class="service-card reveal" style="text-align:center;">
+                <div style="height:150px; background:var(--soft-red); margin-bottom:20px; border-radius:20px; display:flex; align-items:center; justify-content:center;"><i data-lucide="pipette" size="48"></i></div>
+                <h4>V.03 Growth Serum</h4><p>£30.00</p>
+            </div>
+            <div class="service-card reveal" style="text-align:center;">
+                <div style="height:150px; background:var(--soft-red); margin-bottom:20px; border-radius:20px; display:flex; align-items:center; justify-content:center;"><i data-lucide="spray-can" size="48"></i></div>
+                <h4>V.04 Sea Salt</h4><p>£15.00</p>
+            </div>
+            <div class="service-card reveal" style="text-align:center;">
+                <div style="height:150px; background:var(--soft-red); margin-bottom:20px; border-radius:20px; display:flex; align-items:center; justify-content:center;"><i data-lucide="wind" size="48"></i></div>
+                <h4>V.05 Clay Pomade</h4><p>£20.00</p>
+            </div>
+            <div class="service-card reveal" style="text-align:center;">
+                <div style="height:150px; background:var(--soft-red); margin-bottom:20px; border-radius:20px; display:flex; align-items:center; justify-content:center;"><i data-lucide="waves" size="48"></i></div>
+                <h4>V.06 Texture Dust</h4><p>£14.00</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="artisans">
+        <h2 class="section-title reveal">The Artisans.</h2>
+        <div class="artisan-grid">
+            <div class="artisan-card reveal">
+                <div class="artisan-img"><i data-lucide="shield-check" size="40"></i></div>
+                <h3>Sinclair</h3>
+                <p>Master Craftsman</p>
+            </div>
+            <div class="artisan-card reveal">
+                <div class="artisan-img"><i data-lucide="award" size="40"></i></div>
+                <h3>Rossi</h3>
+                <p>Senior Barber</p>
+            </div>
+            <div class="artisan-card reveal">
+                <div class="artisan-img"><i data-lucide="cpu" size="40"></i></div>
+                <h3>V-01 (AI)</h3>
+                <p>Style Consultant</p>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="gallery-grid reveal">
+            <div class="gallery-item" style="background: url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=800') center/cover;"></div>
+            <div class="gallery-item" style="background: url('https://images.unsplash.com/photo-1634449595522-d58638643808?auto=format&fit=crop&w=800') center/cover;"></div>
+            <div class="gallery-item" style="background: url('https://images.unsplash.com/photo-1593702275677-f916c8c79659?auto=format&fit=crop&w=800') center/cover;"></div>
+            <div class="gallery-item" style="background: url('https://images.unsplash.com/photo-1532710093739-9470acff878f?auto=format&fit=crop&w=800') center/cover;"></div>
+            <div class="gallery-item" style="background: url('https://images.unsplash.com/photo-1622286332618-f2802b9954c4?auto=format&fit=crop&w=800') center/cover;"></div>
+        </div>
+    </section>
+
+    <section style="background:#000; color:white;">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:50px;">
+            <div>
+                <h2 class="section-title">Log Files.</h2>
+                <div class="reveal" style="margin-bottom:30px;">
+                    <div style="color:var(--accent-red); margin-bottom:10px;"><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i></div>
+                    <p>"The highest precision fade in the city. The interface booking makes it so easy."</p>
+                    <small>- Marc K.</small>
+                </div>
+                <div class="reveal">
+                    <div style="color:var(--accent-red); margin-bottom:10px;"><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i></div>
+                    <p>"Techno-luxury. Sinclair knows exactly how to handle a straight razor."</p>
+                    <small>- Julian P.</small>
+                </div>
+            </div>
+            <div>
+                <h2 class="section-title">FAQs.</h2>
+                <div class="reveal" style="border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 10px;">
+                    <p><b>Parking availability?</b></p>
+                    <p style="opacity:0.6;">Validated parking at the terminal basement.</p>
+                </div>
+                <div class="reveal" style="border-bottom: 1px solid #333; padding-bottom: 10px;">
+                    <p><b>Late arrival policy?</b></p>
+                    <p style="opacity:0.6;">System allows 10-min buffer before cycle reset.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="studio">
+        <div class="contact-container">
+            <div class="reveal">
+                <h2 class="section-title">The Studio.</h2>
+                <p>12A SAVILE ROW, MAYFAIR, LONDON</p>
+                <div style="margin:20px 0;">
+                    <p><b>MON-FRI:</b> 09:00 - 21:00</p>
+                    <p><b>SAT-SUN:</b> 10:00 - 18:00</p>
+                </div>
+                <div style="display:flex; gap:10px;">
+                    <button class="btn-primary"><i data-lucide="message-square"></i> WhatsApp</button>
+                    <button class="btn-primary" style="background:#222;"><i data-lucide="map-pin"></i> Directions</button>
+                </div>
+            </div>
+            <div class="map-box reveal">
+                <div style="width:100%; height:100%; background:#222; display:flex; align-items:center; justify-content:center; color:white; font-size:0.7rem; letter-spacing:2px;">MAP_EMBED_ACTIVE_2026</div>
+            </div>
+        </div>
+    </section>
+
+    <footer style="padding: 50px 5%; border-top: 1px solid #eee; background: #fff;">
+        <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 40px;">
+            <div><b>Links</b><br><small>Services<br>Pricing<br>Gallery</small></div>
+            <div><b>Social</b><br><small>Instagram<br>TikTok<br>LinkedIn</small></div>
+            <div><b>Legal</b><br><small>Privacy<br>Terms</small></div>
+            <div style="text-align:right;"><button class="btn-primary">Scroll Up</button></div>
+        </div>
+        <p style="text-align:center; opacity:0.5; font-size:0.8rem;">© 2026 GENTRY OPERATING SYSTEM. ENGINEERED FOR STYLE.</p>
     </footer>
 
     <script>
@@ -303,34 +335,26 @@
             gsap.to(elem, {
                 scrollTrigger: {
                     trigger: elem,
-                    start: "top 85%",
+                    start: "top 90%",
                 },
                 opacity: 1,
                 y: 0,
-                duration: 1.2,
-                ease: "expo.out",
-                stagger: 0.1
+                duration: 1,
+                ease: "expo.out"
             });
         });
 
-        // B/A Slider Logic
-        const slider = document.getElementById('sliderHand');
-        document.querySelector('.ba-container').addEventListener('mousemove', (e) => {
+        // B/A Slider
+        const slider = document.getElementById('ba-slider');
+        slider.parentElement.addEventListener('mousemove', (e) => {
             let rect = e.currentTarget.getBoundingClientRect();
             let x = ((e.clientX - rect.left) / rect.width) * 100;
             slider.style.width = x + "%";
         });
 
-        // FAQ Toggle
-        document.querySelectorAll('.faq-item').forEach(item => {
-            item.addEventListener('click', () => {
-                item.classList.toggle('active');
-            });
-        });
-
-        // Mobile Menu Simulation
+        // Mobile Menu
         document.getElementById('menuToggle').addEventListener('click', () => {
-            alert("2026 Mobile UI Layer Activated: Navigation Stack unfolding...");
+            alert("GENTRY OS: Mobile Menu Overlay Initializing...");
         });
     </script>
 </body>
