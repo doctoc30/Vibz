@@ -1,1 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Elite Forge Barbershop — Hyper Elite Grooming 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --text: #e0e0e0;
+      --accent: #c8102e; /* light reddish */
+      --steel: #a9a9a9;
+      --dark-steel: #333;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Montserrat', sans-serif;
+      overflow-x: hidden;
+    }
+    h1, h2, h3 { font-family: 'Orbitron', sans-serif; font-weight: 900; }
+    .container { max-width: 1400px; margin: 0 auto; padding: 0 20px; }
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      background: rgba(10,10,10,0.8);
+      backdrop-filter: blur(10px);
+      padding: 20px 0;
+    }
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo { font-size: 2rem; color: var(--accent); letter-spacing: 5px; }
+    .nav-links { display: flex; gap: 30px; }
+    .nav-links a { color: var(--text); text-decoration: none; font-weight: 600; transition: color 0.3s; }
+    .nav-links a:hover { color: var(--accent); }
+    .hamburger { display: none; cursor: pointer; font-size: 2rem; color: var(--accent); }
+    @media (max-width: 768px) {
+      .nav-links { display: none; flex-direction: column; position: absolute; top: 80px; left: 0; right: 0; background: var(--bg); padding: 20px; gap: 20px; }
+      .nav-links.active { display: flex; }
+      .hamburger { display: block; }
+    }
+    #hero {
+      height: 100vh;
+      background: url('https://picsum.photos/1920/1080?blur&grayscale') center/cover no-repeat fixed; /* Placeholder dark luxury storefront - replace with better */
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    #hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(10,10,10,0.6), rgba(200,16,46,0.2));
+    }
+    .hero-content { position: relative; z-index: 2; }
+    .hero-content h1 { font-size: 6rem; margin-bottom: 20px; text-shadow: 0 0 30px var(--accent); }
+    .hero-content p { font-size: 1.8rem; margin-bottom: 40px; }
+    .btn { background: var(--accent); color: white; padding: 15px 40px; border: none; font-size: 1.2rem; cursor: pointer; transition: all 0.3s; border-radius: 0; box-shadow: 0 0 20px rgba(200,16,46,0.5); }
+    .btn:hover { transform: scale(1.05); box-shadow: 0 0 40px var(--accent); }
+    section { padding: 100px 0; }
+    .section-title { text-align: center; font-size: 4rem; margin-bottom: 60px; color: var(--steel); letter-spacing: 10px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; }
+    .card {
+      background: linear-gradient(135deg, #111, #1a1a1a);
+      padding: 30px;
+      border: 1px solid var(--dark-steel);
+      transition: all 0.5s;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: -50%; left: -50%; width: 200%; height: 200%;
+      background: radial-gradient(circle, rgba(200,16,46,0.1) 0%, transparent 70%);
+      transition: all 0.8s;
+    }
+    .card:hover::before { transform: scale(1.2); }
+    .card:hover { transform: translateY(-10px); border-color: var(--accent); }
+    .services-grid { grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); }
+    .funky-grid { grid-template-columns: repeat(3, 1fr); grid-auto-rows: 300px; grid-auto-flow: dense; }
+    .funky-grid .card:nth-child(odd) { grid-row: span 2; }
+    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 10px; }
+    .gallery-grid img { width: 100%; height: 300px; object-fit: cover; filter: grayscale(80%); transition: 0.5s; }
+    .gallery-grid img:hover { filter: grayscale(0%); transform: scale(1.05); }
+    .before-after { position: relative; height: 500px; overflow: hidden; }
+    .before-after img { position: absolute; width: 100%; height: 100%; object-fit: cover; }
+    .after { clip-path: inset(0 50% 0 0); }
+    .slider-handle { position: absolute; top: 0; bottom: 0; width: 4px; background: var(--accent); left: 50%; cursor: ew-resize; }
+    .reviews { text-align: center; }
+    .stars { color: var(--accent); font-size: 2rem; }
+    .faq details { margin-bottom: 20px; background: #111; padding: 20px; border: 1px solid var(--dark-steel); }
+    .faq summary { cursor: pointer; font-size: 1.5rem; color: var(--accent); }
+    footer { background: #000; padding: 60px 0 20px; text-align: center; border-top: 1px solid var(--dark-steel); }
+    .cta-mid { text-align: center; padding: 150px 0; background: linear-gradient(to right, #000, #111); }
+    .cta-mid h2 { font-size: 5rem; margin-bottom: 40px; }
+    .divider { height: 2px; background: linear-gradient(to right, transparent, var(--steel), transparent); margin: 80px 0; }
+  </style>
+</head>
+<body>
 
+<header>
+  <nav class="container">
+    <div class="logo">ELITE FORGE</div>
+    <div class="nav-links">
+      <a href="#services">Services</a>
+      <a href="#gallery">The Gallery</a>
+      <a href="#artisans">The Artisans</a>
+      <a href="#philosophy">The Philosophy</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <div class="hamburger"><i class="fas fa-bars"></i></div>
+  </nav>
+</header>
+
+<section id="hero">
+  <div class="hero-content" data-aos="fade-up" data-aos-duration="1500">
+    <h1>THE FORGE</h1>
+    <p>Hyper-Elite Grooming • Techno-Craft Mastery • 2026</p>
+    <button class="btn">Reserve Your Session</button>
+  </div>
+</section>
+
+<section class="booking" style="margin-top: -100px; position: relative; z-index: 10;">
+  <div class="container">
+    <form class="card" data-aos="zoom-in">
+      <h2>Book Now</h2>
+      <input type="text" placeholder="Name" required style="width:100%; padding:15px; margin:10px 0; background:#111; border:1px solid var(--steel); color:white;">
+      <input type="email" placeholder="Email" required style="width:100%; padding:15px; margin:10px 0; background:#111; border:1px solid var(--steel); color:white;">
+      <select style="width:100%; padding:15px; margin:10px 0; background:#111; border:1px solid var(--steel); color:white;">
+        <option>Select Service</option>
+        <option>Signature Fade + Beard Sculpt</option>
+        <option>Executive Hot Towel Shave</option>
+        <option>Full Groom Protocol</option>
+      </select>
+      <input type="date" style="width:100%; padding:15px; margin:10px 0; background:#111; border:1px solid var(--steel); color:white;">
+      <button type="submit" class="btn">Secure Slot</button>
+    </form>
+  </div>
+</section>
+
+<section id="services">
+  <div class="container">
+    <h2 class="section-title" data-aos="fade-down">Services</h2>
+    <div class="grid services-grid">
+      <div class="card" data-aos="fade-right">
+        <h3>Signature Fade</h3>
+        <p>Precision zero-blend with holographic edge detection.</p>
+      </div>
+      <div class="card" data-aos="fade-up">
+        <h3>Beard Forge</h3>
+        <p>Damascus-level sculpting and oil infusion.</p>
+      </div>
+      <div class="card" data-aos="fade-left">
+        <h3>Hot Towel Ritual</h3>
+        <p>Steam-activated recovery sequence.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section id="gallery">
+  <div class="container">
+    <h2 class="section-title" data-aos="zoom-in">The Gallery</h2>
+    <div class="gallery-grid">
+      <img src="https://picsum.photos/400/300?random=1&grayscale" alt="Gallery 1" data-aos="fade-up">
+      <img src="https://picsum.photos/400/300?random=2&grayscale" alt="Gallery 2" data-aos="fade-up" data-aos-delay="200">
+      <img src="https://picsum.photos/400/300?random=3&grayscale" alt="Gallery 3" data-aos="fade-up" data-aos-delay="400">
+      <!-- Add more as needed -->
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <h2 class="section-title" data-aos="fade-down">Before & After</h2>
+    <div class="before-after" data-aos="flip-left">
+      <img class="before" src="https://picsum.photos/800/500?blur&random=4" alt="Before">
+      <img class="after" src="https://picsum.photos/800/500?random=5" alt="After">
+      <div class="slider-handle"></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section id="artisans">
+  <div class="container">
+    <h2 class="section-title" data-aos="fade-up">The Artisans</h2>
+    <div class="grid funky-grid">
+      <div class="card"><h3>Master Blade</h3><p>15+ years in precision forging.</p></div>
+      <div class="card"><h3>Edge Architect</h3><p>HUD-assisted line work specialist.</p></div>
+      <div class="card"><h3>Texture Alchemist</h3><p>Leather & steel inspired finishes.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="products">
+  <div class="container">
+    <h2 class="section-title" data-aos="fade-down">Products</h2>
+    <div class="grid">
+      <div class="card" data-aos="zoom-in"><h3>Obsidian Pomade</h3><p>Matte hold with steel shine.</p></div>
+      <div class="card" data-aos="zoom-in" data-aos-delay="100"><h3>Damascus Oil</h3><p>Layered scent profile.</p></div>
+      <div class="card" data-aos="zoom-in" data-aos-delay="200"><h3>Perforated Comb</h3><p>Airflow optimized.</p></div>
+      <div class="card" data-aos="zoom-in" data-aos-delay="300"><h3>Razor Honer</h3><p>Ceramic edge maintainer.</p></div>
+      <div class="card" data-aos="zoom-in" data-aos-delay="400"><h3>Leather Balm</h3><p>Skin recovery protocol.</p></div>
+      <div class="card" data-aos="zoom-in" data-aos-delay="500"><h3>Steel Brush</h3><p>Anti-static grooming.</p></div>
+    </div>
+  </div>
+</section>
+
+<div class="cta-mid" data-aos="fade-up">
+  <div class="container">
+    <h2>ELEVATE YOUR CRAFT</h2>
+    <button class="btn">Initiate Protocol</button>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<section id="philosophy">
+  <div class="container">
+    <h2 class="section-title" data-aos="fade-down">The Philosophy</h2>
+    <p style="text-align:center; font-size:1.5rem; max-width:800px; margin:0 auto;">High-Tech meets High-Craft: Where brushed steel precision fuses with the artistry of perforated leather textures and macro grooming mastery. No compromise. Only elevation.</p>
+  </div>
+</section>
+
+<section id="opening">
+  <div class="container">
+    <h2 class="section-title" data-aos="fade-up">Opening Hours</h2>
+    <div class="card" style="max-width:600px; margin:auto;">
+      <p>Monday - Friday: 10:00 - 20:00</p>
+      <p>Saturday: 09:00 - 18:00</p>
+      <p>Sunday: Closed</p>
+    </div>
+  </div>
+</section>
+
+<section id="location">
+  <div class="container">
+    <h2 class="section-title" data-aos="fade-down">Location</h2>
+    <div style="text-align:center;">
+      <p>Elite Forge Barbershop, Obsidian District, London</p>
+      <p><a href="tel:+442012345678" class="btn" style="margin:10px;"><i class="fas fa-phone"></i> Call Now</a></p>
+      <p><a href="https://wa.me/442012345678" class="btn" style="margin:10px; background:#25D366;"><i class="fab fa-whatsapp"></i> WhatsApp</a></p>
+    </div>
+    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2483.456!2d-0.127!3d51.507!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNTHCsDMwJzI1LjIiTiAwwrAwNyczNy4yIlc!5e0!3m2!1sen!2suk!4v1690000000000" width="100%" height="400" style="border:0; margin-top:40px;" allowfullscreen="" loading="lazy"></iframe>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="container">
+    <h2 class="section-title" data-aos="zoom-in">Contact</h2>
+    <form class="card" style="max-width:600px; margin:auto;">
+      <input type="text" placeholder="Name" required>
+      <input type="email" placeholder="Email" required>
+      <textarea placeholder="Message" rows="5" required style="width:100%; padding:15px; background:#111; border:1px solid var(--steel); color:white;"></textarea>
+      <button type="submit" class="btn">Transmit</button>
+    </form>
+  </div>
+</section>
+
+<section id="reviews">
+  <div class="container">
+    <h2 class="section-title" data-aos="fade-up">Reviews</h2>
+    <div class="grid">
+      <div class="card">
+        <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+        <p>"Ultimate fusion of tech and craft. 10/10 protocol."</p>
+      </div>
+      <!-- Add more -->
+    </div>
+  </div>
+</section>
+
+<section class="faq">
+  <div class="container">
+    <h2 class="section-title" data-aos="fade-down">FAQ</h2>
+    <div class="faq">
+      <details data-aos="fade-right">
+        <summary>What is the cancellation policy?</summary>
+        <p>24-hour notice required for full refund credit.</p>
+      </details>
+      <details data-aos="fade-left" data-aos-delay="200">
+        <summary>Do you offer virtual consultations?</summary>
+        <p>Yes, via holographic HUD interface.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div style="display:flex; justify-content:space-around; flex-wrap:wrap; gap:20px;">
+      <div><h4>Quick Links</h4><a href="#services">Services</a><br><a href="#gallery">Gallery</a></div>
+      <div><h4>Contact</h4><p>eliteforge@hyperelite.com</p></div>
+      <div><h4>Follow Protocol</h4><i class="fab fa-x-twitter"></i> <i class="fab fa-instagram"></i></div>
+    </div>
+    <p style="margin-top:40px;">&copy; 2026 Elite Forge Barbershop. All rights forged.</p>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script>
+  AOS.init({ duration: 1200, once: true });
+
+  // Hamburger
+  document.querySelector('.hamburger').addEventListener('click', () => {
+    document.querySelector('.nav-links').classList.toggle('active');
+  });
+
+  // Simple before-after slider (drag handle)
+  const handle = document.querySelector('.slider-handle');
+  if (handle) {
+    let isDragging = false;
+    handle.addEventListener('mousedown', () => isDragging = true);
+    document.addEventListener('mouseup', () => isDragging = false);
+    document.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      const rect = document.querySelector('.before-after').getBoundingClientRect();
+      let x = e.clientX - rect.left;
+      if (x < 0) x = 0;
+      if (x > rect.width) x = rect.width;
+      document.querySelector('.after').style.clipPath = `inset(0 ${rect.width - x}px 0 0)`;
+      handle.style.left = `${x}px`;
+    });
+  }
+</script>
+</body>
+</html>
