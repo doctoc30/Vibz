@@ -3,244 +3,192 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AETHER & IRON | MOBILE TERMINAL</title>
+    <title>AETHER & IRON | MASTER TERMINAL</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;900&display=swap" rel="stylesheet">
     <style>
         :root {
             --brand-cream: #d2cdc2;
             --obsidian: #0a0a0a;
             --steel: #1a1a1b;
-            --accent: #ffffff;
-            --glass: rgba(210, 205, 194, 0.1);
+            --font-main: 'Inter', sans-serif;
+            --font-bold: 'Archivo Black', sans-serif;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: var(--obsidian); color: var(--brand-cream); font-family: var(--font-main); overflow-x: hidden; }
 
-        body { 
-            background-color: var(--obsidian); 
-            color: var(--brand-cream); 
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
+        /* --- INTRO SLIDER ANIMATION --- */
+        #intro-slider {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--brand-cream); z-index: 9999;
+            display: flex; align-items: center; justify-content: center;
+            transition: transform 1s cubic-bezier(0.8, 0, 0.2, 1);
         }
+        #intro-slider.open { transform: translateY(-100%); }
+        .intro-text { color: var(--obsidian); font-family: var(--font-bold); font-size: 2rem; letter-spacing: -2px; }
 
-        /* --- NATIVE APP HUD NAVIGATION --- */
+        /* --- NAVIGATION --- */
         nav {
             position: fixed; top: 0; width: 100%; z-index: 1000;
-            padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;
-            background: rgba(10, 10, 10, 0.8); backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(210, 205, 194, 0.2);
+            padding: 20px; display: flex; justify-content: space-between; align-items: center;
+            background: linear-gradient(to bottom, var(--obsidian), transparent);
         }
+        .logo { font-family: var(--font-bold); font-size: 1.5rem; letter-spacing: -1px; }
 
-        .logo-box { border: 1px solid var(--brand-cream); padding: 2px 10px; font-weight: 900; letter-spacing: 2px; }
-
-        /* --- FULL WIDTH HERO SECTION --- */
+        /* --- HERO SECTION --- */
         .hero {
-            width: 100vw;
-            height: 70vh;
-            background: linear-gradient(rgba(0,0,0,0.4), var(--obsidian)), 
-                        url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80') center/cover;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            padding: 0 0 40px 20px;
+            width: 100vw; height: 85vh;
+            background: linear-gradient(rgba(0,0,0,0.3), var(--obsidian)), 
+                        url('https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-36-image1.jpg') center/cover no-repeat;
+            display: flex; flex-direction: column; justify-content: flex-end; padding: 40px 20px;
         }
+        .hero h1 { font-family: var(--font-bold); font-size: 5rem; line-height: 0.8; letter-spacing: -4px; text-transform: uppercase; }
 
-        .hero h1 { 
-            font-size: clamp(3rem, 15vw, 5rem); 
-            text-transform: uppercase; 
-            line-height: 0.85; 
-            letter-spacing: -3px;
-            font-weight: 900;
-        }
-
-        /* --- FULL WIDTH BOOKING INTERFACE --- */
+        /* --- BOOKING FORM (Full Width) --- */
         .booking-terminal {
-            width: 100vw;
-            background: var(--brand-cream);
-            color: var(--obsidian);
-            padding: 30px 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            border-bottom: 8px solid var(--steel);
+            width: 100vw; background: var(--brand-cream); color: var(--obsidian);
+            padding: 40px 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
-
-        .booking-terminal h2 { font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase; opacity: 0.6; }
-
+        .booking-terminal h2 { font-family: var(--font-bold); text-transform: uppercase; font-size: 1.2rem; margin-bottom: 20px; }
         .drop-list {
-            width: 100%;
-            background: transparent;
-            border: none;
-            border-bottom: 2px solid var(--obsidian);
-            padding: 15px 0;
-            font-size: 1.1rem;
-            font-weight: 700;
-            appearance: none;
-            border-radius: 0;
+            width: 100%; background: transparent; border: none; border-bottom: 3px solid var(--obsidian);
+            padding: 15px 0; font-size: 1.2rem; font-weight: 900; appearance: none; margin-bottom: 20px;
         }
 
-        /* --- SERVICES & PRICE LIST --- */
-        .section-header { padding: 40px 20px 10px; font-size: 0.65rem; letter-spacing: 5px; text-transform: uppercase; color: var(--brand-cream); opacity: 0.5; }
+        /* --- GALLERY SECTIONS --- */
+        .gallery-container { padding: 40px 10px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .gal-item { height: 250px; background: var(--steel); border: 1px solid rgba(210,205,194,0.1); overflow: hidden; }
+        .gal-item.wide { grid-column: span 2; height: 350px; }
+        .gal-item img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); transition: 0.5s; }
+        .gal-item:hover img { filter: grayscale(0); transform: scale(1.1); }
 
-        .service-card {
-            margin: 0 20px 15px;
-            background: var(--steel);
-            border: 1px solid rgba(210, 205, 194, 0.1);
-            padding: 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: 0.3s;
+        /* --- POPUP SCROLL ANIMATION --- */
+        .reveal { opacity: 0; transform: translateY(50px) scale(0.95); transition: all 0.8s cubic-bezier(0.17, 0.67, 0.83, 0.67); }
+        .reveal.active { opacity: 1; transform: translateY(0) scale(1); }
+
+        /* --- SERVICES BLOCK --- */
+        .service-row { 
+            padding: 30px 20px; border-bottom: 1px solid rgba(210,205,194,0.2);
+            display: flex; justify-content: space-between; align-items: flex-end;
         }
+        .service-name { font-family: var(--font-bold); font-size: 1.5rem; text-transform: uppercase; }
 
-        .price { font-weight: 900; font-size: 1.2rem; }
+        /* --- FOOTER & SOCIALS --- */
+        footer { background: #050505; padding: 60px 20px; text-align: center; }
+        .social-links { display: flex; justify-content: center; gap: 30px; margin: 40px 0; font-size: 1.5rem; }
+        .social-links a { color: var(--brand-cream); text-decoration: none; }
 
-        /* --- PRODUCT GRID (6 DISPLAYS) --- */
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1px;
-            background: rgba(210, 205, 194, 0.2);
-            border: 1px solid rgba(210, 205, 194, 0.2);
+        /* --- FAB ACTION BAR --- */
+        .fab-bar {
+            position: fixed; bottom: 0; width: 100%; display: grid; grid-template-columns: 1fr 1fr;
+            z-index: 1001;
         }
-
-        .product-item {
-            background: var(--obsidian);
-            padding: 40px 20px;
-            text-align: center;
-        }
-
-        .product-item i { font-size: 1.5rem; margin-bottom: 15px; opacity: 0.8; }
-
-        /* --- BARBER STATS (Techno Style) --- */
-        .artisan-scroll {
-            display: flex;
-            overflow-x: auto;
-            padding: 20px;
-            gap: 15px;
-            scrollbar-width: none;
-        }
-
-        .artisan-card {
-            min-width: 85vw;
-            background: linear-gradient(135deg, #1a1a1b 0%, #000 100%);
-            border: 1px solid var(--brand-cream);
-            padding: 30px;
-            position: relative;
-        }
-
-        .stat-bar { height: 2px; width: 100%; background: #333; margin-top: 10px; }
-        .stat-fill { height: 100%; background: var(--brand-cream); width: 95%; }
-
-        /* --- FLOATING ACTIONS --- */
-        .action-bar {
-            position: fixed; bottom: 20px; left: 20px; right: 20px;
-            display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
-            z-index: 1000;
-        }
-
-        .btn {
-            padding: 18px; border: none; font-weight: 900; text-transform: uppercase;
-            font-size: 0.7rem; letter-spacing: 2px; text-align: center; text-decoration: none;
-        }
-
-        .btn-call { background: var(--brand-cream); color: var(--obsidian); }
-        .btn-wa { background: #25D366; color: white; }
-
-        /* Animations */
-        .reveal { animation: slideUp 0.8s forwards; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .fab-btn { padding: 20px; border: none; font-family: var(--font-bold); text-transform: uppercase; font-size: 0.8rem; text-align: center; }
+        .btn-black { background: var(--obsidian); color: var(--brand-cream); }
+        .btn-cream { background: var(--brand-cream); color: var(--obsidian); }
 
     </style>
 </head>
 <body>
 
-    <nav>
-        <div class="logo-box">AETHER & IRON</div>
-        <div class="hamburger" id="navTrigger">
-            <span style="display:block; width:25px; height:2px; background:var(--brand-cream); margin-bottom:5px;"></span>
-            <span style="display:block; width:15px; height:2px; background:var(--brand-cream);"></span>
-        </div>
-    </nav>
-
-    <div class="hero">
-        <p style="letter-spacing: 8px; font-size: 0.6rem; margin-bottom: 10px;">SECTOR: LONDON / 2026</p>
-        <h1>THE<br>ARTISANS</h1>
+    <div id="intro-slider">
+        <div class="intro-text">AETHER & IRON</div>
     </div>
 
-    <section class="booking-terminal">
+    <nav>
+        <div class="logo">A&I</div>
+        <div class="hamburger"><i class="fas fa-bars"></i></div>
+    </nav>
+
+    <section class="hero">
+        <p style="letter-spacing: 5px; font-weight: 900; margin-bottom: 10px; font-size: 0.7rem;">ESTABLISHED 2024</p>
+        <h1>SHARP<br>CULTURE.</h1>
+    </section>
+
+    <section class="booking-terminal reveal">
         <h2>Initiate Protocol</h2>
         <select class="drop-list">
             <option>SELECT OPERATIVE</option>
-            <option>MAXIMUS (MASTER)</option>
-            <option>KANE (PRECISION)</option>
+            <option>V. VOLKOV</option>
+            <option>D. STEEL</option>
         </select>
         <select class="drop-list">
-            <option>SELECT SERVICE</option>
+            <option>SELECT PROTOCOL</option>
             <option>THE IRON CUT — $45</option>
-            <option>AETHER RITUAL — $75</option>
+            <option>AETHER FULL — $75</option>
         </select>
-        <button class="btn btn-call" style="margin-top:10px; width: 100%;">AUTHENTICATE SESSION</button>
+        <button class="fab-btn btn-black" style="width:100%; border: 2px solid var(--obsidian);">SECURE SLOT</button>
     </section>
 
-    <div class="section-header">01 // THE GALLERY</div>
-    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 5px; padding: 0 5px;">
-        <div style="height: 300px; background: var(--steel);"></div>
-        <div style="display: grid; gap: 5px;">
-            <div style="background: var(--brand-cream);"></div>
-            <div style="background: #333;"></div>
+    <div style="padding: 60px 20px 0;"><h3 style="font-family: var(--font-bold); letter-spacing: 4px;">THE ARCHIVE 01</h3></div>
+    <section class="gallery-container reveal">
+        <div class="gal-item"><img src="https://images.unsplash.com/photo-1599351431247-f57949ad77cd?auto=format&fit=crop&q=80" alt="Detail"></div>
+        <div class="gal-item"><img src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&q=80" alt="Detail"></div>
+        <div class="gal-item wide"><img src="[attachment_0](attachment)" alt="Products"></div>
+    </section>
+
+    <section class="reveal" style="background: var(--steel); margin: 40px 0;">
+        <div class="service-row">
+            <div class="service-name">FADE & TAPER</div>
+            <div style="font-weight: 900;">$45</div>
         </div>
-    </div>
-
-    <div class="section-header">02 // SERVICES</div>
-    <div class="service-card">
-        <div><strong>SIGNATURE CUT</strong><br><small>30 MINS</small></div>
-        <div class="price">$45</div>
-    </div>
-    <div class="service-card">
-        <div><strong>BEARD SCULPT</strong><br><small>20 MINS</small></div>
-        <div class="price">$30</div>
-    </div>
-
-    <div class="section-header">03 // INDUSTRIAL GOODS</div>
-    <div class="product-grid">
-        <div class="product-item"><i class="fas fa-biohazard"></i><br><small>POMADE</small></div>
-        <div class="product-item"><i class="fas fa-flask"></i><br><small>OIL</small></div>
-        <div class="product-item"><i class="fas fa-compass"></i><br><small>CLAY</small></div>
-        <div class="product-item"><i class="fas fa-shield-virus"></i><br><small>TONIC</small></div>
-        <div class="product-item"><i class="fas fa-dna"></i><br><small>WASH</small></div>
-        <div class="product-item"><i class="fas fa-atom"></i><br><small>SPRAY</small></div>
-    </div>
-
-    <div class="section-header">04 // THE ARTISANS</div>
-    <div class="artisan-scroll">
-        <div class="artisan-card">
-            <h3>MAXIMUS</h3>
-            <p style="font-size: 0.7rem; opacity: 0.6;">LEAD ARCHITECT</p>
-            <div class="stat-bar"><div class="stat-fill"></div></div>
-            <p style="font-size: 0.5rem; margin-top: 5px;">PRECISION RATING: 98.4%</p>
+        <div class="service-row">
+            <div class="service-name">BEARD SCULPT</div>
+            <div style="font-weight: 900;">$35</div>
         </div>
-        <div class="artisan-card">
-            <h3>KANE</h3>
-            <p style="font-size: 0.7rem; opacity: 0.6;">BLADE SPECIALIST</p>
-            <div class="stat-bar"><div class="stat-fill" style="width: 92%;"></div></div>
-            <p style="font-size: 0.5rem; margin-top: 5px;">PRECISION RATING: 92.1%</p>
+        <div class="service-row">
+            <div class="service-name">THE RITUAL</div>
+            <div style="font-weight: 900;">$90</div>
         </div>
-    </div>
+    </section>
 
-    <div class="section-header">05 // TERMINAL LOCATOR</div>
-    <div style="padding: 20px; background: var(--steel); margin: 20px; border-radius: 4px;">
-        <p><strong>ADDRESS:</strong> 88 BEREESFORD ST, SECTOR 4</p>
-        <p style="margin-top: 10px; font-size: 0.8rem; opacity: 0.7;">MON-FRI: 0900 — 2000<br>SAT-SUN: 1000 — 1800</p>
-        <div style="height: 150px; background: #000; margin-top: 15px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--brand-cream);">
-            MAP_SIGNAL_OFFLINE
+    <div style="padding: 20px 20px 0; text-align: right;"><h3 style="font-family: var(--font-bold); letter-spacing: 4px;">THE ARCHIVE 02</h3></div>
+    <section class="gallery-container reveal">
+        <div class="gal-item wide" style="height: 450px;"><img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&q=80" alt="Steel"></div>
+        <div class="gal-item"><img src="https://images.unsplash.com/photo-1512690196236-403487560e9a?auto=format&fit=crop&q=80" alt="Grip"></div>
+        <div class="gal-item"><img src="https://images.unsplash.com/photo-1622286332613-289568f56608?auto=format&fit=crop&q=80" alt="Chair"></div>
+    </section>
+
+    <footer>
+        <div class="logo" style="font-size: 3rem;">A&I</div>
+        <p style="margin-top: 20px; font-weight: 900; opacity: 0.5;">88 BERESFORD STREET, LONDON</p>
+        
+        <div class="social-links">
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-tiktok"></i></a>
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
         </div>
+
+        <div style="font-size: 0.7rem; opacity: 0.3; letter-spacing: 2px;">
+            TERMINAL VERSION 4.0.2<br>
+            &copy; 2026 AETHER & IRON
+        </div>
+    </footer>
+
+    <div class="fab-bar">
+        <a href="tel:000" class="fab-btn btn-black" style="text-decoration:none;">VOICE</a>
+        <a href="https://wa.me/000" class="fab-btn btn-cream" style="text-decoration:none;">MESSAGE</a>
     </div>
 
-    <div style="height: 120px;"></div> <div class="action-bar">
-        <a href="tel:000" class="btn btn-call">VOICE LINE</a>
-        <a href="https://wa.me/000" class="btn btn-wa">WHATSAPP</a>
-    </div>
+    <script>
+        // Intro Animation Trigger
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('intro-slider').classList.add('open');
+            }, 1500);
+        });
 
+        // Scroll Reveal Logic
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    </script>
 </body>
 </html>
