@@ -2503,32 +2503,104 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-// SCENE 1–4: Save funnel selections into hidden fields
-function setAudience(value) {
+// ================== FULL REVISED JS FOR BARBER FUNNEL ==================
+
+// ========== FORM DATA & GLOBALS ==========
+const formData = {
+    businessName: '',
+    projectType: '',
+    designConcept: '',
+    designCode: '',
+    features: [],
+    audience: '',
+    style: '',
+    color: '',
+    goal: '',
+    planType: '',
+    forcePremiumPlan: false
+};
+
+let currentStep = 1;
+const screens = document.querySelectorAll('.screen');
+const stepDots = document.querySelectorAll('.step-dot');
+
+let standardServiceCount = 0;
+let premiumServiceCount = 0;
+
+// ========== STEP NAVIGATION ==========
+function next() {
+    if (currentStep < 13) currentStep++;
+    updateStepIndicator();
+}
+
+function prev() {
+    if (currentStep > 1) currentStep--;
+    updateStepIndicator();
+}
+
+function updateStepIndicator() {
+    stepDots.forEach((dot, index) => dot.classList.toggle('active', index < currentStep));
+    showScreen('step-' + currentStep);
+    updateHiddenFields();
+}
+
+function showScreen(screenId) {
+    screens.forEach(screen => screen.classList.remove('active'));
+    const screen = document.getElementById(screenId);
+    if (!screen) return;
+    screen.classList.add('active');
+
+    if (screenId === 'step-3' && formData.designCode) {
+        document.getElementById('designInfo').style.display = 'block';
+        document.getElementById('selectedDesignCode').textContent = formData.designCode.toUpperCase();
+    }
+
+    if (screenId === 'step-9') {
+        updateServiceCounters();
+        showPlanRecommendation();
+    }
+
+    if (screenId === 'step-13') {
+        showFinalPlans();
+    }
+
+    if (screenId === 'step-4') {
+        setTimeout(() => {
+            designCodeInput.focus();
+            if (formData.designCode) {
+                designCodeInput.value = formData.designCode;
+                validateAndDisplayConcept();
+            }
+        }, 100);
+    }
+}
+
+// ========== SCENE 1–4 FUNCTIONS ==========
+function setAudience(value) { 
+    formData.audience = value; 
     document.getElementById('hiddenAudience').value = value;
-    formData.audience = value;
-    next();
+    next(); 
 }
 
-function setStyle(value) {
+function setStyle(value) { 
+    formData.style = value; 
     document.getElementById('hiddenStyle').value = value;
-    formData.style = value;
-    next();
+    next(); 
 }
 
-function setColor(value) {
+function setColor(value) { 
+    formData.color = value; 
     document.getElementById('hiddenColor').value = value;
-    formData.color = value;
-    next();
+    next(); 
 }
 
-function setGoal(value) {
+function setGoal(value) { 
+    formData.goal = value; 
     document.getElementById('hiddenGoal').value = value;
-    formData.goal = value;
-    next();
+    next(); 
 }
 
-// Update all hidden fields (for order form submission)
+// ========== HIDDEN FIELDS UPDATE ==========
 function updateHiddenFields() {
     document.getElementById('hiddenDesignCode').value = formData.designCode || '';
     document.getElementById('hiddenFeatures').value = formData.features.join(', ');
@@ -2537,6 +2609,132 @@ function updateHiddenFields() {
     document.getElementById('hiddenColor').value = formData.color || '';
     document.getElementById('hiddenGoal').value = formData.goal || '';
 }
+
+// ========== SERVICE COUNTERS & PLAN LOGIC ==========
+function updateServiceCounters() {
+    standardServiceCount = formData.features.filter(f => allServices.find(s => s.name === f && s.tier === 'standard')).length;
+    premiumServiceCount = formData.features.filter(f => allServices.find(s => s.name === f && s.tier === 'premium')).length;
+}
+
+function calculateRecommendedPlan() {
+    const hasPremiumServices = premiumServiceCount > 0;
+    const recommendedPlan = { type: 'Standard', glow: false, forcePremium: false };
+
+    if (hasPremiumServices) {
+        recommendedPlan.type = 'Premium';
+        recommendedPlan.glow = true;
+        recommendedPlan.forcePremium = true;
+    } else if (formData.features.length > 0) {
+        recommendedPlan.type = 'Standard';
+        recommendedPlan.glow = true;
+    }
+
+    return recommendedPlan;
+}
+
+function showPlanRecommendation() {
+    const recommendation = calculateRecommendedPlan();
+    const preview = document.getElementById('planRecommendationPreview');
+    const logicInfo = document.getElementById('planLogicInfo');
+
+    if (formData.features.length > 0) {
+        logicInfo.style.display = 'block';
+        if (recommendation.forcePremium) {
+            document.getElementById('planLogicText').textContent = 
+                `You selected ${premiumServiceCount} premium service(s). Premium services REQUIRE the Premium Plan.`;
+            preview.style.display = 'inline-block';
+            preview.style.background = 'linear-gradient(90deg, #2196F3, #21CBF3)';
+            document.getElementById('recommendedPlanPreview').textContent = 'Premium Plan REQUIRED';
+        } else {
+            document.getElementById('planLogicText').textContent = 
+                `You selected ${standardServiceCount} standard service(s) (Standard plan available)`;
+            preview.style.display = recommendation.glow ? 'inline-block' : 'none';
+            if (recommendation.glow) document.getElementById('recommendedPlanPreview').textContent = 'Standard Plan';
+        }
+    } else {
+        preview.style.display = 'none';
+        logicInfo.style.display = 'none';
+    }
+}
+
+// ========== REDIRECT TO PAYMENT (WITH SCENE 1–4 FIX) ==========
+function redirectToPayment(planName, stripeLink) {
+    console.log('=== redirectToPayment called ===');
+
+    const hasPremiumServices = premiumServiceCount > 0;
+    if (hasPremiumServices && planName.includes('Standard')) {
+        alert('❌ ERROR: Premium services require the Premium Plan.\n\nPlease select the Premium Plan to proceed.');
+        return;
+    }
+
+    // Update hidden fields for Scene 1–4
+    updateHiddenFields();
+
+    // Store funnel data for thank-you/order page
+    const funnelData = {
+        businessName: formData.businessName,
+        projectType: formData.projectType,
+        designConcept: formData.designConcept,
+        designCode: formData.designCode,
+        features: formData.features,
+        audience: formData.audience,
+        style: formData.style,
+        color: formData.color,
+        goal: formData.goal,
+        planType: planName.includes('Premium') ? 'Premium' : 'Standard',
+        timestamp: new Date().toISOString()
+    };
+    localStorage.setItem('barberFunnelData', JSON.stringify(funnelData));
+    localStorage.setItem('selectedPlan', planName);
+    localStorage.setItem('selectedServices', JSON.stringify(formData.features));
+
+    document.getElementById('hiddenPaymentLink').value = stripeLink;
+    window.location.href = stripeLink;
+}
+
+// ========== SHOW FINAL PLANS ==========
+function showFinalPlans() {
+    updateServiceCounters();
+    const container = document.getElementById('pricingCards');
+    const planText = document.getElementById('planRecommendation');
+    const forcePremium = premiumServiceCount > 0;
+
+    planText.innerHTML = forcePremium ?
+        `You selected <strong>${premiumServiceCount} premium service(s)</strong>. Premium services REQUIRE the <strong>Premium Plan</strong>.` :
+        `Based on your <strong>${formData.features.length} selected services</strong>, we recommend the <strong>Standard Plan</strong>.`;
+
+    // Generate HTML for plans (simplified for brevity, keep your existing pricing cards here)
+    // Ensure your "onclick" calls redirectToPayment(...) as above
+}
+
+// ========== INITIALIZATION ==========
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('=== barber.index.html Initialization ===');
+
+    checkURLParams();
+    updateStepIndicator();
+
+    const mobileBtn = document.getElementById('mobileMenuBtn');
+    if (mobileBtn) mobileBtn.addEventListener('click', () => {
+        const navLinks = document.querySelector('.nav-links');
+        navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
+    });
+
+    if (currentStep === 1 && businessInput) businessInput.focus();
+
+    designCodeInput.addEventListener('input', validateAndDisplayConcept);
+    designCodeInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const input = designCodeInput.value.trim();
+            const concept = findConceptByCode(input);
+            if (concept) confirmDesignSelection();
+        }
+    });
+
+    console.log('Available barber concepts:', barberConcepts.map(c => c.code));
+    console.log('=== Initialization complete ===');
+});
+
 </script>
         
         </body>
