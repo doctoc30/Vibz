@@ -1,1 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURUM | Hyper-Elite Terminal 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Outfit:wght@300;400;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --sky: #87CEEB;
+            --platinum: #E5E4E2;
+            --black: #080808;
+            --white: #ffffff;
+            --glass: rgba(255, 255, 255, 0.1);
+            --transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
 
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: var(--white); color: var(--black); font-family: 'Outfit', sans-serif; overflow-x: hidden; }
+
+        /* --- Navigation --- */
+        nav {
+            position: fixed; top: 0; width: 100%; padding: 25px 5%;
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(25px); z-index: 1000;
+            border-bottom: 1px solid rgba(135, 206, 235, 0.2);
+        }
+        .logo { font-family: 'Syncopate'; font-size: 1.3rem; letter-spacing: 5px; color: var(--sky); }
+        .hamburger { font-size: 1.5rem; cursor: pointer; color: var(--black); transition: 0.3s; }
+        .hamburger:hover { color: var(--sky); transform: rotate(90deg); }
+
+        .nav-overlay {
+            position: fixed; top: 0; right: -100%; width: 100%; height: 100vh;
+            background: var(--white); z-index: 999; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; transition: var(--transition);
+        }
+        .nav-overlay.active { right: 0; }
+        .nav-overlay a { font-family: 'Syncopate'; font-size: 2.5rem; text-decoration: none; color: var(--black); margin: 20px 0; }
+
+        /* --- Hero Section --- */
+        .hero { 
+            height: 90vh; width: 100%; position: relative; display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&q=80&w=2000');
+            background-size: cover; background-position: center; clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
+        }
+        .hero-content { text-align: center; z-index: 2; }
+        .hero-content h1 { font-family: 'Syncopate'; font-size: 10vw; line-height: 0.9; color: var(--white); text-transform: uppercase; }
+        .hero-content h1 span { color: var(--sky); }
+
+        /* --- APP-STYLE BOOKING DOCK --- */
+        .booking-dock-wrap { width: 100%; display: flex; justify-content: center; margin-top: -80px; padding: 0 5%; position: relative; z-index: 100; }
+        .booking-dock {
+            background: var(--black); width: 100%; max-width: 1100px; padding: 12px;
+            border-radius: 30px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px; box-shadow: 0 30px 60px rgba(135, 206, 235, 0.3); border: 1px solid var(--sky);
+        }
+        .dock-field { background: #151515; padding: 18px 25px; border-radius: 22px; display: flex; flex-direction: column; gap: 5px; border: 1px solid #222; }
+        .dock-field label { font-family: 'JetBrains Mono'; font-size: 0.65rem; color: var(--sky); text-transform: uppercase; letter-spacing: 2px; }
+        .dock-field select, .dock-field input { 
+            background: transparent; border: none; color: white; font-family: 'Outfit'; 
+            font-size: 1rem; font-weight: 600; outline: none; color-scheme: dark;
+        }
+        .btn-launch { 
+            background: var(--sky); border: none; border-radius: 22px; font-family: 'Syncopate'; 
+            font-weight: 700; cursor: pointer; transition: var(--transition); font-size: 0.8rem;
+        }
+        .btn-launch:hover { background: var(--white); letter-spacing: 2px; }
+
+        /* --- Content Blocks --- */
+        .section-padding { padding: 120px 8%; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; }
+        
+        .service-card { 
+            padding: 60px 40px; border: 1px solid var(--platinum); border-radius: 40px; 
+            background: var(--white); transition: var(--transition); position: relative; overflow: hidden;
+        }
+        .service-card:hover { border-color: var(--sky); transform: translateY(-15px); box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
+        .service-card i { font-size: 3rem; color: var(--sky); margin-bottom: 30px; }
+
+        /* --- Price List --- */
+        .price-terminal { background: var(--black); color: white; padding: 80px; border-radius: 50px; }
+        .price-row { display: flex; justify-content: space-between; padding: 20px 0; border-bottom: 1px solid #222; font-family: 'Syncopate'; font-size: 0.8rem; }
+        .price-row span { color: var(--sky); }
+
+        /* --- Apothecary (6 Products) --- */
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; }
+        .product-card { background: var(--platinum); padding: 40px 20px; border-radius: 30px; text-align: center; transition: 0.4s; }
+        .product-card:hover { background: var(--sky); color: white; }
+        .product-card i { font-size: 3rem; margin-bottom: 20px; }
+
+        /* --- Before/After Slider --- */
+        .slider-wrap { width: 100%; height: 600px; border-radius: 40px; overflow: hidden; position: relative; cursor: col-resize; box-shadow: 0 40px 80px rgba(0,0,0,0.1); }
+        .slider-after { position: absolute; top: 0; left: 0; width: 50%; height: 100%; border-right: 4px solid var(--sky); z-index: 2; overflow: hidden; }
+        .slider-after img { width: 100vw; height: 100%; object-fit: cover; }
+
+        /* --- Floating UI --- */
+        .float-actions { position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column; gap: 15px; z-index: 1000; }
+        .f-btn { width: 65px; height: 65px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; box-shadow: 0 15px 30px rgba(0,0,0,0.15); transition: 0.3s; font-size: 1.5rem; }
+
+        /* --- FAQ --- */
+        details { padding: 30px; border-bottom: 1px solid var(--platinum); cursor: pointer; }
+        summary { font-family: 'Syncopate'; font-size: 0.75rem; list-style: none; display: flex; justify-content: space-between; color: var(--black); }
+        summary::after { content: '→'; color: var(--sky); transition: 0.3s; }
+        details[open] summary::after { transform: rotate(90deg); }
+
+        @media (max-width: 768px) {
+            .booking-dock { grid-template-columns: 1fr; border-radius: 40px; padding: 20px; }
+            .hero h1 { font-size: 16vw; }
+            .section-padding { padding: 80px 5%; }
+            .price-terminal { padding: 40px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">AURUM_2026</div>
+        <div class="hamburger" id="navOpen"><i class="fas fa-bars-staggered"></i></div>
+    </nav>
+
+    <div class="nav-overlay" id="navFull">
+        <a href="#services">Architecture</a>
+        <a href="#prices">Price System</a>
+        <a href="#products">Apothecary</a>
+        <a href="#gallery">Gallery</a>
+        <a href="#contact">Terminal</a>
+    </div>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1 data-aos="zoom-out">HYPER<br><span>ELITE</span></h1>
+        </div>
+    </section>
+
+    <div class="booking-dock-wrap">
+        <div class="booking-dock" data-aos="fade-up">
+            <div class="dock-field">
+                <label>Select Service</label>
+                <select>
+                    <option>Techno-Organic Cut</option>
+                    <option>Ozone Scalp Shave</option>
+                    <option>Full Terminal Ritual</option>
+                </select>
+            </div>
+            <div class="dock-field">
+                <label>Calibration Date</label>
+                <input type="date" value="2026-01-30">
+            </div>
+            <div class="dock-field">
+                <label>Lead Artisan</label>
+                <select>
+                    <option>Master Vane</option>
+                    <option>Artisan Leo</option>
+                </select>
+            </div>
+            <button class="btn-launch">INITIALIZE</button>
+        </div>
+    </div>
+
+    <section class="section-padding" id="services">
+        <div class="grid-3">
+            <div class="service-card" data-aos="fade-up">
+                <i class="fas fa-microchip"></i>
+                <h3 style="font-family: 'Syncopate'; margin-bottom: 15px;">TECHNO CUT</h3>
+                <p>Geometric precision mapping for a high-performance profile.</p>
+            </div>
+            <div class="service-card" data-aos="fade-up" data-aos-delay="100">
+                <i class="fas fa-wind"></i>
+                <h3 style="font-family: 'Syncopate'; margin-bottom: 15px;">OZONE SHAVE</h3>
+                <p>Purified oxygen steam ritual followed by surgical steel finish.</p>
+            </div>
+            <div class="service-card" data-aos="fade-up" data-aos-delay="200">
+                <i class="fas fa-atom"></i>
+                <h3 style="font-family: 'Syncopate'; margin-bottom: 15px;">SCALP REPAIR</h3>
+                <p>Molecular level root rejuvenation using bio-tech serums.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-padding" style="background: var(--sky); text-align: center; color: white;">
+        <h2 style="font-family: 'Syncopate'; font-size: 3rem;" data-aos="fade-right">READY FOR CALIBRATION?</h2>
+        <p style="margin: 30px 0; font-size: 1.2rem;">Limited terminal slots available for the 2026 season.</p>
+        <button class="btn-launch" style="padding: 20px 60px; color: var(--black);">BOOK ACCESS NOW</button>
+    </section>
+
+    <section class="section-padding" id="prices">
+        <div class="price-terminal" data-aos="fade-up">
+            <h3 style="font-family: 'Syncopate'; margin-bottom: 40px; color: var(--sky);">PRICE_SYSTEM</h3>
+            <div class="price-row">Executive Silhouette <span>$85</span></div>
+            <div class="price-row">Beard Architecture <span>$50</span></div>
+            <div class="price-row">The Full Aurum Ritual <span>$160</span></div>
+            <div class="price-row">Skin Calibration <span>$70</span></div>
+        </div>
+    </section>
+
+    <section class="section-padding" id="products">
+        <span style="font-family: 'JetBrains Mono'; color: var(--sky);">// APOTHECARY_INVENTORY</span>
+        <div class="product-grid" style="margin-top: 40px;">
+            <div class="product-card" data-aos="zoom-in"><i class="fas fa-flask-vial"></i><h4>Clay_01</h4><p>$45</p></div>
+            <div class="product-card" data-aos="zoom-in" data-aos-delay="50"><i class="fas fa-droplet"></i><h4>Oil_05</h4><p>$40</p></div>
+            <div class="product-card" data-aos="zoom-in" data-aos-delay="100"><i class="fas fa-spray-can-sparkles"></i><h4>Mist_02</h4><p>$35</p></div>
+            <div class="product-card" data-aos="zoom-in" data-aos-delay="150"><i class="fas fa-vial-circle-check"></i><h4>Serum_X</h4><p>$60</p></div>
+            <div class="product-card" data-aos="zoom-in" data-aos-delay="200"><i class="fas fa-shield-virus"></i><h4>Balm_09</h4><p>$38</p></div>
+            <div class="product-card" data-aos="zoom-in" data-aos-delay="250"><i class="fas fa-dna"></i><h4>Tonic_H</h4><p>$55</p></div>
+        </div>
+    </section>
+
+    <section class="section-padding">
+        <h3 style="font-family: 'Syncopate'; text-align: center; margin-bottom: 50px;">CALIBRATION_RESULTS</h3>
+        <div class="slider-wrap" id="baSlider" data-aos="zoom-out">
+            <img src="https://images.unsplash.com/photo-1599351431247-f10f20466371?q=80&w=1200" style="width: 100%; height: 100%; object-fit: cover;">
+            <div class="slider-after" id="afterFrame">
+                <img src="https://images.unsplash.com/photo-1512690196236-d20501f2f768?q=80&w=1200" style="width: 100vw; height: 100%; object-fit: cover;">
+            </div>
+        </div>
+    </section>
+
+    <section class="section-padding grid-3">
+        <div class="service-card" style="text-align: center;">
+            <div style="width: 150px; height: 150px; background: var(--platinum); border-radius: 50%; margin: 0 auto 30px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                <i class="fas fa-user-gear fa-2x"></i>
+            </div>
+            <h4>MASTER VANE</h4>
+            <p style="color: var(--sky); font-size: 0.8rem; letter-spacing: 2px;">CHIEF ARCHITECT</p>
+        </div>
+        <div class="service-card" style="text-align: center;">
+            <div style="width: 150px; height: 150px; background: var(--platinum); border-radius: 50%; margin: 0 auto 30px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                <i class="fas fa-user-ninja fa-2x"></i>
+            </div>
+            <h4>ARTISAN LEO</h4>
+            <p style="color: var(--sky); font-size: 0.8rem; letter-spacing: 2px;">FADE SPECIALIST</p>
+        </div>
+    </section>
+
+    <section class="section-padding" style="background: var(--platinum);">
+        <div class="grid-3">
+            <div data-aos="fade-right">
+                <h3 style="font-family: 'Syncopate';">OPERATING_TIME</h3>
+                <div class="price-row" style="border-color: #ccc;">Mon - Fri <span>09:00 - 21:00</span></div>
+                <div class="price-row" style="border-color: #ccc;">Saturday <span>10:00 - 18:00</span></div>
+                <div class="price-row" style="border-color: #ccc;">Sunday <span style="color: #999;">CLOSED</span></div>
+            </div>
+            <div></div>
+            <form style="display: flex; flex-direction: column; gap: 15px;">
+                <h3 style="font-family: 'Syncopate';">TRANSMIT_MSG</h3>
+                <input type="text" placeholder="Identity" style="padding: 20px; border-radius: 15px; border: 1px solid #ccc;">
+                <textarea placeholder="Message" rows="4" style="padding: 20px; border-radius: 15px; border: 1px solid #ccc;"></textarea>
+                <button class="btn-launch" style="padding: 15px;">SEND</button>
+            </form>
+        </div>
+    </section>
+
+    <section style="height: 500px; width: 100%; position: relative;">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2483.540423056448!2d-0.12165032338006091!3d51.50330061153406!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x487604b900d26973%3A0x4291f3172409ea92!2sLondon%20Eye!5e0!3m2!1sen!2suk!4v1706612345678!5m2!1sen!2suk" width="100%" height="100%" style="border:0; filter: grayscale(1) invert(1);" allowfullscreen=""></iframe>
+        <div style="position: absolute; bottom: 40px; left: 40px; background: white; padding: 40px; border-radius: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.1);">
+            <h4 style="font-family: 'Syncopate'; color: var(--sky);">TERMINAL_LOC</h4>
+            <p style="margin-top: 10px;">101 LUX TERMINAL, TECH DISTRICT<br>LONDON, UK</p>
+        </div>
+    </section>
+
+    <section class="section-padding">
+        <h3 style="font-family: 'Syncopate'; margin-bottom: 40px;">FAQ_DATABASE</h3>
+        <details>
+            <summary>Is there a membership required?</summary>
+            <p style="padding-top: 20px; opacity: 0.6;">No, but Terminal Members get priority calibration slots and 20% off the Apothecary range.</p>
+        </details>
+        <details>
+            <summary>What is the Ozone treatment?</summary>
+            <p style="padding-top: 20px; opacity: 0.6;">A pressurized infusion of medical-grade steam that opens follicles for the closest possible shave.</p>
+        </details>
+    </section>
+
+    <section class="section-padding" style="text-align: center; border-top: 1px solid var(--platinum);">
+        <div style="color: var(--sky); margin-bottom: 20px;">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+        </div>
+        <h4 style="font-family: 'Syncopate';">"THE HIGHEST PRECISION IN THE SECTOR."</h4>
+        <p style="opacity: 0.5; margin-top: 15px;">— CLIENT_0012</p>
+    </section>
+
+    <footer class="section-padding" style="border-top: 1px solid var(--platinum);">
+        <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 40px;">
+            <div class="logo">AURUM_2026</div>
+            <div>
+                <h5 style="font-family: 'Syncopate'; font-size: 0.7rem; margin-bottom: 20px;">SYSTEM_LINKS</h5>
+                <p>Architecture</p><p>Artisans</p><p>Inventory</p>
+            </div>
+            <div>
+                <h5 style="font-family: 'Syncopate'; font-size: 0.7rem; margin-bottom: 20px;">CONNECT</h5>
+                <p>Instagram</p><p>Terminal-Live</p>
+            </div>
+        </div>
+    </footer>
+
+    <div class="float-actions">
+        <a href="https://wa.me/12345678" class="f-btn" style="background: #25D366;"><i class="fab fa-whatsapp"></i></a>
+        <a href="tel:+12345678" class="f-btn" style="background: var(--black);"><i class="fas fa-phone"></i></a>
+    </div>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init();
+
+        // Nav Logic
+        const navBtn = document.getElementById('navOpen');
+        const overlay = document.getElementById('navFull');
+        navBtn.onclick = () => overlay.classList.toggle('active');
+        overlay.onclick = () => overlay.classList.remove('active');
+
+        // B/A Slider Logic
+        const slider = document.getElementById('baSlider');
+        const frame = document.getElementById('afterFrame');
+        slider.onmousemove = (e) => {
+            let rect = slider.getBoundingClientRect();
+            let x = e.clientX - rect.left;
+            frame.style.width = (x / rect.width * 100) + "%";
+        };
+    </script>
+</body>
+</html>
