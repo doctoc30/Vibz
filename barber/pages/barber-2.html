@@ -9,258 +9,275 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/TextPlugin.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&family=Unbounded:wght@900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
     <style>
-        :root { --accent: #ff3e3e; --glass: rgba(255, 255, 255, 0.03); }
-        body { background-color: #050505; color: #fff; font-family: 'Space Grotesk', sans-serif; overflow-x: hidden; }
-        .font-huge { font-family: 'Unbounded', sans-serif; letter-spacing: -0.05em; }
-
-        .advanced-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1.5rem; padding: 1.5rem; }
-        @media (max-width: 768px) { .advanced-grid { display: flex; flex-direction: column; } }
+        :root { --accent: #ff3e3e; }
+        body { 
+            background-color: #000; 
+            color: #fff; 
+            font-family: 'Space Grotesk', sans-serif; 
+            overflow-x: hidden;
+        }
+        
+        /* Bolder, More Modern Typography */
+        .font-huge { 
+            font-family: 'Archivo Black', sans-serif; 
+            text-transform: uppercase;
+            line-height: 0.85;
+            letter-spacing: -0.04em;
+        }
 
         .glass-panel { 
-            background: var(--glass); 
+            background: rgba(255, 255, 255, 0.03); 
             backdrop-filter: blur(20px); 
-            border: 1px solid rgba(255,255,255,0.08); 
-            border-radius: 4px; 
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+            border: 1px solid rgba(255,255,255,0.1); 
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1); 
         }
-        .glass-panel:hover { border-color: var(--accent); background: rgba(255,62,62,0.05); }
-        
-        #intro-shutter { position: fixed; inset: 0; background: #000; z-index: 999; display: flex; align-items: center; justify-content: center; }
-        .cursor { display: inline-block; width: 10px; height: 0.9em; background-color: var(--accent); vertical-align: middle; margin-left: 5px; }
-        
-        .step-number { -webkit-text-stroke: 1px rgba(255,255,255,0.2); color: transparent; font-family: 'Unbounded'; }
-        
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: var(--accent); }
-        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-        .animate-marquee { display: flex; animation: marquee 30s linear infinite; width: max-content; }
+
+        /* Hero Image Scan Effect */
+        .hero-image-container::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 2px;
+            background: var(--accent);
+            box-shadow: 0 0 15px var(--accent);
+            animation: scan 4s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { top: 0%; }
+            100% { top: 100%; }
+        }
+
+        /* Menu Overlay */
+        #menu-overlay {
+            clip-path: circle(0% at 90% 5%);
+            transition: clip-path 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+        #menu-overlay.active {
+            clip-path: circle(150% at 90% 5%);
+        }
+
+        .marquee-text { font-family: 'Archivo Black'; -webkit-text-stroke: 1px white; color: transparent; }
     </style>
 </head>
 <body>
 
-<div id="intro-shutter">
-    <div id="expander" class="w-2 h-2 bg-red-600 rounded-full"></div>
-    <h1 id="intro-text" class="absolute font-huge text-5xl opacity-0 tracking-tighter">VIBZ</h1>
+<div id="menu-overlay" class="fixed inset-0 bg-red-600 z-[200] flex flex-col items-center justify-center">
+    <button id="close-menu" class="absolute top-8 right-8 text-black hover:rotate-90 transition-transform">
+        <i data-lucide="x" class="w-12 h-12"></i>
+    </button>
+    <nav class="flex flex-col gap-6 text-center">
+        <a href="#services" class="menu-link text-6xl md:text-9xl font-huge text-black hover:italic">SERVICES</a>
+        <a href="#shop" class="menu-link text-6xl md:text-9xl font-huge text-black hover:italic">SHOP</a>
+        <a href="#location" class="menu-link text-6xl md:text-9xl font-huge text-black hover:italic">LOCATION</a>
+    </nav>
 </div>
 
-<header class="fixed top-0 left-0 w-full z-[100] p-6 flex justify-between items-center px-8 md:px-12 transition-all duration-500" id="main-header">
-    <div class="font-huge text-2xl tracking-tighter">VIBZ<span class="text-red-600">.</span></div>
-    <button id="menu-btn" class="w-12 h-12 bg-white text-black flex items-center justify-center rounded-full hover:bg-red-600 hover:text-white transition-all">
-        <i data-lucide="menu" class="w-5 h-5"></i>
+<header class="fixed top-0 left-0 w-full z-[100] p-8 flex justify-between items-center">
+    <div class="font-huge text-3xl mix-blend-difference">VIBZ<span class="text-red-600">.</span></div>
+    <button id="open-menu" class="w-16 h-16 bg-white text-black flex items-center justify-center rounded-full hover:scale-110 transition">
+        <i data-lucide="plus" class="w-8 h-8"></i>
     </button>
 </header>
 
-<main class="opacity-0" id="content">
-    <section class="advanced-grid min-h-screen pt-24">
-        <div class="col-span-12 md:col-span-9 glass-panel relative overflow-hidden p-12 flex flex-col justify-end min-h-[500px]">
-            <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80')] bg-cover bg-center opacity-30 grayscale hover:scale-105 transition duration-1000"></div>
-            <div class="relative">
-                <p class="text-red-600 font-bold tracking-[0.6em] mb-4 text-[10px] uppercase">Mastery in Every Blade</p>
-                <h1 class="text-5xl md:text-8xl font-huge leading-none uppercase" id="typewriter"></h1><span class="cursor"></span>
+<main>
+    <section class="min-h-screen grid grid-cols-12 gap-0 relative border-b border-white/10">
+        <div class="col-span-12 lg:col-span-7 p-8 md:p-16 flex flex-col justify-center bg-black">
+            <h1 class="font-huge text-[clamp(4rem,15vw,12rem)] mb-8">
+                ELITE<br><span class="text-red-600">CUTS</span><br>ONLY.
+            </h1>
+            <p class="max-w-md text-lg opacity-60 font-bold uppercase tracking-widest">
+                Redefining the London grooming standard since 2026. Precision is our only currency.
+            </p>
+            <div class="mt-12 flex gap-6">
+                <button class="bg-red-600 px-10 py-5 font-huge text-sm hover:bg-white hover:text-black transition">BOOK NOW</button>
+                <button class="border border-white px-10 py-5 font-huge text-sm hover:bg-white hover:text-black transition">GALLERY</button>
             </div>
         </div>
-        <div class="col-span-12 md:col-span-3 glass-panel p-8 flex flex-col justify-between bg-red-600/5">
-            <div>
-                <h4 class="font-huge text-xs mb-8 tracking-widest text-red-600 uppercase">Availability</h4>
-                <div class="space-y-4 text-sm font-bold uppercase">
-                    <div class="flex justify-between border-b border-white/10 pb-2"><span>Mon-Fri</span><span>09-21</span></div>
-                    <div class="flex justify-between border-b border-white/10 pb-2"><span>Sat</span><span>10-18</span></div>
-                    <div class="flex justify-between text-red-600"><span>Sun</span><span>Closed</span></div>
-                </div>
-            </div>
-            <button class="w-full bg-white text-black py-5 font-huge text-[10px] tracking-widest hover:bg-red-600 hover:text-white transition-all">BOOK SEAT</button>
-        </div>
-    </section>
-
-    <section class="px-6 py-24 border-y border-white/5">
-        <div class="max-w-7xl mx-auto">
-            <h2 class="font-huge text-3xl mb-16 uppercase">The <span class="text-red-600 text-italic">Protocol.</span></h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
-                <div class="group">
-                    <span class="step-number text-6xl block mb-4">01</span>
-                    <h4 class="font-huge text-lg mb-2 uppercase">Consultation</h4>
-                    <p class="text-white/50 text-sm leading-relaxed">We analyze your head shape and hair growth patterns before the first cut.</p>
-                </div>
-                <div class="group">
-                    <span class="step-number text-6xl block mb-4">02</span>
-                    <h4 class="font-huge text-lg mb-2 uppercase">Precision</h4>
-                    <p class="text-white/50 text-sm leading-relaxed">Advanced fading techniques combined with traditional straight-razor finishes.</p>
-                </div>
-                <div class="group">
-                    <span class="step-number text-6xl block mb-4">03</span>
-                    <h4 class="font-huge text-lg mb-2 uppercase">Refinement</h4>
-                    <p class="text-white/50 text-sm leading-relaxed">Signature hot towel treatment and styling using our premium product line.</p>
-                </div>
+        <div class="hidden lg:block col-span-5 relative hero-image-container overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80" class="w-full h-full object-cover grayscale brightness-50">
+            <div class="absolute bottom-10 left-10">
+                <p class="font-huge text-4xl leading-none">VIBZ<br>MASTER<br>STUDIO</p>
             </div>
         </div>
     </section>
 
-    <section class="advanced-grid py-12">
-        <div class="col-span-12 md:col-span-4 flex flex-col justify-center">
-            <h2 class="font-huge text-4xl uppercase leading-tight mb-4">Service<br>Manifesto</h2>
-            <p class="text-white/40 text-sm max-w-xs uppercase font-bold">Standard rates for elite grooming. No hidden extras.</p>
+    <section class="py-24 border-b border-white/10">
+        <div class="px-8 grid grid-cols-1 md:grid-cols-3 gap-16">
+            <div class="border-t-4 border-red-600 pt-8">
+                <h3 class="font-huge text-2xl mb-4">01. ANALYSIS</h3>
+                <p class="opacity-50 font-bold uppercase text-sm">Every session starts with a deep dive into your head shape and style goals.</p>
+            </div>
+            <div class="border-t-4 border-white pt-8">
+                <h3 class="font-huge text-2xl mb-4">02. EXECUTION</h3>
+                <p class="opacity-50 font-bold uppercase text-sm">Surgical precision with blades and clippers. Zero room for error.</p>
+            </div>
+            <div class="border-t-4 border-red-600 pt-8">
+                <h3 class="font-huge text-2xl mb-4">03. FINISH</h3>
+                <p class="opacity-50 font-bold uppercase text-sm">Signature hot towel therapy and premium scenting for the ultimate exit.</p>
+            </div>
         </div>
-        <div class="col-span-12 md:col-span-8 space-y-2">
-            <div class="glass-panel p-8 flex justify-between items-center group">
-                <h4 class="text-xl font-bold uppercase">The Vibz Fade</h4>
-                <div class="flex items-center gap-6">
-                    <span class="text-white/30 text-xs uppercase font-bold tracking-widest">45 MIN</span>
-                    <span class="text-red-600 font-huge text-xl">$40</span>
+    </section>
+
+    <section id="services" class="p-8">
+        <div class="flex justify-between items-end mb-16">
+            <h2 class="font-huge text-5xl md:text-8xl">MENU</h2>
+            <p class="font-huge text-red-600">FIXED RATES</p>
+        </div>
+        <div class="grid gap-4">
+            <div class="glass-panel p-10 flex flex-col md:flex-row justify-between items-start md:items-center hover:bg-red-600 group transition">
+                <h4 class="font-huge text-3xl md:text-5xl group-hover:text-black transition">SKIN FADE</h4>
+                <div class="flex items-center gap-10 mt-4 md:mt-0">
+                    <span class="font-bold opacity-40 group-hover:text-black">45 MINS</span>
+                    <span class="font-huge text-4xl md:text-6xl group-hover:text-white">$45</span>
                 </div>
             </div>
-            <div class="glass-panel p-8 flex justify-between items-center group">
-                <h4 class="text-xl font-bold uppercase">Beard Ritual</h4>
-                <div class="flex items-center gap-6">
-                    <span class="text-white/30 text-xs uppercase font-bold tracking-widest">30 MIN</span>
-                    <span class="text-red-600 font-huge text-xl">$30</span>
+            <div class="glass-panel p-10 flex flex-col md:flex-row justify-between items-start md:items-center hover:bg-white group transition">
+                <h4 class="font-huge text-3xl md:text-5xl group-hover:text-black transition">BEARD SCULPT</h4>
+                <div class="flex items-center gap-10 mt-4 md:mt-0">
+                    <span class="font-bold opacity-40 group-hover:text-black">30 MINS</span>
+                    <span class="font-huge text-4xl md:text-6xl group-hover:text-red-600">$30</span>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="p-6">
-        <h2 class="font-huge text-3xl mb-12 uppercase">Tools <span class="text-red-600">for</span> Home.</h2>
-        <div class="grid grid-cols-2 md:grid-cols-6 gap-4">
-            <div class="glass-panel p-4 group">
-                <div class="aspect-square mb-4 overflow-hidden rounded bg-[#111]">
-                    <img src="https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-2-image1.jpg" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-700">
+    <section id="shop" class="py-24 bg-zinc-950">
+        <div class="px-8 mb-16"><h2 class="font-huge text-6xl">THE GOODS</h2></div>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-px bg-white/10">
+            <div class="bg-black p-8 group cursor-pointer border border-white/5">
+                <div class="aspect-[3/4] mb-6 overflow-hidden">
+                    <img src="https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-2-image1.jpg" class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition duration-500">
                 </div>
-                <p class="text-[9px] font-bold text-red-600 uppercase tracking-widest">Texture Clay</p>
-                <p class="font-bold">$22</p>
+                <h5 class="font-huge text-lg leading-none mb-2">CLAY 01</h5>
+                <p class="font-bold text-red-600">$20</p>
             </div>
-            <div class="glass-panel p-4 group">
-                <div class="aspect-square mb-4 overflow-hidden rounded bg-[#111]">
-                    <img src="https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-2-image2.jpg" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-700">
+            <div class="bg-black p-8 group cursor-pointer border border-white/5">
+                <div class="aspect-[3/4] mb-6 overflow-hidden">
+                    <img src="https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-2-image2.jpg" class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition duration-500">
                 </div>
-                <p class="text-[9px] font-bold text-red-600 uppercase tracking-widest">Matte Pomade</p>
-                <p class="font-bold">$25</p>
+                <h5 class="font-huge text-lg leading-none mb-2">PASTE 02</h5>
+                <p class="font-bold text-red-600">$25</p>
             </div>
-            <div class="glass-panel p-4 group">
-                <div class="aspect-square mb-4 overflow-hidden rounded bg-[#111]">
-                    <img src="https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-2-image3.jpg" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-700">
+            <div class="bg-black p-8 group cursor-pointer border border-white/5">
+                <div class="aspect-[3/4] mb-6 overflow-hidden">
+                    <img src="https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-2-image3.jpg" class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition duration-500">
                 </div>
-                <p class="text-[9px] font-bold text-red-600 uppercase tracking-widest">Shave Oil</p>
-                <p class="font-bold">$18</p>
+                <h5 class="font-huge text-lg leading-none mb-2">OIL 03</h5>
+                <p class="font-bold text-red-600">$22</p>
             </div>
-            <div class="glass-panel p-4 group">
-                <div class="aspect-square mb-4 overflow-hidden rounded bg-[#111]">
-                    <img src="https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-2-image4.jpg" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-700">
+            <div class="bg-black p-8 group cursor-pointer border border-white/5">
+                <div class="aspect-[3/4] mb-6 overflow-hidden">
+                    <img src="https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-2-image4.jpg" class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition duration-500">
                 </div>
-                <p class="text-[9px] font-bold text-red-600 uppercase tracking-widest">Styling Wax</p>
-                <p class="font-bold">$20</p>
+                <h5 class="font-huge text-lg leading-none mb-2">WAX 04</h5>
+                <p class="font-bold text-red-600">$28</p>
             </div>
-            <div class="glass-panel p-4 group">
-                <div class="aspect-square mb-4 overflow-hidden rounded bg-[#111]">
-                    <img src="https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-2-image5.jpg" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-700">
+            <div class="bg-black p-8 group cursor-pointer border border-white/5">
+                <div class="aspect-[3/4] mb-6 overflow-hidden">
+                    <img src="https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-2-image5.jpg" class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition duration-500">
                 </div>
-                <p class="text-[9px] font-bold text-red-600 uppercase tracking-widest">Daily Wash</p>
-                <p class="font-bold">$15</p>
+                <h5 class="font-huge text-lg leading-none mb-2">WASH 05</h5>
+                <p class="font-bold text-red-600">$15</p>
             </div>
-            <div class="glass-panel p-4 group">
-                <div class="aspect-square mb-4 overflow-hidden rounded bg-[#111]">
-                    <img src="https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-2-image6.jpg" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-700">
+            <div class="bg-black p-8 group cursor-pointer border border-white/5">
+                <div class="aspect-[3/4] mb-6 overflow-hidden">
+                    <img src="https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-2-image6.jpg" class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition duration-500">
                 </div>
-                <p class="text-[9px] font-bold text-red-600 uppercase tracking-widest">Tonic Water</p>
-                <p class="font-bold">$24</p>
+                <h5 class="font-huge text-lg leading-none mb-2">MIST 06</h5>
+                <p class="font-bold text-red-600">$18</p>
             </div>
         </div>
     </section>
 
-    <section class="py-24 px-6">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-end mb-12">
-            <h2 class="font-huge text-3xl uppercase">The <span class="text-red-600">Architects.</span></h2>
-            <p class="text-white/40 text-xs font-bold tracking-widest uppercase">Select your preferred stylist</p>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="glass-panel p-8 text-center group">
-                <div class="w-32 h-32 bg-white/10 rounded-full mx-auto mb-6 group-hover:bg-red-600 transition duration-500"></div>
-                <h4 class="font-huge text-xl uppercase">Alex</h4>
-                <p class="text-xs text-red-600 font-bold tracking-widest uppercase mt-2">Senior Barber / 12yr Exp</p>
+    <section class="p-8">
+        <h2 class="font-huge text-5xl mb-12">THE CREW</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-px bg-white/10 border border-white/10">
+            <div class="bg-black p-12 text-center">
+                <div class="w-32 h-32 bg-red-600 mx-auto mb-6 rounded-full flex items-center justify-center font-huge text-4xl">A</div>
+                <h4 class="font-huge text-2xl">ALEX</h4>
+                <p class="text-xs font-bold opacity-40 mt-2">SENIOR CRAFTSMAN</p>
             </div>
-            <div class="glass-panel p-8 text-center border-red-600 bg-red-600/10">
-                <div class="w-32 h-32 bg-white/20 rounded-full mx-auto mb-6"></div>
-                <h4 class="font-huge text-xl uppercase">Koen</h4>
-                <p class="text-xs text-white font-bold tracking-widest uppercase mt-2">Creative Director</p>
+            <div class="bg-red-600 p-12 text-center text-black">
+                <div class="w-32 h-32 bg-black mx-auto mb-6 rounded-full flex items-center justify-center font-huge text-4xl text-white">K</div>
+                <h4 class="font-huge text-2xl">KOEN</h4>
+                <p class="text-xs font-bold opacity-80 mt-2">DIRECTOR</p>
             </div>
-            <div class="glass-panel p-8 text-center group">
-                <div class="w-32 h-32 bg-white/10 rounded-full mx-auto mb-6 group-hover:bg-red-600 transition duration-500"></div>
-                <h4 class="font-huge text-xl uppercase">Jude</h4>
-                <p class="text-xs text-red-600 font-bold tracking-widest uppercase mt-2">Precision Stylist</p>
+            <div class="bg-black p-12 text-center">
+                <div class="w-32 h-32 bg-white/20 mx-auto mb-6 rounded-full flex items-center justify-center font-huge text-4xl">J</div>
+                <h4 class="font-huge text-2xl">JUDE</h4>
+                <p class="text-xs font-bold opacity-40 mt-2">FADE SPECIALIST</p>
             </div>
         </div>
     </section>
 
-    <section class="p-6">
-        <div class="glass-panel overflow-hidden h-[400px] grayscale invert">
-            <iframe class="w-full h-full opacity-60 border-0" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2483.540423166861!2d-0.1219662!3d51.5030383!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x487604b900d26973%3A0x4291f3172409ea92!2sLondon%20SE1!5e0!3m2!1sen!2suk!4v1700000000000!5m2!1sen!2suk"></iframe>
+    <section id="location" class="p-8">
+        <div class="glass-panel overflow-hidden h-[500px] border-4 border-white">
+            <iframe class="w-full h-full grayscale invert brightness-50" src="http://googleusercontent.com/maps.google.com/3"></iframe>
         </div>
     </section>
 
-    <section class="advanced-grid py-20 bg-white/5">
-        <div class="col-span-12 md:col-span-6 space-y-12">
-            <div>
-                <h3 class="font-huge text-4xl mb-4 uppercase">Find Us</h3>
-                <p class="text-2xl font-bold opacity-60 uppercase">SE1 NEO-VOK DISTR.<br>LONDON, UK</p>
-            </div>
+    <section class="p-8 grid grid-cols-1 md:grid-cols-2 gap-12 bg-zinc-900 border-t border-white/10">
+        <div>
+            <h3 class="font-huge text-4xl mb-6">STAY CONNECTED</h3>
             <div class="flex gap-4">
-                <div class="p-4 glass-panel rounded-full hover:bg-red-600 hover:text-white cursor-pointer"><i data-lucide="instagram"></i></div>
-                <div class="p-4 glass-panel rounded-full hover:bg-red-600 hover:text-white cursor-pointer"><i data-lucide="phone"></i></div>
-                <div class="p-4 glass-panel rounded-full hover:bg-red-600 hover:text-white cursor-pointer"><i data-lucide="mail"></i></div>
+                <a href="#" class="p-6 bg-white text-black hover:bg-red-600 hover:text-white transition"><i data-lucide="instagram"></i></a>
+                <a href="#" class="p-6 bg-white text-black hover:bg-red-600 hover:text-white transition"><i data-lucide="youtube"></i></a>
             </div>
         </div>
-        <div class="col-span-12 md:col-span-6 glass-panel p-10 bg-white text-black">
-            <h3 class="font-huge text-2xl mb-4 uppercase">Vibz Loyalty</h3>
-            <p class="text-sm font-bold opacity-70 mb-8 uppercase tracking-tighter">Get exclusive priority booking and product drops.</p>
-            <div class="flex border-b-2 border-black pb-2">
-                <input type="email" placeholder="YOUR EMAIL" class="bg-transparent w-full outline-none font-bold text-xs">
-                <button class="font-huge text-[10px] tracking-widest">JOIN</button>
+        <div class="bg-white p-10 text-black">
+            <h3 class="font-huge text-2xl mb-4">NEWSLETTER</h3>
+            <div class="flex border-b-2 border-black pb-4">
+                <input type="text" placeholder="YOUR EMAIL" class="bg-transparent w-full outline-none font-huge text-lg placeholder:text-black/30">
+                <i data-lucide="arrow-right" class="w-8 h-8"></i>
             </div>
         </div>
     </section>
 
-    <div class="w-full bg-red-600 py-4 overflow-hidden border-y border-black">
-        <div class="animate-marquee font-huge text-black text-xs">
-            <span class="px-10">ELITE GROOMING STANDARDS</span>
-            <span class="px-10">URBAN STYLE EVOLUTION</span>
-            <span class="px-10">5.0 STAR PRECISION</span>
-            <span class="px-10">ELITE GROOMING STANDARDS</span>
-            <span class="px-10">URBAN STYLE EVOLUTION</span>
-            <span class="px-10">5.0 STAR PRECISION</span>
+    <div class="py-20 overflow-hidden bg-black flex whitespace-nowrap border-t border-white/5">
+        <div class="flex gap-10 animate-marquee">
+            <span class="marquee-text text-8xl md:text-9xl">VIBZ BARBERS</span>
+            <span class="marquee-text text-8xl md:text-9xl">VIBZ BARBERS</span>
+            <span class="marquee-text text-8xl md:text-9xl">VIBZ BARBERS</span>
         </div>
     </div>
-
-    <footer class="p-12 text-center text-[10px] font-bold tracking-[0.5em] opacity-30 uppercase">
-        Vibz Barbers Group © 2026 // London
-    </footer>
 </main>
 
 <script>
     lucide.createIcons();
-    gsap.registerPlugin(ScrollTrigger, TextPlugin);
 
-    // Opening
-    const tl = gsap.timeline();
-    tl.to("#expander", { scale: 800, duration: 1, ease: "power4.in" })
-      .to("#intro-text", { opacity: 1, y: -10, duration: 0.4 })
-      .to("#intro-shutter", { opacity: 0, pointerEvents: "none", duration: 0.8 })
-      .to("#content", { opacity: 1, duration: 1 })
-      .to("#typewriter", { text: "VIBZ<br><span class='text-red-600'>BARBERS.</span>", duration: 1.5, ease: "none" });
+    // MENU LOGIC
+    const openBtn = document.getElementById('open-menu');
+    const closeBtn = document.getElementById('close-menu');
+    const menuOverlay = document.getElementById('menu-overlay');
+    const menuLinks = document.querySelectorAll('.menu-link');
 
-    // Scroll Effects
-    window.addEventListener('scroll', () => {
-        document.getElementById('main-header').classList.toggle('bg-black/80', window.scrollY > 50);
-        document.getElementById('main-header').classList.toggle('backdrop-blur-md', window.scrollY > 50);
+    openBtn.addEventListener('click', () => menuOverlay.classList.add('active'));
+    closeBtn.addEventListener('click', () => menuOverlay.classList.remove('active'));
+    menuLinks.forEach(link => {
+        link.addEventListener('click', () => menuOverlay.classList.remove('active'));
     });
 
-    // Reveal Panels
-    gsap.utils.toArray('.glass-panel').forEach(panel => {
-        gsap.from(panel, {
-            scrollTrigger: { trigger: panel, start: "top bottom-=50px" },
-            y: 30, opacity: 0, duration: 0.8
+    // SMOOTH SCROLL
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            document.querySelector(this.getAttribute('href')).scrollIntoView({
+                behavior: 'smooth'
+            });
         });
     });
+
+    // GSAP ENTRANCE
+    gsap.from(".font-huge", {
+        y: 100,
+        opacity: 0,
+        duration: 1.5,
+        stagger: 0.2,
+        ease: "power4.out"
+    });
 </script>
+
 </body>
 </html>
