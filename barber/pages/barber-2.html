@@ -3,200 +3,194 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VIBZ | Elite Grooming App</title>
+    <title>VIBZ | The London Flagship</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
-        :root { --accent: #ff3e3e; --safe-top: env(safe-area-inset-top); }
-        body { background: #000; color: #fff; font-family: 'Inter', sans-serif; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
-        .font-app { font-family: 'Archivo Black', sans-serif; text-transform: uppercase; letter-spacing: -0.02em; }
+        :root { --accent: #ff3e3e; }
+        body { background: #050505; color: #fff; font-family: 'Space Grotesk', sans-serif; -webkit-font-smoothing: antialiased; }
+        .font-huge { font-family: 'Archivo Black', sans-serif; text-transform: uppercase; letter-spacing: -0.05em; line-height: 0.8; }
         
-        /* Native App UI Elements */
-        .app-card { background: #111; border-radius: 24px; border: 1px solid rgba(255,255,255,0.08); overflow: hidden; }
-        .pill-button { border-radius: 100px; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
-        .pill-button:active { transform: scale(0.92); opacity: 0.8; }
-        
-        /* Hero Stack Animation */
-        .hero-stack-img { transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
-        .hero-container:hover .hero-stack-img:nth-child(1) { transform: rotate(-6deg) translateX(-20px); }
-        .hero-container:hover .hero-stack-img:nth-child(2) { transform: rotate(6deg) translateX(20px); }
+        /* Elite App Elements */
+        .glass-panel { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(10px); }
+        .btn-elite { background: #fff; color: #000; padding: 20px 40px; font-family: 'Archivo Black'; font-size: 12px; letter-spacing: 2px; transition: 0.4s cubic-bezier(0.19, 1, 0.22, 1); }
+        .btn-elite:hover { background: var(--accent); color: #fff; transform: translateY(-5px); box-shadow: 0 20px 40px rgba(255,62,62,0.2); }
 
-        /* Custom Barber Pole */
-        .pole-indicator {
-            width: 4px; height: 40px;
-            background: repeating-linear-gradient(0deg, #fff, #fff 8px, #ff3e3e 8px, #ff3e3e 16px, #224488 16px, #224488 24px);
-            animation: movePole 1s linear infinite;
-        }
-        @keyframes movePole { from { background-position: 0 0; } to { background-position: 0 24px; } }
+        /* Custom Scrollbar for App Feel */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: var(--accent); }
 
-        #intro-shutter { position: fixed; inset: 0; background: #000; z-index: 999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        
-        ::-webkit-scrollbar { display: none; }
+        /* Floating Animation */
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-20px); } 100% { transform: translateY(0px); } }
+        .float-icon { animation: float 6s ease-in-out infinite; }
     </style>
 </head>
 <body>
 
-<div id="intro-shutter">
-    <div id="loader" class="w-12 h-12 border-4 border-red-600/20 border-t-red-600 rounded-full animate-spin mb-6"></div>
-    <h1 class="font-app text-2xl tracking-tighter">VIBZ<span class="text-red-600">.</span></h1>
+<div id="intro" class="fixed inset-0 bg-black z-[1000] flex flex-col items-center justify-center">
+    <div id="intro-bar" class="w-0 h-[1px] bg-red-600 mb-4"></div>
+    <h1 class="font-huge text-4xl tracking-[1em] opacity-0" id="intro-logo">VIBZ</h1>
 </div>
 
-<header class="fixed top-0 w-full z-[100] p-6 flex justify-between items-center mix-blend-difference">
-    <div class="font-app text-xl">VIBZ</div>
-    <div class="flex gap-3">
-        <button class="w-10 h-10 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/10">
-            <i data-lucide="bell" class="w-4 h-4"></i>
+<header class="fixed top-0 w-full z-[500] p-10 flex justify-between items-center mix-blend-difference">
+    <div class="font-huge text-3xl">V<span class="text-red-600">.</span></div>
+    <div class="flex gap-10 items-center">
+        <a href="#vault" class="text-[10px] font-bold tracking-widest hover:text-red-600 transition">THE VAULT</a>
+        <button id="menu-btn" class="w-12 h-12 glass-panel rounded-full flex items-center justify-center hover:bg-white hover:text-black transition">
+            <i data-lucide="align-right"></i>
         </button>
-        <button id="menu-trigger" class="px-4 py-2 bg-white text-black font-app text-[10px] rounded-full">MENU</button>
     </div>
 </header>
 
-<main id="app-content" class="opacity-0">
-    <section class="min-h-screen pt-32 px-6 flex flex-col justify-between pb-12">
-        <div class="hero-container relative flex justify-center items-center py-12">
-            <div class="hero-stack-img absolute w-64 h-80 app-card z-10 rotate-[-3deg] -translate-x-4">
-                <img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?q=80" class="w-full h-full object-cover grayscale brightness-75">
-            </div>
-            <div class="hero-stack-img w-72 h-96 app-card z-20 shadow-2xl">
-                <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80" class="w-full h-full object-cover">
-                <div class="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-black to-transparent">
-                    <p class="font-app text-xs text-red-600 mb-1">Featured Style</p>
-                    <p class="font-app text-xl leading-none">THE EXECUTIVE FADE</p>
+<main id="main-content" class="opacity-0">
+    <section class="min-h-screen relative flex items-center px-10 md:px-24">
+        <div class="z-10 w-full">
+            <h4 class="text-red-600 font-bold tracking-[0.5em] mb-6 text-xs uppercase">Private Studio • London</h4>
+            <h1 class="font-huge text-[clamp(4rem,18vw,15rem)]">ARCHITECTS<br>OF<br><span class="text-transparent" style="-webkit-text-stroke: 1.5px white;">STYLE.</span></h1>
+            <div class="mt-12 flex flex-wrap gap-6">
+                <button class="btn-elite">SECURE APPOINTMENT</button>
+                <div class="flex items-center gap-4 px-6 border-l border-white/10">
+                    <span class="text-3xl font-huge">001</span>
+                    <p class="text-[9px] font-bold opacity-40 leading-tight uppercase">Ranked First In<br>Luxury Grooming</p>
                 </div>
             </div>
         </div>
-
-        <div class="z-30 mt-8">
-            <div class="flex items-center gap-3 mb-4">
-                <div class="pole-indicator"></div>
-                <span class="text-[10px] font-bold tracking-widest uppercase opacity-50">Authorized Studio 2026</span>
-            </div>
-            <h2 class="font-app text-5xl md:text-7xl leading-[0.85] mb-8">ELITE<br>CULTURE<br><span class="text-red-600">ONLY.</span></h2>
-            <button class="pill-button w-full bg-red-600 py-5 font-app text-sm shadow-xl shadow-red-600/20">BOOK APPOINTMENT</button>
+        <div class="absolute right-10 top-1/4 opacity-10 float-icon hidden lg:block">
+            <svg width="400" height="400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.5">
+                <path d="M6 3h12l1 10H5L6 3zM5 13v3a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-3M9 18v3M15 18v3M12 13V8M10 8h4" />
+            </svg>
         </div>
     </section>
 
-    <section class="px-6 py-12">
-        <div class="grid grid-cols-2 gap-4">
-            <div class="app-card p-6 flex flex-col justify-between h-32">
-                <p class="text-[10px] font-bold opacity-40 uppercase">Global Ranking</p>
-                <h3 class="font-app text-3xl">#01</h3>
-            </div>
-            <div class="app-card p-6 flex flex-col justify-between h-32 bg-red-600 border-none">
-                <p class="text-[10px] font-bold text-black uppercase">Active Artists</p>
-                <h3 class="font-app text-3xl text-black">12</h3>
-            </div>
+    <section class="py-20 border-y border-white/5 bg-zinc-950/50">
+        <div class="grid grid-cols-2 md:grid-cols-4 px-10 gap-10">
+            <div><p class="font-huge text-5xl mb-2 text-red-600">12k</p><p class="text-[10px] tracking-widest font-bold opacity-40">CUTS YEARLY</p></div>
+            <div><p class="font-huge text-5xl mb-2">09</p><p class="text-[10px] tracking-widest font-bold opacity-40">MASTER CHAIRS</p></div>
+            <div><p class="font-huge text-5xl mb-2 text-red-600">100%</p><p class="text-[10px] tracking-widest font-bold opacity-40">RECOGNITION</p></div>
+            <div><p class="font-huge text-5xl mb-2">24/7</p><p class="text-[10px] tracking-widest font-bold opacity-40">VIP SUPPORT</p></div>
         </div>
     </section>
 
-    <section class="py-12 px-6">
-        <h3 class="font-app text-lg mb-6 flex justify-between items-center">
-            MASTER ARTISTS <span class="text-[10px] opacity-40">SWIPE LEFT</span>
-        </h3>
-        <div class="flex gap-4 overflow-x-auto pb-6 scroll-smooth">
-            <div class="flex-shrink-0 w-64">
-                <div class="app-card aspect-[4/5] mb-4">
-                    <img src="https://images.unsplash.com/photo-1618077360395-f3068be8e001?q=80" class="w-full h-full object-cover">
-                </div>
-                <div class="flex justify-between items-center">
-                    <div>
-                        <h4 class="font-app text-sm">MARCUS V.</h4>
-                        <p class="text-[10px] opacity-40 font-bold">SENIOR / FADE MASTER</p>
-                    </div>
-                    <i data-lucide="instagram" class="w-4 h-4 text-red-600"></i>
-                </div>
+    <section class="py-40 px-10 md:px-24">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
+            <div class="relative group">
+                <div class="absolute -inset-4 border border-red-600/30 group-hover:-inset-6 transition-all duration-700"></div>
+                <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80" class="w-full grayscale hover:grayscale-0 transition duration-1000">
             </div>
-            <div class="flex-shrink-0 w-64">
-                <div class="app-card aspect-[4/5] mb-4">
-                    <img src="https://images.unsplash.com/photo-1521446704128-6953dc33a63f?q=80" class="w-full h-full object-cover">
-                </div>
-                <div class="flex justify-between items-center">
-                    <div>
-                        <h4 class="font-app text-sm">LEO KING</h4>
-                        <p class="text-[10px] opacity-40 font-bold">CREATIVE DIRECTOR</p>
-                    </div>
-                    <i data-lucide="instagram" class="w-4 h-4 text-red-600"></i>
+            <div>
+                <h2 class="font-huge text-6xl mb-10">THE<br>LEGACY<span class="text-red-600">.</span></h2>
+                <p class="text-lg font-light leading-relaxed mb-8 opacity-70">VIBZ is not a barbershop. It is a sanctuary for the modern man. Since 2026, we have set the global standard for surgical precision and high-fashion aesthetics.</p>
+                <div class="space-y-6">
+                    <div class="flex items-center gap-6"><i data-lucide="check-circle" class="text-red-600"></i><p class="font-bold text-xs tracking-widest uppercase">Certified Master Artisans</p></div>
+                    <div class="flex items-center gap-6"><i data-lucide="check-circle" class="text-red-600"></i><p class="font-bold text-xs tracking-widest uppercase">Private Executive Suites</p></div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="py-12 bg-zinc-900/50">
-        <div class="px-6 mb-8">
-            <h3 class="font-app text-lg">THE FEEDBACK</h3>
+    <section class="py-40 bg-zinc-950">
+        <div class="px-10 mb-20 flex justify-between items-end">
+            <h2 class="font-huge text-7xl">MENU</h2>
+            <i data-lucide="scissors" class="w-12 h-12 opacity-10"></i>
         </div>
-        <div class="space-y-4 px-6">
-            <div class="app-card p-6">
-                <div class="flex gap-1 mb-3 text-red-600"><i data-lucide="star" class="w-3 h-3 fill-red-600"></i><i data-lucide="star" class="w-3 h-3 fill-red-600"></i><i data-lucide="star" class="w-3 h-3 fill-red-600"></i><i data-lucide="star" class="w-3 h-3 fill-red-600"></i><i data-lucide="star" class="w-3 h-3 fill-red-600"></i></div>
-                <p class="text-sm font-medium mb-4">"The ecosystem at VIBZ is different. It's not just a cut, it's a reset."</p>
-                <div class="flex items-center gap-2">
-                    <div class="w-6 h-6 rounded-full bg-red-600"></div>
-                    <span class="text-[10px] font-bold opacity-40">@STEVEN_MODELS</span>
-                </div>
+        <div class="space-y-[1px] bg-white/5">
+            <div class="group py-16 px-10 flex justify-between items-center bg-black hover:bg-red-600 transition-all duration-500 cursor-pointer">
+                <h3 class="font-huge text-3xl md:text-5xl group-hover:translate-x-10 transition-transform">THE SIGNATURE FADE</h3>
+                <div class="text-right"><p class="font-huge text-4xl">$55</p><p class="text-[10px] font-bold opacity-40">60 MINS</p></div>
+            </div>
+            <div class="group py-16 px-10 flex justify-between items-center bg-black hover:bg-white transition-all duration-500 cursor-pointer">
+                <h3 class="font-huge text-3xl md:text-5xl group-hover:translate-x-10 transition-transform group-hover:text-black">BEARD SCULPTING</h3>
+                <div class="text-right"><p class="font-huge text-4xl group-hover:text-black">$40</p><p class="text-[10px] font-bold opacity-40 group-hover:text-black">45 MINS</p></div>
             </div>
         </div>
     </section>
 
-    <section class="py-12 px-6">
-        <div class="app-card h-80 relative">
-            <iframe class="w-full h-full grayscale invert opacity-40 contrast-125" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2483.5404230554!2d-0.12163!3d51.5033"></iframe>
-            <div class="absolute bottom-4 left-4 right-4 bg-black/80 backdrop-blur-md p-4 rounded-xl border border-white/5">
-                <p class="font-app text-[10px] text-red-600 mb-1">Our Location</p>
-                <p class="text-xs font-bold">120 SAVILE ROW, LONDON</p>
+    <section class="py-40 px-10">
+        <h2 class="font-huge text-4xl mb-20 text-center">TRUSTED BY THE BEST</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+            <div class="glass-panel p-12 text-center">
+                <div class="flex justify-center gap-1 mb-6 text-red-600"><i data-lucide="star" class="fill-current w-4 h-4"></i><i data-lucide="star" class="fill-current w-4 h-4"></i><i data-lucide="star" class="fill-current w-4 h-4"></i><i data-lucide="star" class="fill-current w-4 h-4"></i><i data-lucide="star" class="fill-current w-4 h-4"></i></div>
+                <p class="text-xl italic font-light mb-8">"VIBZ provides a level of service I haven't seen outside of Savile Row."</p>
+                <p class="font-huge text-xs tracking-widest opacity-40">— Julian R.</p>
+            </div>
+            <div class="glass-panel p-12 text-center border-red-600/50">
+                <div class="flex justify-center gap-1 mb-6 text-red-600"><i data-lucide="star" class="fill-current w-4 h-4"></i><i data-lucide="star" class="fill-current w-4 h-4"></i><i data-lucide="star" class="fill-current w-4 h-4"></i><i data-lucide="star" class="fill-current w-4 h-4"></i><i data-lucide="star" class="fill-current w-4 h-4"></i></div>
+                <p class="text-xl italic font-light mb-8">"The private suite booking is essential for my schedule. Faultless."</p>
+                <p class="font-huge text-xs tracking-widest opacity-40">— Marcus D.</p>
+            </div>
+            <div class="glass-panel p-12 text-center">
+                <div class="flex justify-center gap-1 mb-6 text-red-600"><i data-lucide="star" class="fill-current w-4 h-4"></i><i data-lucide="star" class="fill-current w-4 h-4"></i><i data-lucide="star" class="fill-current w-4 h-4"></i><i data-lucide="star" class="fill-current w-4 h-4"></i><i data-lucide="star" class="fill-current w-4 h-4"></i></div>
+                <p class="text-xl italic font-light mb-8">"Consistency is everything in London. VIBZ delivers every single time."</p>
+                <p class="font-huge text-xs tracking-widest opacity-40">— Leo H.</p>
             </div>
         </div>
     </section>
 
-    <section class="py-12 px-6">
-        <div class="app-card p-8">
-            <h3 class="font-app text-2xl mb-6">SUPPORT</h3>
-            <div class="space-y-4">
-                <input type="text" placeholder="Full Name" class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-sm outline-none focus:border-red-600">
-                <textarea placeholder="How can we help?" class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-sm outline-none focus:border-red-600 h-32"></textarea>
-                <button class="pill-button w-full bg-white text-black py-4 font-app text-xs">SEND REQUEST</button>
+    <section id="vault" class="py-40 px-10 md:px-24 bg-red-600 text-black">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+            <div>
+                <h2 class="font-huge text-7xl md:text-9xl">THE<br>VAULT</h2>
+                <p class="mt-10 font-bold uppercase tracking-widest text-sm">Members Only Access</p>
+            </div>
+            <div class="glass-panel !bg-black !text-white p-12">
+                <h3 class="font-huge text-3xl mb-6">VIP MEMBERSHIP</h3>
+                <ul class="space-y-4 mb-10 opacity-70 font-bold uppercase text-[10px]">
+                    <li>• Unlimited Signature Cuts</li>
+                    <li>• Weekly Beard Refinement</li>
+                    <li>• Private Line Access</li>
+                    <li>• Complimentary Top-Shelf Bar</li>
+                </ul>
+                <button class="w-full btn-elite">ENROLL NOW - $150/MO</button>
             </div>
         </div>
     </section>
 
-    <div class="py-8 bg-red-600 overflow-hidden flex whitespace-nowrap">
-        <div class="animate-marquee font-app text-black text-2xl">
-            ELITE SERVICE • LONDON FLAGSHIP • EST 2026 • MASTER CUTS • 
-            ELITE SERVICE • LONDON FLAGSHIP • EST 2026 • MASTER CUTS • 
+    <section class="py-40 px-10 grid grid-cols-1 lg:grid-cols-2 gap-20">
+        <div>
+            <h2 class="font-huge text-6xl mb-10">CONTACT<br>STUDIO</h2>
+            <div class="space-y-12">
+                <div><h5 class="text-red-600 font-bold mb-2">LOCATION</h5><p class="text-2xl font-huge">10-12 MAYFAIR ST, LONDON</p></div>
+                <div><h5 class="text-red-600 font-bold mb-2">DIRECT LINE</h5><p class="text-2xl font-huge">+44 20 7946 0123</p></div>
+            </div>
         </div>
-    </div>
+        <div class="space-y-6">
+            <input type="text" placeholder="FULL NAME" class="w-full bg-white/5 border-b border-white/20 p-6 font-huge text-sm outline-none focus:border-red-600 transition">
+            <input type="email" placeholder="EMAIL ADDRESS" class="w-full bg-white/5 border-b border-white/20 p-6 font-huge text-sm outline-none focus:border-red-600 transition">
+            <textarea placeholder="MESSAGE" class="w-full bg-white/5 border-b border-white/20 p-6 font-huge text-sm outline-none focus:border-red-600 transition h-32"></textarea>
+            <button class="btn-elite w-full">SEND ENQUIRY</button>
+        </div>
+    </section>
 
-    <footer class="p-12 text-center opacity-20 text-[9px] font-bold tracking-[0.4em] uppercase">
-        VIBZ DIGITAL CORE © 2026
+    <section class="h-[600px] grayscale invert contrast-125 opacity-40">
+        <iframe class="w-full h-full" src="http://googleusercontent.com/maps.google.com/5"></iframe>
+    </section>
+
+    <footer class="py-20 px-10 border-t border-white/10 flex flex-col items-center">
+        <div class="font-huge text-9xl text-white/5 absolute -bottom-10">VIBZ</div>
+        <p class="text-[10px] tracking-[1em] font-bold opacity-20">PRIVACY • TERMS • 2026 VIBZ GROUP</p>
     </footer>
 </main>
 
 <script>
     lucide.createIcons();
+    gsap.registerPlugin(ScrollTrigger);
 
-    // INTRO FLOW
-    window.addEventListener('load', () => {
-        const tl = gsap.timeline();
-        tl.to("#loader", { scale: 0, opacity: 0, duration: 0.5 })
-          .to("#intro-shutter", { y: "-100%", duration: 0.8, ease: "expo.inOut" })
-          .to("#app-content", { opacity: 1, duration: 1 }, "-=0.4");
-    });
+    // ELITE INTRO ANIMATION
+    const tl = gsap.timeline();
+    tl.to("#intro-bar", { width: "200px", duration: 1 })
+      .to("#intro-logo", { opacity: 1, duration: 0.5 })
+      .to("#intro", { y: "-100%", duration: 1.2, ease: "expo.inOut", delay: 0.5 })
+      .to("#main-content", { opacity: 1, duration: 1 }, "-=0.5");
 
     // SCROLL REVEALS
-    gsap.registerPlugin(ScrollTrigger);
-    gsap.utils.toArray('.app-card').forEach(card => {
-        gsap.from(card, {
-            scrollTrigger: {
-                trigger: card,
-                start: "top bottom-=50",
-                toggleActions: "play none none reverse"
-            },
-            y: 40,
-            opacity: 0,
-            duration: 1,
-            ease: "power4.out"
+    gsap.utils.toArray('section').forEach(section => {
+        gsap.from(section, {
+            scrollTrigger: { trigger: section, start: "top bottom-=100" },
+            y: 100, opacity: 0, duration: 1.5, ease: "power4.out"
         });
     });
 </script>
