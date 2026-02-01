@@ -191,20 +191,40 @@ header { transition: background 0.3s ease; }
     </div>
 </section>
 
-
 <section class="py-20 md:py-40 px-4 md:px-10 max-w-5xl mx-auto relative group">
+
   <div class="relative mx-auto w-[320px] md:w-[480px] p-4 bg-zinc-900 rounded-[180px_180px_60px_60px] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.8)] border-b-[30px] border-zinc-950">
-    
+
     <div class="b-a-container relative h-[500px] md:h-[650px] overflow-hidden rounded-[160px_160px_40px_40px] cursor-ew-resize" id="ba-slider">
 
-      <!-- BEFORE IMAGE -->
-      <div class="absolute inset-0 flex justify-center bg-[#1a1a1a]">
-        <img src="before-hair.png" alt="Before Hair" class="object-cover h-full w-full"/>
+      <!-- BEFORE: Long hair -->
+      <div id="ba-before" class="absolute inset-0 flex justify-center bg-[#1a1a1a]">
+        <svg viewBox="0 0 200 300" class="w-full h-full">
+          <!-- Head outline -->
+          <path d="M100,20 C40,20 30,150 50,280 C60,290 140,290 150,280 C170,150 160,20 100,20 Z"
+                fill="none" stroke="#222" stroke-width="2"/>
+          <!-- Hair strokes -->
+          <path d="M60,40 Q70,120 65,220" fill="none" stroke="#888" stroke-width="2" stroke-linecap="round"/>
+          <path d="M80,50 Q85,130 80,210" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M100,40 Q100,140 100,200" fill="none" stroke="#888" stroke-width="2" stroke-linecap="round"/>
+          <path d="M120,50 Q115,130 120,210" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M140,40 Q130,120 135,220" fill="none" stroke="#888" stroke-width="2" stroke-linecap="round"/>
+        </svg>
       </div>
 
-      <!-- AFTER IMAGE -->
+      <!-- AFTER: Short hair -->
       <div id="ba-after" class="absolute inset-0 w-1/2 overflow-hidden flex justify-center">
-        <img src="after-hair.png" alt="After Hair" class="object-cover h-full w-full"/>
+        <svg viewBox="0 0 200 300" class="w-full h-full">
+          <!-- Head outline -->
+          <path d="M100,20 C40,20 30,150 50,280 C60,290 140,290 150,280 C170,150 160,20 100,20 Z"
+                fill="none" stroke="#222" stroke-width="2"/>
+          <!-- Hair strokes -->
+          <path d="M60,50 Q70,80 65,100" fill="none" stroke="#f87171" stroke-width="2" stroke-linecap="round"/>
+          <path d="M80,50 Q85,85 80,105" fill="none" stroke="#f87171" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M100,40 Q100,90 100,110" fill="none" stroke="#f87171" stroke-width="2" stroke-linecap="round"/>
+          <path d="M120,50 Q115,80 120,100" fill="none" stroke="#f87171" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M140,40 Q130,85 135,110" fill="none" stroke="#f87171" stroke-width="2" stroke-linecap="round"/>
+        </svg>
       </div>
 
       <!-- SLIDER HANDLE -->
@@ -213,7 +233,8 @@ header { transition: background 0.3s ease; }
           <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/>
             <line x1="20" y1="12" x2="8.12" y2="12"/>
-            <path d="M20 12c0-3.5-3-7-10-7"/><path d="M20 12c0 3.5-3 7-10 7"/>
+            <path d="M20 12c0-3.5-3-7-10-7"/>
+            <path d="M20 12c0 3.5-3 7-10 7"/>
           </svg>
         </div>
       </div>
@@ -222,7 +243,9 @@ header { transition: background 0.3s ease; }
   </div>
 
   <div class="mx-auto w-16 h-32 bg-gradient-to-b from-zinc-950 to-black rounded-b-[50px] shadow-xl border-x-4 border-zinc-900"></div>
+
 </section>
+
 
 
     
@@ -378,6 +401,39 @@ const updateSlider = (e) => {
 };
 baSlider.addEventListener('mousemove', updateSlider);
 baSlider.addEventListener('touchmove', updateSlider);
+
+
+
+  // Basic before/after slider JS
+  const slider = document.getElementById("ba-slider");
+  const handle = document.getElementById("slider-handle");
+  const after = document.getElementById("ba-after");
+
+  let dragging = false;
+
+  handle.addEventListener("mousedown", () => dragging = true);
+  document.addEventListener("mouseup", () => dragging = false);
+  document.addEventListener("mousemove", (e) => {
+    if (!dragging) return;
+    const rect = slider.getBoundingClientRect();
+    let offset = e.clientX - rect.left;
+    offset = Math.max(0, Math.min(offset, rect.width));
+    after.style.width = `${offset}px`;
+    handle.style.left = `${offset}px`;
+  });
+
+  // Touch events for mobile
+  handle.addEventListener("touchstart", () => dragging = true);
+  document.addEventListener("touchend", () => dragging = false);
+  document.addEventListener("touchmove", (e) => {
+    if (!dragging) return;
+    const rect = slider.getBoundingClientRect();
+    let offset = e.touches[0].clientX - rect.left;
+    offset = Math.max(0, Math.min(offset, rect.width));
+    after.style.width = `${offset}px`;
+    handle.style.left = `${offset}px`;
+  });
+
 </script>
 
 </body>
