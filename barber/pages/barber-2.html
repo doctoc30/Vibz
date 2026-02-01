@@ -1,440 +1,325 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VIBZ BARBERS | Elite Grooming</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://unpkg.com/lucide@latest"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/TextPlugin.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&family=Unbounded:wght@900&display=swap" rel="stylesheet">
-<style>
-:root { --burgundy: #2d0a0a; --accent: #ff3e3e; --glass: rgba(45, 10, 10, 0.4); }
-body { background-color: #0a0a0a; color: #fff; font-family: 'Space Grotesk', sans-serif; overflow-x: hidden; }
-.font-huge { font-family: 'Unbounded', sans-serif; letter-spacing: -0.05em; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIBZ BARBERS | Elite Grooming</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/TextPlugin.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&family=Unbounded:wght@900&display=swap" rel="stylesheet">
+    <style>
+        :root { --burgundy: #2d0a0a; --accent: #ff3e3e; --glass: rgba(255, 255, 255, 0.03); }
+        body { background-color: #050505; color: #fff; font-family: 'Space Grotesk', sans-serif; overflow-x: hidden; }
+        .font-huge { font-family: 'Unbounded', sans-serif; letter-spacing: -0.05em; }
 
-/* Grid Logic Fix */
-.advanced-grid { 
-    display: grid; 
-    grid-template-columns: repeat(12, 1fr); 
-    grid-template-rows: repeat(12, minmax(auto, 5vw)); 
-    gap: 1rem; 
-    padding: 1rem; 
-}
+        /* Modern Grid System */
+        .advanced-grid { 
+            display: grid; 
+            grid-template-columns: repeat(12, 1fr); 
+            gap: 1.5rem; 
+            padding: 1.5rem; 
+        }
 
-@media (max-width: 768px) {
-    .advanced-grid { display: flex; flex-direction: column; gap: 1rem; }
-}
+        @media (max-width: 768px) { .advanced-grid { display: flex; flex-direction: column; } }
 
-#intro-shutter { position: fixed; inset: 0; background: #000; z-index: 999; display: flex; align-items: center; justify-content: center; }
-.glass-panel { background: var(--glass); backdrop-filter: blur(40px); border: 1px solid rgba(255,255,255,0.05); border-radius: 2px; transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
-.glass-panel:hover { border-color: var(--accent); background: rgba(255,62,62,0.1); }
-.b-a-container { position: relative; width: 100%; height: 100%; overflow: hidden; }
-.cursor { display: inline-block; width: 8px; height: 0.9em; background-color: #ff3e3e; margin-left: 4px; vertical-align: middle; }
-
-/* Fixed Header Styles */
-header { transition: background 0.3s ease; }
-.header-scrolled { background: rgba(10, 10, 10, 0.8); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,0.05); }
-
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-thumb { background: var(--accent); }
-@keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-.animate-marquee { animation: marquee 20s linear infinite; }
-
-
-#ba-after img, #ba-slider img {
-  mix-blend-mode: multiply;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
-}
-</style>
-
-
-
-
-
-
+        .glass-panel { 
+            background: var(--glass); 
+            backdrop-filter: blur(20px); 
+            border: 1px solid rgba(255,255,255,0.1); 
+            border-radius: 12px; 
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+        .glass-panel:hover { border-color: var(--accent); background: rgba(255,62,62,0.05); transform: translateY(-5px); }
+        
+        /* New Graphics & UI Elements */
+        .stat-card { border-left: 4px solid var(--accent); }
+        .glow-text { text-shadow: 0 0 20px rgba(255, 62, 62, 0.5); }
+        
+        .ba-slider { position: relative; height: 400px; border-radius: 12px; overflow: hidden; }
+        .ba-before { position: absolute; inset: 0; background-size: cover; background-position: center; }
+        .ba-after { position: absolute; inset: 0; background-size: cover; background-position: center; width: 50%; border-right: 2px solid var(--accent); }
+        
+        #intro-shutter { position: fixed; inset: 0; background: #000; z-index: 999; display: flex; align-items: center; justify-content: center; }
+        .cursor { display: inline-block; width: 12px; height: 1em; background-color: var(--accent); vertical-align: middle; }
+        
+        .header-scrolled { background: rgba(5, 5, 5, 0.8) !important; backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255,255,255,0.1); }
+        
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+    </style>
 </head>
 <body>
 
 <div id="intro-shutter">
     <div id="expander" class="w-1 h-1 bg-red-600 rounded-full"></div>
-    <h1 id="intro-text" class="absolute font-huge text-4xl opacity-0">VIBZ</h1>
+    <h1 id="intro-text" class="absolute font-huge text-5xl opacity-0">VIBZ</h1>
 </div>
 
-<header class="fixed top-0 left-0 w-full z-[100] p-6 flex justify-between items-center px-8 md:px-12">
-    <div class="font-huge text-2xl tracking-tighter hover:text-red-600 transition cursor-pointer">
-        VIBZ<span class="text-red-600">.</span>
+<header class="fixed top-0 left-0 w-full z-[100] p-6 transition-all duration-500 flex justify-between items-center px-8 md:px-12">
+    <div class="font-huge text-2xl tracking-tighter group cursor-pointer">
+        VIBZ<span class="text-red-600 group-hover:animate-pulse">.</span>
     </div>
-    <div class="flex items-center gap-6">
-        <span class="font-huge text-[10px] tracking-widest hidden md:block opacity-50 uppercase">Elite Grooming</span>
-        <button id="menu-btn" class="w-14 h-14 bg-white text-black flex items-center justify-center rounded-full hover:scale-110 active:scale-95 transition">
-            <i data-lucide="layers" class="w-6 h-6"></i>
+    <div class="flex items-center gap-8">
+        <nav class="hidden lg:flex gap-8 text-[10px] font-bold tracking-[0.3em] uppercase opacity-70">
+            <a href="#services" class="hover:text-red-600 transition">Services</a>
+            <a href="#shop" class="hover:text-red-600 transition">Shop</a>
+            <a href="#contact" class="hover:text-red-600 transition">Locate</a>
+        </nav>
+        <button id="menu-btn" class="w-12 h-12 bg-white text-black flex items-center justify-center rounded-xl hover:bg-red-600 hover:text-white transition-all">
+            <i data-lucide="menu" class="w-5 h-5"></i>
         </button>
     </div>
 </header>
 
-<div id="side-nav" class="fixed inset-0 bg-black/95 z-[90] translate-x-full flex flex-col p-20">
-    <nav class="space-y-8 mt-20">
-        <a href="#" class="block text-4xl md:text-8xl font-huge hover:text-red-600 transition">SERVICES</a>
-        <a href="#" class="block text-4xl md:text-8xl font-huge hover:text-red-600 transition">GALLERY</a>
-        <a href="#" class="block text-4xl md:text-8xl font-huge hover:text-red-600 transition">CONTACT</a>
-    </nav>
-</div>
-
-<main class="opacity-0 pt-24" id="content">
-
-<section class="advanced-grid min-h-screen">
-    <div class="col-span-12 md:col-span-8 row-span-8 glass-panel relative overflow-hidden group">
-        <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1512690199101-8d766a033339?q=80')] bg-cover bg-center opacity-30 grayscale group-hover:scale-110 transition duration-1000"></div>
-        <div class="relative h-full flex flex-col justify-center px-8 md:px-16 py-32 md:py-0">
-            <span class="text-red-600 font-bold tracking-[0.45em] mb-6 block uppercase">Est. 2026</span>
-            <h1 class="text-4xl md:text-8xl lg:text-9xl font-huge leading-[0.9] uppercase min-h-[2.5em]">
-                <span id="typewriter"></span><span class="cursor"></span>
-            </h1>
-        </div>
-    </div>
-
-    <div class="col-span-12 md:col-span-4 row-span-8 glass-panel p-8 flex flex-col justify-center">
-        <h3 class="font-huge text-xl mb-10 border-b border-red-600 pb-4">BOOKING</h3>
-        <div class="space-y-8">
-            <div class="border-b border-white/10 pb-4">
-                <label class="block text-[10px] text-white/40 mb-2 uppercase">Service</label>
-                <select class="w-full bg-transparent font-bold text-xl outline-none appearance-none cursor-pointer">
-                    <option class="bg-black">Haircut & Fade</option>
-                    <option class="bg-black">Beard Trim</option>
-                    <option class="bg-black">Shave Ritual</option>
-                </select>
-            </div>
-            <div class="border-b border-white/10 pb-4">
-                <label class="block text-[10px] text-white/40 mb-2 uppercase">Barber</label>
-                <select class="w-full bg-transparent font-bold text-xl outline-none appearance-none cursor-pointer">
-                    <option class="bg-black">Alex</option>
-                    <option class="bg-black">Koen</option>
-                    <option class="bg-black">Jude</option>
-                </select>
-            </div>
-            <button class="w-full bg-red-600 p-6 font-huge text-xs tracking-widest hover:bg-white hover:text-black transition">CONFIRM BOOKING</button>
-        </div>
-    </div>
-
-    <div class="col-span-12 md:col-span-4 row-span-4 glass-panel p-6">
-        <i data-lucide="clock" class="text-red-600 mb-4"></i>
-        <div class="text-xs space-y-2 opacity-60 font-bold uppercase">
-            <div class="flex justify-between"><span>Tue–Sat</span><span>10:00 – 22:00</span></div>
-            <div class="flex justify-between text-red-600"><span>Sun–Mon</span><span>Closed</span></div>
-        </div>
-    </div>
-
-    <div class="col-span-12 md:col-span-8 row-span-4 bg-white text-black p-8 flex items-center justify-between group cursor-pointer overflow-hidden">
-        <span class="font-huge text-xl md:text-2xl uppercase">Vibz Loyalty Club</span>
-        <i data-lucide="arrow-right" class="w-8 h-8 group-hover:translate-x-4 transition"></i>
-    </div>
-</section>
-
-<section class="advanced-grid py-20">
-    <div class="col-span-12 md:col-span-2 flex items-center justify-center md:justify-start">
-        <h2 class="font-huge md:-rotate-90 text-4xl text-white/10 whitespace-nowrap mb-10 md:mb-0 uppercase">Price List</h2>
-    </div>
-    <div class="col-span-12 md:col-span-5 space-y-px">
-        <div class="glass-panel p-10 flex justify-between items-center group">
-            <div class="flex items-center gap-6">
-                <span class="text-white/20 font-huge text-2xl">01</span>
-                <h4 class="text-xl md:text-2xl font-bold">Haircut & Fade</h4>
-            </div>
-            <span class="text-red-600 font-huge">$35</span>
-        </div>
-        <div class="glass-panel p-10 flex justify-between items-center">
-            <div class="flex items-center gap-6">
-                <span class="text-white/20 font-huge text-2xl">02</span>
-                <h4 class="text-xl md:text-2xl font-bold">Beard Trim</h4>
-            </div>
-            <span class="text-red-600 font-huge">$25</span>
-        </div>
-    </div>
-    <div class="col-span-12 md:col-span-5 glass-panel p-10 bg-[url('https://images.unsplash.com/photo-1621605815841-aa897bd0f73d?q=80')] bg-cover grayscale contrast-125 min-h-[300px]">
-        <div class="h-full bg-black/60 p-6 flex flex-col justify-end">
-            <h3 class="font-huge text-2xl mb-4 uppercase">Gallery</h3>
-            <p class="text-sm opacity-70">See our recent haircuts and grooming styles.</p>
-        </div>
-    </div>
-</section>
-
-<section class="p-10">
-    <h2 class="font-huge text-3xl mb-12 uppercase">Shop<span class="text-red-600">.</span></h2>
-    <div class="grid grid-cols-2 md:grid-cols-6 gap-4">
-        <div class="aspect-[3/4] glass-panel p-4 flex flex-col justify-between group hover:-translate-y-4 transition">
-            <div class="w-full aspect-square bg-cover bg-center" style="background-image: url('https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-2-image1.jpg');"></div>
-            <div><p class="text-[10px] opacity-40 uppercase">Beard Wax</p><p class="font-bold">$20</p></div>
-        </div>
-        <div class="aspect-[3/4] glass-panel p-4 flex flex-col justify-between group hover:-translate-y-4 transition">
-            <div class="w-full aspect-square bg-cover bg-center" style="background-image: url('https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-2-image2.jpg');"></div>
-            <div><p class="text-[10px] opacity-40 uppercase">Hair Clay</p><p class="font-bold">$25</p></div>
-        </div>
-        <div class="aspect-[3/4] glass-panel p-4 flex flex-col justify-between group hover:-translate-y-4 transition">
-            <div class="w-full aspect-square bg-cover bg-center" style="background-image: url('https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-2-image3.jpg');"></div>
-            <div><p class="text-[10px] opacity-40 uppercase">Pomade</p><p class="font-bold">$22</p></div>
-        </div>
-        <div class="aspect-[3/4] glass-panel p-4 flex flex-col justify-between group hover:-translate-y-4 transition">
-            <div class="w-full aspect-square bg-cover bg-center" style="background-image: url('https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-2-image4.jpg');"></div>
-            <div><p class="text-[10px] opacity-40 uppercase">Kinetic Wax</p><p class="font-bold">$28</p></div>
-        </div>
-        <div class="aspect-[3/4] glass-panel p-4 flex flex-col justify-between group hover:-translate-y-4 transition">
-            <div class="w-full aspect-square bg-cover bg-center" style="background-image: url('https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-2-image5.jpg');"></div>
-            <div><p class="text-[10px] opacity-40 uppercase">Shampoo</p><p class="font-bold">$15</p></div>
-        </div>
-        <div class="aspect-[3/4] glass-panel p-4 flex flex-col justify-between group hover:-translate-y-4 transition">
-            <div class="w-full aspect-square bg-cover bg-center" style="background-image: url('https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-2-image6.jpg');"></div>
-            <div><p class="text-[10px] opacity-40 uppercase">Conditioner</p><p class="font-bold">$18</p></div>
-        </div>
-    </div>
-</section>
-
-<section class="py-20 md:py-40 px-4 md:px-10 max-w-5xl mx-auto relative group">
-
-  <div class="relative mx-auto w-[320px] md:w-[480px] p-4 bg-zinc-900 rounded-[180px_180px_60px_60px] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.8)] border-b-[30px] border-zinc-950">
-
-    <div class="b-a-container relative h-[500px] md:h-[650px] overflow-hidden rounded-[160px_160px_40px_40px] cursor-ew-resize" id="ba-slider">
-
-      <!-- BEFORE: Long hair -->
-      <div id="ba-before" class="absolute inset-0 flex justify-center bg-[#1a1a1a]">
-        <svg viewBox="0 0 200 300" class="w-full h-full">
-          <!-- Head outline -->
-          <path d="M100,20 C40,20 30,150 50,280 C60,290 140,290 150,280 C170,150 160,20 100,20 Z"
-                fill="none" stroke="#222" stroke-width="2"/>
-          <!-- Hair strokes -->
-          <path d="M60,40 Q70,120 65,220" fill="none" stroke="#888" stroke-width="2" stroke-linecap="round"/>
-          <path d="M80,50 Q85,130 80,210" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round"/>
-          <path d="M100,40 Q100,140 100,200" fill="none" stroke="#888" stroke-width="2" stroke-linecap="round"/>
-          <path d="M120,50 Q115,130 120,210" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round"/>
-          <path d="M140,40 Q130,120 135,220" fill="none" stroke="#888" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-      </div>
-
-      <!-- AFTER: Short hair -->
-      <div id="ba-after" class="absolute inset-0 w-1/2 overflow-hidden flex justify-center">
-        <svg viewBox="0 0 200 300" class="w-full h-full">
-          <!-- Head outline -->
-          <path d="M100,20 C40,20 30,150 50,280 C60,290 140,290 150,280 C170,150 160,20 100,20 Z"
-                fill="none" stroke="#222" stroke-width="2"/>
-          <!-- Hair strokes -->
-          <path d="M60,50 Q70,80 65,100" fill="none" stroke="#f87171" stroke-width="2" stroke-linecap="round"/>
-          <path d="M80,50 Q85,85 80,105" fill="none" stroke="#f87171" stroke-width="1.5" stroke-linecap="round"/>
-          <path d="M100,40 Q100,90 100,110" fill="none" stroke="#f87171" stroke-width="2" stroke-linecap="round"/>
-          <path d="M120,50 Q115,80 120,100" fill="none" stroke="#f87171" stroke-width="1.5" stroke-linecap="round"/>
-          <path d="M140,40 Q130,85 135,110" fill="none" stroke="#f87171" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-      </div>
-
-      <!-- SLIDER HANDLE -->
-      <div id="slider-handle" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50">
-        <div class="bg-rose-600 text-white p-4 rounded-full shadow-[0_0_30px_rgba(225,29,72,0.6)] border-2 border-white">
-          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/>
-            <line x1="20" y1="12" x2="8.12" y2="12"/>
-            <path d="M20 12c0-3.5-3-7-10-7"/>
-            <path d="M20 12c0 3.5-3 7-10 7"/>
-          </svg>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <div class="mx-auto w-16 h-32 bg-gradient-to-b from-zinc-950 to-black rounded-b-[50px] shadow-xl border-x-4 border-zinc-900"></div>
-
-</section>
-
-
-
-    
-
-<div class="w-full bg-red-600 py-4 overflow-hidden whitespace-nowrap mb-20 md:mb-40">
-    <div class="flex gap-20 animate-marquee font-huge text-black text-xs">
-        <span>"ULTIMATE PRECISION" • 5.0 RATING</span>
-        <span>"BEST LOCAL BARBERS" • ELITE SERVICE</span>
-        <span>"MODERN & CLASSIC STYLES" • LONDON</span>
-    </div>
-</div>
-
-<section class="grid grid-cols-1 md:grid-cols-3 gap-1 px-4 md:px-10">
-    <div class="glass-panel h-80 md:h-96 flex flex-col items-center justify-center grayscale hover:grayscale-0 transition duration-500">
-        <i data-lucide="shield" class="w-16 h-16 text-red-600 mb-6"></i>
-        <h4 class="font-huge uppercase">Alex</h4>
-        <p class="text-[10px] tracking-widest text-white/40 uppercase">Senior Barber</p>
-    </div>
-    <div class="glass-panel h-80 md:h-96 flex flex-col items-center justify-center bg-red-600 text-black">
-        <i data-lucide="zap" class="w-16 h-16 mb-6"></i>
-        <h4 class="font-huge uppercase">Koen</h4>
-        <p class="text-[10px] tracking-widest font-black uppercase">Lead Stylist</p>
-    </div>
-    <div class="glass-panel h-80 md:h-96 flex flex-col items-center justify-center grayscale hover:grayscale-0 transition">
-        <i data-lucide="target" class="w-16 h-16 text-red-600 mb-6"></i>
-        <h4 class="font-huge uppercase">Jude</h4>
-        <p class="text-[10px] tracking-widest text-white/40 uppercase">Barber</p>
-    </div>
-</section>
-
-
-<section class="advanced-grid py-20 md:py-40">
-    <!-- Contact Info -->
-    <div class="col-span-12 md:col-span-6 glass-panel p-8 md:p-12">
-        <h3 class="font-huge text-4xl mb-10 uppercase">Locate Us</h3>
-        <div class="space-y-6 text-xl">
-            <p class="opacity-50">
-                STATION 04<br>
-                NEO-VOK DISTRICT<br>
-                LONDON, SE1
-            </p>
-            <div class="flex gap-4 pt-10">
-                <a href="tel:+440000000000" class="bg-white text-black p-4 rounded-full">
-                    <i data-lucide="phone"></i>
-                </a>
-                <a href="sms:+440000000000" class="bg-white text-black p-4 rounded-full">
-                    <i data-lucide="message-square"></i>
-                </a>
+<main class="opacity-0" id="content">
+    <section class="advanced-grid min-h-screen pt-24">
+        <div class="col-span-12 md:col-span-8 glass-panel relative overflow-hidden group min-h-[500px]">
+            <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80')] bg-cover bg-center opacity-40 grayscale transition duration-1000 group-hover:scale-105 group-hover:grayscale-0"></div>
+            <div class="relative h-full flex flex-col justify-center p-12">
+                <span class="text-red-600 font-bold tracking-[0.5em] mb-4 uppercase text-xs">Vibz Digital Grooming</span>
+                <h1 class="text-5xl md:text-8xl font-huge leading-none uppercase">
+                    <span id="typewriter"></span><span class="cursor"></span>
+                </h1>
             </div>
         </div>
-    </div>
 
-    <!-- Map -->
-    <div class="col-span-12 md:col-span-6 bg-red-950 grayscale invert h-[300px] md:h-full">
-        <iframe 
-            class="w-full h-full border-0"
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d19805.18452748422!2d-0.1118!3d51.5034!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x487604cb1db74c2b%3A0x6305d6a8e0b13f57!2sLondon%20SE1!5e0!3m2!1sen!2suk!4v1704300000000!5m2!1sen!2suk"
-            allowfullscreen=""
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade">
-        </iframe>
-    </div>
-</section>
+        <div class="col-span-12 md:col-span-4 glass-panel p-10 flex flex-col justify-between border-red-600/30">
+            <div>
+                <h3 class="font-huge text-xl mb-6 flex items-center gap-3">
+                    <i data-lucide="calendar" class="text-red-600"></i> QUICK BOOK
+                </h3>
+                <div class="space-y-6">
+                    <div class="group border-b border-white/10 pb-2">
+                        <p class="text-[9px] text-red-600 font-bold tracking-widest uppercase">Cut Type</p>
+                        <select class="w-full bg-transparent font-bold text-lg outline-none appearance-none py-2">
+                            <option class="bg-[#050505]">Skin Fade Ritual</option>
+                            <option class="bg-[#050505]">Classic Scissor Cut</option>
+                            <option class="bg-[#050505]">The Vibz Signature</option>
+                        </select>
+                    </div>
+                    <div class="group border-b border-white/10 pb-2">
+                        <p class="text-[9px] text-red-600 font-bold tracking-widest uppercase">Expert</p>
+                        <select class="w-full bg-transparent font-bold text-lg outline-none appearance-none py-2">
+                            <option class="bg-[#050505]">Alex (Senior)</option>
+                            <option class="bg-[#050505]">Koen (Lead)</option>
+                            <option class="bg-[#050505]">Jude (Stylist)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <button class="w-full bg-white text-black py-5 font-huge text-[10px] tracking-widest hover:bg-red-600 hover:text-white transition-all mt-8 rounded-lg">
+                SECURE APPOINTMENT
+            </button>
+        </div>
+    </section>
 
-    
-<footer class="mt-40 bg-[#0f0505] border-t border-white/5 pt-20 pb-10 px-10">
-    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
-        <div class="col-span-1 md:col-span-2">
-            <h2 class="font-huge text-4xl md:text-6xl mb-6 uppercase">VIBZ<br>BARBERS<span class="text-red-600">.</span></h2>
-            <div class="flex gap-6 mt-10">
-                <a href="#" class="hover:text-red-600 transition"><i data-lucide="instagram"></i></a>
-                <a href="#" class="hover:text-red-600 transition"><i data-lucide="youtube"></i></a>
-                <a href="#" class="hover:text-red-600 transition"><i data-lucide="twitter"></i></a>
+    <section class="px-6 py-12 grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="glass-panel p-6 stat-card">
+            <h4 class="font-huge text-3xl text-red-600">12k+</h4>
+            <p class="text-[10px] font-bold opacity-50 uppercase tracking-tighter">Fresh Fades</p>
+        </div>
+        <div class="glass-panel p-6 stat-card">
+            <h4 class="font-huge text-3xl">5.0</h4>
+            <p class="text-[10px] font-bold opacity-50 uppercase tracking-tighter">Google Rating</p>
+        </div>
+        <div class="glass-panel p-6 stat-card">
+            <h4 class="font-huge text-3xl text-red-600">03</h4>
+            <p class="text-[10px] font-bold opacity-50 uppercase tracking-tighter">Master Barbers</p>
+        </div>
+        <div class="glass-panel p-6 stat-card">
+            <h4 class="font-huge text-3xl">100%</h4>
+            <p class="text-[10px] font-bold opacity-50 uppercase tracking-tighter">Vibz Only</p>
+        </div>
+    </section>
+
+    <section class="p-6">
+        <div class="glass-panel overflow-hidden">
+            <div class="grid grid-cols-1 md:grid-cols-2">
+                <div class="p-12 flex flex-col justify-center">
+                    <h2 class="font-huge text-4xl mb-6 uppercase">The <span class="text-red-600">Evolution</span></h2>
+                    <p class="opacity-60 mb-8 leading-relaxed">Experience the transition from rough to refined. Our signature fades are engineered for your specific head shape.</p>
+                    <div class="flex gap-4">
+                        <div class="w-12 h-1 border-t-2 border-red-600 mt-3"></div>
+                        <span class="text-[10px] font-bold tracking-widest uppercase">Slide to compare</span>
+                    </div>
+                </div>
+                <div class="ba-slider" id="ba-slider">
+                    <div class="ba-before" style="background-image: url('https://images.unsplash.com/photo-1593702295094-ada34bed074c?q=80');"></div>
+                    <div class="ba-after" id="ba-after" style="background-image: url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80');"></div>
+                </div>
             </div>
         </div>
-        <div>
-            <h4 class="font-huge text-xs tracking-[0.3em] text-red-600 mb-8 uppercase">Explore</h4>
-            <ul class="space-y-4 font-bold text-sm text-white/60">
-                <li><a href="#" class="hover:text-white transition uppercase">Careers</a></li>
-                <li><a href="#" class="hover:text-white transition uppercase">Privacy</a></li>
-            </ul>
-        </div>
-    </div>
-    <div class="max-w-7xl mx-auto border-t border-white/5 pt-10 flex flex-col md:flex-row justify-between items-center gap-6">
-        <div class="text-[10px] font-bold tracking-widest text-white/20 uppercase">
-            © 2026 VIBZ BARBERS GROUP LTD.
-        </div>
-        <div class="flex gap-8">
-            <div class="h-2 w-2 rounded-full bg-green-500 animate-pulse"></div>
-            <span class="text-[10px] font-bold tracking-widest text-white/40 uppercase">System Status: Optimal</span>
-        </div>
-    </div>
-</footer>
+    </section>
 
+    <section id="services" class="advanced-grid py-12">
+        <div class="col-span-12 md:col-span-3">
+            <h2 class="font-huge text-4xl sticky top-32 uppercase leading-none">Menu <br><span class="text-red-600">Pricing.</span></h2>
+        </div>
+        <div class="col-span-12 md:col-span-9 space-y-4">
+            <div class="glass-panel p-8 flex justify-between items-center group">
+                <div class="flex items-center gap-8">
+                    <span class="text-white/10 font-huge text-4xl group-hover:text-red-600/20 transition">01</span>
+                    <div>
+                        <h4 class="text-2xl font-bold uppercase">The Executive Fade</h4>
+                        <p class="text-xs opacity-50 mt-1">Wash, Cut, Style & Hot Towel</p>
+                    </div>
+                </div>
+                <span class="text-2xl font-huge text-red-600">$45</span>
+            </div>
+            <div class="glass-panel p-8 flex justify-between items-center group">
+                <div class="flex items-center gap-8">
+                    <span class="text-white/10 font-huge text-4xl group-hover:text-red-600/20 transition">02</span>
+                    <div>
+                        <h4 class="text-2xl font-bold uppercase">Beard Sculpting</h4>
+                        <p class="text-xs opacity-50 mt-1">Razor outline & Oil treatment</p>
+                    </div>
+                </div>
+                <span class="text-2xl font-huge text-red-600">$30</span>
+            </div>
+        </div>
+    </section>
+
+    <section id="shop" class="px-6 py-20 bg-white/5">
+        <div class="flex justify-between items-end mb-12">
+            <h2 class="font-huge text-4xl uppercase">The <span class="text-red-600">Apothecary</span></h2>
+            <p class="text-[10px] font-bold tracking-widest uppercase opacity-40">Professional Grade</p>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-6 gap-6">
+            <div class="glass-panel p-4 group cursor-pointer">
+                <div class="w-full aspect-square rounded-lg overflow-hidden mb-4">
+                    <img src="https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-2-image1.jpg" class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition duration-500">
+                </div>
+                <p class="text-[9px] text-red-600 font-bold uppercase tracking-widest">Matte Clay</p>
+                <div class="flex justify-between items-center mt-1">
+                    <p class="font-bold">$22</p>
+                    <i data-lucide="plus-circle" class="w-4 h-4 opacity-0 group-hover:opacity-100 transition"></i>
+                </div>
+            </div>
+            <div class="glass-panel p-4 group cursor-pointer">
+                <div class="w-full aspect-square rounded-lg overflow-hidden mb-4">
+                    <img src="https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-2-image2.jpg" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-500">
+                </div>
+                <p class="text-[9px] text-red-600 font-bold uppercase tracking-widest">Texture Paste</p>
+                <p class="font-bold">$25</p>
+            </div>
+            <div class="glass-panel p-4 group cursor-pointer">
+                <div class="w-full aspect-square rounded-lg overflow-hidden mb-4">
+                    <img src="https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-2-image3.jpg" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-500">
+                </div>
+                <p class="text-[9px] text-red-600 font-bold uppercase tracking-widest">Classic Pomade</p>
+                <p class="font-bold">$20</p>
+            </div>
+            <div class="glass-panel p-4 group cursor-pointer">
+                <div class="w-full aspect-square rounded-lg overflow-hidden mb-4">
+                    <img src="https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-2-image4.jpg" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-500">
+                </div>
+                <p class="text-[9px] text-red-600 font-bold uppercase tracking-widest">Beard Balm</p>
+                <p class="font-bold">$18</p>
+            </div>
+            <div class="glass-panel p-4 group cursor-pointer">
+                <div class="w-full aspect-square rounded-lg overflow-hidden mb-4">
+                    <img src="https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-2-image5.jpg" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-500">
+                </div>
+                <p class="text-[9px] text-red-600 font-bold uppercase tracking-widest">Vibz Shampoo</p>
+                <p class="font-bold">$28</p>
+            </div>
+            <div class="glass-panel p-4 group cursor-pointer">
+                <div class="w-full aspect-square rounded-lg overflow-hidden mb-4">
+                    <img src="https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-2-image6.jpg" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-500">
+                </div>
+                <p class="text-[9px] text-red-600 font-bold uppercase tracking-widest">Cooling Mist</p>
+                <p class="font-bold">$15</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="w-full bg-red-600 py-6 overflow-hidden whitespace-nowrap border-y border-black">
+        <div class="flex gap-20 animate-marquee font-huge text-black text-xl italic">
+            <span>PRECISION CUTS • VIBZ BARBERS • LONDON SE1 • EST 2026 • STYLE EVOLVED • </span>
+            <span>PRECISION CUTS • VIBZ BARBERS • LONDON SE1 • EST 2026 • STYLE EVOLVED • </span>
+        </div>
+    </div>
+
+    <section id="contact" class="advanced-grid py-20">
+        <div class="col-span-12 md:col-span-5 glass-panel p-12">
+            <h3 class="font-huge text-4xl mb-12 uppercase leading-none">Join the <br><span class="text-red-600">Lineup.</span></h3>
+            <div class="space-y-8">
+                <div class="flex items-start gap-4">
+                    <i data-lucide="map-pin" class="text-red-600 shrink-0"></i>
+                    <p class="text-lg opacity-80 uppercase font-bold">Station 04, Neo-Vok District<br>London, SE1</p>
+                </div>
+                <div class="flex items-start gap-4">
+                    <i data-lucide="phone" class="text-red-600 shrink-0"></i>
+                    <p class="text-lg opacity-80 font-bold">+44 (0) 20 7946 0000</p>
+                </div>
+            </div>
+            <div class="mt-12 flex gap-4">
+                <div class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:border-red-600 transition cursor-pointer"><i data-lucide="instagram" class="w-4 h-4"></i></div>
+                <div class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:border-red-600 transition cursor-pointer"><i data-lucide="twitter" class="w-4 h-4"></i></div>
+            </div>
+        </div>
+        <div class="col-span-12 md:col-span-7 glass-panel overflow-hidden grayscale contrast-125 h-[400px]">
+            <iframe class="w-full h-full border-0 invert opacity-50" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2483.5404230551273!2d-0.121548!3d51.503324!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x487604b900d26973%3A0x4291f3172409ea92!2sLondon%20Eye!5e0!3m2!1sen!2suk!4v1625000000000!5m2!1sen!2suk"></iframe>
+        </div>
+    </section>
+
+    <footer class="p-12 text-center border-t border-white/5">
+        <p class="text-[10px] font-bold tracking-[0.5em] opacity-20 uppercase">© 2026 VIBZ BARBER GROUP - ALL RIGHTS RESERVED</p>
+    </footer>
 </main>
 
 <script>
-lucide.createIcons();
-gsap.registerPlugin(ScrollTrigger, TextPlugin);
+    lucide.createIcons();
+    gsap.registerPlugin(ScrollTrigger, TextPlugin);
 
-// Master Sequence
-const tl = gsap.timeline();
+    // Opening Sequence
+    const tl = gsap.timeline();
+    tl.to("#expander", { scale: 1000, duration: 1.2, ease: "power4.inOut" })
+      .to("#intro-text", { opacity: 1, y: -20, duration: 0.5 }, "-=0.2")
+      .to("#intro-shutter", { opacity: 0, pointerEvents: "none", duration: 0.8 })
+      .to("#content", { opacity: 1, duration: 1 }, "-=0.5");
 
-tl.to("#expander", { scale: 1000, duration: 1.5, ease: "power4.in" })
-  .to("#intro-text", { opacity: 1, duration: 0.5 }, "-=0.5")
-  .to("#intro-shutter", { opacity: 0, pointerEvents: "none", duration: 0.8 })
-  .to("#content", { opacity: 1, duration: 0.5 }, "-=0.5");
-
-// Typewriter
-tl.to("#typewriter", {
-    duration: 2.5,
-    text: "VIBZ<br>BARBERS.",
-    ease: "none",
-    onStart: () => {
-        gsap.to(".cursor", { opacity: 0, repeat: -1, duration: 0.5, yoyo: true });
-    }
-});
-
-// Header scroll effect
-window.addEventListener('scroll', () => {
-    const header = document.querySelector('header');
-    if (window.scrollY > 50) {
-        header.classList.add('header-scrolled');
-    } else {
-        header.classList.remove('header-scrolled');
-    }
-});
-
-// Scroll Reveal
-gsap.utils.toArray('.glass-panel').forEach(el => {
-    gsap.from(el, {
-        scrollTrigger: { trigger: el, start: "top 95%" },
-        y: 50, opacity: 0, scale: 0.95,
-        duration: 1, ease: "expo.out"
+    // Typewriter Hero
+    tl.to("#typewriter", {
+        duration: 2,
+        text: "VIBZ<br><span class='text-red-600'>BARBERS.</span>",
+        ease: "none"
     });
-});
 
-// Nav
-const btn = document.getElementById('menu-btn');
-const nav = document.getElementById('side-nav');
-btn.addEventListener('click', () => { 
-    nav.classList.toggle('translate-x-full'); 
-    btn.classList.toggle('rotate-90');
-});
+    // Sticky Header
+    window.addEventListener('scroll', () => {
+        const header = document.querySelector('header');
+        header.classList.toggle('header-scrolled', window.scrollY > 50);
+    });
 
-// B/A Slider
-const baSlider = document.getElementById('ba-slider');
-const baAfter = document.getElementById('ba-after');
-const updateSlider = (e) => {
-    const rect = baSlider.getBoundingClientRect();
-    const x = (((e.clientX || (e.touches && e.touches[0].clientX)) - rect.left) / rect.width) * 100;
-    if(x >= 0 && x <= 100) baAfter.style.width = x + '%';
-};
-baSlider.addEventListener('mousemove', updateSlider);
-baSlider.addEventListener('touchmove', updateSlider);
+    // Before/After Slider Logic
+    const baSlider = document.getElementById('ba-slider');
+    const baAfter = document.getElementById('ba-after');
+    
+    baSlider.addEventListener('mousemove', (e) => {
+        const rect = baSlider.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const percent = (x / rect.width) * 100;
+        baAfter.style.width = `${percent}%`;
+    });
 
-
-
-  // Basic before/after slider JS
-  const slider = document.getElementById("ba-slider");
-  const handle = document.getElementById("slider-handle");
-  const after = document.getElementById("ba-after");
-
-  let dragging = false;
-
-  handle.addEventListener("mousedown", () => dragging = true);
-  document.addEventListener("mouseup", () => dragging = false);
-  document.addEventListener("mousemove", (e) => {
-    if (!dragging) return;
-    const rect = slider.getBoundingClientRect();
-    let offset = e.clientX - rect.left;
-    offset = Math.max(0, Math.min(offset, rect.width));
-    after.style.width = `${offset}px`;
-    handle.style.left = `${offset}px`;
-  });
-
-  // Touch events for mobile
-  handle.addEventListener("touchstart", () => dragging = true);
-  document.addEventListener("touchend", () => dragging = false);
-  document.addEventListener("touchmove", (e) => {
-    if (!dragging) return;
-    const rect = slider.getBoundingClientRect();
-    let offset = e.touches[0].clientX - rect.left;
-    offset = Math.max(0, Math.min(offset, rect.width));
-    after.style.width = `${offset}px`;
-    handle.style.left = `${offset}px`;
-  });
-
+    // Reveal animations
+    gsap.utils.toArray('.glass-panel').forEach(panel => {
+        gsap.from(panel, {
+            scrollTrigger: {
+                trigger: panel,
+                start: "top bottom-=100px",
+                toggleActions: "play none none reverse"
+            },
+            y: 40,
+            opacity: 0,
+            duration: 0.8,
+            ease: "power3.out"
+        });
+    });
 </script>
-
 </body>
 </html>
