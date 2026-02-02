@@ -1606,317 +1606,221 @@
         <i class="fas fa-paper-plane"></i>
     </a>
 
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-<script>
-// ================= SERVICE TRACKING SYSTEM =================
-const VIBZServices = {
-    standard: {
-        'Logo': 'placeholder if none',
-        'Services & Pricing Display': 'Clear layout of all offered services and prices',
-        'Team / Barber Profiles': 'Photos, bios, and specialties',
-        'Photo Gallery / Portfolio': 'Image grid showcasing work',
-        'Basic Before & After Slider': 'Compare before/after side-by-side',
-        'Special Offers / Promotions Section': 'Display deals or discounts',
-        'Opening Hours Display': 'Business hours and open/closed status',
-        'Location & Directions': 'Google Maps embed with directions button',
-        'Tap-to-Call & WhatsApp Buttons': 'One-click mobile contact',
-        'FAQ Section': 'Collapsible questions to answer common queries',
-        'Loyalty / Membership Info': 'Show loyalty program details',
-        'Contact Form': 'Simple enquiry form to collect messages',
-        'On-Page SEO Basics': 'Page titles, headers, meta tags, and image alt text',
-        'Reviews': 'Display client testimonials',
-        'Video Grids': 'Up to 6, add YouTube/other videos'
-    },
-    
-    premium: {
-        'Online Booking System Integration': 'Calendly, Setmore, etc.',
-        'Stripe Payments / Deposits': 'Accept payments online',
-        'Reschedule & Cancellation Management': 'Client-managed bookings',
-        'Gift Cards / Vouchers': 'Sell digital gift cards',
-        'Walk-In / Waitlist System': 'Real-time updates for walk-ins',
-        'Pop up offer': 'AI-triggered promotional popups',
-        'Barber Specialties & Service Tags': 'Highlight skills and services',
-        'Advanced Call-to-Action Buttons': 'Sticky buttons, strategic placement',
-        'Analytics & Conversion Tracking Setup': 'Tracks Book Now, Call, WhatsApp, and form submissions',
-        'Priority Build Queue': 'Premium builds scheduled first',
-        'Enhanced Video & Image Gallery': 'Interactive gallery for client-provided media',
-        'Custom graphics': 'Personalized visuals for website sections',
-        'Prominent Sticky Header / Banner': 'Highlight bookings, offers, or CTAs',
-        'Multi-Location / Branch Info': 'Optional for shops with multiple locations',
-        'Full Branding Package': 'Logo, colors, typography, brand identity'
-    },
-    
-    init: function() {
-        console.log('VIBZ Services Tracking - Homepage');
-        this.trackPageServices();
-        this.attachToForms();
-        this.storeServices();
-    },
-    
-    trackPageServices: function() {
-        const services = {
-            standard: [],
-            premium: []
-        };
-        
-        // Detect services on homepage
-        if (document.querySelector('.logo')) services.standard.push('Logo');
-        if (document.querySelector('#services')) services.standard.push('Services & Pricing Display');
-        if (document.querySelector('.testimonial-author')) services.standard.push('Team / Barber Profiles');
-        if (document.querySelector('.features-grid') || document.querySelector('.process-grid')) services.standard.push('Photo Gallery / Portfolio');
-        if (document.querySelector('.slider-frame')) services.standard.push('Basic Before & After Slider');
-        if (document.querySelector('.feature-card')) services.standard.push('Special Offers / Promotions Section');
-        if (document.querySelector('#contact')) {
-            services.standard.push('Opening Hours Display');
-            services.standard.push('Location & Directions');
+    <script>
+        // Initialize AOS (EXISTING)
+        AOS.init({ duration: 800, once: true });
+
+        // Typewriter Logic (EXISTING)
+        const words = ["Customers.", "Growth.", "Revenue.", "Results."];
+        let wordIndex = 0; 
+        let charIndex = 0; 
+        let isDeleting = false;
+        const target = document.getElementById("typewriter");
+
+        function type() {
+            const currentWord = words[wordIndex];
+            if (isDeleting) { 
+                target.textContent = currentWord.substring(0, charIndex--); 
+            } else { 
+                target.textContent = currentWord.substring(0, charIndex++); 
+            }
+
+            if (!isDeleting && charIndex === currentWord.length + 1) {
+                isDeleting = true; 
+                setTimeout(type, 2000);
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false; 
+                wordIndex = (wordIndex + 1) % words.length; 
+                setTimeout(type, 500);
+            } else {
+                setTimeout(type, isDeleting ? 100 : 200);
+            }
         }
-        if (document.querySelector('.nav-btn') || document.querySelector('.floating-cta')) services.standard.push('Tap-to-Call & WhatsApp Buttons');
-        if (document.querySelector('#faq')) services.standard.push('FAQ Section');
-        if (document.querySelector('#conversion')) services.standard.push('Loyalty / Membership Info');
-        if (document.querySelector('form')) services.standard.push('Contact Form');
-        if (document.querySelector('meta[name="description"]')) services.standard.push('On-Page SEO Basics');
-        if (document.querySelector('.testimonials-section')) services.standard.push('Reviews');
-        if (document.querySelector('iframe') || document.querySelector('[src*="youtube"]')) services.standard.push('Video Grids');
-        
-        // Premium detections
-        if (document.querySelector('.lead-capture-container')) {
-            services.premium.push('Online Booking System Integration');
-            services.premium.push('Gift Cards / Vouchers');
-        }
-        if (document.querySelector('#leadCaptureForm')) {
-            services.premium.push('Stripe Payments / Deposits');
-            services.premium.push('Reschedule & Cancellation Management');
-        }
-        if (document.querySelector('.widget-badge')) {
-            services.premium.push('Walk-In / Waitlist System');
-            services.premium.push('Advanced Call-to-Action Buttons');
-        }
-        if (document.querySelector('#conversion')) {
-            services.premium.push('Analytics & Conversion Tracking Setup');
-            services.premium.push('Enhanced Video & Image Gallery');
-        }
-        if (document.querySelector('.graphics-grid')) {
-            services.premium.push('Custom graphics');
-            services.premium.push('Prominent Sticky Header / Banner');
-        }
-        if (document.querySelector('.nav')) services.premium.push('Full Branding Package');
-        services.premium.push('Priority Build Queue');
-        
-        this.currentServices = services;
-        return services;
-    },
-    
-    attachToForms: function() {
-        const forms = document.querySelectorAll('form');
-        forms.forEach((form, index) => {
-            const standardInput = document.createElement('input');
-            standardInput.type = 'hidden';
-            standardInput.name = `standard_services_${index}`;
-            standardInput.value = JSON.stringify(this.currentServices.standard);
-            form.appendChild(standardInput);
+        type();
+
+        // FAQ Logic (EXISTING)
+        function toggleFaq(btn) {
+            const item = btn.parentElement;
+            const content = btn.nextElementSibling;
+            const icon = btn.querySelector('i');
             
-            const premiumInput = document.createElement('input');
-            premiumInput.type = 'hidden';
-            premiumInput.name = `premium_services_${index}`;
-            premiumInput.value = JSON.stringify(this.currentServices.premium);
-            form.appendChild(premiumInput);
+            if (item.classList.contains('active')) {
+                content.style.maxHeight = null;
+                item.classList.remove('active');
+                icon.className = "fa-solid fa-plus";
+            } else {
+                content.style.maxHeight = content.scrollHeight + "px";
+                item.classList.add('active');
+                icon.className = "fa-solid fa-minus";
+            }
+        }
+
+        // Menu Functionality
+        const menuOverlay = document.getElementById('menuOverlay');
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const closeMenuBtn = document.getElementById('closeMenu');
+        const body = document.body;
+        const menuLinks = document.querySelectorAll('.menu-link');
+
+        function openMenu() {
+            menuOverlay.classList.add('active');
+            body.classList.add('menu-open');
+            body.style.overflow = 'hidden';
+        }
+
+        function closeMenu() {
+            menuOverlay.classList.remove('active');
+            body.classList.remove('menu-open');
+            body.style.overflow = '';
+        }
+
+        hamburgerBtn.addEventListener('click', openMenu);
+        closeMenuBtn.addEventListener('click', closeMenu);
+
+        // Close menu when clicking on a link
+        menuLinks.forEach(link => {
+            link.addEventListener('click', closeMenu);
+        });
+
+        // Close menu with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeMenu();
+            }
+        });
+
+        // REINSTATED: Lead Capture Form Enhancement
+        const leadCaptureForm = document.getElementById('leadCaptureForm');
+        if (leadCaptureForm) {
+            leadCaptureForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                
+                // Show loading state
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROCESSING...';
+                submitBtn.disabled = true;
+                
+                // Simulate API call
+                setTimeout(() => {
+                    // Show success
+                    submitBtn.innerHTML = '<i class="fas fa-check"></i> AUDIT REQUESTED!';
+                    submitBtn.style.background = '#4CAF50';
+                    
+                    // Create success message
+                    const successMsg = document.createElement('div');
+                    successMsg.style.cssText = 'background: rgba(76, 175, 80, 0.1); border: 1px solid #4CAF50; color: #2E7D32; padding: 1.5rem; border-radius: 12px; margin-top: 1rem; text-align: center;';
+                    successMsg.innerHTML = `
+                        <h4 style="margin-bottom: 0.5rem; color: #2E7D32;"><i class="fas fa-check-circle"></i> Success!</h4>
+                        <p>Your free audit request has been received. You'll receive your personalized report within 24 hours.</p>
+                        <p style="font-size: 0.9rem; margin-top: 0.5rem;">Check your email for confirmation.</p>
+                    `;
+                    
+                    this.parentNode.insertBefore(successMsg, this.nextSibling);
+                    
+                    // Reset form after 5 seconds
+                    setTimeout(() => {
+                        this.reset();
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.style.background = '';
+                        submitBtn.disabled = false;
+                        successMsg.remove();
+                    }, 5000);
+                }, 1500);
+            });
+        }
+
+        // REINSTATED: Add hover effects to graphic cards
+        document.querySelectorAll('.graphic-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-10px)';
+                card.style.boxShadow = '0 30px 60px rgba(255, 107, 0, 0.1)';
+                card.style.borderColor = 'var(--accent)';
+            });
             
-            form.addEventListener('submit', (e) => {
-                this.onFormSubmit(e);
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0)';
+                card.style.boxShadow = '';
+                card.style.borderColor = 'var(--border)';
             });
         });
-    },
-    
-    onFormSubmit: function(e) {
-        const form = e.target;
-        const formData = new FormData(form);
-        const orderData = {
-            timestamp: new Date().toISOString(),
-            services: this.currentServices,
-            formData: Object.fromEntries(formData)
-        };
-        localStorage.setItem('homepageFormData', JSON.stringify(orderData));
-        console.log('Homepage form submitted with services:', this.currentServices);
-    },
-    
-    storeServices: function() {
-        localStorage.setItem('vibzHomepageServices', JSON.stringify(this.currentServices));
-        sessionStorage.setItem('vibzServices', JSON.stringify(this.currentServices));
-    }
-};
 
-// ================= EXISTING HOMEPAGE FUNCTIONALITY =================
-// Initialize AOS
-AOS.init({ duration: 800, once: true });
-
-// Typewriter Logic
-const words = ["Customers.", "Growth.", "Revenue.", "Results."];
-let wordIndex = 0; 
-let charIndex = 0; 
-let isDeleting = false;
-const target = document.getElementById("typewriter");
-
-function type() {
-    const currentWord = words[wordIndex];
-    if (isDeleting) { 
-        target.textContent = currentWord.substring(0, charIndex--); 
-    } else { 
-        target.textContent = currentWord.substring(0, charIndex++); 
-    }
-
-    if (!isDeleting && charIndex === currentWord.length + 1) {
-        isDeleting = true; 
-        setTimeout(type, 2000);
-    } else if (isDeleting && charIndex === 0) {
-        isDeleting = false; 
-        wordIndex = (wordIndex + 1) % words.length; 
-        setTimeout(type, 500);
-    } else {
-        setTimeout(type, isDeleting ? 100 : 200);
-    }
-}
-type();
-
-// FAQ Logic
-function toggleFaq(btn) {
-    const item = btn.parentElement;
-    const content = btn.nextElementSibling;
-    const icon = btn.querySelector('i');
-    
-    if (item.classList.contains('active')) {
-        content.style.maxHeight = null;
-        item.classList.remove('active');
-        icon.className = "fa-solid fa-plus";
-    } else {
-        content.style.maxHeight = content.scrollHeight + "px";
-        item.classList.add('active');
-        icon.className = "fa-solid fa-minus";
-    }
-}
-
-// Menu Functionality
-const menuOverlay = document.getElementById('menuOverlay');
-const hamburgerBtn = document.getElementById('hamburgerBtn');
-const closeMenuBtn = document.getElementById('closeMenu');
-const body = document.body;
-const menuLinks = document.querySelectorAll('.menu-link');
-
-function openMenu() {
-    menuOverlay.classList.add('active');
-    body.classList.add('menu-open');
-    body.style.overflow = 'hidden';
-}
-
-function closeMenu() {
-    menuOverlay.classList.remove('active');
-    body.classList.remove('menu-open');
-    body.style.overflow = '';
-}
-
-hamburgerBtn.addEventListener('click', openMenu);
-closeMenuBtn.addEventListener('click', closeMenu);
-
-menuLinks.forEach(link => {
-    link.addEventListener('click', closeMenu);
-});
-
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-        closeMenu();
-    }
-});
-
-// Lead Capture Form Enhancement
-const leadCaptureForm = document.getElementById('leadCaptureForm');
-if (leadCaptureForm) {
-    leadCaptureForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const submitBtn = this.querySelector('button[type="submit"]');
-        const originalText = submitBtn.innerHTML;
-        
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROCESSING...';
-        submitBtn.disabled = true;
-        
-        setTimeout(() => {
-            submitBtn.innerHTML = '<i class="fas fa-check"></i> AUDIT REQUESTED!';
-            submitBtn.style.background = '#4CAF50';
+        // REINSTATED: Add hover effects to widget badges
+        document.querySelectorAll('.widget-badge').forEach(badge => {
+            badge.addEventListener('mouseenter', () => {
+                badge.style.transform = 'translateY(-3px)';
+                badge.style.boxShadow = '0 10px 20px rgba(255, 107, 0, 0.1)';
+                badge.style.borderColor = 'var(--accent)';
+            });
             
-            const successMsg = document.createElement('div');
-            successMsg.style.cssText = 'background: rgba(76, 175, 80, 0.1); border: 1px solid #4CAF50; color: #2E7D32; padding: 1.5rem; border-radius: 12px; margin-top: 1rem; text-align: center;';
-            successMsg.innerHTML = `
-                <h4 style="margin-bottom: 0.5rem; color: #2E7D32;"><i class="fas fa-check-circle"></i> Success!</h4>
-                <p>Your free audit request has been received. You'll receive your personalized report within 24 hours.</p>
-                <p style="font-size: 0.9rem; margin-top: 0.5rem;">Check your email for confirmation.</p>
-            `;
-            
-            this.parentNode.insertBefore(successMsg, this.nextSibling);
-            
-            setTimeout(() => {
-                this.reset();
-                submitBtn.innerHTML = originalText;
-                submitBtn.style.background = '';
-                submitBtn.disabled = false;
-                successMsg.remove();
-            }, 5000);
-        }, 1500);
-    });
-}
+            badge.addEventListener('mouseleave', () => {
+                badge.style.transform = 'translateY(0)';
+                badge.style.boxShadow = '';
+                badge.style.borderColor = 'var(--border)';
+            });
+        });
 
-// Hover effects
-document.querySelectorAll('.graphic-card').forEach(card => {
-    card.addEventListener('mouseenter', () => {
-        card.style.transform = 'translateY(-10px)';
-        card.style.boxShadow = '0 30px 60px rgba(255, 107, 0, 0.1)';
-        card.style.borderColor = 'var(--accent)';
-    });
-    
-    card.addEventListener('mouseleave', () => {
-        card.style.transform = 'translateY(0)';
-        card.style.boxShadow = '';
-        card.style.borderColor = 'var(--border)';
-    });
-});
 
-document.querySelectorAll('.widget-badge').forEach(badge => {
-    badge.addEventListener('mouseenter', () => {
-        badge.style.transform = 'translateY(-3px)';
-        badge.style.boxShadow = '0 10px 20px rgba(255, 107, 0, 0.1)';
-        badge.style.borderColor = 'var(--accent)';
-    });
-    
-    badge.addEventListener('mouseleave', () => {
-        badge.style.transform = 'translateY(0)';
-        badge.style.boxShadow = '';
-        badge.style.borderColor = 'var(--border)';
-    });
-});
 
-// ========== SEARCH FUNCTIONALITY ==========
+// ========== IMPROVED SEARCH FUNCTIONALITY ==========
+// Barber suggestion only appears for specific barber-related keywords
+
+// Check if input contains barber-related keywords
 function isBarberRelated(searchTerm) {
     const term = searchTerm.toLowerCase().trim();
+    
+    // Only trigger for these specific patterns
     const barberPatterns = [
-        /^barb/i, /^hair/i, /^cut/i, /^trim/i, /^shav/i, /^groom/i,
-        /^fade/i, /^buzz/i, /^beard/i, /^salon/i, /^studio/i, /^style/i,
-        /^men/i, /^male/i, /^bar$/i, /^ba$/i, /^ha$/i, /^cu$/i
+        // Must start with these prefixes (3+ characters)
+        /^barb/i,      // barb, barbe, barber
+        /^hair/i,      // hair, hairc, haircu
+        /^cut/i,       // cut, cutt
+        /^trim/i,      // trim
+        /^shav/i,      // shav, shave
+        /^groom/i,     // groom
+        /^fade/i,      // fade
+        /^buzz/i,      // buzz
+        /^beard/i,     // beard
+        /^salon/i,     // salon
+        /^studio/i,    // studio
+        /^style/i,     // style
+        /^men/i,       // men, men'
+        /^male/i,      // male
+        
+        // Exact matches for short terms
+        /^bar$/i,      // bar
+        /^ba$/i,       // ba
+        /^ha$/i,       // ha
+        /^cu$/i,       // cu
     ];
     
+    // Check against patterns
     for (const pattern of barberPatterns) {
-        if (pattern.test(term)) return true;
+        if (pattern.test(term)) {
+            return true;
+        }
     }
+    
     return false;
 }
 
+// Show search suggestions on homepage
 function showSearchSuggestions() {
     const input = document.getElementById('homepageBusinessInput');
     const suggestionsContainer = document.getElementById('homepageSearchSuggestions');
     const searchTerm = input.value.trim();
     
+    // Clear previous suggestions
     suggestionsContainer.innerHTML = '';
     suggestionsContainer.style.display = 'none';
     
-    if (!searchTerm) return;
+    // Don't show anything if search is empty
+    if (!searchTerm) {
+        return;
+    }
     
+    // Only show barber suggestion for barber-related searches
     if (isBarberRelated(searchTerm)) {
         suggestionsContainer.innerHTML = `
             <div onclick="redirectToBarberFunnel()" style="padding: 1rem 1.5rem; cursor: pointer; border-bottom: 1px solid var(--border); transition: all 0.3s ease; font-weight: 500; color: var(--dark); text-align: left; display: flex; justify-content: space-between; align-items: center;">
@@ -1925,7 +1829,9 @@ function showSearchSuggestions() {
             </div>
         `;
         suggestionsContainer.style.display = 'block';
-    } else if (searchTerm.length >= 2) {
+    }
+    // Show generic message for non-barber searches with 2+ characters
+    else if (searchTerm.length >= 2) {
         suggestionsContainer.innerHTML = `
             <div style="padding: 1rem 1.5rem; color: var(--text-gray); font-style: italic; cursor: default;">
                 Type a business type (e.g., "dentist", "plumber", "cafe")
@@ -1935,30 +1841,38 @@ function showSearchSuggestions() {
     }
 }
 
+// Redirect to barber funnel from homepage
 function redirectToBarberFunnel() {
     window.location.href = 'https://www.vibz.co.uk/barber/';
 }
 
+// Handle homepage search
 function handleHomepageSearch() {
     const input = document.getElementById('homepageBusinessInput');
     const value = input.value.trim();
     const suggestionsContainer = document.getElementById('homepageSearchSuggestions');
     
-    if (suggestionsContainer) suggestionsContainer.style.display = 'none';
+    // Hide suggestions
+    if (suggestionsContainer) {
+        suggestionsContainer.style.display = 'none';
+    }
     
     if (!value) {
         alert('Please enter your business type.');
         return;
     }
     
+    // Check if it's barber-related
     if (isBarberRelated(value)) {
         window.location.href = 'https://www.vibz.co.uk/barber/';
         return;
     }
     
+    // If no niche match, redirect to generic funnel
     window.location.href = 'https://www.vibz.co.uk/funnel.html?business=' + encodeURIComponent(value);
 }
 
+// Hide suggestions when clicking outside (homepage)
 document.addEventListener('click', function(event) {
     const suggestions = document.getElementById('homepageSearchSuggestions');
     const input = document.getElementById('homepageBusinessInput');
@@ -1970,16 +1884,12 @@ document.addEventListener('click', function(event) {
     }
 });
 
+// Allow Enter key to trigger search
 document.getElementById('homepageBusinessInput').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') handleHomepageSearch();
+    if (e.key === 'Enter') {
+        handleHomepageSearch();
+    }
 });
-
-// ================= INITIALIZE SERVICE TRACKING =================
-document.addEventListener('DOMContentLoaded', () => {
-    VIBZServices.init();
-});
-</script>
-
-
+    </script>
 </body>
 </html>
