@@ -427,7 +427,10 @@
         </div>
     </section>
 
-    <script>
+
+
+
+        <script>
         // FORM LOGIC
         let currentStep = 1;
         const formData = { businessType: '', projectType: '', features: [], planType: '' };
@@ -448,16 +451,29 @@
             });
         }
 
+        // REVISED: Saves choice to memory so the headline updates
         function selectExample(business) {
             formData.businessType = business;
+            localStorage.setItem('selectedNiche', business.toLowerCase());
+            
+            // Trigger the headline change from script.js immediately
+            if (typeof initMasterFunnel === "function") initMasterFunnel();
+
             showScreen('main-intro-options');
             next();
         }
 
+        // REVISED: Updates headline based on what user typed
         function handleSearch() {
             const val = document.getElementById('businessInput').value.trim();
             if (!val) return alert('Please enter business type');
+            
             formData.businessType = val;
+            localStorage.setItem('selectedNiche', val.toLowerCase());
+            
+            // Trigger the headline change from script.js immediately
+            if (typeof initMasterFunnel === "function") initMasterFunnel();
+
             showScreen('main-intro-options');
             next();
         }
@@ -490,6 +506,8 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
+            // Check if we should clear memory on entry (if arriving from fresh home click)
+            // This is a safety net for the "Get a Website" button
             setTimeout(() => { document.getElementById('businessInput')?.focus(); }, 500);
             
             document.getElementById('mobileMenuBtn').addEventListener('click', () => {
@@ -498,6 +516,7 @@
             });
         });
     </script>
+
 
     <script src="script.js"></script>
 </body>
