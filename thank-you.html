@@ -515,450 +515,413 @@
 
 
 <script>
-    // ========== DATA SERVICES DATABASE ==========
-    const servicesDatabase = {
-      // Standard Services
-      'Services & Pricing Display': { tier: 'standard', desc: 'Clear layout of all offered services and prices' },
-      'Team / Barber Profiles': { tier: 'standard', desc: 'Photos, bios, and specialties' },
-      'Photo Gallery / Portfolio': { tier: 'standard', desc: 'Image grid showcasing barber work' },
-      'Basic Before & After Slider': { tier: 'standard', desc: 'Compare hairstyles side-by-side' },
-      'Special Offers / Promotions Section': { tier: 'standard', desc: 'Display deals or discounts' },
-      'Opening Hours Display': { tier: 'standard', desc: 'Business hours and open/closed status' },
-      'Location & Directions': { tier: 'standard', desc: 'Google Maps embed with directions button' },
-      'Tap-to-Call & WhatsApp Buttons': { tier: 'standard', desc: 'One-click mobile contact' },
-      'FAQ Section': { tier: 'standard', desc: 'Collapsible questions to answer common client queries' },
-      'Loyalty / Membership Info': { tier: 'standard', desc: 'Show loyalty program details' },
-      'Contact Form': { tier: 'standard', desc: 'Simple enquiry form to collect messages' },
-      'On-Page SEO Basics': { tier: 'standard', desc: 'Page titles, headers, meta tags, and image alt text' },
-      
-      // Premium Services
-      'Online Booking System Integration': { tier: 'premium', desc: 'Calendly, Setmore, etc.' },
-      'Stripe Payments / Deposits': { tier: 'premium', desc: 'Accept payments online' },
-      'Automated Booking Reminders': { tier: 'premium', desc: 'Email/SMS via booking platform' },
-      'Reschedule & Cancellation Management': { tier: 'premium', desc: 'Client-managed bookings' },
-      'Gift Cards / Vouchers': { tier: 'premium', desc: 'Sell digital gift cards' },
-      'Walk-In / Waitlist System': { tier: 'premium', desc: 'Real-time updates for walk-ins' },
-      'Enhanced Before & After Gallery': { tier: 'premium', desc: 'Filter by barber, style, or service' },
-      'Barber Specialties & Service Tags': { tier: 'premium', desc: 'Highlight skills and services' },
-      'Advanced Call-to-Action Buttons': { tier: 'premium', desc: 'Sticky buttons, strategic placement' },
-      'Analytics & Conversion Tracking Setup': { tier: 'premium', desc: 'Tracks Book Now, Call, WhatsApp, and form submissions' },
-      'Priority Build Queue': { tier: 'premium', desc: 'Premium builds scheduled first' },
-      'Enhanced Video & Image Gallery': { tier: 'premium', desc: 'Interactive gallery for client-provided media' },
-      'Social Proof / Reviews Section': { tier: 'premium', desc: 'Display client testimonials' },
-      'Prominent Sticky Header / Banner': { tier: 'premium', desc: 'Highlight bookings, offers, or CTAs' },
-      'Multi-Location / Branch Info': { tier: 'premium', desc: 'Optional for shops with multiple locations' },
-      'Full Branding Package': { tier: 'premium', desc: 'Logo, colors, typography' },
-      'Custom Graphics & Icons': { tier: 'premium', desc: 'Personalized visuals for website sections' },
-      'Branded Email Newsletter Setup': { tier: 'premium', desc: 'Template ready to connect' },
-      'Favicon & Browser Branding': { tier: 'premium', desc: 'Polished appearance in tabs/bookmarks' },
-      'Premium On-Page SEO': { tier: 'premium', desc: 'Schema, technical setup, optimized indexing' }
-    };
-
-    // ========== INITIALIZE PAGE ==========
-    document.addEventListener('DOMContentLoaded', function() {
-      console.log('=== Thank You Page Initialization ===');
-      
-      // Get data from ALL possible sources
-      const finalData = collectAllData();
-      
-      console.log('Final data for thank you page:', finalData);
-      
-      // Update page content
-      updatePageContent(finalData);
-      
-      // Set up button click handlers
-      setupEventHandlers();
-      
-      // Add celebratory confetti
-      setTimeout(() => {
-        createConfetti();
-      }, 500);
-    });
-
-    // ========== COLLECT ALL DATA ==========
-    function collectAllData() {
-      const urlParams = new URLSearchParams(window.location.search);
-      
-      // Data sources in priority order
-      const dataSources = [
-        // 1. URL parameters (highest priority - from payment processor return)
-        {
-          business: urlParams.get('business') ? decodeURIComponent(urlParams.get('business')) : null,
-          designCode: urlParams.get('designCode'),
-          plan: urlParams.get('plan'),
-          paymentModel: urlParams.get('paymentModel'),
-          services: urlParams.get('services'),
-          standardServices: urlParams.get('standardServices'),
-          premiumServices: urlParams.get('premiumServices')
-        },
+// ================= SERVICE TRACKING FOR THANK YOU PAGE =================
+const ThankYouServices = {
+    // Service Database
+    standard: {
+        'Logo': 'placeholder if none',
+        'Services & Pricing Display': 'Clear layout of all offered services and prices',
+        'Team / Barber Profiles': 'Photos, bios, and specialties',
+        'Photo Gallery / Portfolio': 'Image grid showcasing work',
+        'Basic Before & After Slider': 'Compare before/after side-by-side',
+        'Special Offers / Promotions Section': 'Display deals or discounts',
+        'Opening Hours Display': 'Business hours and open/closed status',
+        'Location & Directions': 'Google Maps embed with directions button',
+        'Tap-to-Call & WhatsApp Buttons': 'One-click mobile contact',
+        'FAQ Section': 'Collapsible questions to answer common queries',
+        'Loyalty / Membership Info': 'Show loyalty program details',
+        'Contact Form': 'Simple enquiry form to collect messages',
+        'On-Page SEO Basics': 'Page titles, headers, meta tags, and image alt text',
+        'Reviews': 'Display client testimonials',
+        'Video Grids': 'Up to 6, add YouTube/other videos'
+    },
+    
+    premium: {
+        'Online Booking System Integration': 'Calendly, Setmore, etc.',
+        'Stripe Payments / Deposits': 'Accept payments online',
+        'Reschedule & Cancellation Management': 'Client-managed bookings',
+        'Gift Cards / Vouchers': 'Sell digital gift cards',
+        'Walk-In / Waitlist System': 'Real-time updates for walk-ins',
+        'Pop up offer': 'AI-triggered promotional popups',
+        'Barber Specialties & Service Tags': 'Highlight skills and services',
+        'Advanced Call-to-Action Buttons': 'Sticky buttons, strategic placement',
+        'Analytics & Conversion Tracking Setup': 'Tracks Book Now, Call, WhatsApp, and form submissions',
+        'Priority Build Queue': 'Premium builds scheduled first',
+        'Enhanced Video & Image Gallery': 'Interactive gallery for client-provided media',
+        'Custom graphics': 'Personalized visuals for website sections',
+        'Prominent Sticky Header / Banner': 'Highlight bookings, offers, or CTAs',
+        'Multi-Location / Branch Info': 'Optional for shops with multiple locations',
+        'Full Branding Package': 'Logo, colors, typography, brand identity'
+    },
+    
+    init: function() {
+        console.log('Thank You Services Tracking');
+        this.loadOrderData();
+        this.updatePageContent();
+        this.setupEventHandlers();
+        this.createConfetti();
+    },
+    
+    // Load data from all possible sources
+    loadOrderData: function() {
+        const urlParams = new URLSearchParams(window.location.search);
         
-        // 2. paymentData object (from index.js redirectToPayment)
-        (() => {
-          const paymentDataStr = localStorage.getItem('paymentData');
-          if (paymentDataStr) {
-            try {
-              return JSON.parse(paymentDataStr);
-            } catch (e) {
-              console.error('Error parsing paymentData:', e);
-            }
-          }
-          return null;
-        })(),
-        
-        // 3. finalOrderData (from order form)
-        (() => {
-          const orderDataStr = localStorage.getItem('finalOrderData');
-          if (orderDataStr) {
-            try {
-              return JSON.parse(orderDataStr);
-            } catch (e) {
-              console.error('Error parsing finalOrderData:', e);
-            }
-          }
-          return null;
-        })(),
-        
-        // 4. barberFunnelData (from index.js)
-        (() => {
-          const funnelDataStr = localStorage.getItem('barberFunnelData');
-          if (funnelDataStr) {
-            try {
-              return JSON.parse(funnelDataStr);
-            } catch (e) {
-              console.error('Error parsing barberFunnelData:', e);
-            }
-          }
-          return null;
-        })(),
-        
-        // 5. Individual localStorage items
-        {
-          business: localStorage.getItem('businessName'),
-          designCode: localStorage.getItem('selectedDesignCode'),
-          plan: localStorage.getItem('selectedPlan'),
-          paymentModel: localStorage.getItem('paymentModel')
-        }
-      ];
-      
-      // Default values
-      let finalData = {
-        business: 'Barber Shop',
-        designCode: 'CUSTOM',
-        plan: 'Standard',
-        paymentModel: 'Own Outright',
-        services: 0,
-        standardServices: 0,
-        premiumServices: 0,
-        selectedFeatures: [],
-        niche: 'barber'
-      };
-      
-      // Merge data from all sources (later sources override earlier ones)
-      dataSources.forEach(source => {
-        if (!source) return;
-        
-        if (source.business && source.business !== 'Barber Shop') {
-          finalData.business = source.business;
-        }
-        
-        if (source.designCode) {
-          finalData.designCode = source.designCode;
-        }
-        
-        if (source.plan) {
-          finalData.plan = source.plan.includes('Premium') ? 'Premium' : 'Standard';
-        }
-        
-        if (source.paymentModel) {
-          finalData.paymentModel = source.paymentModel;
-        }
-        
-        if (source.services) {
-          finalData.services = parseInt(source.services) || 0;
-        }
-        
-        if (source.standardServices) {
-          finalData.standardServices = parseInt(source.standardServices) || 0;
-        }
-        
-        if (source.premiumServices) {
-          finalData.premiumServices = parseInt(source.premiumServices) || 0;
-        }
-        
-        if (source.features && Array.isArray(source.features)) {
-          finalData.selectedFeatures = source.features;
-        }
-        
-        if (source.standardServices && source.premiumServices) {
-          finalData.services = (parseInt(source.standardServices) || 0) + (parseInt(source.premiumServices) || 0);
-        }
-      });
-      
-      // Get selected features if not already set
-      if (finalData.selectedFeatures.length === 0) {
-        const selectedServicesStr = localStorage.getItem('selectedServices');
-        if (selectedServicesStr) {
-          try {
-            finalData.selectedFeatures = JSON.parse(selectedServicesStr);
-          } catch (e) {
-            console.error('Error parsing selectedServices:', e);
-          }
-        }
-      }
-      
-      // Get service counts if not already set
-      if (finalData.services === 0) {
-        const serviceCountsStr = localStorage.getItem('serviceCounts');
-        if (serviceCountsStr) {
-          try {
-            const counts = JSON.parse(serviceCountsStr);
-            finalData.standardServices = counts.standard || 0;
-            finalData.premiumServices = counts.premium || 0;
-            finalData.services = counts.total || 0;
-          } catch (e) {
-            console.error('Error parsing serviceCounts:', e);
-          }
-        }
-      }
-      
-      return finalData;
-    }
-
-    // ========== UPDATE PAGE CONTENT ==========
-    function updatePageContent(data) {
-      const {
-        business,
-        plan,
-        paymentModel,
-        services,
-        standardServices,
-        premiumServices,
-        selectedFeatures,
-        designCode,
-        niche
-      } = data;
-      
-      console.log('Updating page with:', { business, plan, designCode, services });
-      
-      // Update basic info
-      document.getElementById('thankYouTitle').textContent = 'Thank You!';
-      document.getElementById('thankYouText').textContent = `Your ${business} website order has been confirmed!`;
-      document.getElementById('businessName').textContent = business;
-      document.getElementById('planType').textContent = `${plan} Plan`;
-      document.getElementById('paymentModel').textContent = paymentModel;
-      document.getElementById('totalServices').textContent = services;
-      
-      // FIXED: Display correct design code
-      const designConceptElement = document.getElementById('designConcept');
-      if (designCode === 'CUSTOM') {
-        designConceptElement.textContent = 'Custom Design';
-      } else {
-        designConceptElement.textContent = `Design Code: ${designCode.toUpperCase()}`;
-      }
-      
-      // Update plan badge
-      const planBadge = document.getElementById('planBadge');
-      planBadge.textContent = plan.toUpperCase();
-      planBadge.className = `plan-badge ${plan.toLowerCase()}`;
-      
-      // Update project title
-      const projectTitle = document.getElementById('projectTitle');
-      if (projectTitle) {
-        projectTitle.textContent = `${business} - ${plan} Plan`;
-      }
-      
-      // Update Complete Now button with data
-      const completeNowBtn = document.getElementById('completeNowBtn');
-      if (completeNowBtn) {
-        const orderFormParams = new URLSearchParams();
-        orderFormParams.append('plan', plan.toLowerCase());
-        orderFormParams.append('business', encodeURIComponent(business));
-        orderFormParams.append('designCode', designCode);
-        orderFormParams.append('services', services);
-        orderFormParams.append('paymentModel', paymentModel);
-        completeNowBtn.href = `order-form.html?${orderFormParams.toString()}`;
-      }
-      
-      // Show selected features if any
-      if (selectedFeatures.length > 0) {
-        const featuresSection = document.getElementById('selectedFeaturesSection');
-        const featuresGrid = document.getElementById('featuresGrid');
-        
-        if (featuresSection && featuresGrid) {
-          featuresSection.style.display = 'block';
-          featuresGrid.innerHTML = '';
-          
-          selectedFeatures.forEach(featureName => {
-            const serviceData = servicesDatabase[featureName];
-            if (serviceData) {
-              const featureCard = document.createElement('div');
-              featureCard.className = `feature-card ${serviceData.tier}`;
-              featureCard.innerHTML = `
-                <div class="feature-tier ${serviceData.tier}">${serviceData.tier.toUpperCase()}</div>
-                <div class="feature-name">${featureName}</div>
-                <div class="feature-desc">${serviceData.desc}</div>
-              `;
-              featuresGrid.appendChild(featureCard);
-            }
-          });
-        }
-      } else if (services > 0) {
-        // Show summary if we have counts but no features list
-        const featuresSection = document.getElementById('selectedFeaturesSection');
-        const featuresGrid = document.getElementById('featuresGrid');
-        
-        if (featuresSection && featuresGrid) {
-          featuresSection.style.display = 'block';
-          featuresGrid.innerHTML = `
-            <div class="feature-card standard">
-              <div class="feature-tier standard">SUMMARY</div>
-              <div class="feature-name">Service Selection Summary</div>
-              <div class="feature-desc">
-                <strong>${standardServices} Standard Services</strong><br>
-                <strong>${premiumServices} Premium Services</strong><br>
-                <strong>${services} Total Services Selected</strong>
-              </div>
-            </div>
-          `;
-        }
-      }
-      
-      // Update niche color if needed
-      const nicheColors = {
-        barber: '#FF6B00',
-        plumber: '#0066CC',
-        dentist: '#00A86B',
-        gym: '#FF3366'
-      };
-      
-      const nicheColor = nicheColors[niche] || '#FF6B00';
-      document.documentElement.style.setProperty('--primary', nicheColor);
-      updateButtonColors(nicheColor);
-      
-      // Log success
-      console.log('Thank you page updated successfully with business name:', business);
-    }
-
-    // ========== SETUP EVENT HANDLERS ==========
-    function setupEventHandlers() {
-      // Handle "Send Within 48 Hours" button click
-      const sendLaterBtn = document.getElementById('sendLaterBtn');
-      if (sendLaterBtn) {
-        sendLaterBtn.addEventListener('click', function() {
-          const btn = this;
-          const originalText = btn.innerHTML;
-          
-          // Show loading state
-          btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-          btn.disabled = true;
-          
-          // Simulate API call
-          setTimeout(() => {
-            // Show success
-            btn.innerHTML = '<i class="fas fa-check"></i> Questionnaire Sent!';
-            btn.style.background = '#10B981';
-            btn.style.borderColor = '#10B981';
-            btn.style.color = 'white';
+        // Data sources in priority order
+        const dataSources = [
+            // 1. URL parameters (from payment processor)
+            {
+                business: urlParams.get('business') ? decodeURIComponent(urlParams.get('business')) : null,
+                plan: urlParams.get('plan'),
+                paymentModel: urlParams.get('paymentModel'),
+                services: urlParams.get('services'),
+                designCode: urlParams.get('designCode'),
+                standardServices: urlParams.get('standardServices'),
+                premiumServices: urlParams.get('premiumServices')
+            },
             
-            // Show success message
-            const successMsg = document.createElement('div');
-            successMsg.style.cssText = 'background: rgba(16, 185, 129, 0.1); border: 1px solid #10B981; color: #065F46; padding: 1rem; border-radius: 12px; margin-top: 1rem; text-align: center;';
-            successMsg.innerHTML = `
-              <h4 style="margin-bottom: 0.5rem; color: #065F46;"><i class="fas fa-check-circle"></i> Success!</h4>
-              <p>We've sent a detailed questionnaire to your email. Please complete it within 48 hours to start your project.</p>
-              <p style="font-size: 0.9rem; margin-top: 0.5rem;">Check your inbox and spam folder.</p>
+            // 2. barberFunnelData (from index.js)
+            (() => {
+                const funnelDataStr = localStorage.getItem('barberFunnelData');
+                if (funnelDataStr) {
+                    try {
+                        return JSON.parse(funnelDataStr);
+                    } catch (e) {
+                        console.error('Error parsing barberFunnelData:', e);
+                    }
+                }
+                return null;
+            })(),
+            
+            // 3. Individual localStorage items
+            {
+                business: localStorage.getItem('businessName'),
+                designCode: localStorage.getItem('selectedDesignCode'),
+                plan: localStorage.getItem('selectedPlan'),
+                paymentModel: localStorage.getItem('paymentModel'),
+                selectedServices: localStorage.getItem('selectedServices'),
+                serviceCounts: localStorage.getItem('serviceCounts')
+            },
+            
+            // 4. finalOrderData
+            (() => {
+                const orderDataStr = localStorage.getItem('finalOrderData');
+                if (orderDataStr) {
+                    try {
+                        return JSON.parse(orderDataStr);
+                    } catch (e) {
+                        console.error('Error parsing finalOrderData:', e);
+                    }
+                }
+                return null;
+            })()
+        ];
+        
+        // Default values
+        let orderData = {
+            business: 'Barber Shop',
+            designCode: 'CUSTOM',
+            plan: 'Standard',
+            paymentModel: 'Own Outright',
+            services: 0,
+            standardServices: 0,
+            premiumServices: 0,
+            selectedFeatures: [],
+            niche: 'barber'
+        };
+        
+        // Merge data from all sources
+        dataSources.forEach(source => {
+            if (!source) return;
+            
+            if (source.business && source.business !== 'Barber Shop') {
+                orderData.business = source.business;
+            }
+            
+            if (source.designCode) {
+                orderData.designCode = source.designCode;
+            }
+            
+            if (source.plan) {
+                orderData.plan = source.plan.includes('Premium') ? 'Premium' : 'Standard';
+            }
+            
+            if (source.paymentModel) {
+                orderData.paymentModel = source.paymentModel;
+            }
+            
+            if (source.services) {
+                orderData.services = parseInt(source.services) || 0;
+            }
+            
+            if (source.selectedServices) {
+                try {
+                    orderData.selectedFeatures = JSON.parse(source.selectedServices);
+                } catch (e) {
+                    orderData.selectedFeatures = [];
+                }
+            }
+            
+            if (source.serviceCounts) {
+                try {
+                    const counts = JSON.parse(source.serviceCounts);
+                    orderData.standardServices = counts.standard || 0;
+                    orderData.premiumServices = counts.premium || 0;
+                    orderData.services = counts.total || 0;
+                } catch (e) {
+                    console.error('Error parsing serviceCounts:', e);
+                }
+            }
+            
+            if (source.standardServices && source.premiumServices) {
+                orderData.standardServices = parseInt(source.standardServices) || 0;
+                orderData.premiumServices = parseInt(source.premiumServices) || 0;
+                orderData.services = orderData.standardServices + orderData.premiumServices;
+            }
+            
+            if (source.features && Array.isArray(source.features)) {
+                orderData.selectedFeatures = source.features;
+            }
+        });
+        
+        // Get service counts if still 0
+        if (orderData.services === 0) {
+            orderData.services = orderData.selectedFeatures.length;
+        }
+        
+        console.log('Thank You Page - Loaded Order Data:', orderData);
+        this.orderData = orderData;
+        return orderData;
+    },
+    
+    // Update page with order data
+    updatePageContent: function() {
+        const data = this.orderData;
+        
+        // Update basic info
+        document.getElementById('thankYouTitle').textContent = 'Thank You!';
+        document.getElementById('thankYouText').textContent = `Your ${data.business} website order has been confirmed!`;
+        document.getElementById('businessName').textContent = data.business;
+        document.getElementById('planType').textContent = `${data.plan} Plan`;
+        document.getElementById('paymentModel').textContent = data.paymentModel;
+        document.getElementById('totalServices').textContent = data.services;
+        
+        // Design concept
+        const designConceptElement = document.getElementById('designConcept');
+        if (data.designCode === 'CUSTOM') {
+            designConceptElement.textContent = 'Custom Design';
+        } else {
+            designConceptElement.textContent = `Design Code: ${data.designCode.toUpperCase()}`;
+        }
+        
+        // Plan badge
+        const planBadge = document.getElementById('planBadge');
+        planBadge.textContent = data.plan.toUpperCase();
+        planBadge.className = `plan-badge ${data.plan.toLowerCase()}`;
+        
+        // Project title
+        const projectTitle = document.getElementById('projectTitle');
+        if (projectTitle) {
+            projectTitle.textContent = `${data.business} - ${data.plan} Plan`;
+        }
+        
+        // Update Complete Now button with data
+        const completeNowBtn = document.getElementById('completeNowBtn');
+        if (completeNowBtn) {
+            const orderFormParams = new URLSearchParams();
+            orderFormParams.append('plan', data.plan.toLowerCase());
+            orderFormParams.append('business', encodeURIComponent(data.business));
+            orderFormParams.append('designCode', data.designCode);
+            orderFormParams.append('services', data.services);
+            orderFormParams.append('paymentModel', data.paymentModel);
+            completeNowBtn.href = `order-form.html?${orderFormParams.toString()}`;
+        }
+        
+        // Show selected features
+        this.displaySelectedFeatures();
+        
+        // Update niche color
+        this.updateNicheColors(data.niche);
+    },
+    
+    // Display selected features in grid
+    displaySelectedFeatures: function() {
+        const data = this.orderData;
+        const featuresGrid = document.getElementById('featuresGrid');
+        const featuresSection = document.getElementById('selectedFeaturesSection');
+        
+        if (!featuresGrid || !featuresSection) return;
+        
+        // Clear existing content
+        featuresGrid.innerHTML = '';
+        
+        if (data.selectedFeatures.length > 0) {
+            // Show specific features
+            data.selectedFeatures.forEach(serviceName => {
+                const isPremium = this.premium[serviceName];
+                const isStandard = this.standard[serviceName];
+                
+                if (isPremium || isStandard) {
+                    const featureCard = document.createElement('div');
+                    featureCard.className = `feature-card ${isPremium ? 'premium' : 'standard'}`;
+                    featureCard.innerHTML = `
+                        <div class="feature-tier ${isPremium ? 'premium' : 'standard'}">
+                            ${isPremium ? 'PREMIUM' : 'STANDARD'}
+                        </div>
+                        <div class="feature-name">${serviceName}</div>
+                        <div class="feature-desc">${isPremium ? this.premium[serviceName] : this.standard[serviceName]}</div>
+                    `;
+                    featuresGrid.appendChild(featureCard);
+                }
+            });
+            
+            featuresSection.style.display = 'block';
+        } else if (data.services > 0) {
+            // Show summary if we have counts but no features list
+            featuresGrid.innerHTML = `
+                <div class="feature-card standard">
+                    <div class="feature-tier standard">SUMMARY</div>
+                    <div class="feature-name">Service Selection Summary</div>
+                    <div class="feature-desc">
+                        <strong>${data.standardServices} Standard Services</strong><br>
+                        <strong>${data.premiumServices} Premium Services</strong><br>
+                        <strong>${data.services} Total Services Selected</strong>
+                    </div>
+                </div>
             `;
+            featuresSection.style.display = 'block';
+        } else {
+            featuresSection.style.display = 'none';
+        }
+    },
+    
+    // Update colors based on niche
+    updateNicheColors: function(niche) {
+        const nicheColors = {
+            barber: '#FF6B00',
+            plumber: '#0066CC',
+            dentist: '#00A86B',
+            gym: '#FF3366'
+        };
+        
+        const nicheColor = nicheColors[niche] || '#FF6B00';
+        document.documentElement.style.setProperty('--primary', nicheColor);
+        this.updateButtonColors(nicheColor);
+    },
+    
+    // Update button colors
+    updateButtonColors: function(color) {
+        document.querySelectorAll('.option-button').forEach(btn => {
+            btn.style.color = color;
+            btn.style.borderColor = color;
             
-            btn.parentNode.parentNode.insertBefore(successMsg, btn.parentNode.nextSibling);
+            btn.addEventListener('mouseenter', function() {
+                if (!this.disabled) {
+                    this.style.backgroundColor = color;
+                    this.style.color = 'white';
+                }
+            });
+            btn.addEventListener('mouseleave', function() {
+                if (!this.disabled && !this.style.background.includes('10B981')) {
+                    this.style.backgroundColor = 'transparent';
+                    this.style.color = color;
+                }
+            });
+        });
+        
+        document.querySelectorAll('.time-badge').forEach(badge => {
+            badge.style.backgroundColor = color;
+        });
+        
+        const completionOptions = document.querySelector('.completion-options');
+        if (completionOptions) {
+            completionOptions.style.background = `${color}08`;
+        }
+        
+        const planBadge = document.getElementById('planBadge');
+        if (planBadge && !planBadge.classList.contains('premium') && !planBadge.classList.contains('standard')) {
+            planBadge.style.backgroundColor = color;
+        }
+    },
+    
+    // Setup event handlers
+    setupEventHandlers: function() {
+        const sendLaterBtn = document.getElementById('sendLaterBtn');
+        if (sendLaterBtn) {
+            sendLaterBtn.addEventListener('click', function() {
+                const btn = this;
+                const originalText = btn.innerHTML;
+                
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+                btn.disabled = true;
+                
+                setTimeout(() => {
+                    btn.innerHTML = '<i class="fas fa-check"></i> Questionnaire Sent!';
+                    btn.style.background = '#10B981';
+                    btn.style.borderColor = '#10B981';
+                    btn.style.color = 'white';
+                    
+                    const successMsg = document.createElement('div');
+                    successMsg.style.cssText = 'background: rgba(16, 185, 129, 0.1); border: 1px solid #10B981; color: #065F46; padding: 1rem; border-radius: 12px; margin-top: 1rem; text-align: center;';
+                    successMsg.innerHTML = `
+                        <h4 style="margin-bottom: 0.5rem; color: #065F46;"><i class="fas fa-check-circle"></i> Success!</h4>
+                        <p>We've sent a detailed questionnaire to your email. Please complete it within 48 hours to start your project.</p>
+                        <p style="font-size: 0.9rem; margin-top: 0.5rem;">Check your inbox and spam folder.</p>
+                    `;
+                    
+                    btn.parentNode.parentNode.insertBefore(successMsg, btn.parentNode.nextSibling);
+                    
+                    setTimeout(() => {
+                        btn.innerHTML = originalText;
+                        btn.style.background = '';
+                        btn.style.borderColor = '';
+                        btn.style.color = '';
+                        btn.disabled = false;
+                        ThankYouServices.updateButtonColors(getComputedStyle(document.documentElement).getPropertyValue('--primary').trim());
+                        successMsg.remove();
+                    }, 5000);
+                }, 1500);
+            });
+        }
+    },
+    
+    // Create confetti animation
+    createConfetti: function() {
+        const color = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
+        const colors = [color, '#FF6B00', '#121212', '#4a4a4a'];
+        const container = document.querySelector('.thank-you-container');
+        
+        if (!container) return;
+        
+        for (let i = 0; i < 20; i++) {
+            const confetti = document.createElement('div');
+            confetti.style.position = 'absolute';
+            confetti.style.width = '8px';
+            confetti.style.height = '8px';
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.borderRadius = '50%';
+            confetti.style.left = Math.random() * 100 + '%';
+            confetti.style.top = '-20px';
+            confetti.style.opacity = '0.7';
+            confetti.style.zIndex = '-1';
+            container.appendChild(confetti);
             
-            // Reset button after 5 seconds
-            setTimeout(() => {
-              btn.innerHTML = originalText;
-              btn.style.background = '';
-              btn.style.borderColor = '';
-              btn.style.color = '';
-              btn.disabled = false;
-              updateButtonColors(getComputedStyle(document.documentElement).getPropertyValue('--primary').trim());
-              successMsg.remove();
-            }, 5000);
-          }, 1500);
-        });
-      }
+            const animation = confetti.animate([
+                { transform: 'translateY(0) rotate(0deg)', opacity: 0.7 },
+                { transform: `translateY(${window.innerHeight}px) rotate(${Math.random() * 360}deg)`, opacity: 0 }
+            ], {
+                duration: Math.random() * 2000 + 1000,
+                easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)'
+            });
+            
+            animation.onfinish = () => confetti.remove();
+        }
     }
+};
 
-    // ========== HELPER FUNCTIONS ==========
-    function updateButtonColors(color) {
-      // Update all option buttons
-      document.querySelectorAll('.option-button').forEach(btn => {
-        btn.style.color = color;
-        btn.style.borderColor = color;
-        
-        // Update hover effect
-        btn.addEventListener('mouseenter', function() {
-          if (!this.disabled) {
-            this.style.backgroundColor = color;
-            this.style.color = 'white';
-          }
-        });
-        btn.addEventListener('mouseleave', function() {
-          if (!this.disabled && !this.style.background.includes('10B981')) {
-            this.style.backgroundColor = 'transparent';
-            this.style.color = color;
-          }
-        });
-      });
-      
-      // Update time badge
-      document.querySelectorAll('.time-badge').forEach(badge => {
-        badge.style.backgroundColor = color;
-      });
-      
-      // Update completion options background
-      const completionOptions = document.querySelector('.completion-options');
-      if (completionOptions) {
-        completionOptions.style.background = `${color}08`;
-      }
-      
-      // Update plan badge if it's the primary color
-      const planBadge = document.getElementById('planBadge');
-      if (planBadge && !planBadge.classList.contains('premium') && !planBadge.classList.contains('standard')) {
-        planBadge.style.backgroundColor = color;
-      }
-    }
-
-    function createConfetti() {
-      const color = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
-      const colors = [color, '#FF6B00', '#121212', '#4a4a4a'];
-      const container = document.querySelector('.thank-you-container');
-      
-      if (!container) return;
-      
-      for (let i = 0; i < 20; i++) {
-        const confetti = document.createElement('div');
-        confetti.style.position = 'absolute';
-        confetti.style.width = '8px';
-        confetti.style.height = '8px';
-        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-        confetti.style.borderRadius = '50%';
-        confetti.style.left = Math.random() * 100 + '%';
-        confetti.style.top = '-20px';
-        confetti.style.opacity = '0.7';
-        confetti.style.zIndex = '-1';
-        container.appendChild(confetti);
-        
-        // Animate confetti
-        const animation = confetti.animate([
-          { transform: 'translateY(0) rotate(0deg)', opacity: 0.7 },
-          { transform: `translateY(${window.innerHeight}px) rotate(${Math.random() * 360}deg)`, opacity: 0 }
-        ], {
-          duration: Math.random() * 2000 + 1000,
-          easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)'
-        });
-        
-        animation.onfinish = () => confetti.remove();
-      }
-    }
-  </script>
-  </script>
+// ================= INITIALIZE =================
+document.addEventListener('DOMContentLoaded', function() {
+    ThankYouServices.init();
+});
+</script>
 </body>
 </html>
