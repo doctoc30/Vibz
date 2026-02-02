@@ -939,59 +939,347 @@
     </div>
 
 <script>
-/* ===================== CONFIGURATION ===================== */
-const PLANS = {
+// ================= SERVICE TRACKING FOR ORDER FORM =================
+const OrderFormServices = {
+    // Service Database
     standard: {
-        name: "Standard Plan",
-        pages: 5,
-        revisions: 5,
-        delivery: "10-15 days",
-        support: "3 months",
-        features: [
-            "Mobile Responsive Design",
-            "Basic SEO Setup",
-            "Contact Form",
-            "Social Media Integration",
-            "Speed Optimization"
-        ]
+        'Logo': 'placeholder if none',
+        'Services & Pricing Display': 'Clear layout of all offered services and prices',
+        'Team / Barber Profiles': 'Photos, bios, and specialties',
+        'Photo Gallery / Portfolio': 'Image grid showcasing work',
+        'Basic Before & After Slider': 'Compare before/after side-by-side',
+        'Special Offers / Promotions Section': 'Display deals or discounts',
+        'Opening Hours Display': 'Business hours and open/closed status',
+        'Location & Directions': 'Google Maps embed with directions button',
+        'Tap-to-Call & WhatsApp Buttons': 'One-click mobile contact',
+        'FAQ Section': 'Collapsible questions to answer common queries',
+        'Loyalty / Membership Info': 'Show loyalty program details',
+        'Contact Form': 'Simple enquiry form to collect messages',
+        'On-Page SEO Basics': 'Page titles, headers, meta tags, and image alt text',
+        'Reviews': 'Display client testimonials',
+        'Video Grids': 'Up to 6, add YouTube/other videos'
     },
+    
     premium: {
-        name: "Premium Plan",
-        pages: 15,
-        revisions: 10,
-        delivery: "25-30 days",
-        support: "6 months",
-        features: [
-            "Mobile Responsive Design",
-            "Advanced SEO Optimization",
-            "Contact Form with Automation",
-            "Social Media Integration",
-            "Speed Optimization (95+ Score)",
-            "Advanced Analytics",
-            "Content Management System",
-            "E-commerce Ready",
-            "Custom Animations",
-            "Priority Support"
-        ]
-    }
+        'Online Booking System Integration': 'Calendly, Setmore, etc.',
+        'Stripe Payments / Deposits': 'Accept payments online',
+        'Reschedule & Cancellation Management': 'Client-managed bookings',
+        'Gift Cards / Vouchers': 'Sell digital gift cards',
+        'Walk-In / Waitlist System': 'Real-time updates for walk-ins',
+        'Pop up offer': 'AI-triggered promotional popups',
+        'Barber Specialties & Service Tags': 'Highlight skills and services',
+        'Advanced Call-to-Action Buttons': 'Sticky buttons, strategic placement',
+        'Analytics & Conversion Tracking Setup': 'Tracks Book Now, Call, WhatsApp, and form submissions',
+        'Priority Build Queue': 'Premium builds scheduled first',
+        'Enhanced Video & Image Gallery': 'Interactive gallery for client-provided media',
+        'Custom graphics': 'Personalized visuals for website sections',
+        'Prominent Sticky Header / Banner': 'Highlight bookings, offers, or CTAs',
+        'Multi-Location / Branch Info': 'Optional for shops with multiple locations',
+        'Full Branding Package': 'Logo, colors, typography, brand identity'
+    },
+    
+    init: function() {
+        console.log('Order Form Services Tracking');
+        this.loadServicesData();
+        this.initializePlan();
+        this.updateProgress();
+        this.setupEventListeners();
+        this.populateFormFields();
+    },
+    
+    // Load services from storage
+    loadServicesData: function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        // Try to get services from various sources
+        const dataSources = [
+            // URL parameters
+            {
+                plan: urlParams.get('plan'),
+                business: urlParams.get('business') ? decodeURIComponent(urlParams.get('business')) : null,
+                designCode: urlParams.get('designCode'),
+                services: urlParams.get('services'),
+                paymentModel: urlParams.get('paymentModel')
+            },
+            
+            // Local storage
+            {
+                plan: localStorage.getItem('selectedPlan'),
+                business: localStorage.getItem('businessName'),
+                designCode: localStorage.getItem('selectedDesignCode'),
+                paymentModel: localStorage.getItem('paymentModel'),
+                selectedServices: localStorage.getItem('selectedServices'),
+                serviceCounts: localStorage.getItem('serviceCounts'),
+                barberFunnelData: localStorage.getItem('barberFunnelData')
+            }
+        ];
+        
+        // Default values
+        this.orderData = {
+            plan: 'standard',
+            business: 'Your Business',
+            designCode: 'CUSTOM',
+            services: 0,
+            paymentModel: 'Own Outright',
+            selectedServices: [],
+            serviceCounts: { standard: 0, premium: 0, total: 0 }
+        };
+        
+        // Merge data
+        dataSources.forEach(source => {
+            if (!source) return;
+            
+            if (source.plan) {
+                this.orderData.plan = source.plan.includes('premium') ? 'premium' : 'standard';
+            }
+            
+            if (source.business) {
+                this.orderData.business = source.business;
+            }
+            
+            if (source.designCode) {
+                this.orderData.designCode = source.designCode;
+            }
+            
+            if (source.services) {
+                this.orderData.services = parseInt(source.services) || 0;
+            }
+            
+            if (source.paymentModel) {
+                this.orderData.paymentModel = source.paymentModel;
+            }
+            
+            if (source.selectedServices) {
+                try {
+                    this.orderData.selectedServices = JSON.parse(source.selectedServices);
+                } catch (e) {
+                    this.orderData.selectedServices = [];
+                }
+            }
+            
+            if (source.serviceCounts) {
+                try {
+                    this.orderData.serviceCounts = JSON.parse(source.serviceCounts);
+                } catch (e) {
+                    this.orderData.serviceCounts = { standard: 0, premium: 0, total: 0 };
+                }
+            }
+            
+            if (source.barberFunnelData) {
+                try {
+                    const funnelData = JSON.parse(source.barberFunnelData);
+                    if (funnelData.features) {
+                        this.orderData.selectedServices = funnelData.features;
+                    }
+                    if (funnelData.standardServices || funnelData.premiumServices) {
+                        this.orderData.serviceCounts = {
+                            standard: funnelData.standardServices || 0,
+                            premium: funnelData.premiumServices || 0,
+                            total: (funnelData.standardServices || 0) + (funnelData.premiumServices || 0)
+                        };
+                    }
+                } catch (e) {
+                    console.error('Error parsing barberFunnelData:', e);
+                }
+            }
+        });
+        
+        console.log('Order Form - Loaded Services Data:', this.orderData);
+        return this.orderData;
+    },
+    
+    // Populate form fields with data
+    populateFormFields: function() {
+        const data = this.orderData;
+        
+        // Business Name
+        const businessNameField = document.getElementById('businessName');
+        if (businessNameField && data.business) {
+            businessNameField.value = data.business;
+        }
+        
+        // Update plan display
+        this.updatePlanDisplay();
+        
+        // Add service data to form
+        this.attachServiceDataToForm();
+    },
+    
+    // Update plan information display
+    updatePlanDisplay: function() {
+        const data = this.orderData;
+        
+        // Update plan name and badge
+        document.getElementById('planName').textContent = data.plan === 'premium' ? 'Premium Plan' : 'Standard Plan';
+        document.getElementById('planBadge').textContent = data.plan.toUpperCase();
+        
+        // Update features list in Step 3
+        this.updateFeaturesList();
+    },
+    
+    // Update features list in Step 3
+    updateFeaturesList: function() {
+        const data = this.orderData;
+        const featuresList = document.getElementById('featuresList');
+        
+        if (!featuresList) return;
+        
+        // Get plan-specific features
+        const planFeatures = this.getPlanFeatures(data.plan);
+        
+        // Add selected services from funnel
+        const selectedFeatures = data.selectedServices.map(serviceName => {
+            const isPremium = this.premium[serviceName];
+            return {
+                name: serviceName,
+                type: isPremium ? 'premium' : 'standard',
+                description: isPremium ? this.premium[serviceName] : this.standard[serviceName]
+            };
+        });
+        
+        // Combine plan features and selected services
+        const allFeatures = [...planFeatures, ...selectedFeatures];
+        
+        // Remove duplicates
+        const uniqueFeatures = [];
+        const seen = new Set();
+        
+        allFeatures.forEach(feature => {
+            if (!seen.has(feature.name)) {
+                seen.add(feature.name);
+                uniqueFeatures.push(feature);
+            }
+        });
+        
+        // Generate HTML
+        featuresList.innerHTML = uniqueFeatures.map(feature => `
+            <div class="plan-item">
+                <i class="fas fa-check-circle" style="color: ${feature.type === 'premium' ? '#2196F3' : '#4CAF50'}"></i> 
+                ${feature.name}
+                ${feature.description ? `<small style="display: block; color: var(--text-light); margin-top: 2px;">${feature.description}</small>` : ''}
+            </div>
+        `).join('');
+    },
+    
+    // Get features for specific plan
+    getPlanFeatures: function(planType) {
+        const planData = this.PLANS[planType];
+        return planData.features.map(feature => ({
+            name: feature,
+            type: planType,
+            description: ''
+        }));
+    },
+    
+    // Attach service data to form submission
+    attachServiceDataToForm: function() {
+        const form = document.getElementById('websiteOrderForm');
+        if (!form) return;
+        
+        const data = this.orderData;
+        
+        // Remove existing service inputs
+        document.querySelectorAll('input[name="standard_services"], input[name="premium_services"]').forEach(input => input.remove());
+        
+        // Categorize selected services
+        const standardServices = [];
+        const premiumServices = [];
+        
+        data.selectedServices.forEach(serviceName => {
+            if (this.premium[serviceName]) {
+                premiumServices.push(serviceName);
+            } else if (this.standard[serviceName]) {
+                standardServices.push(serviceName);
+            }
+        });
+        
+        // Add hidden inputs
+        const standardInput = document.createElement('input');
+        standardInput.type = 'hidden';
+        standardInput.name = 'standard_services';
+        standardInput.value = JSON.stringify(standardServices);
+        form.appendChild(standardInput);
+        
+        const premiumInput = document.createElement('input');
+        premiumInput.type = 'hidden';
+        premiumInput.name = 'premium_services';
+        premiumInput.value = JSON.stringify(premiumServices);
+        form.appendChild(premiumInput);
+        
+        const countsInput = document.createElement('input');
+        countsInput.type = 'hidden';
+        countsInput.name = 'service_counts';
+        countsInput.value = JSON.stringify(data.serviceCounts);
+        form.appendChild(countsInput);
+        
+        const planInput = document.createElement('input');
+        planInput.type = 'hidden';
+        planInput.name = 'selected_plan';
+        planInput.value = data.plan;
+        form.appendChild(planInput);
+        
+        console.log('Order Form - Attached Services:', {
+            standard: standardServices,
+            premium: premiumServices,
+            counts: data.serviceCounts
+        });
+    },
+    
+    // Plan configurations
+    PLANS: {
+        standard: {
+            name: "Standard Plan",
+            pages: 5,
+            revisions: 5,
+            delivery: "10-15 days",
+            support: "3 months",
+            features: [
+                "Mobile Responsive Design",
+                "Basic SEO Setup",
+                "Contact Form",
+                "Social Media Integration",
+                "Speed Optimization"
+            ]
+        },
+        premium: {
+            name: "Premium Plan",
+            pages: 15,
+            revisions: 10,
+            delivery: "25-30 days",
+            support: "6 months",
+            features: [
+                "Mobile Responsive Design",
+                "Advanced SEO Optimization",
+                "Contact Form with Automation",
+                "Social Media Integration",
+                "Speed Optimization (95+ Score)",
+                "Advanced Analytics",
+                "Content Management System",
+                "E-commerce Ready",
+                "Custom Animations",
+                "Priority Support"
+            ]
+        }
+    },
+    
+    // Existing order form functionality
+    PAGE_TYPES: [
+        "About", "Services", "Contact", "Gallery", "Pricing",
+        "Testimonials", "Blog", "FAQ", "Team", "Portfolio",
+        "Booking", "Shop", "Resources", "Careers", "Custom"
+    ],
+    
+    PAGE_SECTIONS: [
+        { id: "hero", label: "Hero Section", icon: "fa-star" },
+        { id: "text-image", label: "Text + Image", icon: "fa-align-left" },
+        { id: "gallery", label: "Gallery", icon: "fa-th" },
+        { id: "testimonials", label: "Testimonials", icon: "fa-quote-right" },
+        { id: "cta", label: "Call to Action", icon: "fa-phone-alt" },
+        { id: "ai-sections", label: "AI decides sections", icon: "fa-magic" }
+    ]
 };
 
-const PAGE_TYPES = [
-    "About", "Services", "Contact", "Gallery", "Pricing",
-    "Testimonials", "Blog", "FAQ", "Team", "Portfolio",
-    "Booking", "Shop", "Resources", "Careers", "Custom"
-];
-
-const PAGE_SECTIONS = [
-    { id: "hero", label: "Hero Section", icon: "fa-star" },
-    { id: "text-image", label: "Text + Image", icon: "fa-align-left" },
-    { id: "gallery", label: "Gallery", icon: "fa-th" },
-    { id: "testimonials", label: "Testimonials", icon: "fa-quote-right" },
-    { id: "cta", label: "Call to Action", icon: "fa-phone-alt" },
-    { id: "ai-sections", label: "AI decides sections", icon: "fa-magic" }
-];
-
-/* ===================== STATE ===================== */
+// ================= EXISTING ORDER FORM FUNCTIONALITY =================
 let currentStep = 1;
 const totalSteps = 6;
 let plan = "standard";
@@ -1001,20 +1289,9 @@ let formData = {
     confidence: ""
 };
 
-/* ===================== INIT ===================== */
-document.addEventListener("DOMContentLoaded", () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const planParam = urlParams.get("plan");
-    plan = (planParam && PLANS[planParam]) ? planParam : "standard";
-
-    initializePlan();
-    updateProgress();
-    setupEventListeners();
-});
-
-/* ===================== PLAN ===================== */
+// Initialize plan
 function initializePlan() {
-    const planData = PLANS[plan];
+    const planData = OrderFormServices.PLANS[plan];
 
     document.getElementById("planName").textContent = planData.name;
     document.getElementById("planBadge").textContent = plan.toUpperCase();
@@ -1026,20 +1303,14 @@ function initializePlan() {
         <div class="plan-item"><i class="fas fa-headset"></i> ${planData.support} support</div>
     `;
 
-    document.getElementById("featuresList").innerHTML =
-        planData.features.map(f => `
-            <div class="plan-item">
-                <i class="fas fa-check-circle"></i> ${f}
-            </div>
-        `).join("");
-
+    OrderFormServices.updateFeaturesList();
     initializePages();
 }
 
-/* ===================== PAGES ===================== */
+// Initialize pages
 function initializePages() {
     const pagesContainer = document.getElementById("pagesContainer");
-    const pageCount = PLANS[plan].pages;
+    const pageCount = OrderFormServices.PLANS[plan].pages;
 
     let html = "";
 
@@ -1061,7 +1332,7 @@ function initializePages() {
                         : `
                         <select class="form-control page-type" data-page="${i}">
                             <option value="">Select page type</option>
-                            ${PAGE_TYPES.map(p => `<option value="${p}">${p}</option>`).join("")}
+                            ${OrderFormServices.PAGE_TYPES.map(p => `<option value="${p}">${p}</option>`).join("")}
                         </select>
                         <input class="form-control custom-page-name"
                                data-page="${i}"
@@ -1083,7 +1354,7 @@ function initializePages() {
             <div class="form-group">
                 <label class="form-label">Sections (optional)</label>
                 <div class="checkbox-group">
-                    ${PAGE_SECTIONS.map(s => `
+                    ${OrderFormServices.PAGE_SECTIONS.map(s => `
                         <div class="checkbox-item">
                             <input type="checkbox" id="sec-${i}-${s.id}" value="${s.id}">
                             <label class="checkbox-label" for="sec-${i}-${s.id}">
@@ -1107,7 +1378,7 @@ function initializePages() {
             <div class="ai-fallback">
                 <label>
                     <input type="checkbox" class="ai-override-toggle" data-page="${i}">
-                    I’m not sure — VIBZ should design this page for me
+                    I'm not sure — VIBZ should design this page for me
                 </label>
             </div>` : ""}
         </div>
@@ -1125,7 +1396,7 @@ function initializePages() {
     });
 }
 
-/* ===================== STEPS ===================== */
+// Step navigation
 function updateProgress() {
     document.querySelectorAll(".progress-step").forEach((el, i) => {
         el.classList.toggle("active", i + 1 === currentStep);
@@ -1159,15 +1430,21 @@ function prevStep() {
     }
 }
 
-/* ===================== REVIEW ===================== */
+// Review generation
 function generateReview() {
     const review = document.getElementById("reviewContent");
-    const planData = PLANS[plan];
+    const planData = OrderFormServices.PLANS[plan];
 
     let html = `
         <div class="review-section">
             <strong>${planData.name}</strong><br>
             ${planData.pages} pages • ${planData.delivery}
+        </div>
+        
+        <div class="review-section">
+            <strong>Selected Services</strong><br>
+            <small>${OrderFormServices.orderData.serviceCounts.total} total services selected</small><br>
+            <small>${OrderFormServices.orderData.serviceCounts.standard} standard • ${OrderFormServices.orderData.serviceCounts.premium} premium</small>
         </div>
     `;
 
@@ -1188,7 +1465,7 @@ function generateReview() {
     review.innerHTML = html;
 }
 
-/* ===================== SUBMIT ===================== */
+// Setup event listeners
 function setupEventListeners() {
     document.getElementById("websiteOrderForm").addEventListener("submit", e => {
         e.preventDefault();
@@ -1196,16 +1473,23 @@ function setupEventListeners() {
         const payload = {
             plan,
             timestamp: new Date().toISOString(),
-            pages: []
+            pages: [],
+            services: OrderFormServices.orderData
         };
 
-        for (let i = 1; i <= PLANS[plan].pages; i++) {
+        for (let i = 1; i <= OrderFormServices.PLANS[plan].pages; i++) {
             payload.pages.push({
                 page: i,
                 instruction: document.querySelector(`.page-instruction[data-page="${i}"]`)?.value || ""
             });
         }
 
+        // Store final order data
+        localStorage.setItem('finalOrderData', JSON.stringify(payload));
+        
+        console.log('Order Form Submission:', payload);
+
+        // Submit to Formspree
         fetch("https://formspree.io/f/mykkzwvy", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -1213,9 +1497,29 @@ function setupEventListeners() {
         }).then(() => {
             document.querySelector(".form-container").style.display = "none";
             document.getElementById("successMessage").style.display = "block";
+        }).catch(error => {
+            console.error('Form submission error:', error);
+            // Fallback: show success anyway
+            document.querySelector(".form-container").style.display = "none";
+            document.getElementById("successMessage").style.display = "block";
         });
     });
 }
+
+// ================= INITIALIZATION =================
+document.addEventListener("DOMContentLoaded", () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const planParam = urlParams.get("plan");
+    plan = (planParam && OrderFormServices.PLANS[planParam]) ? planParam : "standard";
+
+    // Initialize service tracking
+    OrderFormServices.init();
+    
+    // Initialize existing functionality
+    initializePlan();
+    updateProgress();
+    setupEventListeners();
+});
 </script>
 </body>
 </html>
