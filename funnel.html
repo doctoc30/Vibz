@@ -634,87 +634,47 @@
         </div>
     </section>
 
-
     <script>
-// ================= SERVICE TRACKING FOR FUNNEL PAGE =================
-const FunnelServices = {
-    init: function() {
-        console.log('Funnel Services Tracking');
-        this.trackFunnelServices();
-        this.attachToForms();
-    },
-    
-    trackFunnelServices: function() {
-        const services = {
-            standard: [
-                'Services & Pricing Display',
-                'Contact Form', 
-                'On-Page SEO Basics',
-                'Reviews',
-                'Location & Directions',
-                'FAQ Section'
-            ],
-            premium: [
-                'Analytics & Conversion Tracking Setup',
-                'Priority Build Queue',
-                'Custom graphics',
-                'Advanced Call-to-Action Buttons'
-            ]
-        };
-        
-        // Store for cross-page access
-        localStorage.setItem('funnelServices', JSON.stringify(services));
-        sessionStorage.setItem('currentServices', JSON.stringify(services));
-        
-        this.currentServices = services;
-        return services;
-    },
-    
-    attachToForms: function() {
-        const formWrapper = document.getElementById('formWrapper');
-        if (formWrapper) {
-            const standardInput = document.createElement('input');
-            standardInput.type = 'hidden';
-            standardInput.name = 'standard_services';
-            standardInput.value = JSON.stringify(this.currentServices.standard);
-            formWrapper.appendChild(standardInput);
-            
-            const premiumInput = document.createElement('input');
-            premiumInput.type = 'hidden';
-            premiumInput.name = 'premium_services';
-            premiumInput.value = JSON.stringify(this.currentServices.premium);
-            formWrapper.appendChild(premiumInput);
-            
-            // Also store counts
-            const countsInput = document.createElement('input');
-            countsInput.type = 'hidden';
-            countsInput.name = 'service_counts';
-            countsInput.value = JSON.stringify({
-                standard: this.currentServices.standard.length,
-                premium: this.currentServices.premium.length,
-                total: this.currentServices.standard.length + this.currentServices.premium.length
-            });
-            formWrapper.appendChild(countsInput);
-        }
-    }
-};
 
-// ================= EXISTING FUNNEL FUNCTIONALITY =================
+// ========== IMPROVED SEARCH FUNCTIONALITY ==========
+// Barber suggestion only appears for specific barber-related keywords
+
 // Check if input contains barber-related keywords
 function isBarberRelated(searchTerm) {
     const term = searchTerm.toLowerCase().trim();
     
+    // Only trigger for these specific patterns
     const barberPatterns = [
-        /^barb/i, /^hair/i, /^cut/i, /^trim/i, /^shav/i, /^groom/i,
-        /^fade/i, /^buzz/i, /^beard/i, /^salon/i, /^studio/i, /^style/i,
-        /^men/i, /^male/i, /^bar$/i, /^ba$/i, /^ha$/i, /^cu$/i
+        // Must start with these prefixes (3+ characters)
+        /^barb/i,      // barb, barbe, barber
+        /^hair/i,      // hair, hairc, haircu
+        /^cut/i,       // cut, cutt
+        /^trim/i,      // trim
+        /^shav/i,      // shav, shave
+        /^groom/i,     // groom
+        /^fade/i,      // fade
+        /^buzz/i,      // buzz
+        /^beard/i,     // beard
+        /^salon/i,     // salon
+        /^studio/i,    // studio
+        /^style/i,     // style
+        /^men/i,       // men, men'
+        /^male/i,      // male
+        
+        // Exact matches for short terms
+        /^bar$/i,      // bar
+        /^ba$/i,       // ba
+        /^ha$/i,       // ha
+        /^cu$/i,       // cu
     ];
     
+    // Check against patterns
     for (const pattern of barberPatterns) {
         if (pattern.test(term)) {
             return true;
         }
     }
+    
     return false;
 }
 
@@ -724,11 +684,16 @@ function showSuggestions() {
     const suggestionsContainer = document.getElementById('searchSuggestions');
     const searchTerm = input.value.trim();
     
+    // Clear previous suggestions
     suggestionsContainer.innerHTML = '';
     suggestionsContainer.style.display = 'none';
     
-    if (!searchTerm) return;
+    // Don't show anything if search is empty
+    if (!searchTerm) {
+        return;
+    }
     
+    // Only show barber suggestion for barber-related searches
     if (isBarberRelated(searchTerm)) {
         suggestionsContainer.innerHTML = `
             <div class="suggestion-item" onclick="redirectToBarber()">
@@ -736,7 +701,9 @@ function showSuggestions() {
             </div>
         `;
         suggestionsContainer.style.display = 'block';
-    } else if (searchTerm.length >= 2) {
+    }
+    // Show generic message for non-barber searches with 2+ characters
+    else if (searchTerm.length >= 2) {
         suggestionsContainer.innerHTML = `
             <div class="suggestion-item info-item" onclick="this.style.display='none'">
                 Type "barber" for barber websites, or select from categories below.
@@ -757,183 +724,26 @@ function handleSearch() {
     const value = input.value.trim();
     const suggestionsContainer = document.getElementById('searchSuggestions');
     
-    if (suggestionsContainer) suggestionsContainer.style.display = 'none';
+    // Hide suggestions
+    if (suggestionsContainer) {
+        suggestionsContainer.style.display = 'none';
+    }
     
     if (!value) {
         alert('Please enter your business type or select from the options.');
         return;
     }
     
+    // Check if it's barber-related
     if (isBarberRelated(value)) {
         window.location.href = 'https://www.vibz.co.uk/barber/';
         return;
     }
     
+    // If no niche match, continue with generic funnel
     formData.businessType = value;
     showScreen('main-intro-options');
     next();
-}
-
-// ========== FORM STATE MANAGEMENT ==========
-let currentStep = 1;
-const formData = {
-    businessType: '',
-    projectType: '',
-    features: [],
-    planType: ''
-};
-
-// DOM elements
-const screens = document.querySelectorAll('.form-screen');
-const stepDots = document.querySelectorAll('.step-dot');
-const businessInput = document.getElementById('businessInput');
-const formWrapper = document.getElementById('formWrapper');
-
-// Form navigation
-function showScreen(screenId) {
-    screens.forEach(screen => {
-        screen.classList.remove('active');
-    });
-    document.getElementById(screenId).classList.add('active');
-}
-
-function next() {
-    if (currentStep < 5) {
-        currentStep++;
-        updateStepIndicator();
-    }
-}
-
-function prev() {
-    if (currentStep > 1) {
-        currentStep--;
-        updateStepIndicator();
-    }
-}
-
-function updateStepIndicator() {
-    stepDots.forEach((dot, index) => {
-        if (index < currentStep) {
-            dot.classList.add('active');
-        } else {
-            dot.classList.remove('active');
-        }
-    });
-}
-
-// Business selection
-function selectExample(business) {
-    if (business === 'barber') {
-        window.location.href = 'https://www.vibz.co.uk/barber/';
-        return;
-    }
-    
-    formData.businessType = business;
-    showScreen('main-intro-options');
-    next();
-}
-
-// Project type selection
-function setPath(type) {
-    formData.projectType = type;
-    showScreen('niche-questions');
-    next();
-}
-
-// Feature selection
-function selectFeature(feature) {
-    const index = formData.features.indexOf(feature);
-    if (index === -1) {
-        formData.features.push(feature);
-        event.target.classList.add('vibz-btn-primary');
-    } else {
-        formData.features.splice(index, 1);
-        event.target.classList.remove('vibz-btn-primary');
-    }
-}
-
-// Plan selection
-function selectPlan(plan) {
-    formData.planType = plan;
-    showRecommendedPlan();
-    showScreen('recommended-plan-screen');
-    next();
-}
-
-// Show recommended plan
-function showRecommendedPlan() {
-    const pricingContainer = document.getElementById('pricingCards');
-    let plan;
-    
-    if (formData.planType === 'own-outright') {
-        plan = {
-            name: 'Elite Package',
-            price: '£2,499',
-            period: 'one-time',
-            features: [
-                'Custom Website Design',
-                'Mobile Responsive',
-                'SEO Optimization',
-                'Google Analytics Setup',
-                'Contact Form Integration',
-                formData.features.includes('booking') ? 'Booking System' : null,
-                formData.features.includes('ecommerce') ? 'E-commerce Setup' : null,
-                formData.features.includes('branding') ? 'Full Brand Identity' : null,
-                '3 Months Support',
-                'PageSpeed Optimization'
-            ].filter(Boolean)
-        };
-    } else {
-        plan = {
-            name: 'Premium Monthly',
-            price: '£199',
-            period: 'per month',
-            features: [
-                'Everything in Elite Package',
-                'Monthly Hosting',
-                'Weekly Backups',
-                'Security Monitoring',
-                'Content Updates',
-                'Performance Optimization',
-                '24/7 Support',
-                'Unlimited Edits',
-                'SEO Maintenance',
-                'Analytics Reporting'
-            ]
-        };
-    }
-
-    const featuresHtml = plan.features.map(feature => 
-        `<li>${feature}</li>`
-    ).join('');
-
-    pricingContainer.innerHTML = `
-        <div class="pricing-card">
-            <h3>${plan.name}</h3>
-            <div class="price">${plan.price}<span class="price-period">/${plan.period}</span></div>
-            <ul class="pricing-features">
-                ${featuresHtml}
-            </ul>
-            <button type="button" class="vibz-btn vibz-btn-primary" onclick="submitForm('${plan.name}')">
-                Start This Plan
-            </button>
-        </div>
-    `;
-}
-
-// Form submission
-function submitForm(planName) {
-    document.getElementById('hiddenPlan').value = planName;
-    document.getElementById('hiddenFeatures').value = formData.features.join(', ');
-    
-    let paymentLink = formData.planType === 'own-outright' 
-        ? 'https://buy.stripe.com/test_00g9CBeBea4X6Gg28b' 
-        : 'https://buy.stripe.com/test_28odSBdBCgVn7Z2fZ1';
-    
-    document.getElementById('hiddenPaymentLink').value = paymentLink;
-    
-    formWrapper.submit();
-    showScreen('success-screen');
 }
 
 // Hide suggestions when clicking outside
@@ -950,26 +760,253 @@ document.addEventListener('click', function(event) {
 
 // Allow Enter key to trigger search
 document.getElementById('businessInput').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') handleSearch();
+    if (e.key === 'Enter') {
+        handleSearch();
+    }
 });
+        
 
-// ================= INITIALIZATION =================
-document.addEventListener('DOMContentLoaded', () => {
-    FunnelServices.init();
-    updateStepIndicator();
-    
-    // Mobile menu toggle
-    document.getElementById('mobileMenuBtn').addEventListener('click', () => {
-        const navLinks = document.querySelector('.nav-links');
-        navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
-    });
-    
-    // Auto-focus search input
-    setTimeout(() => {
-        const input = document.getElementById('businessInput');
-        if (input) input.focus();
-    }, 500);
-});
-</script>
+        // ========== FORM STATE MANAGEMENT ==========
+        let currentStep = 1;
+        const formData = {
+            businessType: '',
+            projectType: '',
+            features: [],
+            planType: ''
+        };
+
+        // DOM elements
+        const screens = document.querySelectorAll('.form-screen');
+        const stepDots = document.querySelectorAll('.step-dot');
+        const businessInput = document.getElementById('businessInput');
+        const formWrapper = document.getElementById('formWrapper');
+
+        // Form navigation
+        function showScreen(screenId) {
+            screens.forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function next() {
+            if (currentStep < 5) {
+                currentStep++;
+                updateStepIndicator();
+            }
+        }
+
+        function prev() {
+            if (currentStep > 1) {
+                currentStep--;
+                updateStepIndicator();
+            }
+        }
+
+        function updateStepIndicator() {
+            stepDots.forEach((dot, index) => {
+                if (index < currentStep) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+
+        // Business selection
+        function selectExample(business) {
+            if (business === 'barber') {
+                window.location.href = 'https://www.vibz.co.uk/barber/';
+                return;
+            }
+            
+            // Default: continue with generic funnel
+            formData.businessType = business;
+            showScreen('main-intro-options');
+            next();
+        }
+
+        // Business search with niche detection
+        function handleSearch() {
+            const value = businessInput.value.trim().toLowerCase();
+            const suggestionsContainer = document.getElementById('searchSuggestions');
+            
+            // Hide suggestions
+            if (suggestionsContainer) {
+                suggestionsContainer.style.display = 'none';
+            }
+            
+            if (!value) {
+                alert('Please enter your business type or select from the options.');
+                return;
+            }
+            
+            // Check if it's barber-related
+            const isBarberRelated = barberKeywords.some(keyword => {
+                return value.includes(keyword) || keyword.includes(value);
+            });
+            
+            const hasBarberPartial = value.includes('hair') || 
+                                    value.includes('barber') || 
+                                    value.includes('barb') || 
+                                    value.includes('groom') || 
+                                    value.includes('beard') || 
+                                    value.includes('trim') || 
+                                    value.includes('shave') || 
+                                    value.includes('cut') || 
+                                    value.includes('style') || 
+                                    value.includes('salon') ||
+                                    value.includes('studio') ||
+                                    value.includes('men');
+            
+            // If barber-related, redirect to barber funnel
+            if (isBarberRelated || hasBarberPartial) {
+                window.location.href = 'https://www.vibz.co.uk/barber/';
+                return;
+            }
+            
+            // If no niche match, continue with generic funnel
+            formData.businessType = value;
+            showScreen('main-intro-options');
+            next();
+        }
+
+        // Project type selection
+        function setPath(type) {
+            formData.projectType = type;
+            showScreen('niche-questions');
+            next();
+        }
+
+        // Feature selection
+        function selectFeature(feature) {
+            const index = formData.features.indexOf(feature);
+            if (index === -1) {
+                formData.features.push(feature);
+                event.target.classList.add('vibz-btn-primary');
+            } else {
+                formData.features.splice(index, 1);
+                event.target.classList.remove('vibz-btn-primary');
+            }
+        }
+
+        // Plan selection
+        function selectPlan(plan) {
+            formData.planType = plan;
+            showRecommendedPlan();
+            showScreen('recommended-plan-screen');
+            next();
+        }
+
+        // Show recommended plan
+        function showRecommendedPlan() {
+            const pricingContainer = document.getElementById('pricingCards');
+            let plan;
+            
+            if (formData.planType === 'own-outright') {
+                plan = {
+                    name: 'Elite Package',
+                    price: '£2,499',
+                    period: 'one-time',
+                    features: [
+                        'Custom Website Design',
+                        'Mobile Responsive',
+                        'SEO Optimization',
+                        'Google Analytics Setup',
+                        'Contact Form Integration',
+                        formData.features.includes('booking') ? 'Booking System' : null,
+                        formData.features.includes('ecommerce') ? 'E-commerce Setup' : null,
+                        formData.features.includes('branding') ? 'Full Brand Identity' : null,
+                        '3 Months Support',
+                        'PageSpeed Optimization'
+                    ].filter(Boolean)
+                };
+            } else {
+                plan = {
+                    name: 'Premium Monthly',
+                    price: '£199',
+                    period: 'per month',
+                    features: [
+                        'Everything in Elite Package',
+                        'Monthly Hosting',
+                        'Weekly Backups',
+                        'Security Monitoring',
+                        'Content Updates',
+                        'Performance Optimization',
+                        '24/7 Support',
+                        'Unlimited Edits',
+                        'SEO Maintenance',
+                        'Analytics Reporting'
+                    ]
+                };
+            }
+
+            const featuresHtml = plan.features.map(feature => 
+                `<li>${feature}</li>`
+            ).join('');
+
+            pricingContainer.innerHTML = `
+                <div class="pricing-card">
+                    <h3>${plan.name}</h3>
+                    <div class="price">${plan.price}<span class="price-period">/${plan.period}</span></div>
+                    <ul class="pricing-features">
+                        ${featuresHtml}
+                    </ul>
+                    <button type="button" class="vibz-btn vibz-btn-primary" onclick="submitForm('${plan.name}')">
+                        Start This Plan
+                    </button>
+                </div>
+            `;
+        }
+
+        // Form submission
+        function submitForm(planName) {
+            // Set hidden fields
+            document.getElementById('hiddenPlan').value = planName;
+            document.getElementById('hiddenFeatures').value = formData.features.join(', ');
+            
+            // Generate payment link based on plan
+            let paymentLink = formData.planType === 'own-outright' 
+                ? 'https://buy.stripe.com/test_00g9CBeBea4X6Gg28b' 
+                : 'https://buy.stripe.com/test_28odSBdBCgVn7Z2fZ1';
+            
+            document.getElementById('hiddenPaymentLink').value = paymentLink;
+            
+            // Submit form
+            formWrapper.submit();
+            
+            // Show success screen
+            showScreen('success-screen');
+        }
+
+        // Hide suggestions when clicking outside
+        document.addEventListener('click', function(event) {
+            const suggestions = document.getElementById('searchSuggestions');
+            const input = document.getElementById('businessInput');
+            
+            if (suggestions && input) {
+                if (!input.contains(event.target) && !suggestions.contains(event.target)) {
+                    suggestions.style.display = 'none';
+                }
+            }
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            updateStepIndicator();
+            
+            // Mobile menu toggle
+            document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+                const navLinks = document.querySelector('.nav-links');
+                navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
+            });
+            
+            // Auto-focus search input
+            setTimeout(() => {
+                const input = document.getElementById('businessInput');
+                if (input) input.focus();
+            }, 500);
+        });
+    </script>
 </body>
 </html>
