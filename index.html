@@ -1607,9 +1607,9 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
     <script>
+
 /**
- * VIBZ INDEX MASTER JS
- * Includes: AOS, Typewriter, FAQ, Navigation Menu, Lead Capture, and Smart Search
+ * VIBZ INDEX MASTER JS - REVISED
  */
 
 // 1. INITIALIZATION & AOS
@@ -1694,7 +1694,7 @@ function toggleFaq(btn) {
     }
 }
 
-// 5. SMART SEARCH & BARBER REDIRECTION
+// 5. SMART SEARCH & REDIRECTION (FIXED)
 const BARBER_KEYWORDS = [
     /^barb/i, /^hair/i, /^cut/i, /^trim/i, /^shav/i, 
     /^groom/i, /^fade/i, /^buzz/i, /^beard/i, /^salon/i, 
@@ -1721,7 +1721,7 @@ function showSearchSuggestions() {
     
     if (isBarberRelated(searchTerm)) {
         container.innerHTML = `
-            <div onclick="redirectToBarberFunnel()" class="suggestion-barber">
+            <div onclick="handleHomepageSearch()" class="suggestion-barber">
                 <span>Barber Website</span>
                 <span class="badge-popular">Popular</span>
             </div>`;
@@ -1741,27 +1741,27 @@ function handleHomepageSearch() {
         return;
     }
     
-    // Save niche for global use
-    localStorage.setItem('vibz_selectedNiche', val);
+    // Use 'selectedNiche' to match script.js/funnel.html
+    localStorage.setItem('selectedNiche', val.toLowerCase());
 
-    if (isBarberRelated(val)) {
-        redirectToBarberFunnel();
-    } else {
-        window.location.href = `https://www.vibz.co.uk/funnel.html?business=${encodeURIComponent(val)}`;
-    }
+    // Send everyone to funnel.html (no more subfolder redirects)
+    window.location.href = 'https://www.vibz.co.uk/funnel.html';
 }
 
-function redirectToBarberFunnel() {
-    window.location.href = 'https://www.vibz.co.uk/barber/';
-}
-
-// 6. EVENT LISTENERS FOR SEARCH
+// 6. GLOBAL EVENT LISTENERS (FIXED)
 document.getElementById('homepageBusinessInput')?.addEventListener('input', showSearchSuggestions);
 document.getElementById('homepageBusinessInput')?.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') handleHomepageSearch();
 });
 
 document.addEventListener('click', (e) => {
+    // A: CLEANER LOGIC - If clicking "Get a Website", wipe all memory
+    if (e.target.innerText && e.target.innerText.includes('Get a Website')) {
+        localStorage.removeItem('selectedNiche');
+        localStorage.removeItem('vibz_selectedNiche'); // Removes old key too
+    }
+
+    // B: Close search suggestions if clicking outside
     const container = document.getElementById('homepageSearchSuggestions');
     const input = document.getElementById('homepageBusinessInput');
     if (!input?.contains(e.target) && !container?.contains(e.target)) {
@@ -1815,7 +1815,9 @@ function initHoverEffects() {
     });
 }
 
-    </script>
+
+   </script>
+        
 </body>
 </html>
 
