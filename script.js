@@ -1,7 +1,7 @@
 /**
  * VIBZ script.js - FIXED VERSION
  * Shows "What's Your Business?" by default
- */
+ */ 
 
 const VIBZ_CONFIG = {
     "barber": {
