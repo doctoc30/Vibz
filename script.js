@@ -1,6 +1,6 @@
 /**
- * VIBZ MASTER BRAIN (script.js) - FINAL VERSION
- * This version forces a reset if coming from the Homepage.
+ * VIBZ MASTER BRAIN (script.js) - SIMPLIFIED VERSION
+ * Always shows "What's Your Business?" unless specifically searched
  */
 
 const VIBZ_CONFIG = {
@@ -15,30 +15,32 @@ const VIBZ_CONFIG = {
 };
 
 function initMasterFunnel() {
-    // 1. THE REFERRER SHIELD
-    // If user comes from the homepage, we MUST ignore old memory and show general mode.
-    const ref = document.referrer;
-    const isFromHome = ref.includes('index.html') || ref.endsWith('.co.uk/') || ref.endsWith('.co.uk');
-
-    if (isFromHome) {
-        localStorage.removeItem('selectedNiche');
-        console.log("Resetting to General mode because user arrived from Homepage.");
+    // 1. CHECK FOR SPECIAL CASE: Did user just search from homepage?
+    // Look for a special flag that only gets set when using search
+    const fromSearch = sessionStorage.getItem('fromHomepageSearch');
+    
+    // 2. GET THE DATA - but only if they came from search
+    let nicheKey = null;
+    if (fromSearch === 'true') {
+        // Only check localStorage if they specifically searched
+        const rawKey = localStorage.getItem('selectedNiche');
+        nicheKey = rawKey ? rawKey.toLowerCase().trim() : null;
+        // Clear the flag so it doesn't persist
+        sessionStorage.removeItem('fromHomepageSearch');
     }
-
-    // 2. GET THE DATA
-    const rawKey = localStorage.getItem('selectedNiche');
-    const nicheKey = rawKey ? rawKey.toLowerCase().trim() : null;
-    const titleElement = document.getElementById('niche-title');
-
+    
     // 3. APPLY BRANDING
+    const titleElement = document.getElementById('niche-title');
+    
     if (nicheKey && VIBZ_CONFIG[nicheKey]) {
+        // Only show specific headline if they specifically searched
         const config = VIBZ_CONFIG[nicheKey];
         if (titleElement) titleElement.innerText = `Your Elite ${config.name} Website`;
-        console.log(`Mode: Specific (${nicheKey})`);
+        console.log(`Mode: Specific (${nicheKey}) - from search`);
     } else {
-        // This is the safety net that shows "What's Your Business?"
+        // DEFAULT: Always show "What's Your Business?"
         if (titleElement) titleElement.innerText = "What's Your Business?";
-        console.log("Mode: General");
+        console.log("Mode: General (default)");
     }
 }
 
