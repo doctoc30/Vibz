@@ -15,17 +15,23 @@ const VIBZ_CONFIG = {
 // 2. THE SWITCHBOARD: This function runs on your Master Funnel page
 function initMasterFunnel() {
     // Check which niche was stored in the browser
-    const nicheKey = localStorage.getItem('selectedNiche') || 'barber';
-    const config = VIBZ_CONFIG[nicheKey];
-
-    // Find the elements on your HTML page and swap their content
+    const nicheKey = localStorage.getItem('selectedNiche');
+    
+    // Find the elements on your HTML page
     const titleElement = document.getElementById('niche-title');
     const igElement = document.getElementById('ig-link');
 
-    if (titleElement) titleElement.innerText = `Your Elite ${config.name} Website`;
-    if (igElement) igElement.href = `https://instagram.com/${config.ig}`;
-
-    console.log(`System loaded in ${nicheKey} mode!`);
+    // NEW LOGIC: Only change to a specific niche if one is actually selected
+    if (nicheKey && VIBZ_CONFIG[nicheKey]) {
+        const config = VIBZ_CONFIG[nicheKey];
+        if (titleElement) titleElement.innerText = `Your Elite ${config.name} Website`;
+        if (igElement) igElement.href = `https://instagram.com/${config.ig}`;
+        console.log(`System loaded in ${nicheKey} mode!`);
+    } else {
+        // DEFAULT: Show the standard headline if no niche is in memory
+        if (titleElement) titleElement.innerText = "What's Your Business?";
+        console.log("System loaded in General mode!");
+    }
 }
 
 // Automatically run the switchboard when the page loads
