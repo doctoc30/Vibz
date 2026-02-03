@@ -428,10 +428,8 @@
     </section>
 
 
-
-
-        <script>
-        // FORM LOGIC
+    <script>
+        // ========== CORE FORM LOGIC ==========
         let currentStep = 1;
         const formData = { businessType: '', projectType: '', features: [], planType: '' };
         const screens = document.querySelectorAll('.form-screen');
@@ -442,8 +440,19 @@
             document.getElementById(screenId).classList.add('active');
         }
 
-        function next() { if (currentStep < 5) { currentStep++; updateStepIndicator(); } }
-        function prev() { if (currentStep > 1) { currentStep--; updateStepIndicator(); } }
+        function next() { 
+            if (currentStep < 5) { 
+                currentStep++; 
+                updateStepIndicator(); 
+            } 
+        }
+
+        function prev() { 
+            if (currentStep > 1) { 
+                currentStep--; 
+                updateStepIndicator(); 
+            } 
+        }
 
         function updateStepIndicator() {
             stepDots.forEach((dot, i) => {
@@ -451,32 +460,96 @@
             });
         }
 
-        // REVISED: Saves choice to memory so the headline updates
-        function selectExample(business) {
-            formData.businessType = business;
-            localStorage.setItem('selectedNiche', business.toLowerCase());
-            
-            // Trigger the headline change from script.js immediately
-            if (typeof initMasterFunnel === "function") initMasterFunnel();
+        // ========== BARBER SEARCH & REDIRECT LOGIC ==========
 
-            showScreen('main-intro-options');
-            next();
+        // Check if input contains barber-related keywords
+        function isBarberRelated(searchTerm) {
+            const term = searchTerm.toLowerCase().trim();
+            const barberPatterns = [
+                /^barb/i, /^hair/i, /^cut/i, /^trim/i, /^shav/i, 
+                /^groom/i, /^fade/i, /^buzz/i, /^beard/i, /^salon/i, 
+                /^studio/i, /^style/i, /^men/i, /^male/i,
+                /^bar$/i, /^ba$/i, /^ha$/i, /^cu$/i
+            ];
+            
+            for (const pattern of barberPatterns) {
+                if (pattern.test(term)) return true;
+            }
+            return false;
         }
 
-        // REVISED: Updates headline based on what user typed
-        function handleSearch() {
-            const val = document.getElementById('businessInput').value.trim();
-            if (!val) return alert('Please enter business type');
+        // Show search suggestions on funnel page
+        function showSuggestions() {
+            const input = document.getElementById('businessInput');
+            const suggestionsContainer = document.getElementById('searchSuggestions');
+            const searchTerm = input.value.trim();
             
+            suggestionsContainer.innerHTML = '';
+            suggestionsContainer.style.display = 'none';
+            
+            if (!searchTerm) return;
+            
+            if (isBarberRelated(searchTerm)) {
+                suggestionsContainer.innerHTML = `
+                    <div class="suggestion-item" onclick="redirectToBarber()">
+                        Barber
+                    </div>
+                `;
+                suggestionsContainer.style.display = 'block';
+            } else if (searchTerm.length >= 2) {
+                suggestionsContainer.innerHTML = `
+                    <div class="suggestion-item" style="color: #666; font-size: 0.9rem;" onclick="this.parentElement.style.display='none'">
+                        Type "barber" for barber websites, or select below.
+                    </div>
+                `;
+                suggestionsContainer.style.display = 'block';
+            }
+        }
+
+        function redirectToBarber() {
+            window.location.href = 'https://www.vibz.co.uk/barber/';
+        }
+
+        // Triggered by "Find My Solution" button or Enter Key
+        function handleSearch() {
+            const input = document.getElementById('businessInput');
+            const val = input.value.trim();
+            
+            if (!val) return alert('Please enter business type');
+
+            // If it's a barber keyword, go to the specialized page
+            if (isBarberRelated(val)) {
+                redirectToBarber();
+                return;
+            }
+            
+            // Otherwise, continue with standard funnel
             formData.businessType = val;
             localStorage.setItem('selectedNiche', val.toLowerCase());
             
-            // Trigger the headline change from script.js immediately
             if (typeof initMasterFunnel === "function") initMasterFunnel();
 
             showScreen('main-intro-options');
             next();
         }
+
+        // Triggered by category buttons (Barber, Plumber, etc.)
+        function selectExample(business) {
+            if (business.toLowerCase() === 'barber') {
+                redirectToBarber();
+                return;
+            }
+
+            formData.businessType = business;
+            localStorage.setItem('selectedNiche', business.toLowerCase());
+            
+            if (typeof initMasterFunnel === "function") initMasterFunnel();
+
+            showScreen('main-intro-options');
+            next();
+        }
+
+        // ========== PATH & FEATURE SELECTION ==========
 
         function setPath(type) { formData.projectType = type; }
         
@@ -505,14 +578,34 @@
             showScreen('success-screen');
         }
 
+        // ========== INITIALIZATION & EVENTS ==========
+
         document.addEventListener('DOMContentLoaded', () => {
-            // Check if we should clear memory on entry (if arriving from fresh home click)
-            // This is a safety net for the "Get a Website" button
-            setTimeout(() => { document.getElementById('businessInput')?.focus(); }, 500);
+            const input = document.getElementById('businessInput');
+
+            // Auto-focus search on load
+            setTimeout(() => { input?.focus(); }, 500);
             
+            // Listen for Enter key
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleSearch();
+                }
+            });
+
+            // Mobile menu toggle
             document.getElementById('mobileMenuBtn').addEventListener('click', () => {
                 const nav = document.querySelector('.nav-links');
                 nav.style.display = nav.style.display === 'flex' ? 'none' : 'flex';
+            });
+
+            // Close suggestions when clicking outside
+            document.addEventListener('click', function(e) {
+                const suggestions = document.getElementById('searchSuggestions');
+                if (suggestions && !input.contains(e.target) && !suggestions.contains(e.target)) {
+                    suggestions.style.display = 'none';
+                }
             });
         });
     </script>
