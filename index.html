@@ -2,267 +2,305 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>VIBZ</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VIBZ | Elite Design Agency</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
     
     <style>
         :root {
-            --primary: #FF6B00;
+            --accent: #FF6B00;
+            --accent-dark: #E65A00;
             --bg: #FFFFFF;
-            --soft-gray: #F7F7F7;
-            --text: #000000;
+            --dark: #000000;
+            --glass: rgba(255, 255, 255, 0.8);
         }
 
-        * {
-            margin: 0; padding: 0; box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); overflow-x: hidden; }
 
-        body, html {
-            height: 100%;
-            background-color: var(--bg);
-            font-family: 'Inter', sans-serif;
-            overflow: hidden; /* App feel: no browser bounce */
-        }
-
-        /* ==== 1. MINIMAL SPLASH ==== */
-        #splash {
+        /* ================= 1. THE WOW INTRO ================= */
+        #intro-loader {
             position: fixed;
             inset: 0;
-            background: #000;
-            z-index: 1000;
+            background: var(--dark);
+            z-index: 10000;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.9s cubic-bezier(0.9, 0, 0.1, 1);
+            overflow: hidden;
         }
 
-        .splash-logo {
-            font-size: 4rem;
+        .intro-logo {
+            font-size: 6rem;
             font-weight: 900;
-            color: var(--primary);
-            letter-spacing: -4px;
-        }
-
-        /* ==== 2. THE APP SHELL ==== */
-        #app {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
+            color: var(--accent);
+            letter-spacing: -6px;
+            transform: scale(0.5);
             opacity: 0;
-            transform: scale(0.95);
-            transition: all 0.8s ease-out 0.2s;
+            animation: logo-pop 1.2s cubic-bezier(0.9, 0, 0.1, 1) forwards;
         }
 
-        #app.visible {
-            opacity: 1;
-            transform: scale(1);
+        @keyframes logo-pop {
+            0% { transform: scale(0.5); opacity: 0; filter: blur(20px); }
+            50% { transform: scale(1.1); opacity: 1; filter: blur(0px); }
+            100% { transform: scale(1); opacity: 1; }
         }
 
-        /* ==== 3. GOOGLE HERO (CLEAN) ==== */
-        .hero {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 0 30px;
-            text-align: center;
-        }
-
-        .hero h1 {
-            font-size: 2.2rem;
-            font-weight: 900;
-            margin-bottom: 30px;
-            letter-spacing: -1.5px;
-        }
-
-        /* The "Google" Search Bar */
-        .search-box {
+        .reveal-bg {
+            position: absolute;
             width: 100%;
-            max-width: 500px;
-            background: var(--soft-gray);
-            height: 64px;
-            border-radius: 32px;
+            height: 100%;
+            background: var(--accent);
+            top: 100%;
+            transition: transform 0.8s cubic-bezier(0.9, 0, 0.1, 1);
+        }
+
+        /* ================= 2. BOLD NAVIGATION ================= */
+        nav {
+            position: fixed;
+            top: 0; width: 100%;
+            padding: 25px 6%;
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            padding: 0 25px;
-            transition: all 0.3s ease;
-            border: 1px solid transparent;
+            z-index: 1000;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
         }
 
-        .search-box:focus-within {
-            background: #fff;
-            border-color: var(--primary);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-        }
+        .logo { font-size: 2rem; font-weight: 900; color: var(--accent); letter-spacing: -2px; }
+        .logo span { color: var(--dark); }
 
-        .search-box i {
-            color: #999;
-            font-size: 1.2rem;
-            margin-right: 15px;
-        }
-
-        .search-box input {
-            flex: 1;
-            border: none;
-            background: transparent;
-            outline: none;
-            font-size: 1.1rem;
-            font-weight: 500;
-            color: var(--text);
-        }
-
-        /* ==== 4. NATIVE TAB BAR ==== */
-        .tab-bar {
-            height: 85px;
-            padding-bottom: 25px; /* Home indicator space */
-            border-top: 1px solid #eee;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-        }
-
-        .tab-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: #BBB;
+        .nav-cta {
+            background: var(--accent);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 100px;
             text-decoration: none;
-            font-size: 0.65rem;
-            font-weight: 700;
+            font-weight: 900;
+            font-size: 0.9rem;
             text-transform: uppercase;
             letter-spacing: 1px;
+            box-shadow: 0 10px 20px rgba(255, 107, 0, 0.3);
             transition: 0.3s;
         }
 
-        .tab-item.active {
-            color: var(--primary);
-        }
+        .nav-cta:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(255, 107, 0, 0.4); }
 
-        .tab-item i {
-            font-size: 1.5rem;
-            margin-bottom: 5px;
-        }
-
-        /* Action Circle */
-        .tab-center {
-            width: 55px;
-            height: 55px;
-            background: var(--primary);
-            border-radius: 50%;
+        /* ================= 3. MASSIVE HERO ================= */
+        .hero {
+            min-height: 100vh;
             display: flex;
-            align-items: center;
+            flex-direction: column;
             justify-content: center;
-            color: #fff;
-            margin-top: -40px;
-            box-shadow: 0 8px 20px rgba(255, 107, 0, 0.3);
+            padding: 120px 6% 60px;
+            background: radial-gradient(circle at 80% 20%, #FFF5EE 0%, #FFFFFF 50%);
         }
 
-        /* Minimal Suggestions */
-        .chips {
-            margin-top: 25px;
+        .hero h1 {
+            font-size: clamp(3.5rem, 15vw, 9rem);
+            line-height: 0.85;
+            letter-spacing: -6px;
+            font-weight: 900;
+            margin-bottom: 40px;
+        }
+
+        .hero h1 span { color: var(--accent); }
+
+        .hero p {
+            font-size: 1.4rem;
+            max-width: 600px;
+            color: #555;
+            margin-bottom: 50px;
+            line-height: 1.4;
+            font-weight: 500;
+        }
+
+        /* ================= 4. BOLD SEARCH WIDGET ================= */
+        .search-container {
+            max-width: 800px;
+            background: white;
+            padding: 10px;
+            border-radius: 24px;
             display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            justify-content: center;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.1);
+            border: 1px solid #eee;
         }
 
-        .chip {
-            padding: 8px 18px;
-            background: var(--soft-gray);
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #666;
+        .search-container input {
+            flex: 1;
+            border: none;
+            padding: 20px 30px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            outline: none;
+        }
+
+        .search-btn {
+            background: var(--dark);
+            color: white;
+            border: none;
+            padding: 0 40px;
+            border-radius: 18px;
+            font-weight: 900;
             cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .search-btn:hover { background: var(--accent); }
+
+        /* ================= 5. APP-STYLE GRIDS ================= */
+        .grid-section { padding: 100px 6%; }
+        
+        .section-tag {
+            background: var(--accent);
+            color: white;
+            padding: 6px 15px;
+            border-radius: 6px;
+            font-weight: 900;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 25px;
+            margin-top: 50px;
+        }
+
+        .bento-card {
+            grid-column: span 4;
+            background: #F8F8F8;
+            padding: 50px 40px;
+            border-radius: 40px;
+            transition: 0.5s cubic-bezier(0.2, 1, 0.3, 1);
+            border: 1px solid transparent;
+        }
+
+        .bento-card:hover {
+            background: white;
+            border-color: var(--accent);
+            transform: translateY(-15px);
+            box-shadow: 0 40px 80px rgba(255,107,0,0.15);
+        }
+
+        .bento-card i { font-size: 3rem; color: var(--accent); margin-bottom: 30px; }
+        .bento-card h3 { font-size: 2rem; font-weight: 900; margin-bottom: 15px; letter-spacing: -1px; }
+
+        .card-lg { grid-column: span 8; background: var(--dark); color: white; }
+        .card-lg i { color: var(--accent); }
+
+        /* ================= MOBILE OPTIMIZATION ================= */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 4.5rem; letter-spacing: -3px; }
+            .search-container { flex-direction: column; padding: 15px; border-radius: 30px; }
+            .search-btn { padding: 20px; margin-top: 10px; }
+            .bento-card, .card-lg { grid-column: span 12; }
+            .intro-logo { font-size: 4rem; }
         }
     </style>
 </head>
 <body>
 
-    <div id="splash">
-        <div class="splash-logo">VIBZ</div>
+    <div id="intro-loader">
+        <div class="intro-logo">VIBZ</div>
+        <div class="reveal-bg" id="reveal"></div>
     </div>
 
-    <div id="app">
-        <header style="padding: 20px 30px; display: flex; justify-content: space-between; align-items: center;">
-            <div style="font-weight: 900; font-size: 1.2rem;">VIBZ<span style="color: var(--primary);">.</span></div>
-            <i class="fa-solid fa-circle-user" style="font-size: 1.8rem; color: #eee;"></i>
-        </header>
+    <nav>
+        <div class="logo">VIBZ<span>.</span></div>
+        <a href="https://www.vibz.co.uk/funnel.html" class="nav-cta">Start Now</a>
+    </nav>
 
-        <main class="hero">
-            <h1 id="greeting">Good Morning.</h1>
+    <section class="hero">
+        <div data-aos="fade-up" data-aos-delay="1000">
+            <span class="section-tag">PREMIUM DESIGN AGENCY 2026</span>
+            <h1>Websites<br>That <span>Vibe.</span></h1>
+            <p>We build high-performance digital engines for barbers, dentists, and elite services. Stop losing leads to bad design.</p>
             
-            <div class="search-box">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="search" placeholder="What is your business?" onkeypress="handleEnter(event)">
+            <div class="search-container">
+                <input type="text" id="bizInput" placeholder="What is your industry?">
+                <button class="search-btn" onclick="startSearch()">GET STARTED <i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+        </div>
+    </section>
+
+    <section class="grid-section">
+        <div data-aos="fade-right">
+            <span class="section-tag">BENEFITS</span>
+            <h2 style="font-size: 3.5rem; font-weight: 900; letter-spacing: -2px;">The VIBZ Protocol</h2>
+        </div>
+
+        <div class="bento-grid">
+            <div class="bento-card card-lg" data-aos="zoom-in-up">
+                <i class="fa-solid fa-bolt"></i>
+                <h3>Lightning Core</h3>
+                <p style="font-size: 1.2rem; opacity: 0.8;">Our websites outpace 99% of the internet. We prioritize Google PageSpeed and Core Web Vitals to ensure your customers never wait a single second.</p>
             </div>
 
-            <div class="chips">
-                <div class="chip" onclick="quickSearch('Dentist')">Dentist</div>
-                <div class="chip" onclick="quickSearch('Barber')">Barber</div>
-                <div class="chip" onclick="quickSearch('Studio')">Studio</div>
+            <div class="bento-card" data-aos="zoom-in-up" data-aos-delay="200">
+                <i class="fa-solid fa-fingerprint"></i>
+                <h3>Identity</h3>
+                <p>Custom branding that makes your local business look like a global leader.</p>
             </div>
-        </main>
 
-        <nav class="tab-bar">
-            <a href="#" class="tab-item active">
-                <i class="fa-solid fa-house"></i>
-                <span>Home</span>
-            </a>
-            <a href="#" class="tab-item">
-                <i class="fa-solid fa-compass"></i>
-                <span>Explore</span>
-            </a>
-            <div class="tab-center" onclick="handleSearch()">
-                <i class="fa-solid fa-arrow-right"></i>
+            <div class="bento-card" data-aos="zoom-in-up">
+                <i class="fa-solid fa-chart-line"></i>
+                <h3>Scale</h3>
+                <p>Integrated funnels built to turn traffic into paying clients automatically.</p>
             </div>
-            <a href="#" class="tab-item">
-                <i class="fa-solid fa-briefcase"></i>
-                <span>Work</span>
-            </a>
-            <a href="#" class="tab-item">
-                <i class="fa-solid fa-gear"></i>
-                <span>Menu</span>
-            </a>
-        </nav>
-    </div>
 
+            <div class="bento-card" data-aos="zoom-in-up" data-aos-delay="200">
+                <i class="fa-solid fa-mobile-screen"></i>
+                <h3>Native Feel</h3>
+                <p>Websites that behave like mobile apps. Smooth, fast, and tactile.</p>
+            </div>
+
+            <div class="bento-card" data-aos="zoom-in-up" data-aos-delay="400">
+                <i class="fa-solid fa-shield-halved"></i>
+                <h3>Secure</h3>
+                <p>Enterprise encryption for every local hero we build for.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer style="padding: 100px 6%; background: var(--dark); color: white; text-align: center;">
+        <h2 style="font-size: 4rem; font-weight: 900; margin-bottom: 40px; letter-spacing: -2px;">Ready to <span style="color: var(--accent);">Evolve?</span></h2>
+        <a href="https://www.vibz.co.uk/funnel.html" class="nav-cta" style="padding: 25px 60px; font-size: 1.2rem;">CLAIM YOUR AUDIT</a>
+        <p style="margin-top: 60px; opacity: 0.4;">© 2026 VIBZ COLLECTIVE. ALL RIGHTS RESERVED.</p>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
     <script>
-        // App Reveal Logic
+        // INTRO ANIMATION SEQUENCE
         window.addEventListener('load', () => {
-            // Set dynamic greeting
-            const hour = new Date().getHours();
-            const greet = hour < 12 ? "Good Morning." : hour < 18 ? "Good Afternoon." : "Good Evening.";
-            document.getElementById('greeting').innerText = greet;
-
+            const loader = document.getElementById('intro-loader');
+            const reveal = document.getElementById('reveal');
+            
             setTimeout(() => {
-                document.getElementById('splash').style.transform = 'translateY(-100%)';
-                document.getElementById('app').classList.add('visible');
-            }, 1800);
+                reveal.style.transform = 'translateY(-200%)';
+                loader.style.transform = 'translateY(-100%)';
+                loader.style.transition = 'transform 1s cubic-bezier(0.9, 0, 0.1, 1)';
+                
+                // Initialize AOS after reveal
+                setTimeout(() => {
+                    AOS.init({ duration: 1000, once: true });
+                }, 500);
+            }, 2200);
         });
 
-        function handleEnter(e) {
-            if (e.key === 'Enter') handleSearch();
-        }
-
-        function quickSearch(val) {
-            document.getElementById('search').value = val;
-            handleSearch();
-        }
-
-        function handleSearch() {
-            const val = document.getElementById('search').value;
+        function startSearch() {
+            const val = document.getElementById('bizInput').value;
             if(val) {
-                // Mimic native "Processing"
-                document.querySelector('.tab-center').innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>';
-                setTimeout(() => {
-                    localStorage.setItem('selectedNiche', val.toLowerCase());
-                    window.location.href = 'https://www.vibz.co.uk/funnel.html';
-                }, 600);
+                localStorage.setItem('selectedNiche', val.toLowerCase());
+                window.location.href = 'https://www.vibz.co.uk/funnel.html';
+            } else {
+                alert('Please enter your industry');
             }
         }
     </script>
