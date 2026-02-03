@@ -3,232 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>VIBZ App</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <title>VIBZ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <style>
         :root {
             --primary: #FF6B00;
-            --primary-light: #FFF5EE;
-            --bg: #F8F9FA;
-            --surface: #FFFFFF;
-            --text: #1A1A1A;
-            --text-secondary: #757575;
-            --nav-height: 70px;
-            --safe-area-inset-bottom: env(safe-area-inset-bottom);
+            --bg: #FFFFFF;
+            --soft-gray: #F7F7F7;
+            --text: #000000;
         }
 
         * {
             margin: 0; padding: 0; box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
+        }
+
+        body, html {
+            height: 100%;
+            background-color: var(--bg);
             font-family: 'Inter', sans-serif;
+            overflow: hidden; /* App feel: no browser bounce */
         }
 
-        body {
-            background-color: #000; /* Dark background for the 'pull up' effect */
-            color: var(--text);
-            overflow: hidden; /* Prevent body scroll, use app-container scroll */
-        }
-
-        /* 1. APP SPLASH SCREEN */
+        /* ==== 1. MINIMAL SPLASH ==== */
         #splash {
             position: fixed;
             inset: 0;
-            background: #fff;
-            z-index: 10000;
+            background: #000;
+            z-index: 1000;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            transition: transform 0.8s cubic-bezier(0.7, 0, 0.3, 1);
+            transition: transform 0.9s cubic-bezier(0.9, 0, 0.1, 1);
         }
 
         .splash-logo {
-            font-size: 3.5rem;
+            font-size: 4rem;
             font-weight: 900;
             color: var(--primary);
-            letter-spacing: -3px;
-            animation: pulse 1.5s infinite ease-in-out;
+            letter-spacing: -4px;
         }
 
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(0.95); opacity: 0.8; }
-        }
-
-        /* 2. APP CONTAINER */
-        #app-shell {
-            position: relative;
+        /* ==== 2. THE APP SHELL ==== */
+        #app {
             height: 100vh;
-            width: 100%;
-            background: var(--bg);
-            overflow-y: auto;
-            border-radius: 0;
-            transition: transform 0.8s cubic-bezier(0.7, 0, 0.3, 1);
-            padding-bottom: calc(var(--nav-height) + 40px);
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            transform: scale(0.95);
+            transition: all 0.8s ease-out 0.2s;
         }
 
-        /* 3. APP HEADER (STUCK TOP) */
-        header {
-            position: sticky;
-            top: 0;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(20px);
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 100;
+        #app.visible {
+            opacity: 1;
+            transform: scale(1);
         }
 
-        .user-profile {
-            width: 40px;
-            height: 40px;
-            background: var(--primary-light);
-            border-radius: 12px;
+        /* ==== 3. GOOGLE HERO (CLEAN) ==== */
+        .hero {
+            flex: 1;
             display: flex;
-            align-items: center;
+            flex-direction: column;
             justify-content: center;
-            color: var(--primary);
-            font-weight: 700;
-        }
-
-        /* 4. GOOGLE SEARCH HERO */
-        .hero-card {
-            background: var(--surface);
-            margin: 15px;
-            padding: 30px 20px;
-            border-radius: 28px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            align-items: center;
+            padding: 0 30px;
             text-align: center;
         }
 
-        .hero-card h1 {
-            font-size: 1.8rem;
-            font-weight: 800;
-            margin-bottom: 20px;
-            letter-spacing: -0.5px;
+        .hero h1 {
+            font-size: 2.2rem;
+            font-weight: 900;
+            margin-bottom: 30px;
+            letter-spacing: -1.5px;
         }
 
-        .google-search-container {
-            position: relative;
-            background: #F1F3F4;
-            border-radius: 100px;
+        /* The "Google" Search Bar */
+        .search-box {
+            width: 100%;
+            max-width: 500px;
+            background: var(--soft-gray);
+            height: 64px;
+            border-radius: 32px;
             display: flex;
             align-items: center;
-            padding: 5px 15px;
-            margin-top: 15px;
-            transition: 0.3s;
-            border: 2px solid transparent;
+            padding: 0 25px;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
         }
 
-        .google-search-container:focus-within {
+        .search-box:focus-within {
             background: #fff;
             border-color: var(--primary);
-            box-shadow: 0 10px 20px rgba(255,107,0,0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
         }
 
-        .google-search-container i { color: #5F6368; font-size: 1.1rem; }
+        .search-box i {
+            color: #999;
+            font-size: 1.2rem;
+            margin-right: 15px;
+        }
 
-        .google-search-container input {
+        .search-box input {
             flex: 1;
             border: none;
             background: transparent;
-            padding: 12px 10px;
-            font-size: 1rem;
             outline: none;
-        }
-
-        /* 5. APP "WIDGET" SECTIONS */
-        .section-title {
-            padding: 20px 25px 10px;
             font-size: 1.1rem;
-            font-weight: 700;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            font-weight: 500;
+            color: var(--text);
         }
 
-        .section-title span { color: var(--primary); font-size: 0.8rem; }
-
-        .widget-scroll {
-            display: flex;
-            overflow-x: auto;
-            padding: 10px 20px;
-            gap: 15px;
-            scroll-snap-type: x mandatory;
-            scrollbar-width: none;
-        }
-
-        .widget-scroll::-webkit-scrollbar { display: none; }
-
-        .widget-card {
-            min-width: 260px;
-            background: var(--surface);
-            padding: 20px;
-            border-radius: 24px;
-            scroll-snap-align: start;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
-        }
-
-        .icon-box {
-            width: 50px;
-            height: 50px;
-            background: var(--primary-light);
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 15px;
-            color: var(--primary);
-            font-size: 1.3rem;
-        }
-
-        /* 6. BOTTOM NAVIGATION BAR */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            height: calc(var(--nav-height) + var(--safe-area-inset-bottom));
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
+        /* ==== 4. NATIVE TAB BAR ==== */
+        .tab-bar {
+            height: 85px;
+            padding-bottom: 25px; /* Home indicator space */
+            border-top: 1px solid #eee;
             display: flex;
             justify-content: space-around;
             align-items: center;
-            padding-bottom: var(--safe-area-inset-bottom);
-            border-top: 1px solid #eee;
-            z-index: 1000;
         }
 
-        .nav-item {
+        .tab-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            color: #BDBDBD;
+            color: #BBB;
             text-decoration: none;
-            font-size: 0.7rem;
-            font-weight: 600;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             transition: 0.3s;
         }
 
-        .nav-item.active { color: var(--primary); }
-        .nav-item i { font-size: 1.4rem; margin-bottom: 4px; }
+        .tab-item.active {
+            color: var(--primary);
+        }
 
-        /* Floating Action Button */
-        .fab {
-            width: 60px;
-            height: 60px;
+        .tab-item i {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        /* Action Circle */
+        .tab-center {
+            width: 55px;
+            height: 55px;
             background: var(--primary);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             color: #fff;
-            font-size: 1.5rem;
-            box-shadow: 0 8px 20px rgba(255, 107, 0, 0.4);
             margin-top: -40px;
-            border: 4px solid #fff;
+            box-shadow: 0 8px 20px rgba(255, 107, 0, 0.3);
+        }
+
+        /* Minimal Suggestions */
+        .chips {
+            margin-top: 25px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .chip {
+            padding: 8px 18px;
+            background: var(--soft-gray);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -236,131 +185,86 @@
 
     <div id="splash">
         <div class="splash-logo">VIBZ</div>
-        <p style="color: #999; font-weight: 600; margin-top: 10px;">Loading Experience...</p>
     </div>
 
-    <div id="app-shell">
-        <header>
-            <div style="font-weight: 900; font-size: 1.4rem; color: var(--primary);">V.</div>
-            <div style="display: flex; gap: 15px;">
-                <i class="fa-regular fa-bell" style="font-size: 1.4rem;"></i>
-                <div class="user-profile">JD</div>
-            </div>
+    <div id="app">
+        <header style="padding: 20px 30px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-weight: 900; font-size: 1.2rem;">VIBZ<span style="color: var(--primary);">.</span></div>
+            <i class="fa-solid fa-circle-user" style="font-size: 1.8rem; color: #eee;"></i>
         </header>
 
-        <div class="hero-card">
-            <h1>What can we build<br>for you today?</h1>
-            <div class="google-search-container">
-                <i class="fas fa-search"></i>
-                <input type="text" id="appSearch" placeholder="Search industries (e.g. Dentist)" onkeypress="handleEnter(event)">
+        <main class="hero">
+            <h1 id="greeting">Good Morning.</h1>
+            
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="search" placeholder="What is your business?" onkeypress="handleEnter(event)">
             </div>
-        </div>
 
-        <div class="section-title">
-            Featured Solutions <span>See All</span>
-        </div>
-        <div class="widget-scroll">
-            <div class="widget-card">
-                <div class="icon-box"><i class="fas fa-rocket"></i></div>
-                <h3 style="margin-bottom: 8px;">Scale-Up Site</h3>
-                <p style="font-size: 0.85rem; color: var(--text-secondary);">High-conversion landing pages for elite brands.</p>
+            <div class="chips">
+                <div class="chip" onclick="quickSearch('Dentist')">Dentist</div>
+                <div class="chip" onclick="quickSearch('Barber')">Barber</div>
+                <div class="chip" onclick="quickSearch('Studio')">Studio</div>
             </div>
-            <div class="widget-card">
-                <div class="icon-box"><i class="fas fa-code"></i></div>
-                <h3 style="margin-bottom: 8px;">Custom SaaS</h3>
-                <p style="font-size: 0.85rem; color: var(--text-secondary);">Complex web apps built with native speed.</p>
-            </div>
-        </div>
+        </main>
 
-        <div class="section-title">Recent Launches</div>
-        <div style="padding: 0 20px;">
-            <div style="background: #fff; border-radius: 20px; padding: 15px; display: flex; align-items: center; gap: 15px; margin-bottom: 12px;">
-                <div style="width: 60px; height: 60px; background: #eee; border-radius: 12px;"></div>
-                <div>
-                    <h4 style="font-size: 0.95rem;">Dental Care Plus</h4>
-                    <p style="font-size: 0.75rem; color: var(--text-secondary);">Healthcare Branding • 2026</p>
-                </div>
-                <i class="fa-solid fa-chevron-right" style="margin-left: auto; color: #ccc;"></i>
+        <nav class="tab-bar">
+            <a href="#" class="tab-item active">
+                <i class="fa-solid fa-house"></i>
+                <span>Home</span>
+            </a>
+            <a href="#" class="tab-item">
+                <i class="fa-solid fa-compass"></i>
+                <span>Explore</span>
+            </a>
+            <div class="tab-center" onclick="handleSearch()">
+                <i class="fa-solid fa-arrow-right"></i>
             </div>
-            <div style="background: #fff; border-radius: 20px; padding: 15px; display: flex; align-items: center; gap: 15px; margin-bottom: 12px;">
-                <div style="width: 60px; height: 60px; background: #eee; border-radius: 12px;"></div>
-                <div>
-                    <h4 style="font-size: 0.95rem;">Urban Barber Co.</h4>
-                    <p style="font-size: 0.75rem; color: var(--text-secondary);">Service Industry • 2026</p>
-                </div>
-                <i class="fa-solid fa-chevron-right" style="margin-left: auto; color: #ccc;"></i>
-            </div>
-        </div>
+            <a href="#" class="tab-item">
+                <i class="fa-solid fa-briefcase"></i>
+                <span>Work</span>
+            </a>
+            <a href="#" class="tab-item">
+                <i class="fa-solid fa-gear"></i>
+                <span>Menu</span>
+            </a>
+        </nav>
     </div>
 
-    <nav class="bottom-nav">
-        <a href="#" class="nav-item active">
-            <i class="fa-solid fa-house-chimney"></i>
-            <span>Home</span>
-        </a>
-        <a href="#" class="nav-item">
-            <i class="fa-solid fa-layer-group"></i>
-            <span>Projects</span>
-        </a>
-        <div class="fab" onclick="handleSearch()">
-            <i class="fa-solid fa-plus"></i>
-        </div>
-        <a href="#" class="nav-item">
-            <i class="fa-solid fa-chart-simple"></i>
-            <span>Stats</span>
-        </a>
-        <a href="#" class="nav-item">
-            <i class="fa-solid fa-user"></i>
-            <span>Profile</span>
-        </a>
-    </nav>
-
     <script>
-        // APP INITIALIZATION
+        // App Reveal Logic
         window.addEventListener('load', () => {
+            // Set dynamic greeting
+            const hour = new Date().getHours();
+            const greet = hour < 12 ? "Good Morning." : hour < 18 ? "Good Afternoon." : "Good Evening.";
+            document.getElementById('greeting').innerText = greet;
+
             setTimeout(() => {
-                const splash = document.getElementById('splash');
-                const app = document.getElementById('app-shell');
-                
-                // Native Reveal Animation
-                splash.style.transform = 'translateY(-100%)';
-                // Slight bounce effect
-                setTimeout(() => {
-                    splash.style.display = 'none';
-                }, 800);
-            }, 2000);
+                document.getElementById('splash').style.transform = 'translateY(-100%)';
+                document.getElementById('app').classList.add('visible');
+            }, 1800);
         });
 
-        // Search Logic
         function handleEnter(e) {
             if (e.key === 'Enter') handleSearch();
         }
 
-        function handleSearch() {
-            const val = document.getElementById('appSearch').value;
-            // Native-like feedback
-            const btn = document.querySelector('.fab');
-            btn.style.transform = 'scale(0.8)';
-            
-            setTimeout(() => {
-                btn.style.transform = 'scale(1)';
-                if(val) {
-                    localStorage.setItem('selectedNiche', val.toLowerCase());
-                    window.location.href = 'https://www.vibz.co.uk/funnel.html';
-                } else {
-                    alert('Please enter your business type');
-                }
-            }, 200);
+        function quickSearch(val) {
+            document.getElementById('search').value = val;
+            handleSearch();
         }
 
-        // Active Nav Toggle
-        const navItems = document.querySelectorAll('.nav-item');
-        navItems.forEach(item => {
-            item.addEventListener('click', function() {
-                navItems.forEach(i => i.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
+        function handleSearch() {
+            const val = document.getElementById('search').value;
+            if(val) {
+                // Mimic native "Processing"
+                document.querySelector('.tab-center').innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>';
+                setTimeout(() => {
+                    localStorage.setItem('selectedNiche', val.toLowerCase());
+                    window.location.href = 'https://www.vibz.co.uk/funnel.html';
+                }, 600);
+            }
+        }
     </script>
 </body>
 </html>
