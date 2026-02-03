@@ -3,207 +3,215 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>VIBZ | AI Web OS</title>
+    <title>VIBZ | Genesis OS</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;900&family=Fira+Code:wght@400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;900&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     
     <style>
         :root {
             --primary: #FF6B00;
-            --primary-soft: rgba(255, 107, 0, 0.1);
-            --bg: #FFFFFF;
-            --glass: rgba(255, 255, 255, 0.7);
+            --soft-orange: #FFF5EE;
+            --interface-white: #FFFFFF;
+            --app-shadow: 0 30px 60px -12px rgba(255, 107, 0, 0.15);
         }
 
         * {
             margin: 0; padding: 0; box-sizing: border-box;
             -webkit-font-smoothing: antialiased;
             font-family: 'Plus Jakarta Sans', sans-serif;
+            cursor: none; /* Custom AI Cursor */
         }
 
         body {
-            background: var(--bg);
+            background: var(--soft-orange);
             height: 100vh;
             width: 100vw;
             overflow: hidden;
             display: flex;
+        }
+
+        /* --- THE SIDE-CODE CONSOLE --- */
+        .code-console {
+            width: 300px;
+            background: #fff;
+            border-right: 1px solid rgba(255, 107, 0, 0.1);
+            height: 100vh;
+            padding: 40px 20px;
+            display: flex;
             flex-direction: column;
-            color: #000;
+            gap: 10px;
+            overflow: hidden;
         }
-
-        /* --- AI AMBIENT BACKGROUND --- */
-        .ai-canvas {
-            position: fixed; inset: 0; z-index: -1;
-            background: 
-                radial-gradient(circle at 80% 20%, rgba(255, 107, 0, 0.1) 0%, transparent 40%),
-                radial-gradient(circle at 20% 80%, rgba(255, 107, 0, 0.05) 0%, transparent 40%);
-        }
-
-        /* --- FLOATING CODE FRAGMENTS --- */
-        .code-float {
-            position: absolute;
-            font-family: 'Fira Code', monospace;
-            font-size: 0.8rem;
+        .console-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
             color: var(--primary);
-            opacity: 0.15;
-            pointer-events: none;
-            animation: floatUp 20s linear infinite;
+            opacity: 0.6;
+            white-space: nowrap;
+            animation: drift 3s infinite ease-in-out;
         }
-        @keyframes floatUp {
-            from { transform: translateY(110vh) rotate(0deg); }
-            to { transform: translateY(-10vh) rotate(360deg); }
+        @keyframes drift { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(5px); } }
+
+        /* --- MAIN APP VIEW --- */
+        .app-view {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px;
+            position: relative;
         }
 
-        /* --- APP HEADER --- */
-        .app-top {
-            padding: 40px; display: flex; justify-content: space-between; align-items: center;
+        /* --- THE CORE EYE (FOLLOWS MOUSE) --- */
+        .ai-iris-wrap {
+            width: 120px; height: 120px;
+            background: #fff;
+            border-radius: 40px; /* Squircle app shape */
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: var(--app-shadow);
+            margin-bottom: 40px;
+            border: 1px solid rgba(255, 107, 0, 0.1);
         }
-        .v-logo { font-weight: 900; font-size: 1.8rem; letter-spacing: -2px; }
-        .v-logo span { color: var(--primary); }
-
-        /* --- MAIN STAGE --- */
-        .app-main {
-            flex: 1; display: flex; flex-direction: column; 
-            align-items: center; justify-content: center;
-            padding: 0 30px; text-align: center;
+        .iris {
+            width: 40px; height: 40px;
+            background: var(--primary);
+            border-radius: 50%;
+            position: relative;
+            transition: 0.1s ease-out;
+            box-shadow: 0 0 20px var(--primary);
         }
 
-        /* --- THE WOW HERO (UBER BOLD) --- */
-        .hero-title {
-            font-size: clamp(4rem, 15vw, 7.5rem);
+        /* --- THE SEARCH OS ENGINE --- */
+        .hero-os {
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+        }
+        .hero-os h1 {
+            font-size: 6rem;
             font-weight: 900;
             line-height: 0.8;
             letter-spacing: -6px;
             margin-bottom: 40px;
-            position: relative;
+            color: #000;
         }
-        .hero-title span { color: var(--primary); }
+        .hero-os h1 span { color: var(--primary); }
 
-        /* --- AI ROBOT SCANNER --- */
-        .ai-scanner {
-            width: 80px; height: 80px; margin-bottom: 20px;
-            background: var(--primary-soft);
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            border: 2px solid var(--primary);
-            box-shadow: 0 0 20px var(--primary-soft);
-            animation: pulse 2s infinite;
+        .os-pill {
+            background: #fff;
+            height: 80px;
+            border-radius: 25px;
+            padding: 10px 10px 10px 30px;
+            display: flex;
+            align-items: center;
+            border: 1px solid rgba(0,0,0,0.05);
+            box-shadow: var(--app-shadow);
+            transition: 0.5s cubic-bezier(0.19, 1, 0.22, 1);
         }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); box-shadow: 0 0 40px var(--primary-soft); } 100% { transform: scale(1); } }
-
-        /* --- GOOGLE-APP SEARCH BAR (£100K FINISH) --- */
-        .search-engine {
-            width: 100%; max-width: 550px;
-            background: var(--glass);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 2px solid rgba(0,0,0,0.05);
-            border-radius: 24px;
-            padding: 12px 12px 12px 30px;
-            display: flex; align-items: center;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.05);
-            transition: 0.4s cubic-bezier(0.19, 1, 0.22, 1);
-            margin-bottom: 40px;
-        }
-        .search-engine:focus-within {
-            transform: translateY(-10px);
+        .os-pill:focus-within {
+            transform: scale(1.05);
             border-color: var(--primary);
-            box-shadow: 0 40px 80px rgba(255, 107, 0, 0.15);
         }
-        .search-engine input {
-            flex: 1; border: none; outline: none; background: transparent;
-            font-size: 1.2rem; font-weight: 700; color: #000;
+        .os-pill input {
+            flex: 1; border: none; outline: none; font-size: 1.3rem;
+            font-weight: 700; color: #000;
         }
-        .ai-btn {
-            width: 54px; height: 54px; background: #000; color: #fff;
-            border: none; border-radius: 18px; cursor: pointer;
-            font-size: 1.2rem; transition: 0.3s;
+        .os-btn {
+            width: 60px; height: 60px; background: var(--primary);
+            border: none; border-radius: 20px; color: #fff;
+            font-size: 1.2rem; cursor: pointer; transition: 0.3s;
         }
-        .ai-btn:hover { background: var(--primary); transform: scale(1.1); }
+        .os-btn:hover { transform: rotate(90deg); background: #000; }
 
-        /* --- REAL-TIME CODING FEED --- */
-        .coding-terminal {
-            font-family: 'Fira Code', monospace;
-            font-size: 0.7rem; color: #888;
-            max-width: 400px; height: 20px; overflow: hidden;
-            margin-bottom: 50px;
+        /* --- NATIVE DOCK --- */
+        .nav-dock {
+            position: absolute; bottom: 40px;
+            background: #000; padding: 10px 30px;
+            border-radius: 100px; display: flex; gap: 40px;
         }
+        .dock-btn { color: #555; font-size: 1.5rem; transition: 0.3s; }
+        .dock-btn.active { color: #fff; }
 
-        /* --- APP NAVIGATION DOCK --- */
-        .app-dock {
-            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-            background: #000; padding: 12px 30px; border-radius: 100px;
-            display: flex; gap: 40px; align-items: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        /* --- THE CUSTOM CURSOR --- */
+        #cursor {
+            width: 20px; height: 20px; background: var(--primary);
+            border-radius: 50%; position: fixed; pointer-events: none;
+            z-index: 9999; mix-blend-mode: difference;
+            transition: transform 0.1s;
         }
-        .dock-link { color: #555; font-size: 1.3rem; text-decoration: none; transition: 0.3s; }
-        .dock-link.active { color: #fff; }
-        .dock-link:hover { color: var(--primary); }
 
     </style>
 </head>
 <body>
 
-    <div class="ai-canvas" id="canvas"></div>
+    <div id="cursor"></div>
 
-    <header class="app-top">
-        <div class="v-logo">VIBZ<span>.</span></div>
-        <div style="font-size: 0.7rem; font-weight: 900; letter-spacing: 2px;">AI SYSTEM v4.0</div>
-    </header>
+    <aside class="code-console" id="console"></aside>
 
-    <main class="app-main">
-        <div class="ai-scanner">
-            <i class="fa-solid fa-robot" style="color: var(--primary); font-size: 2rem;"></i>
+    <main class="app-view">
+        
+        <div class="ai-iris-wrap">
+            <div class="iris" id="iris"></div>
         </div>
 
-        <h1 class="hero-title">ELITE<br><span>WEB</span> OS.</h1>
-
-        <div class="search-engine">
-            <input type="text" id="niche" placeholder="What should we build today?" onkeydown="if(event.key==='Enter') run()">
-            <button class="ai-btn" onclick="run()">
-                <i class="fa-solid fa-wand-magic-sparkles"></i>
-            </button>
+        <div class="hero-os">
+            <h1>BUILD<br><span>SITE</span><br>OS.</h1>
+            
+            <div class="os-pill">
+                <input type="text" id="userInput" placeholder="Industry Name..." onkeydown="if(event.key==='Enter') launch()">
+                <button class="os-btn" onclick="launch()">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+            </div>
         </div>
 
-        <div class="coding-terminal" id="terminal">Initializing HTML5 structure...</div>
+        <nav class="nav-dock">
+            <a href="#" class="dock-btn active"><i class="fa-solid fa-house"></i></a>
+            <a href="#" class="dock-btn"><i class="fa-solid fa-robot"></i></a>
+            <a href="#" class="dock-btn"><i class="fa-solid fa-code-merge"></i></a>
+        </nav>
     </main>
 
-    <nav class="app-dock">
-        <a href="#" class="dock-link active"><i class="fa-solid fa-house"></i></a>
-        <a href="#" class="dock-link"><i class="fa-solid fa-code"></i></a>
-        <a href="https://www.vibz.co.uk/funnel.html" class="dock-link"><i class="fa-solid fa-circle-plus"></i></a>
-        <a href="mailto:info@vibz.co.uk" class="dock-link"><i class="fa-solid fa-message"></i></a>
-    </nav>
-
     <script>
-        // Create Floating Code Bits
-        const codeSnips = ['<div>', '</div>', '<html>', 'const AI = true', '<span>', 'API.fetch()', 'margin: 0', 'flex: 1'];
-        function createCode() {
-            const snip = document.createElement('div');
-            snip.className = 'code-float';
-            snip.innerText = codeSnips[Math.floor(Math.random() * codeSnips.length)];
-            snip.style.left = Math.random() * 100 + 'vw';
-            snip.style.animationDuration = (Math.random() * 10 + 10) + 's';
-            document.getElementById('canvas').appendChild(snip);
-            setTimeout(() => snip.remove(), 20000);
-        }
-        setInterval(createCode, 1000);
+        // Custom Cursor & Iris Follow
+        const iris = document.getElementById('iris');
+        const cursor = document.getElementById('cursor');
 
-        // Coding Terminal Effect
-        const phrases = [
-            "Parsing industry data...",
-            "Generating React components...",
-            "Optimizing SEO Meta Tags...",
-            "Deploying to Cloudflare Edge...",
-            "Injecting AI Logic..."
+        document.addEventListener('mousemove', (e) => {
+            // Move Cursor
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+
+            // Move Iris
+            const x = (e.clientX / window.innerWidth - 0.5) * 30;
+            const y = (e.clientY / window.innerHeight - 0.5) * 30;
+            iris.style.transform = `translate(${x}px, ${y}px)`;
+        });
+
+        // Generate Console Code
+        const codes = [
+            '<div class="vibz-core">',
+            'const ai = new Agency();',
+            'ai.deploy("e-commerce");',
+            'system.render(UX_4K);',
+            'await build.complete();',
+            'console.log("Vibz Active");',
+            '<html> <header> <body>'
         ];
-        let i = 0;
+        
+        const consoleEl = document.getElementById('console');
         setInterval(() => {
-            document.getElementById('terminal').innerText = phrases[i];
-            i = (i + 1) % phrases.length;
-        }, 2500);
+            const div = document.createElement('div');
+            div.className = 'console-tag';
+            div.innerText = codes[Math.floor(Math.random() * codes.length)];
+            consoleEl.prepend(div);
+            if(consoleEl.children.length > 25) consoleEl.lastChild.remove();
+        }, 800);
 
-        function run() {
-            const val = document.getElementById('niche').value;
+        function launch() {
+            const val = document.getElementById('userInput').value;
             if(val) {
                 localStorage.setItem('selectedNiche', val.toLowerCase());
                 window.location.href = 'https://www.vibz.co.uk/funnel.html';
