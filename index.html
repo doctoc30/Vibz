@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VIBZ | The Agency App</title>
+    <title>VIBZ | Digital Studio</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
@@ -13,8 +13,8 @@
             --bg: #FFFFFF;
             --accent: #FF6B00;
             --dark: #000000;
-            --gray-app: #F2F2F7; /* iOS System Gray */
-            --card-radius: 28px;
+            --gray-app: #F2F2F7;
+            --search-shadow: 0 20px 48px rgba(0,0,0,0.08);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -24,290 +24,176 @@
             background-color: var(--bg);
             color: var(--dark);
             overflow-x: hidden;
-            user-select: none;
         }
 
-        /* ==== APP REVEAL INTRO ==== */
+        /* ==== APP INTRO ==== */
         #splash {
             position: fixed;
             inset: 0;
-            background: var(--dark);
+            background: var(--bg);
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            transition: clip-path 1s cubic-bezier(0.77, 0, 0.175, 1);
-            clip-path: circle(100% at 50% 50%);
+            transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
         }
+        .loaded #splash { opacity: 0; transform: scale(1.1); pointer-events: none; }
 
-        .splash-logo {
-            font-size: 4rem;
-            font-weight: 800;
-            color: var(--accent);
-            letter-spacing: -4px;
-            transform: scale(1);
-            animation: pulse 1.5s infinite alternate;
-        }
-
-        @keyframes pulse { to { transform: scale(1.1); } }
-        .loaded #splash { clip-path: circle(0% at 50% 50%); }
-
-        /* ==== NATIVE UI ELEMENTS ==== */
-        .status-bar {
-            padding: 15px 6% 5px;
-            display: flex;
-            justify-content: space-between;
-            font-weight: 700;
-            font-size: 0.9rem;
-        }
-
+        /* ==== APP SHELL ==== */
         header {
-            padding: 10px 6% 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            padding: 60px 6% 20px;
+            text-align: center;
         }
 
-        .user-profile {
-            width: 45px;
-            height: 45px;
-            background: var(--gray-app);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 2px solid var(--accent);
-        }
-
-        /* ==== BOLD HERO ==== */
-        .hero-section {
-            padding: 0 6%;
-            margin-bottom: 30px;
-        }
-
-        .hero-section h1 {
-            font-size: 3.5rem;
+        .hero-title {
+            font-size: 3.8rem;
             font-weight: 800;
-            line-height: 0.9;
-            letter-spacing: -3px;
-        }
-
-        /* ==== GOOGLE WIDGET SEARCH ==== */
-        .search-container {
-            padding: 0 6%;
+            letter-spacing: -4px;
+            line-height: 0.85;
             margin-bottom: 40px;
         }
 
-        .google-widget {
-            background: var(--gray-app);
-            height: 65px;
-            border-radius: 50px;
+        /* ==== GOOGLE BREATHE SEARCH ==== */
+        .search-outer-wrapper {
+            padding: 20px 6% 80px; /* Massive breathing room below */
+            display: flex;
+            justify-content: center;
+        }
+
+        .google-breathe-bar {
+            width: 100%;
+            max-width: 580px;
+            height: 64px;
+            background: #FFFFFF;
+            border-radius: 32px;
             display: flex;
             align-items: center;
-            padding: 0 25px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            padding: 0 24px;
+            border: 1px solid #dfe1e5;
+            box-shadow: none;
+            transition: box-shadow 0.3s, border-color 0.3s;
         }
 
-        .google-widget input {
+        .google-breathe-bar:hover, .google-breathe-bar:focus-within {
+            box-shadow: var(--search-shadow);
+            border-color: transparent;
+        }
+
+        .google-breathe-bar i.search-icon { color: #9AA0A6; font-size: 1.2rem; }
+        .google-breathe-bar i.mic-icon { color: var(--accent); font-size: 1.2rem; cursor: pointer; }
+
+        .google-breathe-bar input {
             flex: 1;
-            background: transparent;
             border: none;
             outline: none;
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-left: 15px;
+            font-size: 1.1rem;
+            padding: 0 15px;
+            font-weight: 400;
+            color: #202124;
         }
 
-        /* ==== BIG ACTION TILES ==== */
+        /* ==== BOLD APP GRID ==== */
         .app-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            padding: 0 6% 100px;
+            gap: 16px;
+            padding: 0 6% 60px;
+            max-width: 800px;
+            margin: 0 auto;
         }
 
-        .action-tile {
+        .tile {
             background: var(--gray-app);
-            height: 160px;
-            border-radius: var(--card-radius);
-            padding: 25px;
+            height: 180px;
+            border-radius: 32px;
+            padding: 28px;
             text-decoration: none;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid transparent;
+            transition: transform 0.2s cubic-bezier(0.33, 1, 0.68, 1), background 0.2s;
         }
 
-        .action-tile:active {
-            transform: scale(0.95);
-            background: #e5e5ea;
+        .tile:active { transform: scale(0.96); background: #E5E5EA; }
+
+        .tile i { font-size: 2.2rem; color: var(--accent); }
+        .tile span { font-size: 1.3rem; font-weight: 800; color: var(--dark); letter-spacing: -0.5px; }
+
+        .tile.primary { background: var(--accent); }
+        .tile.primary i, .tile.primary span { color: #FFFFFF; }
+
+        /* Tablet/Desktop spacing */
+        @media (min-width: 768px) {
+            .app-grid { grid-template-columns: repeat(4, 1fr); }
+            .hero-title { font-size: 5rem; }
         }
-
-        .action-tile i {
-            font-size: 2rem;
-            color: var(--accent);
-        }
-
-        .action-tile span {
-            font-size: 1.2rem;
-            font-weight: 800;
-            color: var(--dark);
-            line-height: 1.1;
-        }
-
-        .tile-orange {
-            background: var(--accent);
-        }
-        .tile-orange i, .tile-orange span { color: white; }
-
-        /* ==== BOTTOM DRAWER ==== */
-        #drawer {
-            position: fixed;
-            bottom: -100%;
-            left: 0;
-            right: 0;
-            background: white;
-            border-radius: 35px 35px 0 0;
-            padding: 40px 6%;
-            z-index: 1000;
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.2);
-            transition: bottom 0.5s cubic-bezier(0.85, 0, 0.15, 1);
-        }
-
-        #drawer.open { bottom: 0; }
-
-        .drawer-handle {
-            width: 40px;
-            height: 5px;
-            background: #DDD;
-            border-radius: 10px;
-            margin: -20px auto 30px;
-        }
-
-        .overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.5);
-            display: none;
-            z-index: 999;
-        }
-
-        .overlay.active { display: block; }
     </style>
 </head>
 <body>
 
     <div id="splash">
-        <div class="splash-logo">VIBZ</div>
+        <h1 style="font-weight: 800; color: var(--accent); letter-spacing: -3px; font-size: 3rem;">VIBZ</h1>
     </div>
-
-    <div class="status-bar">
-        <span>9:41</span>
-        <div style="display: flex; gap: 8px;">
-            <i class="fa-solid fa-signal"></i>
-            <i class="fa-solid fa-wifi"></i>
-            <i class="fa-solid fa-battery-full"></i>
-        </div>
-    </div>
-
-    <header>
-        <div class="user-profile">
-            <i class="fa-solid fa-bolt" style="color: var(--accent);"></i>
-        </div>
-        <i class="fa-solid fa-bell" style="font-size: 1.5rem;"></i>
-    </header>
 
     <main>
-        <section class="hero-section" data-aos="fade-up">
-            <h1>Create<br>Something<br><span style="color: var(--accent);">Iconic.</span></h1>
-        </section>
+        <header data-aos="fade-down">
+            <h1 class="hero-title">Think<br><span style="color: var(--accent);">Bigger.</span></h1>
+        </header>
 
-        <section class="search-container" data-aos="fade-up" data-aos-delay="100">
-            <div class="google-widget">
-                <i class="fa-brands fa-google" style="color: #4285F4; font-size: 1.5rem;"></i>
-                <input type="text" placeholder="Search for a service..." id="appSearch">
-                <i class="fa-solid fa-camera" style="color: #777;"></i>
+        <section class="search-outer-wrapper" data-aos="fade-up" data-aos-delay="200">
+            <div class="google-breathe-bar">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" placeholder="Search services..." id="searchInput">
+                <i class="fa-solid fa-microphone mic-icon"></i>
             </div>
         </section>
 
-        <div class="app-grid" data-aos="fade-up" data-aos-delay="200">
-            <a href="#" class="action-tile tile-orange">
+        <section class="app-grid" data-aos="fade-up" data-aos-delay="400">
+            <a href="#" class="tile primary">
                 <i class="fa-solid fa-code"></i>
-                <span>Web<br>Development</span>
+                <span>Web<br>Build</span>
             </a>
-            <a href="#" class="action-tile">
-                <i class="fa-solid fa-palette"></i>
-                <span>UI/UX<br>Design</span>
+            <a href="#" class="tile">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <span>Design</span>
             </a>
-            <a href="#" class="action-tile">
-                <i class="fa-solid fa-chart-pie"></i>
-                <span>Digital<br>Strategy</span>
+            <a href="#" class="tile">
+                <i class="fa-solid fa-chart-line"></i>
+                <span>SEO</span>
             </a>
-            <a href="#" class="action-tile">
-                <i class="fa-solid fa-bag-shopping"></i>
-                <span>E-Com<br>Elite</span>
+            <a href="#" class="tile">
+                <i class="fa-solid fa-mobile"></i>
+                <span>Apps</span>
             </a>
-            <a href="#" class="action-tile">
+            <a href="#" class="tile">
                 <i class="fa-solid fa-bullhorn"></i>
-                <span>Ad<br>Campaigns</span>
+                <span>Ads</span>
             </a>
-            <a href="#" class="action-tile">
-                <i class="fa-solid fa-mobile-button"></i>
-                <span>Native<br>Apps</span>
+            <a href="#" class="tile">
+                <i class="fa-solid fa-envelope-open-text"></i>
+                <span>Email</span>
             </a>
-            <a href="#" class="action-tile">
-                <i class="fa-solid fa-fire-flame-curved"></i>
-                <span>SEO<br>Rank</span>
+            <a href="#" class="tile">
+                <i class="fa-solid fa-shield-halved"></i>
+                <span>Secure</span>
             </a>
-            <a href="javascript:void(0)" class="action-tile" id="moreBtn">
-                <i class="fa-solid fa-grid-2-plus"></i>
-                <span>Explore<br>All</span>
+            <a href="#" class="tile">
+                <i class="fa-solid fa-ellipsis"></i>
+                <span>More</span>
             </a>
-        </div>
+        </section>
     </main>
-
-    <div class="overlay" id="overlay"></div>
-    <div id="drawer">
-        <div class="drawer-handle"></div>
-        <h2 style="font-weight: 800; font-size: 2rem; margin-bottom: 20px;">All Services</h2>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-            <div style="padding: 20px; background: var(--gray-app); border-radius: 20px; font-weight: 700;">Content Writing</div>
-            <div style="padding: 20px; background: var(--gray-app); border-radius: 20px; font-weight: 700;">Cyber Security</div>
-            <div style="padding: 20px; background: var(--gray-app); border-radius: 20px; font-weight: 700;">Logo Design</div>
-            <div style="padding: 20px; background: var(--gray-app); border-radius: 20px; font-weight: 700;">Support</div>
-        </div>
-        <button onclick="toggleDrawer()" style="width: 100%; margin-top: 30px; padding: 20px; border-radius: 20px; border: none; background: var(--dark); color: white; font-weight: 800;">CLOSE</button>
-    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
     <script>
-        // Intro Reveal
         window.addEventListener('load', () => {
             setTimeout(() => {
                 document.body.classList.add('loaded');
-                if (typeof AOS !== 'undefined') {
-                    AOS.init({ duration: 800, once: true });
-                }
-            }, 1800);
+                AOS.init({ duration: 1000, once: true });
+            }, 1000);
         });
 
-        // Drawer Logic
-        const moreBtn = document.getElementById('moreBtn');
-        const drawer = document.getElementById('drawer');
-        const overlay = document.getElementById('overlay');
-
-        function toggleDrawer() {
-            drawer.classList.toggle('open');
-            overlay.classList.toggle('active');
-        }
-
-        moreBtn.addEventListener('click', toggleDrawer);
-        overlay.addEventListener('click', toggleDrawer);
-
-        // Search Redirect
-        const search = document.getElementById('appSearch');
-        search.addEventListener('keypress', (e) => {
+        document.getElementById('searchInput').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 window.location.href = 'https://www.vibz.co.uk/funnel.html';
             }
