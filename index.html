@@ -3,217 +3,399 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>VIBZ | Core OS</title>
+    <title>VIBZ | Genesis AI Core</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     
     <style>
         :root {
-            --primary: #FF6B00; /* VIBZ Orange */
-            --bg: #F8F9FA;
-            --card: #FFFFFF;
-            --text: #000000;
+            --primary-orange: #FF6B00;
+            --primary-glow: rgba(255, 107, 0, 0.4);
+            --dark-bg: #0A0A0E;
+            --light-ui: #1E1E28;
+            --text-light: #E0E0E0;
+            --code-green: #00FF99;
         }
 
         * {
             margin: 0; padding: 0; box-sizing: border-box;
             -webkit-font-smoothing: antialiased;
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Outfit', sans-serif; /* For bold elements */
             -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background-color: var(--bg);
-            color: var(--text);
+            background-color: var(--dark-bg);
+            color: var(--text-light);
             height: 100vh;
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
         }
 
-        /* --- THE APP STAGE --- */
-        .app-shell {
+        /* --- BACKGROUND: LIVE CODE GRID --- */
+        .live-code-grid {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: -2;
+            opacity: 0.1;
+            background-image: 
+                linear-gradient(to right, rgba(0,255,153,0.1) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0,255,153,0.1) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: gridPan 60s linear infinite;
+        }
+
+        @keyframes gridPan {
+            from { background-position: 0 0; }
+            to { background-position: -4000px -4000px; }
+        }
+
+        /* --- AI ORB ASSISTANT (ANIMATED) --- */
+        .ai-orb {
+            position: fixed;
+            width: 150px; height: 150px;
+            background: radial-gradient(circle at center, var(--primary-orange) 0%, rgba(255, 107, 0, 0) 70%);
+            border-radius: 50%;
+            filter: blur(50px);
+            opacity: 0.2;
+            animation: orbPulse 4s ease-in-out infinite alternate, orbFloat 30s ease-in-out infinite alternate;
+            z-index: -1;
+            transform: translate(-50%, -50%); /* Center the initial position */
+        }
+
+        @keyframes orbPulse {
+            0% { transform: scale(0.95); opacity: 0.2; }
+            100% { transform: scale(1.05); opacity: 0.3; }
+        }
+        @keyframes orbFloat {
+            0% { left: 20%; top: 20%; }
+            25% { left: 70%; top: 30%; }
+            50% { left: 40%; top: 80%; }
+            75% { left: 10%; top: 60%; }
+            100% { left: 20%; top: 20%; }
+        }
+
+        /* --- ROBOT ARM SPLASH (Placeholder - would be a GIF/Video in production) --- */
+        #splash-screen {
+            position: fixed;
+            inset: 0;
+            background: var(--dark-bg);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+            transition: opacity 1s ease-out;
+        }
+        .robot-arm-animation {
+            width: 120px;
+            height: 120px;
+            /* In a real project, this would be a Lottie animation, GIF, or SVG sequence */
+            background: url('https://i.imgur.com/G5g2mJc.gif') no-repeat center center / contain; /* Example GIF for a loading robot arm */
+            margin-bottom: 20px;
+        }
+        .loading-text {
+            font-family: 'Space Mono', monospace;
+            color: var(--code-green);
+            font-size: 1rem;
+            letter-spacing: 2px;
+            position: relative;
+        }
+        .loading-text::after {
+            content: '_';
+            animation: blinkCaret 0.75s step-end infinite;
+        }
+        @keyframes blinkCaret {
+            from, to { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+
+        /* --- APP CORE INTERFACE --- */
+        .app-container {
             flex: 1;
             display: flex;
             flex-direction: column;
-            padding: 60px 24px 0;
-            max-width: 500px;
-            margin: 0 auto;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: env(safe-area-inset-top) 24px env(safe-area-inset-bottom) 24px;
+            max-width: 600px;
             width: 100%;
+            transition: opacity 1s ease-out;
+            opacity: 0; /* Hidden initially */
         }
 
-        /* --- BRANDING --- */
-        .app-header {
+        .agency-header {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--code-green);
+            opacity: 0.6;
             margin-bottom: 40px;
         }
-        .logo-bold {
-            font-size: 1.8rem;
-            font-weight: 900;
-            letter-spacing: -2px;
-        }
-        .logo-bold span { color: var(--primary); }
 
-        /* --- THE "UBER" HERO --- */
-        .hero-text {
-            font-size: 5rem;
+        /* --- HERO: GENERATED TEXT EFFECT --- */
+        .hero-headline {
+            font-size: clamp(3rem, 12vw, 6rem);
             font-weight: 900;
-            line-height: 0.85;
-            letter-spacing: -5px;
+            line-height: 0.9;
+            letter-spacing: -3px;
             text-transform: uppercase;
-            margin-bottom: 30px;
+            color: var(--text-light);
+            margin-bottom: 60px;
+            min-height: 1.8em; /* Ensure space for glitch effect */
+        }
+        .hero-headline span {
+            color: var(--primary-orange);
+        }
+        .typed-text {
+            display: inline-block;
+            overflow: hidden;
+            border-right: 0.15em solid var(--primary-orange);
+            white-space: nowrap;
+            letter-spacing: 0.05em;
+            animation: typing 2s steps(40, end), blink-caret .75s step-end infinite;
+        }
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: var(--primary-orange); }
         }
 
-        /* --- THE GOOGLE SEARCH MACHINE --- */
-        .search-container {
-            margin-bottom: 30px;
-        }
-        .google-pill {
-            background: var(--card);
-            height: 72px;
-            border-radius: 20px; /* Chunky App Corner */
+        /* --- HOLOGRAPHIC SEARCH --- */
+        .search-module {
+            background: rgba(255, 255, 255, 0.05); /* Translucent base */
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 107, 0, 0.2); /* Orange glow border */
+            border-radius: 12px;
+            padding: 8px;
             display: flex;
             align-items: center;
-            padding: 0 10px 0 25px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.06);
-            border: 1px solid rgba(0,0,0,0.05);
-            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3), 0 0 20px var(--primary-glow);
+            transition: all 0.3s ease-out;
         }
-        .google-pill:focus-within {
-            transform: scale(1.02);
-            border-color: var(--primary);
-            box-shadow: 0 20px 40px rgba(255, 107, 0, 0.15);
+        .search-module:focus-within {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.5), 0 0 30px var(--primary-orange);
         }
-        .google-pill input {
-            flex: 1; border: none; outline: none; font-size: 1.2rem;
-            font-weight: 700; color: #000; background: transparent;
+        .search-module input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            padding: 15px 20px;
+            font-size: 1.1rem;
+            color: var(--text-light);
+            font-family: 'Space Mono', monospace;
+            letter-spacing: 1px;
         }
-        .search-btn {
-            width: 52px; height: 52px; background: var(--primary);
-            color: #fff; border: none; border-radius: 14px;
+        .search-module input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+        .launch-action {
+            width: 50px; height: 50px;
+            background: linear-gradient(135deg, var(--primary-orange) 0%, #FF9900 100%);
+            border-radius: 8px;
+            border: none;
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.2rem; cursor: pointer;
+            color: var(--dark-bg);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: transform 0.2s ease-out;
         }
+        .launch-action:active { transform: scale(0.9); }
 
-        /* --- QUICK SERVICE GRID --- */
-        .service-grid {
+        /* --- DYNAMIC SERVICE TILES --- */
+        .service-hub {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
             gap: 12px;
+            margin-top: 50px;
+            width: 100%;
+            max-width: 480px;
         }
         .service-tile {
-            background: var(--card);
-            padding: 24px;
-            border-radius: 24px;
-            border: 1px solid rgba(0,0,0,0.03);
+            background: var(--light-ui);
+            border-radius: 10px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease-out;
             text-decoration: none;
-            transition: 0.2s;
+            color: var(--text-light);
         }
-        .service-tile:active {
-            transform: scale(0.95);
-            background: #F1F1F1;
+        .service-tile:hover {
+            transform: translateY(-5px) scale(1.03);
+            border-color: var(--primary-orange);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4), 0 0 15px var(--primary-glow);
         }
         .service-tile i {
             font-size: 1.8rem;
-            color: var(--primary);
-            margin-bottom: 15px;
-            display: block;
+            color: var(--code-green);
+            margin-bottom: 10px;
         }
         .service-tile h3 {
-            font-size: 0.8rem;
-            font-weight: 900;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 700;
             text-transform: uppercase;
-            color: #000;
+            letter-spacing: 1px;
         }
 
-        /* --- NATIVE NAV BAR --- */
-        .bottom-nav {
-            background: #fff;
-            height: 90px;
-            border-top: 1px solid rgba(0,0,0,0.05);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            padding-bottom: 20px; /* For iPhone notch */
+        /* --- DOCK: AI NAV CONSOLE --- */
+        .ai-nav-console {
+            position: fixed;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 48px);
+            max-width: 450px;
+            background: rgba(30, 30, 40, 0.8); /* Darker glass for console */
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 107, 0, 0.3);
+            border-radius: 16px;
+            padding: 10px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+            z-index: 1000;
         }
-        .nav-item {
+        .console-link {
             display: flex;
             flex-direction: column;
             align-items: center;
             text-decoration: none;
-            color: #BCBCBC;
-            transition: 0.3s;
+            color: rgba(255, 255, 255, 0.5);
+            padding: 8px 0;
+            transition: all 0.3s ease-out;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.6rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
         }
-        .nav-item.active { color: var(--primary); }
-        .nav-item i { font-size: 1.4rem; margin-bottom: 4px; }
-        .nav-item span { font-size: 0.65rem; font-weight: 900; text-transform: uppercase; }
+        .console-link.active, .console-link:hover {
+            color: var(--code-green);
+            transform: translateY(-3px);
+            text-shadow: 0 0 8px var(--code-green);
+        }
+        .console-link i {
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+            transition: all 0.3s ease-out;
+        }
+        .console-link.active i, .console-link:hover i {
+            color: var(--primary-orange);
+            text-shadow: 0 0 10px var(--primary-orange);
+        }
 
     </style>
 </head>
 <body>
 
-    <div class="app-shell">
+    <div class="live-code-grid"></div>
+    <div class="ai-orb"></div>
+
+    <div id="splash-screen">
+        <div class="robot-arm-animation"></div>
+        <div class="loading-text">VIBZ :: Initializing AI Core</div>
+    </div>
+
+    <div class="app-container">
         
-        <div class="app-header">
-            <div class="logo-bold">VIBZ<span>.</span></div>
+        <div class="agency-header">VIBZ :: DIGITAL GENESIS PROTOCOL</div>
+
+        <h1 class="hero-headline">
+            <span class="typed-text">YOUR VISION.</span>
+            <br>AI-SCALED.
+        </h1>
+
+        <div class="search-module">
+            <input type="text" id="commandInput" placeholder="Enter Project Brief..." onkeydown="if(event.key==='Enter') executeCommand()">
+            <button class="launch-action" onclick="executeCommand()">
+                <i class="fa-solid fa-play"></i>
+            </button>
         </div>
 
-        <h1 class="hero-text">ELITE<br>WEB<br>OS.</h1>
-
-        <div class="search-container">
-            <div class="google-pill">
-                <input type="text" id="niche" placeholder="Your industry..." onkeydown="if(event.key==='Enter') start()">
-                <button class="search-btn" onclick="start()">
-                    <i class="fa-solid fa-arrow-right"></i>
-                </button>
-            </div>
-        </div>
-
-        <div class="service-grid">
+        <div class="service-hub">
             <a href="#" class="service-tile">
-                <i class="fa-solid fa-code"></i>
-                <h3>Build</h3>
+                <i class="fa-solid fa-cube"></i>
+                <h3>Dev Protocol</h3>
             </a>
             <a href="#" class="service-tile">
-                <i class="fa-solid fa-server"></i>
-                <h3>Host</h3>
+                <i class="fa-solid fa-brain"></i>
+                <h3>AI Integration</h3>
             </a>
             <a href="#" class="service-tile">
-                <i class="fa-solid fa-bolt"></i>
-                <h3>Maintain</h3>
+                <i class="fa-solid fa-satellite-dish"></i>
+                <h3>Deployment</h3>
             </a>
             <a href="#" class="service-tile">
-                <i class="fa-solid fa-shield-halved"></i>
-                <h3>Protect</h3>
+                <i class="fa-solid fa-chart-line"></i>
+                <h3>Growth Matrix</h3>
             </a>
         </div>
 
     </div>
 
-    <nav class="bottom-nav">
-        <a href="#" class="nav-item active">
-            <i class="fa-solid fa-house-chimney"></i>
-            <span>Home</span>
+    <nav class="ai-nav-console">
+        <a href="#" class="console-link active">
+            <i class="fa-solid fa-laptop-code"></i>
+            <span>CORE</span>
         </a>
-        <a href="#" class="nav-item">
-            <i class="fa-solid fa-grid-2"></i>
-            <span>Services</span>
+        <a href="#" class="console-link">
+            <i class="fa-solid fa-robot"></i>
+            <span>AI</span>
         </a>
-        <a href="https://www.vibz.co.uk/funnel.html" class="nav-item">
-            <i class="fa-solid fa-circle-plus"></i>
-            <span>Start</span>
+        <a href="https://www.vibz.co.uk/funnel.html" class="console-link">
+            <i class="fa-solid fa-rocket"></i>
+            <span>LAUNCH</span>
         </a>
-        <a href="mailto:info@vibz.co.uk" class="nav-item">
-            <i class="fa-solid fa-envelope"></i>
-            <span>Contact</span>
+        <a href="mailto:info@vibz.co.uk" class="console-link">
+            <i class="fa-solid fa-users"></i>
+            <span>CONNECT</span>
         </a>
     </nav>
 
     <script>
-        function start() {
-            const val = document.getElementById('niche').value;
+        // Splash screen and content fade in
+        window.addEventListener('load', () => {
+            const splashScreen = document.getElementById('splash-screen');
+            const appContainer = document.querySelector('.app-container');
+
+            setTimeout(() => {
+                splashScreen.style.opacity = '0';
+                setTimeout(() => {
+                    splashScreen.style.display = 'none';
+                    appContainer.style.opacity = '1'; // Reveal the app
+                }, 1000); // Wait for splash fade-out
+            }, 3000); // Display splash for 3 seconds
+        });
+
+        function executeCommand() {
+            const val = document.getElementById('commandInput').value;
             if(val) {
-                localStorage.setItem('selectedNiche', val.toLowerCase());
+                localStorage.setItem('projectBrief', val.toLowerCase());
                 window.location.href = 'https://www.vibz.co.uk/funnel.html';
             }
         }
