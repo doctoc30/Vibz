@@ -2,217 +2,243 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>VIBZ | Genesis OS</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;900&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VIBZ | Native Experience</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
     
     <style>
         :root {
-            --primary: #FF6B00;
-            --soft-orange: #FFF5EE;
-            --interface-white: #FFFFFF;
-            --app-shadow: 0 30px 60px -12px rgba(255, 107, 0, 0.15);
+            --bg: #ffffff;
+            --accent: #FF6B00;
+            --accent-light: #FFF5EE;
+            --dark: #121212;
+            --glass: rgba(255, 255, 255, 0.8);
+            --shadow: 0 8px 32px 0 rgba(255, 107, 0, 0.15);
         }
 
-        * {
-            margin: 0; padding: 0; box-sizing: border-box;
-            -webkit-font-smoothing: antialiased;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            cursor: none; /* Custom AI Cursor */
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body {
-            background: var(--soft-orange);
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden;
-            display: flex;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--dark);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* --- THE SIDE-CODE CONSOLE --- */
-        .code-console {
-            width: 300px;
-            background: #fff;
-            border-right: 1px solid rgba(255, 107, 0, 0.1);
-            height: 100vh;
-            padding: 40px 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            overflow: hidden;
-        }
-        .console-tag {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.65rem;
-            color: var(--primary);
-            opacity: 0.6;
-            white-space: nowrap;
-            animation: drift 3s infinite ease-in-out;
-        }
-        @keyframes drift { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(5px); } }
-
-        /* --- MAIN APP VIEW --- */
-        .app-view {
-            flex: 1;
+        /* ==== 🚀 SKYROCKET INTRO ==== */
+        #intro-loader {
+            position: fixed;
+            inset: 0;
+            background: var(--dark);
+            z-index: 9999;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 60px;
-            position: relative;
+            transition: transform 0.8s cubic-bezier(0.87, 0, 0.13, 1);
         }
 
-        /* --- THE CORE EYE (FOLLOWS MOUSE) --- */
-        .ai-iris-wrap {
-            width: 120px; height: 120px;
-            background: #fff;
-            border-radius: 40px; /* Squircle app shape */
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: var(--app-shadow);
-            margin-bottom: 40px;
-            border: 1px solid rgba(255, 107, 0, 0.1);
-        }
-        .iris {
-            width: 40px; height: 40px;
-            background: var(--primary);
-            border-radius: 50%;
-            position: relative;
-            transition: 0.1s ease-out;
-            box-shadow: 0 0 20px var(--primary);
+        .rocket-container {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: shake 0.2s infinite;
         }
 
-        /* --- THE SEARCH OS ENGINE --- */
-        .hero-os {
-            text-align: center;
-            max-width: 600px;
-            width: 100%;
-        }
-        .hero-os h1 {
-            font-size: 6rem;
+        .loader-logo {
+            color: var(--accent);
             font-weight: 900;
-            line-height: 0.8;
-            letter-spacing: -6px;
-            margin-bottom: 40px;
-            color: #000;
+            font-size: 3rem;
+            letter-spacing: -2px;
         }
-        .hero-os h1 span { color: var(--primary); }
 
-        .os-pill {
-            background: #fff;
-            height: 80px;
+        @keyframes shake {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0); }
+        }
+
+        .launch-sequence {
+            transform: translateY(-100vh) !important;
+        }
+
+        /* ==== 📱 NATIVE APP BOTTOM BAR ==== */
+        .bottom-nav {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 400px;
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.3);
             border-radius: 25px;
-            padding: 10px 10px 10px 30px;
+            display: none;
+            justify-content: space-around;
+            padding: 12px;
+            box-shadow: var(--shadow);
+            z-index: 2000;
+        }
+
+        @media (max-width: 768px) { .bottom-nav { display: flex; } }
+
+        .nav-item {
+            color: var(--dark);
+            text-decoration: none;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            border: 1px solid rgba(0,0,0,0.05);
-            box-shadow: var(--app-shadow);
-            transition: 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+            font-size: 0.7rem;
+            font-weight: 700;
+            opacity: 0.6;
+            transition: 0.3s;
         }
-        .os-pill:focus-within {
-            transform: scale(1.05);
-            border-color: var(--primary);
-        }
-        .os-pill input {
-            flex: 1; border: none; outline: none; font-size: 1.3rem;
-            font-weight: 700; color: #000;
-        }
-        .os-btn {
-            width: 60px; height: 60px; background: var(--primary);
-            border: none; border-radius: 20px; color: #fff;
-            font-size: 1.2rem; cursor: pointer; transition: 0.3s;
-        }
-        .os-btn:hover { transform: rotate(90deg); background: #000; }
 
-        /* --- NATIVE DOCK --- */
-        .nav-dock {
-            position: absolute; bottom: 40px;
-            background: #000; padding: 10px 30px;
-            border-radius: 100px; display: flex; gap: 40px;
-        }
-        .dock-btn { color: #555; font-size: 1.5rem; transition: 0.3s; }
-        .dock-btn.active { color: #fff; }
+        .nav-item.active { opacity: 1; color: var(--accent); }
+        .nav-item i { font-size: 1.2rem; margin-bottom: 4px; }
 
-        /* --- THE CUSTOM CURSOR --- */
-        #cursor {
-            width: 20px; height: 20px; background: var(--primary);
-            border-radius: 50%; position: fixed; pointer-events: none;
-            z-index: 9999; mix-blend-mode: difference;
-            transition: transform 0.1s;
+        /* ==== ADVANCED SECTION STYLING ==== */
+        .app-card {
+            background: var(--accent-light);
+            border-radius: 30px;
+            padding: 40px;
+            border: 1px solid rgba(255, 107, 0, 0.1);
+            transition: all 0.4s ease;
         }
+
+        .app-card:hover {
+            transform: scale(1.02);
+            box-shadow: var(--shadow);
+        }
+
+        /* Custom Header Styling */
+        nav {
+            position: sticky;
+            top: 0;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            padding: 15px 6%;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .hero-title {
+            font-size: clamp(3rem, 10vw, 7rem);
+            font-weight: 900;
+            line-height: 0.85;
+            letter-spacing: -5px;
+            margin-bottom: 30px;
+        }
+
+        .btn-pill {
+            background: var(--accent);
+            color: white;
+            padding: 18px 35px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 900;
+            display: inline-block;
+            box-shadow: 0 10px 20px rgba(255, 107, 0, 0.2);
+            transition: 0.3s;
+        }
+
+        .btn-pill:active { transform: scale(0.95); }
 
     </style>
 </head>
 <body>
 
-    <div id="cursor"></div>
+    <div id="intro-loader">
+        <div class="rocket-container">🚀</div>
+        <div class="loader-logo">VIBZ</div>
+        <div style="color: white; margin-top: 20px; font-weight: 700; letter-spacing: 2px;">IGNITING...</div>
+    </div>
 
-    <aside class="code-console" id="console"></aside>
+    <div class="bottom-nav">
+        <a href="#home" class="nav-item active"><i class="fas fa-home"></i>Home</a>
+        <a href="#conversion" class="nav-item"><i class="fas fa-bolt"></i>Tools</a>
+        <a href="#services" class="nav-item"><i class="fas fa-chart-line"></i>Stats</a>
+        <a href="https://www.vibz.co.uk/funnel.html" class="nav-item"><i class="fas fa-plus-circle" style="color: var(--accent); font-size: 1.5rem;"></i>Build</a>
+    </div>
 
-    <main class="app-view">
-        
-        <div class="ai-iris-wrap">
-            <div class="iris" id="iris"></div>
-        </div>
+    <nav>
+        <div class="loader-logo" style="font-size: 1.5rem;">VIBZ</div>
+        <a href="#contact" class="btn-pill" style="padding: 10px 20px; font-size: 0.8rem;">GET STARTED</a>
+    </nav>
 
-        <div class="hero-os">
-            <h1>BUILD<br><span>SITE</span><br>OS.</h1>
-            
-            <div class="os-pill">
-                <input type="text" id="userInput" placeholder="Industry Name..." onkeydown="if(event.key==='Enter') launch()">
-                <button class="os-btn" onclick="launch()">
-                    <i class="fa-solid fa-plus"></i>
-                </button>
+    <main>
+        <section class="hero" id="home" style="padding: 100px 6% 60px; text-align: center; min-height: 80vh; display: flex; flex-direction: column; justify-content: center;">
+            <h1 class="hero-title" data-aos="zoom-out-up">CRAFTING <br><span style="color: var(--accent);">DIGITAL</span><br> ELITE.</h1>
+            <p style="font-size: 1.2rem; color: #666; max-width: 600px; margin: 20px auto 40px;">Native speed. High conversion. The vibe your business deserves.</p>
+            <div data-aos="fade-up">
+                <a href="#conversion" class="btn-pill">EXPLORE THE VIBE 🔥</a>
             </div>
-        </div>
+        </section>
 
-        <nav class="nav-dock">
-            <a href="#" class="dock-btn active"><i class="fa-solid fa-house"></i></a>
-            <a href="#" class="dock-btn"><i class="fa-solid fa-robot"></i></a>
-            <a href="#" class="dock-btn"><i class="fa-solid fa-code-merge"></i></a>
-        </nav>
+        <section class="branded-section" style="padding: 40px 6%;">
+            <div class="app-card" data-aos="fade-up">
+                <h2 style="font-weight: 900; margin-bottom: 20px;">What do you do?</h2>
+                <div style="display: flex; gap: 10px; flex-direction: column;">
+                    <input type="text" id="appInput" placeholder="e.g. Luxury Barber" style="padding: 20px; border-radius: 15px; border: 2px solid var(--accent); outline: none; font-size: 1.1rem;">
+                    <button onclick="handleHomepageSearch()" class="btn-pill">FIND MY SOLUTION</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="services" style="padding: 80px 6%;">
+             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="app-card" style="text-align: center;">
+                    <div style="font-size: 2.5rem; font-weight: 900; color: var(--accent);">98%</div>
+                    <div style="font-size: 0.8rem; font-weight: 800;">GROWTH</div>
+                </div>
+                <div class="app-card" style="text-align: center; background: var(--dark); color: white;">
+                    <div style="font-size: 2.5rem; font-weight: 900; color: var(--accent);">24h</div>
+                    <div style="font-size: 0.8rem; font-weight: 800;">SUPPORT</div>
+                </div>
+             </div>
+        </section>
+
+        <section id="contact" style="padding: 80px 6%; background: var(--accent-light);">
+            <div style="max-width: 600px; margin: 0 auto;">
+                <h2 style="font-size: 3rem; font-weight: 900; letter-spacing: -2px; margin-bottom: 30px;">Let's Talk.</h2>
+                <form style="display: flex; flex-direction: column; gap: 15px;">
+                    <input type="text" placeholder="Name" style="padding: 20px; border-radius: 15px; border: none; box-shadow: var(--shadow);">
+                    <input type="email" placeholder="Email" style="padding: 20px; border-radius: 15px; border: none; box-shadow: var(--shadow);">
+                    <button type="submit" class="btn-pill">SEND REQUEST</button>
+                </form>
+            </div>
+        </section>
     </main>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
     <script>
-        // Custom Cursor & Iris Follow
-        const iris = document.getElementById('iris');
-        const cursor = document.getElementById('cursor');
-
-        document.addEventListener('mousemove', (e) => {
-            // Move Cursor
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
-
-            // Move Iris
-            const x = (e.clientX / window.innerWidth - 0.5) * 30;
-            const y = (e.clientY / window.innerHeight - 0.5) * 30;
-            iris.style.transform = `translate(${x}px, ${y}px)`;
+        // 🚀 SKYROCKET LAUNCH
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('intro-loader').classList.add('launch-sequence');
+                AOS.init({ duration: 1000, once: true });
+            }, 2500); // 2.5s for impact
         });
 
-        // Generate Console Code
-        const codes = [
-            '<div class="vibz-core">',
-            'const ai = new Agency();',
-            'ai.deploy("e-commerce");',
-            'system.render(UX_4K);',
-            'await build.complete();',
-            'console.log("Vibz Active");',
-            '<html> <header> <body>'
-        ];
-        
-        const consoleEl = document.getElementById('console');
-        setInterval(() => {
-            const div = document.createElement('div');
-            div.className = 'console-tag';
-            div.innerText = codes[Math.floor(Math.random() * codes.length)];
-            consoleEl.prepend(div);
-            if(consoleEl.children.length > 25) consoleEl.lastChild.remove();
-        }, 800);
+        // 📱 MOBILE NAV ACTIVE STATE
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                navItems.forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+            });
+        });
 
-        function launch() {
-            const val = document.getElementById('userInput').value;
-            if(val) {
+        // SEARCH HANDLE
+        function handleHomepageSearch() {
+            const val = document.getElementById('appInput').value.trim();
+            if (val) {
                 localStorage.setItem('selectedNiche', val.toLowerCase());
                 window.location.href = 'https://www.vibz.co.uk/funnel.html';
             }
