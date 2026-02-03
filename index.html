@@ -3,347 +3,296 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VIBZ | Service Marketplace</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>VIBZ App</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
     <style>
         :root {
-            --fiverr-green: #1dbf73;
-            --dark-gray: #404145;
-            --light-gray: #74767e;
-            --border: #e4e5e7;
-            --bg-light: #ffffff;
-            --bg-faint: #f7f7f7;
+            --accent: #FF6B00; /* Your Light Orange */
+            --accent-soft: rgba(255, 107, 0, 0.1);
+            --bg: #F8F9FA;
+            --card-bg: #FFFFFF;
+            --text-main: #202124;
+            --text-secondary: #5F6368;
+            --border: #DADCE0;
+            --shadow: 0 2px 6px rgba(0,0,0,0.08);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--bg-light);
-            color: var(--dark-gray);
-            padding-top: 130px; /* Space for fixed double header */
+            background-color: var(--bg);
+            color: var(--text-main);
+            padding-bottom: 90px;
         }
 
-        /* ================= NAVIGATION (FIVERR STYLE) ================= */
-        header {
+        /* ================= GOOGLE STYLE TOP BAR ================= */
+        .app-header {
             position: fixed;
             top: 0;
             width: 100%;
-            background: #fff;
+            padding: 12px 16px;
+            background: var(--bg);
             z-index: 1000;
-            border-bottom: 1px solid var(--border);
         }
 
-        .top-nav {
+        .google-search-bar {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            padding: 12px 20px;
-            gap: 20px;
-        }
-
-        .logo {
-            font-size: 26px;
-            font-weight: 800;
-            color: #404145;
-            text-decoration: none;
-            letter-spacing: -1px;
-        }
-
-        .logo span { color: var(--fiverr-green); }
-
-        .search-bar-wrapper {
-            flex-grow: 1;
-            max-width: 600px;
-            position: relative;
-        }
-
-        .search-bar-wrapper input {
-            width: 100%;
-            padding: 10px 15px 10px 40px;
+            background: var(--card-bg);
+            padding: 10px 16px;
+            border-radius: 24px;
+            box-shadow: var(--shadow);
             border: 1px solid var(--border);
-            border-radius: 4px;
-            font-size: 14px;
+            gap: 12px;
+        }
+
+        .google-search-bar i.fa-magnifying-glass { color: #4285F4; } /* Google Blue */
+        
+        .search-input {
+            flex: 1;
+            border: none;
             outline: none;
+            font-size: 16px;
+            color: var(--text-main);
+            background: transparent;
         }
 
-        .search-bar-wrapper i {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--light-gray);
+        .brand-dot {
+            width: 32px;
+            height: 32px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 800;
+            font-size: 14px;
+            box-shadow: 0 2px 4px rgba(255, 107, 0, 0.3);
         }
 
-        /* ================= CATEGORY SCROLLER ================= */
-        .category-nav {
+        /* ================= CHIP CATEGORIES ================= */
+        .chip-container {
             display: flex;
             overflow-x: auto;
-            white-space: nowrap;
-            padding: 10px 20px;
-            gap: 25px;
-            border-bottom: 1px solid var(--border);
-            background: #fff;
+            padding: 80px 16px 12px;
+            gap: 8px;
             scrollbar-width: none;
         }
 
-        .category-nav::-webkit-scrollbar { display: none; }
+        .chip-container::-webkit-scrollbar { display: none; }
 
-        .category-link {
-            text-decoration: none;
-            color: var(--light-gray);
+        .chip {
+            padding: 8px 16px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            white-space: nowrap;
             font-size: 14px;
             font-weight: 500;
-            padding-bottom: 5px;
-            border-bottom: 2px solid transparent;
+            color: var(--text-secondary);
             transition: 0.2s;
         }
 
-        .category-link:hover, .category-link.active {
-            color: var(--fiverr-green);
-            border-bottom: 2px solid var(--fiverr-green);
+        .chip.active {
+            background: var(--accent-soft);
+            color: var(--accent);
+            border-color: var(--accent);
         }
 
-        /* ================= MARKETPLACE GRID ================= */
-        .container { padding: 20px; max-width: 1400px; margin: 0 auto; }
-
-        .section-title {
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 20px;
+        /* ================= APP CONTENT AREA ================= */
+        .app-shell {
+            padding: 0 16px;
         }
 
-        .service-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 25px;
+        .section-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin: 16px 0 12px;
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .service-card {
-            border: 1px solid var(--border);
-            border-radius: 8px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            margin-bottom: 16px;
             overflow: hidden;
-            transition: 0.3s;
-            cursor: pointer;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: transform 0.1s;
         }
 
-        .service-card:hover { box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
+        .service-card:active { transform: scale(0.98); }
 
-        .card-img {
-            width: 100%;
-            height: 180px;
-            background: #eee;
+        .card-banner {
+            height: 160px;
+            background: #E8EAED;
             background-size: cover;
             background-position: center;
         }
 
-        .card-details { padding: 12px; }
+        .card-body { padding: 16px; }
 
-        .seller-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 8px;
-        }
-
-        .seller-avatar {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: var(--fiverr-green);
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
+        .card-title {
+            font-size: 18px;
             font-weight: 700;
+            margin-bottom: 4px;
         }
 
-        .seller-name { font-weight: 700; font-size: 14px; }
-
-        .service-title {
-            font-size: 15px;
-            line-height: 1.4;
-            height: 42px;
-            overflow: hidden;
-            margin-bottom: 10px;
-            color: var(--dark-gray);
-        }
-
-        .rating {
-            display: flex;
-            align-items: center;
-            gap: 4px;
+        .card-desc {
             font-size: 14px;
-            font-weight: 700;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
         }
-
-        .rating i { color: #ffbe5b; }
 
         .card-footer {
-            border-top: 1px solid var(--border);
-            padding: 10px 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-top: 1px solid #F1F3F4;
+            padding-top: 12px;
         }
 
-        .price-label { font-size: 10px; color: var(--light-gray); text-transform: uppercase; font-weight: 700; }
-        .price-value { font-size: 16px; font-weight: 800; }
+        .price-tag {
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 16px;
+        }
 
-        /* ================= MOBILE BOTTOM NAV ================= */
+        /* ================= NATIVE TAB BAR ================= */
         .bottom-nav {
             position: fixed;
             bottom: 0;
             width: 100%;
-            background: #fff;
+            background: #FFFFFF;
             border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
             z-index: 1000;
         }
-
-        @media (min-width: 769px) { .bottom-nav { display: none; } }
 
         .nav-item {
             display: flex;
             flex-direction: column;
             align-items: center;
             text-decoration: none;
-            color: var(--light-gray);
+            color: var(--text-secondary);
             font-size: 11px;
+            font-weight: 500;
             gap: 4px;
         }
 
-        .nav-item.active { color: var(--fiverr-green); }
+        .nav-item.active { color: var(--accent); }
         .nav-item i { font-size: 20px; }
 
-        @media (max-width: 768px) {
-            header { padding-top: 5px; }
-            .top-nav { flex-wrap: wrap; }
-            .search-bar-wrapper { order: 3; max-width: 100%; margin-top: 10px; }
-            body { padding-top: 160px; padding-bottom: 70px; }
+        .fab {
+            position: fixed;
+            bottom: 80px;
+            right: 16px;
+            width: 56px;
+            height: 56px;
+            background: var(--accent);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 4px 12px rgba(255, 107, 0, 0.4);
+            font-size: 24px;
+            z-index: 999;
         }
+
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="top-nav">
-            <a href="#" class="logo">vibz<span>.</span></a>
-            <div class="search-bar-wrapper">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="mainSearch" placeholder="What service are you looking for today?">
-            </div>
-            <div style="font-weight: 600; font-size: 14px; color: var(--fiverr-green); cursor: pointer;" class="desktop-only">Join</div>
+    <div class="app-header">
+        <div class="google-search-bar">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" class="search-input" id="searchApp" placeholder="Search services...">
+            <div class="brand-dot">V</div>
         </div>
-        
-        <div class="category-nav">
-            <a href="#" class="category-link active">Web Design</a>
-            <a href="#" class="category-link">Logo Design</a>
-            <a href="#" class="category-link">SEO</a>
-            <a href="#" class="category-link">Marketing</a>
-            <a href="#" class="category-link">Video Editing</a>
-            <a href="#" class="category-link">Architecture</a>
+    </div>
+
+    <div class="chip-container">
+        <div class="chip active">All Services</div>
+        <div class="chip">Web Design</div>
+        <div class="chip">SEO</div>
+        <div class="chip">Branding</div>
+        <div class="chip">E-commerce</div>
+        <div class="chip">App Dev</div>
+    </div>
+
+    <div class="app-shell">
+        <span class="section-label">Recommended for you</span>
+
+        <div class="service-card" onclick="openService('Barber')">
+            <div class="card-banner" style="background-image: url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&w=600&q=80')"></div>
+            <div class="card-body">
+                <h3 class="card-title">Barber Pro Website</h3>
+                <p class="card-desc">Full booking system and custom landing page.</p>
+                <div class="card-footer">
+                    <div class="rating"><i class="fa-solid fa-star" style="color:#FBBC04"></i> 5.0</div>
+                    <div class="price-tag">£495</div>
+                </div>
+            </div>
         </div>
-    </header>
 
-    <div class="container">
-        <h2 class="section-title">Popular Professional Services</h2>
-        
-        <div class="service-grid">
-            <div class="service-card" onclick="handleCardClick('Barber')">
-                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=500&q=80')"></div>
-                <div class="card-details">
-                    <div class="seller-info">
-                        <div class="seller-avatar">V</div>
-                        <span class="seller-name">Vibz Studio</span>
-                    </div>
-                    <div class="service-title">I will design a high-converting website for your Barber Shop</div>
-                    <div class="rating"><i class="fa-solid fa-star"></i> 5.0 <span>(120)</span></div>
-                </div>
+        <div class="service-card" onclick="openService('Dentist')">
+            <div class="card-banner" style="background-image: url('https://images.unsplash.com/photo-1588776814546-1ffce47267a5?auto=format&fit=crop&w=600&q=80')"></div>
+            <div class="card-body">
+                <h3 class="card-title">Medical Elite Portal</h3>
+                <p class="card-desc">HIPAA compliant patient intake and scheduling.</p>
                 <div class="card-footer">
-                    <i class="fa-solid fa-heart" style="color: #ccc;"></i>
-                    <div>
-                        <span class="price-label">Starting at</span>
-                        <span class="price-value">£495</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="service-card" onclick="handleCardClick('Dentist')">
-                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=500&q=80')"></div>
-                <div class="card-details">
-                    <div class="seller-info">
-                        <div class="seller-avatar" style="background: #000;">V</div>
-                        <span class="seller-name">Vibz Elite</span>
-                    </div>
-                    <div class="service-title">I will build a premium booking platform for your Dental Clinic</div>
-                    <div class="rating"><i class="fa-solid fa-star"></i> 4.9 <span>(84)</span></div>
-                </div>
-                <div class="card-footer">
-                    <i class="fa-solid fa-heart" style="color: #ccc;"></i>
-                    <div>
-                        <span class="price-label">Starting at</span>
-                        <span class="price-value">£995</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="service-card" onclick="handleCardClick('Trades')">
-                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&w=500&q=80')"></div>
-                <div class="card-details">
-                    <div class="seller-info">
-                        <div class="seller-avatar">V</div>
-                        <span class="seller-name">Vibz Trades</span>
-                    </div>
-                    <div class="service-title">I will create a lead-gen machine for your Plumbing or Trade business</div>
-                    <div class="rating"><i class="fa-solid fa-star"></i> 5.0 <span>(215)</span></div>
-                </div>
-                <div class="card-footer">
-                    <i class="fa-solid fa-heart" style="color: #ccc;"></i>
-                    <div>
-                        <span class="price-label">Starting at</span>
-                        <span class="price-value">£350</span>
-                    </div>
+                    <div class="rating"><i class="fa-solid fa-star" style="color:#FBBC04"></i> 4.9</div>
+                    <div class="price-tag">£995</div>
                 </div>
             </div>
         </div>
     </div>
 
+    <div class="fab">
+        <i class="fa-solid fa-plus"></i>
+    </div>
+
     <nav class="bottom-nav">
         <a href="#" class="nav-item active">
-            <i class="fa-solid fa-house"></i>
+            <i class="fa-solid fa-house-variant"></i>
             <span>Home</span>
         </a>
         <a href="#" class="nav-item">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <span>Search</span>
+            <i class="fa-solid fa-compass"></i>
+            <span>Explore</span>
         </a>
         <a href="#" class="nav-item">
-            <i class="fa-solid fa-message"></i>
-            <span>Inbox</span>
+            <i class="fa-solid fa-bell"></i>
+            <span>Alerts</span>
         </a>
         <a href="#" class="nav-item">
-            <i class="fa-solid fa-user"></i>
-            <span>Profile</span>
+            <i class="fa-solid fa-circle-user"></i>
+            <span>Account</span>
         </a>
     </nav>
 
     <script>
-        function handleCardClick(niche) {
+        function openService(niche) {
             localStorage.setItem('selectedNiche', niche.toLowerCase());
             window.location.href = 'https://www.vibz.co.uk/funnel.html';
         }
 
-        // Search redirection logic
-        document.getElementById('mainSearch').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                handleCardClick(this.value);
-            }
+        // Chip selection logic
+        document.querySelectorAll('.chip').forEach(chip => {
+            chip.addEventListener('click', function() {
+                document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+                this.classList.add('active');
+            });
         });
     </script>
 </body>
