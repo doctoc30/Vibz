@@ -3,155 +3,970 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VIBZ | Premium Web Design Agency</title>
-    <!-- PWA / Native App Enhancements -->
-    <meta name="theme-color" content="#FF6B00">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
-    <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22VIBZ%20-%20Premium%20Web%20Design%22,%22short_name%22:%22VIBZ%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22#ffffff%22,%22theme_color%22:%22#FF6B00%22,%22icons%22:[{%22src%22:%22https://via.placeholder.com/192/FF6B00/FFFFFF?text=V%22,%22sizes%22:%22192x192%22,%22type%22:%22image/png%22},{%22src%22:%22https://via.placeholder.com/512/FF6B00/FFFFFF?text=V%22,%22sizes%22:%22512x512%22,%22type%22:%22image/png%22}]}">
+    <title>VIBZ | Elite Design Agency</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
     
     <style>
+        /* ==== ENHANCED STYLES FOR NATIVE APP EXPERIENCE ==== */
         :root {
             --bg: #ffffff;
             --accent: #FF6B00;
-            --accent-light: #FF8C00;
+            --accent-light: #FF8B33;
+            --accent-dark: #E55A00;
             --dark: #121212;
             --navy: #0A192F;
             --text-gray: #4a4a4a;
             --light-gray: #f9f9f9;
             --border: #eeeeee;
+            --app-radius: 16px;
+            --app-shadow: 0 10px 40px rgba(255, 107, 0, 0.12);
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--dark); overflow-x:hidden; scroll-behavior:smooth; transition:transform 0.4s cubic-bezier(0.4,0,0.2,1); }
-
-        /* Skyrocket Intro */
-        #intro {
-            position:fixed; inset:0; background:linear-gradient(to bottom, #fff5ee, #ffffff); z-index:9999;
-            display:flex; align-items:center; justify-content:center; transition:opacity 1.2s ease;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .intro-content { text-align:center; position:relative; }
-        #rocket { font-size:10rem; color:var(--accent); animation:skyrocket 4s ease-in-out forwards; }
-        @keyframes skyrocket {
-            0% { transform:translateY(100vh) scale(0.3) rotate(-20deg); opacity:0; }
-            40% { transform:translateY(-10vh) scale(1.4); opacity:1; }
-            100% { transform:translateY(-180vh) scale(0.4) rotate(45deg); opacity:0; }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-tap-highlight-color: transparent;
         }
-        #introLogo { font-size:8rem; font-weight:900; color:var(--accent); letter-spacing:-4px; opacity:0; animation:logoAppear 2s ease-out 2.5s forwards; }
-        @keyframes logoAppear { 0% { opacity:0; transform:scale(0.6) translateY(50px); } 100% { opacity:1; transform:scale(1) translateY(0); } }
 
-        /* Bottom Nav for Native Feel (Mobile) */
-        .bottom-nav {
-            display:none; position:fixed; bottom:0; left:0; right:0; background:rgba(255,255,255,0.95);
-            backdrop-filter:blur(10px); border-top:1px solid var(--border); z-index:1000; padding:10px 0;
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--dark);
+            overflow-x: hidden;
+            position: relative;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
-        .bottom-nav a { flex:1; text-align:center; color:var(--dark); font-size:1.5rem; text-decoration:none; transition:0.3s; }
-        .bottom-nav a:hover { color:var(--accent); transform:scale(1.1); }
-        @media (max-width:768px) { .bottom-nav { display:flex; } }
 
-        /* Existing styles kept + enhancements */
-        /* ... (paste all your original styles here, including nav, hero, sections, etc.) ... */
-        /* Add to existing .portfolio-card or similar */
-        .portfolio-card { overflow:hidden; border-radius:24px; transition:0.5s cubic-bezier(0.175,0.885,0.32,1.275); box-shadow:0 10px 30px rgba(0,0,0,0.05); }
-        .portfolio-card:hover { transform:scale(1.05); box-shadow:0 30px 60px rgba(255,107,0,0.2); }
-        .portfolio-card img { width:100%; height:auto; display:block; }
+        /* ================= SKYROCKET INTRO ANIMATION ================= */
+        .intro-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0A192F 0%, var(--dark) 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
 
-        /* Process enhancements */
-        .process-grid { grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); }
+        .intro-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .rocket-container {
+            position: relative;
+            width: 200px;
+            height: 300px;
+            margin-bottom: 60px;
+        }
+
+        .rocket {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, var(--accent) 0%, var(--accent-light) 100%);
+            clip-path: polygon(50% 0%, 100% 50%, 70% 50%, 70% 100%, 30% 100%, 30% 50%, 0% 50%);
+            animation: rocketFloat 3s ease-in-out infinite;
+            transform-origin: center bottom;
+        }
+
+        .rocket::before {
+            content: '';
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 60px;
+            background: radial-gradient(ellipse at center, rgba(255, 107, 0, 0.8) 0%, transparent 70%);
+            filter: blur(10px);
+            animation: rocketFire 0.8s ease-in-out infinite alternate;
+        }
+
+        .intro-logo {
+            font-size: 5rem;
+            font-weight: 900;
+            color: white;
+            letter-spacing: -2px;
+            text-align: center;
+            margin-top: 30px;
+            opacity: 0;
+            animation: fadeInUp 1s ease 1s forwards;
+        }
+
+        .intro-logo::after {
+            content: ".";
+            color: var(--accent);
+            margin-left: 2px;
+        }
+
+        .intro-tagline {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.2rem;
+            margin-top: 20px;
+            opacity: 0;
+            animation: fadeInUp 1s ease 1.5s forwards;
+        }
+
+        @keyframes rocketFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(1deg); }
+        }
+
+        @keyframes rocketFire {
+            0% { transform: translateX(-50%) scale(1); opacity: 0.8; }
+            100% { transform: translateX(-50%) scale(1.2); opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ================= APP-LIKE NAVIGATION ================= */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1rem 6%;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 107, 0, 0.1);
+            transform: translateY(0);
+            transition: var(--transition);
+        }
+
+        nav.hidden {
+            transform: translateY(-100%);
+        }
+
+        .logo {
+            font-weight: 900;
+            font-size: 1.8rem;
+            color: var(--accent);
+            letter-spacing: -1px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .logo::after {
+            content: ".";
+            color: #000;
+            margin-left: 2px;
+            font-weight: 900;
+        }
+
+        .logo-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .nav-btn {
+            padding: 0.9rem 2rem;
+            border-radius: 12px;
+            border: 2px solid var(--accent);
+            color: var(--accent);
+            font-weight: 700;
+            text-decoration: none;
+            font-size: 1rem;
+            white-space: nowrap;
+            transition: var(--transition);
+            background: white;
+        }
+
+        .nav-btn:hover {
+            background: var(--accent);
+            color: white;
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(255, 107, 0, 0.25);
+        }
+
+        .hamburger-btn {
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            color: var(--dark);
+            cursor: pointer;
+            padding: 0.5rem;
+            transition: all 0.3s ease;
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+        }
+
+        .hamburger-btn:hover {
+            background: rgba(255, 107, 0, 0.1);
+            color: var(--accent);
+        }
+
+        /* ================= ENHANCED HERO SECTION ================= */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 6%;
+            position: relative;
+            background: radial-gradient(circle at top right, #fff5ee, #ffffff);
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(255, 107, 0, 0.05) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .hero h1 {
+            font-size: clamp(3.5rem, 12vw, 8rem);
+            font-weight: 900;
+            line-height: 0.9;
+            letter-spacing: -4px;
+            margin-bottom: 2rem;
+            text-transform: capitalize;
+        }
+
+        .typewriter-container {
+            color: var(--accent);
+            border-right: 8px solid var(--accent);
+            padding-right: 10px;
+            animation: blink 0.7s infinite;
+            display: inline-block;
+        }
+
+        @keyframes blink {
+            50% { border-color: transparent; }
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-gray);
+            max-width: 550px;
+            margin-bottom: 3rem;
+            line-height: 1.5;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1.2rem 2.5rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: var(--transition);
+            font-size: 1.1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            border: 2px solid transparent;
+        }
+
+        .btn-fill {
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            color: white;
+            box-shadow: 0 10px 30px rgba(255, 107, 0, 0.3);
+        }
+
+        .btn-outline {
+            border: 2px solid var(--accent);
+            color: var(--accent);
+            background: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(255, 107, 0, 0.25);
+        }
+
+        .btn-fill:hover {
+            background: linear-gradient(135deg, var(--accent-dark), var(--accent));
+        }
+
+        /* ================= APP-LIKE SECTIONS ================= */
+        section {
+            padding: 120px 6%;
+            position: relative;
+        }
+
+        .section-label {
+            color: var(--accent);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        /* ================= PROCESS CARDS ================= */
+        .process-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .process-step {
+            padding: 3.5rem 2.5rem;
+            background: white;
+            border-radius: var(--app-radius);
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+            border: 1px solid var(--border);
+            box-shadow: var(--app-shadow);
+        }
+
+        .process-step:hover {
+            border-color: var(--accent);
+            transform: translateY(-15px);
+            box-shadow: 0 40px 80px rgba(255, 107, 0, 0.15);
+        }
+
+        .process-step i {
+            font-size: 2.5rem;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+        .step-num {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 6rem;
+            font-weight: 900;
+            color: rgba(255, 107, 0, 0.05);
+        }
+
+        /* ================= PREMIUM FEATURES ================= */
+        .features-section { 
+            background: linear-gradient(135deg, #fff9f5 0%, #ffffff 100%);
+            padding: 120px 6%; 
+        }
+
+        .features-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+            gap: 30px; 
+            margin-top: 60px; 
+        }
+
+        .feature-card { 
+            padding: 3rem 2.5rem; 
+            background: white; 
+            border-radius: var(--app-radius); 
+            border: 1px solid var(--border); 
+            transition: var(--transition); 
+            position: relative; 
+            overflow: hidden;
+            box-shadow: var(--app-shadow);
+        }
+
+        .feature-card:hover { 
+            transform: translateY(-10px); 
+            border-color: var(--accent); 
+            box-shadow: 0 40px 80px rgba(255, 107, 0, 0.15);
+        }
+
+        .feature-icon { 
+            width: 70px; 
+            height: 70px; 
+            background: linear-gradient(135deg, rgba(255, 107, 0, 0.1), rgba(255, 107, 0, 0.05));
+            border-radius: 20px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            margin-bottom: 1.5rem; 
+        }
+
+        .feature-icon i { 
+            font-size: 2rem; 
+            color: var(--accent); 
+        }
+
+        /* ================= INTERACTIVE SHOWCASE ================= */
+        .showcase-section {
+            padding: 120px 6%;
+            background: var(--light-gray);
+        }
+
+        .showcase-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .showcase-device {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            height: 600px;
+            margin: 0 auto;
+            background: #1a1a1a;
+            border-radius: 40px;
+            padding: 20px;
+            box-shadow: 0 50px 100px rgba(0, 0, 0, 0.2);
+            border: 10px solid #0a0a0a;
+        }
+
+        .device-screen {
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .screen-content {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .screen-content.active {
+            opacity: 1;
+        }
+
+        .screen-content h3 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--dark);
+            margin-bottom: 20px;
+        }
+
+        .device-controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .device-btn {
+            padding: 1rem 2rem;
+            background: white;
+            border: 2px solid var(--accent);
+            color: var(--accent);
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .device-btn:hover, .device-btn.active {
+            background: var(--accent);
+            color: white;
+        }
+
+        /* ================= PARALLAX EFFECTS ================= */
+        .parallax-section {
+            position: relative;
+            overflow: hidden;
+            height: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .parallax-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 120%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/></svg>');
+            background-size: 100px;
+            opacity: 0.3;
+            animation: parallaxMove 20s linear infinite;
+        }
+
+        @keyframes parallaxMove {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-100px); }
+        }
+
+        /* ================= APP-LIKE INTERACTIONS ================= */
+        .floating-cta {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            text-decoration: none;
+            box-shadow: 0 10px 30px rgba(255, 107, 0, 0.4);
+            z-index: 1000;
+            transition: var(--transition);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .floating-cta:hover {
+            transform: scale(1.1) rotate(45deg);
+            box-shadow: 0 15px 40px rgba(255, 107, 0, 0.6);
+        }
+
+        /* ================= MICRO-INTERACTIONS ================= */
+        .ripple {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ripple:after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 107, 0, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .ripple:active:after {
+            width: 300px;
+            height: 300px;
+        }
+
+        /* ================= RESPONSIVE DESIGN ================= */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 3rem;
+                letter-spacing: -2px;
+            }
+            
+            .showcase-device {
+                height: 400px;
+            }
+            
+            .process-grid, .features-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .btn {
+                justify-content: center;
+                text-align: center;
+            }
+        }
+
+        /* ================= DARK MODE READY ================= */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #0a0a0a;
+                --dark: #ffffff;
+                --text-gray: #b0b0b0;
+                --light-gray: #1a1a1a;
+                --border: #333333;
+            }
+            
+            body {
+                background: var(--bg);
+                color: var(--dark);
+            }
+            
+            nav {
+                background: rgba(10, 10, 10, 0.98);
+            }
+            
+            .process-step, .feature-card {
+                background: #1a1a1a;
+            }
+            
+            .hero {
+                background: radial-gradient(circle at top right, #1a0f00, #0a0a0a);
+            }
+        }
     </style>
 </head>
 <body>
-
-    <!-- Skyrocket Intro -->
-    <div id="intro">
-        <div class="intro-content">
-            <i class="fas fa-rocket" id="rocket"></i>
-            <div id="introLogo">VIBZ</div>
+    <!-- SKYROCKET INTRO -->
+    <div class="intro-overlay" id="introOverlay">
+        <div class="rocket-container">
+            <div class="rocket"></div>
         </div>
+        <div class="intro-logo">VIBZ</div>
+        <div class="intro-tagline">Elite Web Design Experience</div>
     </div>
 
-    <!-- Your existing menu-overlay, nav, hero, search-bar-section, etc. -->
+    <!-- APP-LIKE NAVIGATION -->
+    <nav id="mainNav">
+        <div class="nav-left logo">
+            VIBZ<span class="logo-dot"></span>
+        </div>
+        <div class="nav-center">
+            <a href="https://www.vibz.co.uk/funnel.html" onclick="localStorage.removeItem('selectedNiche')" class="nav-btn ripple">Get a Website</a>
+        </div>
+        <div class="nav-right">
+            <button class="hamburger-btn" id="hamburgerBtn">
+                <i class="fa-solid fa-bars-staggered"></i>
+            </button>
+        </div>
+    </nav>
 
-    <!-- Added Portfolio Section (Wow with visuals) -->
-    <section id="portfolio" style="padding:120px 6%; background:var(--light-gray);">
-        <span class="section-label" data-aos="fade-up">Our Work</span>
-        <h2 style="font-size:4rem; font-weight:900; text-align:center; margin-bottom:4rem; letter-spacing:-2px;" data-aos="fade-up">Masterpieces That Convert</h2>
-        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(400px,1fr)); gap:40px;">
-            <div class="portfolio-card" data-aos="zoom-in">
-                <img src="https://cdn.prod.website-files.com/64da807a9aa000087e97b92d/64edd9bec9123633154ba3c1_63fbe3bf3efb72b8f1501841_toothfairy128image1.jpeg" alt="Premium Dental Website">
-                <div style="padding:1.5rem; text-align:center; font-weight:700;">Elite Dental Clinic Site</div>
-            </div>
-            <div class="portfolio-card" data-aos="zoom-in" data-aos-delay="100">
-                <img src="https://www.framer.com/creators-assets/_next/image/?url=https%3A%2F%2Fy4pdgnepgswqffpt.public.blob.vercel-storage.com%2Ftemplates%2F49414%2Fdentify-P76NO3i1OhPjhnUhGGQeFbhFgpgkbl&w=3840&q=100" alt="Modern Dentist Website">
-                <div style="padding:1.5rem; text-align:center; font-weight:700;">Dentify – Bright Smiles</div>
-            </div>
-            <div class="portfolio-card" data-aos="zoom-in" data-aos-delay="200">
-                <img src="https://www.framer.com/creators-assets/_next/image/?url=https%3A%2F%2Fy4pdgnepgswqffpt.public.blob.vercel-storage.com%2Ftemplates%2F56394%2Fsalona-ZgBT6CXcDy4COC8ypRCGE1QwaEA2z8&w=3840&q=100" alt="Luxury Barber Website">
-                <div style="padding:1.5rem; text-align:center; font-weight:700;">Salona Barber Experience</div>
-            </div>
-            <div class="portfolio-card" data-aos="zoom-in" data-aos-delay="300">
-                <img src="https://s.tmimgcdn.com/scr/1200x627/369200/silicko-web-agency-dark-and-light-one-page-html5-template_369256-original.jpg" alt="Creative Agency Template">
-                <div style="padding:1.5rem; text-align:center; font-weight:700;">Silicko Agency Showcase</div>
+    <!-- HERO SECTION -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1 data-aos="fade-up" data-aos-delay="200">
+                Websites <br>That Bring <br>
+                <span id="typewriter" class="typewriter-container"></span>
+            </h1>
+            <p data-aos="fade-up" data-aos-delay="400">
+                We design premium, high-performance websites for elite brands ready to dominate their market.
+            </p>
+            <div class="btn-group" data-aos="fade-up" data-aos-delay="600">
+                <a href="#showcase" class="btn btn-fill ripple">
+                    <i class="fas fa-eye"></i> View Showcase
+                </a>
+                <a href="#contact" class="btn btn-outline ripple">
+                    <i class="fas fa-rocket"></i> Start Project
+                </a>
             </div>
         </div>
     </section>
 
-    <!-- Enhanced Process Section (completed steps) -->
+    <!-- INTERACTIVE SHOWCASE -->
+    <section class="showcase-section" id="showcase">
+        <div class="showcase-container">
+            <span class="section-label" data-aos="fade-up">Showcase</span>
+            <h2 style="font-size: 3.5rem; font-weight: 900; margin-bottom: 1rem; letter-spacing: -2px;" data-aos="fade-up">
+                Interactive <span style="color: var(--accent);">Experience</span>
+            </h2>
+            <p style="color: var(--text-gray); max-width: 600px; margin-bottom: 3rem;" data-aos="fade-up">
+                Experience our premium designs in an interactive showcase
+            </p>
+            
+            <div class="showcase-device" data-aos="zoom-in">
+                <div class="device-screen">
+                    <div class="screen-content active" id="screen1">
+                        <h3>Premium Dental Clinic</h3>
+                        <p>Modern design with appointment booking</p>
+                    </div>
+                    <div class="screen-content" id="screen2">
+                        <h3>Elite Barber Shop</h3>
+                        <p>Bold branding with online booking</p>
+                    </div>
+                    <div class="screen-content" id="screen3">
+                        <h3>Luxury Real Estate</h3>
+                        <p>3D property tours and virtual staging</p>
+                    </div>
+                </div>
+                
+                <div class="device-controls">
+                    <button class="device-btn active" onclick="showScreen(1)">Design</button>
+                    <button class="device-btn" onclick="showScreen(2)">Function</button>
+                    <button class="device-btn" onclick="showScreen(3)">Experience</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PARALLAX SECTION -->
+    <section class="parallax-section">
+        <div class="parallax-bg"></div>
+        <div style="position: relative; z-index: 2;">
+            <h2 style="font-size: 4rem; font-weight: 900; margin-bottom: 2rem;" data-aos="fade-up">
+                Ready to <span style="color: var(--dark);">Skyrocket</span> Your Business?
+            </h2>
+            <a href="#contact" class="btn btn-fill ripple" style="background: white; color: var(--accent);" data-aos="fade-up">
+                <i class="fas fa-rocket"></i> Launch Project
+            </a>
+        </div>
+    </section>
+
+    <!-- PREMIUM PROCESS -->
     <section id="process">
-        <span class="section-label" data-aos="fade-up">Protocol</span>
-        <h2 style="font-size:4rem; font-weight:900; margin-bottom:1rem; letter-spacing:-2px;">The Evolution Process</h2>
+        <span class="section-label" data-aos="fade-up">Process</span>
+        <h2 style="font-size: 4rem; font-weight: 900; margin-bottom: 1rem; letter-spacing: -2px;" data-aos="fade-up">
+            Our <span style="color: var(--accent);">Elite</span> Protocol
+        </h2>
         <div class="process-grid">
             <div class="process-step" data-aos="fade-up">
                 <span class="step-num">01</span>
                 <i class="fa-solid fa-fingerprint"></i>
-                <h3>Audit</h3>
-                <p>We analyze your market and competitors to find your unfair digital advantage.</p>
+                <h3>Discovery & Strategy</h3>
+                <p>Deep dive into your business goals and market positioning.</p>
             </div>
             <div class="process-step" data-aos="fade-up" data-aos-delay="100">
                 <span class="step-num">02</span>
-                <i class="fa-solid fa-lightbulb"></i>
-                <h3>Strategy</h3>
-                <p>Crafting a bespoke roadmap focused on conversion, speed, and brand dominance.</p>
+                <i class="fa-solid fa-pen-ruler"></i>
+                <h3>Premium Design</h3>
+                <p>Custom UI/UX design with focus on conversion optimization.</p>
             </div>
             <div class="process-step" data-aos="fade-up" data-aos-delay="200">
                 <span class="step-num">03</span>
                 <i class="fa-solid fa-code"></i>
-                <h3>Build</h3>
-                <p>Custom, lightning-fast development that achieves perfect PageSpeed scores.</p>
+                <h3>Development</h3>
+                <p>High-performance coding with perfect PageSpeed scores.</p>
             </div>
             <div class="process-step" data-aos="fade-up" data-aos-delay="300">
                 <span class="step-num">04</span>
                 <i class="fa-solid fa-rocket"></i>
                 <h3>Launch & Scale</h3>
-                <p>Deploy with analytics, A/B testing, and ongoing optimization for explosive growth.</p>
+                <p>Strategic deployment and ongoing performance optimization.</p>
             </div>
         </div>
     </section>
 
-    <!-- Existing sections (features, clients, testimonials, FAQ, footer) -->
+    <!-- PREMIUM FEATURES -->
+    <section class="features-section">
+        <span class="section-label" data-aos="fade-up">Features</span>
+        <h2 style="font-size: 3.5rem; font-weight: 900; margin-bottom: 1rem; letter-spacing: -2px;" data-aos="fade-up">
+            Premium <span style="color: var(--accent);">Capabilities</span>
+        </h2>
+        <div class="features-grid">
+            <div class="feature-card" data-aos="fade-up">
+                <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+                <h3>Lightning Fast</h3>
+                <p>Optimized for 100/100 PageSpeed scores with advanced caching.</p>
+            </div>
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-icon"><i class="fas fa-mobile-alt"></i></div>
+                <h3>Fully Responsive</h3>
+                <p>Perfect experience on all devices and screen sizes.</p>
+            </div>
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                <h3>Secure</h3>
+                <p>Enterprise-grade security with daily backups.</p>
+            </div>
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+                <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+                <h3>SEO Optimized</h3>
+                <p>Built to rank #1 on Google search results.</p>
+            </div>
+        </div>
+    </section>
 
-    <!-- Bottom Nav -->
-    <div class="bottom-nav">
-        <a href="#home"><i class="fas fa-home"></i></a>
-        <a href="#portfolio"><i class="fas fa-images"></i></a>
-        <a href="#process"><i class="fas fa-stream"></i></a>
-        <a href="#contact"><i class="fas fa-envelope"></i></a>
-    </div>
+    <!-- CONTACT SECTION -->
+    <footer class="footer-form" id="contact">
+        <div class="form-grid">
+            <div data-aos="fade-right">
+                <h2>Ready to <br><span style="color: var(--accent);">Launch?</span></h2>
+                <p style="color: var(--text-gray); margin-top: 2rem; max-width: 400px;">
+                    Let's create something extraordinary together. Schedule your free strategy session today.
+                </p>
+            </div>
+            <div class="form-container" data-aos="fade-left">
+                <form id="contactForm">
+                    <input type="text" placeholder="Your Name" required>
+                    <input type="email" placeholder="Email Address" required>
+                    <input type="text" placeholder="Company Name">
+                    <textarea placeholder="Tell us about your project" rows="4"></textarea>
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-paper-plane"></i> SEND MESSAGE
+                    </button>
+                </form>
+            </div>
+        </div>
+        <div style="text-align: center; margin-top: 100px; color: var(--text-gray); border-top: 1px solid var(--border); padding-top: 40px; font-size: 0.9rem; opacity: 0.7;">
+            © 2026 VIBZ COLLECTIVE. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- FLOATING CTA -->
+    <a href="#contact" class="floating-cta ripple">
+        <i class="fas fa-rocket"></i>
+    </a>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
     <script>
-        AOS.init({ duration: 800, once: true });
+        // SKYROCKET INTRO
+        document.addEventListener('DOMContentLoaded', () => {
+            const intro = document.getElementById('introOverlay');
+            
+            // Hide intro after animation
+            setTimeout(() => {
+                intro.classList.add('hidden');
+                setTimeout(() => intro.style.display = 'none', 800);
+            }, 3000);
+            
+            // Initialize AOS
+            AOS.init({
+                duration: 1000,
+                once: true,
+                offset: 100
+            });
+            
+            // Start typewriter
+            type();
+            
+            // Nav hide/show on scroll
+            let lastScroll = 0;
+            window.addEventListener('scroll', () => {
+                const nav = document.getElementById('mainNav');
+                const currentScroll = window.pageYOffset;
+                
+                if (currentScroll <= 0) {
+                    nav.classList.remove('hidden');
+                    return;
+                }
+                
+                if (currentScroll > lastScroll && !nav.classList.contains('hidden')) {
+                    nav.classList.add('hidden');
+                } else if (currentScroll < lastScroll && nav.classList.contains('hidden')) {
+                    nav.classList.remove('hidden');
+                }
+                lastScroll = currentScroll;
+            });
+        });
 
-        // Hide intro after animation
-        setTimeout(() => {
-            document.getElementById('intro').style.opacity = '0';
-            setTimeout(() => document.getElementById('intro').remove(), 1200);
-        }, 5000);
+        // TYPEWRITER EFFECT
+        const words = ["Growth.", "Revenue.", "Results.", "Success.", "Impact."];
+        let wIdx = 0, cIdx = 0, isDel = false;
+        
+        function type() {
+            const target = document.getElementById("typewriter");
+            if (!target) return;
+            const word = words[wIdx];
+            target.textContent = isDel ? word.substring(0, cIdx--) : word.substring(0, cIdx++);
+            
+            if (!isDel && cIdx === word.length + 1) {
+                isDel = true;
+                setTimeout(type, 1500);
+            } else if (isDel && cIdx === 0) {
+                isDel = false;
+                wIdx = (wIdx + 1) % words.length;
+                setTimeout(type, 500);
+            } else {
+                setTimeout(type, isDel ? 50 : 150);
+            }
+        }
 
-        // Your existing scripts (typewriter, menu, faq, search)...
+        // SHOWCASE CONTROLS
+        function showScreen(screenNum) {
+            // Update buttons
+            document.querySelectorAll('.device-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update screens
+            document.querySelectorAll('.screen-content').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(`screen${screenNum}`).classList.add('active');
+        }
+
+        // FORM SUBMISSION
+        document.getElementById('contactForm')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const submitBtn = e.target.querySelector('.submit-btn');
+            const originalText = submitBtn.innerHTML;
+            
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> SENDING...';
+            submitBtn.disabled = true;
+            
+            // Simulate API call
+            setTimeout(() => {
+                alert('Thank you! Your message has been sent. We\'ll contact you within 24 hours.');
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+                e.target.reset();
+            }, 1500);
+        });
+
+        // RIPPLE EFFECT
+        document.querySelectorAll('.ripple').forEach(button => {
+            button.addEventListener('click', function(e) {
+                const x = e.clientX - e.target.getBoundingClientRect().left;
+                const y = e.clientY - e.target.getBoundingClientRect().top;
+                
+                const ripple = document.createElement('span');
+                ripple.style.left = `${x}px`;
+                ripple.style.top = `${y}px`;
+                ripple.classList.add('ripple-effect');
+                
+                this.appendChild(ripple);
+                
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+
+        // PARALLAX EFFECT
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallax = document.querySelector('.parallax-bg');
+            if (parallax) {
+                parallax.style.transform = `translateY(${scrolled * 0.5}px)`;
+            }
+        });
     </script>
 </body>
 </html>
