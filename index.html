@@ -3,20 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VIBZ | Elite Design Studio</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>VIBZ | The Agency App</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
     
     <style>
         :root {
             --bg: #FFFFFF;
-            --accent: #FF6B00; /* Primary Orange */
-            --accent-soft: rgba(255, 107, 0, 0.08);
-            --dark: #1A1A1A;
-            --gray: #F8F9FA;
-            --border: #E9ECEF;
-            --shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+            --accent: #FF6B00;
+            --dark: #000000;
+            --gray-app: #F2F2F7; /* iOS System Gray */
+            --card-radius: 28px;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -26,273 +24,292 @@
             background-color: var(--bg);
             color: var(--dark);
             overflow-x: hidden;
+            user-select: none;
         }
 
-        /* ==== APP INTRO SPLASH ==== */
+        /* ==== APP REVEAL INTRO ==== */
         #splash {
             position: fixed;
             inset: 0;
-            background: var(--bg);
+            background: var(--dark);
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+            transition: clip-path 1s cubic-bezier(0.77, 0, 0.175, 1);
+            clip-path: circle(100% at 50% 50%);
         }
 
         .splash-logo {
-            font-size: 3.5rem;
+            font-size: 4rem;
             font-weight: 800;
             color: var(--accent);
-            letter-spacing: -3px;
+            letter-spacing: -4px;
+            transform: scale(1);
+            animation: pulse 1.5s infinite alternate;
         }
 
-        .loaded #splash { transform: translateY(-100%); }
+        @keyframes pulse { to { transform: scale(1.1); } }
+        .loaded #splash { clip-path: circle(0% at 50% 50%); }
 
-        /* ==== NATIVE HEADER ==== */
+        /* ==== NATIVE UI ELEMENTS ==== */
+        .status-bar {
+            padding: 15px 6% 5px;
+            display: flex;
+            justify-content: space-between;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
         header {
-            padding: 1.5rem 6%;
+            padding: 10px 6% 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: sticky;
-            top: 0;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(20px);
-            z-index: 100;
         }
 
-        .logo-text { font-weight: 800; font-size: 1.4rem; color: var(--dark); }
-        .logo-text span { color: var(--accent); }
-
-        /* ==== GOOGLE SEARCH HUB ==== */
-        .app-container {
-            max-width: 600px;
-            margin: 40px auto;
-            padding: 0 20px;
-            text-align: center;
-        }
-
-        .google-search-box {
-            background: var(--gray);
-            border-radius: 50px;
-            padding: 6px 12px;
-            display: flex;
-            align-items: center;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
-            border: 1px solid var(--border);
-            margin-bottom: 30px;
-            transition: 0.3s;
-        }
-
-        .google-search-box:focus-within {
-            background: #fff;
-            border-color: var(--accent);
-            box-shadow: 0 10px 25px rgba(255, 107, 0, 0.1);
-        }
-
-        .google-search-box i {
-            padding: 0 15px;
-            color: #666;
-            font-size: 1.1rem;
-        }
-
-        .google-search-box input {
-            flex: 1;
-            border: none;
-            background: transparent;
-            padding: 12px 5px;
-            font-size: 1rem;
-            font-weight: 500;
-            outline: none;
-        }
-
-        /* ==== 8 RESPONSIVE BUTTONS (APP GRID) ==== */
-        .service-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .service-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-decoration: none;
-            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .service-item:active { transform: scale(0.9); }
-
-        .icon-circle {
-            width: 60px;
-            height: 60px;
-            background: var(--gray);
-            border-radius: 20px;
+        .user-profile {
+            width: 45px;
+            height: 45px;
+            background: var(--gray-app);
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 10px;
-            transition: 0.3s;
-            border: 1px solid var(--border);
+            border: 2px solid var(--accent);
         }
 
-        .service-item:hover .icon-circle {
-            background: var(--accent-soft);
-            border-color: var(--accent);
+        /* ==== BOLD HERO ==== */
+        .hero-section {
+            padding: 0 6%;
+            margin-bottom: 30px;
+        }
+
+        .hero-section h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 0.9;
+            letter-spacing: -3px;
+        }
+
+        /* ==== GOOGLE WIDGET SEARCH ==== */
+        .search-container {
+            padding: 0 6%;
+            margin-bottom: 40px;
+        }
+
+        .google-widget {
+            background: var(--gray-app);
+            height: 65px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            padding: 0 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .google-widget input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-left: 15px;
+        }
+
+        /* ==== BIG ACTION TILES ==== */
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            padding: 0 6% 100px;
+        }
+
+        .action-tile {
+            background: var(--gray-app);
+            height: 160px;
+            border-radius: var(--card-radius);
+            padding: 25px;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid transparent;
+        }
+
+        .action-tile:active {
+            transform: scale(0.95);
+            background: #e5e5ea;
+        }
+
+        .action-tile i {
+            font-size: 2rem;
             color: var(--accent);
         }
 
-        .icon-circle i {
-            font-size: 1.4rem;
-            color: var(--dark);
-            transition: 0.3s;
-        }
-
-        .service-item:hover i { color: var(--accent); }
-
-        .service-item span {
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: #666;
-            white-space: nowrap;
-        }
-
-        /* ==== WOW HERO TEXT ==== */
-        .hero-text {
-            margin-top: 60px;
-            margin-bottom: 20px;
-        }
-
-        .hero-text h1 {
-            font-size: 2.8rem;
+        .action-tile span {
+            font-size: 1.2rem;
             font-weight: 800;
-            letter-spacing: -2px;
+            color: var(--dark);
             line-height: 1.1;
         }
 
-        /* RESPONSIVE */
-        @media (max-width: 480px) {
-            .service-grid { grid-template-columns: repeat(4, 1fr); gap: 10px; }
-            .icon-circle { width: 55px; height: 55px; border-radius: 18px; }
-            .hero-text h1 { font-size: 2.2rem; }
-        }
-
-        /* SECTION STYLING */
-        .content-card {
-            background: var(--gray);
-            margin: 20px 6%;
-            padding: 30px;
-            border-radius: 32px;
-            border: 1px solid var(--border);
-        }
-
-        .btn-primary {
+        .tile-orange {
             background: var(--accent);
-            color: white;
-            padding: 16px 32px;
-            border-radius: 16px;
-            text-decoration: none;
-            font-weight: 700;
-            display: inline-block;
-            margin-top: 20px;
-            box-shadow: 0 10px 20px rgba(255, 107, 0, 0.2);
         }
+        .tile-orange i, .tile-orange span { color: white; }
+
+        /* ==== BOTTOM DRAWER ==== */
+        #drawer {
+            position: fixed;
+            bottom: -100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 35px 35px 0 0;
+            padding: 40px 6%;
+            z-index: 1000;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.2);
+            transition: bottom 0.5s cubic-bezier(0.85, 0, 0.15, 1);
+        }
+
+        #drawer.open { bottom: 0; }
+
+        .drawer-handle {
+            width: 40px;
+            height: 5px;
+            background: #DDD;
+            border-radius: 10px;
+            margin: -20px auto 30px;
+        }
+
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            z-index: 999;
+        }
+
+        .overlay.active { display: block; }
     </style>
 </head>
 <body>
 
     <div id="splash">
         <div class="splash-logo">VIBZ</div>
-        <p style="margin-top: 15px; font-weight: 600; color: #999;">Loading Studio...</p>
+    </div>
+
+    <div class="status-bar">
+        <span>9:41</span>
+        <div style="display: flex; gap: 8px;">
+            <i class="fa-solid fa-signal"></i>
+            <i class="fa-solid fa-wifi"></i>
+            <i class="fa-solid fa-battery-full"></i>
+        </div>
     </div>
 
     <header>
-        <div class="logo-text">VIBZ<span>.</span></div>
-        <i class="fa-solid fa-user-circle" style="font-size: 1.8rem; color: var(--accent);"></i>
+        <div class="user-profile">
+            <i class="fa-solid fa-bolt" style="color: var(--accent);"></i>
+        </div>
+        <i class="fa-solid fa-bell" style="font-size: 1.5rem;"></i>
     </header>
 
     <main>
-        <section class="app-container">
-            <div class="hero-text" data-aos="fade-up">
-                <h1>The Future of<br><span style="color: var(--accent);">Web Design</span></h1>
-                <p style="margin-top: 15px; color: #777; font-weight: 500;">Search or select a service to start.</p>
-            </div>
+        <section class="hero-section" data-aos="fade-up">
+            <h1>Create<br>Something<br><span style="color: var(--accent);">Iconic.</span></h1>
+        </section>
 
-            <div class="google-search-box" data-aos="fade-up" data-aos-delay="100">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="mainSearch" placeholder="Describe your dream website...">
-                <i class="fa-solid fa-microphone" style="color: var(--accent);"></i>
-            </div>
-
-            <div class="service-grid" data-aos="fade-up" data-aos-delay="200">
-                <a href="#" class="service-item">
-                    <div class="icon-circle"><i class="fa-solid fa-laptop-code"></i></div>
-                    <span>Web Dev</span>
-                </a>
-                <a href="#" class="service-item">
-                    <div class="icon-circle"><i class="fa-solid fa-pen-nib"></i></div>
-                    <span>Branding</span>
-                </a>
-                <a href="#" class="service-item">
-                    <div class="icon-circle"><i class="fa-solid fa-shop"></i></div>
-                    <span>Store</span>
-                </a>
-                <a href="#" class="service-item">
-                    <div class="icon-circle"><i class="fa-solid fa-rocket"></i></div>
-                    <span>SEO</span>
-                </a>
-                <a href="#" class="service-item">
-                    <div class="icon-circle"><i class="fa-solid fa-mobile-screen"></i></div>
-                    <span>Apps</span>
-                </a>
-                <a href="#" class="service-item">
-                    <div class="icon-circle"><i class="fa-solid fa-chart-line"></i></div>
-                    <span>Growth</span>
-                </a>
-                <a href="#" class="service-item">
-                    <div class="icon-circle"><i class="fa-solid fa-server"></i></div>
-                    <span>Hosting</span>
-                </a>
-                <a href="#" class="service-item">
-                    <div class="icon-circle"><i class="fa-solid fa-ellipsis"></i></div>
-                    <span>More</span>
-                </a>
+        <section class="search-container" data-aos="fade-up" data-aos-delay="100">
+            <div class="google-widget">
+                <i class="fa-brands fa-google" style="color: #4285F4; font-size: 1.5rem;"></i>
+                <input type="text" placeholder="Search for a service..." id="appSearch">
+                <i class="fa-solid fa-camera" style="color: #777;"></i>
             </div>
         </section>
 
-        <section class="content-card" data-aos="fade-up">
-            <span style="background: white; padding: 5px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; color: var(--accent); border: 1px solid var(--border);">FEATURED CASE STUDY</span>
-            <h2 style="margin-top: 15px; font-size: 1.8rem; font-weight: 800;">300% Growth for Elite Dental Group</h2>
-            <p style="margin-top: 10px; color: #666;">See how we redesigned a medical practice into a conversion machine.</p>
-            <a href="#" class="btn-primary">View Project</a>
-        </section>
+        <div class="app-grid" data-aos="fade-up" data-aos-delay="200">
+            <a href="#" class="action-tile tile-orange">
+                <i class="fa-solid fa-code"></i>
+                <span>Web<br>Development</span>
+            </a>
+            <a href="#" class="action-tile">
+                <i class="fa-solid fa-palette"></i>
+                <span>UI/UX<br>Design</span>
+            </a>
+            <a href="#" class="action-tile">
+                <i class="fa-solid fa-chart-pie"></i>
+                <span>Digital<br>Strategy</span>
+            </a>
+            <a href="#" class="action-tile">
+                <i class="fa-solid fa-bag-shopping"></i>
+                <span>E-Com<br>Elite</span>
+            </a>
+            <a href="#" class="action-tile">
+                <i class="fa-solid fa-bullhorn"></i>
+                <span>Ad<br>Campaigns</span>
+            </a>
+            <a href="#" class="action-tile">
+                <i class="fa-solid fa-mobile-button"></i>
+                <span>Native<br>Apps</span>
+            </a>
+            <a href="#" class="action-tile">
+                <i class="fa-solid fa-fire-flame-curved"></i>
+                <span>SEO<br>Rank</span>
+            </a>
+            <a href="javascript:void(0)" class="action-tile" id="moreBtn">
+                <i class="fa-solid fa-grid-2-plus"></i>
+                <span>Explore<br>All</span>
+            </a>
+        </div>
     </main>
+
+    <div class="overlay" id="overlay"></div>
+    <div id="drawer">
+        <div class="drawer-handle"></div>
+        <h2 style="font-weight: 800; font-size: 2rem; margin-bottom: 20px;">All Services</h2>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div style="padding: 20px; background: var(--gray-app); border-radius: 20px; font-weight: 700;">Content Writing</div>
+            <div style="padding: 20px; background: var(--gray-app); border-radius: 20px; font-weight: 700;">Cyber Security</div>
+            <div style="padding: 20px; background: var(--gray-app); border-radius: 20px; font-weight: 700;">Logo Design</div>
+            <div style="padding: 20px; background: var(--gray-app); border-radius: 20px; font-weight: 700;">Support</div>
+        </div>
+        <button onclick="toggleDrawer()" style="width: 100%; margin-top: 30px; padding: 20px; border-radius: 20px; border: none; background: var(--dark); color: white; font-weight: 800;">CLOSE</button>
+    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
     <script>
-        // Splash Loader Sequence
+        // Intro Reveal
         window.addEventListener('load', () => {
             setTimeout(() => {
                 document.body.classList.add('loaded');
                 if (typeof AOS !== 'undefined') {
-                    AOS.init({ duration: 800, once: true, easing: 'ease-out-quad' });
+                    AOS.init({ duration: 800, once: true });
                 }
-            }, 1500);
+            }, 1800);
         });
 
-        // Search Interaction
-        const searchInput = document.getElementById('mainSearch');
-        searchInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && searchInput.value !== "") {
-                // Simulate "Native App" loading
-                searchInput.parentElement.style.opacity = "0.5";
-                setTimeout(() => {
-                    localStorage.setItem('selectedNiche', searchInput.value.toLowerCase());
-                    window.location.href = 'https://www.vibz.co.uk/funnel.html';
-                }, 600);
+        // Drawer Logic
+        const moreBtn = document.getElementById('moreBtn');
+        const drawer = document.getElementById('drawer');
+        const overlay = document.getElementById('overlay');
+
+        function toggleDrawer() {
+            drawer.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+
+        moreBtn.addEventListener('click', toggleDrawer);
+        overlay.addEventListener('click', toggleDrawer);
+
+        // Search Redirect
+        const search = document.getElementById('appSearch');
+        search.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                window.location.href = 'https://www.vibz.co.uk/funnel.html';
             }
         });
     </script>
