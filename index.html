@@ -12,236 +12,246 @@
     <style>
         :root {
             --primary: #FF6B00;
-            --primary-light: #FF8533;
-            --bg-canvas: #FFFFFF;
-            --app-black: #0D0D0D;
-            --glass-border: rgba(255, 107, 0, 0.15);
+            --primary-glow: rgba(255, 107, 0, 0.3);
+            --bg: #FFFFFF;
+            --surface: rgba(255, 255, 255, 0.8);
+            --text-main: #000000;
+            --text-sub: #555555;
+            --border: rgba(255, 107, 0, 0.15);
         }
 
         * {
             margin: 0; padding: 0; box-sizing: border-box;
             -webkit-font-smoothing: antialiased;
             font-family: 'Plus Jakarta Sans', sans-serif;
-            -webkit-user-select: none;
         }
 
         body {
-            background: var(--bg-canvas);
-            color: var(--app-black);
-            overflow: hidden; /* Lock scroll for app feel */
-            height: 100vh;
-            width: 100vw;
-        }
-
-        /* --- THE LIQUID BACKGROUND --- */
-        .mesh-bg {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background-color: var(--bg);
             background: 
-                radial-gradient(circle at 0% 0%, rgba(255, 107, 0, 0.15) 0%, transparent 45%),
-                radial-gradient(circle at 100% 100%, rgba(255, 107, 0, 0.1) 0%, transparent 45%),
-                radial-gradient(circle at 50% 10%, rgba(255, 255, 255, 1) 0%, transparent 100%);
+                radial-gradient(at 0% 0%, rgba(255, 107, 0, 0.18) 0px, transparent 45%),
+                radial-gradient(at 100% 100%, rgba(255, 107, 0, 0.1) 0px, transparent 45%),
+                #FFFFFF;
+            color: var(--text-main);
+            overflow: hidden; /* App feel lock */
+            height: 100vh;
         }
 
-        /* --- STARTUP SEQUENCE --- */
+        /* --- SPLASH SKYROCKET --- */
         #splash-screen {
             position: fixed; inset: 0; background: #fff; z-index: 9999;
             display: flex; align-items: center; justify-content: center;
         }
-        .intro-brand { font-size: 5rem; font-weight: 900; letter-spacing: -4px; color: var(--primary); }
-        .intro-brand span { color: #000; }
-        .skyrocket-exit { animation: skyrocket 0.9s cubic-bezier(0.9, 0, 0.1, 1) forwards; }
+        .intro-logo { font-size: 5rem; font-weight: 900; letter-spacing: -4px; color: var(--primary); }
+        .intro-logo span { color: #000; }
+        .skyrocket-anim { animation: skyrocket 0.8s cubic-bezier(0.9, 0, 0.1, 1) forwards; }
         @keyframes skyrocket {
             0% { transform: scale(1); opacity: 1; }
             30% { transform: scale(0.9) translateY(20px); }
-            100% { transform: scale(0.5) translateY(-150vh); opacity: 0; }
+            100% { transform: scale(0.4) translateY(-150vh); opacity: 0; }
         }
 
-        /* --- APP SHELL --- */
-        .app-viewport {
-            height: 100vh; display: flex; flex-direction: column;
-            padding: env(safe-area-inset-top) 24px 120px;
-            max-width: 500px; margin: 0 auto; overflow-y: auto;
+        /* --- APP CONTAINER --- */
+        .app-shell {
+            max-width: 500px;
+            margin: 0 auto;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: env(safe-area-inset-top) 24px 120px 24px;
+            overflow-y: auto;
             scrollbar-width: none;
         }
-        .app-viewport::-webkit-scrollbar { display: none; }
+        .app-shell::-webkit-scrollbar { display: none; }
 
-        /* --- TOP UI --- */
-        .status-bar {
+        /* --- TOP BRANDING --- */
+        .app-header {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 20px 0; margin-bottom: 30px;
+            padding: 20px 0; margin-bottom: 20px;
         }
-        .system-time { font-weight: 800; font-size: 1.1rem; }
-        .agency-badge { 
-            background: var(--app-black); color: #fff; padding: 5px 12px; 
-            border-radius: 100px; font-size: 0.65rem; font-weight: 900; 
-            letter-spacing: 1px; display: flex; align-items: center; gap: 6px;
+        .brand-os { font-weight: 900; font-size: 1.6rem; letter-spacing: -1.5px; }
+        .brand-os span { color: var(--primary); }
+        .live-badge {
+            background: #000; color: #fff; padding: 6px 14px; border-radius: 100px;
+            font-size: 0.65rem; font-weight: 800; display: flex; align-items: center; gap: 8px;
         }
-        .dot { width: 6px; height: 6px; background: #00FF66; border-radius: 50%; box-shadow: 0 0 10px #00FF66; }
+        .pulse-dot { width: 6px; height: 6px; background: #00FF66; border-radius: 50%; box-shadow: 0 0 10px #00FF66; }
 
-        /* --- HERO: THE AGENCY STATEMENT --- */
-        .hero-wrap { margin-top: 10px; }
-        .hero-wrap h1 {
-            font-size: 5.8rem; font-weight: 900; line-height: 0.82; 
-            letter-spacing: -6px; margin-bottom: 15px;
+        /* --- HERO TEXT (MAX BOLD) --- */
+        .hero-section { margin-top: 20px; text-align: left; }
+        .hero-section h1 {
+            font-size: 5.8rem; font-weight: 900; line-height: 0.82; letter-spacing: -6px;
         }
-        .hero-wrap h1 span { color: var(--primary); }
-        .hero-desc { 
-            font-size: 1.1rem; font-weight: 700; color: #555; 
-            max-width: 280px; line-height: 1.3; margin-bottom: 40px;
+        .hero-section h1 span { color: var(--primary); }
+        .hero-section p {
+            font-size: 1.2rem; font-weight: 700; color: var(--text-sub);
+            margin: 20px 0 40px 0; max-width: 300px;
         }
 
-        /* --- GOOGLE-STYLE SEARCH MACHINE --- */
+        /* --- THE GOOGLE-PILL MACHINE --- */
+        .search-container { position: relative; width: 100%; margin-bottom: 20px; }
         .google-pill {
             background: #fff;
+            border: 2.5px solid var(--border);
             border-radius: 100px;
-            padding: 6px 6px 6px 24px;
+            padding: 8px 8px 8px 28px;
             display: flex; align-items: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.03);
-            border: 1px solid var(--glass-border);
-            margin-bottom: 50px;
+            box-shadow: 0 20px 50px rgba(255, 107, 0, 0.15);
             transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .google-pill:focus-within {
-            transform: translateY(-4px) scale(1.02);
-            box-shadow: 0 30px 60px rgba(255, 107, 0, 0.15);
+            transform: translateY(-5px);
             border-color: var(--primary);
+            box-shadow: 0 30px 60px rgba(255, 107, 0, 0.25);
         }
         .google-pill input {
-            flex: 1; border: none; outline: none; font-size: 1.05rem;
-            font-weight: 600; color: var(--app-black);
+            flex: 1; border: none; outline: none; font-size: 1.1rem;
+            font-weight: 700; color: var(--text-main); background: transparent;
         }
-        .search-trigger {
-            width: 48px; height: 48px; background: var(--primary);
+        .search-btn {
+            width: 54px; height: 54px; background: var(--primary);
             color: #fff; border: none; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; font-size: 1.2rem; transition: 0.2s;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            font-size: 1.3rem; transition: 0.2s;
         }
-        .search-trigger:active { transform: scale(0.85); }
+        .search-btn:active { transform: scale(0.9); }
 
-        /* --- SERVICES BENTO --- */
-        .services-scroll {
-            display: flex; gap: 12px; overflow-x: auto;
-            padding-bottom: 20px; scrollbar-width: none;
+        /* --- QUICK SERVICE PILLS --- */
+        .service-pills {
+            display: flex; gap: 10px; overflow-x: auto;
+            padding-bottom: 15px; scrollbar-width: none;
         }
-        .service-card {
-            min-width: 160px; background: #fff; border-radius: 28px;
-            padding: 24px; border: 1px solid var(--glass-border);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.02);
+        .service-pills::-webkit-scrollbar { display: none; }
+        .pill {
+            white-space: nowrap; background: #fff; border: 1.5px solid var(--border);
+            padding: 10px 20px; border-radius: 100px; font-size: 0.75rem;
+            font-weight: 900; color: var(--primary); cursor: pointer; transition: 0.3s;
         }
-        .service-card i { font-size: 1.8rem; color: var(--primary); margin-bottom: 15px; display: block;}
-        .service-card h4 { font-size: 0.8rem; font-weight: 900; text-transform: uppercase; }
+        .pill:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
 
-        /* --- NATIVE TAB BAR --- */
-        .tab-bar {
+        /* --- BENTO TILES --- */
+        .bento-wrap {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 30px;
+        }
+        .bento-card {
+            background: var(--surface); backdrop-filter: blur(10px);
+            border: 1px solid #fff; border-radius: 32px; padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+            transition: 0.3s;
+        }
+        .bento-card:active { transform: scale(0.96); }
+        .bento-card i { font-size: 2rem; color: var(--primary); margin-bottom: 12px; display: block; }
+        .bento-card h3 { font-size: 0.8rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* --- APP TAB BAR --- */
+        .app-dock {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-            width: calc(100% - 48px); max-width: 400px;
-            background: rgba(13, 13, 13, 0.95);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border-radius: 40px; padding: 10px;
+            width: calc(100% - 48px); max-width: 420px;
+            background: rgba(0, 0, 0, 0.92); backdrop-filter: blur(20px);
+            border-radius: 100px; padding: 12px;
             display: grid; grid-template-columns: repeat(4, 1fr);
-            z-index: 1000; box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+            z-index: 1000; box-shadow: 0 30px 60px rgba(0,0,0,0.3);
         }
-        .tab-item {
+        .dock-item {
             display: flex; flex-direction: column; align-items: center;
-            color: #777; text-decoration: none; padding: 10px 0; transition: 0.3s;
+            color: #777; text-decoration: none; transition: 0.3s;
         }
-        .tab-item.active { color: #fff; }
-        .tab-item i { font-size: 1.3rem; margin-bottom: 4px; }
-        .tab-item span { font-size: 0.6rem; font-weight: 800; text-transform: uppercase; }
+        .dock-item.active { color: #fff; }
+        .dock-item i { font-size: 1.3rem; margin-bottom: 4px; }
+        .dock-item span { font-size: 0.6rem; font-weight: 800; text-transform: uppercase; }
 
     </style>
 </head>
 <body>
 
-    <div class="mesh-bg"></div>
-
     <div id="splash-screen">
-        <div class="intro-brand" id="logo">VIBZ<span>.</span></div>
+        <div class="intro-logo" id="logo">VIBZ<span>.</span></div>
     </div>
 
-    <div class="app-viewport">
+    <div class="app-shell">
         
-        <div class="status-bar">
-            <div class="system-time" id="clock">12:00</div>
-            <div class="agency-badge">
-                <div class="dot"></div> AGENCY ONLINE
+        <header class="app-header">
+            <div class="brand-os">VIBZ<span>.</span></div>
+            <div class="live-badge">
+                <div class="pulse-dot"></div> AGENCY OS
             </div>
-        </div>
+        </header>
 
-        <section class="hero-wrap" data-aos="fade-up">
-            <h1>ELITE<br><span>SITE</span> OS.</h1>
-            <p class="hero-desc">Bespoke digital architecture for high-performance brands.</p>
+        <section class="hero-section">
+            <h1 data-aos="fade-right">ELITE<br><span>SITE</span> OS.</h1>
+            <p data-aos="fade-up" data-aos-delay="200">The 4K standard for high-performance brands.</p>
         </section>
 
-        <div class="google-pill" data-aos="fade-up" data-aos-delay="200">
-            <input type="text" id="nicheInput" placeholder="Enter your industry..." onkeydown="if(event.key==='Enter') runLaunch()">
-            <button class="search-trigger" onclick="runLaunch()">
-                <i class="fa-solid fa-arrow-up"></i>
-            </button>
+        <div class="search-container" data-aos="zoom-in" data-aos-delay="400">
+            <div class="google-pill">
+                <input type="text" id="funnelInput" placeholder="Enter your business niche..." onkeydown="if(event.key==='Enter') executeLaunch()">
+                <button class="search-btn" onclick="executeLaunch()">
+                    <i class="fa-solid fa-arrow-up"></i>
+                </button>
+            </div>
         </div>
 
-        <div class="services-scroll" data-aos="fade-left" data-aos-delay="400">
-            <div class="service-card">
-                <i class="fa-solid fa-pencil-ruler"></i>
-                <h4>UI/UX</h4>
+        <div class="service-pills" data-aos="fade-left" data-aos-delay="500">
+            <div class="pill">Web Design</div>
+            <div class="pill">Site Maintenance</div>
+            <div class="pill">4K Hosting</div>
+            <div class="pill">Ads & SEO</div>
+        </div>
+
+        <div class="bento-wrap">
+            <div class="bento-card" data-aos="fade-up" data-aos-delay="600">
+                <i class="fa-solid fa-microchip"></i>
+                <h3>Fast Build</h3>
             </div>
-            <div class="service-card">
-                <i class="fa-solid fa-code"></i>
-                <h4>Dev</h4>
-            </div>
-            <div class="service-card">
-                <i class="fa-solid fa-bolt-lightning"></i>
-                <h4>Ads</h4>
+            <div class="bento-card" data-aos="fade-up" data-aos-delay="700">
+                <i class="fa-solid fa-globe"></i>
+                <h3>Deployment</h3>
             </div>
         </div>
 
     </div>
 
-    <nav class="tab-bar">
-        <a href="#" class="tab-item active">
-            <i class="fa-solid fa-compass"></i>
-            <span>Discover</span>
+    <nav class="app-dock">
+        <a href="#" class="dock-item active">
+            <i class="fa-solid fa-house-user"></i>
+            <span>Home</span>
         </a>
-        <a href="#services" class="tab-item">
-            <i class="fa-solid fa-layer-group"></i>
+        <a href="#" class="dock-item">
+            <i class="fa-solid fa-grid-2"></i>
+            <span>OS</span>
+        </a>
+        <a href="https://www.vibz.co.uk/funnel.html" class="dock-item">
+            <i class="fa-solid fa-plus-circle"></i>
             <span>Build</span>
         </a>
-        <a href="https://www.vibz.co.uk/funnel.html" class="tab-item">
-            <i class="fa-solid fa-circle-nodes"></i>
-            <span>Connect</span>
-        </a>
-        <a href="mailto:info@vibz.co.uk" class="tab-item">
-            <i class="fa-solid fa-user-gear"></i>
-            <span>Account</span>
+        <a href="mailto:info@vibz.co.uk" class="dock-item">
+            <i class="fa-solid fa-envelope"></i>
+            <span>Contact</span>
         </a>
     </nav>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
     <script>
-        // Clock Sync
-        function updateClock() {
-            const now = new Date();
-            document.getElementById('clock').innerText = now.getHours() + ":" + (now.getMinutes()<10?'0':'') + now.getMinutes();
-        }
-        setInterval(updateClock, 1000);
-        updateClock();
-
         // Startup Logic
         window.addEventListener('load', () => {
+            const logo = document.getElementById('logo');
+            const splash = document.getElementById('splash-screen');
+
             setTimeout(() => {
-                document.getElementById('logo').classList.add('skyrocket-exit');
+                logo.classList.add('skyrocket-anim');
                 setTimeout(() => {
-                    document.getElementById('splash-screen').style.opacity = '0';
+                    splash.style.transition = 'opacity 0.6s ease';
+                    splash.style.opacity = '0';
                     setTimeout(() => {
-                        document.getElementById('splash-screen').style.display = 'none';
+                        splash.style.display = 'none';
                         AOS.init({ duration: 1000, once: true });
-                    }, 500);
-                }, 600);
+                    }, 600);
+                }, 500);
             }, 1000);
         });
 
-        function runLaunch() {
-            const val = document.getElementById('nicheInput').value;
+        function executeLaunch() {
+            const val = document.getElementById('funnelInput').value;
             if(val) {
                 localStorage.setItem('selectedNiche', val.toLowerCase());
                 window.location.href = 'https://www.vibz.co.uk/funnel.html';
