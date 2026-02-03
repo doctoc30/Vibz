@@ -3,297 +3,332 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VIBZ App</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>VIBZ | Elite Design Agency</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
     
     <style>
         :root {
-            --accent: #FF6B00; /* Your Light Orange */
-            --accent-soft: rgba(255, 107, 0, 0.1);
-            --bg: #F8F9FA;
-            --card-bg: #FFFFFF;
-            --text-main: #202124;
-            --text-secondary: #5F6368;
-            --border: #DADCE0;
-            --shadow: 0 2px 6px rgba(0,0,0,0.08);
+            --bg: #ffffff;
+            --accent: #FF6B00;
+            --accent-light: #FFF5EE;
+            --accent-gradient: linear-gradient(135deg, #FF6B00 0%, #FF8533 100%);
+            --dark: #1A1A1A;
+            --text-gray: #666666;
+            --border: #F0F0F0;
+            --glass: rgba(255, 255, 255, 0.8);
+            --shadow-sm: 0 4px 12px rgba(255, 107, 0, 0.08);
+            --shadow-lg: 0 20px 40px rgba(255, 107, 0, 0.15);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
+        
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg);
-            color: var(--text-main);
-            padding-bottom: 90px;
+            color: var(--dark);
+            overflow-x: hidden;
+            line-height: 1.6;
         }
 
-        /* ================= GOOGLE STYLE TOP BAR ================= */
-        .app-header {
+        /* ==== 1. APP INTRO REVEAL ==== */
+        #app-loader {
             position: fixed;
-            top: 0;
-            width: 100%;
-            padding: 12px 16px;
-            background: var(--bg);
+            inset: 0;
+            background: var(--dark);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 1s cubic-bezier(0.85, 0, 0.15, 1);
+        }
+
+        .loader-logo {
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--accent);
+            letter-spacing: -2px;
+            transform: scale(0.8);
+            opacity: 0;
+            animation: logoEntrance 1.2s forwards cubic-bezier(0.17, 0.67, 0.83, 0.67);
+        }
+
+        @keyframes logoEntrance {
+            0% { transform: scale(0.5); opacity: 0; filter: blur(10px); }
+            50% { opacity: 1; filter: blur(0); }
+            100% { transform: scale(1.1); opacity: 1; }
+        }
+
+        .loader-up { transform: translateY(-100%); }
+
+        /* ==== 2. NATIVE NAV BAR ==== */
+        nav {
+            position: fixed;
+            top: 0; width: 100%;
+            height: 70px;
+            padding: 0 6%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             z-index: 1000;
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo { font-weight: 900; font-size: 1.6rem; color: var(--dark); letter-spacing: -1px; }
+        .logo span { color: var(--accent); }
+
+        /* ==== 3. GOOGLE-STYLE HERO SEARCH ==== */
+        .hero {
+            padding: 140px 6% 80px;
+            text-align: center;
+            background: radial-gradient(circle at 50% 0%, var(--accent-light) 0%, #ffffff 70%);
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 40px;
+            letter-spacing: -3px;
+        }
+
+        /* The Advanced Search Bar */
+        .search-container {
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
+            transform: translateY(20px);
+            opacity: 0;
+            animation: fadeInUp 0.8s 1.5s forwards;
         }
 
         .google-search-bar {
             display: flex;
             align-items: center;
-            background: var(--card-bg);
-            padding: 10px 16px;
-            border-radius: 24px;
-            box-shadow: var(--shadow);
+            background: #fff;
+            padding: 8px 12px 8px 24px;
+            border-radius: 100px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05), 0 10px 30px rgba(0,0,0,0.03);
             border: 1px solid var(--border);
-            gap: 12px;
+            transition: all 0.3s ease;
         }
 
-        .google-search-bar i.fa-magnifying-glass { color: #4285F4; } /* Google Blue */
+        .google-search-bar:focus-within {
+            box-shadow: var(--shadow-lg);
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .google-search-bar i { color: #9aa0a6; font-size: 1.2rem; }
         
-        .search-input {
+        .google-search-bar input {
             flex: 1;
             border: none;
             outline: none;
-            font-size: 16px;
-            color: var(--text-main);
-            background: transparent;
+            padding: 15px;
+            font-size: 1.1rem;
+            font-family: inherit;
         }
 
-        .brand-dot {
-            width: 32px;
-            height: 32px;
-            background: var(--accent);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .search-btn {
+            background: var(--accent-gradient);
             color: white;
-            font-weight: 800;
-            font-size: 14px;
-            box-shadow: 0 2px 4px rgba(255, 107, 0, 0.3);
-        }
-
-        /* ================= CHIP CATEGORIES ================= */
-        .chip-container {
-            display: flex;
-            overflow-x: auto;
-            padding: 80px 16px 12px;
-            gap: 8px;
-            scrollbar-width: none;
-        }
-
-        .chip-container::-webkit-scrollbar { display: none; }
-
-        .chip {
-            padding: 8px 16px;
-            background: var(--card-bg);
-            border: 1px solid var(--border);
+            border: none;
+            padding: 12px 28px;
             border-radius: 100px;
-            white-space: nowrap;
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text-secondary);
-            transition: 0.2s;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
         }
 
-        .chip.active {
-            background: var(--accent-soft);
-            color: var(--accent);
-            border-color: var(--accent);
-        }
+        .search-btn:hover { opacity: 0.9; transform: scale(1.02); }
 
-        /* ================= APP CONTENT AREA ================= */
-        .app-shell {
-            padding: 0 16px;
-        }
+        /* ==== 4. APP CARDS (WOW FACTOR) ==== */
+        section { padding: 100px 6%; }
 
         .section-label {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            margin: 16px 0 12px;
-            display: block;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .service-card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            margin-bottom: 16px;
-            overflow: hidden;
-            border: 1px solid var(--border);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            transition: transform 0.1s;
-        }
-
-        .service-card:active { transform: scale(0.98); }
-
-        .card-banner {
-            height: 160px;
-            background: #E8EAED;
-            background-size: cover;
-            background-position: center;
-        }
-
-        .card-body { padding: 16px; }
-
-        .card-title {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
-        .card-desc {
-            font-size: 14px;
-            color: var(--text-secondary);
-            margin-bottom: 12px;
-        }
-
-        .card-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-top: 1px solid #F1F3F4;
-            padding-top: 12px;
-        }
-
-        .price-tag {
+            display: inline-block;
+            background: var(--accent-light);
             color: var(--accent);
-            font-weight: 700;
-            font-size: 16px;
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
         }
 
-        /* ================= NATIVE TAB BAR ================= */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            background: #FFFFFF;
-            border-top: 1px solid var(--border);
+        .grid-native {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
-            z-index: 1000;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
         }
 
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-decoration: none;
-            color: var(--text-secondary);
-            font-size: 11px;
-            font-weight: 500;
-            gap: 4px;
+        .app-card {
+            background: #fff;
+            border-radius: 30px;
+            padding: 40px;
+            border: 1px solid var(--border);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
         }
 
-        .nav-item.active { color: var(--accent); }
-        .nav-item i { font-size: 20px; }
-
-        .fab {
-            position: fixed;
-            bottom: 80px;
-            right: 16px;
-            width: 56px;
-            height: 56px;
-            background: var(--accent);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            box-shadow: 0 4px 12px rgba(255, 107, 0, 0.4);
-            font-size: 24px;
-            z-index: 999;
+        .app-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--accent);
+            box-shadow: var(--shadow-lg);
         }
 
+        .app-card i {
+            font-size: 2.5rem;
+            margin-bottom: 25px;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Mobile specific native tweaks */
+        @media (max-width: 768px) {
+            nav { padding: 0 5%; }
+            .hero h1 { font-size: 2.8rem; }
+            .google-search-bar { padding: 5px 8px 5px 15px; }
+            .google-search-bar input { padding: 10px; font-size: 1rem; }
+            .search-btn { padding: 10px 18px; font-size: 0.9rem; }
+            .app-card { padding: 30px; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="app-header">
-        <div class="google-search-bar">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" class="search-input" id="searchApp" placeholder="Search services...">
-            <div class="brand-dot">V</div>
+    <div id="app-loader">
+        <div class="loader-logo">VIBZ<span>.</span></div>
+    </div>
+
+    <nav>
+        <div class="logo">VIBZ<span>.</span></div>
+        <div style="display: flex; gap: 15px; align-items: center;">
+            <a href="#" class="search-btn" style="padding: 10px 20px; font-size: 0.8rem;">START PROJECT</a>
+            <i class="fa-solid fa-bars-staggered" style="font-size: 1.5rem; cursor: pointer;"></i>
         </div>
-    </div>
-
-    <div class="chip-container">
-        <div class="chip active">All Services</div>
-        <div class="chip">Web Design</div>
-        <div class="chip">SEO</div>
-        <div class="chip">Branding</div>
-        <div class="chip">E-commerce</div>
-        <div class="chip">App Dev</div>
-    </div>
-
-    <div class="app-shell">
-        <span class="section-label">Recommended for you</span>
-
-        <div class="service-card" onclick="openService('Barber')">
-            <div class="card-banner" style="background-image: url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&w=600&q=80')"></div>
-            <div class="card-body">
-                <h3 class="card-title">Barber Pro Website</h3>
-                <p class="card-desc">Full booking system and custom landing page.</p>
-                <div class="card-footer">
-                    <div class="rating"><i class="fa-solid fa-star" style="color:#FBBC04"></i> 5.0</div>
-                    <div class="price-tag">£495</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="service-card" onclick="openService('Dentist')">
-            <div class="card-banner" style="background-image: url('https://images.unsplash.com/photo-1588776814546-1ffce47267a5?auto=format&fit=crop&w=600&q=80')"></div>
-            <div class="card-body">
-                <h3 class="card-title">Medical Elite Portal</h3>
-                <p class="card-desc">HIPAA compliant patient intake and scheduling.</p>
-                <div class="card-footer">
-                    <div class="rating"><i class="fa-solid fa-star" style="color:#FBBC04"></i> 4.9</div>
-                    <div class="price-tag">£995</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="fab">
-        <i class="fa-solid fa-plus"></i>
-    </div>
-
-    <nav class="bottom-nav">
-        <a href="#" class="nav-item active">
-            <i class="fa-solid fa-house-variant"></i>
-            <span>Home</span>
-        </a>
-        <a href="#" class="nav-item">
-            <i class="fa-solid fa-compass"></i>
-            <span>Explore</span>
-        </a>
-        <a href="#" class="nav-item">
-            <i class="fa-solid fa-bell"></i>
-            <span>Alerts</span>
-        </a>
-        <a href="#" class="nav-item">
-            <i class="fa-solid fa-circle-user"></i>
-            <span>Account</span>
-        </a>
     </nav>
 
+    <main id="main-content">
+        <section class="hero">
+            <span class="section-label" data-aos="fade-down">The Future of Web Design</span>
+            <h1 data-aos="fade-up" data-aos-delay="200">Building Digital<br><span style="color: var(--accent)">Masterpieces</span></h1>
+            
+            <div class="search-container">
+                <div class="google-search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="bizInput" placeholder="What is your business niche? (e.g. Dental, Real Estate)">
+                    <button class="search-btn" onclick="handleSearch()">Generate Strategy</button>
+                </div>
+                <p style="margin-top: 20px; color: var(--text-gray); font-size: 0.9rem;">
+                    Try: <span style="text-decoration: underline; cursor: pointer;">"Elite Barber Shop"</span> or <span style="text-decoration: underline; cursor: pointer;">"Private Clinic"</span>
+                </p>
+            </div>
+        </section>
+
+        <section id="services">
+            <div style="text-align: center; margin-bottom: 60px;">
+                <span class="section-label">Our Ecosystem</span>
+                <h2 style="font-size: 2.5rem; font-weight: 900;">Native Performance. Web Scale.</h2>
+            </div>
+
+            <div class="grid-native">
+                <div class="app-card" data-aos="fade-up">
+                    <i class="fas fa-bolt"></i>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 15px;">Hyper-Speed</h3>
+                    <p style="color: var(--text-gray);">Native-grade optimization ensures your site loads in under 0.8 seconds. Instant interaction, zero friction.</p>
+                </div>
+
+                <div class="app-card" data-aos="fade-up" data-aos-delay="100">
+                    <i class="fas fa-fingerprint"></i>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 15px;">Elite UI/UX</h3>
+                    <p style="color: var(--text-gray);">Custom interfaces designed to make users feel like they're using a premium iOS/Android application.</p>
+                </div>
+
+                <div class="app-card" data-aos="fade-up" data-aos-delay="200">
+                    <i class="fas fa-chart-line"></i>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 15px;">Conversion AI</h3>
+                    <p style="color: var(--text-gray);">Built-in lead intelligence that tracks user behavior and optimizes layouts for maximum ROI.</p>
+                </div>
+            </div>
+        </section>
+
+        <section style="background: var(--accent-light); border-radius: 50px; margin: 0 6%; padding: 60px;">
+            <div class="grid-native" style="text-align: center;">
+                <div>
+                    <h2 style="font-size: 3rem; color: var(--accent);">99.9%</h2>
+                    <p style="font-weight: 700; text-transform: uppercase; font-size: 0.8rem;">Uptime Guarantee</p>
+                </div>
+                <div>
+                    <h2 style="font-size: 3rem; color: var(--accent);">300%</h2>
+                    <p style="font-weight: 700; text-transform: uppercase; font-size: 0.8rem;">Avg. Lead Increase</p>
+                </div>
+                <div>
+                    <h2 style="font-size: 3rem; color: var(--accent);">15+</h2>
+                    <p style="font-weight: 700; text-transform: uppercase; font-size: 0.8rem;">Industries Dominated</p>
+                </div>
+            </div>
+        </section>
+
+        <footer style="padding: 100px 6%; text-align: center;">
+            <h2 style="font-size: 3rem; font-weight: 900; margin-bottom: 30px;">Ready to Evolve?</h2>
+            <a href="mailto:info@vibz.co.uk" class="search-btn" style="padding: 20px 50px; font-size: 1.1rem; display: inline-block; text-decoration: none;">Get Started Now</a>
+            <p style="margin-top: 50px; opacity: 0.5; font-size: 0.8rem;">© 2026 VIBZ COLLECTIVE. ALL RIGHTS RESERVED.</p>
+        </footer>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
     <script>
-        function openService(niche) {
-            localStorage.setItem('selectedNiche', niche.toLowerCase());
-            window.location.href = 'https://www.vibz.co.uk/funnel.html';
+        // Handle App Loading Intro
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const loader = document.getElementById('app-loader');
+                loader.classList.add('loader-up');
+                
+                // Initialize AOS after loader is gone
+                setTimeout(() => {
+                    AOS.init({ duration: 1000, once: true });
+                    loader.style.display = 'none';
+                }, 1000);
+            }, 2000); // 2 second dramatic splash
+        });
+
+        // Search Logic
+        function handleSearch() {
+            const val = document.getElementById('bizInput').value;
+            if(val) {
+                // "Native-like" feedback
+                document.querySelector('.search-btn').innerText = "Analyzing...";
+                setTimeout(() => {
+                    localStorage.setItem('selectedNiche', val.toLowerCase());
+                    window.location.href = 'https://www.vibz.co.uk/funnel.html';
+                }, 800);
+            } else {
+                document.getElementById('bizInput').focus();
+            }
         }
 
-        // Chip selection logic
-        document.querySelectorAll('.chip').forEach(chip => {
-            chip.addEventListener('click', function() {
-                document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
+        // Add smooth haptic-like feel to scroll
+        let isScrolling;
+        window.addEventListener('scroll', () => {
+            window.clearTimeout(isScrolling);
+            document.body.style.pointerEvents = 'none'; // Smooths out high refresh rate screens
+            isScrolling = setTimeout(() => {
+                document.body.style.pointerEvents = 'auto';
+            }, 66);
+        }, false);
     </script>
 </body>
 </html>
