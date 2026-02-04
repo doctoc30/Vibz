@@ -13,7 +13,7 @@
             --primary-light: #FFF5EE;
             --bg: #FFFFFF;
             --text: #121212;
-            --card-bg: rgba(255, 255, 255, 0.9);
+            --menu-bg: rgba(255, 245, 238, 0.95); /* Light Orange App Theme */
             --safe-top: env(safe-area-inset-top);
             --safe-bottom: env(safe-area-inset-bottom);
         }
@@ -31,7 +31,7 @@
             overflow: hidden;
         }
 
-        /* ==== 1. BOLD LOGO BOOT SEQUENCE ==== */
+        /* ==== 1. APP LOADER ==== */
         #app-loader {
             position: fixed;
             inset: 0;
@@ -48,71 +48,74 @@
             font-weight: 900;
             color: var(--primary);
             letter-spacing: -5px;
-            animation: pulse 1s infinite alternate;
-        }
-        
-        .loader-content span { color: #000000; }
-        @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.1); } }
-
-        /* ==== 2. EXPLOSION MENU (HIGHEST Z-INDEX) ==== */
-        #explosion {
-            position: fixed;
-            bottom: 40px;
-            right: 40px;
-            width: 10px;
-            height: 10px;
-            background: var(--primary);
-            border-radius: 50%;
-            z-index: 10000;
-            transform: scale(0);
-            transition: transform 0.6s cubic-bezier(0.9, 0, 0.1, 1);
-            pointer-events: none;
         }
 
-        #explosion.active {
-            transform: scale(300);
-            pointer-events: auto;
-        }
-
-        #menuLinks {
+        /* ==== 2. NATIVE APP MENU (SLIDE-UP SHEET) ==== */
+        #app-menu-layer {
             position: fixed;
             inset: 0;
-            z-index: 10001;
-            display: none;
+            background: var(--menu-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            z-index: 5000;
+            display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 40px;
+            gap: 20px;
+            transform: translateY(100%); /* Start off-screen */
+            transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+            border-top-left-radius: 40px;
+            border-top-right-radius: 40px;
         }
 
-        #menuLinks.show { display: flex; }
-
-        .menu-link {
-            font-size: 3.5rem;
-            font-weight: 900;
-            color: white;
-            text-decoration: none;
-            letter-spacing: -2px;
-            opacity: 0;
-            transform: translateY(30px);
-            transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        #menuLinks.show .menu-link {
-            opacity: 1;
+        #app-menu-layer.open {
             transform: translateY(0);
         }
 
-        .close-menu {
+        /* Handle bar at top of menu to look like an app drawer */
+        .menu-handle {
             position: absolute;
-            top: 50px;
-            right: 40px;
-            color: white;
-            font-size: 2.5rem;
-            cursor: pointer;
+            top: 15px;
+            width: 40px;
+            height: 5px;
+            background: rgba(0,0,0,0.1);
+            border-radius: 10px;
         }
 
-        /* ==== 3. APP SHELL ==== */
+        .menu-item {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--primary);
+            text-decoration: none;
+            letter-spacing: -1.5px;
+            padding: 15px 40px;
+            border-radius: 20px;
+            width: 80%;
+            text-align: center;
+            transition: 0.3s;
+        }
+
+        .menu-item:active {
+            background: rgba(255, 107, 0, 0.1);
+            transform: scale(0.95);
+        }
+
+        .close-app-menu {
+            margin-top: 40px;
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 10px 20px rgba(255, 107, 0, 0.3);
+        }
+
+        /* ==== 3. MAIN APP INTERFACE ==== */
         #app-container {
             height: 100vh;
             display: flex;
@@ -126,12 +129,10 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            z-index: 10;
         }
 
         .app-logo { font-size: 1.8rem; font-weight: 900; letter-spacing: -1.5px; color: var(--primary); }
-        .app-logo span { color: #000000; }
-
+        
         .content-scroll {
             flex: 1;
             overflow-y: auto;
@@ -140,94 +141,46 @@
 
         .hero-area {
             text-align: center;
-            padding: 80px 0 40px; 
+            padding: 60px 0 40px; 
         }
 
         .hero-area h1 {
-            font-size: 3.8rem;
+            font-size: 3.5rem;
             font-weight: 900;
             line-height: 0.9;
             letter-spacing: -3px;
-            margin-bottom: 12px;
         }
 
         .typewriter-container {
             font-size: 1.8rem;
             font-weight: 800;
             color: var(--primary);
-            height: 2.2rem;
-            margin-bottom: 25px;
+            height: 2.5rem;
+            margin-top: 10px;
             text-transform: capitalize;
         }
 
         .search-container {
             background: #fff;
             border-radius: 24px;
-            padding: 10px;
+            padding: 8px;
             display: flex;
             align-items: center;
             box-shadow: 0 20px 40px rgba(255, 107, 0, 0.15);
+            margin: 40px auto 80px; 
             max-width: 500px;
-            margin: 0 auto 100px; 
         }
 
         .search-container input {
             flex: 1;
             border: none;
             outline: none;
-            padding: 15px;
-            font-size: 1.2rem;
-            font-weight: 700;
+            padding: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
         }
 
-        .search-icon-btn {
-            width: 55px; height: 55px;
-            background: var(--primary);
-            border-radius: 18px;
-            display: flex; align-items: center; justify-content: center;
-            color: #fff; border: none; cursor: pointer;
-        }
-
-        .section-header {
-            font-size: 0.8rem;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: var(--primary);
-            margin-bottom: 20px;
-            display: block;
-        }
-
-        .app-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        .app-tile {
-            background: var(--card-bg);
-            padding: 25px 20px;
-            border-radius: 30px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            transition: 0.3s;
-        }
-
-        .tile-icon {
-            width: 50px; height: 50px;
-            background: var(--primary);
-            color: white;
-            border-radius: 15px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.2rem;
-        }
-
-        .app-tile h3 { font-size: 1.1rem; font-weight: 900; }
-        .app-tile p { font-size: 0.8rem; font-weight: 600; color: #777; }
-        .full-tile { grid-column: span 2; flex-direction: row; align-items: center; }
-
-        /* ==== 4. DOCK ==== */
+        /* ==== 4. APP DOCK ==== */
         .app-dock {
             position: fixed;
             bottom: 25px;
@@ -248,24 +201,22 @@
             display: flex; flex-direction: column; align-items: center;
             color: #A0A0A0; text-decoration: none; gap: 4px;
             background: none; border: none; cursor: pointer;
-            width: 60px;
         }
 
         .dock-btn.active { color: var(--primary); }
-        .dock-btn i { font-size: 1.5rem; }
-        .dock-btn span { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; }
+        .dock-btn i { font-size: 1.4rem; }
+        .dock-btn span { font-size: 0.6rem; font-weight: 800; text-transform: uppercase; }
 
         .dock-center {
-            width: 65px; height: 65px;
+            width: 60px; height: 60px;
             background: var(--primary);
             border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            color: #fff; font-size: 1.8rem;
-            margin-top: -50px;
-            border: 6px solid var(--primary-light);
+            color: #fff; font-size: 1.5rem;
+            margin-top: -45px;
+            border: 5px solid var(--primary-light);
             box-shadow: 0 10px 20px rgba(255, 107, 0, 0.3);
         }
-
     </style>
 </head>
 <body>
@@ -274,12 +225,15 @@
         <div class="loader-content">VIBZ<span>.</span></div>
     </div>
 
-    <div id="explosion"></div>
-    <div id="menuLinks">
-        <div class="close-menu" onclick="toggleMenu()"><i class="fa-solid fa-xmark"></i></div>
-        <a href="#" class="menu-link" style="transition-delay: 0.1s;">About Us</a>
-        <a href="#" class="menu-link" style="transition-delay: 0.2s;">Services</a>
-        <a href="#" class="menu-link" style="transition-delay: 0.3s;">Contact</a>
+    <div id="app-menu-layer">
+        <div class="menu-handle"></div>
+        <a href="#" class="menu-item" onclick="toggleAppMenu()">About us</a>
+        <a href="#" class="menu-item" onclick="toggleAppMenu()">Services</a>
+        <a href="#" class="menu-item" onclick="toggleAppMenu()">Contact</a>
+        
+        <div class="close-app-menu" onclick="toggleAppMenu()">
+            <i class="fa-solid fa-chevron-down"></i>
+        </div>
     </div>
 
     <div id="app-container">
@@ -290,98 +244,67 @@
 
         <main class="content-scroll">
             <div class="hero-area">
-                <h1>We dont just say we<br>building?</h1>
+                <h1>We don't just say we<br>building?</h1>
                 <div class="typewriter-container"><span id="typewriter"></span></div>
+                
                 <div class="search-container">
-                    <input type="text" id="mainSearch" placeholder="Enter Business Industry..." onkeypress="handleEnter(event)">
-                    <button class="search-icon-btn" onclick="triggerFlow()">
-                        <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="mainSearch" placeholder="Enter Business Industry...">
+                    <button class="dock-center" style="margin-top: 0; width: 50px; height: 50px;" onclick="alert('Vibing...')">
+                        <i class="fa-solid fa-magnifying-glass" style="font-size: 1rem;"></i>
                     </button>
                 </div>
             </div>
 
-            <span class="section-header">Our Capabilities</span>
-            <div class="app-grid">
-                <div class="app-tile" onclick="triggerFlow()">
-                    <div class="tile-icon"><i class="fa-solid fa-plus-circle"></i></div>
-                    <h3>New Website</h3>
-                    <p>Custom build</p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div style="background: white; padding: 25px; border-radius: 25px;">
+                    <i class="fa-solid fa-bolt" style="color: var(--primary); margin-bottom: 10px;"></i>
+                    <h3 style="font-size: 1rem;">New Site</h3>
                 </div>
-                <div class="app-tile" onclick="triggerFlow()">
-                    <div class="tile-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
-                    <h3>Brand Re-design</h3>
-                    <p>Modernize</p>
-                </div>
-                <div class="app-tile full-tile" onclick="triggerFlow()">
-                    <div class="tile-icon"><i class="fa-solid fa-chart-line"></i></div>
-                    <div style="margin-left: 10px;">
-                        <h3>SEO & Maintenance</h3>
-                        <p>Fully managed digital growth</p>
-                    </div>
+                <div style="background: white; padding: 25px; border-radius: 25px;">
+                    <i class="fa-solid fa-layer-group" style="color: var(--primary); margin-bottom: 10px;"></i>
+                    <h3 style="font-size: 1rem;">Hosting</h3>
                 </div>
             </div>
         </main>
 
         <nav class="app-dock">
-            <div class="dock-btn active"><i class="fa-solid fa-house-chimney"></i><span>Home</span></div>
+            <div class="dock-btn active"><i class="fa-solid fa-house"></i><span>Home</span></div>
             <div class="dock-btn"><i class="fa-solid fa-compass"></i><span>Explore</span></div>
-            <div class="dock-center" onclick="triggerFlow()"><i class="fa-solid fa-bolt"></i></div>
-            <div class="dock-btn"><i class="fa-solid fa-briefcase"></i><span>Portal</span></div>
-            <div class="dock-btn" id="menuTrigger" onclick="toggleMenu()">
-                <i class="fa-solid fa-bars"></i>
+            <div class="dock-center"><i class="fa-solid fa-plus"></i></div>
+            <div class="dock-btn"><i class="fa-solid fa-wallet"></i><span>Portal</span></div>
+            <div class="dock-btn" onclick="toggleAppMenu()">
+                <i class="fa-solid fa-grip-lines"></i>
                 <span>Menu</span>
             </div>
         </nav>
     </div>
 
     <script>
-        // BOOTING
+        // BOOTING SEQUENCE
         window.addEventListener('load', () => {
             setTimeout(() => {
                 document.getElementById('app-loader').style.transform = 'translateY(-100%)';
                 document.getElementById('app-container').style.opacity = '1';
                 startTypewriter();
-            }, 1800);
+            }, 1200);
         });
 
-        // DATA
-        const words = ["barber", "dentist", "driving school", "phone repair", "accountant", "estate agent", "plumber", "electrician", "gym", "lawyer", "bakery", "vet", "physio", "mechanic"];
-        let wordIndex = 0, charIndex = 0, isDeleting = false;
-        const typewriterEl = document.getElementById('typewriter');
+        // MENU TOGGLE
+        function toggleAppMenu() {
+            const menu = document.getElementById('app-menu-layer');
+            menu.classList.toggle('open');
+        }
 
+        // TYPEWRITER (Randomized from 100 industries)
+        const industries = ["barber", "dentist", "driving school", "phone repair", "accountant", "estate agent", "plumber", "gym", "lawyer", "bakery", "vet", "physio", "mechanic", "florist", "coffee shop", "tattoo artist", "tutor", "architect"];
+        let i = 0, j = 0, isDel = false;
         function startTypewriter() {
-            const currentWord = words[wordIndex % words.length];
-            const typeSpeed = isDeleting ? 40 : 80;
-            if (!isDeleting && charIndex < currentWord.length) {
-                typewriterEl.textContent += currentWord.charAt(charIndex++);
-            } else if (isDeleting && charIndex > 0) {
-                typewriterEl.textContent = currentWord.substring(0, --charIndex);
-            } else {
-                isDeleting = !isDeleting;
-                if (!isDeleting) wordIndex = Math.floor(Math.random() * words.length);
-            }
-            setTimeout(startTypewriter, isDeleting && charIndex === 0 ? 800 : typeSpeed);
+            const word = industries[i % industries.length];
+            document.getElementById('typewriter').textContent = isDel ? word.substring(0, j--) : word.substring(0, j++);
+            if (!isDel && j > word.length) { isDel = true; setTimeout(startTypewriter, 1500); }
+            else if (isDel && j < 0) { isDel = false; i = Math.floor(Math.random()*industries.length); setTimeout(startTypewriter, 500); }
+            else setTimeout(startTypewriter, isDel ? 50 : 100);
         }
-
-        // MENU EXPLOSION TOGGLE
-        function toggleMenu() {
-            const explosion = document.getElementById('explosion');
-            const links = document.getElementById('menuLinks');
-            
-            if (!explosion.classList.contains('active')) {
-                explosion.classList.add('active');
-                setTimeout(() => links.classList.add('show'), 300);
-            } else {
-                links.classList.remove('show');
-                setTimeout(() => explosion.classList.remove('active'), 200);
-            }
-        }
-
-        function triggerFlow() {
-            alert('Initiating Vibe Flow...');
-        }
-
-        function handleEnter(e) { if (e.key === 'Enter') triggerFlow(); }
     </script>
 </body>
 </html>
