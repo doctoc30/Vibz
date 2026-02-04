@@ -90,11 +90,20 @@
         }
 
         .hero-area h1 {
-            font-size: 3.5rem;
+            font-size: 2.8rem;
             font-weight: 900;
             line-height: 0.9;
             letter-spacing: -3px;
-            margin-bottom: 30px;
+            margin-bottom: 10px;
+        }
+
+        /* Typewriter Styling */
+        .typewriter-container {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary);
+            height: 1.5rem;
+            margin-bottom: 25px;
         }
 
         /* The Hero Search Bar */
@@ -108,7 +117,7 @@
             border: 2px solid #fff;
             transition: 0.3s;
             max-width: 500px;
-            margin: 0 auto 50px;
+            margin: 0 auto 70px;
         }
 
         .search-container:focus-within { border-color: var(--primary); }
@@ -238,6 +247,10 @@
             <div class="hero-area">
                 <h1>What are we<br>building?</h1>
                 
+                <div class="typewriter-container">
+                    <span id="typewriter"></span>
+                </div>
+
                 <div class="search-container">
                     <input type="text" id="mainSearch" placeholder="Enter Business Industry..." onkeypress="handleEnter(event)">
                     <button class="search-icon-btn" onclick="triggerFlow()">
@@ -313,8 +326,32 @@
             setTimeout(() => {
                 document.getElementById('app-loader').style.transform = 'translateY(-100%)';
                 document.getElementById('app-container').style.opacity = '1';
+                startTypewriter();
             }, 1800);
         });
+
+        const words = ["barber", "dentist", "driving school", "phone repair", "accountant", "estate agent"];
+        let wordIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        const typewriterEl = document.getElementById('typewriter');
+
+        function startTypewriter() {
+            const currentWord = words[wordIndex];
+            const typeSpeed = isDeleting ? 50 : 100;
+
+            if (!isDeleting && charIndex < currentWord.length) {
+                typewriterEl.textContent += currentWord.charAt(charIndex);
+                charIndex++;
+            } else if (isDeleting && charIndex > 0) {
+                typewriterEl.textContent = currentWord.substring(0, charIndex - 1);
+                charIndex--;
+            } else {
+                isDeleting = !isDeleting;
+                if (!isDeleting) wordIndex = (wordIndex + 1) % words.length;
+            }
+            setTimeout(startTypewriter, isDeleting && charIndex === 0 ? 1000 : typeSpeed);
+        }
 
         function handleEnter(e) {
             if (e.key === 'Enter') triggerFlow();
@@ -339,8 +376,4 @@
         }
     </script>
 </body>
-</html> 
-
-
-
-
+</html>
