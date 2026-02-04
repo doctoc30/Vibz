@@ -35,62 +35,23 @@
         #app-loader {
             position: fixed;
             inset: 0;
-            background: #FFF2EB;
+            background: var(--primary);
             z-index: 10000;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 1.2s cubic-bezier(0.85, 0, 0.15, 1);
+            transition: transform 0.8s cubic-bezier(0.9, 0, 0.1, 1);
         }
 
         .loader-content {
             font-size: 5rem;
             font-weight: 900;
-            color: var(--primary);
+            color: #fff;
             letter-spacing: -5px;
-            position: relative;
-            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-        }
-        
-        .loader-content span { color: #000000; }
-
-        /* Rocket Transformation Classes */
-        .loader-content.launching {
-            font-size: 0px;
-            color: transparent;
+            animation: pulse 1s infinite alternate;
         }
 
-        .loader-content.launching::after {
-            content: "\f135"; /* FontAwesome Rocket */
-            font-family: "Font Awesome 6 Free";
-            font-weight: 900;
-            font-size: 4rem;
-            color: var(--primary);
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            text-shadow: 0 10px 20px rgba(255, 107, 0, 0.4);
-        }
-
-        .loader-content.launching::before {
-            content: "";
-            position: absolute;
-            bottom: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 15px;
-            height: 40px;
-            background: linear-gradient(to bottom, var(--primary), transparent);
-            filter: blur(4px);
-            border-radius: 50%;
-            animation: exhaust 0.1s infinite;
-        }
-
-        @keyframes exhaust {
-            0% { height: 30px; opacity: 0.8; }
-            100% { height: 50px; opacity: 0.4; }
-        }
+        @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.1); } }
 
         /* ==== 2. APP SHELL ==== */
         #app-container {
@@ -110,8 +71,8 @@
             z-index: 10;
         }
 
-        .app-logo { font-size: 1.8rem; font-weight: 900; letter-spacing: -1.5px; color: var(--primary); }
-        .app-logo span { color: #000000; }
+        .app-logo { font-size: 1.8rem; font-weight: 900; letter-spacing: -1.5px; }
+        .app-logo span { color: var(--primary); }
 
         /* ==== 3. COMMAND CENTER (HERO) ==== */
         .content-scroll {
@@ -127,11 +88,11 @@
         }
 
         .hero-area h1 {
-            font-size: 3.5rem;
+            font-size: 3rem;
             font-weight: 900;
             line-height: 0.9;
             letter-spacing: -3px;
-            margin-bottom: 30px;
+            margin-bottom: 50px;
         }
 
         /* The Hero Search Bar */
@@ -145,7 +106,7 @@
             border: 2px solid #fff;
             transition: 0.3s;
             max-width: 500px;
-            margin: 0 auto 50px;
+            margin: 0 auto 100px;
         }
 
         .search-container:focus-within { border-color: var(--primary); }
@@ -262,7 +223,7 @@
 <body>
 
     <div id="app-loader">
-        <div class="loader-content">VIBZ<span>.</span></div>
+        <div class="loader-content">VIBZ</div>
     </div>
 
     <div id="app-container">
@@ -347,20 +308,10 @@
     <script>
         // HANDLE APP BOOT
         window.addEventListener('load', () => {
-            const loaderEl = document.querySelector('.loader-content');
-            const loaderScreen = document.getElementById('app-loader');
-            const container = document.getElementById('app-container');
-
             setTimeout(() => {
-                // Phase 1: Transform text to rocket
-                loaderEl.classList.add('launching');
-                
-                setTimeout(() => {
-                    // Phase 2: Launch upwards and fade in content
-                    loaderScreen.style.transform = 'translateY(-100%)';
-                    container.style.opacity = '1';
-                }, 800);
-            }, 1200);
+                document.getElementById('app-loader').style.transform = 'translateY(-100%)';
+                document.getElementById('app-container').style.opacity = '1';
+            }, 1800);
         });
 
         function handleEnter(e) {
