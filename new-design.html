@@ -1,435 +1,400 @@
-<style>
-    :root {
-        --primary: #FF6B00;
-        --primary-light: #FFF5EE;
-        --bg: #FFFFFF;
-        --text: #121212;
-        --card-bg: rgba(255, 255, 255, 0.9);
-        --safe-top: env(safe-area-inset-top);
-        --safe-bottom: env(safe-area-inset-bottom);
-    }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>VIBZ App Interface</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #FF6B00;
+            --primary-light: #FFF5EE;
+            --bg: #FFFFFF;
+            --text: #121212;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --safe-top: env(safe-area-inset-top);
+            --safe-bottom: env(safe-area-inset-bottom);
+        }
 
-    * {
-        margin: 0; padding: 0; box-sizing: border-box;
-        -webkit-tap-highlight-color: transparent;
-        font-family: 'Inter', sans-serif;
-    }
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Inter', sans-serif;
+        }
 
-    body, html {
-        height: 100%;
-        background-color: var(--primary-light);
-        color: var(--text);
-        overflow: hidden; /* Lock viewport for app feel */
-    }
+        body, html {
+            height: 100%;
+            background-color: var(--primary-light);
+            color: var(--text);
+            overflow: hidden; /* Lock viewport for app feel */
+        }
 
-    /* ==== 1. BOLD LOGO BOOT SEQUENCE ==== */
-    #app-loader {
-        position: fixed;
-        inset: 0;
-        background: #FFF2EB;
-        z-index: 10000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: transform 0.8s cubic-bezier(0.9, 0, 0.1, 1);
-    }
+        /* ==== 1. BOLD LOGO BOOT SEQUENCE ==== */
+        #app-loader {
+            position: fixed;
+            inset: 0;
+            background: #FFF2EB;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.8s cubic-bezier(0.9, 0, 0.1, 1);
+            perspective: 1000px;
+        }
 
-    .vault-container {
-        position: relative;
-        width: 220px;
-        height: 220px;
-        perspective: 1000px;
-    }
+        .loader-content {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-    .vault-wheel {
-        width: 100%;
-        height: 100%;
-        position: relative;
-        transform-style: preserve-3d;
-        animation: vaultTurn 2.8s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
-    }
+        .vault-wheel {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border: 15px solid #888;
+            border-top-color: #aaa;
+            border-bottom-color: #555;
+            border-radius: 50%;
+            background: radial-gradient(circle, #ccc 20%, #888 100%);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4), inset 0 0 20px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: wheelTurn 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            z-index: 2;
+        }
 
-    .vault-face {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #222 0%, #000 100%);
-        border: 12px solid #111;
-        box-shadow: 0 0 40px rgba(0,0,0,0.9);
-        backface-visibility: hidden;
-    }
+        .vault-wheel::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 20px;
+            background: #777;
+            transform: rotate(45deg);
+        }
 
-    .vault-face.front { transform: translateZ(30px); }
-    .vault-face.back  { transform: rotateY(180deg) translateZ(30px); background: #111; }
+        .vault-wheel::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 100%;
+            background: #777;
+            transform: rotate(45deg);
+        }
 
-    .spokes {
-        position: absolute;
-        inset: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
+        .vault-logo {
+            font-size: 5rem;
+            font-weight: 900;
+            color: var(--primary);
+            letter-spacing: -5px;
+            opacity: 0;
+            transform: scale(0.5);
+            animation: logoReveal 1s 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        
+        .vault-logo span { color: #000000; }
 
-    .spoke {
-        position: absolute;
-        width: 18px;
-        height: 50%;
-        background: #444;
-        transform-origin: bottom center;
-    }
+        @keyframes wheelTurn {
+            0% { transform: rotate(0deg) scale(1); opacity: 1; }
+            50% { transform: rotate(360deg) scale(1.1); opacity: 1; }
+            100% { transform: rotate(720deg) scale(0); opacity: 0; }
+        }
 
-    .spoke:nth-child(1) { transform: rotate(0deg); }
-    .spoke:nth-child(2) { transform: rotate(45deg); }
-    .spoke:nth-child(3) { transform: rotate(90deg); }
-    .spoke:nth-child(4) { transform: rotate(135deg); }
-    .spoke:nth-child(5) { transform: rotate(180deg); }
-    .spoke:nth-child(6) { transform: rotate(225deg); }
-    .spoke:nth-child(7) { transform: rotate(270deg); }
-    .spoke:nth-child(8) { transform: rotate(315deg); }
+        @keyframes logoReveal {
+            to { opacity: 1; transform: scale(1); }
+        }
 
-    .center-lock {
-        width: 70px;
-        height: 70px;
-        background: radial-gradient(circle at 30% 30%, #555, #222);
-        border-radius: 50%;
-        border: 8px solid #000;
-        position: absolute;
-        z-index: 2;
-        box-shadow: inset 0 0 20px #000;
-    }
+        /* ==== 2. APP SHELL ==== */
+        #app-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            transition: opacity 0.5s ease-in;
+        }
 
-    .logo-reveal {
-        position: absolute;
-        inset: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 6.5rem;
-        font-weight: 900;
-        color: var(--primary);
-        letter-spacing: -6px;
-        opacity: 0;
-        animation: revealLogo 0.9s ease-out 2.4s forwards;
-        transform-style: preserve-3d;
-    }
+        /* App Header */
+        header {
+            padding: calc(var(--safe-top) + 20px) 25px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
 
-    .logo-reveal span { color: #000000; }
+        .app-logo { font-size: 1.8rem; font-weight: 900; letter-spacing: -1.5px; color: var(--primary); }
+        .app-logo span { color: #000000; }
 
-    @keyframes vaultTurn {
-        0%   { transform: rotateY(0deg) rotateZ(0deg); }
-        70%  { transform: rotateY(0deg) rotateZ(360deg); }
-        100% { transform: rotateY(70deg) rotateZ(360deg); }
-    }
+        /* ==== 3. COMMAND CENTER (HERO) ==== */
+        .content-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 25px 120px;
+            scroll-behavior: smooth;
+        }
 
-    @keyframes revealLogo {
-        0%   { opacity: 0; transform: translateZ(-80px) scale(0.6); }
-        100% { opacity: 1; transform: translateZ(0) scale(1); }
-    }
+        .hero-area {
+            text-align: center;
+            padding: 40px 0;
+        }
 
-    @media (max-width: 500px) {
-        .vault-container { width: 180px; height: 180px; }
-        .logo-reveal { font-size: 5rem; letter-spacing: -5px; }
-    }
+        .hero-area h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            line-height: 0.9;
+            letter-spacing: -3px;
+            margin-bottom: 30px;
+        }
 
-    /* ==== 2. APP SHELL ==== */
-    #app-container {
-        height: 100vh;
-        display: flex;
-        flex-direction: column;
-        opacity: 0;
-        transition: opacity 0.5s ease-in;
-    }
+        /* The Hero Search Bar */
+        .search-container {
+            background: #fff;
+            border-radius: 24px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 20px 40px rgba(255, 107, 0, 0.15);
+            border: 2px solid #fff;
+            transition: 0.3s;
+            max-width: 500px;
+            margin: 0 auto 50px;
+        }
 
-    /* App Header */
-    header {
-        padding: calc(var(--safe-top) + 20px) 25px 15px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        z-index: 10;
-    }
+        .search-container:focus-within { border-color: var(--primary); }
 
-    .app-logo { font-size: 1.8rem; font-weight: 900; letter-spacing: -1.5px; color: var(--primary); }
-    .app-logo span { color: #000000; }
+        .search-container input {
+            flex: 1;
+            border: none;
+            outline: none;
+            padding: 15px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text);
+        }
 
-    /* ==== 3. COMMAND CENTER (HERO) ==== */
-    .content-scroll {
-        flex: 1;
-        overflow-y: auto;
-        padding: 20px 25px 120px;
-        scroll-behavior: smooth;
-    }
+        .search-icon-btn {
+            width: 55px;
+            height: 55px;
+            background: var(--primary);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.2rem;
+            border: none;
+            cursor: pointer;
+        }
 
-    .hero-area {
-        text-align: center;
-        padding: 40px 0;
-    }
+        /* ==== 4. CAPABILITY GRID ==== */
+        .section-header {
+            font-size: 0.8rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--primary);
+            margin-bottom: 20px;
+            display: block;
+        }
 
-    .hero-area h1 {
-        font-size: 3.5rem;
-        font-weight: 900;
-        line-height: 0.9;
-        letter-spacing: -3px;
-        margin-bottom: 30px;
-    }
+        .app-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
 
-    /* The Hero Search Bar */
-    .search-container {
-        background: #fff;
-        border-radius: 24px;
-        padding: 10px;
-        display: flex;
-        align-items: center;
-        box-shadow: 0 20px 40px rgba(255, 107, 0, 0.15);
-        border: 2px solid #fff;
-        transition: 0.3s;
-        max-width: 500px;
-        margin: 0 auto 50px;
-    }
+        .app-tile {
+            background: var(--card-bg);
+            padding: 25px 20px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 107, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: 0.3s;
+            cursor: pointer;
+        }
 
-    .search-container:focus-within { border-color: var(--primary); }
+        .app-tile:active { transform: scale(0.94); background: #fff; }
 
-    .search-container input {
-        flex: 1;
-        border: none;
-        outline: none;
-        padding: 15px;
-        font-size: 1.2rem;
-        font-weight: 700;
-        color: var(--text);
-    }
+        .tile-icon {
+            width: 50px; height: 50px;
+            background: var(--primary);
+            color: white;
+            border-radius: 15px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem;
+            box-shadow: 0 8px 15px rgba(255, 107, 0, 0.2);
+        }
 
-    .search-icon-btn {
-        width: 55px;
-        height: 55px;
-        background: var(--primary);
-        border-radius: 18px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #fff;
-        font-size: 1.2rem;
-        border: none;
-        cursor: pointer;
-    }
+        .app-tile h3 { font-size: 1.1rem; font-weight: 900; line-height: 1.2; }
+        .app-tile p { font-size: 0.8rem; font-weight: 600; color: #777; }
 
-    /* ==== 4. CAPABILITY GRID ==== */
-    .section-header {
-        font-size: 0.8rem;
-        font-weight: 900;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        color: var(--primary);
-        margin-bottom: 20px;
-        display: block;
-    }
+        .full-tile { grid-column: span 2; flex-direction: row; align-items: center; }
 
-    .app-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 15px;
-    }
+        /* ==== 5. APP DOCK ==== */
+        .app-dock {
+            position: fixed;
+            bottom: 25px;
+            left: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            height: 80px;
+            border-radius: 40px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.5);
+        }
 
-    .app-tile {
-        background: var(--card-bg);
-        padding: 25px 20px;
-        border-radius: 30px;
-        border: 1px solid rgba(255, 107, 0, 0.1);
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        transition: 0.3s;
-        cursor: pointer;
-    }
+        .dock-btn {
+            display: flex; flex-direction: column; align-items: center;
+            color: #A0A0A0; text-decoration: none; gap: 4px;
+        }
 
-    .app-tile:active { transform: scale(0.94); background: #fff; }
+        .dock-btn.active { color: var(--primary); }
+        .dock-btn i { font-size: 1.5rem; }
+        .dock-btn span { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; }
 
-    .tile-icon {
-        width: 50px; height: 50px;
-        background: var(--primary);
-        color: white;
-        border-radius: 15px;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 1.2rem;
-        box-shadow: 0 8px 15px rgba(255, 107, 0, 0.2);
-    }
+        .dock-center {
+            width: 65px; height: 65px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 1.8rem;
+            margin-top: -50px;
+            border: 6px solid var(--primary-light);
+            box-shadow: 0 10px 20px rgba(255, 107, 0, 0.3);
+        }
 
-    .app-tile h3 { font-size: 1.1rem; font-weight: 900; line-height: 1.2; }
-    .app-tile p { font-size: 0.8rem; font-weight: 600; color: #777; }
+    </style>
+</head>
+<body>
 
-    .full-tile { grid-column: span 2; flex-direction: row; align-items: center; }
-
-    /* ==== 5. APP DOCK ==== */
-    .app-dock {
-        position: fixed;
-        bottom: 25px;
-        left: 20px;
-        right: 20px;
-        background: rgba(255, 255, 255, 0.85);
-        backdrop-filter: blur(20px);
-        height: 80px;
-        border-radius: 40px;
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-        border: 1px solid rgba(255,255,255,0.5);
-    }
-
-    .dock-btn {
-        display: flex; flex-direction: column; align-items: center;
-        color: #A0A0A0; text-decoration: none; gap: 4px;
-    }
-
-    .dock-btn.active { color: var(--primary); }
-    .dock-btn i { font-size: 1.5rem; }
-    .dock-btn span { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; }
-
-    .dock-center {
-        width: 65px; height: 65px;
-        background: var(--primary);
-        border-radius: 50%;
-        display: flex; align-items: center; justify-content: center;
-        color: #fff; font-size: 1.8rem;
-        margin-top: -50px;
-        border: 6px solid var(--primary-light);
-        box-shadow: 0 10px 20px rgba(255, 107, 0, 0.3);
-    }
-
-</style>
-
-
-
-<div id="app-loader">
-    <div class="vault-container">
-        <div class="vault-wheel">
-            <div class="vault-face front">
-                <div class="spokes">
-                    <div class="spoke"></div>
-                    <div class="spoke"></div>
-                    <div class="spoke"></div>
-                    <div class="spoke"></div>
-                    <div class="spoke"></div>
-                    <div class="spoke"></div>
-                    <div class="spoke"></div>
-                    <div class="spoke"></div>
-                </div>
-                <div class="center-lock"></div>
-            </div>
-            <div class="vault-face back"></div>
+    <div id="app-loader">
+        <div class="loader-content">
+            <div class="vault-wheel"></div>
+            <div class="vault-logo">VIBZ<span>.</span></div>
         </div>
-        <div class="logo-reveal">VIBZ<span>.</span></div>
     </div>
-</div>
 
-<div id="app-container">
-    <header>
-        <div class="app-logo">VIBZ<span>.</span></div>
-        <i class="fa-solid fa-circle-user" style="font-size: 1.8rem; color: #ddd;"></i>
-    </header>
+    <div id="app-container">
+        <header>
+            <div class="app-logo">VIBZ<span>.</span></div>
+            <i class="fa-solid fa-circle-user" style="font-size: 1.8rem; color: #ddd;"></i>
+        </header>
 
-    <main class="content-scroll">
-        <div class="hero-area">
-            <h1>What are we<br>building?</h1>
-            
-            <div class="search-container">
-                <input type="text" id="mainSearch" placeholder="Enter Business Industry..." onkeypress="handleEnter(event)">
-                <button class="search-icon-btn" onclick="triggerFlow()">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                </button>
-            </div>
-        </div>
-
-        <span class="section-header">Our Capabilities</span>
-        
-        <div class="app-grid">
-            <div class="app-tile" onclick="triggerFlow()">
-                <div class="tile-icon"><i class="fa-solid fa-plus-circle"></i></div>
-                <h3>New<br>Website</h3>
-                <p>Custom build</p>
-            </div>
-
-            <div class="app-tile" onclick="triggerFlow()">
-                <div class="tile-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
-                <h3>Brand<br>Re-design</h3>
-                <p>Modernize</p>
-            </div>
-
-            <div class="app-tile" onclick="triggerFlow()">
-                <div class="tile-icon"><i class="fa-solid fa-screwdriver-wrench"></i></div>
-                <h3>Active<br>Support</h3>
-                <p>24/7 Tech</p>
-            </div>
-
-            <div class="app-tile" onclick="triggerFlow()">
-                <div class="tile-icon"><i class="fa-solid fa-server"></i></div>
-                <h3>Premium<br>Hosting</h3>
-                <p>Cloud speed</p>
-            </div>
-
-            <div class="app-tile full-tile" onclick="triggerFlow()">
-                <div class="tile-icon"><i class="fa-solid fa-chart-line"></i></div>
-                <div style="margin-left: 10px;">
-                    <h3>SEO & Maintenance</h3>
-                    <p>Fully managed digital growth</p>
+        <main class="content-scroll">
+            <div class="hero-area">
+                <h1>What are we<br>building?</h1>
+                
+                <div class="search-container">
+                    <input type="text" id="mainSearch" placeholder="Enter Business Industry..." onkeypress="handleEnter(event)">
+                    <button class="search-icon-btn" onclick="triggerFlow()">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
                 </div>
-                <i class="fa-solid fa-chevron-right" style="margin-left: auto; color: #ccc;"></i>
             </div>
-        </div>
-    </main>
 
-    <nav class="app-dock">
-        <a href="#" class="dock-btn active">
-            <i class="fa-solid fa-house-chimney"></i>
-            <span>Home</span>
-        </a>
-        <a href="#" class="dock-btn">
-            <i class="fa-solid fa-compass"></i>
-            <span>Explore</span>
-        </a>
-        <div class="dock-center" onclick="triggerFlow()">
-            <i class="fa-solid fa-bolt"></i>
-        </div>
-        <a href="#" class="dock-btn">
-            <i class="fa-solid fa-briefcase"></i>
-            <span>Portal</span>
-        </a>
-        <a href="#" class="dock-btn">
-            <i class="fa-solid fa-bars"></i>
-            <span>Menu</span>
-        </a>
-    </nav>
-</div>
+            <span class="section-header">Our Capabilities</span>
+            
+            <div class="app-grid">
+                <div class="app-tile" onclick="triggerFlow()">
+                    <div class="tile-icon"><i class="fa-solid fa-plus-circle"></i></div>
+                    <h3>New<br>Website</h3>
+                    <p>Custom build</p>
+                </div>
 
-<script>
-    // HANDLE APP BOOT
-    window.addEventListener('load', () => {
-        setTimeout(() => {
-            document.getElementById('app-loader').style.transform = 'translateY(-100%)';
-            document.getElementById('app-container').style.opacity = '1';
-        }, 3800);  // extended slightly to let vault animation complete
-    });
+                <div class="app-tile" onclick="triggerFlow()">
+                    <div class="tile-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                    <h3>Brand<br>Re-design</h3>
+                    <p>Modernize</p>
+                </div>
 
-    function handleEnter(e) {
-        if (e.key === 'Enter') triggerFlow();
-    }
+                <div class="app-tile" onclick="triggerFlow()">
+                    <div class="tile-icon"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+                    <h3>Active<br>Support</h3>
+                    <p>24/7 Tech</p>
+                </div>
 
-    function triggerFlow() {
-        const val = document.getElementById('mainSearch').value;
-        const loader = document.querySelector('.search-icon-btn');
-        
-        // App-like feedback
-        loader.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
-        
-        setTimeout(() => {
-            if(val) {
-                localStorage.setItem('selectedNiche', val.toLowerCase());
-                window.location.href = 'https://www.vibz.co.uk/funnel.html';
-            } else {
-                loader.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i>';
-                alert('Command: Select Industry First');
-            }
-        }, 600);
-    }
-</script>
+                <div class="app-tile" onclick="triggerFlow()">
+                    <div class="tile-icon"><i class="fa-solid fa-server"></i></div>
+                    <h3>Premium<br>Hosting</h3>
+                    <p>Cloud speed</p>
+                </div>
+
+                <div class="app-tile full-tile" onclick="triggerFlow()">
+                    <div class="tile-icon"><i class="fa-solid fa-chart-line"></i></div>
+                    <div style="margin-left: 10px;">
+                        <h3>SEO & Maintenance</h3>
+                        <p>Fully managed digital growth</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-right" style="margin-left: auto; color: #ccc;"></i>
+                </div>
+            </div>
+        </main>
+
+        <nav class="app-dock">
+            <a href="#" class="dock-btn active">
+                <i class="fa-solid fa-house-chimney"></i>
+                <span>Home</span>
+            </a>
+            <a href="#" class="dock-btn">
+                <i class="fa-solid fa-compass"></i>
+                <span>Explore</span>
+            </a>
+            <div class="dock-center" onclick="triggerFlow()">
+                <i class="fa-solid fa-bolt"></i>
+            </div>
+            <a href="#" class="dock-btn">
+                <i class="fa-solid fa-briefcase"></i>
+                <span>Portal</span>
+            </a>
+            <a href="#" class="dock-btn">
+                <i class="fa-solid fa-bars"></i>
+                <span>Menu</span>
+            </a>
+        </nav>
+    </div>
+
+    <script>
+        // HANDLE APP BOOT
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('app-loader').style.transform = 'translateY(-100%)';
+                document.getElementById('app-container').style.opacity = '1';
+            }, 2500);
+        });
+
+        function handleEnter(e) {
+            if (e.key === 'Enter') triggerFlow();
+        }
+
+        function triggerFlow() {
+            const val = document.getElementById('mainSearch').value;
+            const loader = document.querySelector('.search-icon-btn');
+            
+            // App-like feedback
+            loader.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            
+            setTimeout(() => {
+                if(val) {
+                    localStorage.setItem('selectedNiche', val.toLowerCase());
+                    window.location.href = 'https://www.vibz.co.uk/funnel.html';
+                } else {
+                    loader.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i>';
+                    alert('Command: Select Industry First');
+                }
+            }, 600);
+        }
+    </script>
+</body>
+</html>
