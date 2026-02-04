@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>VIBZ | Unified Interface</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --orange: #FF6B00;
+            --surface: #121212;
+            --card: #1C1C1E;
+            --text-dim: #8E8E93;
+            --safe-top: env(safe-area-inset-top);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Inter', sans-serif; }
+        body { background: #000; color: #fff; overflow: hidden; height: 100vh; }
+
+        /* ==== 1. APP BOOT LOADER ==== */
+        #boot-sequence {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: 0.8s cubic-bezier(0.9, 0, 0.1, 1);
+        }
+
+        .boot-logo { font-size: 5rem; font-weight: 900; color: var(--orange); letter-spacing: -5px; }
+        .scanner-line { width: 200px; height: 2px; background: var(--orange); margin-top: 10px; box-shadow: 0 0 15px var(--orange); animation: scan 1.5s infinite; }
+        @keyframes scan { 0% { transform: scaleX(0); opacity: 0; } 50% { transform: scaleX(1); opacity: 1; } 100% { transform: scaleX(0); opacity: 0; } }
+
+        /* ==== 2. MAIN APP INTERFACE ==== */
+        #app-interface {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: 1s cubic-bezier(0.2, 1, 0.3, 1);
+        }
+
+        .app-ready #app-interface { opacity: 1; transform: translateY(0); }
+
+        /* Header Area */
+        .app-header {
+            padding: calc(var(--safe-top) + 20px) 25px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-tag { background: var(--card); padding: 8px 15px; border-radius: 50px; display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 0.85rem; border: 1px solid #333; }
+        .online-pulse { width: 8px; height: 8px; background: #34C759; border-radius: 50%; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(52, 199, 89, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(52, 199, 89, 0); } 100% { box-shadow: 0 0 0 0 rgba(52, 199, 89, 0); } }
+
+        /* ==== 3. COMMAND CENTER (HERO) ==== */
+        .scroller { flex: 1; overflow-y: auto; padding: 20px 25px 120px; -webkit-overflow-scrolling: touch; }
+
+        .hero-title { font-size: 3.5rem; font-weight: 900; line-height: 0.85; letter-spacing: -3px; margin-bottom: 30px; }
+        .hero-title span { color: var(--orange); }
+
+        /* The App Search Bar */
+        .command-bar {
+            background: var(--card);
+            border-radius: 24px;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            border: 1px solid #333;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            margin-bottom: 40px;
+        }
+
+        .command-bar input { flex: 1; background: transparent; border: none; color: #fff; padding: 15px; font-size: 1.1rem; font-weight: 600; outline: none; }
+        .go-btn { background: var(--orange); width: 50px; height: 50px; border-radius: 18px; display: flex; align-items: center; justify-content: center; color: #fff; border: none; font-size: 1.2rem; cursor: pointer; }
+
+        /* ==== 4. CAPABILITY TILES ==== */
+        .section-label { color: var(--text-dim); font-weight: 800; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; display: block; }
+        
+        .capability-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .cap-tile {
+            background: var(--card);
+            padding: 20px;
+            border-radius: 28px;
+            border: 1px solid #2C2C2E;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .cap-tile:active { transform: scale(0.95); background: #2C2C2E; }
+
+        .tile-icon { width: 45px; height: 45px; background: rgba(255, 107, 0, 0.1); border-radius: 14px; display: flex; align-items: center; justify-content: center; color: var(--orange); font-size: 1.2rem; }
+        .cap-tile h4 { font-size: 1rem; font-weight: 800; line-height: 1.2; }
+
+        /* Full Width Action Card */
+        .action-card {
+            background: linear-gradient(135deg, var(--orange), #FF8E3C);
+            padding: 25px;
+            border-radius: 30px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .action-card h3 { font-size: 1.4rem; font-weight: 900; letter-spacing: -0.5px; }
+
+        /* ==== 5. HAPTIC DOCK ==== */
+        .dock-container {
+            position: fixed;
+            bottom: 30px;
+            left: 25px;
+            right: 25px;
+            background: rgba(28, 28, 30, 0.8);
+            backdrop-filter: blur(25px);
+            height: 75px;
+            border-radius: 35px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border: 1px solid rgba(255,255,255,0.1);
+            z-index: 1000;
+        }
+
+        .dock-item { color: var(--text-dim); font-size: 1.4rem; transition: 0.3s; width: 50px; text-align: center; }
+        .dock-item.active { color: var(--orange); transform: translateY(-5px); }
+
+    </style>
+</head>
+<body>
+
+    <div id="boot-sequence">
+        <div class="boot-logo">VIBZ</div>
+        <div class="scanner-line"></div>
+        <p style="margin-top: 20px; font-size: 0.7rem; color: #444; font-weight: 800; letter-spacing: 3px;">INITIALIZING INTERFACE</p>
+    </div>
+
+    <div id="app-interface">
+        <div class="app-header">
+            <div class="user-tag">
+                <div class="online-pulse"></div>
+                SYSTEM ID: 2026-VBZ
+            </div>
+            <div style="width: 40px; height: 40px; border-radius: 12px; background: var(--orange); display: flex; align-items: center; justify-content: center;">
+                <i class="fa-solid fa-plus" style="color: #fff;"></i>
+            </div>
+        </div>
+
+        <div class="scroller">
+            <h1 class="hero-title">Select<br>Global<br><span>Objective.</span></h1>
+
+            <div class="command-bar">
+                <input type="text" id="nicheInput" placeholder="Enter Business Industry..." onkeypress="handleKey(event)">
+                <button class="go-btn" onclick="executeSearch()">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <span class="section-label">Core Capabilities</span>
+            <div class="capability-grid">
+                <div class="cap-tile" onclick="capabilityTap('New Build')">
+                    <div class="tile-icon"><i class="fa-solid fa-rocket"></i></div>
+                    <h4>New Website Build</h4>
+                </div>
+                <div class="cap-tile" onclick="capabilityTap('Redesign')">
+                    <div class="tile-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                    <h4>Brand Re-design</h4>
+                </div>
+                <div class="cap-tile" onclick="capabilityTap('Maintenance')">
+                    <div class="tile-icon"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+                    <h4>Active Maintenance</h4>
+                </div>
+                <div class="cap-tile" onclick="capabilityTap('Hosting')">
+                    <div class="tile-icon"><i class="fa-solid fa-server"></i></div>
+                    <h4>Cloud Hosting</h4>
+                </div>
+            </div>
+
+            <div class="action-card" onclick="capabilityTap('Technical Support')">
+                <div>
+                    <h3>24/7 Priority Support</h3>
+                    <p style="font-size: 0.8rem; font-weight: 700; opacity: 0.8;">Instant Technical Assistance</p>
+                </div>
+                <i class="fa-solid fa-headset" style="font-size: 2rem;"></i>
+            </div>
+        </div>
+
+        <div class="dock-container">
+            <a href="#" class="dock-item active"><i class="fa-solid fa-house"></i></a>
+            <a href="#" class="dock-item"><i class="fa-solid fa-magnifying-glass-chart"></i></a>
+            <a href="#" class="dock-item" style="background: var(--orange); color: #fff; width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-top: -40px; border: 5px solid #000; box-shadow: 0 10px 20px rgba(255,107,0,0.4);">
+                <i class="fa-solid fa-bolt"></i>
+            </a>
+            <a href="#" class="dock-item"><i class="fa-solid fa-folder-tree"></i></a>
+            <a href="#" class="dock-item"><i class="fa-solid fa-user-gear"></i></a>
+        </div>
+    </div>
+
+    <script>
+        // BOOT LOGIC
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const boot = document.getElementById('boot-sequence');
+                boot.style.opacity = '0';
+                boot.style.transform = 'scale(1.2)';
+                document.body.classList.add('app-ready');
+                setTimeout(() => boot.style.display = 'none', 800);
+            }, 2000);
+        });
+
+        // APP LOGIC
+        function handleKey(e) {
+            if (e.key === 'Enter') executeSearch();
+        }
+
+        function capabilityTap(type) {
+            console.log("Selected Capability: " + type);
+            // Simulate App Navigation
+            document.body.style.opacity = '0.5';
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+                executeSearch();
+            }, 300);
+        }
+
+        function executeSearch() {
+            const val = document.getElementById('nicheInput').value;
+            const btn = document.querySelector('.go-btn');
+            
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>';
+            
+            setTimeout(() => {
+                if(val) {
+                    localStorage.setItem('selectedNiche', val.toLowerCase());
+                    window.location.href = 'https://www.vibz.co.uk/funnel.html';
+                } else {
+                    btn.innerHTML = '<i class="fa-solid fa-arrow-right"></i>';
+                    alert('Please enter your business type.');
+                }
+            }, 600);
+        }
+    </script>
+</body>
+</html>
