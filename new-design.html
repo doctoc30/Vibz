@@ -29,31 +29,56 @@
             background-color: var(--primary-light);
             color: var(--text);
             overflow: hidden; /* Lock viewport for app feel */
+            perspective: 1500px;
         }
 
         /* ==== 1. BOLD LOGO BOOT SEQUENCE ==== */
         #app-loader {
             position: fixed;
             inset: 0;
-            background: #FFF2EB;
             z-index: 10000;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.8s cubic-bezier(0.9, 0, 0.1, 1);
+            background: transparent;
+            transition: visibility 1s;
         }
+
+        /* Vault Doors Effect */
+        #app-loader::before,
+        #app-loader::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            width: 50%;
+            height: 100%;
+            background: #FFF2EB;
+            transition: transform 1.2s cubic-bezier(0.7, 0, 0.3, 1);
+            z-index: -1;
+        }
+
+        #app-loader::before { left: 0; transform-origin: left; }
+        #app-loader::after { right: 0; transform-origin: right; }
+
+        #app-loader.open::before { transform: rotateY(-90deg); }
+        #app-loader.open::after { transform: rotateY(90deg); }
 
         .loader-content {
             font-size: 5rem;
             font-weight: 900;
             color: var(--primary);
             letter-spacing: -5px;
-            animation: pulse 1s infinite alternate;
+            transform: translateZ(0) scale(0.5);
+            opacity: 0;
+            transition: transform 1s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s;
         }
         
-        .loader-content span { color: #000000; }
+        .loader-content.reveal {
+            opacity: 1;
+            transform: translateZ(100px) scale(1);
+        }
 
-        @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.1); } }
+        .loader-content span { color: #000000; }
 
         /* ==== 2. APP SHELL ==== */
         #app-container {
@@ -310,10 +335,20 @@
     <script>
         // HANDLE APP BOOT
         window.addEventListener('load', () => {
+            const loader = document.getElementById('app-loader');
+            const content = loader.querySelector('.loader-content');
+            
+            // Sequence: Reveal Logo -> Open Vault -> Show App
+            setTimeout(() => content.classList.add('reveal'), 100);
+            
             setTimeout(() => {
-                document.getElementById('app-loader').style.transform = 'translateY(-100%)';
+                loader.classList.add('open');
                 document.getElementById('app-container').style.opacity = '1';
-            }, 1800);
+            }, 1200);
+
+            setTimeout(() => {
+                loader.style.visibility = 'hidden';
+            }, 2400);
         });
 
         function handleEnter(e) {
@@ -339,4 +374,4 @@
         }
     </script>
 </body>
-</html> 
+</html>
