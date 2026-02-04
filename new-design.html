@@ -40,8 +40,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.8s cubic-bezier(0.9, 0, 0.1, 1);
-            perspective: 1000px;
+            transition: transform 1.2s cubic-bezier(0.85, 0, 0.15, 1);
         }
 
         .loader-content {
@@ -50,32 +49,47 @@
             color: var(--primary);
             letter-spacing: -5px;
             position: relative;
-            display: flex;
-            transform-style: preserve-3d;
-            animation: assembleJigsaw 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, 
-                       transformRocket 0.6s 1.4s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards,
-                       launchRocket 0.8s 1.8s cubic-bezier(0.9, 0, 0.1, 1) forwards;
+            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
         }
         
-        .loader-content span { color: #000000; display: inline-block; }
+        .loader-content span { color: #000000; }
 
-        /* Jigsaw Pieces Effect */
-        @keyframes assembleJigsaw {
-            0% { opacity: 0; transform: translateZ(-200px) rotateX(90deg) rotateY(45deg); filter: blur(10px); }
-            100% { opacity: 1; transform: translateZ(0) rotateX(0) rotateY(0); filter: blur(0); }
+        /* Rocket Transformation Classes */
+        .loader-content.launching {
+            font-size: 0px;
+            color: transparent;
         }
 
-        /* Transform Logo into Rocket shape/angle */
-        @keyframes transformRocket {
-            0% { transform: scale(1) rotate(0deg); }
-            100% { transform: scale(0.6) rotate(-45deg); color: var(--primary); }
+        .loader-content.launching::after {
+            content: "\f135"; /* FontAwesome Rocket */
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            font-size: 4rem;
+            color: var(--primary);
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            text-shadow: 0 10px 20px rgba(255, 107, 0, 0.4);
         }
 
-        /* Rocket Launch */
-        @keyframes launchRocket {
-            0% { transform: scale(0.6) rotate(-45deg) translateY(0); }
-            30% { transform: scale(0.6) rotate(-45deg) translateY(20px); }
-            100% { transform: scale(0.6) rotate(-45deg) translateY(-200vh); }
+        .loader-content.launching::before {
+            content: "";
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 15px;
+            height: 40px;
+            background: linear-gradient(to bottom, var(--primary), transparent);
+            filter: blur(4px);
+            border-radius: 50%;
+            animation: exhaust 0.1s infinite;
+        }
+
+        @keyframes exhaust {
+            0% { height: 30px; opacity: 0.8; }
+            100% { height: 50px; opacity: 0.4; }
         }
 
         /* ==== 2. APP SHELL ==== */
@@ -333,10 +347,20 @@
     <script>
         // HANDLE APP BOOT
         window.addEventListener('load', () => {
+            const loaderEl = document.querySelector('.loader-content');
+            const loaderScreen = document.getElementById('app-loader');
+            const container = document.getElementById('app-container');
+
             setTimeout(() => {
-                document.getElementById('app-loader').style.transform = 'translateY(-100%)';
-                document.getElementById('app-container').style.opacity = '1';
-            }, 2600); // Adjusted timing to match the new animation sequence
+                // Phase 1: Transform text to rocket
+                loaderEl.classList.add('launching');
+                
+                setTimeout(() => {
+                    // Phase 2: Launch upwards and fade in content
+                    loaderScreen.style.transform = 'translateY(-100%)';
+                    container.style.opacity = '1';
+                }, 800);
+            }, 1200);
         });
 
         function handleEnter(e) {
