@@ -175,7 +175,7 @@
 
         <nav class="app-dock">
             <a href="#" class="dock-btn active"><i class="fa-solid fa-house-chimney"></i><span>Home</span></a>
-            <a href="#" class="dock-btn"><i class="fa-solid fa-compass"></i><span>Explore</span></a>
+            <a href="https://www.vibz.co.uk/barber/concepts.html" class="dock-btn"><i class="fa-solid fa-compass"></i><span>Explore</span></a>
             <div class="dock-center" onclick="next()"><i class="fa-solid fa-bolt"></i></div>
             <a href="#" class="dock-btn"><i class="fa-solid fa-briefcase"></i><span>Portal</span></a>
             <div class="dock-btn"><i class="fa-solid fa-bars"></i><span>Menu</span></div>
@@ -246,12 +246,38 @@
 
         function renderOptions() {
             const container = document.getElementById('dynamic-options');
-            container.innerHTML = ['Option One', 'Option Two', 'Option Three'].map(o => `
+            let options = [];
+            
+            // Tailored options based on the current step
+            if(currentStep === 5) {
+                options = ['High-End Luxury', 'Urban/Modern', 'Classic Gentlemen', 'Community/Family'];
+            } else if(currentStep === 6) {
+                options = ['Minimalist', 'Vintage/Retro', 'Bold & Industrial', 'Elegant'];
+            } else if(currentStep === 7) {
+                options = ['Monochrome (Black/White)', 'Gold & Black', 'Natural Earth Tones', 'Electric/Neon'];
+            } else {
+                options = ['Option One', 'Option Two', 'Option Three'];
+            }
+
+            container.innerHTML = options.map(o => `
                 <button class="vibz-btn" onclick="next()">${o}</button>
             `).join('');
         }
 
-        window.onload = updateUI;
+        // HANDLE EXTERNAL NAVIGATION (From Home or Concept Library)
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const stepRequest = urlParams.get('step');
+            
+            if(stepRequest === '5') {
+                currentStep = 5;
+                // Ensure a placeholder name exists to avoid empty states
+                if(!document.getElementById('businessInput').value) {
+                    document.getElementById('businessInput').value = "Premium Barber";
+                }
+            }
+            updateUI();
+        };
     </script>
 </body>
-</html> 
+</html>
