@@ -1,280 +1,300 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<head> 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>VIBZ | Barber Web Solutions</title>
+    <title>VIBZ | Barber Solutions</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
     <style>
         :root {
             --primary: #FF6B00;
-            --primary-dark: #E65F00;
+            --primary-light: #FFF5EE;
             --bg: #FFFFFF;
             --text: #121212;
             --gray: #666;
-            --light-gray: #F8F8F8;
-            --border: #EEE;
-            --standard-color: #4CAF50;
-            --premium-color: #2196F3;
+            --border: rgba(255, 107, 0, 0.1);
+            --safe-top: env(safe-area-inset-top);
+            --standard: #4CAF50;
+            --premium: #2196F3;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background: var(--light-gray); color: var(--text); line-height: 1.6; }
-
-        .funnel-container { max-width: 800px; margin: 40px auto; padding: 20px; }
-        .form-screen { 
-            background: white; padding: 40px; border-radius: 30px; 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.05); display: none; 
-            animation: fadeIn 0.5s ease;
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Inter', sans-serif;
         }
-        .form-screen.active { display: block; }
+
+        body, html {
+            height: 100%;
+            background-color: var(--primary-light);
+            color: var(--text);
+            overflow: hidden;
+        }
+
+        #app-container {
+            height: 100vh; display: flex; flex-direction: column;
+        }
+
+        header {
+            padding: calc(var(--safe-top) + 20px) 25px 10px;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 10;
+        }
+
+        .app-logo { font-size: 1.8rem; font-weight: 900; letter-spacing: -1.5px; color: var(--primary); }
+        .app-logo span { color: #000000; }
+
+        .content-scroll {
+            flex: 1; overflow-y: auto; padding: 0 25px 160px; scroll-behavior: smooth;
+        }
+
+        .hero-centered { margin-top: 15vh; text-align: center; transition: 0.4s ease; }
+        .hero-balanced { margin-top: 5vh; text-align: center; transition: 0.4s ease; }
+
+        .step-header h1 {
+            font-size: 2.5rem; font-weight: 900; line-height: 1.1;
+            letter-spacing: -1.2px; color: var(--primary);
+            margin-bottom: 10px;
+        }
+        .step-header p { color: var(--gray); margin-bottom: 25px; font-weight: 500; }
+
+        .vibz-input {
+            width: 100%; padding: 22px; border-radius: 24px; border: 2px solid var(--border);
+            background: #fff; font-size: 1.1rem; font-weight: 700; margin-bottom: 15px;
+            outline: none; box-shadow: 0 10px 25px rgba(255, 107, 0, 0.05);
+            text-align: center;
+        }
+
+        .vibz-btn {
+            width: 100%; padding: 18px; border-radius: 20px; border: 1px solid var(--border);
+            background: #fff; color: var(--text); font-size: 1.1rem; font-weight: 800;
+            margin-bottom: 12px; cursor: pointer; transition: 0.2s; text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+            text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+
+        .vibz-btn:active { transform: scale(0.97); }
+        .vibz-btn.primary { background: var(--primary); color: #fff; border: none; }
+        .vibz-btn.back-btn { background: transparent; border: none; color: #999; margin-top: 10px; box-shadow: none; }
+
+        /* Step 9 Service Grid Styling */
+        .services-grid { display: grid; grid-template-columns: 1fr; gap: 12px; text-align: left; }
+        .service-card {
+            background: #fff; border: 2px solid var(--border); border-radius: 20px;
+            padding: 18px; cursor: pointer; transition: 0.3s;
+        }
+        .service-card.selected.standard { border-color: var(--standard); background: rgba(76,175,80,0.05); }
+        .service-card.selected.premium { border-color: var(--premium); background: rgba(33,150,243,0.05); }
+        .tier-pill { font-size: 0.65rem; font-weight: 900; padding: 4px 10px; border-radius: 8px; display: inline-block; margin-bottom: 8px; }
+
+        .form-screen { display: none; width: 100%; }
+        .form-screen.active { display: block; animation: fadeIn 0.4s ease-out; }
+
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        h2 { font-size: 2rem; font-weight: 900; margin-bottom: 10px; letter-spacing: -1px; }
-        p { color: var(--gray); margin-bottom: 30px; }
-
-        /* Buttons & Options */
-        .options { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px; }
-        .vibz-btn {
-            padding: 20px; border: 2px solid var(--border); background: white;
-            border-radius: 15px; font-weight: 700; cursor: pointer; transition: 0.3s;
-            display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+        /* Dock */
+        .app-dock {
+            position: fixed; bottom: 25px; left: 20px; right: 20px;
+            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px);
+            height: 80px; border-radius: 40px; display: flex; justify-content: space-around;
+            align-items: center; box-shadow: 0 15px 35px rgba(0,0,0,0.1); z-index: 1000;
         }
-        .vibz-btn:hover { border-color: var(--primary); background: #FFF5EE; }
-        .vibz-btn.selected { border-color: var(--primary); background: var(--primary); color: white; }
-        
-        .back-button { background: none; border: none; color: var(--gray); margin-top: 20px; font-size: 0.9rem; cursor: pointer; }
-
-        /* Services Grid */
-        .services-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
-        .service-card {
-            padding: 20px; border: 2px solid var(--border); border-radius: 15px; cursor: pointer; transition: 0.3s;
-        }
-        .service-card.selected.standard { border-color: var(--standard-color); background: rgba(76, 175, 80, 0.05); }
-        .service-card.selected.premium { border-color: var(--premium-color); background: rgba(33, 150, 243, 0.05); }
-
-        /* Pricing Cards */
-        .pricing-container { display: flex; flex-direction: column; gap: 30px; margin-top: 30px; }
-        .plan-card {
-            border: 2px solid var(--border); border-radius: 20px; padding: 30px; position: relative;
-        }
-        .plan-card.premium { border-color: var(--premium-color); }
-        .plan-price { font-size: 2.5rem; font-weight: 900; margin: 10px 0; }
-        .buy-button {
-            width: 100%; padding: 15px; border-radius: 12px; border: none;
-            font-weight: 800; cursor: pointer; margin-top: 20px;
-        }
-        .buy-button.standard { background: var(--standard-color); color: white; }
-        .buy-button.premium { background: var(--premium-color); color: white; }
-
-        /* Lead Form */
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; font-weight: 700; margin-bottom: 5px; }
-        .form-group input, .form-group select, .form-group textarea {
-            width: 100%; padding: 12px; border: 2px solid var(--border); border-radius: 10px;
-        }
-
-        .step-options-large { display: flex; flex-direction: column; gap: 15px; }
-
-        @media (max-width: 600px) {
-            .options, .services-grid { grid-template-columns: 1fr; }
-            .funnel-container { margin: 10px auto; }
+        .dock-btn { display: flex; flex-direction: column; align-items: center; color: #A0A0A0; text-decoration: none; gap: 4px; }
+        .dock-btn.active { color: var(--primary); }
+        .dock-btn i { font-size: 1.4rem; }
+        .dock-btn span { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; }
+        .dock-center {
+            width: 65px; height: 65px; background: var(--primary); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; color: #fff;
+            font-size: 1.8rem; margin-top: -50px; border: 6px solid var(--primary-light);
+            box-shadow: 0 10px 20px rgba(255, 107, 0, 0.3);
         }
     </style>
 </head>
 <body>
 
-<div class="funnel-container">
-    <div class="form-screen active" id="step-1">
-        <h2>What is your shop name?</h2>
-        <div class="form-group">
-            <input type="text" id="shopName" placeholder="Enter barbershop name...">
-        </div>
-        <button type="button" class="vibz-btn" style="background: var(--primary); color: white; width: 100%;" onclick="next()">Continue</button>
-    </div>
+    <div id="app-container">
+        <header>
+            <div class="app-logo">VIBZ<span>.</span></div>
+            <i class="fa-solid fa-circle-user" style="font-size: 1.8rem; color: #ddd;"></i>
+        </header>
 
-    <div class="form-screen" id="step-2"><h2>Step 2</h2><button onclick="next()">Next</button></div>
-    <div class="form-screen" id="step-3"><h2>Step 3</h2><button onclick="next()">Next</button></div>
-    <div class="form-screen" id="step-4"><h2>Step 4</h2><button onclick="next()">Next</button></div>
-
-    <div class="form-screen" id="step-5">
-        <h2>Who are your main clients?</h2>
-        <div class="options">
-            <button type="button" class="vibz-btn" onclick="setAudience('Men')">Men</button>
-            <button type="button" class="vibz-btn" onclick="setAudience('Women')">Women</button>
-            <button type="button" class="vibz-btn" onclick="setAudience('Children')">Children</button>
-            <button type="button" class="vibz-btn" onclick="setAudience('Family')">Mixed/Family</button>
-        </div>
-        <button type="button" class="back-button" onclick="prev()">← Go Back</button>
-    </div>
-
-    <div class="form-screen" id="step-6">
-        <h2>What style do you prefer?</h2>
-        <div class="options">
-            <button type="button" class="vibz-btn" onclick="setStyle('Classic')">Classic</button>
-            <button type="button" class="vibz-btn" onclick="setStyle('Modern')">Modern</button>
-            <button type="button" class="vibz-btn" onclick="setStyle('Minimalist')">Minimalist</button>
-            <button type="button" class="vibz-btn" onclick="setStyle('Premium')">Premium</button>
-        </div>
-        <button type="button" class="back-button" onclick="prev()">← Go Back</button>
-    </div>
-
-    <div class="form-screen" id="step-7">
-        <h2>Preferred color scheme?</h2>
-        <div class="options">
-            <button type="button" class="vibz-btn" onclick="setColor('Black & Gold')">Black & Gold</button>
-            <button type="button" class="vibz-btn" onclick="setColor('Modern/Vibrant')">Modern/Vibrant</button>
-            <button type="button" class="vibz-btn" onclick="setColor('Neutral/Classic')">Neutral/Classic</button>
-            <button type="button" class="vibz-btn" onclick="setColor('Custom')">Custom</button>
-        </div>
-        <button type="button" class="back-button" onclick="prev()">← Go Back</button>
-    </div>
-
-    <div class="form-screen" id="step-8">
-        <h2>What's the main goal?</h2>
-        <div class="options">
-            <button type="button" class="vibz-btn" onclick="setGoal('Attract New Clients')">Attract New Clients</button>
-            <button type="button" class="vibz-btn" onclick="setGoal('Showcase Portfolio')">Showcase Portfolio</button>
-            <button type="button" class="vibz-btn" onclick="setGoal('Facilitate Bookings')">Facilitate Bookings</button>
-        </div>
-        <button type="button" class="back-button" onclick="prev()">← Go Back</button>
-    </div>
-
-    <div class="form-screen" id="step-9">
-        <h2>Select Your Services</h2>
-        <div class="services-grid">
-            <div class="service-card standard" onclick="toggleService('Services Display', 'standard', this)">
-                <h4>Services & Pricing</h4>
-                <p>Standard Display</p>
-            </div>
-            <div class="service-card standard" onclick="toggleService('Gallery', 'standard', this)">
-                <h4>Photo Gallery</h4>
-                <p>Work Showcase</p>
-            </div>
-            <div class="service-card premium" onclick="toggleService('Online Booking', 'premium', this)">
-                <h4>Online Booking</h4>
-                <p>Integration (Premium)</p>
-            </div>
-            <div class="service-card premium" onclick="toggleService('Stripe Payments', 'premium', this)">
-                <h4>Payments</h4>
-                <p>Collect Deposits (Premium)</p>
-            </div>
-        </div>
-        <div id="selectionSummary" style="margin-top:20px; padding:15px; background:#f0f0f0; border-radius:10px;">
-            Total Selected: <span id="totalCount">0</span>
-        </div>
-        <button type="button" class="vibz-btn" style="background: var(--primary); color:white; width:100%; margin-top:20px;" onclick="next()">Continue</button>
-        <button type="button" class="back-button" onclick="prev()">← Go Back</button>
-    </div>
-
-    <div class="form-screen" id="step-10">
-        <h2>What would you like to do next?</h2>
-        <div class="step-options-large">
-            <button type="button" class="vibz-btn" onclick="setUrgency('Start ASAP')">I want to start ASAP</button>
-            <button type="button" class="vibz-btn" onclick="setUrgency('More Info')">I need more information</button>
-        </div>
-        <button type="button" class="back-button" onclick="prev()">← Go Back</button>
-    </div>
-
-    <div class="form-screen" id="step-11">
-        <h2>How would you like to pay?</h2>
-        <div class="step-options-large">
-            <button type="button" class="vibz-btn" onclick="setPlanModel('Own Outright')">Own Outright (One-time)</button>
-            <button type="button" class="vibz-btn" onclick="setPlanModel('Monthly Support')">Monthly Support (Subscription)</button>
-        </div>
-        <button type="button" class="back-button" onclick="prev()">← Go Back</button>
-    </div>
-
-    <div class="form-screen" id="step-12">
-        <h2>Get More Information</h2>
-        <form onsubmit="submitLeadForm(event)">
-            <div class="form-group"><label>Name</label><input type="text" required></div>
-            <div class="form-group"><label>Email</label><input type="email" required></div>
-            <div class="form-group"><label>Phone</label><input type="tel" required></div>
-            <button type="submit" class="vibz-btn" style="background:var(--primary); color:white; width:100%;">Send Request</button>
-        </form>
-        <button type="button" class="back-button" onclick="showStep(10)">← Go Back</button>
-    </div>
-
-    <div class="form-screen" id="step-13">
-        <h2>Your Recommended Plan</h2>
-        <div id="pricingCards" class="pricing-container">
-            <div id="outrightContainer">
-                <div class="plan-card">
-                    <h3>Standard Build</h3>
-                    <div class="plan-price">£1,500</div>
-                    <button class="buy-button standard" onclick="alert('Redirecting to Stripe Standard...')">Buy Now</button>
+        <main class="content-scroll">
+            <div id="main-content-wrapper" class="hero-centered">
+                
+                <div class="step-header">
+                    <h1 id="dynamic-title">What is your barber shop name?</h1>
+                    <p id="dynamic-subtitle">Let's build your digital presence.</p>
                 </div>
-                <div class="plan-card premium">
-                    <h3>Premium Build</h3>
-                    <div class="plan-price">£3,000</div>
-                    <button class="buy-button premium" onclick="alert('Redirecting to Stripe Premium...')">Buy Now</button>
-                </div>
+
+                <form id="funnelForm" onsubmit="return false;">
+                    
+                    <div class="form-screen active" id="step-1">
+                        <input type="text" class="vibz-input" id="businessInput" placeholder="Enter shop name...">
+                        <button class="vibz-btn primary" onclick="handleStep1()">Continue <i class="fa-solid fa-arrow-right"></i></button>
+                    </div>
+
+                    <div class="form-screen" id="step-2">
+                        <button class="vibz-btn" onclick="next()">New Website</button>
+                        <button class="vibz-btn" onclick="next()">Redesign Existing</button>
+                        <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
+                    </div>
+
+                    <div class="form-screen" id="step-3">
+                        <button class="vibz-btn" onclick="goToStep(4)">I Have a Design Code</button>
+                        <a href="https://www.vibz.co.uk/barber/concepts.html" class="vibz-btn primary">Browse Concept Library</a>
+                        <button class="vibz-btn" onclick="next()">Request Custom Design</button>
+                        <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
+                    </div>
+
+                    <div class="form-screen" id="step-4">
+                        <input type="text" class="vibz-input" id="designCode" placeholder="e.g. barber-1">
+                        <button class="vibz-btn primary" onclick="next()">Verify Design</button>
+                        <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
+                    </div>
+
+                    <div class="form-screen" id="step-5">
+                        <button class="vibz-btn" onclick="setVal('audience','Men')">Men</button>
+                        <button class="vibz-btn" onclick="setVal('audience','Women')">Women</button>
+                        <button class="vibz-btn" onclick="setVal('audience','Children')">Children</button>
+                        <button class="vibz-btn" onclick="setVal('audience','Family')">Mixed/Family</button>
+                        <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
+                    </div>
+
+                    <div class="form-screen" id="step-6">
+                        <button class="vibz-btn" onclick="setVal('style','Classic')">Classic</button>
+                        <button class="vibz-btn" onclick="setVal('style','Modern')">Modern</button>
+                        <button class="vibz-btn" onclick="setVal('style','Minimalist')">Minimalist</button>
+                        <button class="vibz-btn" onclick="setVal('style','Premium')">Premium</button>
+                        <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
+                    </div>
+
+                    <div class="form-screen" id="step-7">
+                        <button class="vibz-btn" onclick="setVal('color','Black & Gold')">Black & Gold</button>
+                        <button class="vibz-btn" onclick="setVal('color','Modern/Vibrant')">Modern/Vibrant</button>
+                        <button class="vibz-btn" onclick="setVal('color','Neutral/Classic')">Neutral/Classic</button>
+                        <button class="vibz-btn" onclick="setVal('color','Custom')">Custom</button>
+                        <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
+                    </div>
+
+                    <div class="form-screen" id="step-8">
+                        <button class="vibz-btn" onclick="setVal('goal','Clients')">Attract New Clients</button>
+                        <button class="vibz-btn" onclick="setVal('goal','Portfolio')">Showcase Styles</button>
+                        <button class="vibz-btn" onclick="setVal('goal','Bookings')">Facilitate Bookings</button>
+                        <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
+                    </div>
+
+                    <div class="form-screen" id="step-9">
+                        <div class="services-grid">
+                            <div class="service-card" onclick="toggleSvc('Pricing', 'standard', this)">
+                                <span class="tier-pill" style="background:#E8F5E9; color:#4CAF50;">STANDARD</span>
+                                <h4>Pricing Display</h4>
+                                <p style="font-size:0.8rem; color:#999;">List your services and costs.</p>
+                            </div>
+                            <div class="service-card" onclick="toggleSvc('Booking', 'premium', this)">
+                                <span class="tier-pill" style="background:#E3F2FD; color:#2196F3;">PREMIUM</span>
+                                <h4>Online Booking</h4>
+                                <p style="font-size:0.8rem; color:#999;">Automated appointment system.</p>
+                            </div>
+                        </div>
+                        <button class="vibz-btn primary" style="margin-top:15px;" onclick="next()">Continue</button>
+                        <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
+                    </div>
+
+                    <div class="form-screen" id="step-10">
+                        <button class="vibz-btn" onclick="setUrgency('Start ASAP')"><i class="fas fa-bolt"></i> Start ASAP</button>
+                        <button class="vibz-btn" onclick="setUrgency('Info')"><i class="fas fa-info-circle"></i> Need More Info</button>
+                        <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
+                    </div>
+
+                    <div class="form-screen" id="step-11">
+                        <button class="vibz-btn" onclick="setPlan('Own')">Own Outright</button>
+                        <button class="vibz-btn" onclick="setPlan('Monthly')">Monthly Support</button>
+                        <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
+                    </div>
+
+                    <div class="form-screen" id="step-12">
+                        <input type="text" class="vibz-input" placeholder="Full Name">
+                        <input type="email" class="vibz-input" placeholder="Email Address">
+                        <button class="vibz-btn primary" onclick="alert('Sent!')">Submit Inquiry</button>
+                        <button class="vibz-btn back-btn" onclick="goToStep(10)">Go Back</button>
+                    </div>
+
+                    <div class="form-screen" id="step-13">
+                        <div id="final-plan-display"></div>
+                        <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
+                    </div>
+
+                </form>
             </div>
-        </div>
-        <button type="button" class="back-button" onclick="prev()">← Go Back</button>
+        </main>
+
+        <nav class="app-dock">
+            <a href="https://www.vibz.co.uk" class="dock-btn active"><i class="fa-solid fa-house-chimney"></i><span>Home</span></a>
+            <a href="https://www.vibz.co.uk/barber/concepts.html" class="dock-btn"><i class="fa-solid fa-compass"></i><span>Explore</span></a>
+            <div class="dock-center" onclick="next()"><i class="fa-solid fa-bolt"></i></div>
+            <a href="#" class="dock-btn"><i class="fa-solid fa-briefcase"></i><span>Portal</span></a>
+            <div class="dock-btn"><i class="fa-solid fa-bars"></i><span>Menu</span></div>
+        </nav>
     </div>
-</div>
 
-<script>
-    let currentStep = 1;
-    let formData = {
-        services: []
-    };
+    <script>
+        let currentStep = 1;
+        let selections = { services: [] };
 
-    // Check URL for Step 5 bypass
-    window.onload = () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('step') === '5') {
-            showStep(5);
+        const titles = {
+            1: "Shop Name?", 2: "Project Type?", 3: "Design Choice?", 4: "Design Code?",
+            5: "Main Clients?", 6: "Style Preference?", 7: "Color Palette?", 8: "Main Goal?",
+            9: "Select Features", 10: "Your Timeline", 11: "Payment Model", 12: "Your Details", 13: "Final Plan"
+        };
+
+        function updateUI() {
+            const wrapper = document.getElementById('main-content-wrapper');
+            const title = document.getElementById('dynamic-title');
+            const subtitle = document.getElementById('dynamic-subtitle');
+            
+            document.querySelectorAll('.form-screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(`step-${currentStep}`).classList.add('active');
+            
+            title.textContent = titles[currentStep];
+            wrapper.className = (currentStep === 1) ? "hero-centered" : "hero-balanced";
+            subtitle.style.display = (currentStep === 1) ? "block" : "none";
+            window.scrollTo(0,0);
         }
-    };
 
-    function showStep(step) {
-        document.querySelectorAll('.form-screen').forEach(s => s.classList.remove('active'));
-        document.getElementById('step-' + step).classList.add('active');
-        currentStep = step;
-        window.scrollTo(0,0);
-    }
-
-    function next() { showStep(currentStep + 1); }
-    function prev() { showStep(currentStep - 1); }
-
-    function setAudience(val) { formData.audience = val; next(); }
-    function setStyle(val) { formData.style = val; next(); }
-    function setColor(val) { formData.color = val; next(); }
-    function setGoal(val) { formData.goal = val; next(); }
-
-    function toggleService(name, tier, el) {
-        el.classList.toggle('selected');
-        const index = formData.services.indexOf(name);
-        if (index > -1) {
-            formData.services.splice(index, 1);
-        } else {
-            formData.services.push(name);
+        function next() { currentStep++; updateUI(); }
+        function prev() { currentStep--; updateUI(); }
+        function goToStep(s) { currentStep = s; updateUI(); }
+        
+        function handleStep1() { if(document.getElementById('businessInput').value) next(); }
+        
+        function setVal(key, val) { selections[key] = val; next(); }
+        
+        function toggleSvc(name, tier, el) {
+            el.classList.toggle('selected');
+            el.classList.toggle(tier);
         }
-        document.getElementById('totalCount').innerText = formData.services.length;
-    }
 
-    function setUrgency(val) {
-        formData.urgency = val;
-        if(val === 'More Info') showStep(12);
-        else next();
-    }
+        function setUrgency(val) {
+            if(val === 'Info') goToStep(12);
+            else next();
+        }
 
-    function setPlanModel(val) {
-        formData.paymentModel = val;
-        // Logic to show specific cards in Step 13 could go here
-        next();
-    }
+        function setPlan(val) {
+            const container = document.getElementById('final-plan-display');
+            container.innerHTML = (val === 'Own') ? 
+                `<div style="padding:20px; background:#fff; border-radius:20px; border:2px solid #4CAF50;"><h3>Standard Build</h3><h2 style="font-size:2rem; margin:10px 0;">£1,500</h2><button class="vibz-btn primary">Buy Now</button></div>` :
+                `<div style="padding:20px; background:#fff; border-radius:20px; border:2px solid #2196F3;"><h3>Monthly Support</h3><h2 style="font-size:2rem; margin:10px 0;">£100/mo</h2><button class="vibz-btn primary">Subscribe</button></div>`;
+            next();
+        }
 
-    function submitLeadForm(e) {
-        e.preventDefault();
-        alert("Information Sent! We will contact you shortly.");
-        // Redirect to thank you or home
-    }
-</script>
-
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if(urlParams.get('step') === '5') goToStep(5);
+            updateUI();
+        };
+    </script>
 </body>
 </html>
