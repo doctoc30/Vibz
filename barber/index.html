@@ -19,7 +19,6 @@
             --safe-bottom: env(safe-area-inset-bottom);
         }
 
-        /* ==== 1. HOMEPAGE BASE STYLES ==== */
         * {
             margin: 0; padding: 0; box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
@@ -33,24 +32,10 @@
             overflow: hidden;
         }
 
-        /* ==== BOOT SEQUENCE ==== */
-        #app-loader {
-            position: fixed; inset: 0; background: #FFF2EB; z-index: 10000;
-            display: flex; align-items: center; justify-content: center;
-            transition: transform 0.8s cubic-bezier(0.9, 0, 0.1, 1);
-        }
-
-        .loader-content {
-            font-size: 5rem; font-weight: 900; color: var(--primary);
-            letter-spacing: -5px; animation: pulse 1s infinite alternate;
-        }
-        .loader-content span { color: #000000; }
-        @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.1); } }
-
         /* ==== APP SHELL ==== */
         #app-container {
             height: 100vh; display: flex; flex-direction: column;
-            opacity: 0; transition: opacity 0.5s ease-in;
+            opacity: 1; /* No intro animation */
         }
 
         header {
@@ -66,14 +51,20 @@
             flex: 1; overflow-y: auto; padding: 0 25px 140px; scroll-behavior: smooth;
         }
 
-        /* ==== FUNNEL HEADER ==== */
+        /* ==== JOINED ORANGE HERO TEXT ==== */
         .step-header { text-align: center; padding: 40px 0 20px; }
         .step-header h1 {
-            font-size: 3.2rem; font-weight: 900; line-height: 0.9;
-            letter-spacing: -2px; color: var(--text); margin-bottom: 10px;
+            font-size: 3.2rem; font-weight: 900; line-height: 0.85;
+            letter-spacing: -2.5px; color: var(--primary);
+            margin-bottom: 0;
+            text-transform: capitalize;
         }
-        .step-header h1 span { color: var(--primary); }
-        .step-header p { font-size: 1.1rem; font-weight: 600; color: #666; }
+
+        .status-pill {
+            display: inline-block; padding: 5px 15px; background: var(--primary);
+            color: #fff; border-radius: 20px; font-size: 0.7rem; font-weight: 900;
+            text-transform: uppercase; margin-bottom: 15px;
+        }
 
         /* ==== STEP INDICATOR ==== */
         .indicator-bar {
@@ -86,11 +77,11 @@
         .dot.active { background: var(--primary); width: 24px; }
 
         /* ==== FORM ELEMENTS ==== */
-        .form-screen { display: none; animation: slideUp 0.4s ease-out; }
-        .form-screen.active { display: block; }
+        .form-screen { display: none; }
+        .form-screen.active { display: block; animation: slideUp 0.3s ease-out; }
 
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
@@ -109,7 +100,12 @@
             text-align: center; display: block; text-decoration: none;
         }
 
-        .vibz-btn:active { transform: scale(0.96); background: var(--primary-light); }
+        .vibz-btn:active, .vibz-btn.selected { 
+            transform: scale(0.97); 
+            background: var(--primary); 
+            color: white; 
+            border-color: var(--primary);
+        }
         .vibz-btn.primary { background: var(--primary); color: #fff; border: none; }
 
         /* ==== SERVICE CARDS ==== */
@@ -160,19 +156,9 @@
             font-size: 1.8rem; margin-top: -50px; border: 6px solid var(--primary-light);
             box-shadow: 0 10px 20px rgba(255, 107, 0, 0.3);
         }
-        
-        .status-pill {
-            display: inline-block; padding: 5px 15px; background: var(--primary);
-            color: #fff; border-radius: 20px; font-size: 0.7rem; font-weight: 900;
-            text-transform: uppercase; margin-bottom: 10px;
-        }
     </style>
 </head>
 <body>
-
-    <div id="app-loader">
-        <div class="loader-content">VIBZ<span>.</span></div>
-    </div>
 
     <div id="app-container">
         <header>
@@ -181,14 +167,12 @@
         </header>
 
         <main class="content-scroll">
-            
             <div class="step-header">
                 <div class="status-pill" id="step-count">Step 1 of 13</div>
-                <h1 id="dynamic-title">Barber<span>Shop</span> Name?</h1>
+                <h1 id="dynamic-title">ShopName?</h1>
             </div>
 
-            <div class="indicator-bar" id="dot-bar">
-                </div>
+            <div class="indicator-bar" id="dot-bar"></div>
 
             <form id="funnelForm" onsubmit="return false;">
                 
@@ -206,7 +190,7 @@
 
                 <div class="form-screen" id="step-3">
                     <button class="vibz-btn" onclick="setDesignConcept('Code')">I Have a Design Code</button>
-                    <button class="vibz-btn primary" onclick="window.location.href='https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-1.jpg'">Browse Concept Library</button>
+                    <button class="vibz-btn primary" onclick="window.open('https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-1.jpg')">Browse Concept Library</button>
                     <button class="vibz-btn" onclick="setDesignConcept('Custom')">Request Custom Design</button>
                     <button class="vibz-btn" style="border:none; color:#999;" onclick="prev()">Go Back</button>
                 </div>
@@ -239,13 +223,13 @@
 
                 <div class="form-screen" id="step-lead">
                     <div id="lead-fields"></div>
-                    <button class="vibz-btn primary" id="lead-action-btn">Next</button>
+                    <button class="vibz-btn primary" id="lead-action-btn" style="display:none;">Next</button>
                     <button class="vibz-btn" style="border:none; color:#999;" onclick="prev()">Go Back</button>
                 </div>
 
                 <div class="form-screen" id="step-13">
                     <div id="pricingCards" class="pricing-grid"></div>
-                    <button class="vibz-btn" style="border:none; color:#999;" onclick="prev()">Go Back</button>
+                    <button class="vibz-btn" style="border:none; color:#999; margin-top:20px;" onclick="prev()">Change Details</button>
                 </div>
 
             </form>
@@ -253,15 +237,15 @@
 
         <nav class="app-dock">
             <a href="#" class="dock-btn active"><i class="fa-solid fa-house-chimney"></i><span>Home</span></a>
-            <a href="#" class="dock-btn"><i class="fa-solid fa-compass"></i><span>Explore</span></a>
             <div class="dock-center" onclick="next()"><i class="fa-solid fa-bolt"></i></div>
-            <a href="#" class="dock-btn"><i class="fa-solid fa-briefcase"></i><span>Portal</span></a>
-            <div class="dock-btn"><i class="fa-solid fa-bars"></i><span>Menu</span></div>
+            <a href="#" class="dock-btn"><i class="fa-solid fa-bars"></i><span>Menu</span></a>
         </nav>
     </div>
 
     <script>
-        // JS Database
+        // HARD RESET ON REFRESH
+        window.onbeforeunload = function() { sessionStorage.clear(); };
+
         const barberConcepts = Array.from({length: 100}, (_, i) => ({
             code: `barber-${i+1}`,
             image: `https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-${i+1}.jpg`
@@ -278,16 +262,7 @@
         ];
 
         let currentStep = 1;
-        const formData = { businessName: '', features: [], designCode: '', planModel: '' };
-
-        // Loader
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                document.getElementById('app-loader').style.transform = 'translateY(-100%)';
-                document.getElementById('app-container').style.opacity = '1';
-                initDots();
-            }, 1500);
-        });
+        const formData = { businessName: '', features: [], designCode: '', planModel: '', target: '', style: '', color: '', goal: '', urgency: '' };
 
         function initDots() {
             const bar = document.getElementById('dot-bar');
@@ -302,30 +277,16 @@
         function updateUI() {
             document.querySelectorAll('.form-screen').forEach(s => s.classList.remove('active'));
             document.getElementById('step-count').textContent = `Step ${currentStep} of 13`;
-            initDots();
-
-            const title = document.getElementById('dynamic-title');
-            const screens = {
-                1: "Barber<span>Shop</span> Name?",
-                2: "Project<span>Type</span>?",
-                3: "Design<span>Concept</span>?",
-                4: "Enter<span>Code</span>",
-                5: "Target<span>Audience</span>?",
-                6: "Preferred<span>Style</span>?",
-                7: "Color<span>Palette</span>?",
-                8: "Primary<span>Goal</span>?",
-                9: "Select<span>Services</span>",
-                10: "Timeline<span>Urgency</span>",
-                11: "Payment<span>Plan</span>",
-                12: "Contact<span>Details</span>",
-                13: "Final<span>Plans</span>"
+            
+            const titles = {
+                1: "ShopName?", 2: "ProjectType?", 3: "DesignConcept?", 4: "EnterCode?",
+                5: "TargetAudience?", 6: "PreferredStyle?", 7: "ColorPalette?", 8: "PrimaryGoal?",
+                9: "SelectServices", 10: "Timeline?", 11: "PaymentPlan?", 12: "ContactDetails", 13: "FinalPlans"
             };
-            title.innerHTML = screens[currentStep] || "VIBZ<span>.</span>";
+            document.getElementById('dynamic-title').textContent = titles[currentStep] || "VIBZ";
 
-            // Inject screens for 5-8
             if(currentStep >= 5 && currentStep <= 8) {
-                const stepEl = document.getElementById('step-step');
-                stepEl.classList.add('active');
+                document.getElementById('step-step').classList.add('active');
                 renderOptions();
             } else if (currentStep === 9) {
                 document.getElementById('step-9').classList.add('active');
@@ -339,6 +300,7 @@
             } else {
                 document.getElementById(`step-${currentStep}`).classList.add('active');
             }
+            initDots();
         }
 
         function next() { if(currentStep < 13) { currentStep++; updateUI(); } }
@@ -368,7 +330,7 @@
                 document.getElementById('codeStatus').innerHTML = "✅ Valid Code";
             } else {
                 display.style.display = 'none';
-                document.getElementById('codeStatus').innerHTML = "❌ Searching...";
+                document.getElementById('codeStatus').innerHTML = "Searching...";
             }
         }
 
@@ -390,7 +352,11 @@
                 const btn = document.createElement('button');
                 btn.className = "vibz-btn";
                 btn.textContent = opt;
-                btn.onclick = () => { formData[`step${currentStep}`] = opt; next(); };
+                btn.onclick = () => { 
+                    const keys = {5:'target', 6:'style', 7:'color', 8:'goal'};
+                    formData[keys[currentStep]] = opt;
+                    next(); 
+                };
                 container.appendChild(btn);
             });
         }
@@ -439,11 +405,11 @@
                 btn.style.display = 'none';
             } else {
                 container.innerHTML = `
-                    <input type="text" class="vibz-input" placeholder="Full Name">
-                    <input type="email" class="vibz-input" placeholder="Email Address">
+                    <input type="text" class="vibz-input" id="userName" placeholder="Full Name">
+                    <input type="email" class="vibz-input" id="userEmail" placeholder="Email Address">
                 `;
                 btn.style.display = 'block';
-                btn.textContent = "See Pricing";
+                btn.textContent = "See Final Plans";
                 btn.onclick = () => next();
             }
         }
@@ -462,7 +428,7 @@
             ];
 
             grid.innerHTML = plans.map(p => `
-                <div class="price-card ${p.active ? 'recommended' : ''}" style="${!p.active ? 'opacity:0.5; pointer-events:none;' : ''}">
+                <div class="price-card ${p.active ? 'recommended' : ''}" style="${!p.active ? 'opacity:0.5; filter: grayscale(1); pointer-events:none;' : ''}">
                     <h3>${p.name}</h3>
                     <div class="price">${p.price}${isMonthly ? '<span>/mo</span>' : ''}</div>
                     <ul>${p.features.map(f => `<li><i class="fa-solid fa-circle-check"></i> ${f}</li>`).join('')}</ul>
@@ -470,6 +436,12 @@
                 </div>
             `).join('');
         }
+
+        window.onload = () => {
+            initDots();
+            // Clear any lingering highlights
+            document.querySelectorAll('.vibz-btn').forEach(b => b.classList.remove('selected'));
+        };
     </script>
 </body>
 </html>
