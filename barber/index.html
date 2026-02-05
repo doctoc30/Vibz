@@ -233,12 +233,12 @@
                 title.textContent = titles[currentStep] || "VIBZ";
             }
 
-            // For steps 9-13, we use the dynamic-options placeholder
             if(currentStep >= 9) {
                 document.getElementById('step-dynamic').classList.add('active');
                 renderOptions();
             } else {
-                document.getElementById(`step-${currentStep}`).classList.add('active');
+                const targetStep = document.getElementById(`step-${currentStep}`);
+                if(targetStep) targetStep.classList.add('active');
             }
         }
 
@@ -264,7 +264,6 @@
 
         function renderOptions() {
             const container = document.getElementById('dynamic-options');
-            // Sample options for steps 9-13
             const options = {
                 9: ["Standard Package", "Premium Package"],
                 10: ["ASAP", "1-2 Weeks", "Just Browsing"],
@@ -277,7 +276,32 @@
             `).join('');
         }
 
-        window.onload = updateUI;
+        // ==========================================
+        // NEW URL LISTENER LOGIC
+        // ==========================================
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const stepParam = urlParams.get('step');
+            const codeParam = urlParams.get('code');
+
+            // If the URL has ?step=5
+            if (stepParam === '5') {
+                currentStep = 5;
+                
+                // If a design code was passed (e.g., barber-1)
+                if (codeParam) {
+                    const designInput = document.getElementById('designCodeInput');
+                    if (designInput) {
+                        designInput.value = codeParam;
+                        // Trigger search logic so the image is ready in background
+                        searchConcept();
+                    }
+                }
+            }
+            
+            // Initial UI Update
+            updateUI();
+        };
     </script>
 </body>
 </html>
