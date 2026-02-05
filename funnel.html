@@ -462,7 +462,6 @@
 
         // ========== BARBER SEARCH & REDIRECT LOGIC ==========
 
-        // Check if input contains barber-related keywords
         function isBarberRelated(searchTerm) {
             const term = searchTerm.toLowerCase().trim();
             const barberPatterns = [
@@ -478,7 +477,6 @@
             return false;
         }
 
-        // Show search suggestions on funnel page
         function showSuggestions() {
             const input = document.getElementById('businessInput');
             const suggestionsContainer = document.getElementById('searchSuggestions');
@@ -492,38 +490,36 @@
             if (isBarberRelated(searchTerm)) {
                 suggestionsContainer.innerHTML = `
                     <div class="suggestion-item" onclick="redirectToBarber()">
-                        Barber
+                        <i class="fa-solid fa-scissors" style="margin-right:8px; color:var(--primary);"></i> Barber Shop Solution
                     </div>
                 `;
                 suggestionsContainer.style.display = 'block';
             } else if (searchTerm.length >= 2) {
                 suggestionsContainer.innerHTML = `
                     <div class="suggestion-item" style="color: #666; font-size: 0.9rem;" onclick="this.parentElement.style.display='none'">
-                        Type "barber" for barber websites, or select below.
+                        Type "barber" for specialized designs...
                     </div>
                 `;
                 suggestionsContainer.style.display = 'block';
             }
         }
 
+        // REVISED: Forces jump to Step 5 of the Barber Funnel
         function redirectToBarber() {
-            window.location.href = 'https://www.vibz.co.uk/barber/';
+            window.location.href = 'https://www.vibz.co.uk/barber/?step=5';
         }
 
-        // Triggered by "Find My Solution" button or Enter Key
         function handleSearch() {
             const input = document.getElementById('businessInput');
             const val = input.value.trim();
             
             if (!val) return alert('Please enter business type');
 
-            // If it's a barber keyword, go to the specialized page
             if (isBarberRelated(val)) {
                 redirectToBarber();
                 return;
             }
             
-            // Otherwise, continue with standard funnel
             formData.businessType = val;
             localStorage.setItem('selectedNiche', val.toLowerCase());
             
@@ -533,7 +529,6 @@
             next();
         }
 
-        // Triggered by category buttons (Barber, Plumber, etc.)
         function selectExample(business) {
             if (business.toLowerCase() === 'barber') {
                 redirectToBarber();
@@ -582,11 +577,8 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             const input = document.getElementById('businessInput');
-
-            // Auto-focus search on load
             setTimeout(() => { input?.focus(); }, 500);
             
-            // Listen for Enter key
             input.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
                     e.preventDefault();
@@ -594,13 +586,11 @@
                 }
             });
 
-            // Mobile menu toggle
             document.getElementById('mobileMenuBtn').addEventListener('click', () => {
                 const nav = document.querySelector('.nav-links');
                 nav.style.display = nav.style.display === 'flex' ? 'none' : 'flex';
             });
 
-            // Close suggestions when clicking outside
             document.addEventListener('click', function(e) {
                 const suggestions = document.getElementById('searchSuggestions');
                 if (suggestions && !input.contains(e.target) && !suggestions.contains(e.target)) {
@@ -609,8 +599,5 @@
             });
         });
     </script>
-
-
-    <script src="script.js"></script>
 </body>
 </html>
