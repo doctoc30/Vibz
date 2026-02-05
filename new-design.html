@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>VIBZ App Interface</title>
+    <title>VIBZ | Premium Web Solutions</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
@@ -46,7 +46,7 @@
         .loader-content span { color: #000000; }
         @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.1); } }
 
-        /* ==== NEW: APP MENU LAYER ==== */
+        /* ==== APP MENU LAYER ==== */
         #app-menu-layer {
             position: fixed; inset: 0; background: var(--primary-light);
             z-index: 9500; display: flex; flex-direction: column;
@@ -105,6 +105,7 @@
             margin-top: 20px; width: 60px; height: 60px; background: var(--primary);
             color: white; border-radius: 50%; display: flex; align-items: center;
             justify-content: center; font-size: 1.5rem; box-shadow: 0 10px 20px rgba(255, 107, 0, 0.2);
+            cursor: pointer;
         }
 
         /* ==== 2. APP SHELL ==== */
@@ -154,10 +155,9 @@
         .search-icon-btn {
             width: 55px; height: 55px; background: var(--primary); border-radius: 18px;
             display: flex; align-items: center; justify-content: center; color: #fff;
-            cursor: pointer;
+            cursor: pointer; border: none;
         }
 
-        /* ==== CENTERED NICHE GRID ==== */
         .section-header {
             font-size: 0.8rem; font-weight: 900; text-transform: uppercase;
             letter-spacing: 2px; color: var(--primary); margin-bottom: 20px;
@@ -220,8 +220,8 @@
             <div class="close-btn" style="margin-top:0;" onclick="toggleMenu()"><i class="fa-solid fa-xmark"></i></div>
         </div>
         <div class="menu-links">
-            <a href="#" class="menu-item">Home</a>
-            <a href="#" class="menu-item">Explore</a>
+            <a href="#" class="menu-item" onclick="toggleMenu()">Home</a>
+            <a href="https://www.vibz.co.uk/barber/concepts.html" class="menu-item">Explore</a>
             <a href="#" class="menu-item">Portal</a>
             <a href="#" class="menu-item">Support</a>
         </div>
@@ -231,7 +231,7 @@
     <div id="category-layer">
         <h2 id="cat-title" style="color: var(--primary); margin-bottom: 20px; font-weight: 900; letter-spacing: -1px;">Niche Selection</h2>
         <div id="cat-list" style="width: 100%; display: flex; flex-direction: column; align-items: center; overflow-y: auto; max-height: 60vh;">
-        </div>
+            </div>
         <div class="close-btn" onclick="toggleCategories()"><i class="fa-solid fa-xmark"></i></div>
     </div>
 
@@ -281,7 +281,7 @@
 
         <nav class="app-dock">
             <a href="#" class="dock-btn active"><i class="fa-solid fa-house-chimney"></i><span>Home</span></a>
-            <a href="#" class="dock-btn"><i class="fa-solid fa-compass"></i><span>Explore</span></a>
+            <a href="https://www.vibz.co.uk/barber/concepts.html" class="dock-btn"><i class="fa-solid fa-compass"></i><span>Library</span></a>
             <div class="dock-center" onclick="triggerFlow()"><i class="fa-solid fa-bolt"></i></div>
             <a href="#" class="dock-btn"><i class="fa-solid fa-briefcase"></i><span>Portal</span></a>
             <div class="dock-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i><span>Menu</span></div>
@@ -297,6 +297,7 @@
             "Retail & Creative": ["Boutiques", "E-commerce Stores", "Photographers", "Artists", "Florists", "Pet Shops"]
         };
 
+        // Boot loader sequence
         window.addEventListener('load', () => {
             setTimeout(() => {
                 document.getElementById('app-loader').style.transform = 'translateY(-100%)';
@@ -305,10 +306,8 @@
             }, 1800);
         });
 
-        function toggleCategories() { document.getElementById('category-layer').classList.toggle('active'); }
-        
-        // ADDED: Menu Toggle Logic
         function toggleMenu() { document.getElementById('app-menu-layer').classList.toggle('active'); }
+        function toggleCategories() { document.getElementById('category-layer').classList.toggle('active'); }
 
         function openNiche(sector) {
             const list = document.getElementById('cat-list');
@@ -329,6 +328,7 @@
             toggleCategories();
         }
 
+        // Typewriter Logic
         const words = ["barbers", "dentists", "plumbers", "lawyers", "gym owners", "chefs"];
         let wordIndex = 0; let charIndex = 0; let isDeleting = false;
         const typewriterEl = document.getElementById('typewriter');
@@ -347,17 +347,27 @@
             setTimeout(startTypewriter, isDeleting && charIndex === 0 ? 1200 : (isDeleting ? 40 : 80));
         }
 
-        // REDIRECTION LOGIC
+        // REDIRECTION LOGIC (SMART BARBER DETECT)
         function triggerFlow() { 
             const val = document.getElementById('mainSearch').value.trim().toLowerCase();
-            const loader = document.querySelector('.search-icon-btn');
-            loader.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            const loaderIcon = document.querySelector('.search-icon-btn i');
             
+            // Add a little spin to show action
+            loaderIcon.className = 'fa-solid fa-spinner fa-spin';
+            
+            // Logic to detect barber-related terms
+            const isBarber = val.includes('barber') || val.includes('hair') || val.includes('shave');
+
             setTimeout(() => { 
-                if (val === 'barbers' || val === 'barber') {
-                    window.location.href = "https://www.vibz.co.uk/barber/";
-                } else {
+                if (isBarber) {
+                    // Send to specialized barber funnel, forcing Step 5 (Audience Selection)
+                    window.location.href = "https://www.vibz.co.uk/barber/index.html?step=5";
+                } else if (val !== "") {
+                    // Standard niche funnel
                     window.location.href = "https://www.vibz.co.uk/funnel.html?niche=" + encodeURIComponent(val);
+                } else {
+                    // No input, reset icon
+                    loaderIcon.className = 'fa-solid fa-magnifying-glass';
                 }
             }, 800);
         }
