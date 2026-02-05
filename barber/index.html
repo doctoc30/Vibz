@@ -40,22 +40,24 @@
             z-index: 10;
         }
 
+        /* LOGO WITH BLACK DOT */
         .app-logo { font-size: 1.8rem; font-weight: 900; letter-spacing: -1.5px; color: var(--primary); }
+        .app-logo span { color: #000000; }
 
         .content-scroll {
             flex: 1; overflow-y: auto; padding: 0 25px 160px; scroll-behavior: smooth;
         }
 
-        /* ==== STEP 1: LOWERED HERO ==== */
+        /* SCREEN 1: CENTERED & LOWERED */
         .hero-centered {
             margin-top: 15vh; 
             text-align: center;
             transition: margin-top 0.4s ease;
         }
 
-        /* ==== STEPS 2-13: BALANCED MIDDLE POSITION ==== */
+        /* STEPS 2-13: BALANCED MIDDLE POSITION */
         .hero-balanced {
-            margin-top: 8vh; /* Adjusted so it's not too high, but clears the dock */
+            margin-top: 8vh; 
             text-align: center;
             transition: margin-top 0.4s ease;
         }
@@ -78,6 +80,7 @@
             background: #fff; color: var(--text); font-size: 1.1rem; font-weight: 800;
             margin-bottom: 10px; cursor: pointer; transition: 0.2s; text-align: center;
             box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+            text-decoration: none; display: block;
         }
 
         .vibz-btn:active { transform: scale(0.97); }
@@ -88,10 +91,17 @@
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .service-grid { display: grid; gap: 10px; width: 100%; margin-top: 10px; }
-        .service-card { background: #fff; padding: 18px; border-radius: 20px; border: 2px solid transparent; cursor: pointer; text-align: left;}
+        /* Concept Image Preview */
+        #conceptPreviewBox {
+            margin-top: 15px;
+            border-radius: 20px;
+            overflow: hidden;
+            display: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        #conceptPreviewBox img { width: 100%; display: block; }
 
-        /* ==== EXACT HOMEPAGE DOCK ==== */
+        /* DOCK */
         .app-dock {
             position: fixed; bottom: 25px; left: 20px; right: 20px;
             background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px);
@@ -139,14 +149,24 @@
                     </div>
 
                     <div class="form-screen" id="step-3">
-                        <button class="vibz-btn" onclick="next()">I Have a Design Code</button>
-                        <button class="vibz-btn primary" onclick="window.location.href='https://www.vibz.co.uk/barber/concepts.html'">Browse Concept Library</button>
+                        <button class="vibz-btn" onclick="goToSearch()">I Have a Design Code</button>
+                        <a href="https://www.vibz.co.uk/barber/concepts.html" class="vibz-btn primary">Browse Concept Library</a>
                         <button class="vibz-btn" onclick="next()">Request Custom Design</button>
                         <button class="vibz-btn" style="border:none; color:#999;" onclick="prev()">Go Back</button>
                     </div>
 
+                    <div class="form-screen" id="step-4">
+                        <input type="text" class="vibz-input" id="designCodeInput" placeholder="e.g. barber-1" oninput="searchConcept()">
+                        <div id="searchStatus" style="font-weight: 800; margin-bottom: 10px; color: var(--primary);"></div>
+                        <div id="conceptPreviewBox">
+                            <img id="previewImg" src="">
+                            <button class="vibz-btn primary" style="margin-top: 15px;" onclick="next()">Use This Design</button>
+                        </div>
+                        <button class="vibz-btn" style="border:none; color:#999; margin-top: 10px;" onclick="prev()">Go Back</button>
+                    </div>
+
                     <div class="form-screen" id="step-dynamic">
-                        <div id="dynamic-options" class="service-grid"></div>
+                        <div id="dynamic-options" style="display: grid; gap: 10px;"></div>
                         <button class="vibz-btn" style="border:none; color:#999; margin-top: 15px;" onclick="prev()">Go Back</button>
                     </div>
                 </form>
@@ -168,10 +188,15 @@
         let currentStep = 1;
         const totalSteps = 13;
 
+        // Concept Database
+        const barberConcepts = Array.from({length: 100}, (_, i) => ({
+            code: `barber-${i+1}`,
+            image: `https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-${i+1}.jpg`
+        }));
+
         function updateUI() {
             const wrapper = document.getElementById('main-content-wrapper');
             const title = document.getElementById('dynamic-title');
-            
             document.querySelectorAll('.form-screen').forEach(s => s.classList.remove('active'));
 
             if(currentStep === 1) {
@@ -180,15 +205,15 @@
             } else {
                 wrapper.className = "hero-balanced";
                 const titles = {
-                    2: "Project Type?", 3: "Design Concept?", 4: "Target Audience?",
-                    5: "Preferred Style?", 6: "Color Palette?", 7: "Primary Goal?",
-                    8: "Select Services", 9: "Timeline", 10: "Logo Design?",
+                    2: "Project Type?", 3: "Design Concept?", 4: "Enter Design Code",
+                    5: "Target Audience?", 6: "Style Preference?", 7: "Color Palette?",
+                    8: "Primary Goal?", 9: "Select Services", 10: "Timeline",
                     11: "Payment Plan", 12: "Lead Info", 13: "Final Plan"
                 };
                 title.textContent = titles[currentStep] || "VIBZ";
             }
 
-            if(currentStep >= 4) {
+            if(currentStep >= 5) {
                 document.getElementById('step-dynamic').classList.add('active');
                 renderOptions();
             } else {
@@ -199,14 +224,30 @@
         function next() { if(currentStep < totalSteps) { currentStep++; updateUI(); } }
         function prev() { if(currentStep > 1) { currentStep--; updateUI(); } }
 
-        function handleBusinessName() { 
-            if(document.getElementById('businessInput').value) next(); 
+        function handleBusinessName() { if(document.getElementById('businessInput').value) next(); }
+        
+        function goToSearch() { currentStep = 4; updateUI(); }
+
+        function searchConcept() {
+            const val = document.getElementById('designCodeInput').value.toLowerCase().trim();
+            const found = barberConcepts.find(c => c.code === val);
+            const box = document.getElementById('conceptPreviewBox');
+            const status = document.getElementById('searchStatus');
+
+            if(found) {
+                document.getElementById('previewImg').src = found.image;
+                box.style.display = 'block';
+                status.textContent = "✅ Concept Found";
+            } else {
+                box.style.display = 'none';
+                status.textContent = val.length > 2 ? "Searching..." : "";
+            }
         }
 
         function renderOptions() {
             const container = document.getElementById('dynamic-options');
-            container.innerHTML = ['Option One', 'Option Two', 'Option Three', 'Option Four'].map(o => `
-                <div class="service-card" onclick="next()"><h4>${o}</h4><p>Tap to select and continue</p></div>
+            container.innerHTML = ['Option One', 'Option Two', 'Option Three'].map(o => `
+                <button class="vibz-btn" onclick="next()">${o}</button>
             `).join('');
         }
 
