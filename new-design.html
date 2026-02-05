@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>VIBZ App Interface</title>
+    <title>VIBZ | Home</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
@@ -37,119 +37,94 @@
             display: flex; align-items: center; justify-content: center;
             transition: transform 0.8s cubic-bezier(0.9, 0, 0.1, 1);
         }
-
         .loader-content {
             font-size: 5rem; font-weight: 900; color: var(--primary);
             letter-spacing: -5px; animation: pulse 1s infinite alternate;
         }
-        
         .loader-content span { color: #000000; }
         @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.1); } }
 
-        /* ==== APP MENU & CATEGORY LAYERS ==== */
-        #app-menu-layer, #category-layer {
+        /* ==== 2. MAGIC MENU DUST LAYER ==== */
+        #magic-menu-overlay {
+            position: fixed; inset: 0; z-index: 11000;
+            visibility: hidden; pointer-events: none;
+        }
+        #magic-menu-overlay.active { visibility: visible; pointer-events: all; }
+        #dust-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+        #menu-content-layer {
+            position: relative; width: 100%; height: 100%;
+            background: var(--primary-light);
+            display: flex; flex-direction: column;
+            padding: calc(var(--safe-top) + 20px) 25px;
+            opacity: 0;
+        }
+        .menu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 60px; }
+        .m-link {
+            font-size: 2.2rem; font-weight: 900; color: var(--text);
+            text-decoration: none; letter-spacing: -1.5px;
+            padding: 15px 0; border-bottom: 1px solid rgba(255, 107, 0, 0.1);
+            display: flex; align-items: center;
+        }
+        .m-link span { color: var(--primary); font-size: 0.9rem; margin-right: 15px; }
+        .close-magic {
+            width: 55px; height: 55px; background: #000; color: #fff;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+        }
+
+        /* ==== 3. CATEGORY LAYERS ==== */
+        #category-layer {
             position: fixed; inset: 0; background: rgba(255, 245, 238, 0.98);
             backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
             z-index: 9000; display: flex; flex-direction: column;
             align-items: center; justify-content: center; gap: 15px;
             transform: translateY(100%); transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
         }
-
-        #app-menu-layer.active, #category-layer.active { transform: translateY(0); }
-
+        #category-layer.active { transform: translateY(0); }
         .cat-item {
             font-size: 1.6rem; font-weight: 800; color: var(--text);
             text-decoration: none; width: 85%; text-align: center;
             padding: 18px; background: white; border-radius: 20px;
             margin-bottom: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.03);
             border: 1px solid rgba(255, 107, 0, 0.05);
-            cursor: pointer;
         }
 
-        .close-btn {
-            margin-top: 20px; width: 60px; height: 60px; background: var(--primary);
-            color: white; border-radius: 50%; display: flex; align-items: center;
-            justify-content: center; font-size: 1.5rem; box-shadow: 0 10px 20px rgba(255, 107, 0, 0.2);
-        }
-
-        /* ==== 2. APP SHELL ==== */
+        /* ==== 4. APP SHELL ==== */
         #app-container {
             height: 100vh; display: flex; flex-direction: column;
             opacity: 0; transition: opacity 0.5s ease-in;
         }
-
-        header {
-            padding: calc(var(--safe-top) + 20px) 25px 15px;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-
+        header { padding: calc(var(--safe-top) + 20px) 25px 15px; display: flex; justify-content: space-between; align-items: center; }
+        .app-logo { font-size: 1.8rem; font-weight: 900; letter-spacing: -1.5px; color: var(--primary); }
+        .app-logo span { color: #000000; }
+        
         .header-spacer {
             width: 60%; height: 2px; margin: 0 auto;
             background: radial-gradient(circle, var(--primary) 0%, rgba(255, 107, 0, 0) 90%);
-            opacity: 0.6;
+            opacity: 0.4;
         }
 
-        .app-logo { font-size: 1.8rem; font-weight: 900; letter-spacing: -1.5px; color: var(--primary); }
-        .app-logo span { color: #000000; }
-
-        .content-scroll {
-            flex: 1; overflow-y: auto; padding: 0 25px 140px; scroll-behavior: smooth;
-        }
-
-        .hero-area { text-align: center; padding: 60px 0 40px; }
-        .hero-area h1 {
-            font-size: 3.8rem; font-weight: 900; line-height: 0.9;
-            letter-spacing: -3px; margin-bottom: 5px; color: var(--primary);
-        }
-
-        .typewriter-container {
-            font-size: 3.8rem; font-weight: 900; color: #000000;
-            line-height: 0.9; letter-spacing: -3px; margin-bottom: 35px;
-            text-transform: capitalize; min-height: 4.2rem;
-        }
+        .content-scroll { flex: 1; overflow-y: auto; padding: 0 25px 140px; scroll-behavior: smooth; }
+        .hero-area { text-align: center; padding: 50px 0 30px; }
+        .hero-area h1 { font-size: 3.8rem; font-weight: 900; line-height: 0.9; letter-spacing: -3px; color: var(--primary); }
+        .typewriter-container { font-size: 3.8rem; font-weight: 900; color: #000; line-height: 0.9; letter-spacing: -3px; margin-bottom: 35px; min-height: 4.2rem; }
 
         .search-container {
             background: #fff; border-radius: 24px; padding: 10px;
             display: flex; align-items: center; box-shadow: 0 20px 40px rgba(255, 107, 0, 0.15);
-            max-width: 500px; margin: 0 auto 80px; 
+            max-width: 500px; margin: 0 auto 60px; 
         }
-
         .search-container input { flex: 1; border: none; outline: none; padding: 15px; font-size: 1.2rem; font-weight: 700; }
+        .search-icon-btn { width: 55px; height: 55px; background: var(--primary); border-radius: 18px; display: flex; align-items: center; justify-content: center; color: #fff; }
 
-        .search-icon-btn {
-            width: 55px; height: 55px; background: var(--primary); border-radius: 18px;
-            display: flex; align-items: center; justify-content: center; color: #fff;
-            cursor: pointer;
-        }
-
-        /* ==== CENTERED NICHE GRID ==== */
-        .section-header {
-            font-size: 0.8rem; font-weight: 900; text-transform: uppercase;
-            letter-spacing: 2px; color: var(--primary); margin-bottom: 20px;
-            display: block; text-align: center;
-        }
-
-        .app-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; max-width: 600px; margin: 0 auto;
-        }
-
+        .app-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; max-width: 600px; margin: 0 auto; }
         .app-tile {
             background: var(--card-bg); padding: 25px 15px; border-radius: 30px;
-            border: 1px solid rgba(255, 107, 0, 0.1); display: flex;
+            border: 1px solid rgba(255, 107, 0, 0.05); display: flex;
             flex-direction: column; align-items: center; gap: 12px; transition: 0.3s;
-            cursor: pointer;
         }
-
-        .app-tile:active { transform: scale(0.94); background: #fff; }
-
-        .tile-icon {
-            width: 50px; height: 50px; background: var(--primary); color: white;
-            border-radius: 15px; display: flex; align-items: center; justify-content: center;
-            font-size: 1.2rem; box-shadow: 0 8px 15px rgba(255, 107, 0, 0.2);
-        }
-
-        .app-tile h3 { font-size: 1rem; font-weight: 900; line-height: 1.2; text-align: center; }
-        .full-tile { grid-column: span 2; flex-direction: row; justify-content: center; }
+        .app-tile:active { transform: scale(0.94); }
+        .tile-icon { width: 50px; height: 50px; background: var(--primary); color: white; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+        .app-tile h3 { font-size: 1rem; font-weight: 900; text-align: center; }
 
         /* ==== 5. APP DOCK ==== */
         .app-dock {
@@ -158,18 +133,14 @@
             height: 80px; border-radius: 40px; display: flex; justify-content: space-around;
             align-items: center; box-shadow: 0 15px 35px rgba(0,0,0,0.1); z-index: 1000;
         }
-
         .dock-btn { display: flex; flex-direction: column; align-items: center; color: #A0A0A0; text-decoration: none; gap: 4px; }
         .dock-btn.active { color: var(--primary); }
         .dock-btn i { font-size: 1.5rem; }
         .dock-btn span { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; }
-
         .dock-center {
             width: 65px; height: 65px; background: var(--primary); border-radius: 50%;
             display: flex; align-items: center; justify-content: center; color: #fff;
             font-size: 1.8rem; margin-top: -50px; border: 6px solid var(--primary-light);
-            box-shadow: 0 10px 20px rgba(255, 107, 0, 0.3);
-            cursor: pointer;
         }
     </style>
 </head>
@@ -179,11 +150,27 @@
         <div class="loader-content">VIBZ<span>.</span></div>
     </div>
 
-    <div id="category-layer">
-        <h2 id="cat-title" style="color: var(--primary); margin-bottom: 20px; font-weight: 900; letter-spacing: -1px;">Niche Selection</h2>
-        <div id="cat-list" style="width: 100%; display: flex; flex-direction: column; align-items: center; overflow-y: auto; max-height: 60vh;">
+    <div id="magic-menu-overlay">
+        <canvas id="dust-canvas"></canvas>
+        <div id="menu-content-layer">
+            <div class="menu-header">
+                <div class="app-logo">VIBZ<span>.</span></div>
+                <div class="close-magic" onclick="reverseDust()"><i class="fa-solid fa-xmark"></i></div>
+            </div>
+            <div class="menu-items">
+                <a href="https://www.vibz.co.uk/barber/" class="m-link"><span>01</span> BARBER CONCEPTS</a>
+                <a href="https://www.vibz.co.uk/barber/concepts.html" class="m-link"><span>02</span> CONCEPT LIBRARY</a>
+                <a href="#" class="m-link"><span>03</span> CLIENT PORTAL</a>
+                <a href="#" class="m-link"><span>04</span> OUR STATS</a>
+                <a href="#" class="m-link"><span>05</span> CONTACT US</a>
+            </div>
         </div>
-        <div class="close-btn" onclick="toggleCategories()"><i class="fa-solid fa-xmark"></i></div>
+    </div>
+
+    <div id="category-layer">
+        <h2 id="cat-title" style="color: var(--primary); margin-bottom: 20px; font-weight: 900;">Niche Selection</h2>
+        <div id="cat-list" style="width: 100%; display: flex; flex-direction: column; align-items: center; overflow-y: auto; max-height: 60vh;"></div>
+        <div class="dock-center" style="margin-top: 20px;" onclick="toggleCategories()"><i class="fa-solid fa-xmark"></i></div>
     </div>
 
     <div id="app-container">
@@ -198,56 +185,42 @@
                 <h1>We Build Websites For:</h1>
                 <div class="typewriter-container"><span id="typewriter"></span></div>
                 <div class="search-container">
-                    <input type="text" id="mainSearch" placeholder="Search any industry..." onkeypress="if(event.key==='Enter') triggerFlow()">
+                    <input type="text" id="mainSearch" placeholder="Search industry..." onkeypress="if(event.key==='Enter') triggerFlow()">
                     <button class="search-icon-btn" onclick="triggerFlow()"><i class="fa-solid fa-magnifying-glass"></i></button>
                 </div>
             </div>
 
-            <span class="section-header">Or Select From Popular Categories</span>
             <div class="app-grid">
                 <div class="app-tile" onclick="openNiche('Health & Wellness')">
                     <div class="tile-icon"><i class="fa-solid fa-heart-pulse"></i></div>
-                    <h3>Health &<br>Wellness</h3>
+                    <h3>Health & Wellness</h3>
                 </div>
                 <div class="app-tile" onclick="openNiche('Home & Trades')">
                     <div class="tile-icon"><i class="fa-solid fa-hammer"></i></div>
-                    <h3>Home &<br>Trades</h3>
+                    <h3>Home & Trades</h3>
                 </div>
                 <div class="app-tile" onclick="openNiche('Professional')">
                     <div class="tile-icon"><i class="fa-solid fa-briefcase"></i></div>
-                    <h3>Professional<br>Services</h3>
+                    <h3>Professional</h3>
                 </div>
                 <div class="app-tile" onclick="openNiche('Food & Drink')">
                     <div class="tile-icon"><i class="fa-solid fa-utensils"></i></div>
-                    <h3>Food &<br>Drink</h3>
-                </div>
-                <div class="app-tile full-tile" onclick="openNiche('Retail & Creative')">
-                    <div class="tile-icon"><i class="fa-solid fa-bag-shopping"></i></div>
-                    <div style="margin-left: 15px;">
-                        <h3>Retail & Creative Industries</h3>
-                    </div>
+                    <h3>Food & Drink</h3>
                 </div>
             </div>
         </main>
 
         <nav class="app-dock">
             <a href="#" class="dock-btn active"><i class="fa-solid fa-house-chimney"></i><span>Home</span></a>
-            <a href="#" class="dock-btn"><i class="fa-solid fa-compass"></i><span>Explore</span></a>
+            <a href="https://www.vibz.co.uk/barber/concepts.html" class="dock-btn"><i class="fa-solid fa-compass"></i><span>Explore</span></a>
             <div class="dock-center" onclick="triggerFlow()"><i class="fa-solid fa-bolt"></i></div>
             <a href="#" class="dock-btn"><i class="fa-solid fa-briefcase"></i><span>Portal</span></a>
-            <div class="dock-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i><span>Menu</span></div>
+            <div class="dock-btn" onclick="toggleMagicMenu()"><i class="fa-solid fa-bars"></i><span>Menu</span></div>
         </nav>
     </div>
 
     <script>
-        const nicheData = {
-            "Health & Wellness": ["Barbers", "Dentists", "Gyms & Studios", "Spas & Beauty", "Physiotherapists", "Yoga Instructors", "Therapists"],
-            "Home & Trades": ["Plumbers", "Electricians", "Landscapers", "Cleaners", "Roofers", "Carpenters", "Locksmiths"],
-            "Professional": ["Lawyers", "Accountants", "Real Estate", "Tutors", "Marketing Agencies", "Consultants"],
-            "Food & Drink": ["Restaurants", "Cafes & Coffee", "Bakeries", "Bars & Clubs", "Catering", "Takeaways"],
-            "Retail & Creative": ["Boutiques", "E-commerce Stores", "Photographers", "Artists", "Florists", "Pet Shops"]
-        };
-
+        // BOOT LOGIC
         window.addEventListener('load', () => {
             setTimeout(() => {
                 document.getElementById('app-loader').style.transform = 'translateY(-100%)';
@@ -256,27 +229,68 @@
             }, 1800);
         });
 
-        function toggleCategories() { document.getElementById('category-layer').classList.toggle('active'); }
+        // DUST TRANSITION ENGINE
+        let particles = [];
+        const canvas = document.getElementById('dust-canvas');
+        const ctx = canvas.getContext('2d');
+        const menuOverlay = document.getElementById('magic-menu-overlay');
+        const contentLayer = document.getElementById('menu-content-layer');
 
-        function openNiche(sector) {
-            const list = document.getElementById('cat-list');
-            const title = document.getElementById('cat-title');
-            title.textContent = sector;
-            list.innerHTML = "";
-            nicheData[sector].forEach(niche => {
-                const div = document.createElement('div');
-                div.className = "cat-item";
-                div.textContent = niche;
-                div.onclick = () => {
-                    document.getElementById('mainSearch').value = niche;
-                    toggleCategories();
-                    triggerFlow();
-                };
-                list.appendChild(div);
-            });
-            toggleCategories();
+        function toggleMagicMenu() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            menuOverlay.classList.add('active');
+            createDust();
         }
 
+        function createDust() {
+            particles = [];
+            for (let i = 0; i < 2500; i++) {
+                particles.push({
+                    x: window.innerWidth * 0.85, 
+                    y: window.innerHeight * 0.9,
+                    targetX: Math.random() * canvas.width,
+                    targetY: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 40,
+                    vy: (Math.random() - 0.5) * 40 - 15,
+                    size: Math.random() * 2.5 + 0.5,
+                    color: Math.random() > 0.4 ? '#FF6B00' : '#000000',
+                    alpha: 1
+                });
+            }
+            animateDust();
+        }
+
+        function animateDust() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            let finished = true;
+            particles.forEach(p => {
+                let dx = p.targetX - p.x;
+                let dy = p.targetY - p.y;
+                p.x += dx * 0.09;
+                p.y += dy * 0.09;
+                ctx.globalAlpha = p.alpha;
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+                if (Math.abs(dx) > 1.5) finished = false;
+            });
+            if (!finished) {
+                requestAnimationFrame(animateDust);
+            } else {
+                contentLayer.style.transition = "opacity 0.6s ease";
+                contentLayer.style.opacity = "1";
+                setTimeout(() => ctx.clearRect(0,0, canvas.width, canvas.height), 300);
+            }
+        }
+
+        function reverseDust() {
+            contentLayer.style.opacity = "0";
+            setTimeout(() => { menuOverlay.classList.remove('active'); }, 400);
+        }
+
+        // TYPEWRITER & NICHE DATA
         const words = ["barbers", "dentists", "plumbers", "lawyers", "gym owners", "chefs"];
         let wordIndex = 0; let charIndex = 0; let isDeleting = false;
         const typewriterEl = document.getElementById('typewriter');
@@ -295,26 +309,39 @@
             setTimeout(startTypewriter, isDeleting && charIndex === 0 ? 1200 : (isDeleting ? 40 : 80));
         }
 
-        // REDIRECTION LOGIC
+        function openNiche(sector) {
+            const nicheData = {
+                "Health & Wellness": ["Barbers", "Dentists", "Gyms", "Spas", "Therapists"],
+                "Home & Trades": ["Plumbers", "Electricians", "Landscapers", "Cleaners"],
+                "Professional": ["Lawyers", "Accountants", "Real Estate", "Consultants"],
+                "Food & Drink": ["Restaurants", "Cafes", "Bakeries", "Bars"]
+            };
+            const list = document.getElementById('cat-list');
+            document.getElementById('cat-title').textContent = sector;
+            list.innerHTML = "";
+            nicheData[sector].forEach(n => {
+                const div = document.createElement('div');
+                div.className = "cat-item";
+                div.textContent = n;
+                div.onclick = () => { document.getElementById('mainSearch').value = n; toggleCategories(); triggerFlow(); };
+                list.appendChild(div);
+            });
+            toggleCategories();
+        }
+
+        function toggleCategories() { document.getElementById('category-layer').classList.toggle('active'); }
+        
         function triggerFlow() { 
             const val = document.getElementById('mainSearch').value.trim().toLowerCase();
             const loader = document.querySelector('.search-icon-btn');
             loader.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
-            
             setTimeout(() => { 
-                // Specific redirect for Barber
                 if (val === 'barbers' || val === 'barber') {
                     window.location.href = "https://www.vibz.co.uk/barber/";
                 } else {
-                    // Standard redirect for all other niches
                     window.location.href = "https://www.vibz.co.uk/funnel.html?niche=" + encodeURIComponent(val);
                 }
             }, 800);
-        }
-
-        function toggleMenu() {
-            // Placeholder for menu functionality
-            alert("VIBZ Menu Layer");
         }
     </script>
 </body>
