@@ -15,6 +15,7 @@
             --text: #121212;
             --border: rgba(255, 107, 0, 0.1);
             --safe-top: env(safe-area-inset-top);
+            --gray: #666;
         }
 
         * {
@@ -27,79 +28,69 @@
             height: 100%;
             background-color: var(--primary-light);
             color: var(--text);
-            overflow: hidden;
+            overflow-x: hidden;
         }
 
         #app-container {
-            height: 100vh; display: flex; flex-direction: column;
+            min-height: 100vh; display: flex; flex-direction: column;
         }
 
         header {
             padding: calc(var(--safe-top) + 20px) 25px 10px;
             display: flex; justify-content: space-between; align-items: center;
-            z-index: 10;
+            position: sticky; top: 0; background: var(--primary-light); z-index: 100;
         }
 
-        /* LOGO WITH BLACK DOT */
         .app-logo { font-size: 1.8rem; font-weight: 900; letter-spacing: -1.5px; color: var(--primary); }
         .app-logo span { color: #000000; }
 
         .content-scroll {
-            flex: 1; overflow-y: auto; padding: 0 25px 160px; scroll-behavior: smooth;
+            flex: 1; padding: 0 25px 160px; scroll-behavior: smooth;
         }
 
-        /* SCREEN 1: CENTERED & LOWERED */
-        .hero-centered {
-            margin-top: 15vh; 
+        .hero-section {
+            margin-top: 5vh; 
             text-align: center;
-            transition: margin-top 0.4s ease;
-        }
-
-        /* STEPS 2-13: BALANCED MIDDLE POSITION */
-        .hero-balanced {
-            margin-top: 8vh; 
-            text-align: center;
-            transition: margin-top 0.4s ease;
         }
 
         .step-header h1 {
-            font-size: 2.8rem; font-weight: 900; line-height: 1.1;
+            font-size: 2.2rem; font-weight: 900; line-height: 1.1;
             letter-spacing: -1.2px; color: var(--primary);
-            margin-bottom: 25px;
+            margin-bottom: 10px;
         }
+        .step-header p { font-weight: 600; color: var(--gray); margin-bottom: 25px; }
 
         .vibz-input {
             width: 100%; padding: 22px; border-radius: 24px; border: 2px solid var(--border);
             background: #fff; font-size: 1.1rem; font-weight: 700; margin-bottom: 15px;
-            outline: none; box-shadow: 0 10px 25px rgba(255, 107, 0, 0.05);
-            text-align: center;
+            outline: none; text-align: center;
         }
 
         .vibz-btn {
             width: 100%; padding: 18px; border-radius: 20px; border: 1px solid var(--border);
             background: #fff; color: var(--text); font-size: 1.1rem; font-weight: 800;
-            margin-bottom: 10px; cursor: pointer; transition: 0.2s; text-align: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
-            text-decoration: none; display: block;
+            margin-bottom: 12px; cursor: pointer; transition: 0.2s; text-align: center;
+            text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px;
         }
 
         .vibz-btn:active { transform: scale(0.97); }
         .vibz-btn.primary { background: var(--primary); color: #fff; border: none; }
+        .vibz-btn.back-btn { border: none; background: transparent; color: #999; font-size: 0.9rem; margin-top: 10px; }
 
         .form-screen { display: none; width: 100%; }
         .form-screen.active { display: block; animation: fadeIn 0.4s ease-out; }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        /* Concept Image Preview */
-        #conceptPreviewBox {
-            margin-top: 15px;
-            border-radius: 20px;
-            overflow: hidden;
-            display: none;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        /* Pricing Card Styles */
+        .plan-card {
+            background: #fff; border-radius: 30px; padding: 25px; margin-bottom: 20px;
+            border: 2px solid var(--border); text-align: left;
         }
-        #conceptPreviewBox img { width: 100%; display: block; }
+        .plan-card.premium { border-color: #2196F3; }
+        .plan-price { font-size: 2rem; font-weight: 900; color: var(--primary); }
+        .feature-list { list-style: none; margin: 15px 0; }
+        .feature-list li { margin-bottom: 8px; font-weight: 600; font-size: 0.9rem; display: flex; gap: 8px; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         /* DOCK */
         .app-dock {
@@ -110,13 +101,10 @@
         }
         .dock-btn { display: flex; flex-direction: column; align-items: center; color: #A0A0A0; text-decoration: none; gap: 4px; }
         .dock-btn.active { color: var(--primary); }
-        .dock-btn i { font-size: 1.4rem; }
-        .dock-btn span { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; }
         .dock-center {
             width: 65px; height: 65px; background: var(--primary); border-radius: 50%;
             display: flex; align-items: center; justify-content: center; color: #fff;
-            font-size: 1.8rem; margin-top: -50px; border: 6px solid var(--primary-light);
-            box-shadow: 0 10px 20px rgba(255, 107, 0, 0.3);
+            margin-top: -50px; border: 6px solid var(--primary-light);
         }
     </style>
 </head>
@@ -129,129 +117,176 @@
         </header>
 
         <main class="content-scroll">
-            <div id="main-content-wrapper" class="hero-centered">
+            <div class="hero-section">
                 
-                <div class="step-header">
-                    <h1 id="dynamic-title">What is your barber shop name?</h1>
-                </div>
-
-                <form id="funnelForm" onsubmit="return false;" style="width: 100%;">
+                <form id="funnelForm" onsubmit="return false;">
+                    
                     <div class="form-screen active" id="step-1">
-                        <input type="text" class="vibz-input" id="businessInput" placeholder="Enter name...">
-                        <button class="vibz-btn primary" onclick="handleBusinessName()">Continue <i class="fa-solid fa-arrow-right"></i></button>
+                        <h1>What is your barber shop name?</h1>
+                        <input type="text" class="vibz-input" id="businessName" placeholder="Enter name...">
+                        <button class="vibz-btn primary" onclick="next()">Continue <i class="fa-solid fa-arrow-right"></i></button>
                     </div>
 
                     <div class="form-screen" id="step-2">
+                        <h1>Project Type?</h1>
                         <button class="vibz-btn" onclick="next()">New Website</button>
                         <button class="vibz-btn" onclick="next()">Redesign Existing</button>
                         <button class="vibz-btn" onclick="next()">Maintenance</button>
-                        <button class="vibz-btn" style="border:none; color:#999;" onclick="prev()">Go Back</button>
+                        <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
                     </div>
 
                     <div class="form-screen" id="step-3">
-                        <button class="vibz-btn" onclick="goToSearch()">I Have a Design Code</button>
+                        <h1>Design Concept?</h1>
+                        <button class="vibz-btn" onclick="showStep(4)">I Have a Design Code</button>
                         <a href="https://www.vibz.co.uk/barber/concepts.html" class="vibz-btn primary">Browse Concept Library</a>
-                        <button class="vibz-btn" onclick="next()">Request Custom Design</button>
-                        <button class="vibz-btn" style="border:none; color:#999;" onclick="prev()">Go Back</button>
+                        <button class="vibz-btn" onclick="showStep(5)">Request Custom Design</button>
+                        <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
                     </div>
 
                     <div class="form-screen" id="step-4">
-                        <input type="text" class="vibz-input" id="designCodeInput" placeholder="e.g. barber-1" oninput="searchConcept()">
-                        <div id="searchStatus" style="font-weight: 800; margin-bottom: 10px; color: var(--primary);"></div>
-                        <div id="conceptPreviewBox">
-                            <img id="previewImg" src="">
-                            <button class="vibz-btn primary" style="margin-top: 15px;" onclick="next()">Use This Design</button>
-                        </div>
-                        <button class="vibz-btn" style="border:none; color:#999; margin-top: 10px;" onclick="prev()">Go Back</button>
+                        <h1>Enter Design Code</h1>
+                        <input type="text" class="vibz-input" id="designCode" placeholder="e.g. barber-1">
+                        <button class="vibz-btn primary" onclick="next()">Confirm Design</button>
+                        <button class="vibz-btn back-btn" onclick="showStep(3)">Go Back</button>
                     </div>
 
-                    <div class="form-screen" id="step-dynamic">
-                        <div id="dynamic-options" style="display: grid; gap: 10px;"></div>
-                        <button class="vibz-btn" style="border:none; color:#999; margin-top: 15px;" onclick="prev()">Go Back</button>
+                    <div class="form-screen" id="step-5">
+                        <h1>Who are your main clients?</h1>
+                        <button class="vibz-btn" onclick="next()">Men</button>
+                        <button class="vibz-btn" onclick="next()">Women</button>
+                        <button class="vibz-btn" onclick="next()">Children</button>
+                        <button class="vibz-btn" onclick="next()">Mixed/Family</button>
+                        <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
                     </div>
+
+                    <div class="form-screen" id="step-6">
+                        <h1>Website Style?</h1>
+                        <button class="vibz-btn" onclick="next()">Classic</button>
+                        <button class="vibz-btn" onclick="next()">Modern</button>
+                        <button class="vibz-btn" onclick="next()">Minimalist</button>
+                        <button class="vibz-btn" onclick="next()">Premium</button>
+                        <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
+                    </div>
+
+                    <div class="form-screen" id="step-7">
+                        <h1>Color Scheme?</h1>
+                        <button class="vibz-btn" onclick="next()">Black & Gold</button>
+                        <button class="vibz-btn" onclick="next()">Modern/Vibrant</button>
+                        <button class="vibz-btn" onclick="next()">Neutral/Classic</button>
+                        <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
+                    </div>
+
+                    <div class="form-screen" id="step-8">
+                        <h1>Website Goal?</h1>
+                        <button class="vibz-btn" onclick="next()">Attract New Clients</button>
+                        <button class="vibz-btn" onclick="next()">Showcase Portfolio</button>
+                        <button class="vibz-btn" onclick="next()">Facilitate Bookings</button>
+                        <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
+                    </div>
+
+                    <div class="form-screen" id="step-9">
+                        <h1>Main Package?</h1>
+                        <button class="vibz-btn" onclick="setPlan('Standard')">Standard Package (£1,500)</button>
+                        <button class="vibz-btn primary" onclick="setPlan('Premium')">Premium Package (£3,000)</button>
+                        <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
+                    </div>
+
+                    <div class="form-screen" id="step-10">
+                        <h1>Timeline?</h1>
+                        <button class="vibz-btn" onclick="next()">Start ASAP</button>
+                        <button class="vibz-btn" onclick="showStep(12)">Need More Info</button>
+                        <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
+                    </div>
+
+                    <div class="form-screen" id="step-11">
+                        <h1>Payment Plan?</h1>
+                        <button class="vibz-btn" onclick="showStep(13)">Own Outright</button>
+                        <button class="vibz-btn" onclick="showStep(13)">Monthly Support</button>
+                        <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
+                    </div>
+
+                    <div class="form-screen" id="step-12">
+                        <h1>Your Details</h1>
+                        <input type="text" class="vibz-input" placeholder="Name">
+                        <input type="email" class="vibz-input" placeholder="Email">
+                        <button class="vibz-btn primary" onclick="alert('Inquiry Sent!')">Send Info</button>
+                        <button class="vibz-btn back-btn" onclick="showStep(10)">Go Back</button>
+                    </div>
+
+                    <div class="form-screen" id="step-13">
+                        <h1>Choose Your Plan</h1>
+                        <div id="finalPlans">
+                            </div>
+                        <button class="vibz-btn back-btn" onclick="showStep(11)">Go Back</button>
+                    </div>
+
                 </form>
             </div>
         </main>
 
         <nav class="app-dock">
             <a href="#" class="dock-btn active"><i class="fa-solid fa-house-chimney"></i><span>Home</span></a>
-            <a href="#" class="dock-btn"><i class="fa-solid fa-compass"></i><span>Explore</span></a>
+            <a href="https://www.vibz.co.uk/barber/concepts.html" class="dock-btn"><i class="fa-solid fa-compass"></i><span>Library</span></a>
             <div class="dock-center" onclick="next()"><i class="fa-solid fa-bolt"></i></div>
             <a href="#" class="dock-btn"><i class="fa-solid fa-briefcase"></i><span>Portal</span></a>
-            <div class="dock-btn"><i class="fa-solid fa-bars"></i><span>Menu</span></div>
+            <a href="#" class="dock-btn"><i class="fa-solid fa-bars"></i><span>Menu</span></a>
         </nav>
     </div>
 
     <script>
-        window.onbeforeunload = function() { sessionStorage.clear(); };
-
         let currentStep = 1;
-        const totalSteps = 13;
+        let selectedPlan = 'Standard';
 
-        // Concept Database
-        const barberConcepts = Array.from({length: 100}, (_, i) => ({
-            code: `barber-${i+1}`,
-            image: `https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-${i+1}.jpg`
-        }));
-
-        function updateUI() {
-            const wrapper = document.getElementById('main-content-wrapper');
-            const title = document.getElementById('dynamic-title');
+        function showStep(step) {
             document.querySelectorAll('.form-screen').forEach(s => s.classList.remove('active'));
-
-            if(currentStep === 1) {
-                wrapper.className = "hero-centered";
-                title.textContent = "What is your barber shop name?";
-            } else {
-                wrapper.className = "hero-balanced";
-                const titles = {
-                    2: "Project Type?", 3: "Design Concept?", 4: "Enter Design Code",
-                    5: "Target Audience?", 6: "Style Preference?", 7: "Color Palette?",
-                    8: "Primary Goal?", 9: "Select Services", 10: "Timeline",
-                    11: "Payment Plan", 12: "Lead Info", 13: "Final Plan"
-                };
-                title.textContent = titles[currentStep] || "VIBZ";
+            const target = document.getElementById(`step-${step}`);
+            if(target) {
+                target.classList.add('active');
+                currentStep = step;
+                window.scrollTo(0,0);
             }
-
-            if(currentStep >= 5) {
-                document.getElementById('step-dynamic').classList.add('active');
-                renderOptions();
-            } else {
-                document.getElementById(`step-${currentStep}`).classList.add('active');
-            }
+            if(step === 13) renderFinalPlans();
         }
 
-        function next() { if(currentStep < totalSteps) { currentStep++; updateUI(); } }
-        function prev() { if(currentStep > 1) { currentStep--; updateUI(); } }
+        function next() { showStep(currentStep + 1); }
+        function prev() { showStep(currentStep - 1); }
 
-        function handleBusinessName() { if(document.getElementById('businessInput').value) next(); }
-        
-        function goToSearch() { currentStep = 4; updateUI(); }
+        function setPlan(p) {
+            selectedPlan = p;
+            next();
+        }
 
-        function searchConcept() {
-            const val = document.getElementById('designCodeInput').value.toLowerCase().trim();
-            const found = barberConcepts.find(c => c.code === val);
-            const box = document.getElementById('conceptPreviewBox');
-            const status = document.getElementById('searchStatus');
+        function renderFinalPlans() {
+            const container = document.getElementById('finalPlans');
+            const isPremium = selectedPlan === 'Premium';
+            
+            container.innerHTML = `
+                <div class="plan-card ${isPremium ? 'premium' : ''}">
+                    <h3>${selectedPlan} Package</h3>
+                    <div class="plan-price">${isPremium ? '£3,000' : '£1,500'}</div>
+                    <ul class="feature-list">
+                        <li><i class="fa-solid fa-check" style="color:#4CAF50"></i> Mobile Responsive</li>
+                        <li><i class="fa-solid fa-check" style="color:#4CAF50"></i> SEO Optimized</li>
+                        <li><i class="fa-solid fa-check" style="color:#4CAF50"></i> ${isPremium ? '15 Pages' : '5 Pages'}</li>
+                    </ul>
+                    <button class="vibz-btn primary">Secure via Stripe</button>
+                </div>
+            `;
+        }
 
-            if(found) {
-                document.getElementById('previewImg').src = found.image;
-                box.style.display = 'block';
-                status.textContent = "✅ Concept Found";
-            } else {
-                box.style.display = 'none';
-                status.textContent = val.length > 2 ? "Searching..." : "";
+        // URL PARAMETER HANDLING (Back from Concept Page)
+        window.onload = () => {
+            const params = new URLSearchParams(window.location.search);
+            const step = params.get('step');
+            const code = params.get('code');
+
+            if (code) {
+                document.getElementById('designCode').value = code;
             }
-        }
-
-        function renderOptions() {
-            const container = document.getElementById('dynamic-options');
-            container.innerHTML = ['Option One', 'Option Two', 'Option Three'].map(o => `
-                <button class="vibz-btn" onclick="next()">${o}</button>
-            `).join('');
-        }
-
-        window.onload = updateUI;
+            if (step) {
+                showStep(parseInt(step));
+            }
+        };
     </script>
 </body>
 </html>
