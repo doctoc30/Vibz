@@ -297,7 +297,6 @@
             "Retail & Creative": ["Boutiques", "E-commerce Stores", "Photographers", "Artists", "Florists", "Pet Shops"]
         };
 
-        // Boot loader sequence
         window.addEventListener('load', () => {
             setTimeout(() => {
                 document.getElementById('app-loader').style.transform = 'translateY(-100%)';
@@ -320,15 +319,14 @@
                 div.textContent = niche;
                 div.onclick = () => {
                     document.getElementById('mainSearch').value = niche;
-                    toggleCategories();
-                    triggerFlow();
+                    // Directly call triggerFlow with the specific niche
+                    triggerFlow(niche);
                 };
                 list.appendChild(div);
             });
             toggleCategories();
         }
 
-        // Typewriter Logic
         const words = ["barbers", "dentists", "plumbers", "lawyers", "gym owners", "chefs"];
         let wordIndex = 0; let charIndex = 0; let isDeleting = false;
         const typewriterEl = document.getElementById('typewriter');
@@ -347,27 +345,23 @@
             setTimeout(startTypewriter, isDeleting && charIndex === 0 ? 1200 : (isDeleting ? 40 : 80));
         }
 
-        // REDIRECTION LOGIC (SMART BARBER DETECT)
-        function triggerFlow() { 
-            const val = document.getElementById('mainSearch').value.trim().toLowerCase();
+        // UPDATED REDIRECTION LOGIC
+        function triggerFlow(overrideNiche = null) { 
+            const val = overrideNiche ? overrideNiche.toLowerCase() : document.getElementById('mainSearch').value.trim().toLowerCase();
             const loaderIcon = document.querySelector('.search-icon-btn i');
             
-            // Add a little spin to show action
+            if (!val) return;
+
             loaderIcon.className = 'fa-solid fa-spinner fa-spin';
             
-            // Logic to detect barber-related terms
             const isBarber = val.includes('barber') || val.includes('hair') || val.includes('shave');
 
             setTimeout(() => { 
                 if (isBarber) {
-                    // Send to specialized barber funnel, forcing Step 5 (Audience Selection)
-                    window.location.href = "https://www.vibz.co.uk/barber/index.html?step=5";
-                } else if (val !== "") {
-                    // Standard niche funnel
-                    window.location.href = "https://www.vibz.co.uk/funnel.html?niche=" + encodeURIComponent(val);
+                    // Start at Step 1 (Shop Name) for homepage users
+                    window.location.href = "https://www.vibz.co.uk/barber/index.html";
                 } else {
-                    // No input, reset icon
-                    loaderIcon.className = 'fa-solid fa-magnifying-glass';
+                    window.location.href = "https://www.vibz.co.uk/funnel.html?niche=" + encodeURIComponent(val);
                 }
             }, 800);
         }
