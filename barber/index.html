@@ -50,8 +50,9 @@
             flex: 1; overflow-y: auto; padding: 0 25px 160px; scroll-behavior: smooth;
         }
 
+        /* Adjusted Spacing: Step 1 is centered, others are dropped slightly lower than before */
         .hero-centered { margin-top: 15vh; text-align: center; transition: 0.4s ease; }
-        .hero-balanced { margin-top: 3vh; text-align: center; transition: 0.4s ease; }
+        .hero-balanced { margin-top: 12vh; text-align: center; transition: 0.4s ease; }
 
         .step-header h1 {
             font-size: 2.4rem; font-weight: 900; line-height: 1.1;
@@ -79,7 +80,6 @@
         .vibz-btn.primary { background: var(--primary); color: #fff; border: none; }
         .vibz-btn.back-btn { background: transparent; border: none; color: #999; margin-top: 10px; box-shadow: none; font-weight: 700; }
 
-        /* Step 9 Service Grid Styling */
         .services-grid { display: grid; grid-template-columns: 1fr; gap: 10px; text-align: left; margin-bottom: 30px; }
         .service-card {
             background: #fff; border: 2px solid var(--border); border-radius: 20px;
@@ -89,19 +89,17 @@
         .service-card.selected.premium { border-color: var(--premium); background: rgba(33,150,243,0.06); }
         .tier-pill { font-size: 0.65rem; font-weight: 900; padding: 4px 10px; border-radius: 8px; display: inline-block; margin-bottom: 6px; }
 
-        /* Final Summary Styling */
         .final-summary-card { background: #fff; border-radius: 30px; padding: 30px; border: 2px solid var(--border); text-align: left; }
         .summary-header { border-bottom: 2px solid #f9f9f9; padding-bottom: 20px; margin-bottom: 20px; }
         .summary-feature { font-size: 0.95rem; font-weight: 600; padding: 8px 0; border-bottom: 1px solid #f5f5f5; display: flex; justify-content: space-between; align-items: center; }
-        .summary-feature i { color: var(--standard); font-size: 0.8rem; }
-        .summary-feature span.incl { color: var(--gray); font-size: 0.75rem; font-weight: 400; font-style: italic; }
+        .summary-feature i { color: var(--standard); font-size: 0.8rem; margin-right: 8px; }
+        .incl { color: var(--gray); font-size: 0.75rem; font-weight: 400; font-style: italic; }
 
         .form-screen { display: none; width: 100%; }
         .form-screen.active { display: block; animation: fadeIn 0.4s ease-out forwards; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Dock */
         .app-dock {
             position: fixed; bottom: 25px; left: 20px; right: 20px;
             background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px);
@@ -194,8 +192,7 @@
                     </div>
 
                     <div class="form-screen" id="step-9">
-                        <div class="services-grid" id="master-service-grid">
-                            </div>
+                        <div class="services-grid" id="master-service-grid"></div>
                         <button class="vibz-btn primary" onclick="next()">Continue Selection</button>
                         <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
                     </div>
@@ -239,129 +236,96 @@
 
     <script>
         let currentStep = 1;
-        let selections = { 
-            businessName: '',
-            services: [],
-            planType: ''
-        };
+        let selections = { businessName: '', services: [], planType: '' };
 
         const standardServices = [
-            "Logo (placeholder)", "Services & Pricing Display", "Team Profiles", "Photo Gallery", 
-            "Before & After Slider", "Special Offers Section", "Opening Hours Display", "Location & Directions", 
-            "Tap-to-Call / WhatsApp", "FAQ Section", "Loyalty Info", "Contact Form", 
-            "On-Page SEO Basics", "Customer Reviews", "Video Grids (up to 6)"
+            "Logo (placeholder if none)", "Services & Pricing Display", "Team / Barber Profiles", "Photo Gallery / Portfolio", 
+            "Basic Before & After Slider", "Special Offers / Promotions Section", "Opening Hours Display", "Location & Directions", 
+            "Tap-to-Call & WhatsApp Buttons", "FAQ Section", "Loyalty / Membership Info", "Contact Form", 
+            "On-Page SEO Basics", "Reviews", "Video Grids (up to 6)"
         ];
 
         const premiumServices = [
-            "Online Booking Integration", "Stripe Payments / Deposits", "Cancellation Management", "Gift Cards / Vouchers", 
-            "Walk-In / Waitlist System", "Pop-up Offer", "Barber Specialty Tags", "Advanced CTA Buttons", 
-            "Conversion Tracking", "Priority Build Queue", "Enhanced Gallery", "Custom Graphics", 
-            "Sticky Header / Banner", "Multi-Location Info", "Full Branding Package"
+            "Online Booking System Integration", "Stripe Payments / Deposits", "Reschedule & Cancellation Management", "Gift Cards / Vouchers", 
+            "Walk-In / Waitlist System", "Pop up offer", "Barber Specialties & Service Tags", "Advanced Call-to-Action Buttons", 
+            "Analytics & Conversion Tracking Setup", "Priority Build Queue", "Enhanced Video & Image Gallery", "Custom graphics", 
+            "Prominent Sticky Header / Banner", "Multi-Location / Branch Info", "Full Branding Package"
         ];
 
         function initServiceList() {
             const grid = document.getElementById('master-service-grid');
             grid.innerHTML = '';
-            
             standardServices.forEach(s => {
-                grid.innerHTML += `
-                    <div class="service-card" onclick="toggleService('${s}', 'standard', this)">
-                        <span class="tier-pill" style="background:#E8F5E9; color:#4CAF50;">STANDARD</span>
-                        <div style="font-weight:700; font-size:0.95rem;">${s}</div>
-                    </div>`;
+                grid.innerHTML += `<div class="service-card" onclick="toggleService('${s}', 'standard', this)">
+                    <span class="tier-pill" style="background:#E8F5E9; color:#4CAF50;">STANDARD</span>
+                    <div style="font-weight:700; font-size:0.95rem;">${s}</div></div>`;
             });
-
             premiumServices.forEach(s => {
-                grid.innerHTML += `
-                    <div class="service-card" onclick="toggleService('${s}', 'premium', this)">
-                        <span class="tier-pill" style="background:#E3F2FD; color:#2196F3;">PREMIUM</span>
-                        <div style="font-weight:700; font-size:0.95rem;">${s}</div>
-                    </div>`;
+                grid.innerHTML += `<div class="service-card" onclick="toggleService('${s}', 'premium', this)">
+                    <span class="tier-pill" style="background:#E3F2FD; color:#2196F3;">PREMIUM</span>
+                    <div style="font-weight:700; font-size:0.95rem;">${s}</div></div>`;
             });
         }
 
         function toggleService(name, tier, el) {
-            el.classList.toggle('selected');
-            el.classList.toggle(tier);
+            el.classList.toggle('selected'); el.classList.toggle(tier);
             const index = selections.services.findIndex(item => item.name === name);
-            if (index > -1) {
-                selections.services.splice(index, 1);
-            } else {
-                selections.services.push({ name, tier });
-            }
+            if (index > -1) selections.services.splice(index, 1);
+            else selections.services.push({ name, tier });
         }
 
         function handleStep1() {
             const input = document.getElementById('businessInput').value;
-            if(input) {
-                selections.businessName = input;
-                next();
-            }
+            if(input) { selections.businessName = input; next(); }
         }
 
         function setVal(key, val) { selections[key] = val; next(); }
         function setUrgency(val) { val === 'Info' ? goToStep(12) : next(); }
 
         function setPlanType(val) {
-            selections.planType = val;
-            renderFinalSummary();
-            next();
+            selections.planType = val; renderFinalSummary(); next();
         }
 
         function renderFinalSummary() {
             const container = document.getElementById('final-summary-render');
             const hasPremium = selections.services.some(s => s.tier === 'premium');
             const buildType = hasPremium ? 'Premium' : 'Standard';
-            
-            let price = "";
-            if(selections.planType === 'Own Outright') {
-                price = hasPremium ? "£2,999" : "£1,499";
-            } else {
-                price = hasPremium ? "£199/mo" : "£99/mo";
-            }
+            let price = (selections.planType === 'Own Outright') ? (hasPremium ? "£2,999" : "£1,499") : (hasPremium ? "£199/mo" : "£99/mo");
 
             let featuresHtml = '';
             selections.services.forEach(s => {
                 const isIncl = (s.tier === 'standard' && hasPremium) ? '<span class="incl"> (Included from Standard Plan)</span>' : '';
-                featuresHtml += `
-                    <div class="summary-feature">
-                        <div><i class="fas fa-check-circle"></i> ${s.name} ${isIncl}</div>
-                    </div>`;
+                featuresHtml += `<div class="summary-feature"><div><i class="fas fa-check-circle"></i> ${s.name} ${isIncl}</div></div>`;
             });
 
-            container.innerHTML = `
-                <div class="final-summary-card">
-                    <div class="summary-header">
-                        <div style="text-transform: uppercase; font-size:0.7rem; font-weight:900; color:var(--primary);">${selections.planType}</div>
-                        <h2 style="font-size:2rem; margin:5px 0;">${buildType} Build</h2>
-                        <div style="font-size:2.5rem; font-weight:900; color:var(--text);">${price}</div>
-                    </div>
-                    <div style="margin-bottom:20px;">
-                        <p style="font-weight:800; font-size:0.8rem; color:var(--gray); margin-bottom:10px;">SELECTED FEATURES:</p>
-                        ${featuresHtml}
-                    </div>
-                    <button class="vibz-btn primary" style="height:70px; font-size:1.3rem;">Secure Setup Now</button>
+            container.innerHTML = `<div class="final-summary-card">
+                <div class="summary-header">
+                    <div style="text-transform: uppercase; font-size:0.7rem; font-weight:900; color:var(--primary);">${selections.planType}</div>
+                    <h2 style="font-size:2rem; margin:5px 0;">${buildType} Build</h2>
+                    <div style="font-size:2.5rem; font-weight:900; color:var(--text);">${price}</div>
                 </div>
-            `;
+                <div style="margin-bottom:20px;">
+                    <p style="font-weight:800; font-size:0.8rem; color:var(--gray); margin-bottom:10px;">SELECTED FEATURES:</p>
+                    ${featuresHtml}
+                </div>
+                <button class="vibz-btn primary" style="height:70px; font-size:1.3rem;">Secure Setup Now</button>
+            </div>`;
         }
 
         function updateUI() {
             const wrapper = document.getElementById('main-content-wrapper');
-            const title = document.getElementById('dynamic-title');
-            const subtitle = document.getElementById('dynamic-subtitle');
-            
             document.querySelectorAll('.form-screen').forEach(s => s.classList.remove('active'));
             document.getElementById(`step-${currentStep}`).classList.add('active');
             
             const titles = {
-                1: "Shop Name?", 2: "Project Type?", 3: "Design Choice?", 4: "Design Code?",
+                1: "What is your shop name?", 2: "Project Type?", 3: "Design Choice?", 4: "Design Code?",
                 5: "Main Clients?", 6: "Style Preference?", 7: "Color Palette?", 8: "Main Goal?",
                 9: "Select Features", 10: "Timeline", 11: "Payment Model", 12: "Your Details", 13: "Final Plan"
             };
 
-            title.textContent = titles[currentStep];
+            document.getElementById('dynamic-title').textContent = titles[currentStep];
             wrapper.className = (currentStep === 1) ? "hero-centered" : "hero-balanced";
-            subtitle.style.display = (currentStep === 1) ? "block" : "none";
+            document.getElementById('dynamic-subtitle').style.display = (currentStep === 1) ? "block" : "none";
             window.scrollTo(0,0);
         }
 
