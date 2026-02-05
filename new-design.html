@@ -44,38 +44,52 @@
         .loader-content span { color: #000000; }
         @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.1); } }
 
-        /* ==== 2. MAGIC MENU DUST LAYER ==== */
-        #magic-menu-overlay {
-            position: fixed; inset: 0; z-index: 11000;
-            visibility: hidden; pointer-events: none;
-        }
-        #magic-menu-overlay.active { visibility: visible; pointer-events: all; }
-        #dust-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
-        #menu-content-layer {
-            position: relative; width: 100%; height: 100%;
-            background: var(--primary-light);
+        /* ==== 2. NEW VERTICAL SLIDE MENU ==== */
+        #slide-menu {
+            position: fixed; inset: 0; 
+            background: #000000; 
+            z-index: 9500;
+            transform: translateY(100%);
+            transition: transform 0.6s cubic-bezier(0.85, 0, 0.15, 1);
             display: flex; flex-direction: column;
-            padding: calc(var(--safe-top) + 20px) 25px;
-            opacity: 0;
+            padding: calc(var(--safe-top) + 40px) 30px;
         }
-        .menu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 60px; }
-        .m-link {
-            font-size: 2.2rem; font-weight: 900; color: var(--text);
-            text-decoration: none; letter-spacing: -1.5px;
-            padding: 15px 0; border-bottom: 1px solid rgba(255, 107, 0, 0.1);
-            display: flex; align-items: center;
-        }
-        .m-link span { color: var(--primary); font-size: 0.9rem; margin-right: 15px; }
-        .close-magic {
-            width: 55px; height: 55px; background: #000; color: #fff;
-            border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+        #slide-menu.active { transform: translateY(0); }
+
+        .menu-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 50px; }
+        .menu-logo { font-size: 2rem; font-weight: 900; color: #fff; letter-spacing: -1.5px; }
+        .menu-logo span { color: var(--primary); }
+        
+        .close-trigger {
+            width: 50px; height: 50px; border-radius: 50%; background: rgba(255,255,255,0.1);
+            color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
         }
 
-        /* ==== 3. CATEGORY LAYERS ==== */
+        .menu-links { display: flex; flex-direction: column; gap: 20px; }
+        
+        /* Staggered Slide Animation for Links */
+        .m-nav-item {
+            font-size: 3rem; font-weight: 900; color: #fff;
+            text-decoration: none; letter-spacing: -2px;
+            transform: translateY(100px); opacity: 0;
+            transition: 0.6s cubic-bezier(0.32, 0.72, 0, 1);
+            display: block;
+        }
+        #slide-menu.active .m-nav-item { transform: translateY(0); opacity: 1; }
+        .m-nav-item span { font-size: 1rem; color: var(--primary); margin-right: 15px; font-weight: 400; vertical-align: middle; }
+        
+        /* Animation Delays */
+        .m-nav-item:nth-child(1) { transition-delay: 0.1s; }
+        .m-nav-item:nth-child(2) { transition-delay: 0.2s; }
+        .m-nav-item:nth-child(3) { transition-delay: 0.3s; }
+        .m-nav-item:nth-child(4) { transition-delay: 0.4s; }
+
+        .menu-footer { margin-top: auto; color: rgba(255,255,255,0.4); font-weight: 700; font-size: 0.8rem; letter-spacing: 2px; }
+
+        /* ==== 3. CATEGORY OVERLAY ==== */
         #category-layer {
             position: fixed; inset: 0; background: rgba(255, 245, 238, 0.98);
-            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            z-index: 9000; display: flex; flex-direction: column;
+            backdrop-filter: blur(25px); z-index: 9000; display: flex; flex-direction: column;
             align-items: center; justify-content: center; gap: 15px;
             transform: translateY(100%); transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
         }
@@ -84,24 +98,16 @@
             font-size: 1.6rem; font-weight: 800; color: var(--text);
             text-decoration: none; width: 85%; text-align: center;
             padding: 18px; background: white; border-radius: 20px;
-            margin-bottom: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-            border: 1px solid rgba(255, 107, 0, 0.05);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03); border: 1px solid rgba(255, 107, 0, 0.05);
         }
 
         /* ==== 4. APP SHELL ==== */
-        #app-container {
-            height: 100vh; display: flex; flex-direction: column;
-            opacity: 0; transition: opacity 0.5s ease-in;
-        }
+        #app-container { height: 100vh; display: flex; flex-direction: column; opacity: 0; transition: opacity 0.5s ease-in; }
         header { padding: calc(var(--safe-top) + 20px) 25px 15px; display: flex; justify-content: space-between; align-items: center; }
         .app-logo { font-size: 1.8rem; font-weight: 900; letter-spacing: -1.5px; color: var(--primary); }
         .app-logo span { color: #000000; }
         
-        .header-spacer {
-            width: 60%; height: 2px; margin: 0 auto;
-            background: radial-gradient(circle, var(--primary) 0%, rgba(255, 107, 0, 0) 90%);
-            opacity: 0.4;
-        }
+        .header-spacer { width: 60%; height: 2px; margin: 0 auto; background: radial-gradient(circle, var(--primary) 0%, rgba(255, 107, 0, 0) 90%); opacity: 0.4; }
 
         .content-scroll { flex: 1; overflow-y: auto; padding: 0 25px 140px; scroll-behavior: smooth; }
         .hero-area { text-align: center; padding: 50px 0 30px; }
@@ -150,22 +156,21 @@
         <div class="loader-content">VIBZ<span>.</span></div>
     </div>
 
-    <div id="magic-menu-overlay">
-        <canvas id="dust-canvas"></canvas>
-        <div id="menu-content-layer">
-            <div class="menu-header">
-                <div class="app-logo">VIBZ<span>.</span></div>
-                <div class="close-magic" onclick="reverseDust()"><i class="fa-solid fa-xmark"></i></div>
-            </div>
-            <div class="menu-items">
-                <a href="https://www.vibz.co.uk/barber/" class="m-link"><span>01</span> BARBER CONCEPTS</a>
-                <a href="https://www.vibz.co.uk/barber/concepts.html" class="m-link"><span>02</span> CONCEPT LIBRARY</a>
-                <a href="#" class="m-link"><span>03</span> CLIENT PORTAL</a>
-                <a href="#" class="m-link"><span>04</span> OUR STATS</a>
-                <a href="#" class="m-link"><span>05</span> CONTACT US</a>
-            </div>
+    <nav id="slide-menu">
+        <div class="menu-top">
+            <div class="menu-logo">VIBZ<span>.</span></div>
+            <div class="close-trigger" onclick="toggleMenu()"><i class="fa-solid fa-xmark"></i></div>
         </div>
-    </div>
+        
+        <div class="menu-links">
+            <a href="https://www.vibz.co.uk/barber/" class="m-nav-item"><span>01</span> Home</a>
+            <a href="https://www.vibz.co.uk/barber/concepts.html" class="m-nav-item"><span>02</span> Library</a>
+            <a href="#" class="m-nav-item"><span>03</span> Portal</a>
+            <a href="#" class="m-nav-item"><span>04</span> Support</a>
+        </div>
+
+        <div class="menu-footer">VIBZ COLLECTIVE © 2026</div>
+    </nav>
 
     <div id="category-layer">
         <h2 id="cat-title" style="color: var(--primary); margin-bottom: 20px; font-weight: 900;">Niche Selection</h2>
@@ -215,7 +220,7 @@
             <a href="https://www.vibz.co.uk/barber/concepts.html" class="dock-btn"><i class="fa-solid fa-compass"></i><span>Explore</span></a>
             <div class="dock-center" onclick="triggerFlow()"><i class="fa-solid fa-bolt"></i></div>
             <a href="#" class="dock-btn"><i class="fa-solid fa-briefcase"></i><span>Portal</span></a>
-            <div class="dock-btn" onclick="toggleMagicMenu()"><i class="fa-solid fa-bars"></i><span>Menu</span></div>
+            <div class="dock-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i><span>Menu</span></div>
         </nav>
     </div>
 
@@ -229,68 +234,12 @@
             }, 1800);
         });
 
-        // DUST TRANSITION ENGINE
-        let particles = [];
-        const canvas = document.getElementById('dust-canvas');
-        const ctx = canvas.getContext('2d');
-        const menuOverlay = document.getElementById('magic-menu-overlay');
-        const contentLayer = document.getElementById('menu-content-layer');
-
-        function toggleMagicMenu() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            menuOverlay.classList.add('active');
-            createDust();
+        // MENU TOGGLE
+        function toggleMenu() {
+            document.getElementById('slide-menu').classList.toggle('active');
         }
 
-        function createDust() {
-            particles = [];
-            for (let i = 0; i < 2500; i++) {
-                particles.push({
-                    x: window.innerWidth * 0.85, 
-                    y: window.innerHeight * 0.9,
-                    targetX: Math.random() * canvas.width,
-                    targetY: Math.random() * canvas.height,
-                    vx: (Math.random() - 0.5) * 40,
-                    vy: (Math.random() - 0.5) * 40 - 15,
-                    size: Math.random() * 2.5 + 0.5,
-                    color: Math.random() > 0.4 ? '#FF6B00' : '#000000',
-                    alpha: 1
-                });
-            }
-            animateDust();
-        }
-
-        function animateDust() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            let finished = true;
-            particles.forEach(p => {
-                let dx = p.targetX - p.x;
-                let dy = p.targetY - p.y;
-                p.x += dx * 0.09;
-                p.y += dy * 0.09;
-                ctx.globalAlpha = p.alpha;
-                ctx.fillStyle = p.color;
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                ctx.fill();
-                if (Math.abs(dx) > 1.5) finished = false;
-            });
-            if (!finished) {
-                requestAnimationFrame(animateDust);
-            } else {
-                contentLayer.style.transition = "opacity 0.6s ease";
-                contentLayer.style.opacity = "1";
-                setTimeout(() => ctx.clearRect(0,0, canvas.width, canvas.height), 300);
-            }
-        }
-
-        function reverseDust() {
-            contentLayer.style.opacity = "0";
-            setTimeout(() => { menuOverlay.classList.remove('active'); }, 400);
-        }
-
-        // TYPEWRITER & NICHE DATA
+        // TYPEWRITER
         const words = ["barbers", "dentists", "plumbers", "lawyers", "gym owners", "chefs"];
         let wordIndex = 0; let charIndex = 0; let isDeleting = false;
         const typewriterEl = document.getElementById('typewriter');
@@ -309,6 +258,7 @@
             setTimeout(startTypewriter, isDeleting && charIndex === 0 ? 1200 : (isDeleting ? 40 : 80));
         }
 
+        // NICHE LOGIC
         function openNiche(sector) {
             const nicheData = {
                 "Health & Wellness": ["Barbers", "Dentists", "Gyms", "Spas", "Therapists"],
