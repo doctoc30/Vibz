@@ -75,12 +75,12 @@
 
         .concept-details { padding: 25px 20px; text-align: center; background: #fff; }
 
-        /* BUTTONS */
+        /* VIBZ BRANDED BUTTONS */
         .vibz-btn {
             width: 100%; padding: 18px; border-radius: 20px; border: 1px solid var(--border);
             background: #fff; color: var(--text); font-size: 1rem; font-weight: 800;
             margin-bottom: 12px; cursor: pointer; transition: 0.2s; text-align: center;
-            text-decoration: none; display: block;
+            text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px;
         }
         .vibz-btn.primary { background: var(--primary); color: #fff; border: none; }
         .vibz-btn:active { transform: scale(0.96); }
@@ -90,10 +90,10 @@
             letter-spacing: 2px; margin-top: 10px; text-transform: uppercase;
         }
 
-        /* NEW: FLOATING BACK TO TOP */
+        /* FLOATING BACK TO TOP */
         #backToTop {
             position: fixed;
-            bottom: 120px; /* Sits above the dock */
+            bottom: 120px;
             right: 25px;
             width: 50px;
             height: 50px;
@@ -116,14 +116,27 @@
             visibility: visible;
         }
 
-        /* PAGINATION */
+        /* BRANDED PAGINATION */
         .pagination {
-            display: flex; justify-content: center; align-items: center;
-            gap: 15px; margin-top: 40px;
+            margin-top: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
         }
-        .page-btn {
-            background: #fff; border: 1px solid var(--border);
-            padding: 12px 20px; border-radius: 15px; font-weight: 800;
+        .pagination-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            width: 100%;
+        }
+        .page-indicator {
+            font-size: 0.8rem;
+            font-weight: 900;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
         /* APP DOCK */
@@ -170,6 +183,7 @@
         </section>
 
         <div class="concepts-grid" id="conceptsGrid"></div>
+        
         <div class="pagination" id="paginationControls"></div>
     </main>
 
@@ -227,10 +241,18 @@
         function renderPagination() {
             const controls = document.getElementById('paginationControls');
             const totalPages = Math.ceil(barberConcepts.length / itemsPerPage);
+            
             controls.innerHTML = `
-                ${currentPage > 1 ? `<button class="page-btn" onclick="changePage(${currentPage - 1})">Prev</button>` : ''}
-                <span style="font-weight:900;">Page ${currentPage} of ${totalPages}</span>
-                ${currentPage < totalPages ? `<button class="page-btn" onclick="changePage(${currentPage + 1})">Next</button>` : ''}
+                <div class="page-indicator">Page ${currentPage} / ${totalPages}</div>
+                <div class="pagination-row">
+                    ${currentPage > 1 ? 
+                        `<button class="vibz-btn" onclick="changePage(${currentPage - 1})"><i class="fa-solid fa-chevron-left"></i> Previous</button>` : 
+                        `<button class="vibz-btn" style="opacity:0.3; pointer-events:none;"><i class="fa-solid fa-chevron-left"></i> Previous</button>`}
+                    
+                    ${currentPage < totalPages ? 
+                        `<button class="vibz-btn" onclick="changePage(${currentPage + 1})">Next <i class="fa-solid fa-chevron-right"></i></button>` : 
+                        `<button class="vibz-btn" style="opacity:0.3; pointer-events:none;">Next <i class="fa-solid fa-chevron-right"></i></button>`}
+                </div>
             `;
         }
 
@@ -244,7 +266,6 @@
             window.scrollTo({top: 0, behavior: 'smooth'});
         }
 
-        // Show/Hide Back to Top Button
         window.onscroll = function() {
             const btn = document.getElementById('backToTop');
             if (document.body.scrollTop > 400 || document.documentElement.scrollTop > 400) {
