@@ -63,6 +63,7 @@
             padding: 18px; background: white; border-radius: 20px;
             margin-bottom: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.03);
             border: 1px solid rgba(255, 107, 0, 0.05);
+            cursor: pointer;
         }
 
         .close-btn {
@@ -118,6 +119,7 @@
         .search-icon-btn {
             width: 55px; height: 55px; background: var(--primary); border-radius: 18px;
             display: flex; align-items: center; justify-content: center; color: #fff;
+            cursor: pointer;
         }
 
         /* ==== CENTERED NICHE GRID ==== */
@@ -135,6 +137,7 @@
             background: var(--card-bg); padding: 25px 15px; border-radius: 30px;
             border: 1px solid rgba(255, 107, 0, 0.1); display: flex;
             flex-direction: column; align-items: center; gap: 12px; transition: 0.3s;
+            cursor: pointer;
         }
 
         .app-tile:active { transform: scale(0.94); background: #fff; }
@@ -166,6 +169,7 @@
             display: flex; align-items: center; justify-content: center; color: #fff;
             font-size: 1.8rem; margin-top: -50px; border: 6px solid var(--primary-light);
             box-shadow: 0 10px 20px rgba(255, 107, 0, 0.3);
+            cursor: pointer;
         }
     </style>
 </head>
@@ -194,7 +198,7 @@
                 <h1>We Build Websites For:</h1>
                 <div class="typewriter-container"><span id="typewriter"></span></div>
                 <div class="search-container">
-                    <input type="text" id="mainSearch" placeholder="Search any industry...">
+                    <input type="text" id="mainSearch" placeholder="Search any industry..." onkeypress="if(event.key==='Enter') triggerFlow()">
                     <button class="search-icon-btn" onclick="triggerFlow()"><i class="fa-solid fa-magnifying-glass"></i></button>
                 </div>
             </div>
@@ -236,6 +240,7 @@
     </div>
 
     <script>
+        // Data mapping for categories
         const nicheData = {
             "Health & Wellness": ["Barbers", "Dentists", "Gyms & Studios", "Spas & Beauty", "Physiotherapists", "Yoga Instructors", "Therapists"],
             "Home & Trades": ["Plumbers", "Electricians", "Landscapers", "Cleaners", "Roofers", "Carpenters", "Locksmiths"],
@@ -244,6 +249,7 @@
             "Retail & Creative": ["Boutiques", "E-commerce Stores", "Photographers", "Artists", "Florists", "Pet Shops"]
         };
 
+        // Loading sequence
         window.addEventListener('load', () => {
             setTimeout(() => {
                 document.getElementById('app-loader').style.transform = 'translateY(-100%)';
@@ -254,6 +260,7 @@
 
         function toggleCategories() { document.getElementById('category-layer').classList.toggle('active'); }
 
+        // Logic to open categories and handle selection
         function openNiche(sector) {
             const list = document.getElementById('cat-list');
             const title = document.getElementById('cat-title');
@@ -273,6 +280,7 @@
             toggleCategories();
         }
 
+        // Typewriter Effect
         const words = ["barbers", "dentists", "plumbers", "lawyers", "gym owners", "chefs"];
         let wordIndex = 0; let charIndex = 0; let isDeleting = false;
         const typewriterEl = document.getElementById('typewriter');
@@ -291,12 +299,31 @@
             setTimeout(startTypewriter, isDeleting && charIndex === 0 ? 1200 : (isDeleting ? 40 : 80));
         }
 
+        /**
+         * LINKED FLOW LOGIC
+         * Redirects to funnel.html with the niche parameter.
+         * If the user selected "Barbers", the funnel will detect it.
+         */
         function triggerFlow() { 
+            const val = document.getElementById('mainSearch').value.trim();
             const loader = document.querySelector('.search-icon-btn');
+            
+            // Show loading state
             loader.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            
             setTimeout(() => { 
-                window.location.href = "https://www.vibz.co.uk/funnel.html?niche=" + document.getElementById('mainSearch').value;
+                // Store the niche in localStorage for the funnel to pick up
+                localStorage.setItem('vibz_selected_niche', val.toLowerCase());
+                
+                // Redirect to the funnel page
+                // Note: Ensure your funnel page is named funnel.html in the same directory
+                window.location.href = "funnel.html?niche=" + encodeURIComponent(val);
             }, 800);
+        }
+
+        function toggleMenu() {
+            // Basic toggle for the menu layer if needed
+            alert("VIBZ Menu: Account | Portfolio | Support");
         }
     </script>
 </body>
