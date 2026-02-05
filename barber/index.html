@@ -40,7 +40,6 @@
             z-index: 10;
         }
 
-        /* LOGO WITH BLACK DOT */
         .app-logo { font-size: 1.8rem; font-weight: 900; letter-spacing: -1.5px; color: var(--primary); }
         .app-logo span { color: #000000; }
 
@@ -48,14 +47,12 @@
             flex: 1; overflow-y: auto; padding: 0 25px 160px; scroll-behavior: smooth;
         }
 
-        /* SCREEN 1: CENTERED & LOWERED */
         .hero-centered {
             margin-top: 15vh; 
             text-align: center;
             transition: margin-top 0.4s ease;
         }
 
-        /* STEPS 2-13: BALANCED MIDDLE POSITION */
         .hero-balanced {
             margin-top: 8vh; 
             text-align: center;
@@ -91,7 +88,6 @@
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Concept Image Preview */
         #conceptPreviewBox {
             margin-top: 15px;
             border-radius: 20px;
@@ -101,7 +97,6 @@
         }
         #conceptPreviewBox img { width: 100%; display: block; }
 
-        /* DOCK */
         .app-dock {
             position: fixed; bottom: 25px; left: 20px; right: 20px;
             background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px);
@@ -174,7 +169,7 @@
         </main>
 
         <nav class="app-dock">
-            <a href="#" class="dock-btn active"><i class="fa-solid fa-house-chimney"></i><span>Home</span></a>
+            <a href="https://www.vibz.co.uk" class="dock-btn active"><i class="fa-solid fa-house-chimney"></i><span>Home</span></a>
             <a href="https://www.vibz.co.uk/barber/concepts.html" class="dock-btn"><i class="fa-solid fa-compass"></i><span>Explore</span></a>
             <div class="dock-center" onclick="next()"><i class="fa-solid fa-bolt"></i></div>
             <a href="#" class="dock-btn"><i class="fa-solid fa-briefcase"></i><span>Portal</span></a>
@@ -183,12 +178,9 @@
     </div>
 
     <script>
-        window.onbeforeunload = function() { sessionStorage.clear(); };
-
         let currentStep = 1;
         const totalSteps = 13;
 
-        // Concept Database
         const barberConcepts = Array.from({length: 100}, (_, i) => ({
             code: `barber-${i+1}`,
             image: `https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-${i+1}.jpg`
@@ -223,9 +215,7 @@
 
         function next() { if(currentStep < totalSteps) { currentStep++; updateUI(); } }
         function prev() { if(currentStep > 1) { currentStep--; updateUI(); } }
-
         function handleBusinessName() { if(document.getElementById('businessInput').value) next(); }
-        
         function goToSearch() { currentStep = 4; updateUI(); }
 
         function searchConcept() {
@@ -233,7 +223,6 @@
             const found = barberConcepts.find(c => c.code === val);
             const box = document.getElementById('conceptPreviewBox');
             const status = document.getElementById('searchStatus');
-
             if(found) {
                 document.getElementById('previewImg').src = found.image;
                 box.style.display = 'block';
@@ -246,35 +235,18 @@
 
         function renderOptions() {
             const container = document.getElementById('dynamic-options');
-            let options = [];
-            
-            // Tailored options based on the current step
-            if(currentStep === 5) {
-                options = ['High-End Luxury', 'Urban/Modern', 'Classic Gentlemen', 'Community/Family'];
-            } else if(currentStep === 6) {
-                options = ['Minimalist', 'Vintage/Retro', 'Bold & Industrial', 'Elegant'];
-            } else if(currentStep === 7) {
-                options = ['Monochrome (Black/White)', 'Gold & Black', 'Natural Earth Tones', 'Electric/Neon'];
-            } else {
-                options = ['Option One', 'Option Two', 'Option Three'];
-            }
-
-            container.innerHTML = options.map(o => `
-                <button class="vibz-btn" onclick="next()">${o}</button>
-            `).join('');
+            let opts = (currentStep === 5) ? ['High-End Luxury', 'Urban/Modern', 'Classic Gent', 'Family'] : ['Option A', 'Option B', 'Option C'];
+            container.innerHTML = opts.map(o => `<button class="vibz-btn" onclick="next()">${o}</button>`).join('');
         }
 
-        // HANDLE EXTERNAL NAVIGATION (From Home or Concept Library)
         window.onload = function() {
             const urlParams = new URLSearchParams(window.location.search);
-            const stepRequest = urlParams.get('step');
-            
-            if(stepRequest === '5') {
+            // ONLY jump to step 5 if it's explicitly in the URL (from Concepts Page)
+            if(urlParams.get('step') === '5') {
                 currentStep = 5;
-                // Ensure a placeholder name exists to avoid empty states
-                if(!document.getElementById('businessInput').value) {
-                    document.getElementById('businessInput').value = "Premium Barber";
-                }
+                if(!document.getElementById('businessInput').value) document.getElementById('businessInput').value = "Barber Client";
+            } else {
+                currentStep = 1;
             }
             updateUI();
         };
