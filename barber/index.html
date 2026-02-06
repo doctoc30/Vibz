@@ -75,7 +75,9 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.02);
             text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
         }
-        .vibz-btn span.btn-desc { font-size: 0.75rem; font-weight: 500; color: var(--gray); line-height: 1.2; max-width: 80%; }
+        
+        /* Orange text for button descriptions */
+        .vibz-btn span.btn-desc { font-size: 0.75rem; font-weight: 700; color: var(--primary); line-height: 1.2; max-width: 85%; }
 
         .vibz-btn:active { transform: scale(0.97); }
         .vibz-btn.primary { background: var(--primary); color: #fff; border: none; }
@@ -100,9 +102,10 @@
         .feature-divider { height: 1px; background: #eee; margin: 15px 0; position: relative; }
         .feature-divider span { position: absolute; top: -10px; left: 0; background: #fff; padding-right: 10px; font-size: 0.65rem; font-weight: 900; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
 
-        .maintenance-info { background: #fdfdfd; border: 1px solid #eee; border-radius: 15px; padding: 15px; margin-top: 15px; }
-        .maintenance-info h4 { font-size: 0.75rem; font-weight: 900; color: var(--primary); text-transform: uppercase; margin-bottom: 5px; display: flex; align-items: center; gap: 5px; }
-        .maintenance-info p { font-size: 0.75rem; color: var(--gray); line-height: 1.4; font-weight: 500; }
+        .maintenance-info { background: #fff; border: 2px solid var(--border); border-radius: 15px; padding: 15px; margin-top: 15px; }
+        .maintenance-info h4 { font-size: 0.75rem; font-weight: 900; color: var(--text); text-transform: uppercase; margin-bottom: 5px; display: flex; align-items: center; gap: 5px; }
+        /* Orange text for maintenance p */
+        .maintenance-info p { font-size: 0.75rem; color: var(--primary); line-height: 1.4; font-weight: 700; }
 
         .form-screen { display: none; width: 100%; }
         .form-screen.active { display: block; animation: fadeIn 0.4s ease-out forwards; }
@@ -227,11 +230,11 @@
                     <div class="form-screen" id="step-11">
                         <button class="vibz-btn" onclick="setPlanType('Own Outright')">
                             <strong>Own Outright</strong>
-                            <span class="btn-desc">You own the full website. Hosting and maintenance is your responsibility.</span>
+                            <span class="btn-desc">You own the website files. Hosting and maintenance is your responsibility.</span>
                         </button>
                         <button class="vibz-btn" onclick="setPlanType('Monthly Support')">
                             <strong>Monthly Support</strong>
-                            <span class="btn-desc">We handle everything: hosting, maintenance, and monthly updates.</span>
+                            <span class="btn-desc">VIBZ manages everything: Hosting, Security, and your monthly site updates.</span>
                         </button>
                         <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
                     </div>
@@ -270,19 +273,8 @@
             designCode: ''
         };
 
-        const standardServices = [
-            "Logo (placeholder)", "Services & Pricing Display", "Team Profiles", "Photo Gallery", 
-            "Before & After Slider", "Special Offers Section", "Opening Hours Display", "Location & Directions", 
-            "Tap-to-Call / WhatsApp", "FAQ Section", "Loyalty Info", "Contact Form", 
-            "On-Page SEO Basics", "Customer Reviews", "Video Grids (up to 6)"
-        ];
-
-        const premiumServices = [
-            "Online Booking Integration", "Stripe Payments / Deposits", "Cancellation Management", "Gift Cards / Vouchers", 
-            "Walk-In / Waitlist System", "Pop-up Offer", "Barber Specialty Tags", "Advanced CTA Buttons", 
-            "Conversion Tracking", "Priority Build Queue", "Enhanced Gallery", "Custom Graphics", 
-            "Sticky Header / Banner", "Multi-Location Info", "Full Branding Package"
-        ];
+        const standardServices = ["Logo (placeholder)", "Services & Pricing Display", "Team Profiles", "Photo Gallery", "Before & After Slider", "Special Offers Section", "Opening Hours Display", "Location & Directions", "Tap-to-Call / WhatsApp", "FAQ Section", "Loyalty Info", "Contact Form", "On-Page SEO Basics", "Customer Reviews", "Video Grids (up to 6)"];
+        const premiumServices = ["Online Booking Integration", "Stripe Payments / Deposits", "Cancellation Management", "Gift Cards / Vouchers", "Walk-In / Waitlist System", "Pop-up Offer", "Barber Specialty Tags", "Advanced CTA Buttons", "Conversion Tracking", "Priority Build Queue", "Enhanced Gallery", "Custom Graphics", "Sticky Header / Banner", "Multi-Location Info", "Full Branding Package"];
 
         function initServiceList() {
             const grid = document.getElementById('master-service-grid');
@@ -311,43 +303,17 @@
             const input = document.getElementById('designCode').value.trim().toLowerCase();
             const display = document.getElementById('concept-display-area');
             const entry = document.getElementById('code-entry-area');
-            
-            const wordMap = { "one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10 };
             let conceptNum = input.match(/\d+/);
-            if (!conceptNum) {
-                for (let word in wordMap) { if (input.includes(word)) { conceptNum = [wordMap[word]]; break; } }
-            }
-
             if(conceptNum && conceptNum[0] <= 446) {
                 const num = conceptNum[0];
-                const codeString = `barber-${num}`;
-                const imageUrl = `https://raw.githubusercontent.com/doctoc30/Vibz/main/images/${codeString}.jpg`;
-                
-                selections.designCode = codeString.toUpperCase();
+                selections.designCode = `BARBER-${num}`;
                 entry.style.display = 'none';
                 display.style.display = 'block';
-                display.innerHTML = `
-                    <div class="concept-preview">
-                        <img src="${imageUrl}" onerror="this.src='https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80&w=800'">
-                        <div class="concept-info">
-                            <h3>${selections.designCode}</h3>
-                            <p>Design located. We'll use this layout as the blueprint for ${selections.businessName || 'your shop'}.</p>
-                        </div>
-                    </div>
-                    <button class="vibz-btn primary" onclick="next()">Confirm Design</button>
-                    <button class="vibz-btn back-btn" onclick="resetCodeEntry()">Different Code</button>
-                `;
-            } else {
-                alert("Enter a valid code (1-446)");
-            }
+                display.innerHTML = `<div class="concept-preview"><div class="concept-info"><h3>${selections.designCode}</h3><p>Layout located. Ready to customize.</p></div></div><button class="vibz-btn primary" onclick="next()">Confirm Design</button><button class="vibz-btn back-btn" onclick="resetCodeEntry()">Different Code</button>`;
+            } else { alert("Enter a valid code (1-446)"); }
         }
 
-        function resetCodeEntry() {
-            document.getElementById('code-entry-area').style.display = 'block';
-            document.getElementById('concept-display-area').style.display = 'none';
-            document.getElementById('designCode').value = '';
-        }
-
+        function resetCodeEntry() { document.getElementById('code-entry-area').style.display = 'block'; document.getElementById('concept-display-area').style.display = 'none'; }
         function setVal(key, val) { selections[key] = val; next(); }
         function setUrgency(val) { val === 'Info' ? goToStep(12) : next(); }
 
@@ -366,21 +332,11 @@
             const updates = hasPremium ? 10 : 5;
             let price = (selections.planType === 'Own Outright') ? (hasPremium ? "£2,999" : "£1,499") : (hasPremium ? "£199/mo" : "£99/mo");
 
-            let standardHtml = standardSelections.map(s => `
-                <div class="summary-feature">
-                    <div><i class="fas fa-check-circle"></i> ${s.name} ${hasPremium ? '<span class="incl">(Included)</span>' : ''}</div>
-                </div>`).join('');
-
-            let premiumHtml = premiumSelections.map(s => `
-                <div class="summary-feature">
-                    <div><i class="fas fa-crown" style="color:var(--premium); font-size:0.7rem;"></i> ${s.name}</div>
-                </div>`).join('');
-
             let maintenanceContent = selections.planType === 'Own Outright' 
-                ? `<h4><i class="fas fa-user-check"></i> Direct Ownership</h4>
-                   <p>Full website files delivered. <strong>Hosting and ongoing maintenance are your responsibility</strong> after launch.</p>`
-                : `<h4><i class="fas fa-shield-halved"></i> VIBZ Fully Managed</h4>
-                   <p>We handle hosting, security, and provide <strong>${updates} content changes every month</strong> to keep your site fresh.</p>`;
+                ? `<h4><i class="fas fa-user-gear"></i> Owner Responsibility</h4>
+                   <p>Full website ownership. Hosting, SSL security, and all future maintenance are your responsibility post-launch.</p>`
+                : `<h4><i class="fas fa-shield-halved"></i> VIBZ Managed Support</h4>
+                   <p>Includes high-speed hosting, security updates, and <strong>${updates} content changes</strong> per month by our team.</p>`;
 
             container.innerHTML = `
                 <div class="final-summary-card">
@@ -388,58 +344,36 @@
                         <div style="text-transform: uppercase; font-size:0.7rem; font-weight:900; color:var(--primary);">${selections.planType}</div>
                         <h2 style="font-size:2rem; margin:5px 0;">${buildType} Build</h2>
                         <div style="font-size:2.5rem; font-weight:900; color:var(--text);">${price}</div>
-                        ${selections.designCode ? `<p style="font-weight:700; color:var(--primary); margin-top:5px;">BLUEPRINT: ${selections.designCode}</p>` : ''}
+                        ${selections.designCode ? `<p style="font-weight:700; color:var(--primary); margin-top:5px;">${selections.designCode}</p>` : ''}
                     </div>
-                    <div style="margin-bottom:10px;">
-                        ${standardSelections.length > 0 ? `
-                            <div class="feature-divider"><span>Standard Essentials</span></div>
-                            ${standardHtml}
-                        ` : ''}
-                        
-                        ${hasPremium ? `
-                            <div class="feature-divider" style="margin-top:25px;"><span>Premium Upgrades</span></div>
-                            ${premiumHtml}
-                        ` : ''}
-                    </div>
+                    
+                    <div class="feature-divider"><span>Core Essentials</span></div>
+                    ${standardSelections.map(s => `<div class="summary-feature"><div><i class="fas fa-check-circle"></i> ${s.name}</div></div>`).join('')}
+                    
+                    ${hasPremium ? `<div class="feature-divider" style="margin-top:20px;"><span>Premium Upgrades</span></div>${premiumSelections.map(s => `<div class="summary-feature"><div><i class="fas fa-crown" style="color:var(--premium);"></i> ${s.name}</div></div>`).join('')}` : ''}
 
                     <div class="maintenance-info">
                         ${maintenanceContent}
                     </div>
 
-                    <button class="vibz-btn primary" style="height:70px; font-size:1.3rem; margin-top:25px;">Secure Setup Now</button>
+                    <button class="vibz-btn primary" style="height:70px; font-size:1.3rem; margin-top:25px;" onclick="goToStep(12)">Continue to Secure</button>
                 </div>`;
         }
 
         function updateUI() {
             document.querySelectorAll('.form-screen').forEach(s => s.classList.remove('active'));
             document.getElementById(`step-${currentStep}`).classList.add('active');
-            
-            const titles = { 1: "Shop Name?", 2: "Project Type?", 3: "Design Choice?", 4: "Design Code?", 5: "Main Clients?", 6: "Style Preference?", 7: "Color Palette?", 8: "Main Goal?", 9: "Select Features", 10: "Timeline", 11: "Payment Model", 12: "Your Details", 13: "Final Plan" };
-            document.getElementById('dynamic-title').textContent = titles[currentStep];
+            const titles = { 1: "Shop Name?", 11: "Payment Model", 13: "Final Build Summary" };
+            document.getElementById('dynamic-title').textContent = titles[currentStep] || "Customize Your Build";
             document.getElementById('main-content-wrapper').className = (currentStep === 1) ? "hero-centered" : "hero-balanced";
-            document.getElementById('dynamic-subtitle').style.display = (currentStep === 1) ? "block" : "none";
-            if(currentStep === 4) resetCodeEntry();
             window.scrollTo(0,0);
         }
 
         function next() { if(currentStep < 13) { currentStep++; updateUI(); } }
-        function prev() { 
-            if(currentStep === 13) { goToStep(11); return; }
-            if(currentStep > 1) { currentStep--; updateUI(); } 
-        }
+        function prev() { if(currentStep > 1) { currentStep--; updateUI(); } }
         function goToStep(s) { currentStep = s; updateUI(); }
 
-        window.onload = function() {
-            initServiceList();
-            const urlParams = new URLSearchParams(window.location.search);
-            if(urlParams.get('step') === '5') {
-                const storedCode = sessionStorage.getItem('selectedBarberCode');
-                if(storedCode) selections.designCode = storedCode.toUpperCase();
-                selections.businessName = "Barber Client";
-                goToStep(5);
-            }
-            updateUI();
-        };
+        window.onload = () => { initServiceList(); updateUI(); };
     </script>
 </body>
 </html>
