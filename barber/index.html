@@ -40,51 +40,18 @@
         header {
             padding: calc(var(--safe-top) + 20px) 25px 10px;
             display: flex; justify-content: space-between; align-items: center;
-            z-index: 100;
+            z-index: 10;
         }
 
         .app-logo { font-size: 1.8rem; font-weight: 900; letter-spacing: -1.5px; color: var(--primary); }
         .app-logo span { color: #000000; }
 
         .content-scroll {
-            flex: 1; 
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto; 
-            padding: 0 25px; 
-            scroll-behavior: smooth;
+            flex: 1; overflow-y: auto; padding: 0 25px 160px; scroll-behavior: smooth;
         }
 
-        /* Logic for Centering */
-        .main-wrapper {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            transition: 0.4s ease;
-        }
-
-        /* Step 1 Specific */
-        .hero-centered { 
-            justify-content: flex-start;
-            padding-top: 15vh; 
-            text-align: center; 
-        }
-
-        /* Following Steps: True Center */
-        .hero-balanced { 
-            justify-content: center;
-            padding-bottom: 100px; /* Accounts for dock height */
-            text-align: center; 
-        }
-
-        .step-header {
-            width: 100%;
-        }
-
-        .hero-balanced .step-header {
-            margin-bottom: 45px; /* Increased space to stop congestion */
-        }
+        .hero-centered { margin-top: 15vh; text-align: center; transition: 0.4s ease; }
+        .hero-balanced { margin-top: 3vh; text-align: center; transition: 0.4s ease; }
 
         .step-header h1 {
             font-size: 2.4rem; font-weight: 900; line-height: 1.1;
@@ -112,6 +79,7 @@
         .vibz-btn.primary { background: var(--primary); color: #fff; border: none; }
         .vibz-btn.back-btn { background: transparent; border: none; color: #999; margin-top: 10px; box-shadow: none; font-weight: 700; }
 
+        /* Step 9 Service Grid Styling */
         .services-grid { display: grid; grid-template-columns: 1fr; gap: 10px; text-align: left; margin-bottom: 30px; }
         .service-card {
             background: #fff; border: 2px solid var(--border); border-radius: 20px;
@@ -121,26 +89,34 @@
         .service-card.selected.premium { border-color: var(--premium); background: rgba(33,150,243,0.06); }
         .tier-pill { font-size: 0.65rem; font-weight: 900; padding: 4px 10px; border-radius: 8px; display: inline-block; margin-bottom: 6px; }
 
+        /* Final Summary Styling */
         .final-summary-card { background: #fff; border-radius: 30px; padding: 30px; border: 2px solid var(--border); text-align: left; }
         .summary-header { border-bottom: 2px solid #f9f9f9; padding-bottom: 20px; margin-bottom: 20px; }
         .summary-feature { font-size: 0.95rem; font-weight: 600; padding: 8px 0; border-bottom: 1px solid #f5f5f5; display: flex; justify-content: space-between; align-items: center; }
         .summary-feature i { color: var(--standard); font-size: 0.8rem; }
+        .summary-feature span.incl { color: var(--gray); font-size: 0.75rem; font-weight: 400; font-style: italic; }
 
         .form-screen { display: none; width: 100%; }
         .form-screen.active { display: block; animation: fadeIn 0.4s ease-out forwards; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* Dock */
         .app-dock {
             position: fixed; bottom: 25px; left: 20px; right: 20px;
             background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px);
             height: 80px; border-radius: 40px; display: flex; justify-content: space-around;
             align-items: center; box-shadow: 0 15px 35px rgba(0,0,0,0.1); z-index: 1000;
         }
+        .dock-btn { display: flex; flex-direction: column; align-items: center; color: #A0A0A0; text-decoration: none; gap: 4px; }
+        .dock-btn.active { color: var(--primary); }
+        .dock-btn i { font-size: 1.4rem; }
+        .dock-btn span { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; }
         .dock-center {
             width: 65px; height: 65px; background: var(--primary); border-radius: 50%;
             display: flex; align-items: center; justify-content: center; color: #fff;
             font-size: 1.8rem; margin-top: -50px; border: 6px solid var(--primary-light);
+            box-shadow: 0 10px 20px rgba(255, 107, 0, 0.3);
         }
     </style>
 </head>
@@ -153,14 +129,14 @@
         </header>
 
         <main class="content-scroll">
-            <div id="main-content-wrapper" class="main-wrapper hero-centered">
+            <div id="main-content-wrapper" class="hero-centered">
                 
                 <div class="step-header">
                     <h1 id="dynamic-title">What is your barber shop name?</h1>
                     <p id="dynamic-subtitle">Let's build your digital presence.</p>
                 </div>
 
-                <form id="funnelForm" onsubmit="return false;" style="width: 100%;">
+                <form id="funnelForm" onsubmit="return false;">
                     
                     <div class="form-screen active" id="step-1">
                         <input type="text" class="vibz-input" id="businessInput" placeholder="Enter shop name...">
@@ -218,7 +194,8 @@
                     </div>
 
                     <div class="form-screen" id="step-9">
-                        <div class="services-grid" id="master-service-grid"></div>
+                        <div class="services-grid" id="master-service-grid">
+                            </div>
                         <button class="vibz-btn primary" onclick="next()">Continue Selection</button>
                         <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
                     </div>
@@ -252,8 +229,8 @@
         </main>
 
         <nav class="app-dock">
-            <a href="#" class="dock-btn active"><i class="fa-solid fa-house-chimney"></i><span>Home</span></a>
-            <a href="#" class="dock-btn"><i class="fa-solid fa-compass"></i><span>Explore</span></a>
+            <a href="https://www.vibz.co.uk" class="dock-btn active"><i class="fa-solid fa-house-chimney"></i><span>Home</span></a>
+            <a href="https://www.vibz.co.uk/barber/concepts.html" class="dock-btn"><i class="fa-solid fa-compass"></i><span>Explore</span></a>
             <div class="dock-center" onclick="next()"><i class="fa-solid fa-bolt"></i></div>
             <a href="#" class="dock-btn"><i class="fa-solid fa-briefcase"></i><span>Portal</span></a>
             <div class="dock-btn"><i class="fa-solid fa-bars"></i><span>Menu</span></div>
@@ -262,19 +239,44 @@
 
     <script>
         let currentStep = 1;
-        let selections = { businessName: '', services: [], planType: '' };
+        let selections = { 
+            businessName: '',
+            services: [],
+            planType: ''
+        };
 
-        const standardServices = ["Logo (placeholder)", "Pricing Menu", "Team Profiles", "Photo Gallery", "Before & After Slider", "Opening Hours", "Map & Directions", "WhatsApp Link", "Contact Form", "SEO Basics", "Reviews"];
-        const premiumServices = ["Online Booking Integration", "Stripe Payments", "Waitlist System", "Gift Cards", "Priority Build", "Full Branding"];
+        const standardServices = [
+            "Logo (placeholder)", "Services & Pricing Display", "Team Profiles", "Photo Gallery", 
+            "Before & After Slider", "Special Offers Section", "Opening Hours Display", "Location & Directions", 
+            "Tap-to-Call / WhatsApp", "FAQ Section", "Loyalty Info", "Contact Form", 
+            "On-Page SEO Basics", "Customer Reviews", "Video Grids (up to 6)"
+        ];
+
+        const premiumServices = [
+            "Online Booking Integration", "Stripe Payments / Deposits", "Cancellation Management", "Gift Cards / Vouchers", 
+            "Walk-In / Waitlist System", "Pop-up Offer", "Barber Specialty Tags", "Advanced CTA Buttons", 
+            "Conversion Tracking", "Priority Build Queue", "Enhanced Gallery", "Custom Graphics", 
+            "Sticky Header / Banner", "Multi-Location Info", "Full Branding Package"
+        ];
 
         function initServiceList() {
             const grid = document.getElementById('master-service-grid');
             grid.innerHTML = '';
+            
             standardServices.forEach(s => {
-                grid.innerHTML += `<div class="service-card" onclick="toggleService('${s}', 'standard', this)"><span class="tier-pill" style="background:#E8F5E9; color:#4CAF50;">STANDARD</span><div style="font-weight:700;">${s}</div></div>`;
+                grid.innerHTML += `
+                    <div class="service-card" onclick="toggleService('${s}', 'standard', this)">
+                        <span class="tier-pill" style="background:#E8F5E9; color:#4CAF50;">STANDARD</span>
+                        <div style="font-weight:700; font-size:0.95rem;">${s}</div>
+                    </div>`;
             });
+
             premiumServices.forEach(s => {
-                grid.innerHTML += `<div class="service-card" onclick="toggleService('${s}', 'premium', this)"><span class="tier-pill" style="background:#E3F2FD; color:#2196F3;">PREMIUM</span><div style="font-weight:700;">${s}</div></div>`;
+                grid.innerHTML += `
+                    <div class="service-card" onclick="toggleService('${s}', 'premium', this)">
+                        <span class="tier-pill" style="background:#E3F2FD; color:#2196F3;">PREMIUM</span>
+                        <div style="font-weight:700; font-size:0.95rem;">${s}</div>
+                    </div>`;
             });
         }
 
@@ -282,37 +284,84 @@
             el.classList.toggle('selected');
             el.classList.toggle(tier);
             const index = selections.services.findIndex(item => item.name === name);
-            index > -1 ? selections.services.splice(index, 1) : selections.services.push({ name, tier });
+            if (index > -1) {
+                selections.services.splice(index, 1);
+            } else {
+                selections.services.push({ name, tier });
+            }
         }
 
         function handleStep1() {
             const input = document.getElementById('businessInput').value;
-            if(input) { selections.businessName = input; next(); }
+            if(input) {
+                selections.businessName = input;
+                next();
+            }
         }
 
         function setVal(key, val) { selections[key] = val; next(); }
         function setUrgency(val) { val === 'Info' ? goToStep(12) : next(); }
-        function setPlanType(val) { selections.planType = val; renderFinalSummary(); next(); }
+
+        function setPlanType(val) {
+            selections.planType = val;
+            renderFinalSummary();
+            next();
+        }
 
         function renderFinalSummary() {
             const container = document.getElementById('final-summary-render');
             const hasPremium = selections.services.some(s => s.tier === 'premium');
-            const price = selections.planType === 'Own Outright' ? (hasPremium ? "£2,999" : "£1,499") : (hasPremium ? "£199/mo" : "£99/mo");
-            container.innerHTML = `<div class="final-summary-card"><h2>${hasPremium ? 'Premium' : 'Standard'} Build</h2><div style="font-size:2.5rem; font-weight:900;">${price}</div><p>${selections.planType}</p></div>`;
+            const buildType = hasPremium ? 'Premium' : 'Standard';
+            
+            let price = "";
+            if(selections.planType === 'Own Outright') {
+                price = hasPremium ? "£2,999" : "£1,499";
+            } else {
+                price = hasPremium ? "£199/mo" : "£99/mo";
+            }
+
+            let featuresHtml = '';
+            selections.services.forEach(s => {
+                const isIncl = (s.tier === 'standard' && hasPremium) ? '<span class="incl"> (Included from Standard Plan)</span>' : '';
+                featuresHtml += `
+                    <div class="summary-feature">
+                        <div><i class="fas fa-check-circle"></i> ${s.name} ${isIncl}</div>
+                    </div>`;
+            });
+
+            container.innerHTML = `
+                <div class="final-summary-card">
+                    <div class="summary-header">
+                        <div style="text-transform: uppercase; font-size:0.7rem; font-weight:900; color:var(--primary);">${selections.planType}</div>
+                        <h2 style="font-size:2rem; margin:5px 0;">${buildType} Build</h2>
+                        <div style="font-size:2.5rem; font-weight:900; color:var(--text);">${price}</div>
+                    </div>
+                    <div style="margin-bottom:20px;">
+                        <p style="font-weight:800; font-size:0.8rem; color:var(--gray); margin-bottom:10px;">SELECTED FEATURES:</p>
+                        ${featuresHtml}
+                    </div>
+                    <button class="vibz-btn primary" style="height:70px; font-size:1.3rem;">Secure Setup Now</button>
+                </div>
+            `;
         }
 
         function updateUI() {
             const wrapper = document.getElementById('main-content-wrapper');
+            const title = document.getElementById('dynamic-title');
+            const subtitle = document.getElementById('dynamic-subtitle');
+            
             document.querySelectorAll('.form-screen').forEach(s => s.classList.remove('active'));
             document.getElementById(`step-${currentStep}`).classList.add('active');
             
-            const titles = { 1: "Shop Name?", 2: "Project Type?", 3: "Design Choice?", 4: "Design Code?", 5: "Main Clients?", 6: "Style Preference?", 7: "Color Palette?", 8: "Main Goal?", 9: "Select Features", 10: "Timeline", 11: "Payment Model", 12: "Your Details", 13: "Final Plan" };
-            document.getElementById('dynamic-title').textContent = titles[currentStep];
-            
-            wrapper.className = (currentStep === 1) ? "main-wrapper hero-centered" : "main-wrapper hero-balanced";
-            document.getElementById('dynamic-subtitle').style.display = (currentStep === 1) ? "block" : "none";
-            
-            if(currentStep === 9) initServiceList();
+            const titles = {
+                1: "Shop Name?", 2: "Project Type?", 3: "Design Choice?", 4: "Design Code?",
+                5: "Main Clients?", 6: "Style Preference?", 7: "Color Palette?", 8: "Main Goal?",
+                9: "Select Features", 10: "Timeline", 11: "Payment Model", 12: "Your Details", 13: "Final Plan"
+            };
+
+            title.textContent = titles[currentStep];
+            wrapper.className = (currentStep === 1) ? "hero-centered" : "hero-balanced";
+            subtitle.style.display = (currentStep === 1) ? "block" : "none";
             window.scrollTo(0,0);
         }
 
@@ -320,7 +369,15 @@
         function prev() { if(currentStep > 1) { currentStep--; updateUI(); } }
         function goToStep(s) { currentStep = s; updateUI(); }
 
-        window.onload = updateUI;
+        window.onload = function() {
+            initServiceList();
+            const urlParams = new URLSearchParams(window.location.search);
+            if(urlParams.get('step') === '5') {
+                selections.businessName = "Barber Client";
+                goToStep(5);
+            }
+            updateUI();
+        };
     </script>
 </body>
 </html>
