@@ -91,9 +91,13 @@
 
         .final-summary-card { background: #fff; border-radius: 30px; padding: 30px; border: 2px solid var(--border); text-align: left; }
         .summary-header { border-bottom: 2px solid #f9f9f9; padding-bottom: 20px; margin-bottom: 20px; }
-        .summary-feature { font-size: 0.95rem; font-weight: 600; padding: 8px 0; border-bottom: 1px solid #f5f5f5; display: flex; justify-content: space-between; align-items: center; }
-        .summary-feature i { color: var(--standard); font-size: 0.8rem; }
-        .summary-feature span.incl { color: var(--gray); font-size: 0.75rem; font-weight: 400; font-style: italic; }
+        .summary-feature { font-size: 0.85rem; font-weight: 600; padding: 6px 0; display: flex; justify-content: space-between; align-items: center; }
+        .summary-feature i { color: var(--standard); font-size: 0.8rem; margin-right: 8px; }
+        .summary-feature i.premium-check { color: var(--premium); }
+        .summary-feature span.incl { color: var(--gray); font-size: 0.7rem; font-weight: 400; font-style: italic; }
+
+        .feature-divider { height: 1px; background: #eee; margin: 15px 0; position: relative; }
+        .feature-divider span { position: absolute; top: -10px; left: 0; background: #fff; padding-right: 10px; font-size: 0.65rem; font-weight: 900; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
 
         .form-screen { display: none; width: 100%; }
         .form-screen.active { display: block; animation: fadeIn 0.4s ease-out forwards; }
@@ -230,7 +234,7 @@
 
                     <div class="form-screen" id="step-13">
                         <div id="final-summary-render"></div>
-                        <button class="vibz-btn back-btn" onclick="goToStep(11)">Change Plan</button>
+                        <button class="vibz-btn back-btn" onclick="goToStep(11)">Change Payment</button>
                     </div>
 
                 </form>
@@ -339,18 +343,25 @@
         function setPlanType(val) {
             selections.planType = val;
             renderFinalSummary();
-            goToStep(13); // SKIPS STEP 12 DIRECTLY TO SUMMARY
+            goToStep(13);
         }
 
         function renderFinalSummary() {
             const container = document.getElementById('final-summary-render');
-            const hasPremium = selections.services.some(s => s.tier === 'premium');
+            const premiumSelections = selections.services.filter(s => s.tier === 'premium');
+            const standardSelections = selections.services.filter(s => s.tier === 'standard');
+            const hasPremium = premiumSelections.length > 0;
             const buildType = hasPremium ? 'Premium' : 'Standard';
             let price = (selections.planType === 'Own Outright') ? (hasPremium ? "£2,999" : "£1,499") : (hasPremium ? "£199/mo" : "£99/mo");
 
-            let featuresHtml = selections.services.map(s => `
+            let standardHtml = standardSelections.map(s => `
                 <div class="summary-feature">
-                    <div><i class="fas fa-check-circle"></i> ${s.name} ${(s.tier === 'standard' && hasPremium) ? '<span class="incl"> (Included)</span>' : ''}</div>
+                    <div><i class="fas fa-check-circle"></i> ${s.name} ${hasPremium ? '<span class="incl">(Included)</span>' : ''}</div>
+                </div>`).join('');
+
+            let premiumHtml = premiumSelections.map(s => `
+                <div class="summary-feature">
+                    <div><i class="fas fa-crown" style="color:var(--premium); font-size:0.7rem;"></i> ${s.name}</div>
                 </div>`).join('');
 
             container.innerHTML = `
@@ -362,8 +373,15 @@
                         ${selections.designCode ? `<p style="font-weight:700; color:var(--primary); margin-top:5px;">BLUEPRINT: ${selections.designCode}</p>` : ''}
                     </div>
                     <div style="margin-bottom:20px;">
-                        <p style="font-weight:800; font-size:0.8rem; color:var(--gray); margin-bottom:10px;">SELECTED FEATURES:</p>
-                        ${featuresHtml}
+                        ${standardSelections.length > 0 ? `
+                            <div class="feature-divider"><span>Standard Essentials</span></div>
+                            ${standardHtml}
+                        ` : ''}
+                        
+                        ${hasPremium ? `
+                            <div class="feature-divider" style="margin-top:25px;"><span>Premium Upgrades</span></div>
+                            ${premiumHtml}
+                        ` : ''}
                     </div>
                     <button class="vibz-btn primary" style="height:70px; font-size:1.3rem;">Secure Setup Now</button>
                 </div>`;
@@ -383,7 +401,6 @@
 
         function next() { if(currentStep < 13) { currentStep++; updateUI(); } }
         function prev() { 
-            // If on summary, go back to Plan selection (11) not lead form (12)
             if(currentStep === 13) { goToStep(11); return; }
             if(currentStep > 1) { currentStep--; updateUI(); } 
         }
