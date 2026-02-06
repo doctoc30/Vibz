@@ -119,6 +119,15 @@
             font-size: 1.8rem; margin-top: -50px; border: 6px solid var(--primary-light);
             box-shadow: 0 10px 20px rgba(255, 107, 0, 0.3);
         }
+
+        .concept-preview {
+            background: #fff; border-radius: 20px; overflow: hidden; margin-bottom: 20px;
+            border: 2px solid var(--border); text-align: left;
+        }
+        .concept-preview img { width: 100%; height: 180px; object-fit: cover; }
+        .concept-info { padding: 15px; }
+        .concept-info h3 { font-weight: 900; color: var(--primary); margin-bottom: 5px; }
+        .concept-info p { font-size: 0.85rem; color: var(--gray); }
     </style>
 </head>
 <body>
@@ -158,8 +167,11 @@
                     </div>
 
                     <div class="form-screen" id="step-4">
-                        <input type="text" class="vibz-input" id="designCode" placeholder="e.g. barber-1">
-                        <button class="vibz-btn primary" onclick="next()">Verify Design</button>
+                        <div id="code-entry-area">
+                            <input type="text" class="vibz-input" id="designCode" placeholder="e.g. Barber 1">
+                            <button class="vibz-btn primary" onclick="verifyDesign()">Verify Design</button>
+                        </div>
+                        <div id="concept-display-area" style="display:none;"></div>
                         <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
                     </div>
 
@@ -243,7 +255,8 @@
         let selections = { 
             businessName: '',
             services: [],
-            planType: ''
+            planType: '',
+            designCode: ''
         };
 
         const standardServices = [
@@ -298,6 +311,52 @@
                 selections.businessName = input;
                 next();
             }
+        }
+
+        function verifyDesign() {
+            const input = document.getElementById('designCode').value.trim().toLowerCase();
+            const display = document.getElementById('concept-display-area');
+            const entry = document.getElementById('code-entry-area');
+            
+            // Map text numbers to digits for typos like "barber one"
+            const wordMap = { "one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10 };
+            
+            // Extract numbers from string
+            let conceptNum = input.match(/\d+/);
+            if (!conceptNum) {
+                for (let word in wordMap) {
+                    if (input.includes(word)) {
+                        conceptNum = [wordMap[word]];
+                        break;
+                    }
+                }
+            }
+
+            if(conceptNum && conceptNum[0] <= 100) {
+                const num = conceptNum[0];
+                selections.designCode = `BARBER-${num}`;
+                entry.style.display = 'none';
+                display.style.display = 'block';
+                display.innerHTML = `
+                    <div class="concept-preview">
+                        <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80&w=800" alt="Concept Preview">
+                        <div class="concept-info">
+                            <h3>Concept BARBER-${num}</h3>
+                            <p>Optimized digital experience tailored for your brand aesthetic.</p>
+                        </div>
+                    </div>
+                    <button class="vibz-btn primary" onclick="next()">Confirm & Continue</button>
+                    <button class="vibz-btn" onclick="resetCodeEntry()" style="background:transparent; border:none; color:var(--primary); font-size:0.9rem;">Change Code</button>
+                `;
+            } else {
+                alert("Please enter a valid concept number (1-100)");
+            }
+        }
+
+        function resetCodeEntry() {
+            document.getElementById('code-entry-area').style.display = 'block';
+            document.getElementById('concept-display-area').style.display = 'none';
+            document.getElementById('designCode').value = '';
         }
 
         function setVal(key, val) { selections[key] = val; next(); }
@@ -363,6 +422,9 @@
             title.textContent = titles[currentStep];
             wrapper.className = (currentStep === 1) ? "hero-centered" : "hero-balanced";
             subtitle.style.display = (currentStep === 1) ? "block" : "none";
+
+            if(currentStep === 4) resetCodeEntry();
+            
             window.scrollTo(0,0);
         }
 
