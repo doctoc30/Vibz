@@ -80,7 +80,6 @@
         .vibz-btn.primary { background: var(--primary); color: #fff; border: none; }
         .vibz-btn.back-btn { background: transparent; border: none; color: #999; margin-top: 10px; box-shadow: none; font-weight: 700; }
 
-        /* Step 9 Service Grid Styling */
         .services-grid { display: grid; grid-template-columns: 1fr; gap: 10px; text-align: left; margin-bottom: 30px; }
         .service-card {
             background: #fff; border: 2px solid var(--border); border-radius: 20px;
@@ -90,7 +89,6 @@
         .service-card.selected.premium { border-color: var(--premium); background: rgba(33,150,243,0.06); }
         .tier-pill { font-size: 0.65rem; font-weight: 900; padding: 4px 10px; border-radius: 8px; display: inline-block; margin-bottom: 6px; }
 
-        /* Final Summary Styling */
         .final-summary-card { background: #fff; border-radius: 30px; padding: 30px; border: 2px solid var(--border); text-align: left; }
         .summary-header { border-bottom: 2px solid #f9f9f9; padding-bottom: 20px; margin-bottom: 20px; }
         .summary-feature { font-size: 0.95rem; font-weight: 600; padding: 8px 0; border-bottom: 1px solid #f5f5f5; display: flex; justify-content: space-between; align-items: center; }
@@ -102,7 +100,6 @@
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Dock */
         .app-dock {
             position: fixed; bottom: 25px; left: 20px; right: 20px;
             background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px);
@@ -120,14 +117,15 @@
             box-shadow: 0 10px 20px rgba(255, 107, 0, 0.3);
         }
 
+        /* Concept Display Styling */
         .concept-preview {
-            background: #fff; border-radius: 20px; overflow: hidden; margin-bottom: 20px;
-            border: 2px solid var(--border); text-align: left;
+            background: #fff; border-radius: 30px; overflow: hidden; margin-bottom: 20px;
+            border: 2px solid var(--border); text-align: left; animation: fadeIn 0.4s ease;
         }
-        .concept-preview img { width: 100%; height: 180px; object-fit: cover; }
-        .concept-info { padding: 15px; }
-        .concept-info h3 { font-weight: 900; color: var(--primary); margin-bottom: 5px; }
-        .concept-info p { font-size: 0.85rem; color: var(--gray); }
+        .concept-preview img { width: 100%; height: 220px; object-fit: cover; background: #f0f0f0; }
+        .concept-info { padding: 20px; }
+        .concept-info h3 { font-weight: 900; color: var(--primary); text-transform: uppercase; margin-bottom: 4px; }
+        .concept-info p { font-size: 0.85rem; color: var(--gray); font-weight: 600; line-height: 1.4; }
     </style>
 </head>
 <body>
@@ -168,7 +166,7 @@
 
                     <div class="form-screen" id="step-4">
                         <div id="code-entry-area">
-                            <input type="text" class="vibz-input" id="designCode" placeholder="e.g. Barber 1">
+                            <input type="text" class="vibz-input" id="designCode" placeholder="e.g. Barber 446">
                             <button class="vibz-btn primary" onclick="verifyDesign()">Verify Design</button>
                         </div>
                         <div id="concept-display-area" style="display:none;"></div>
@@ -207,8 +205,7 @@
                     </div>
 
                     <div class="form-screen" id="step-9">
-                        <div class="services-grid" id="master-service-grid">
-                            </div>
+                        <div class="services-grid" id="master-service-grid"></div>
                         <button class="vibz-btn primary" onclick="next()">Continue Selection</button>
                         <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
                     </div>
@@ -242,8 +239,8 @@
         </main>
 
         <nav class="app-dock">
-            <a href="https://www.vibz.co.uk" class="dock-btn active"><i class="fa-solid fa-house-chimney"></i><span>Home</span></a>
-            <a href="https://www.vibz.co.uk/barber/concepts.html" class="dock-btn"><i class="fa-solid fa-compass"></i><span>Explore</span></a>
+            <a href="https://www.vibz.co.uk/barber/index.html" class="dock-btn active"><i class="fa-solid fa-house-chimney"></i><span>Home</span></a>
+            <a href="https://www.vibz.co.uk/barber/concepts.html" class="dock-btn"><i class="fa-solid fa-compass"></i><span>Library</span></a>
             <div class="dock-center" onclick="next()"><i class="fa-solid fa-bolt"></i></div>
             <a href="#" class="dock-btn"><i class="fa-solid fa-briefcase"></i><span>Portal</span></a>
             <div class="dock-btn"><i class="fa-solid fa-bars"></i><span>Menu</span></div>
@@ -276,21 +273,11 @@
         function initServiceList() {
             const grid = document.getElementById('master-service-grid');
             grid.innerHTML = '';
-            
             standardServices.forEach(s => {
-                grid.innerHTML += `
-                    <div class="service-card" onclick="toggleService('${s}', 'standard', this)">
-                        <span class="tier-pill" style="background:#E8F5E9; color:#4CAF50;">STANDARD</span>
-                        <div style="font-weight:700; font-size:0.95rem;">${s}</div>
-                    </div>`;
+                grid.innerHTML += `<div class="service-card" onclick="toggleService('${s}', 'standard', this)"><span class="tier-pill" style="background:#E8F5E9; color:#4CAF50;">STANDARD</span><div style="font-weight:700; font-size:0.95rem;">${s}</div></div>`;
             });
-
             premiumServices.forEach(s => {
-                grid.innerHTML += `
-                    <div class="service-card" onclick="toggleService('${s}', 'premium', this)">
-                        <span class="tier-pill" style="background:#E3F2FD; color:#2196F3;">PREMIUM</span>
-                        <div style="font-weight:700; font-size:0.95rem;">${s}</div>
-                    </div>`;
+                grid.innerHTML += `<div class="service-card" onclick="toggleService('${s}', 'premium', this)"><span class="tier-pill" style="background:#E3F2FD; color:#2196F3;">PREMIUM</span><div style="font-weight:700; font-size:0.95rem;">${s}</div></div>`;
             });
         }
 
@@ -298,19 +285,12 @@
             el.classList.toggle('selected');
             el.classList.toggle(tier);
             const index = selections.services.findIndex(item => item.name === name);
-            if (index > -1) {
-                selections.services.splice(index, 1);
-            } else {
-                selections.services.push({ name, tier });
-            }
+            index > -1 ? selections.services.splice(index, 1) : selections.services.push({ name, tier });
         }
 
         function handleStep1() {
             const input = document.getElementById('businessInput').value;
-            if(input) {
-                selections.businessName = input;
-                next();
-            }
+            if(input) { selections.businessName = input; next(); }
         }
 
         function verifyDesign() {
@@ -318,38 +298,35 @@
             const display = document.getElementById('concept-display-area');
             const entry = document.getElementById('code-entry-area');
             
-            // Map text numbers to digits for typos like "barber one"
+            // Map text numbers to digits for typos
             const wordMap = { "one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10 };
-            
-            // Extract numbers from string
             let conceptNum = input.match(/\d+/);
             if (!conceptNum) {
-                for (let word in wordMap) {
-                    if (input.includes(word)) {
-                        conceptNum = [wordMap[word]];
-                        break;
-                    }
-                }
+                for (let word in wordMap) { if (input.includes(word)) { conceptNum = [wordMap[word]]; break; } }
             }
 
-            if(conceptNum && conceptNum[0] <= 100) {
+            if(conceptNum && conceptNum[0] <= 446) {
                 const num = conceptNum[0];
-                selections.designCode = `BARBER-${num}`;
+                const codeString = `barber-${num}`;
+                // Fetching from the verified Github location
+                const imageUrl = `https://raw.githubusercontent.com/doctoc30/Vibz/main/images/${codeString}.jpg`;
+                
+                selections.designCode = codeString.toUpperCase();
                 entry.style.display = 'none';
                 display.style.display = 'block';
                 display.innerHTML = `
                     <div class="concept-preview">
-                        <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80&w=800" alt="Concept Preview">
+                        <img src="${imageUrl}" onerror="this.src='https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80&w=800'">
                         <div class="concept-info">
-                            <h3>Concept BARBER-${num}</h3>
-                            <p>Optimized digital experience tailored for your brand aesthetic.</p>
+                            <h3>${selections.designCode}</h3>
+                            <p>Design located. We'll use this layout as the blueprint for ${selections.businessName || 'your shop'}.</p>
                         </div>
                     </div>
-                    <button class="vibz-btn primary" onclick="next()">Confirm & Continue</button>
-                    <button class="vibz-btn" onclick="resetCodeEntry()" style="background:transparent; border:none; color:var(--primary); font-size:0.9rem;">Change Code</button>
+                    <button class="vibz-btn primary" onclick="next()">Confirm Design</button>
+                    <button class="vibz-btn back-btn" onclick="resetCodeEntry()">Different Code</button>
                 `;
             } else {
-                alert("Please enter a valid concept number (1-100)");
+                alert("Enter a valid code (1-446)");
             }
         }
 
@@ -372,22 +349,12 @@
             const container = document.getElementById('final-summary-render');
             const hasPremium = selections.services.some(s => s.tier === 'premium');
             const buildType = hasPremium ? 'Premium' : 'Standard';
-            
-            let price = "";
-            if(selections.planType === 'Own Outright') {
-                price = hasPremium ? "£2,999" : "£1,499";
-            } else {
-                price = hasPremium ? "£199/mo" : "£99/mo";
-            }
+            let price = (selections.planType === 'Own Outright') ? (hasPremium ? "£2,999" : "£1,499") : (hasPremium ? "£199/mo" : "£99/mo");
 
-            let featuresHtml = '';
-            selections.services.forEach(s => {
-                const isIncl = (s.tier === 'standard' && hasPremium) ? '<span class="incl"> (Included from Standard Plan)</span>' : '';
-                featuresHtml += `
-                    <div class="summary-feature">
-                        <div><i class="fas fa-check-circle"></i> ${s.name} ${isIncl}</div>
-                    </div>`;
-            });
+            let featuresHtml = selections.services.map(s => `
+                <div class="summary-feature">
+                    <div><i class="fas fa-check-circle"></i> ${s.name} ${(s.tier === 'standard' && hasPremium) ? '<span class="incl"> (Included)</span>' : ''}</div>
+                </div>`).join('');
 
             container.innerHTML = `
                 <div class="final-summary-card">
@@ -395,36 +362,25 @@
                         <div style="text-transform: uppercase; font-size:0.7rem; font-weight:900; color:var(--primary);">${selections.planType}</div>
                         <h2 style="font-size:2rem; margin:5px 0;">${buildType} Build</h2>
                         <div style="font-size:2.5rem; font-weight:900; color:var(--text);">${price}</div>
+                        ${selections.designCode ? `<p style="font-weight:700; color:var(--primary); margin-top:5px;">BLUEPRINT: ${selections.designCode}</p>` : ''}
                     </div>
                     <div style="margin-bottom:20px;">
                         <p style="font-weight:800; font-size:0.8rem; color:var(--gray); margin-bottom:10px;">SELECTED FEATURES:</p>
                         ${featuresHtml}
                     </div>
                     <button class="vibz-btn primary" style="height:70px; font-size:1.3rem;">Secure Setup Now</button>
-                </div>
-            `;
+                </div>`;
         }
 
         function updateUI() {
-            const wrapper = document.getElementById('main-content-wrapper');
-            const title = document.getElementById('dynamic-title');
-            const subtitle = document.getElementById('dynamic-subtitle');
-            
             document.querySelectorAll('.form-screen').forEach(s => s.classList.remove('active'));
             document.getElementById(`step-${currentStep}`).classList.add('active');
             
-            const titles = {
-                1: "Shop Name?", 2: "Project Type?", 3: "Design Choice?", 4: "Design Code?",
-                5: "Main Clients?", 6: "Style Preference?", 7: "Color Palette?", 8: "Main Goal?",
-                9: "Select Features", 10: "Timeline", 11: "Payment Model", 12: "Your Details", 13: "Final Plan"
-            };
-
-            title.textContent = titles[currentStep];
-            wrapper.className = (currentStep === 1) ? "hero-centered" : "hero-balanced";
-            subtitle.style.display = (currentStep === 1) ? "block" : "none";
-
+            const titles = { 1: "Shop Name?", 2: "Project Type?", 3: "Design Choice?", 4: "Design Code?", 5: "Main Clients?", 6: "Style Preference?", 7: "Color Palette?", 8: "Main Goal?", 9: "Select Features", 10: "Timeline", 11: "Payment Model", 12: "Your Details", 13: "Final Plan" };
+            document.getElementById('dynamic-title').textContent = titles[currentStep];
+            document.getElementById('main-content-wrapper').className = (currentStep === 1) ? "hero-centered" : "hero-balanced";
+            document.getElementById('dynamic-subtitle').style.display = (currentStep === 1) ? "block" : "none";
             if(currentStep === 4) resetCodeEntry();
-            
             window.scrollTo(0,0);
         }
 
@@ -436,6 +392,8 @@
             initServiceList();
             const urlParams = new URLSearchParams(window.location.search);
             if(urlParams.get('step') === '5') {
+                const storedCode = sessionStorage.getItem('selectedBarberCode');
+                if(storedCode) selections.designCode = storedCode.toUpperCase();
                 selections.businessName = "Barber Client";
                 goToStep(5);
             }
