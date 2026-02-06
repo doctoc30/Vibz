@@ -117,7 +117,6 @@
             box-shadow: 0 10px 20px rgba(255, 107, 0, 0.3);
         }
 
-        /* Concept Display Styling */
         .concept-preview {
             background: #fff; border-radius: 30px; overflow: hidden; margin-bottom: 20px;
             border: 2px solid var(--border); text-align: left; animation: fadeIn 0.4s ease;
@@ -231,7 +230,7 @@
 
                     <div class="form-screen" id="step-13">
                         <div id="final-summary-render"></div>
-                        <button class="vibz-btn back-btn" onclick="prev()">Change Features</button>
+                        <button class="vibz-btn back-btn" onclick="goToStep(11)">Change Plan</button>
                     </div>
 
                 </form>
@@ -298,7 +297,6 @@
             const display = document.getElementById('concept-display-area');
             const entry = document.getElementById('code-entry-area');
             
-            // Map text numbers to digits for typos
             const wordMap = { "one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10 };
             let conceptNum = input.match(/\d+/);
             if (!conceptNum) {
@@ -308,7 +306,6 @@
             if(conceptNum && conceptNum[0] <= 446) {
                 const num = conceptNum[0];
                 const codeString = `barber-${num}`;
-                // Fetching from the verified Github location
                 const imageUrl = `https://raw.githubusercontent.com/doctoc30/Vibz/main/images/${codeString}.jpg`;
                 
                 selections.designCode = codeString.toUpperCase();
@@ -342,7 +339,7 @@
         function setPlanType(val) {
             selections.planType = val;
             renderFinalSummary();
-            next();
+            goToStep(13); // SKIPS STEP 12 DIRECTLY TO SUMMARY
         }
 
         function renderFinalSummary() {
@@ -385,7 +382,11 @@
         }
 
         function next() { if(currentStep < 13) { currentStep++; updateUI(); } }
-        function prev() { if(currentStep > 1) { currentStep--; updateUI(); } }
+        function prev() { 
+            // If on summary, go back to Plan selection (11) not lead form (12)
+            if(currentStep === 13) { goToStep(11); return; }
+            if(currentStep > 1) { currentStep--; updateUI(); } 
+        }
         function goToStep(s) { currentStep = s; updateUI(); }
 
         window.onload = function() {
