@@ -146,82 +146,109 @@
         <a href="#" class="dock-btn"><i class="fa-solid fa-bars"></i><span>Menu</span></a>
     </nav>
 
+
+
     <script>
-        const barberConcepts = Array.from({length: 269}, (_, i) => ({
-            code: `barber-${i+1}`,
-            image: `https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-${i+1}.jpg`
-        }));
+    // === BARBER CONCEPTS ===
+    // Supports up to 446 designs
+    const barberConcepts = Array.from({length: 446}, (_, i) => ({
+        code: `barber-${i+1}`,
+        image: `https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-${i+1}.jpg`
+    }));
 
-        let currentPage = 1;
-        const itemsPerPage = 8;
-        let selectedCode = "";
+    let currentPage = 1;
+    const itemsPerPage = 8;
+    let selectedCode = "";
 
-        function renderConcepts() {
-            const grid = document.getElementById('conceptsGrid');
-            grid.innerHTML = "";
-            const start = (currentPage - 1) * itemsPerPage;
-            const end = start + itemsPerPage;
-            const pageItems = barberConcepts.slice(start, end);
+    // === RENDER CONCEPT GRID ===
+    function renderConcepts() {
+        const grid = document.getElementById('conceptsGrid');
+        grid.innerHTML = "";
 
-            pageItems.forEach(item => {
-                grid.innerHTML += `
-                    <div class="concept-card">
-                        <div class="concept-image-wrap">
-                            <img src="${item.image}" alt="Barber Concept" loading="lazy">
-                        </div>
-                        <div class="concept-details">
-                            <button class="vibz-btn primary" onclick="selectDesign('${item.code}')">Select This Design</button>
-                            <button class="vibz-btn" onclick="window.open('https://www.vibz.co.uk/barber/pages/${item.code}.html', '_blank')">View Live Demo</button>
-                            <div class="code-display">CODE: ${item.code.toUpperCase()}</div>
-                        </div>
+        const start = (currentPage - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const pageItems = barberConcepts.slice(start, end);
+
+        pageItems.forEach(item => {
+            grid.innerHTML += `
+                <div class="concept-card">
+                    <div class="concept-image-wrap">
+                        <img src="${item.image}" alt="Barber Concept" loading="lazy">
                     </div>
-                `;
-            });
-            renderPagination();
-        }
-
-        function renderPagination() {
-            const controls = document.getElementById('paginationControls');
-            const totalPages = Math.ceil(barberConcepts.length / itemsPerPage);
-            controls.innerHTML = `
-                ${currentPage > 1 ? `<button class="page-btn" onclick="changePage(${currentPage - 1})">Prev</button>` : ''}
-                <span style="font-weight:900;">Page ${currentPage} of ${totalPages}</span>
-                ${currentPage < totalPages ? `<button class="page-btn" onclick="changePage(${currentPage + 1})">Next</button>` : ''}
+                    <div class="concept-details">
+                        <button class="vibz-btn primary" onclick="selectDesign('${item.code}')">Select This Design</button>
+                        <button class="vibz-btn" onclick="window.open('https://www.vibz.co.uk/barber/pages/${item.code}.html', '_blank')">View Live Demo</button>
+                        <div class="code-display">CODE: ${item.code.toUpperCase()}</div>
+                    </div>
+                </div>
             `;
+        });
+
+        renderPagination();
+    }
+
+    // === PAGINATION ===
+    function renderPagination() {
+        const controls = document.getElementById('paginationControls');
+        const totalPages = Math.ceil(barberConcepts.length / itemsPerPage);
+
+        controls.innerHTML = `
+            ${currentPage > 1 ? `<button class="page-btn" onclick="changePage(${currentPage - 1})">Prev</button>` : ''}
+            <span style="font-weight:900;">Page ${currentPage} of ${totalPages}</span>
+            ${currentPage < totalPages ? `<button class="page-btn" onclick="changePage(${currentPage + 1})">Next</button>` : ''}
+        `;
+    }
+
+    function changePage(p) {
+        currentPage = p;
+        renderConcepts();
+        scrollToTop();
+    }
+
+    function scrollToTop() {
+        window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+
+    // === BACK TO TOP BUTTON ===
+    window.onscroll = function() {
+        const btn = document.getElementById('backToTop');
+        if (document.body.scrollTop > 400 || document.documentElement.scrollTop > 400) {
+            btn.classList.add('show');
+        } else {
+            btn.classList.remove('show');
         }
+    };
 
-        function changePage(p) {
-            currentPage = p;
-            renderConcepts();
-            scrollToTop();
-        }
+    // === DESIGN SELECTION ===
+    function selectDesign(code) {
+        selectedCode = code;
+        sessionStorage.setItem('selectedBarberCode', code);
 
-        function scrollToTop() { window.scrollTo({top: 0, behavior: 'smooth'}); }
+        document.getElementById('modalText').innerHTML = `Selected Code:<br><b style="font-size:1.5rem;">${code.toUpperCase()}</b>`;
+        document.getElementById('selectionModal').style.display = 'flex';
+    }
 
-        window.onscroll = function() {
-            const btn = document.getElementById('backToTop');
-            if (document.body.scrollTop > 400 || document.documentElement.scrollTop > 400) {
-                btn.classList.add('show');
-            } else {
-                btn.classList.remove('show');
-            }
-        };
+    function closeModal() {
+        document.getElementById('selectionModal').style.display = 'none';
+    }
 
-        function selectDesign(code) {
-            selectedCode = code;
-            sessionStorage.setItem('selectedBarberCode', code);
-            document.getElementById('modalText').innerHTML = `Selected Code:<br><b style="font-size:1.5rem;">${code.toUpperCase()}</b>`;
-            document.getElementById('selectionModal').style.display = 'flex';
-        }
+    // === GO TO FUNNEL ===
+    function goToFunnel() { 
+        // Redirects to funnel and auto-jumps to Step 5 (Target Audience)
+        const url = new URL("https://www.vibz.co.uk/barber/index.html");
+        url.searchParams.set('step', '5');
+        window.location.href = url.toString();
+    }
 
-        function closeModal() { document.getElementById('selectionModal').style.display = 'none'; }
-        
-        function goToFunnel() { 
-            // Ensures the jump to Step 5 (Target Audience)
-            window.location.href = "https://www.vibz.co.uk/barber/index.html?step=5"; 
-        }
+    // === INITIAL LOAD ===
+    window.onload = function() {
+        renderConcepts();
 
-        window.onload = renderConcepts;
-    </script>
+        // Pre-select code if user came back from funnel
+        const storedCode = sessionStorage.getItem('selectedBarberCode');
+        if(storedCode) selectedCode = storedCode;
+    };
+</script>
+
 </body>
 </html>
