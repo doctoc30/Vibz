@@ -155,101 +155,110 @@
     </header>
 
     <main class="content-scroll">
-        <div id="main-content-wrapper" class="hero-centered">
 
-            <div class="step-header">
-                <h1 id="dynamic-title">What is your barber shop name?</h1>
-                <p id="dynamic-subtitle">Let's build your digital presence.</p>
-            </div>
 
+        <!-- ===================== FUNNEL HTML ===================== -->
+<div id="app-container">
+
+<header>
+  <div class="app-logo">VIBZ<span>.</span></div>
+  <i class="fa-solid fa-circle-user"></i>
+</header>
+
+<main>
 <form id="funnelForm" onsubmit="return false;">
 
-  <!-- STEP 0: INTENT (COLD vs HOT) -->
-  <div class="form-screen active" id="step-0">
-    <h2>What best describes you right now?</h2>
-    <button class="vibz-btn primary" onclick="setIntent('ready')">I’m ready to start my website</button>
-    <button class="vibz-btn" onclick="setIntent('exploring')">I’m just exploring</button>
-  </div>
+<!-- STEP 1: INTENT (COLD VS WARM) -->
+<div class="form-screen active" id="step-1">
+  <h2>What brings you here today?</h2>
+  <button class="vibz-btn" onclick="setIntent('explore')">Just exploring</button>
+  <button class="vibz-btn primary" onclick="setIntent('ready')">Ready to start my website</button>
+</div>
 
-  <!-- STEP 1: SHOP NAME (OPTIONAL) -->
-  <div class="form-screen" id="step-1">
-    <input type="text" class="vibz-input" id="businessInput" placeholder="Your barber shop name (optional)">
-    <button class="vibz-btn primary" onclick="handleShopName()">Continue</button>
-  </div>
+<!-- STEP 2: SHOP NAME (SKIPPABLE) -->
+<div class="form-screen" id="step-2">
+  <input class="vibz-input" id="businessInput" placeholder="Barber shop name (optional)">
+  <button class="vibz-btn primary" onclick="saveShop()">Continue</button>
+  <button class="vibz-btn back-btn" onclick="skipShop()">Skip</button>
+</div>
 
-  <!-- STEP 2: DESIGN -->
-  <div class="form-screen" id="step-2">
-    <button class="vibz-btn" onclick="goToStep(3)">I have a design code</button>
-    <a href="/barber/concepts.html" class="vibz-btn primary">Browse concepts</a>
-    <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
-  </div>
+<!-- STEP 3: DESIGN CODE -->
+<div class="form-screen" id="step-3">
+  <input class="vibz-input" id="designCode" placeholder="Enter design code e.g. BARBER-12">
+  <button class="vibz-btn primary" onclick="confirmDesign()">Confirm Design</button>
+</div>
 
-  <!-- STEP 3: DESIGN CODE -->
-  <div class="form-screen" id="step-3">
-    <input type="text" class="vibz-input" id="designCode" placeholder="e.g. BARBER-46">
-    <button class="vibz-btn primary" onclick="confirmDesign()">Confirm Design</button>
-    <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
-  </div>
+<!-- STEP 4: MANAGEMENT QUALIFIER -->
+<div class="form-screen" id="step-4">
+  <h2>How do you want this website handled?</h2>
+  <button class="vibz-btn" onclick="choosePlan('buy')">I’ll manage everything myself</button>
+  <button class="vibz-btn primary" onclick="choosePlan('monthly')">VIBZ handles everything</button>
+</div>
 
-  <!-- STEP 4: MANAGEMENT QUALIFIER -->
-  <div class="form-screen" id="step-4">
-    <h2>How do you want your website handled?</h2>
-    <button class="vibz-btn" onclick="setPlan('buy')">I’ll manage it myself</button>
-    <button class="vibz-btn primary" onclick="setPlan('monthly')">VIBZ manages everything</button>
-    <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
-  </div>
+<!-- STEP 5: BUILD LEVEL -->
+<div class="form-screen" id="step-5">
+  <h2>Select build level</h2>
+  <button class="vibz-btn" onclick="setLevel('standard')">Standard</button>
+  <button class="vibz-btn primary" onclick="setLevel('premium')">Premium</button>
+</div>
 
-  <!-- STEP 5: TIMELINE -->
-  <div class="form-screen" id="step-5">
-    <h2>How soon do you want to start?</h2>
-    <button class="vibz-btn primary" onclick="next()">Start ASAP</button>
-    <button class="vibz-btn" onclick="goToStep(7)">Need more info</button>
-    <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
-  </div>
+<!-- STEP 6: FEATURE SELECTION -->
+<div class="form-screen" id="step-6">
+  <h2>Select features</h2>
+  <div id="servicesGrid" class="services-grid"></div>
+  <button class="vibz-btn primary" onclick="next()">Continue</button>
+</div>
 
-  <!-- STEP 6: FEATURES -->
-  <div class="form-screen" id="step-6">
-    <h2>Select features</h2>
-    <div class="services-grid" id="servicesGrid"></div>
-    <button class="vibz-btn primary" onclick="goToStep(7)">Continue</button>
-    <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
-  </div>
-
-  <!-- STEP 7: FINAL SUMMARY -->
-  <div class="form-screen" id="step-7">
-    <div id="finalSummary"></div>
-    <button class="vibz-btn primary">Secure Setup</button>
-    <button class="vibz-btn back-btn" onclick="goToStep(6)">Edit Features</button>
-  </div>
+<!-- STEP 7: FINAL SUMMARY -->
+<div class="form-screen" id="step-7">
+  <div id="summary"></div>
+  <button class="vibz-btn primary">Secure Setup Now</button>
+</div>
 
 </form>
+</main>
+</div>
 
+<!-- ===================== FUNNEL JS ===================== -->
 <script>
-let step = 0;
-const data = {
+let step = 1;
+let state = {
   intent:'',
-  business:'',
+  shop:'',
   design:'',
   plan:'',
+  level:'',
   services:[]
 };
 
-const buyStandard = [
-  "Logo placeholder","Pricing page","Gallery","Contact form","Opening hours",
-  "Map & directions","Reviews","Tap to call","FAQ","SEO basics",
-  "Team section","Before/After","Offers section","Social links","Video grid"
-];
-
-const buyPremium = [
-  "Pop-up offer","Advanced gallery","Brand graphics","Sticky CTA","Custom sections",
-  "Animations","Portfolio layout","Email signup","Custom email (up to 3)",
-  "Testimonials slider","Feature highlights","Icons pack","Hover effects",
-  "Advanced layout","Hero video","Filters","Sidebar CTA","Design polish",
-  "UX enhancements","Performance tuning"
-];
-
-const monthlyStandard = buyStandard.map(s=>s+" (managed)");
-const monthlyPremium = buyPremium.map(s=>s+" (managed)");
+const SERVICES = {
+  buy: {
+    standard: [
+      "Logo Placeholder","Pricing Page","Gallery","Contact Form","SEO Basics",
+      "Reviews","Opening Hours","Location Map","CTA Buttons","FAQ",
+      "Service Pages","Before & After","Social Links","Mobile Optimised","Fast Hosting Ready"
+    ],
+    premium: [
+      "Logo Placeholder","Pricing Page","Gallery","Contact Form","SEO Basics",
+      "Reviews","Opening Hours","Location Map","CTA Buttons","FAQ",
+      "Service Pages","Before & After","Social Links","Mobile Optimised","Fast Hosting Ready",
+      "Advanced Layouts","Animated Sections","Video Sections","Brand Styling","Conversion Layout"
+    ]
+  },
+  monthly: {
+    standard: [
+      "Everything Managed","Hosting","Security","Monthly Updates","Backups",
+      "SEO Monitoring","Review Management","CTA Optimisation","Speed Optimisation",
+      "Email Capture","Booking Support","Gallery Updates","Form Management","Analytics","Uptime Monitoring"
+    ],
+    premium: [
+      "Everything Managed","Hosting","Security","Monthly Updates","Backups",
+      "SEO Monitoring","Review Management","CTA Optimisation","Speed Optimisation",
+      "Email Capture","Booking Support","Gallery Updates","Form Management","Analytics","Uptime Monitoring",
+      "Pop-up Offers","Conversion Tracking","Campaign Pages","Advanced Analytics","Priority Support"
+    ]
+  }
+};
 
 function showStep(n){
   document.querySelectorAll('.form-screen').forEach(s=>s.classList.remove('active'));
@@ -258,57 +267,70 @@ function showStep(n){
 }
 
 function next(){ showStep(step+1); }
-function prev(){ if(step>0) showStep(step-1); }
-function goToStep(n){ showStep(n); }
 
-function setIntent(v){ data.intent=v; showStep(1); }
-function handleShopName(){
-  data.business=document.getElementById('businessInput').value;
-  showStep(2);
+function setIntent(v){ state.intent=v; showStep(2); }
+
+function saveShop(){
+  state.shop=document.getElementById('businessInput').value;
+  showStep(3);
 }
+function skipShop(){ showStep(3); }
+
 function confirmDesign(){
-  data.design=document.getElementById('designCode').value;
+  state.design=document.getElementById('designCode').value;
   showStep(4);
 }
 
-function setPlan(p){
-  data.plan=p;
-  loadServices();
+function choosePlan(v){
+  state.plan=v;
   showStep(5);
 }
 
-function loadServices(){
+function setLevel(v){
+  state.level=v;
+  renderServices();
+  showStep(6);
+}
+
+function renderServices(){
   const grid=document.getElementById('servicesGrid');
   grid.innerHTML='';
-  const base = data.plan==='buy'?buyStandard:monthlyStandard;
-  const premium = data.plan==='buy'?buyPremium:monthlyPremium;
-
-  [...base,...premium].forEach(name=>{
-    const div=document.createElement('div');
-    div.className='service-card';
-    div.textContent=name;
-    div.onclick=()=>toggleService(name,div);
-    grid.appendChild(div);
+  SERVICES[state.plan][state.level].forEach(s=>{
+    grid.innerHTML+=`
+      <div class="service-card" onclick="toggleService('${s}',this)">
+        ${s}
+      </div>`;
   });
 }
 
 function toggleService(name,el){
   el.classList.toggle('selected');
-  const i=data.services.indexOf(name);
-  i>-1?data.services.splice(i,1):data.services.push(name);
+  if(state.services.includes(name)){
+    state.services=state.services.filter(x=>x!==name);
+  } else {
+    state.services.push(name);
+  }
 }
 
 function renderSummary(){
-  document.getElementById('finalSummary').innerHTML=`
-    <h2>${data.plan==='buy'?'Buy Outright':'Monthly Managed'}</h2>
-    <p><strong>Design:</strong> ${data.design}</p>
-    <p><strong>Selected Features:</strong></p>
-    <ul>${data.services.map(s=>`<li>${s}</li>`).join('')}</ul>
-  `;
+  const price =
+    state.plan==='buy'
+      ? (state.level==='standard'?'£1,500':'£3,000')
+      : (state.level==='standard'?'£199/mo + £500 setup':'£299/mo + £500 setup');
+
+  document.getElementById('summary').innerHTML=`
+    <h2>${state.plan==='buy'?'Buy Outright':'Monthly Managed'} – ${state.level}</h2>
+    <p>${price}</p>
+    <p>Design: ${state.design}</p>
+    <ul>${state.services.map(s=>`<li>${s}</li>`).join('')}</ul>`;
 }
 
-document.getElementById('step-7').addEventListener('click',renderSummary);
+document.getElementById('step-6').addEventListener('click',()=>{
+  setTimeout(()=>{ renderSummary(); showStep(7); },0);
+});
 </script>
-    
+
+        
+  
 </body>
 </html>
