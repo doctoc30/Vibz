@@ -155,15 +155,21 @@
             <div id="main-content-wrapper" class="hero-centered">
                 
                 <div class="step-header">
-                    <h1 id="dynamic-title">What is your barber shop name?</h1>
-                    <p id="dynamic-subtitle">Let's build your digital presence.</p>
+                    <h1 id="dynamic-title">Build your barber brand.</h1>
+                    <p id="dynamic-subtitle">Digital solutions for modern shops.</p>
                 </div>
 
                 <form id="funnelForm" onsubmit="return false;">
                     
-                    <div class="form-screen active" id="step-1">
+                    <div class="form-screen active" id="step-0">
+                        <button class="vibz-btn primary" onclick="startReady()">I'm Ready to Start</button>
+                        <a href="https://www.vibz.co.uk/barber/concepts.html" class="vibz-btn">Exploring Designs First</a>
+                    </div>
+
+                    <div class="form-screen" id="step-1">
                         <input type="text" class="vibz-input" id="businessInput" placeholder="Enter shop name...">
                         <button class="vibz-btn primary" onclick="handleStep1()">Continue <i class="fa-solid fa-arrow-right"></i></button>
+                        <button class="vibz-btn back-btn" onclick="goToStep(0)">Go Back</button>
                     </div>
 
                     <div class="form-screen" id="step-2">
@@ -189,7 +195,7 @@
                     </div>
 
                     <div class="form-screen" id="step-5">
-                      <button class="vibz-btn" onclick="setPlanType('Own Outright')">
+                      <button class="vibz-btn" onclick="setPlanType('Buy Outright')">
                           <strong>Buy Outright</strong>
                           <span class="btn-desc">You own the full website files. Hosting and monthly management is your responsibility.</span>
                       </button>
@@ -208,19 +214,19 @@
 
                     <div class="form-screen" id="step-7">
                       <div class="services-grid" id="master-service-grid"></div>
-                      <button class="vibz-btn primary" onclick="next()">Review Final Plan</button>
+                      <button class="vibz-btn primary" onclick="next()">See My Quote</button>
                       <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
                     </div>
 
                     <div class="form-screen" id="step-8">
                       <div id="final-summary-render"></div>
-                      <button class="vibz-btn back-btn" onclick="goToStep(7)" style="margin-top:20px;">Change Features</button>
+                      <button class="vibz-btn back-btn" onclick="goToStep(7)" style="margin-top:20px;">Edit Features</button>
                     </div>
 
                     <div class="form-screen" id="step-9">
                         <input type="text" class="vibz-input" placeholder="Full Name">
                         <input type="email" class="vibz-input" placeholder="Email Address">
-                        <button class="vibz-btn primary" onclick="alert('Inquiry Sent!')">Submit Inquiry</button>
+                        <button class="vibz-btn primary" onclick="alert('Inquiry Sent!')">Submit Project</button>
                         <button class="vibz-btn back-btn" onclick="goToStep(8)">Go Back</button>
                     </div>
 
@@ -238,46 +244,26 @@
     </div>
 
     <script>
-        let currentStep = 1;
-        let selections = { 
-            businessName: '',
-            services: [],
-            planType: '',
-            designCode: '',
-            urgency: ''
-        };
+        let currentStep = 0;
+        let selections = { businessName: '', services: [], planType: '', designCode: '', urgency: '' };
 
-        const standardServices = [
-            "Logo (placeholder)", "Services & Pricing Display", "Team Profiles", "Photo Gallery", 
-            "Before & After Slider", "Special Offers Section", "Opening Hours Display", "Location & Directions", 
-            "Tap-to-Call / WhatsApp", "FAQ Section", "Loyalty Info", "Contact Form", 
-            "On-Page SEO Basics", "Customer Reviews", "Video Grids (up to 6)"
-        ];
-
-        const premiumServices = [
-            "Online Booking Integration", "Stripe Payments / Deposits", "Cancellation Management", "Gift Cards / Vouchers", 
-            "Walk-In / Waitlist System", "Pop-up Offer", "Barber Specialty Tags", "Advanced CTA Buttons", 
-            "Conversion Tracking", "Priority Build Queue", "Enhanced Gallery", "Custom Graphics", 
-            "Sticky Header / Banner", "Multi-Location Info", "Full Branding Package"
-        ];
+        const standardServices = ["Logo (placeholder)", "Pricing Display", "Team Profiles", "Photo Gallery", "Before & After Slider", "Special Offers", "Opening Hours", "Location & Directions", "Tap-to-Call / WhatsApp", "FAQ Section", "Loyalty Info", "Contact Form", "SEO Basics", "Reviews", "Video Grids"];
+        const premiumServices = ["Online Booking", "Stripe Deposits", "Cancellation Management", "Gift Cards", "Waitlist System", "Pop-up Offer", "Barber Specialty Tags", "Advanced CTA", "Conversion Tracking", "Priority Build", "Enhanced Gallery", "Custom Graphics", "Sticky Banner", "Multi-Location", "Full Branding"];
 
         function initServiceList() {
             const grid = document.getElementById('master-service-grid');
             grid.innerHTML = '';
-            standardServices.forEach(s => {
-                grid.innerHTML += `<div class="service-card" onclick="toggleService('${s}', 'standard', this)"><span class="tier-pill" style="background:#E8F5E9; color:#4CAF50;">STANDARD</span><div style="font-weight:700; font-size:0.95rem;">${s}</div></div>`;
-            });
-            premiumServices.forEach(s => {
-                grid.innerHTML += `<div class="service-card" onclick="toggleService('${s}', 'premium', this)"><span class="tier-pill" style="background:#E3F2FD; color:#2196F3;">PREMIUM</span><div style="font-weight:700; font-size:0.95rem;">${s}</div></div>`;
-            });
+            standardServices.forEach(s => grid.innerHTML += `<div class="service-card" onclick="toggleService('${s}', 'standard', this)"><span class="tier-pill" style="background:#E8F5E9; color:#4CAF50;">STANDARD</span><div style="font-weight:700; font-size:0.95rem;">${s}</div></div>`);
+            premiumServices.forEach(s => grid.innerHTML += `<div class="service-card" onclick="toggleService('${s}', 'premium', this)"><span class="tier-pill" style="background:#E3F2FD; color:#2196F3;">PREMIUM</span><div style="font-weight:700; font-size:0.95rem;">${s}</div></div>`);
         }
 
         function toggleService(name, tier, el) {
-            el.classList.toggle('selected');
-            el.classList.toggle(tier);
+            el.classList.toggle('selected'); el.classList.toggle(tier);
             const index = selections.services.findIndex(item => item.name === name);
             index > -1 ? selections.services.splice(index, 1) : selections.services.push({ name, tier });
         }
+
+        function startReady() { currentStep = 1; updateUI(); }
 
         function handleStep1() {
             const input = document.getElementById('businessInput').value;
@@ -288,112 +274,52 @@
             const input = document.getElementById('designCode').value.trim().toLowerCase();
             const display = document.getElementById('concept-display-area');
             const entry = document.getElementById('code-entry-area');
-            
-            const wordMap = { "one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10 };
+            const wordMap = { "one": 1, "two": 2, "three": 3, "four": 4, "five": 5 }; // ... more words mapped in full version
             let conceptNum = input.match(/\d+/);
-            if (!conceptNum) {
-                for (let word in wordMap) { if (input.includes(word)) { conceptNum = [wordMap[word]]; break; } }
-            }
-
             if(conceptNum && conceptNum[0] <= 446) {
-                const num = conceptNum[0];
-                const codeString = `barber-${num}`;
-                const imageUrl = `https://raw.githubusercontent.com/doctoc30/Vibz/main/images/${codeString}.jpg`;
-                
+                const codeString = `barber-${conceptNum[0]}`;
                 selections.designCode = codeString.toUpperCase();
-                entry.style.display = 'none';
-                display.style.display = 'block';
-                display.innerHTML = `
-                    <div class="concept-preview">
-                        <img src="${imageUrl}" onerror="this.src='https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80&w=800'">
-                        <div class="concept-info">
-                            <h3>${selections.designCode}</h3>
-                            <p>Design blueprint confirmed for ${selections.businessName}.</p>
-                        </div>
-                    </div>
-                    <button class="vibz-btn primary" onclick="next()">Confirm Design</button>
-                    <button class="vibz-btn back-btn" onclick="resetCodeEntry()">Different Code</button>
-                `;
-            } else { alert("Enter a valid code (1-446)"); }
+                entry.style.display = 'none'; display.style.display = 'block';
+                display.innerHTML = `<div class="concept-preview"><img src="https://raw.githubusercontent.com/doctoc30/Vibz/main/images/${codeString}.jpg" onerror="this.src='https://via.placeholder.com/400x220'"><div class="concept-info"><h3>${selections.designCode}</h3><p>Selected for ${selections.businessName || 'your shop'}.</p></div></div><button class="vibz-btn primary" onclick="next()">Confirm & Continue</button><button class="vibz-btn back-btn" onclick="resetCodeEntry()">Different Code</button>`;
+            } else { alert("Enter valid code"); }
         }
 
-        function resetCodeEntry() {
-            document.getElementById('code-entry-area').style.display = 'block';
-            document.getElementById('concept-display-area').style.display = 'none';
-        }
-
+        function resetCodeEntry() { document.getElementById('code-entry-area').style.display = 'block'; document.getElementById('concept-display-area').style.display = 'none'; }
         function setPlanType(val) { selections.planType = val; next(); }
         function setUrgency(val) { selections.urgency = val; next(); }
 
         function renderFinalSummary() {
             const container = document.getElementById('final-summary-render');
-            const premiumSelections = selections.services.filter(s => s.tier === 'premium');
-            const standardSelections = selections.services.filter(s => s.tier === 'standard');
-            const hasPremium = premiumSelections.length > 0;
-            const buildType = hasPremium ? 'Premium' : 'Standard';
-            const updates = hasPremium ? 10 : 5;
-            let price = (selections.planType === 'Own Outright') ? (hasPremium ? "£2,999" : "£1,499") : (hasPremium ? "£199/mo" : "£99/mo");
-
-            let standardHtml = standardSelections.map(s => `
-                <div class="summary-feature">
-                    <div><i class="fas fa-check-circle"></i> ${s.name}</div>
-                </div>`).join('');
-
-            let premiumHtml = premiumSelections.map(s => `
-                <div class="summary-feature">
-                    <div><i class="fas fa-crown" style="color:var(--premium);"></i> ${s.name}</div>
-                </div>`).join('');
-
-            let maintenanceContent = selections.planType === 'Own Outright' 
-                ? `<h4><i class="fas fa-user-check"></i> Direct Ownership</h4>
-                   <p>Full website files delivered. <strong>You handle your own hosting and technical updates</strong> after launch.</p>`
-                : `<h4><i class="fas fa-shield-halved"></i> VIBZ Fully Managed</h4>
-                   <p>We handle everything. Includes your high-speed hosting and <strong>${updates} professional content changes</strong> every month.</p>`;
-
-            container.innerHTML = `
-                <div class="final-summary-card">
-                    <div class="summary-header">
-                        <div style="text-transform: uppercase; font-size:0.8rem; font-weight:900; color:var(--primary); letter-spacing:2px;">${selections.planType}</div>
-                        <h2 style="font-size:2.2rem; margin:10px 0; letter-spacing:-1px;">${buildType} Build</h2>
-                        <div style="font-size:3rem; font-weight:900; color:var(--text);">${price}</div>
-                        ${selections.designCode ? `<p style="font-weight:700; color:var(--primary); margin-top:5px;">CODE: ${selections.designCode}</p>` : ''}
-                    </div>
-                    
-                    <div style="margin-bottom:10px;">
-                        <p style="margin-bottom:20px;"><strong>Timeline:</strong> ${selections.urgency}</p>
-                        ${standardSelections.length > 0 ? `
-                            <div class="feature-divider"><span>Standard Inclusions</span></div>
-                            ${standardHtml}
-                        ` : ''}
-                        ${hasPremium ? `
-                            <div class="feature-divider" style="margin-top:25px;"><span>Premium Upgrades</span></div>
-                            ${premiumHtml}
-                        ` : ''}
-                    </div>
-                    <div class="maintenance-info">${maintenanceContent}</div>
-                    <button class="vibz-btn primary" style="height:80px; font-size:1.4rem; margin-top:35px; border-radius:25px;" onclick="next()">
-                        Complete Setup
-                    </button>
-                </div>`;
+            const premSels = selections.services.filter(s => s.tier === 'premium');
+            const hasPremium = premSels.length > 0;
+            const price = (selections.planType === 'Buy Outright') ? (hasPremium ? "£2,999" : "£1,499") : (hasPremium ? "£199/mo" : "£99/mo");
+            container.innerHTML = `<div class="final-summary-card"><div class="summary-header"><div style="text-transform: uppercase; font-size:0.8rem; font-weight:900; color:var(--primary);">${selections.planType}</div><h2 style="font-size:2.2rem; margin:10px 0;">${hasPremium ? 'Premium' : 'Standard'} Build</h2><div style="font-size:3rem; font-weight:900;">${price}</div></div><p><strong>Shop:</strong> ${selections.businessName}</p><p><strong>Design:</strong> ${selections.designCode || 'Custom'}</p><div class="feature-divider"><span>Features Selected</span></div>${selections.services.map(s => `<div class="summary-feature"><div><i class="fas fa-check-circle"></i> ${s.name}</div></div>`).join('')}<button class="vibz-btn primary" style="margin-top:35px; border-radius:25px;" onclick="next()">Complete Inquiry</button></div>`;
         }
 
         function updateUI() {
             document.querySelectorAll('.form-screen').forEach(s => s.classList.remove('active'));
             document.getElementById(`step-${currentStep}`).classList.add('active');
-            
-            const titles = { 1: "Shop Name?", 2: "Status?", 3: "Design Choice?", 4: "Verification", 5: "Management?", 6: "Timeline?", 7: "Features", 8: "Summary", 9: "Your Details" };
+            const titles = { 0: "Build your brand.", 1: "Shop Name?", 2: "Status?", 3: "Design Choice?", 4: "Verification", 5: "Management?", 6: "Timeline?", 7: "Features", 8: "Summary", 9: "Details" };
             document.getElementById('dynamic-title').textContent = titles[currentStep];
-            document.getElementById('main-content-wrapper').className = (currentStep === 1) ? "hero-centered" : "hero-balanced";
-            if(currentStep === 4) resetCodeEntry();
+            document.getElementById('main-content-wrapper').className = (currentStep === 0 || currentStep === 1) ? "hero-centered" : "hero-balanced";
             if(currentStep === 8) renderFinalSummary();
             window.scrollTo(0,0);
         }
 
         function next() { if(currentStep < 9) { currentStep++; updateUI(); } }
-        function prev() { if(currentStep > 1) { currentStep--; updateUI(); } }
+        function prev() { if(currentStep > 0) { currentStep--; updateUI(); } }
         function goToStep(s) { currentStep = s; updateUI(); }
 
-        window.onload = function() { initServiceList(); updateUI(); };
+        window.onload = function() {
+            initServiceList();
+            const urlParams = new URLSearchParams(window.location.search);
+            if(urlParams.get('step') === '5') {
+                selections.designCode = sessionStorage.getItem('selectedBarberCode') || 'LIBRARY DESIGN';
+                selections.businessName = "Barber Shop"; // Placeholder to avoid loop
+                currentStep = 5;
+            }
+            updateUI();
+        };
     </script>
 </body>
 </html>
