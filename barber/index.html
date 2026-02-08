@@ -10,13 +10,14 @@
     <style>
         :root {
             --primary: #FF6B00;
-            --primary-dark: #e66000;
             --primary-light: #FFF5EE;
             --bg: #FFFFFF;
             --text: #121212;
             --gray: #666;
-            --border: rgba(255, 107, 0, 0.15);
+            --border: rgba(255, 107, 0, 0.1);
             --safe-top: env(safe-area-inset-top);
+            --standard: #000000;
+            --premium: #FF6B00;
         }
 
         * {
@@ -33,232 +34,104 @@
         }
 
         #app-container {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
+            height: 100vh; display: flex; flex-direction: column;
         }
 
         header {
             padding: calc(var(--safe-top) + 20px) 25px 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            display: flex; justify-content: space-between; align-items: center;
             z-index: 10;
         }
 
-        .app-logo {
-            font-size: 1.8rem;
-            font-weight: 900;
-            letter-spacing: -1.5px;
-            color: var(--primary);
-        }
+        .app-logo { font-size: 1.8rem; font-weight: 900; letter-spacing: -1.5px; color: var(--primary); }
+        .app-logo span { color: #000000; }
 
         .content-scroll {
-            flex: 1;
-            overflow-y: auto;
-            padding: 0 20px 160px;
-            scroll-behavior: smooth;
-            display: flex;
-            flex-direction: column;
+            flex: 1; overflow-y: auto; padding: 0 20px 160px; scroll-behavior: smooth;
+            display: flex; flex-direction: column;
         }
 
-        .hero-centered {
-            margin-top: 15vh;
-            text-align: center;
-            transition: 0.4s ease;
-        }
-
-        .hero-balanced {
-            margin-top: auto;
-            margin-bottom: auto;
-            text-align: center;
-            padding-bottom: 40px;
-            transition: 0.4s ease;
-        }
+        .hero-centered { margin-top: 15vh; text-align: center; transition: 0.4s ease; }
+        .hero-balanced { margin-top: auto; margin-bottom: auto; text-align: center; transition: 0.4s ease; padding-bottom: 40px; }
 
         .step-header h1 {
-            font-size: 2.2rem;
-            font-weight: 900;
-            line-height: 1.1;
-            letter-spacing: -1.2px;
-            color: var(--primary);
-            margin-bottom: 30px;
+            font-size: 2.4rem; font-weight: 900; line-height: 1.1;
+            letter-spacing: -1.2px; color: var(--primary);
+            margin-bottom: 40px;
         }
 
         .vibz-input {
-            width: 100%;
-            padding: 22px;
-            border-radius: 20px;
-            border: 2px solid var(--border);
-            background: #fff;
-            font-size: 1.1rem;
-            font-weight: 700;
-            margin-bottom: 15px;
-            outline: none;
+            width: 100%; padding: 22px; border-radius: 24px; border: 2px solid var(--border);
+            background: #fff; font-size: 1.1rem; font-weight: 700; margin-bottom: 15px;
+            outline: none; box-shadow: 0 10px 25px rgba(255, 107, 0, 0.05);
             text-align: center;
-            box-shadow: 0 10px 25px rgba(255, 107, 0, 0.05);
         }
 
         .vibz-btn {
-            width: 100%;
-            padding: 22px 18px;
-            border-radius: 20px;
-            border: 2px solid var(--primary);
-            background: #fff;
-            color: var(--text);
-            font-size: 1.1rem;
-            font-weight: 800;
-            margin-bottom: 12px;
-            cursor: pointer;
-            transition: 0.2s;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
+            width: 100%; padding: 22px 18px; border-radius: 20px; border: 2px solid var(--primary);
+            background: #fff; color: var(--text); font-size: 1.1rem; font-weight: 800;
+            margin-bottom: 12px; cursor: pointer; transition: 0.2s; text-align: center;
+            text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+        }
+        
+        .vibz-btn span.btn-desc { 
+            font-size: 0.85rem; font-weight: 600; color: var(--gray); 
+            line-height: 1.4; max-width: 90%; 
         }
 
-        .vibz-btn:active {
-            transform: scale(0.98);
-        }
+        .vibz-btn:active { transform: scale(0.97); }
+        .vibz-btn.primary { background: var(--primary); color: #fff; border: none; }
+        .vibz-btn.back-btn { background: #000; color: #fff; border: none; margin-top: 10px; box-shadow: none; font-weight: 700; }
 
-        .vibz-btn.primary {
-            background: var(--primary);
-            color: #fff;
-            border: none;
-        }
-
-        .vibz-btn.back-btn {
-            background: #000;
-            color: #fff;
-            border: none;
-            margin-top: 10px;
-        }
-
-        .services-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
-            text-align: left;
-            margin-bottom: 30px;
-        }
-
+        .services-grid { display: grid; grid-template-columns: 1fr; gap: 10px; text-align: left; margin-bottom: 30px; }
         .service-card {
-            background: #fff;
-            border: 2px solid var(--border);
-            border-radius: 18px;
-            padding: 18px;
-            cursor: pointer;
-            transition: 0.3s;
+            background: #fff; border: 2px solid var(--border); border-radius: 20px;
+            padding: 16px; cursor: pointer; transition: 0.3s;
         }
+        .service-card.selected.standard { border-color: #000; background: rgba(0,0,0,0.03); }
+        .service-card.selected.premium { border-color: var(--primary); background: rgba(255,107,0,0.06); }
+        
+        .tier-pill { font-size: 0.65rem; font-weight: 900; padding: 4px 10px; border-radius: 8px; display: inline-block; margin-bottom: 6px; }
 
-        .service-card.selected {
-            border-color: var(--primary);
-            background: rgba(255, 107, 0, 0.08);
+        .final-summary-card { 
+            background: #fff; border-radius: 30px; padding: 35px 25px; 
+            border: 2px solid var(--border); text-align: left; width: 100%;
         }
+        .summary-header { border-bottom: 2px solid #f9f9f9; padding-bottom: 25px; margin-bottom: 25px; text-align: center; }
+        .summary-feature { font-size: 0.95rem; font-weight: 600; padding: 8px 0; display: flex; align-items: center; line-height: 1.4; }
+        .summary-feature i { font-size: 0.9rem; margin-right: 12px; }
+        .summary-feature.std-feat i { color: #000; }
+        .summary-feature.prem-feat i { color: var(--primary); }
 
-        .tier-pill {
-            font-size: 0.65rem;
-            font-weight: 900;
-            padding: 4px 10px;
-            border-radius: 8px;
-            display: inline-block;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-        }
+        .feature-divider { height: 1px; background: #eee; margin: 25px 0; position: relative; }
+        .feature-divider span { position: absolute; top: -10px; left: 0; background: #fff; padding-right: 15px; font-size: 0.75rem; font-weight: 900; color: #aaa; text-transform: uppercase; letter-spacing: 2px; }
 
-        .final-summary-card {
-            background: #fff;
-            border-radius: 30px;
-            padding: 35px 25px;
-            border: 2px solid var(--border);
-            text-align: left;
-            width: 100%;
-        }
+        .form-screen { display: none; width: 100%; }
+        .form-screen.active { display: block; animation: fadeIn 0.4s ease-out forwards; }
 
-        .price-tag {
-            font-size: 3rem;
-            font-weight: 900;
-            color: #000;
-            margin: 5px 0;
-            letter-spacing: -1px;
-        }
-
-        .sub-price {
-            font-size: 1.1rem;
-            color: var(--primary);
-            font-weight: 800;
-            margin-bottom: 25px;
-        }
-
-        .summary-section-label {
-            font-size: 0.75rem;
-            font-weight: 900;
-            color: #aaa;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin: 25px 0 12px;
-            border-bottom: 1px solid #f0f0f0;
-            padding-bottom: 8px;
-        }
-
-        .summary-item {
-            font-size: 0.95rem;
-            font-weight: 600;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            line-height: 1.4;
-        }
-
-        .summary-item i {
-            font-size: 0.85rem;
-            width: 20px;
-        }
-
-        .fa-check { color: #000; }
-        .fa-crown { color: var(--primary); }
-
-        .form-screen {
-            display: none;
-            width: 100%;
-        }
-
-        .form-screen.active {
-            display: block;
-            animation: fadeIn 0.5s ease forwards;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .app-dock {
-            position: fixed;
-            bottom: 25px;
-            left: 20px;
-            right: 20px;
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(20px);
-            height: 80px;
-            border-radius: 40px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-            z-index: 1000;
+            position: fixed; bottom: 25px; left: 20px; right: 20px;
+            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px);
+            height: 80px; border-radius: 40px; display: flex; justify-content: space-around;
+            align-items: center; box-shadow: 0 15px 35px rgba(0,0,0,0.1); z-index: 1000;
+        }
+        .dock-btn { display: flex; flex-direction: column; align-items: center; color: #A0A0A0; text-decoration: none; gap: 4px; }
+        .dock-btn.active { color: var(--primary); }
+        .dock-btn i { font-size: 1.4rem; }
+        .dock-btn span { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; }
+        .dock-center {
+            width: 65px; height: 65px; background: var(--primary); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; color: #fff;
+            font-size: 1.8rem; margin-top: -50px; border: 6px solid var(--primary-light);
+            box-shadow: 0 10px 20px rgba(255, 107, 0, 0.3);
         }
 
-        .dock-text {
-            color: var(--primary);
-            font-weight: 900;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            font-size: 0.8rem;
+        .concept-preview {
+            background: #fff; border-radius: 30px; overflow: hidden; margin-bottom: 20px; border: 2px solid var(--border); text-align: left;
         }
+        .concept-preview img { width: 100%; height: 220px; object-fit: cover; }
     </style>
 </head>
 <body>
@@ -266,7 +139,7 @@
     <div id="app-container">
         <header>
             <div class="app-logo">VIBZ<span>.</span></div>
-            <i class="fa-solid fa-shield-check" style="font-size: 1.5rem; color: #000;"></i>
+            <i class="fa-solid fa-circle-user" style="font-size: 1.8rem; color: #ddd;"></i>
         </header>
 
         <main class="content-scroll">
@@ -278,7 +151,7 @@
                 <form id="funnelForm" onsubmit="return false;">
                     
                     <div class="form-screen active" id="step-0">
-                        <button class="vibz-btn primary" onclick="startFlow()">I'm Ready to Start</button>
+                        <button class="vibz-btn primary" onclick="startReady()">I'm Ready to Start</button>
                         <a href="https://www.vibz.co.uk/barber/concepts.html" class="vibz-btn">Exploring Designs First</a>
                     </div>
 
@@ -289,26 +162,23 @@
                     </div>
 
                     <div class="form-screen" id="step-2">
-                      <button class="vibz-btn" onclick="setPlan('Buy Outright')">
-                          <strong>Buy Outright</strong>
-                          <span style="font-size:0.8rem; font-weight: 500;">Complete ownership of all files.</span>
-                      </button>
-                      <button class="vibz-btn" onclick="setPlan('Monthly Support')">
-                          <strong>Monthly Support</strong>
-                          <span style="font-size:0.8rem; font-weight: 500;">£500 setup + Monthly management.</span>
-                      </button>
-                      <button class="vibz-btn back-btn" onclick="prev()">Previous</button>
+                        <button class="vibz-btn" onclick="setPlanType('Buy Outright')"><strong>Buy Outright</strong><span class="btn-desc">One-time payment. Ownership of files.</span></button>
+                        <button class="vibz-btn" onclick="setPlanType('Monthly Support')"><strong>Monthly Support</strong><span class="btn-desc">£500 setup + Monthly maintenance.</span></button>
+                        <button class="vibz-btn back-btn" onclick="prev()">Previous</button>
                     </div>
 
                     <div class="form-screen" id="step-3">
                         <button class="vibz-btn" onclick="goToStep(4)">I Have a Design Code</button>
-                        <button class="vibz-btn primary" onclick="setDesign('Custom Request'); next();">Request Custom Design</button>
+                        <button class="vibz-btn primary" onclick="setDesign('Custom'); next();">Request Custom Design</button>
                         <button class="vibz-btn back-btn" onclick="prev()">Previous</button>
                     </div>
 
                     <div class="form-screen" id="step-4">
-                        <input type="text" class="vibz-input" id="designCode" placeholder="e.g. Barber 446">
-                        <button class="vibz-btn primary" onclick="verifyDesign()">Verify & Continue</button>
+                        <div id="code-entry-area">
+                            <input type="text" class="vibz-input" id="designCode" placeholder="e.g. Barber 446">
+                            <button class="vibz-btn primary" onclick="verifyDesign()">Verify Design</button>
+                        </div>
+                        <div id="concept-display-area" style="display:none;"></div>
                         <button class="vibz-btn back-btn" onclick="prev()">Previous</button>
                     </div>
 
@@ -328,165 +198,86 @@
         </main>
 
         <nav class="app-dock">
-            <div class="dock-text">VIBZ Secure Checkout</div>
+            <a href="index.html" class="dock-btn active"><i class="fa-solid fa-house-chimney"></i><span>Home</span></a>
+            <a href="concepts.html" class="dock-btn"><i class="fa-solid fa-compass"></i><span>Library</span></a>
+            <div class="dock-center" onclick="next()"><i class="fa-solid fa-bolt"></i></div>
+            <a href="#" class="dock-btn"><i class="fa-solid fa-briefcase"></i><span>Portal</span></a>
+            <div class="dock-btn"><i class="fa-solid fa-bars"></i><span>Menu</span></div>
         </nav>
     </div>
 
     <script>
         let currentStep = 0;
-        let selections = { 
-            businessName: '', 
-            planType: '', 
-            designCode: '', 
-            services: [] 
-        };
+        let selections = { businessName: '', services: [], planType: '', designCode: '' };
 
-        const standardServices = [
-            "Logo Placement", "Pricing Display", "Team Profiles", "Photo Gallery", 
-            "Opening Hours", "Map Integration", "Tap-to-Call / WhatsApp", 
-            "FAQ Section", "Contact Form", "Basic Google SEO", 
-            "Instagram Feed Sync", "Social Media Links", 
-            "Mobile UX Optimization", "High Speed Loading", "Privacy & Legal Policy"
-        ];
-
-        const premiumServices = [
-            "Online Booking Integration", "Stripe Deposit System", "Digital Gift Cards", 
-            "Automated Waitlist", "Marketing Pop-up Offers", "Conversion Data Tracking", 
-            "Priority Build Queue", "Custom UI Graphics", "Multi-Location Support", 
-            "Google Review Booster", "Customer CRM Database", "Email Marketing Automation", 
-            "SMS Appointment Alerts", "VIP Membership Logic", "Advanced Analytics", 
-            "News / Blog Engine", "Career & Hiring Portal", "Cancellation Policy Logic", 
-            "Individual Staff Logins", "Inventory Management Sync"
-        ];
+        const standardServices = ["Logo Placement", "Pricing Display", "Team Profiles", "Photo Gallery", "Opening Hours", "Map Integration", "Tap-to-Call", "FAQ Section", "Contact Form", "Basic SEO", "Instagram Feed", "Social Links", "Mobile UX", "Speed Loading", "Privacy Policy"];
+        const premiumServices = ["Online Booking", "Stripe Deposits", "Gift Cards", "Waitlist System", "Pop-up Offers", "Conversion Tracking", "Priority Build", "Custom Graphics", "Multi-Location", "Review Booster", "Customer CRM", "Email Marketing", "SMS Alerts", "VIP Memberships", "Analytics", "Blog Engine", "Career Portal", "Cancellation Logic", "Staff Logins", "Inventory Sync"];
 
         function initServiceList() {
             const grid = document.getElementById('master-service-grid');
             grid.innerHTML = '';
-            
-            standardServices.forEach(service => {
-                grid.innerHTML += `
-                    <div class="service-card" onclick="toggleService('${service}', 'standard', this)">
-                        <span class="tier-pill" style="background:#000; color:#fff;">Standard</span>
-                        <div style="font-weight:700; font-size:1rem;">${service}</div>
-                    </div>`;
-            });
-
-            premiumServices.forEach(service => {
-                grid.innerHTML += `
-                    <div class="service-card" onclick="toggleService('${service}', 'premium', this)">
-                        <span class="tier-pill" style="background:var(--primary); color:#fff;">Premium Upgrade</span>
-                        <div style="font-weight:700; font-size:1rem;">${service}</div>
-                    </div>`;
-            });
+            standardServices.forEach(s => grid.innerHTML += `<div class="service-card" onclick="toggleService('${s}', 'standard', this)"><span class="tier-pill" style="background:#000; color:#fff;">STANDARD</span><div style="font-weight:700;">${s}</div></div>`);
+            premiumServices.forEach(s => grid.innerHTML += `<div class="service-card" onclick="toggleService('${s}', 'premium', this)"><span class="tier-pill" style="background:var(--primary); color:#fff;">PREMIUM</span><div style="font-weight:700;">${s}</div></div>`);
         }
 
         function toggleService(name, tier, el) {
-            el.classList.toggle('selected');
+            el.classList.toggle('selected'); el.classList.toggle(tier);
             const index = selections.services.findIndex(item => item.name === name);
-            if (index > -1) {
-                selections.services.splice(index, 1);
-            } else {
-                selections.services.push({ name, tier });
-            }
+            index > -1 ? selections.services.splice(index, 1) : selections.services.push({ name, tier });
         }
 
-        function startFlow() { currentStep = 1; updateUI(); }
-        
-        function handleStep1() { 
-            const val = document.getElementById('businessInput').value;
-            if(val) { selections.businessName = val; next(); } 
-        }
-
-        function setPlan(val) { selections.planType = val; next(); }
-        
+        function startReady() { currentStep = 1; updateUI(); }
+        function handleStep1() { if(document.getElementById('businessInput').value) { selections.businessName = document.getElementById('businessInput').value; next(); } }
+        function setPlanType(val) { selections.planType = val; next(); }
         function setDesign(val) { selections.designCode = val; }
-        
-        function verifyDesign() { 
-            const code = document.getElementById('designCode').value;
-            if(code) { selections.designCode = code.toUpperCase(); next(); } 
+
+        function verifyDesign() {
+            const input = document.getElementById('designCode').value;
+            if(input) { 
+                selections.designCode = input.toUpperCase(); 
+                document.getElementById('code-entry-area').style.display = 'none';
+                const display = document.getElementById('concept-display-area');
+                display.style.display = 'block';
+                display.innerHTML = `<div class="concept-preview"><img src="https://via.placeholder.com/400x220?text=${selections.designCode}"></div><button class="vibz-btn primary" onclick="next()">Confirm Design</button>`;
+            }
         }
 
         function renderFinalSummary() {
             const isOutright = selections.planType === 'Buy Outright';
-            const selStandard = selections.services.filter(s => s.tier === 'standard');
-            const selPremium = selections.services.filter(s => s.tier === 'premium');
-            const hasPremium = selPremium.length > 0;
+            const selStd = selections.services.filter(s => s.tier === 'standard');
+            const selPrem = selections.services.filter(s => s.tier === 'premium');
+            const hasPremium = selPrem.length > 0;
             
-            let priceText, subPriceText, ctaText;
+            let price = isOutright ? (hasPremium ? "£5,000" : "£2,500") : "£500";
+            let subPrice = isOutright ? "One-time Payment" : `Setup + ${hasPremium ? '£150' : '£100'}/mo`;
 
-            if(isOutright) {
-                priceText = hasPremium ? "£5,000" : "£2,500";
-                subPriceText = "Total One-Time Investment";
-                ctaText = `Pay ${priceText} Now`;
-            } else {
-                const monthlyFee = hasPremium ? "£150" : "£100";
-                priceText = "£500";
-                subPriceText = `Setup Fee + ${monthlyFee}/mo Management`;
-                ctaText = `Pay £500 Setup Fee`;
+            let html = `<div class="final-summary-card"><div class="summary-header"><h2>${selections.businessName}</h2><div style="font-size:3rem; font-weight:900;">${price}</div><div style="color:var(--primary); font-weight:700;">${subPrice}</div></div>`;
+            
+            if(selStd.length > 0) {
+                html += `<div class="feature-divider"><span>Standard Selected</span></div>`;
+                selStd.forEach(s => html += `<div class="summary-feature std-feat"><i class="fa-solid fa-circle-check"></i> ${s.name}</div>`);
             }
-
-            let htmlOutput = `
-                <div class="final-summary-card">
-                    <h2 style="text-transform:uppercase; font-size:0.9rem; color:var(--primary); letter-spacing:1px;">
-                        ${selections.businessName}
-                    </h2>
-                    <div class="price-tag">${priceText}</div>
-                    <div class="sub-price">${subPriceText}</div>
-                    <p style="font-size:0.9rem; color:#666; margin-bottom:10px;">
-                        Plan: <strong>${selections.planType}</strong><br>
-                        Design: <strong>${selections.designCode}</strong>
-                    </p>`;
-
-            if(selStandard.length > 0) {
-                htmlOutput += `<div class="summary-section-label">Selected Standard Features</div>`;
-                selStandard.forEach(s => {
-                    htmlOutput += `<div class="summary-item"><i class="fa-solid fa-check"></i> ${s.name}</div>`;
-                });
+            if(selPrem.length > 0) {
+                html += `<div class="feature-divider"><span>Premium Upgrades</span></div>`;
+                selPrem.forEach(s => html += `<div class="summary-feature prem-feat"><i class="fa-solid fa-crown"></i> ${s.name}</div>`);
             }
-
-            if(selPremium.length > 0) {
-                htmlOutput += `<div class="summary-section-label">Selected Premium Upgrades</div>`;
-                selPremium.forEach(s => {
-                    htmlOutput += `<div class="summary-item"><i class="fa-solid fa-crown"></i> ${s.name}</div>`;
-                });
-            }
-
-            htmlOutput += `
-                    <button class="vibz-btn primary" style="height:85px; font-size:1.4rem; margin-top:35px;" onclick="alert('Connecting to VIBZ Payment Gateway...')">
-                        ${ctaText}
-                    </button>
-                </div>`;
-
-            document.getElementById('final-summary-render').innerHTML = htmlOutput;
+            html += `<button class="vibz-btn primary" style="margin-top:30px; height:80px; font-size:1.3rem;" onclick="alert('Redirecting...')">Pay Securely</button></div>`;
+            document.getElementById('final-summary-render').innerHTML = html;
         }
 
         function updateUI() {
             document.querySelectorAll('.form-screen').forEach(s => s.classList.remove('active'));
-            const activeStep = document.getElementById(`step-${currentStep}`);
-            if(activeStep) activeStep.classList.add('active');
-            
-            const titleMap = { 
-                0: "Build your brand.", 
-                1: "Shop Name?", 
-                2: "Select Your Plan", 
-                3: "Choose Design", 
-                4: "Verification", 
-                5: "Select Services", 
-                6: "Secure Checkout" 
-            };
-            
-            document.getElementById('dynamic-title').textContent = titleMap[currentStep] || "Build your brand.";
+            document.getElementById(`step-${currentStep}`).classList.add('active');
+            const titles = { 0: "Build your brand.", 1: "Shop Name?", 2: "Select Plan", 3: "Design Choice", 4: "Verification", 5: "Features", 6: "Checkout" };
+            document.getElementById('dynamic-title').textContent = titles[currentStep];
             document.getElementById('main-content-wrapper').className = (currentStep <= 1) ? "hero-centered" : "hero-balanced";
-            
             if(currentStep === 5) initServiceList();
             if(currentStep === 6) renderFinalSummary();
-            
-            window.scrollTo(0,0);
         }
 
         function next() { currentStep++; updateUI(); }
         function prev() { currentStep--; updateUI(); }
-        function goToStep(num) { currentStep = num; updateUI(); }
+        function goToStep(s) { currentStep = s; updateUI(); }
 
         window.onload = updateUI;
     </script>
