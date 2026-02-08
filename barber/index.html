@@ -76,6 +76,7 @@
             text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
         }
         
+        /* Revised Orange Small Text - High contrast & Spaced */
         .vibz-btn span.btn-desc { 
             font-size: 0.85rem; font-weight: 700; color: var(--primary); 
             line-height: 1.4; max-width: 90%; 
@@ -94,15 +95,7 @@
         .service-card.selected.premium { border-color: var(--premium); background: rgba(33,150,243,0.06); }
         .tier-pill { font-size: 0.65rem; font-weight: 900; padding: 4px 10px; border-radius: 8px; display: inline-block; margin-bottom: 6px; }
 
-        /* Discovery Layouts */
-        .explore-carousel { display: flex; gap: 15px; overflow-x: auto; padding: 10px 0 25px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
-        .explore-carousel::-webkit-scrollbar { display: none; }
-        .explore-card { flex-shrink: 0; width: 80%; scroll-snap-align: center; border-radius: 24px; overflow: hidden; background: #fff; border: 2px solid var(--border); text-align: left; }
-        .explore-card img { width: 100%; height: 180px; object-fit: cover; }
-        .explore-card-info { padding: 15px; }
-        #discovery-ticker { background: var(--text); color: #fff; padding: 12px; border-radius: 15px; margin-bottom: 20px; font-weight: 900; width: 100%; text-align: center; }
-
-        /* Summary Overhaul */
+        /* Full Width Summary Overhaul */
         .final-summary-card { 
             background: #fff; border-radius: 30px; padding: 35px 25px; 
             border: 2px solid var(--border); text-align: left; width: 100%;
@@ -164,35 +157,13 @@
             <div id="main-content-wrapper" class="hero-centered">
                 
                 <div class="step-header">
-                    <h1 id="dynamic-title">Build Your Legend</h1>
-                    <p id="dynamic-subtitle">Experience the VIBZ digital blueprint.</p>
+                    <h1 id="dynamic-title">What is your barber shop name?</h1>
+                    <p id="dynamic-subtitle">Let's build your digital presence.</p>
                 </div>
 
                 <form id="funnelForm" onsubmit="return false;">
                     
-                    <div class="form-screen active" id="step-0">
-                        <button class="vibz-btn" onclick="startDiscovery()">Just Exploring</button>
-                        <button class="vibz-btn primary" onclick="goToStep(1)">Ready to Start</button>
-                    </div>
-
-                    <div class="form-screen" id="step-discover-gallery">
-                         <div class="explore-carousel">
-                            <div class="explore-card"><img src="https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-446.jpg"><div class="explore-card-info"><h3>Concept 446</h3><p>Modern Industrial</p></div></div>
-                            <div class="explore-card"><img src="https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-400.jpg"><div class="explore-card-info"><h3>Concept 400</h3><p>Minimalist Luxury</p></div></div>
-                            <div class="explore-card"><img src="https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-350.jpg"><div class="explore-card-info"><h3>Concept 350</h3><p>Classic Studio</p></div></div>
-                        </div>
-                        <button class="vibz-btn primary" onclick="goToStep('discover-features')">Next: Explore Features</button>
-                        <button class="vibz-btn back-btn" onclick="goToStep(0)">Back</button>
-                    </div>
-
-                    <div class="form-screen" id="step-discover-features">
-                        <div id="discovery-ticker">Estimated Build: £1,499</div>
-                        <div class="services-grid" id="discovery-grid"></div>
-                        <button class="vibz-btn primary" onclick="goToStep(1)">I Like This - Name My Shop</button>
-                        <button class="vibz-btn back-btn" onclick="goToStep('discover-gallery')">Back</button>
-                    </div>
-
-                    <div class="form-screen" id="step-1">
+                    <div class="form-screen active" id="step-1">
                         <input type="text" class="vibz-input" id="businessInput" placeholder="Enter shop name...">
                         <button class="vibz-btn primary" onclick="handleStep1()">Continue <i class="fa-solid fa-arrow-right"></i></button>
                     </div>
@@ -205,7 +176,7 @@
 
                     <div class="form-screen" id="step-3">
                         <button class="vibz-btn" onclick="goToStep(4)">I Have a Design Code</button>
-                        <button class="vibz-btn primary" onclick="startDiscovery()">Browse Concept Library</button>
+                        <a href="https://www.vibz.co.uk/barber/concepts.html" class="vibz-btn primary">Browse Concept Library</a>
                         <button class="vibz-btn" onclick="next()">Request Custom Design</button>
                         <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
                     </div>
@@ -292,16 +263,15 @@
 
         <nav class="app-dock">
             <a href="https://www.vibz.co.uk/barber/index.html" class="dock-btn active"><i class="fa-solid fa-house-chimney"></i><span>Home</span></a>
-            <a href="#" onclick="startDiscovery()" class="dock-btn"><i class="fa-solid fa-compass"></i><span>Library</span></a>
+            <a href="https://www.vibz.co.uk/barber/concepts.html" class="dock-btn"><i class="fa-solid fa-compass"></i><span>Library</span></a>
             <div class="dock-center" onclick="next()"><i class="fa-solid fa-bolt"></i></div>
             <a href="#" class="dock-btn"><i class="fa-solid fa-briefcase"></i><span>Portal</span></a>
             <div class="dock-btn"><i class="fa-solid fa-bars"></i><span>Menu</span></div>
         </nav>
     </div>
 
-
     <script>
-        let currentStep = 0; // Starts at the Hub
+        let currentStep = 1;
         let selections = { 
             businessName: '',
             services: [],
@@ -323,34 +293,22 @@
             "Sticky Header / Banner", "Multi-Location Info", "Full Branding Package"
         ];
 
-        function initServiceList(gridId) {
-            const grid = document.getElementById(gridId);
-            if(!grid) return;
+        function initServiceList() {
+            const grid = document.getElementById('master-service-grid');
             grid.innerHTML = '';
             standardServices.forEach(s => {
-                grid.innerHTML += `<div class="service-card" onclick="toggleService('${s}', 'standard', this, '${gridId}')"><span class="tier-pill" style="background:#E8F5E9; color:#4CAF50;">STANDARD</span><div style="font-weight:700; font-size:0.95rem;">${s}</div></div>`;
+                grid.innerHTML += `<div class="service-card" onclick="toggleService('${s}', 'standard', this)"><span class="tier-pill" style="background:#E8F5E9; color:#4CAF50;">STANDARD</span><div style="font-weight:700; font-size:0.95rem;">${s}</div></div>`;
             });
             premiumServices.forEach(s => {
-                grid.innerHTML += `<div class="service-card" onclick="toggleService('${s}', 'premium', this, '${gridId}')"><span class="tier-pill" style="background:#E3F2FD; color:#2196F3;">PREMIUM</span><div style="font-weight:700; font-size:0.95rem;">${s}</div></div>`;
+                grid.innerHTML += `<div class="service-card" onclick="toggleService('${s}', 'premium', this)"><span class="tier-pill" style="background:#E3F2FD; color:#2196F3;">PREMIUM</span><div style="font-weight:700; font-size:0.95rem;">${s}</div></div>`;
             });
         }
 
-        function toggleService(name, tier, el, gridId) {
+        function toggleService(name, tier, el) {
             el.classList.toggle('selected');
             el.classList.toggle(tier);
             const index = selections.services.findIndex(item => item.name === name);
             index > -1 ? selections.services.splice(index, 1) : selections.services.push({ name, tier });
-            
-            if(gridId === 'discovery-grid') {
-                const hasPremium = selections.services.some(s => s.tier === 'premium');
-                document.getElementById('discovery-ticker').textContent = `Estimated Build: ${hasPremium ? '£2,999' : '£1,499'}`;
-            }
-        }
-
-        function startDiscovery() {
-            currentStep = 'discover-gallery';
-            initServiceList('discovery-grid');
-            updateUI();
         }
 
         function handleStep1() {
@@ -362,31 +320,40 @@
             const input = document.getElementById('designCode').value.trim().toLowerCase();
             const display = document.getElementById('concept-display-area');
             const entry = document.getElementById('code-entry-area');
+            
             const wordMap = { "one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10 };
             let conceptNum = input.match(/\d+/);
-            if (!conceptNum) { for (let word in wordMap) { if (input.includes(word)) { conceptNum = [wordMap[word]]; break; } } }
+            if (!conceptNum) {
+                for (let word in wordMap) { if (input.includes(word)) { conceptNum = [wordMap[word]]; break; } }
+            }
 
             if(conceptNum && conceptNum[0] <= 446) {
                 const num = conceptNum[0];
                 const codeString = `barber-${num}`;
+                const imageUrl = `https://raw.githubusercontent.com/doctoc30/Vibz/main/images/${codeString}.jpg`;
+                
                 selections.designCode = codeString.toUpperCase();
                 entry.style.display = 'none';
                 display.style.display = 'block';
                 display.innerHTML = `
                     <div class="concept-preview">
-                        <img src="https://raw.githubusercontent.com/doctoc30/Vibz/main/images/${codeString}.jpg" onerror="this.src='https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80&w=800'">
-                        <div class="concept-info"><h3>${selections.designCode}</h3><p>Design located. Ready for ${selections.businessName || 'your shop'}.</p></div>
+                        <img src="${imageUrl}" onerror="this.src='https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80&w=800'">
+                        <div class="concept-info">
+                            <h3>${selections.designCode}</h3>
+                            <p>Design located. We'll use this layout as the blueprint for ${selections.businessName || 'your shop'}.</p>
+                        </div>
                     </div>
                     <button class="vibz-btn primary" onclick="next()">Confirm Design</button>
-                    <button class="vibz-btn back-btn" onclick="resetCodeEntry()">Different Code</button>`;
-            } else { alert("Enter a valid code (1-446)"); }
+                    <button class="vibz-btn back-btn" onclick="resetCodeEntry()">Different Code</button>
+                `;
+            } else {
+                alert("Enter a valid code (1-446)");
+            }
         }
 
         function resetCodeEntry() {
-            const entry = document.getElementById('code-entry-area');
-            const display = document.getElementById('concept-display-area');
-            if(entry) entry.style.display = 'block';
-            if(display) display.style.display = 'none';
+            document.getElementById('code-entry-area').style.display = 'block';
+            document.getElementById('concept-display-area').style.display = 'none';
             document.getElementById('designCode').value = '';
         }
 
@@ -405,90 +372,87 @@
             const standardSelections = selections.services.filter(s => s.tier === 'standard');
             const hasPremium = premiumSelections.length > 0;
             const buildType = hasPremium ? 'Premium' : 'Standard';
+            const updates = hasPremium ? 10 : 5;
             let price = (selections.planType === 'Own Outright') ? (hasPremium ? "£2,999" : "£1,499") : (hasPremium ? "£199/mo" : "£99/mo");
 
-            let standardHtml = standardSelections.map(s => `<div class="summary-feature"><div><i class="fas fa-check-circle"></i> ${s.name}</div></div>`).join('');
-            let premiumHtml = premiumSelections.map(s => `<div class="summary-feature"><div><i class="fas fa-crown" style="color:var(--premium);"></i> ${s.name}</div></div>`).join('');
+            let standardHtml = standardSelections.map(s => `
+                <div class="summary-feature">
+                    <div><i class="fas fa-check-circle"></i> ${s.name}</div>
+                </div>`).join('');
+
+            let premiumHtml = premiumSelections.map(s => `
+                <div class="summary-feature">
+                    <div><i class="fas fa-crown" style="color:var(--premium);"></i> ${s.name}</div>
+                </div>`).join('');
+
+            let maintenanceContent = selections.planType === 'Own Outright' 
+                ? `<h4><i class="fas fa-user-check"></i> Direct Ownership</h4>
+                   <p>Full website files delivered. <strong>You handle your own hosting and technical updates</strong> after launch.</p>`
+                : `<h4><i class="fas fa-shield-halved"></i> VIBZ Fully Managed</h4>
+                   <p>We handle everything. Includes your high-speed hosting and <strong>${updates} professional content changes</strong> every single month.</p>`;
 
             container.innerHTML = `
                 <div class="final-summary-card">
                     <div class="summary-header">
-                        <div style="text-transform: uppercase; font-size:0.8rem; font-weight:900; color:var(--primary);">${selections.planType}</div>
-                        <h2 style="font-size:2.2rem; margin:10px 0;">${buildType} Build</h2>
-                        <div style="font-size:3rem; font-weight:900;">${price}</div>
+                        <div style="text-transform: uppercase; font-size:0.8rem; font-weight:900; color:var(--primary); letter-spacing:2px;">${selections.planType}</div>
+                        <h2 style="font-size:2.2rem; margin:10px 0; letter-spacing:-1px;">${buildType} Build</h2>
+                        <div style="font-size:3rem; font-weight:900; color:var(--text);">${price}</div>
+                        ${selections.designCode ? `<p style="font-weight:700; color:var(--primary); margin-top:5px;">${selections.designCode}</p>` : ''}
                     </div>
                     
-                    ${selections.designCode ? `
-                        <div style="margin-bottom:20px; border-radius:15px; overflow:hidden; border:2px solid var(--border);">
-                            <img src="https://raw.githubusercontent.com/doctoc30/Vibz/main/images/${selections.designCode.toLowerCase()}.jpg" style="width:100%; height:120px; object-fit:cover;">
-                            <div style="padding:10px; background:#fff; font-weight:900; font-size:0.8rem; text-align:center; color:var(--primary);">${selections.designCode}</div>
-                        </div>
-                    ` : ''}
+                    <div style="margin-bottom:10px;">
+                        ${standardSelections.length > 0 ? `
+                            <div class="feature-divider"><span>Included Features</span></div>
+                            ${standardHtml}
+                        ` : ''}
+                        
+                        ${hasPremium ? `
+                            <div class="feature-divider" style="margin-top:25px;"><span>Premium Upgrades</span></div>
+                            ${premiumHtml}
+                        ` : ''}
+                    </div>
 
-                    ${standardSelections.length > 0 ? `<div class="feature-divider"><span>Included</span></div>${standardHtml}` : ''}
-                    ${hasPremium ? `<div class="feature-divider"><span>Premium Upgrades</span></div>${premiumHtml}` : ''}
-                    
-                    <button class="vibz-btn primary" style="height:80px; margin-top:35px;" onclick="goToStep(12)">Secure Setup Now</button>
+                    <div class="maintenance-info">
+                        ${maintenanceContent}
+                    </div>
+
+                    <button class="vibz-btn primary" style="height:80px; font-size:1.4rem; margin-top:35px; border-radius:25px;" onclick="goToStep(12)">
+                        Secure Setup Now
+                    </button>
                 </div>`;
         }
 
         function updateUI() {
             document.querySelectorAll('.form-screen').forEach(s => s.classList.remove('active'));
-            const activeScreen = document.getElementById(`step-${currentStep}`);
-            if(activeScreen) activeScreen.classList.add('active');
-
-            // Visual Handshake Preview for Step 5
-            if (currentStep === 5 && selections.designCode) {
-                const preview = document.getElementById('selection-preview');
-                const img = document.getElementById('preview-img');
-                const codeText = document.getElementById('preview-code');
-                if (preview && img && codeText) {
-                    preview.style.display = 'block';
-                    codeText.textContent = selections.designCode;
-                    img.src = `https://raw.githubusercontent.com/doctoc30/Vibz/main/images/${selections.designCode.toLowerCase()}.jpg`;
-                }
-            }
-
-            const titles = { 0: "VIBZ Barber", "discover-gallery": "The Library", "discover-features": "Feature Lab", 1: "Shop Name?", 5: "Main Clients?", 13: "Final Plan" };
-            document.getElementById('dynamic-title').textContent = titles[currentStep] || "Shop Setup";
-            document.getElementById('main-content-wrapper').className = (currentStep === 0 || currentStep === 1) ? "hero-centered" : "hero-balanced";
+            document.getElementById(`step-${currentStep}`).classList.add('active');
             
+            const titles = { 1: "Shop Name?", 2: "Project Type?", 3: "Design Choice?", 4: "Design Code?", 5: "Main Clients?", 6: "Style Preference?", 7: "Color Palette?", 8: "Main Goal?", 9: "Select Features", 10: "Timeline", 11: "Payment Model", 12: "Your Details", 13: "Your Final Plan" };
+            document.getElementById('dynamic-title').textContent = titles[currentStep];
+            document.getElementById('main-content-wrapper').className = (currentStep === 1) ? "hero-centered" : "hero-balanced";
+            document.getElementById('dynamic-subtitle').style.display = (currentStep === 1) ? "block" : "none";
             if(currentStep === 4) resetCodeEntry();
             window.scrollTo(0,0);
         }
 
-        function next() { 
-            if(typeof currentStep === 'number' && currentStep < 13) { currentStep++; updateUI(); } 
-            else if(currentStep === 'discover-features') { goToStep(1); }
-        }
+        function next() { if(currentStep < 13) { currentStep++; updateUI(); } }
         function prev() { 
-            if(currentStep === 0) return;
-            if(currentStep === 1 || currentStep === 'discover-gallery') { currentStep = 0; }
-            else if(currentStep === 'discover-features') { currentStep = 'discover-gallery'; }
-            else if(currentStep === 13) { goToStep(11); }
-            else { currentStep--; }
-            updateUI(); 
+            if(currentStep === 13) { goToStep(11); return; }
+            if(currentStep > 1) { currentStep--; updateUI(); } 
         }
         function goToStep(s) { currentStep = s; updateUI(); }
 
         window.onload = function() {
-            initServiceList('master-service-grid');
-            
+            initServiceList();
             const urlParams = new URLSearchParams(window.location.search);
             if(urlParams.get('step') === '5') {
                 const storedCode = sessionStorage.getItem('selectedBarberCode');
-                if(storedCode) {
-                    selections.designCode = storedCode.toUpperCase();
-                    selections.businessName = "Barber Client";
-                }
+                if(storedCode) selections.designCode = storedCode.toUpperCase();
+                selections.businessName = "Barber Client";
                 goToStep(5);
-            } else {
-                updateUI();
             }
+            updateUI();
         };
     </script>
-
-    
-
 </body>
 </html>
+
