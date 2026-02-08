@@ -148,7 +148,8 @@
 
 
 <script>
-const barberConcepts = Array.from({length: 269}, (_, i) => ({
+// 1. Array updated to 446 to match index.html logic
+const barberConcepts = Array.from({length: 446}, (_, i) => ({
     code: `barber-${i+1}`,
     image: `https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-${i+1}.jpg`
 }));
@@ -160,7 +161,9 @@ let selectedCode = "";
 // === RENDER CONCEPT CARDS ===
 function renderConcepts() {
     const grid = document.getElementById('conceptsGrid');
+    if(!grid) return;
     grid.innerHTML = "";
+    
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
     const pageItems = barberConcepts.slice(start, end);
@@ -169,12 +172,15 @@ function renderConcepts() {
         grid.innerHTML += `
             <div class="concept-card">
                 <div class="concept-image-wrap">
-                    <img src="${item.image}" alt="Barber Concept" loading="lazy">
+                    <img src="${item.image}" 
+                         alt="Barber Concept" 
+                         loading="lazy" 
+                         onerror="this.src='https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80&w=800'">
                 </div>
                 <div class="concept-details">
                     <button class="vibz-btn primary" onclick="selectDesign('${item.code}')">Select This Design</button>
                     <button class="vibz-btn" onclick="window.open('https://www.vibz.co.uk/barber/pages/${item.code}.html', '_blank')">View Live Demo</button>
-                    <div class="code-display">CODE: ${item.code.toUpperCase()}</div>
+                    <div class="code-display" style="font-weight:900; color:var(--primary); margin-top:10px;">CODE: ${item.code.toUpperCase()}</div>
                 </div>
             </div>
         `;
@@ -185,10 +191,12 @@ function renderConcepts() {
 // === PAGINATION ===
 function renderPagination() {
     const controls = document.getElementById('paginationControls');
+    if(!controls) return;
     const totalPages = Math.ceil(barberConcepts.length / itemsPerPage);
+    
     controls.innerHTML = `
         ${currentPage > 1 ? `<button class="page-btn" onclick="changePage(${currentPage - 1})">Prev</button>` : ''}
-        <span style="font-weight:900;">Page ${currentPage} of ${totalPages}</span>
+        <span style="font-weight:900; margin: 0 15px;">Page ${currentPage} of ${totalPages}</span>
         ${currentPage < totalPages ? `<button class="page-btn" onclick="changePage(${currentPage + 1})">Next</button>` : ''}
     `;
 }
@@ -203,36 +211,48 @@ function scrollToTop() { window.scrollTo({top: 0, behavior: 'smooth'}); }
 
 window.onscroll = function() {
     const btn = document.getElementById('backToTop');
-    if (document.body.scrollTop > 400 || document.documentElement.scrollTop > 400) {
-        btn.classList.add('show');
-    } else {
-        btn.classList.remove('show');
+    if (btn) {
+        if (document.body.scrollTop > 400 || document.documentElement.scrollTop > 400) {
+            btn.classList.add('show');
+        } else {
+            btn.classList.remove('show');
+        }
     }
 };
 
-// === SELECT DESIGN ===
+// === SELECT DESIGN (The Memory Bridge) ===
 function selectDesign(code) {
-    selectedCode = code;
-    // Store in session so funnel can read it
-    sessionStorage.setItem('selectedBarberCode', code);
+    selectedCode = code.toUpperCase();
+    
+    // Store in session memory using the exact key index.html looks for
+    sessionStorage.setItem('selectedBarberCode', selectedCode);
 
     // Show modal confirmation
-    document.getElementById('modalText').innerHTML = `Selected Code:<br><b style="font-size:1.5rem;">${code.toUpperCase()}</b>`;
-    document.getElementById('selectionModal').style.display = 'flex';
+    const modalText = document.getElementById('modalText');
+    const modal = document.getElementById('selectionModal');
+    
+    if(modalText && modal) {
+        modalText.innerHTML = `Selected Code:<br><b style="font-size:1.8rem; color:#FF6B00;">${selectedCode}</b><br><p style="font-size:0.8rem; margin-top:10px;">Ready to customize this build.</p>`;
+        modal.style.display = 'flex';
+    }
 }
 
 // === CLOSE MODAL ===
-function closeModal() { document.getElementById('selectionModal').style.display = 'none'; }
+function closeModal() { 
+    const modal = document.getElementById('selectionModal');
+    if(modal) modal.style.display = 'none'; 
+}
 
-// === GO TO FUNNEL ===
+// === GO TO FUNNEL (The Jump) ===
 function goToFunnel() { 
-    // Jump to funnel Step 5 (Target Audience)
-    window.location.href = "https://www.vibz.co.uk/barber/index.html?step=5"; 
+    // Redirects to index with the ?step=5 trigger
+    window.location.href = "index.html?step=5"; 
 }
 
 // === INIT ON LOAD ===
 window.onload = renderConcepts;
 </script>
+
 
 </body>
 </html>
