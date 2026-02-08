@@ -122,7 +122,7 @@
             height: 80px; border-radius: 40px; display: flex; justify-content: space-around;
             align-items: center; box-shadow: 0 15px 35px rgba(0,0,0,0.1); z-index: 1000;
         }
-        .dock-btn { display: flex; flex-direction: column; align-items: center; color: #A0A0A0; text-decoration: none; gap: 4px; }
+        .dock-btn { display: flex; flex-direction: column; align-items: center; color: #A0A0A0; text-decoration: none; gap: 4px; border: none; background: none; cursor: pointer; }
         .dock-btn.active { color: var(--primary); }
         .dock-btn i { font-size: 1.4rem; }
         .dock-btn span { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; }
@@ -238,8 +238,8 @@
             <a href="https://www.vibz.co.uk/barber/index.html" class="dock-btn active"><i class="fa-solid fa-house-chimney"></i><span>Home</span></a>
             <a href="https://www.vibz.co.uk/barber/concepts.html" class="dock-btn"><i class="fa-solid fa-compass"></i><span>Library</span></a>
             <div class="dock-center" onclick="next()"><i class="fa-solid fa-bolt"></i></div>
-            <a href="#" class="dock-btn"><i class="fa-solid fa-briefcase"></i><span>Portal</span></a>
-            <div class="dock-btn"><i class="fa-solid fa-bars"></i><span>Menu</span></div>
+            <button class="dock-btn" onclick="alert('Portal coming soon!')"><i class="fa-solid fa-briefcase"></i><span>Portal</span></button>
+            <button class="dock-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i><span>Menu</span></button>
         </nav>
     </div>
 
@@ -249,6 +249,10 @@
 
         const standardServices = ["Logo Placement", "Pricing Display", "Team Profiles", "Photo Gallery", "Before & After Slider", "Special Offers", "Opening Hours", "Location & Directions", "Tap-to-Call / WhatsApp", "FAQ Section", "Loyalty Info", "Contact Form", "SEO Basics", "Reviews", "Video Grids"];
         const premiumServices = ["Online Booking Integration", "Stripe Deposit System", "Digital Gift Cards", "Automated Waitlist", "Marketing Pop-up Offers", "Conversion Data Tracking", "Priority Build Queue", "Custom UI Graphics", "Multi-Location Support", "Google Review Booster", "Customer CRM Database", "Email Marketing Automation", "SMS Appointment Alerts", "VIP Membership Logic", "Advanced Analytics", "News / Blog Engine", "Career & Hiring Portal", "Cancellation Policy Logic", "Individual Staff Logins", "Inventory Management Sync"];
+
+        function toggleMenu() {
+            alert("Menu Triggered - Implement your navigation overlay here.");
+        }
 
         function initServiceList() {
             const grid = document.getElementById('master-service-grid');
@@ -266,15 +270,14 @@
         function startReady() { currentStep = 1; updateUI(); }
 
         function handleStep1() {
-            const input = document.getElementById('businessInput').value;
-            if(input) { selections.businessName = input; next(); }
+            const input = document.getElementById('businessInput').value.trim();
+            if(input) { selections.businessName = input; next(); } else { alert("Please enter a shop name."); }
         }
 
         function verifyDesign() {
             const input = document.getElementById('designCode').value.trim().toLowerCase();
             const display = document.getElementById('concept-display-area');
             const entry = document.getElementById('code-entry-area');
-            const wordMap = { "one": 1, "two": 2, "three": 3, "four": 4, "five": 5 }; 
             let conceptNum = input.match(/\d+/);
             if(conceptNum && conceptNum[0] <= 446) {
                 const codeString = `barber-${conceptNum[0]}`;
@@ -319,7 +322,7 @@
             const urlParams = new URLSearchParams(window.location.search);
             if(urlParams.get('step') === '5') {
                 selections.designCode = sessionStorage.getItem('selectedBarberCode') || 'LIBRARY DESIGN';
-                selections.businessName = "Barber Shop";
+                if(!selections.businessName) selections.businessName = "Your Shop";
                 currentStep = 5;
             }
             updateUI();
