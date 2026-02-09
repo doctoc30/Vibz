@@ -342,7 +342,7 @@
 
                     <div class="form-screen" id="step-7">
                       <div class="premium-notice">
-                          <i class="fas fa-crown"></i> Premium includes ALL Standard features automatically
+                          <i class="fas fa-crown"></i> Selected Standard features are included with Premium
                       </div>
                       <div class="services-grid" id="master-service-grid"></div>
                       <button class="vibz-btn primary" onclick="next()">See My Quote</button>
@@ -385,7 +385,7 @@
             fromConceptLibrary: false
         };
 
-        // UPDATED: 15 Standard Services - ALL suitable for one-time purchase (no ongoing maintenance)
+        // 15 Standard Services
         const standardServices = [
             "Professional Logo Integration",
             "Service Menu & Pricing Display",
@@ -404,7 +404,7 @@
             "Social Media Links Integration"
         ];
 
-        // UPDATED: 20 Premium Services - ALL suitable for one-time purchase (no ongoing maintenance)
+        // 20 Premium Services
         const premiumServices = [
             "Online Appointment Booking System",
             "Stripe Payment Integration Setup",
@@ -428,7 +428,6 @@
             "Inventory Display Integration"
         ];
 
-        // EXACT MENU FUNCTION FROM HOMEPAGE
         function toggleMenu() {
             const menu = document.getElementById('app-menu-layer');
             menu.classList.toggle('active');
@@ -457,9 +456,6 @@
                     <div style="font-size:0.7rem; color:var(--gray); font-weight:600; margin-top:4px;">
                         <i class="fas fa-check"></i> One-time setup
                     </div>
-                    <div style="font-size:0.75rem; color:var(--premium); font-weight:600; margin-top:5px;">
-                        <i class="fas fa-crown"></i> Includes all Standard features
-                    </div>
                 </div>
             `);
         }
@@ -476,30 +472,8 @@
             } else {
                 // Add if not selected
                 selections.services.push({ name, tier });
-                
-                // If premium is selected, automatically add all standard services
-                if (tier === 'premium') {
-                    standardServices.forEach(stdService => {
-                        const stdIndex = selections.services.findIndex(item => 
-                            item.name === stdService && item.tier === 'standard'
-                        );
-                        if (stdIndex === -1) {
-                            selections.services.push({ name: stdService, tier: 'standard' });
-                        }
-                    });
-                    
-                    // Update UI to show standard services as selected
-                    document.querySelectorAll('.service-card').forEach(card => {
-                        const serviceName = card.querySelector('div[style*="font-weight:700"]').textContent;
-                        if (standardServices.includes(serviceName) && !card.classList.contains('selected')) {
-                            card.classList.add('selected');
-                            card.classList.add('standard');
-                        }
-                    });
-                }
             }
             
-            // Update selection display
             console.log("Current selections:", selections.services);
         }
 
@@ -566,31 +540,29 @@
             
             let featuresHTML = '';
             
-            // Show premium features first if any
+            // Show premium features if any
             if (hasPremium) {
                 featuresHTML += `<div style="margin-bottom:20px;"><div style="font-size:0.8rem; font-weight:900; color:var(--premium); margin-bottom:10px; text-transform:uppercase;">Premium Features (One-time setup)</div>`;
                 premSels.forEach(s => {
                     featuresHTML += `<div class="summary-feature"><div><i class="fas fa-crown premium-check"></i> ${s.name}</div></div>`;
                 });
                 featuresHTML += `</div>`;
-                
-                // Note about included standard features
-                featuresHTML += `<div class="premium-notice" style="margin:15px 0; padding:12px; font-size:0.8rem;">
-                    <i class="fas fa-check-circle"></i> All ${stdSels.length} Standard features included (One-time setup)
-                </div>`;
             }
             
-            // Show standard features if no premium or separately
-            if (!hasPremium || stdSels.length > 0) {
-                if (!hasPremium) {
-                    featuresHTML += `<div style="margin-bottom:20px;"><div style="font-size:0.8rem; font-weight:900; color:var(--standard); margin-bottom:10px; text-transform:uppercase;">Standard Features (One-time setup)</div>`;
-                }
+            // Show standard features
+            if (stdSels.length > 0) {
+                featuresHTML += `<div style="margin-bottom:20px;"><div style="font-size:0.8rem; font-weight:900; color:var(--standard); margin-bottom:10px; text-transform:uppercase;">Standard Features (One-time setup)</div>`;
                 stdSels.forEach(s => {
                     featuresHTML += `<div class="summary-feature"><div><i class="fas fa-check-circle"></i> ${s.name}</div></div>`;
                 });
-                if (!hasPremium) {
-                    featuresHTML += `</div>`;
-                }
+                featuresHTML += `</div>`;
+            }
+            
+            // Add note if premium includes standard features
+            if (hasPremium && stdSels.length > 0) {
+                featuresHTML += `<div class="premium-notice" style="margin:15px 0; padding:12px; font-size:0.8rem;">
+                    <i class="fas fa-check-circle"></i> ${stdSels.length} selected Standard features included with Premium
+                </div>`;
             }
             
             container.innerHTML = `<div class="final-summary-card">
