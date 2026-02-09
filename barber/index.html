@@ -47,10 +47,10 @@
         .app-logo { font-size: 1.8rem; font-weight: 900; letter-spacing: -1.5px; color: var(--primary); }
         .app-logo span { color: #000000; }
 
-        /* --- Menu Styles Exactly Like Homepage --- */
+        /* --- EXACT HOMEPAGE MENU STYLING --- */
         .menu-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #FFFFFF; z-index: 3000;
+            background: #FFFFFF; z-index: 9999; /* Highest priority */
             display: none; flex-direction: column; padding: calc(var(--safe-top) + 20px) 25px;
             overflow-y: auto;
         }
@@ -172,9 +172,9 @@
         </div>
         <div class="menu-links">
             <a href="https://www.vibz.co.uk/barber/index.html" class="menu-link">HOME</a>
-            <a href="https://www.vibz.co.uk/barber/concepts.html" class="menu-link">LIBRARY</a>
-            <a href="#" class="menu-link active" onclick="closeMenu(); goToStep(0); return false;">START BUILD</a>
+            <a href="https://www.vibz.co.uk/barber/concepts.html" class="menu-link">EXPLORE</a>
             <a href="#" class="menu-link">PORTAL</a>
+            <a href="#" class="menu-link">SUPPORT</a>
         </div>
     </div>
 
@@ -269,7 +269,7 @@
 
         <nav class="app-dock">
             <a href="https://www.vibz.co.uk/barber/index.html" class="dock-btn active"><i class="fa-solid fa-house-chimney"></i><span>Home</span></a>
-            <a href="https://www.vibz.co.uk/barber/concepts.html" class="dock-btn"><i class="fa-solid fa-compass"></i><span>Library</span></a>
+            <a href="https://www.vibz.co.uk/barber/concepts.html" class="dock-btn"><i class="fa-solid fa-compass"></i><span>Explore</span></a>
             <div class="dock-center" onclick="next()"><i class="fa-solid fa-bolt"></i></div>
             <a href="#" class="dock-btn"><i class="fa-solid fa-briefcase"></i><span>Portal</span></a>
             <button class="dock-btn" onclick="openMenu()"><i class="fa-solid fa-bars"></i><span>Menu</span></button>
@@ -285,12 +285,10 @@
 
         function openMenu() {
             document.getElementById('mainMenu').style.display = 'flex';
-            document.body.style.overflow = 'hidden';
         }
 
         function closeMenu() {
             document.getElementById('mainMenu').style.display = 'none';
-            document.body.style.overflow = 'auto';
         }
 
         function initServiceList() {
@@ -346,7 +344,6 @@
             document.getElementById(`step-${currentStep}`).classList.add('active');
             const titles = { 0: "Build your brand.", 1: "Shop Name?", 2: "Status?", 3: "Design Choice?", 4: "Verification", 5: "Management?", 6: "Timeline?", 7: "Features", 8: "Summary", 9: "Details" };
             document.getElementById('dynamic-title').textContent = titles[currentStep];
-            document.getElementById('dynamic-subtitle').textContent = "";
             document.getElementById('main-content-wrapper').className = "hero-centered";
             if(currentStep === 7) initServiceList();
             if(currentStep === 8) renderFinalSummary();
@@ -358,12 +355,6 @@
         function goToStep(s) { currentStep = s; updateUI(); }
 
         window.onload = function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            if(urlParams.get('step') === '5') {
-                selections.designCode = sessionStorage.getItem('selectedBarberCode') || 'LIBRARY DESIGN';
-                if(!selections.businessName) selections.businessName = "Your Shop";
-                currentStep = 5;
-            }
             updateUI();
         };
     </script>
