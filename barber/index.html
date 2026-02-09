@@ -35,7 +35,6 @@
 
         #app-container {
             height: 100vh; display: flex; flex-direction: column;
-            position: relative;
         }
 
         header {
@@ -46,25 +45,6 @@
 
         .app-logo { font-size: 1.8rem; font-weight: 900; letter-spacing: -1.5px; color: var(--primary); }
         .app-logo span { color: #000000; }
-
-        /* --- EXACT HOMEPAGE MENU STYLING --- */
-        .menu-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #FFFFFF; z-index: 9999; /* Highest priority */
-            display: none; flex-direction: column; padding: calc(var(--safe-top) + 20px) 25px;
-            overflow-y: auto;
-        }
-        .menu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 60px; }
-        .menu-links { 
-            display: flex; flex-direction: column; gap: 30px; 
-            margin-top: 10vh;
-        }
-        .menu-link { 
-            font-size: 3rem; font-weight: 900; text-decoration: none; 
-            color: var(--text); letter-spacing: -2px; line-height: 1;
-            text-align: left; text-transform: uppercase;
-        }
-        .menu-link.active { color: var(--primary); }
 
         .content-scroll {
             flex: 1; overflow-y: auto; padding: 0 20px 160px; scroll-behavior: smooth;
@@ -140,9 +120,9 @@
             position: fixed; bottom: 25px; left: 20px; right: 20px;
             background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px);
             height: 80px; border-radius: 40px; display: flex; justify-content: space-around;
-            align-items: center; box-shadow: 0 15px 35px rgba(0,0,0,0.1); z-index: 2000;
+            align-items: center; box-shadow: 0 15px 35px rgba(0,0,0,0.1); z-index: 1000;
         }
-        .dock-btn { display: flex; flex-direction: column; align-items: center; color: #A0A0A0; text-decoration: none; gap: 4px; background: none; border: none; cursor: pointer; }
+        .dock-btn { display: flex; flex-direction: column; align-items: center; color: #A0A0A0; text-decoration: none; gap: 4px; }
         .dock-btn.active { color: var(--primary); }
         .dock-btn i { font-size: 1.4rem; }
         .dock-btn span { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; }
@@ -165,19 +145,6 @@
 </head>
 <body>
 
-    <div id="mainMenu" class="menu-overlay">
-        <div class="menu-header">
-            <div class="app-logo">VIBZ<span>.</span></div>
-            <button onclick="closeMenu()" style="border:none; background:none; font-size:2rem; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <div class="menu-links">
-            <a href="https://www.vibz.co.uk/barber/index.html" class="menu-link">HOME</a>
-            <a href="https://www.vibz.co.uk/barber/concepts.html" class="menu-link">EXPLORE</a>
-            <a href="#" class="menu-link">PORTAL</a>
-            <a href="#" class="menu-link">SUPPORT</a>
-        </div>
-    </div>
-
     <div id="app-container">
         <header>
             <div class="app-logo">VIBZ<span>.</span></div>
@@ -189,7 +156,7 @@
                 
                 <div class="step-header">
                     <h1 id="dynamic-title">Build your barber brand.</h1>
-                    <p id="dynamic-subtitle"></p>
+                    <p id="dynamic-subtitle">Digital solutions for modern shops.</p>
                 </div>
 
                 <form id="funnelForm" onsubmit="return false;">
@@ -269,10 +236,10 @@
 
         <nav class="app-dock">
             <a href="https://www.vibz.co.uk/barber/index.html" class="dock-btn active"><i class="fa-solid fa-house-chimney"></i><span>Home</span></a>
-            <a href="https://www.vibz.co.uk/barber/concepts.html" class="dock-btn"><i class="fa-solid fa-compass"></i><span>Explore</span></a>
+            <a href="https://www.vibz.co.uk/barber/concepts.html" class="dock-btn"><i class="fa-solid fa-compass"></i><span>Library</span></a>
             <div class="dock-center" onclick="next()"><i class="fa-solid fa-bolt"></i></div>
             <a href="#" class="dock-btn"><i class="fa-solid fa-briefcase"></i><span>Portal</span></a>
-            <button class="dock-btn" onclick="openMenu()"><i class="fa-solid fa-bars"></i><span>Menu</span></button>
+            <div class="dock-btn"><i class="fa-solid fa-bars"></i><span>Menu</span></div>
         </nav>
     </div>
 
@@ -282,14 +249,6 @@
 
         const standardServices = ["Logo Placement", "Pricing Display", "Team Profiles", "Photo Gallery", "Before & After Slider", "Special Offers", "Opening Hours", "Location & Directions", "Tap-to-Call / WhatsApp", "FAQ Section", "Loyalty Info", "Contact Form", "SEO Basics", "Reviews", "Video Grids"];
         const premiumServices = ["Online Booking Integration", "Stripe Deposit System", "Digital Gift Cards", "Automated Waitlist", "Marketing Pop-up Offers", "Conversion Data Tracking", "Priority Build Queue", "Custom UI Graphics", "Multi-Location Support", "Google Review Booster", "Customer CRM Database", "Email Marketing Automation", "SMS Appointment Alerts", "VIP Membership Logic", "Advanced Analytics", "News / Blog Engine", "Career & Hiring Portal", "Cancellation Policy Logic", "Individual Staff Logins", "Inventory Management Sync"];
-
-        function openMenu() {
-            document.getElementById('mainMenu').style.display = 'flex';
-        }
-
-        function closeMenu() {
-            document.getElementById('mainMenu').style.display = 'none';
-        }
 
         function initServiceList() {
             const grid = document.getElementById('master-service-grid');
@@ -307,14 +266,15 @@
         function startReady() { currentStep = 1; updateUI(); }
 
         function handleStep1() {
-            const input = document.getElementById('businessInput').value.trim();
-            if(input) { selections.businessName = input; next(); } else { alert("Please enter a shop name."); }
+            const input = document.getElementById('businessInput').value;
+            if(input) { selections.businessName = input; next(); }
         }
 
         function verifyDesign() {
             const input = document.getElementById('designCode').value.trim().toLowerCase();
             const display = document.getElementById('concept-display-area');
             const entry = document.getElementById('code-entry-area');
+            const wordMap = { "one": 1, "two": 2, "three": 3, "four": 4, "five": 5 }; 
             let conceptNum = input.match(/\d+/);
             if(conceptNum && conceptNum[0] <= 446) {
                 const codeString = `barber-${conceptNum[0]}`;
@@ -344,7 +304,7 @@
             document.getElementById(`step-${currentStep}`).classList.add('active');
             const titles = { 0: "Build your brand.", 1: "Shop Name?", 2: "Status?", 3: "Design Choice?", 4: "Verification", 5: "Management?", 6: "Timeline?", 7: "Features", 8: "Summary", 9: "Details" };
             document.getElementById('dynamic-title').textContent = titles[currentStep];
-            document.getElementById('main-content-wrapper').className = "hero-centered";
+            document.getElementById('main-content-wrapper').className = (currentStep === 0 || currentStep === 1) ? "hero-centered" : "hero-balanced";
             if(currentStep === 7) initServiceList();
             if(currentStep === 8) renderFinalSummary();
             window.scrollTo(0,0);
@@ -355,8 +315,16 @@
         function goToStep(s) { currentStep = s; updateUI(); }
 
         window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if(urlParams.get('step') === '5') {
+                selections.designCode = sessionStorage.getItem('selectedBarberCode') || 'LIBRARY DESIGN';
+                selections.businessName = "Barber Shop";
+                currentStep = 5;
+            }
             updateUI();
         };
     </script>
 </body>
 </html>
+
+
