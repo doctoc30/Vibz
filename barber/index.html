@@ -502,47 +502,88 @@
             fromConceptLibrary: false
         };
 
-        // 15 Standard Services
-        const standardServices = [
+        // ===== BUY OUTRIGHT SERVICES (One-time setup) =====
+        const buyOutrightStandard = [
             "Professional Logo Integration",
-            "Service Menu & Pricing Display",
-            "Staff Team Profiles",
+            "Service Menu & Pricing Tables", 
+            "Staff Team Profile Pages",
             "Portfolio Photo Gallery",
             "Before/After Comparison Slider",
-            "Promotions & Special Offers Page",
+            "Special Offers & Promotions Page",
             "Business Hours & Location Display",
-            "Google Maps Integration",
+            "Google Maps Embed Integration",
             "Click-to-Call Phone Links",
-            "FAQ Knowledge Base",
-            "Loyalty Program Information",
-            "Contact Form with Validation",
-            "SEO Meta Tags Setup",
-            "Customer Testimonials Section",
+            "FAQ Accordion Section",
+            "Loyalty Program Information Page",
+            "Contact Form with Email Setup",
+            "SEO Meta Tags Configuration",
+            "Customer Testimonials Display",
             "Social Media Links Integration"
         ];
 
-        // 20 Premium Services
-        const premiumServices = [
-            "Online Appointment Booking System",
-            "Stripe Payment Integration Setup",
-            "Digital Gift Card System Setup",
-            "Waitlist Management System",
-            "Marketing Pop-up Design & Setup",
-            "Google Analytics Integration",
-            "Priority Development Scheduling",
-            "Custom Illustration & Graphics",
+        const buyOutrightPremium = [
+            "Online Booking Form Integration",
+            "Stripe Payment Button Setup",
+            "Digital Gift Card Display Page",
+            "Waitlist Notification Form",
+            "Exit-Intent Popup Design",
+            "Google Analytics Implementation",
+            "Priority Development Timeline",
+            "Custom Brand Illustrations",
             "Multi-Location Pages Setup",
-            "Google Reviews Integration",
-            "Customer Contact Database Setup",
-            "Email Template Design",
-            "SMS Integration Setup",
-            "VIP Membership Page Design",
-            "Advanced Analytics Dashboard Setup",
-            "Blog/News System Installation",
-            "Career/Jobs Portal Setup",
-            "Cancellation Policy System",
-            "Staff Login System Setup",
-            "Inventory Display Integration"
+            "Google Reviews Embed System",
+            "Customer Contact Form Database",
+            "Email Newsletter Signup Form",
+            "Mobile Text Interface Design",
+            "VIP Members Area Page Design",
+            "Business Stats Dashboard Mockup",
+            "Blog/News Publishing Template",
+            "Career & Application Portal",
+            "Policy & Terms Pages Suite",
+            "Staff Schedule Display Interface",
+            "Product/Service Showcase Gallery"
+        ];
+
+        // ===== MONTHLY SUPPORT SERVICES (Ongoing maintenance) =====
+        const monthlyStandard = [
+            "Monthly Content Updates (5 pages)",
+            "Regular Security Patches",
+            "Website Performance Monitoring",
+            "Uptime & Backup Management",
+            "Basic SEO Optimization",
+            "Google Analytics Reporting",
+            "Mobile Responsive Maintenance",
+            "Form & Functionality Checks",
+            "Broken Link Monitoring",
+            "Browser Compatibility Updates",
+            "Speed Optimization Tweaks",
+            "Monthly Security Scans",
+            "Backup & Recovery Management",
+            "Domain & SSL Monitoring",
+            "Basic Content Refreshes"
+        ];
+
+        const monthlyPremium = [
+            "Priority Monthly Content Updates",
+            "Advanced Security Management",
+            "Performance Optimization Suite",
+            "Proactive Uptime Monitoring",
+            "Advanced SEO Strategy",
+            "Conversion Rate Optimization",
+            "Multi-Device Testing",
+            "Form & Integration Maintenance",
+            "Comprehensive Link Management",
+            "Cross-Browser Optimization",
+            "Speed & Performance Tuning",
+            "Security Vulnerability Scans",
+            "Automated Backup Systems",
+            "SSL & Domain Management",
+            "Content Strategy Implementation",
+            "Social Media Integration",
+            "Review & Reputation Management",
+            "Analytics & Reporting Suite",
+            "Competitor Analysis Updates",
+            "Monthly Strategy Consultations"
         ];
 
         function toggleMenu() {
@@ -554,13 +595,18 @@
             const grid = document.getElementById('master-service-grid');
             grid.innerHTML = '';
             
+            const isOutright = selections.planType === 'Buy Outright';
+            const standardServices = isOutright ? buyOutrightStandard : monthlyStandard;
+            const premiumServices = isOutright ? buyOutrightPremium : monthlyPremium;
+            
             // Add Standard Services
             standardServices.forEach(s => grid.innerHTML += `
                 <div class="service-card" onclick="toggleService('${s}', 'standard', this)">
                     <span class="tier-pill" style="background:#E8F5E9; color:#4CAF50;">STANDARD</span>
                     <div style="font-weight:700; font-size:0.95rem;">${s}</div>
                     <div style="font-size:0.7rem; color:var(--gray); font-weight:600; margin-top:4px;">
-                        <i class="fas fa-check"></i> One-time setup
+                        <i class="fas ${isOutright ? 'fa-check' : 'fa-sync'}"></i> 
+                        ${isOutright ? 'One-time setup' : 'Monthly included'}
                     </div>
                 </div>
             `);
@@ -571,7 +617,8 @@
                     <span class="tier-pill" style="background:#E3F2FD; color:#2196F3;">PREMIUM</span>
                     <div style="font-weight:700; font-size:0.95rem;">${s}</div>
                     <div style="font-size:0.7rem; color:var(--gray); font-weight:600; margin-top:4px;">
-                        <i class="fas fa-check"></i> One-time setup
+                        <i class="fas ${isOutright ? 'fa-check' : 'fa-sync'}"></i> 
+                        ${isOutright ? 'One-time setup' : 'Monthly included'}
                     </div>
                 </div>
             `);
@@ -634,6 +681,8 @@
         function setPlanType(val) { 
             selections.planType = val; 
             console.log("Plan type saved:", selections.planType);
+            // Clear previous selections when plan changes
+            selections.services = [];
             next(); 
         }
         
@@ -726,7 +775,7 @@
             if (selections.services.length > 0) {
                 cardsHTML += `
                     <div class="final-summary-card" style="margin-top:20px;">
-                        <div class="feature-divider"><span>Your Selected Features</span></div>
+                        <div class="feature-divider"><span>Your Selected ${isOutright ? 'One-Time' : 'Monthly'} Features</span></div>
                         <div style="margin-top:20px;">
                             ${hasPremium ? `
                                 <div style="margin-bottom:15px;">
@@ -754,6 +803,7 @@
                             <div><strong>Design:</strong> ${selections.designCode || 'Custom'}</div>
                             <div><strong>Timeline:</strong> ${selections.urgency || 'Standard'}</div>
                             <div><strong>Plan:</strong> ${selections.planType}</div>
+                            <div><strong>Type:</strong> ${isOutright ? 'One-Time Setup' : 'Monthly Managed Service'}</div>
                         </div>
                     </div>
                 `;
