@@ -269,6 +269,13 @@
             padding: 25px;
             border: 2px solid var(--border);
             text-align: center;
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .pricing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
         }
         
         .pricing-card.standard {
@@ -289,6 +296,26 @@
         .pricing-card.monthly-premium {
             border-color: var(--primary);
             background: linear-gradient(135deg, rgba(255,107,0,0.08) 0%, rgba(255,107,0,0.03) 100%);
+        }
+        
+        .plan-recommended-badge {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary);
+            color: white;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            z-index: 10;
+        }
+        
+        .plan-recommended-badge i {
+            margin-right: 5px;
         }
         
         .pricing-header {
@@ -370,6 +397,81 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             margin-bottom: 10px;
+        }
+        
+        /* Payment button styles */
+        .payment-button {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary) 0%, #FF8C42 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 18px;
+            font-size: 1.1rem;
+            font-weight: 900;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 10px 20px rgba(255, 107, 0, 0.2);
+        }
+        
+        .payment-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px rgba(255, 107, 0, 0.3);
+        }
+        
+        .payment-button:active {
+            transform: translateY(0);
+        }
+        
+        .payment-button.secondary {
+            background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%);
+            box-shadow: 0 10px 20px rgba(76, 175, 80, 0.2);
+        }
+        
+        .payment-button.secondary:hover {
+            box-shadow: 0 15px 25px rgba(76, 175, 80, 0.3);
+        }
+        
+        .payment-button.premium {
+            background: linear-gradient(135deg, var(--premium) 0%, #42A5F5 100%);
+            box-shadow: 0 10px 20px rgba(33, 150, 243, 0.2);
+        }
+        
+        .payment-button.premium:hover {
+            box-shadow: 0 15px 25px rgba(33, 150, 243, 0.3);
+        }
+        
+        /* Plan selection indicators */
+        .plan-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .indicator-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ddd;
+            transition: background 0.3s ease;
+        }
+        
+        .indicator-dot.active {
+            background: var(--primary);
+        }
+        
+        .indicator-dot.standard {
+            background: var(--standard);
+        }
+        
+        .indicator-dot.premium {
+            background: var(--premium);
         }
     </style>
 </head>
@@ -462,6 +564,7 @@
                           <i class="fas fa-crown"></i> Selected Standard features are included with Premium
                       </div>
                       <div class="services-grid" id="master-service-grid"></div>
+                      <div class="plan-indicator" id="plan-indicator"></div>
                       <button class="vibz-btn primary" onclick="next()">See My Quote</button>
                       <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
                     </div>
@@ -499,36 +602,40 @@
             planType: '', 
             designCode: '', 
             urgency: '',
-            fromConceptLibrary: false
+            fromConceptLibrary: false,
+            recommendedPlan: '' // Store the recommended plan type
         };
 
-        // ===== BUY OUTRIGHT SERVICES (One-time setup) =====
+        // ===== BUY OUTRIGHT SERVICES (One-time setup) - UPDATED WITH STATIC FEATURES =====
         const buyOutrightStandard = [
-            "Professional Logo Integration",
+            "Professional Logo Design & Integration",
+            "Static Customer Reviews Display",
+            "WhatsApp Business Integration",
+            "Contact Form with Email Setup",
             "Service Menu & Pricing Tables", 
             "Staff Team Profile Pages",
             "Portfolio Photo Gallery",
-            "Before/After Comparison Slider",
-            "Special Offers & Promotions Page",
             "Business Hours & Location Display",
             "Google Maps Embed Integration",
             "Click-to-Call Phone Links",
             "FAQ Accordion Section",
-            "Loyalty Program Information Page",
-            "Contact Form with Email Setup",
             "SEO Meta Tags Configuration",
-            "Customer Testimonials Display",
-            "Social Media Links Integration"
+            "Social Media Links Integration",
+            "Mobile Responsive Design",
+            "Basic SEO Setup"
         ];
 
         const buyOutrightPremium = [
+            "Premium Logo Animation Design",
+            "Interactive Reviews & Testimonials",
+            "WhatsApp Chat Automation Setup",
+            "Advanced Contact Form with CRM",
             "Online Booking Form Integration",
             "Stripe Payment Button Setup",
             "Digital Gift Card Display Page",
-            "Waitlist Notification Form",
+            "Waitlist Notification System",
             "Exit-Intent Popup Design",
             "Google Analytics Implementation",
-            "Priority Development Timeline",
             "Custom Brand Illustrations",
             "Multi-Location Pages Setup",
             "Google Reviews Embed System",
@@ -536,15 +643,12 @@
             "Email Newsletter Signup Form",
             "Mobile Text Interface Design",
             "VIP Members Area Page Design",
-            "Business Stats Dashboard Mockup",
+            "Business Stats Dashboard",
             "Blog/News Publishing Template",
-            "Career & Application Portal",
-            "Policy & Terms Pages Suite",
-            "Staff Schedule Display Interface",
-            "Product/Service Showcase Gallery"
+            "Advanced SEO Strategy"
         ];
 
-        // ===== MONTHLY SUPPORT SERVICES (Ongoing maintenance) =====
+        // ===== MONTHLY SUPPORT SERVICES (Ongoing maintenance) - UPDATED =====
         const monthlyStandard = [
             "Monthly Content Updates (5 pages)",
             "Regular Security Patches",
@@ -560,7 +664,7 @@
             "Monthly Security Scans",
             "Backup & Recovery Management",
             "Domain & SSL Monitoring",
-            "Basic Content Refreshes"
+            "Logo & Brand Asset Updates"
         ];
 
         const monthlyPremium = [
@@ -622,6 +726,9 @@
                     </div>
                 </div>
             `);
+            
+            // Update plan indicator
+            updatePlanIndicator();
         }
 
         function toggleService(name, tier, el) {
@@ -638,7 +745,42 @@
                 selections.services.push({ name, tier });
             }
             
+            // Update recommended plan based on selections
+            updateRecommendedPlan();
             console.log("Current selections:", selections.services);
+        }
+
+        function updateRecommendedPlan() {
+            const premSels = selections.services.filter(s => s.tier === 'premium');
+            const stdSels = selections.services.filter(s => s.tier === 'standard');
+            
+            // Determine recommended plan
+            if (premSels.length > 3) {
+                selections.recommendedPlan = 'premium';
+            } else if (stdSels.length > 5) {
+                selections.recommendedPlan = 'premium';
+            } else {
+                selections.recommendedPlan = 'standard';
+            }
+            
+            updatePlanIndicator();
+        }
+
+        function updatePlanIndicator() {
+            const indicator = document.getElementById('plan-indicator');
+            if (!indicator) return;
+            
+            const premSels = selections.services.filter(s => s.tier === 'premium').length;
+            const stdSels = selections.services.filter(s => s.tier === 'standard').length;
+            
+            let html = `
+                <div class="indicator-dot ${selections.recommendedPlan === 'standard' ? 'standard active' : 'standard'}"></div>
+                <div style="font-size:0.8rem; font-weight:700; color:var(--gray);">${stdSels} selected</div>
+                <div class="indicator-dot ${selections.recommendedPlan === 'premium' ? 'premium active' : 'premium'}"></div>
+                <div style="font-size:0.8rem; font-weight:700; color:var(--gray);">${premSels} selected</div>
+            `;
+            
+            indicator.innerHTML = html;
         }
 
         function startReady() { 
@@ -696,13 +838,15 @@
             const premSels = selections.services.filter(s => s.tier === 'premium');
             const hasPremium = premSels.length > 0;
             const isOutright = selections.planType === 'Buy Outright';
+            const isRecommendedPremium = selections.recommendedPlan === 'premium';
             
             let cardsHTML = '';
             
             if (isOutright) {
                 // Buy Outright Plans
                 cardsHTML = `
-                    <div class="pricing-card standard">
+                    <div class="pricing-card standard ${isRecommendedPremium ? '' : 'recommended'}">
+                        ${!isRecommendedPremium ? '<div class="plan-recommended-badge"><i class="fas fa-star"></i> Recommended</div>' : ''}
                         <div class="pricing-header">
                             <div class="plan-type standard-type">STANDARD PLAN</div>
                             <div class="plan-price">£2,500</div>
@@ -717,9 +861,13 @@
                             <div class="plan-feature"><i class="fas fa-key"></i> You own everything</div>
                             <div class="plan-feature"><i class="fas fa-server"></i> You handle hosting & updates</div>
                         </div>
+                        <button class="payment-button secondary" onclick="proceedWithPlan('standard')">
+                            <i class="fas fa-shopping-cart"></i> Select Standard Plan
+                        </button>
                     </div>
                     
-                    <div class="pricing-card premium">
+                    <div class="pricing-card premium ${isRecommendedPremium ? 'recommended' : ''}">
+                        ${isRecommendedPremium ? '<div class="plan-recommended-badge"><i class="fas fa-crown"></i> Recommended For You</div>' : ''}
                         <div class="pricing-header">
                             <div class="plan-type premium-type">PREMIUM PLAN</div>
                             <div class="plan-price">£5,000</div>
@@ -734,12 +882,16 @@
                             <div class="plan-feature"><i class="fas fa-key"></i> You own everything</div>
                             <div class="plan-feature"><i class="fas fa-server"></i> You handle hosting & updates</div>
                         </div>
+                        <button class="payment-button premium" onclick="proceedWithPlan('premium')">
+                            <i class="fas fa-crown"></i> Select Premium Plan
+                        </button>
                     </div>
                 `;
             } else {
                 // Monthly Support Plans
                 cardsHTML = `
-                    <div class="pricing-card monthly-standard">
+                    <div class="pricing-card monthly-standard ${isRecommendedPremium ? '' : 'recommended'}">
+                        ${!isRecommendedPremium ? '<div class="plan-recommended-badge"><i class="fas fa-star"></i> Recommended</div>' : ''}
                         <div class="pricing-header">
                             <div class="monthly-badge"><i class="fas fa-sync"></i> MONTHLY STANDARD SUPPORT</div>
                             <div class="plan-price">£500</div>
@@ -751,9 +903,13 @@
                             <div class="plan-feature"><i class="fas fa-check" style="color:#4CAF50;"></i> We handle hosting & updates</div>
                             <div class="plan-feature"><i class="fas fa-check" style="color:#4CAF50;"></i> Always up-to-date & secure</div>
                         </div>
+                        <button class="payment-button secondary" onclick="proceedWithPlan('monthly-standard')">
+                            <i class="fas fa-sync"></i> Select Monthly Standard
+                        </button>
                     </div>
                     
-                    <div class="pricing-card monthly-premium">
+                    <div class="pricing-card monthly-premium ${isRecommendedPremium ? 'recommended' : ''}">
+                        ${isRecommendedPremium ? '<div class="plan-recommended-badge"><i class="fas fa-crown"></i> Recommended For You</div>' : ''}
                         <div class="pricing-header">
                             <div class="monthly-badge"><i class="fas fa-sync"></i> MONTHLY PREMIUM SUPPORT</div>
                             <div class="plan-price">£650</div>
@@ -765,6 +921,9 @@
                             <div class="plan-feature"><i class="fas fa-check" style="color:#2196F3;"></i> We handle hosting & updates</div>
                             <div class="plan-feature"><i class="fas fa-check" style="color:#2196F3;"></i> Always up-to-date & secure</div>
                         </div>
+                        <button class="payment-button premium" onclick="proceedWithPlan('monthly-premium')">
+                            <i class="fas fa-crown"></i> Select Monthly Premium
+                        </button>
                     </div>
                 `;
             }
@@ -810,6 +969,22 @@
             }
             
             container.innerHTML = cardsHTML;
+        }
+
+        function proceedWithPlan(planType) {
+            // Store the selected plan for checkout
+            selections.selectedPlan = planType;
+            
+            // Show payment modal or redirect to checkout
+            alert(`Proceeding to checkout with ${planType} plan...`);
+            
+            // In a real implementation, you would:
+            // 1. Collect payment details
+            // 2. Process payment via Stripe/PayPal
+            // 3. Redirect to success page
+            
+            // For now, just go to the next step
+            next();
         }
 
         function resetHeader() {
@@ -877,7 +1052,11 @@
                 mainContent.className = "hero-balanced";
             }
             
-            if(currentStep === 7) initServiceList();
+            if(currentStep === 7) {
+                initServiceList();
+                // Initialize recommended plan
+                updateRecommendedPlan();
+            }
             if(currentStep === 8) renderPricingCards();
             
             window.scrollTo({ top: 0, behavior: 'smooth' });
