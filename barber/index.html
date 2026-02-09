@@ -158,12 +158,12 @@
     <div id="mainMenu" class="menu-overlay">
         <div class="menu-header">
             <div class="app-logo">VIBZ<span>.</span></div>
-            <button onclick="closeMenu()" style="border:none; background:none; font-size:1.8rem;"><i class="fa-solid fa-xmark"></i></button>
+            <button id="closeMenuBtn" style="border:none; background:none; font-size:1.8rem;"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="menu-links">
             <a href="https://www.vibz.co.uk/barber/index.html" class="menu-link">Home</a>
             <a href="https://www.vibz.co.uk/barber/concepts.html" class="menu-link">Concept Library</a>
-            <a href="#" class="menu-link" onclick="closeMenu(); goToStep(0);">Start Build</a>
+            <a href="#" class="menu-link" id="startBuildLink">Start Build</a>
             <a href="#" class="menu-link">Portal</a>
         </div>
     </div>
@@ -262,7 +262,7 @@
             <a href="https://www.vibz.co.uk/barber/concepts.html" class="dock-btn"><i class="fa-solid fa-compass"></i><span>Library</span></a>
             <div class="dock-center" onclick="next()"><i class="fa-solid fa-bolt"></i></div>
             <a href="#" class="dock-btn"><i class="fa-solid fa-briefcase"></i><span>Portal</span></a>
-            <button class="dock-btn" onclick="openMenu()"><i class="fa-solid fa-bars"></i><span>Menu</span></button>
+            <button id="menuBtn" class="dock-btn"><i class="fa-solid fa-bars"></i><span>Menu</span></button>
         </nav>
     </div>
 
@@ -273,12 +273,32 @@
         const standardServices = ["Logo Placement", "Pricing Display", "Team Profiles", "Photo Gallery", "Before & After Slider", "Special Offers", "Opening Hours", "Location & Directions", "Tap-to-Call / WhatsApp", "FAQ Section", "Loyalty Info", "Contact Form", "SEO Basics", "Reviews", "Video Grids"];
         const premiumServices = ["Online Booking Integration", "Stripe Deposit System", "Digital Gift Cards", "Automated Waitlist", "Marketing Pop-up Offers", "Conversion Data Tracking", "Priority Build Queue", "Custom UI Graphics", "Multi-Location Support", "Google Review Booster", "Customer CRM Database", "Email Marketing Automation", "SMS Appointment Alerts", "VIP Membership Logic", "Advanced Analytics", "News / Blog Engine", "Career & Hiring Portal", "Cancellation Policy Logic", "Individual Staff Logins", "Inventory Management Sync"];
 
-        function openMenu() {
-            document.getElementById('mainMenu').style.display = 'flex';
-        }
-
-        function closeMenu() {
-            document.getElementById('mainMenu').style.display = 'none';
+        function initMenuListeners() {
+            const menuBtn = document.getElementById('menuBtn');
+            const closeMenuBtn = document.getElementById('closeMenuBtn');
+            const startBuildLink = document.getElementById('startBuildLink');
+            const menuOverlay = document.getElementById('mainMenu');
+            
+            menuBtn.addEventListener('click', function() {
+                menuOverlay.style.display = 'flex';
+            });
+            
+            closeMenuBtn.addEventListener('click', function() {
+                menuOverlay.style.display = 'none';
+            });
+            
+            startBuildLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                menuOverlay.style.display = 'none';
+                goToStep(0);
+            });
+            
+            // Close menu when clicking on overlay background
+            menuOverlay.addEventListener('click', function(e) {
+                if (e.target === menuOverlay) {
+                    menuOverlay.style.display = 'none';
+                }
+            });
         }
 
         function initServiceList() {
@@ -335,7 +355,6 @@
             const titles = { 0: "Build your brand.", 1: "Shop Name?", 2: "Status?", 3: "Design Choice?", 4: "Verification", 5: "Management?", 6: "Timeline?", 7: "Features", 8: "Summary", 9: "Details" };
             document.getElementById('dynamic-title').textContent = titles[currentStep];
             document.getElementById('dynamic-subtitle').textContent = "";
-            // ALWAYS use hero-centered for consistent layout across all steps
             document.getElementById('main-content-wrapper').className = "hero-centered";
             if(currentStep === 7) initServiceList();
             if(currentStep === 8) renderFinalSummary();
@@ -354,6 +373,7 @@
                 currentStep = 5;
             }
             updateUI();
+            initMenuListeners();
         };
     </script>
 </body>
