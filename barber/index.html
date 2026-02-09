@@ -41,10 +41,17 @@
             padding: calc(var(--safe-top) + 20px) 25px 10px;
             display: flex; justify-content: space-between; align-items: center;
             z-index: 10;
+            position: relative;
         }
 
-        .app-logo { font-size: 1.8rem; font-weight: 900; letter-spacing: -1.5px; color: var(--primary); }
-        .app-logo span { color: #000000; }
+        /* Hide header logo on certain steps */
+        .header-logo { 
+            font-size: 1.8rem; font-weight: 900; letter-spacing: -1.5px; color: var(--primary); 
+            transition: opacity 0.3s;
+        }
+        .header-logo span { color: #000000; }
+        
+        .header-logo.hidden { opacity: 0; visibility: hidden; }
 
         /* ==== EXACT MENU FROM HOMEPAGE (new-design.html) ==== */
         #app-menu-layer {
@@ -59,6 +66,11 @@
             display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 20px;
         }
+
+        .menu-logo {
+            font-size: 2rem; font-weight: 900; letter-spacing: -1.5px; color: var(--primary);
+        }
+        .menu-logo span { color: #000000; }
 
         .menu-links {
             display: flex; flex-direction: column; 
@@ -212,7 +224,7 @@
     <!-- EXACT MENU FROM HOMEPAGE -->
     <div id="app-menu-layer">
         <div class="menu-header">
-            <div class="app-logo">VIBZ<span>.</span></div>
+            <div class="menu-logo">VIBZ<span>.</span></div>
             <div class="close-btn" style="margin-top:0; border:none; background:none; font-size:1.8rem; cursor:pointer; color:#666;" onclick="toggleMenu()"><i class="fa-solid fa-xmark"></i></div>
         </div>
         <div class="menu-links">
@@ -226,7 +238,7 @@
 
     <div id="app-container">
         <header>
-            <div class="app-logo">VIBZ<span>.</span></div>
+            <div class="header-logo hidden">VIBZ<span>.</span></div>
             <i class="fa-solid fa-circle-user" style="font-size: 1.8rem; color: #ddd;"></i>
         </header>
 
@@ -386,11 +398,37 @@
         function updateUI() {
             document.querySelectorAll('.form-screen').forEach(s => s.classList.remove('active'));
             document.getElementById(`step-${currentStep}`).classList.add('active');
-            const titles = { 0: "Build your brand.", 1: "Shop Name?", 2: "Status?", 3: "Design Choice?", 4: "Verification", 5: "Management?", 6: "Timeline?", 7: "Features", 8: "Summary", 9: "Details" };
+            
+            // Update title
+            const titles = { 
+                0: "Build your brand.", 
+                1: "Shop Name?", 
+                2: "Status?", 
+                3: "Design Choice?", 
+                4: "Verification", 
+                5: "Management?", 
+                6: "Timeline?", 
+                7: "Features", 
+                8: "Summary", 
+                9: "Details" 
+            };
             document.getElementById('dynamic-title').textContent = titles[currentStep];
+            
+            // Update layout
             document.getElementById('main-content-wrapper').className = (currentStep === 0 || currentStep === 1) ? "hero-centered" : "hero-balanced";
+            
+            // Show/hide header logo - only show on first step
+            const headerLogo = document.querySelector('.header-logo');
+            if (currentStep === 0) {
+                headerLogo.classList.remove('hidden');
+            } else {
+                headerLogo.classList.add('hidden');
+            }
+            
+            // Initialize specific step content
             if(currentStep === 7) initServiceList();
             if(currentStep === 8) renderFinalSummary();
+            
             window.scrollTo(0,0);
         }
 
