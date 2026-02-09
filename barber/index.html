@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head> 
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>VIBZ | Barber Solutions</title>
@@ -46,31 +46,53 @@
         .app-logo { font-size: 1.8rem; font-weight: 900; letter-spacing: -1.5px; color: var(--primary); }
         .app-logo span { color: #000000; }
 
-        /* --- Menu Overlay Styles EXACTLY like IMG_0747.jpeg --- */
-        .menu-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255,255,255,0.98); z-index: 3000;
-            display: none; flex-direction: column; padding: 60px 25px 40px;
-            overflow-y: auto;
+        /* ==== EXACT MENU FROM HOMEPAGE (new-design.html) ==== */
+        #app-menu-layer {
+            position: fixed; inset: 0; background: var(--primary-light);
+            z-index: 3000; display: flex; flex-direction: column;
+            padding: calc(var(--safe-top) + 20px) 25px;
+            transform: translateY(100%); transition: transform 0.6s cubic-bezier(0.32, 0.72, 0, 1);
         }
-        .menu-header { 
-            display: flex; justify-content: space-between; align-items: center; 
-            margin-bottom: 80px;
+        #app-menu-layer.active { transform: translateY(0); }
+
+        .menu-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px;
         }
-        .menu-links { 
-            display: flex; flex-direction: column; gap: 35px;
+
+        .menu-links {
+            display: flex; flex-direction: column; 
+            gap: 20px;
             flex: 1;
             justify-content: center;
+            align-items: center;
+            text-align: center;
         }
-        .menu-link { 
-            font-size: 3rem; font-weight: 900; text-decoration: none; 
-            color: var(--text); letter-spacing: -2px;
-            text-align: left;
-            line-height: 1.1;
-            padding: 10px 0;
+
+        .menu-item {
+            font-size: 4.5rem; font-weight: 900; color: var(--text);
+            text-decoration: none; letter-spacing: -3px; line-height: 1;
+            opacity: 0; transform: translateY(30px);
+            transition: 0.5s cubic-bezier(0.32, 0.72, 0, 1);
         }
-        .menu-link:hover {
-            color: var(--primary);
+        #app-menu-layer.active .menu-item { 
+            opacity: 1; transform: translateY(0); 
+        }
+        #app-menu-layer.active .menu-item:nth-child(1) { transition-delay: 0.1s; }
+        #app-menu-layer.active .menu-item:nth-child(2) { transition-delay: 0.2s; }
+        #app-menu-layer.active .menu-item:nth-child(3) { transition-delay: 0.3s; }
+        #app-menu-layer.active .menu-item:nth-child(4) { transition-delay: 0.4s; }
+
+        .menu-footer {
+            margin-top: auto; 
+            font-weight: 800; font-size: 0.8rem; letter-spacing: 1px; color: #bbb;
+            text-align: center;
+            padding-bottom: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .menu-item { font-size: 6rem; }
+            .menu-footer { font-size: 1.2rem; }
         }
 
         .content-scroll {
@@ -78,8 +100,18 @@
             display: flex; flex-direction: column;
         }
 
-        .hero-centered { margin-top: 15vh; text-align: center; transition: 0.4s ease; }
-        .hero-balanced { margin-top: auto; margin-bottom: auto; text-align: center; transition: 0.4s ease; padding-bottom: 40px; }
+        .hero-centered { 
+            margin-top: 15vh; 
+            text-align: center; 
+            transition: 0.4s ease; 
+        }
+        .hero-balanced { 
+            margin-top: auto; 
+            margin-bottom: auto; 
+            text-align: center; 
+            transition: 0.4s ease; 
+            padding-bottom: 40px; 
+        }
 
         .step-header h1 {
             font-size: 2.4rem; font-weight: 900; line-height: 1.1;
@@ -162,6 +194,7 @@
             display: flex; align-items: center; justify-content: center; color: #fff;
             font-size: 1.8rem; margin-top: -50px; border: 6px solid var(--primary-light);
             box-shadow: 0 10px 20px rgba(255, 107, 0, 0.3);
+            cursor: pointer;
         }
 
         .concept-preview {
@@ -176,18 +209,19 @@
 </head>
 <body>
 
-    <!-- Menu Overlay EXACTLY like IMG_0747.jpeg -->
-    <div id="mainMenu" class="menu-overlay">
+    <!-- EXACT MENU FROM HOMEPAGE -->
+    <div id="app-menu-layer">
         <div class="menu-header">
             <div class="app-logo">VIBZ<span>.</span></div>
-            <button onclick="closeMenu()" style="border:none; background:none; font-size:1.8rem; cursor:pointer; color: #666;"><i class="fa-solid fa-xmark"></i></button>
+            <div class="close-btn" style="margin-top:0; border:none; background:none; font-size:1.8rem; cursor:pointer; color:#666;" onclick="toggleMenu()"><i class="fa-solid fa-xmark"></i></div>
         </div>
         <div class="menu-links">
-            <a href="https://www.vibz.co.uk/barber/index.html" class="menu-link">Home</a>
-            <a href="https://www.vibz.co.uk/barber/concepts.html" class="menu-link">Concept Library</a>
-            <a href="#" class="menu-link" onclick="closeMenu(); goToStep(0); return false;">Start Build</a>
-            <a href="#" class="menu-link">Portal</a>
+            <a href="https://www.vibz.co.uk/new-design.html" class="menu-item" onclick="toggleMenu()">Home</a>
+            <a href="https://www.vibz.co.uk/barber/concepts.html" class="menu-item" onclick="toggleMenu()">Explore</a>
+            <a href="#" class="menu-item" onclick="toggleMenu()">Portal</a>
+            <a href="#" class="menu-item" onclick="toggleMenu()">Support</a>
         </div>
+        <div class="menu-footer">VIBZ COLLECTIVE © 2026</div>
     </div>
 
     <div id="app-container">
@@ -284,7 +318,7 @@
             <a href="https://www.vibz.co.uk/barber/concepts.html" class="dock-btn"><i class="fa-solid fa-compass"></i><span>Library</span></a>
             <div class="dock-center" onclick="next()"><i class="fa-solid fa-bolt"></i></div>
             <a href="#" class="dock-btn"><i class="fa-solid fa-briefcase"></i><span>Portal</span></a>
-            <button class="dock-btn" onclick="openMenu()"><i class="fa-solid fa-bars"></i><span>Menu</span></button>
+            <button class="dock-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i><span>Menu</span></button>
         </nav>
     </div>
 
@@ -295,14 +329,9 @@
         const standardServices = ["Logo Placement", "Pricing Display", "Team Profiles", "Photo Gallery", "Before & After Slider", "Special Offers", "Opening Hours", "Location & Directions", "Tap-to-Call / WhatsApp", "FAQ Section", "Loyalty Info", "Contact Form", "SEO Basics", "Reviews", "Video Grids"];
         const premiumServices = ["Online Booking Integration", "Stripe Deposit System", "Digital Gift Cards", "Automated Waitlist", "Marketing Pop-up Offers", "Conversion Data Tracking", "Priority Build Queue", "Custom UI Graphics", "Multi-Location Support", "Google Review Booster", "Customer CRM Database", "Email Marketing Automation", "SMS Appointment Alerts", "VIP Membership Logic", "Advanced Analytics", "News / Blog Engine", "Career & Hiring Portal", "Cancellation Policy Logic", "Individual Staff Logins", "Inventory Management Sync"];
 
-        function openMenu() {
-            document.getElementById('mainMenu').style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeMenu() {
-            document.getElementById('mainMenu').style.display = 'none';
-            document.body.style.overflow = 'auto';
+        // EXACT MENU FUNCTION FROM HOMEPAGE
+        function toggleMenu() {
+            document.getElementById('app-menu-layer').classList.toggle('active');
         }
 
         function initServiceList() {
@@ -368,13 +397,6 @@
         function next() { if(currentStep < 9) { currentStep++; updateUI(); } }
         function prev() { if(currentStep > 0) { currentStep--; updateUI(); } }
         function goToStep(s) { currentStep = s; updateUI(); }
-
-        // Close menu with escape key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && document.getElementById('mainMenu').style.display === 'flex') {
-                closeMenu();
-            }
-        });
 
         window.onload = function() {
             const urlParams = new URLSearchParams(window.location.search);
