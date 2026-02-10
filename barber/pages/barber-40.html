@@ -3,247 +3,233 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>S&B // 2026 FLAGSHIP</title>
+    <title>S&B HERITAGE // THE 2026 TRADITION</title>
     
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@800&family=Outfit:wght@100;400;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,600&family=Outfit:wght@100;400;900&display=swap');
 
         :root {
-            --accent: #FF2E2E;
-            --bg: #FFFFFF;
-            --ink: #000000;
-            --grey: #F0F0F0;
-            --glass: rgba(255, 255, 255, 0.8);
+            --cream: #F9F7F2;
+            --ink: #1A1A1A;
+            --accent: #D4AF37; /* Brass/Gold */
+            --white: #FFFFFF;
+            --glass: rgba(255, 255, 255, 0.6);
         }
 
-        /* --- THE 'ELITE' RESET --- */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
-        body { background: var(--bg); color: var(--ink); font-family: 'Outfit', sans-serif; overflow-x: hidden; }
+        body { background: var(--cream); color: var(--ink); font-family: 'Outfit', sans-serif; overflow-x: hidden; }
+
+        /* --- 1. THE "SHOP ENTRANCE" ANIMATION --- */
+        .entrance-overlay {
+            position: fixed; inset: 0; background: var(--ink); z-index: 9999;
+            display: flex; align-items: center; justify-content: center;
+            transition: transform 1.2s cubic-bezier(0.85, 0, 0.15, 1);
+        }
+        .entrance-overlay.open { transform: translateY(-100%); }
+
+        /* --- NAVIGATION --- */
+        nav {
+            position: fixed; top: 0; width: 100%; z-index: 1000;
+            padding: 30px 5%; display: flex; justify-content: space-between;
+            background: linear-gradient(to bottom, var(--cream), transparent);
+        }
+
+        /* --- HERO: EXTERIOR VIEW --- */
+        .hero-spatial {
+            height: 100vh; display: flex; align-items: center; justify-content: center;
+            perspective: 1000px; padding: 0 5%;
+        }
+        .shop-facade {
+            width: 100%; max-width: 1200px; height: 70vh;
+            background: url('https://images.unsplash.com/photo-1512690196236-4bab0b544391?auto=format&fit=crop&q=80') center/cover;
+            border-radius: 4px; box-shadow: 0 50px 100px rgba(0,0,0,0.1);
+            transform: rotateX(5deg); transition: 0.8s ease;
+            display: flex; align-items: center; justify-content: center; position: relative;
+        }
+        .shop-facade:hover { transform: rotateX(0deg) scale(1.02); }
         
-        h1, h2, .massive-type { 
-            font-family: 'Syncopate', sans-serif; 
-            text-transform: uppercase; 
-            letter-spacing: -6px;
-            line-height: 0.8;
-            font-weight: 800;
+        .hero-text { 
+            font-family: 'Cormorant Garamond', serif; font-size: clamp(3rem, 10vw, 8rem);
+            color: var(--white); text-align: center; font-style: italic;
         }
 
-        /* --- 5. APP-STYLE FIXED NAV --- */
-        .top-dock {
-            position: fixed; top: 0; width: 100%; z-index: 2000;
-            padding: 30px; display: flex; justify-content: space-between;
-            background: linear-gradient(to bottom, white, transparent);
+        /* --- BENTO SECTION --- */
+        .bento-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 20px; padding: 20px; }
+        .bento-card { 
+            background: var(--white); border: 1px solid rgba(0,0,0,0.05);
+            border-radius: 20px; padding: 40px; position: relative; overflow: hidden;
+            transition: 0.5s cubic-bezier(0.2, 1, 0.3, 1);
         }
+        .bento-card:hover { transform: translateY(-10px); box-shadow: 0 30px 60px rgba(0,0,0,0.05); }
 
-        .bottom-dock {
-            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-            width: 90%; max-width: 450px; height: 80px; background: var(--ink);
-            border-radius: 100px; z-index: 2000; display: flex; 
-            justify-content: space-around; align-items: center; padding: 0 20px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+        /* --- TRADITIONAL ELEMENTS --- */
+        .barber-pole {
+            width: 10px; height: 100px; background: repeating-linear-gradient(45deg, #ff2e2e, #ff2e2e 10px, #fff 10px, #fff 20px, #2e5eff 20px, #2e5eff 30px, #fff 30px, #fff 40px);
+            animation: pole-spin 2s linear infinite; border-radius: 5px;
         }
-        .nav-item { color: #555; text-decoration: none; font-size: 0.7rem; font-weight: 900; text-align: center; }
-        .nav-item.active { color: var(--accent); }
-        .nav-item i { font-size: 1.5rem; display: block; margin-bottom: 5px; }
+        @keyframes pole-spin { from { background-position: 0 0; } to { background-position: 0 100px; } }
 
-        /* --- 1. HERO: THE STATEMENT --- */
-        .hero {
-            height: 100vh; padding: 120px 5% 50px; display: flex; flex-direction: column;
-            justify-content: space-between; position: relative;
+        .btn-gold {
+            background: var(--ink); color: var(--white); border: none; padding: 20px 40px;
+            font-weight: 900; letter-spacing: 2px; text-transform: uppercase; cursor: pointer;
+            border-radius: 0; transition: 0.3s;
         }
-        .hero-title { font-size: clamp(4rem, 18vw, 22rem); z-index: 10; pointer-events: none; }
-        .hero-img { 
-            position: absolute; right: 5%; top: 20%; width: 45%; height: 70%; 
-            background: url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80') center/cover;
-            filter: grayscale(100%); transition: 0.8s;
-        }
-        .hero-img:hover { filter: grayscale(0%); transform: scale(1.02); }
-
-        /* --- BENTO GRIDS (INDUSTRIAL) --- */
-        .grid-container { display: grid; grid-template-columns: repeat(12, 1fr); gap: 10px; padding: 10px; }
-        .grid-box { 
-            background: var(--grey); padding: 50px; border-radius: 5px; 
-            position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end;
-        }
-        .span-12 { grid-column: span 12; }
-        .span-8 { grid-column: span 8; }
-        .span-4 { grid-column: span 4; }
-        .span-6 { grid-column: span 6; }
-        .tall { min-height: 600px; }
-        .short { min-height: 300px; }
-
-        /* --- 2. BOOKING ACTION --- */
-        .booking-bar {
-            background: var(--accent); color: white; padding: 40px; display: flex;
-            justify-content: space-between; align-items: center; cursor: pointer;
-        }
-
-        /* --- 7. PRICE LIST (HUGE) --- */
-        .price-row { 
-            display: flex; justify-content: space-between; align-items: baseline; 
-            padding: 40px 0; border-bottom: 2px solid var(--ink);
-        }
-        .price-row h3 { font-size: 3rem; font-weight: 900; }
-        .price-row span { font-size: 4rem; font-family: 'Syncopate'; color: var(--accent); }
-
-        /* --- 9. THE SLIDER (RE-ENGINEERED) --- */
-        .slider-wrap { width: 100%; height: 70vh; position: relative; overflow: hidden; }
-        .before-img { 
-            position: absolute; top:0; left:0; width:50%; height:100%; 
-            background: url('https://images.unsplash.com/photo-1593702295094-ada74bc4a19c?auto=format&fit=crop&q=80') center/cover;
-            border-right: 5px solid var(--accent); z-index: 2;
-        }
+        .btn-gold:hover { background: var(--accent); }
 
         /* --- STATS --- */
-        .big-num { font-size: 10rem; line-height: 0.7; font-weight: 900; }
+        .stat-circle {
+            width: 150px; height: 150px; border: 1px solid var(--accent);
+            border-radius: 50%; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; margin: 0 auto;
+        }
+
+        /* --- 2026 TABS --- */
+        .app-tabs {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: var(--white); padding: 10px 30px; border-radius: 100px;
+            display: flex; gap: 40px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); z-index: 1000;
+        }
+        .app-tabs i { font-size: 1.2rem; color: #ccc; cursor: pointer; }
+        .app-tabs i.active { color: var(--accent); }
 
     </style>
 </head>
 <body>
 
-    <div class="top-dock">
-        <div class="massive-type" style="font-size: 1.5rem; letter-spacing: -2px;">S&B_026</div>
-        <div style="font-weight: 900;">[ LONDON_HQ ]</div>
+    <div class="entrance-overlay" id="loader" onclick="this.classList.add('open')">
+        <div style="text-align: center; color: var(--accent);">
+            <h1 class="hero-text" style="font-size: 2rem;">S&B HERITAGE</h1>
+            <p style="letter-spacing: 5px; margin-top: 10px; font-size: 0.7rem;">TAP TO ENTER SHOP</p>
+        </div>
     </div>
 
-    <div class="bottom-dock">
-        <a href="#hero" class="nav-item active"><i class="fas fa-scissors"></i>CUTS</a>
-        <a href="#booking" class="nav-item"><i class="fas fa-calendar-day"></i>BOOK</a>
-        <a href="#shop" class="nav-item"><i class="fas fa-flask"></i>KIT</a>
-        <a href="#location" class="nav-item"><i class="fas fa-map-marker-alt"></i>FIND</a>
+    <nav>
+        <div style="font-family: 'Cormorant Garamond'; font-size: 1.5rem; font-weight: bold;">S&B</div>
+        <div class="barber-pole"></div>
+        <div style="font-weight: 900; font-size: 0.7rem; letter-spacing: 2px;">EST. 2026</div>
+    </nav>
+
+    <div class="app-tabs">
+        <i class="fas fa-door-open active"></i>
+        <i class="fas fa-chair"></i>
+        <i class="fas fa-calendar-alt"></i>
+        <i class="fas fa-shopping-bag"></i>
     </div>
 
-    <section class="hero" id="hero">
-        <h1 class="hero-title" data-aos="fade-right">SHARP<br>AS<br><span style="color:var(--accent)">HELL.</span></h1>
-        <div class="hero-img"></div>
-        <div style="display: flex; justify-content: space-between; align-items: flex-end;">
-            <p style="max-width: 300px; font-weight: 900; text-transform: uppercase;">The world's first high-frequency grooming terminal. Operated by artisans, powered by precision.</p>
-            <div class="massive-type" style="font-size: 5rem; opacity: 0.1;">2026_EST</div>
+    <section class="hero-spatial">
+        <div class="shop-facade" data-aos="zoom-out" data-aos-duration="1500">
+            <div style="z-index: 2;">
+                <h1 class="hero-text">Tradition<br>Refined.</h1>
+                <button class="btn-gold" style="margin-top: 30px;">BOOK THE CHAIR</button>
+            </div>
+            <div style="position:absolute; inset:0; background: rgba(0,0,0,0.3);"></div>
         </div>
     </section>
 
-    <div class="booking-bar" id="booking">
-        <h2 class="massive-type" style="font-size: 3rem;">INITIALIZE_BOOKING_SEQUENCE</h2>
-        <i class="fas fa-arrow-right" style="font-size: 3rem;"></i>
-    </div>
-
-    <div class="grid-container">
-        <div class="grid-box span-8 tall" style="background: var(--ink); color: white;">
-            <h5 style="color: var(--accent); letter-spacing: 5px;">PROTOCOL_01</h5>
-            <h2 class="massive-type" style="font-size: 6rem; margin: 20px 0;">THE<br>MASTER<br>FADE</h2>
-            <p style="opacity: 0.5;">A 60-minute technical calibration. Includes scalp detox and razor finish.</p>
-            <div class="big-num" style="margin-top: 40px; color: var(--accent);">£65</div>
-        </div>
-        
-        <div class="grid-box span-4 tall" style="background: url('https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&q=80') center/cover;">
-            <div style="position:absolute; top:0; left:0; width:100%; height:100%; background: rgba(255,46,46,0.8); mix-blend-mode: multiply;"></div>
-            <h2 class="massive-type" style="color: white; z-index: 1;">BEARD<br>LAB</h2>
-        </div>
-
-        <div class="grid-box span-4 short">
-            <h1 class="big-num">98%</h1>
-            <p style="font-weight: 900;">PRECISION_SYNC</p>
-        </div>
-        <div class="grid-box span-8 short" style="background: var(--accent); color: white;">
-            <h2 class="massive-type" style="font-size: 4rem;">MEMBERSHIP_ONLY_ACCESS</h2>
-        </div>
-    </div>
-
-    <section style="padding: 150px 5%;">
-        <div class="price-row" data-aos="fade-up">
-            <h3>BUZZ_CALIBRATION</h3>
-            <span>£35</span>
-        </div>
-        <div class="price-row" data-aos="fade-up">
-            <h3>SCISSOR_ARCHITECTURE</h3>
-            <span>£75</span>
-        </div>
-        <div class="price-row" data-aos="fade-up">
-            <h3>STEAM_RAZOR_SHAVE</h3>
-            <span>£45</span>
-        </div>
-    </section>
-
-    <div class="slider-wrap" id="slider">
-        <div style="width:100%; height:100%; background: url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80') center/cover;"></div>
-        <div class="before-img" id="before-mask"></div>
-        <div style="position:absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; pointer-events: none;">
-            <h2 class="massive-type" style="font-size: 10vw; color: white; -webkit-text-stroke: 2px black;">EVOLUTION</h2>
-        </div>
-    </div>
-
-    <section id="shop" style="padding: 100px 5%;">
-        <h2 class="massive-type" style="font-size: 6rem; margin-bottom: 50px;">THE_KIT</h2>
-        <div class="grid-container">
-            <div class="grid-box span-4 short" style="text-align: center;">
-                <div style="height: 150px; background: #fff; margin-bottom: 20px;"></div>
-                <h4 style="font-weight: 900;">CARBON_POMADE</h4>
-                <p style="color: var(--accent);">£22.00</p>
-            </div>
-            <div class="grid-box span-4 short">
-                <div style="height: 150px; background: #fff; margin-bottom: 20px;"></div>
-                <h4 style="font-weight: 900;">ISO_CLAY</h4>
-                <p style="color: var(--accent);">£18.00</p>
-            </div>
-            <div class="grid-box span-4 short">
-                <div style="height: 150px; background: #fff; margin-bottom: 20px;"></div>
-                <h4 style="font-weight: 900;">TITANIUM_SERUM</h4>
-                <p style="color: var(--accent);">£35.00</p>
+    <section style="padding: 100px 5%;">
+        <div class="bento-grid">
+            <div class="bento-card" style="grid-column: span 12; display: flex; align-items: center; gap: 50px;" data-aos="fade-up">
+                <div style="width: 40%; height: 400px; background: url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80') center/cover; border-radius: 10px;"></div>
+                <div style="width: 60%;">
+                    <h5 style="color: var(--accent); margin-bottom: 20px;">[ THE INTERIOR ]</h5>
+                    <h2 style="font-family: 'Cormorant Garamond'; font-size: 4rem; line-height: 1;">A Sanctuary of Stillness.</h2>
+                    <p style="margin-top: 20px; font-size: 1.2rem; opacity: 0.7;">Premium Italian leather chairs, warm ambient lighting, and the scent of sandalwood. This isn't just a haircut; it's a 45-minute departure from the world.</p>
+                </div>
             </div>
         </div>
     </section>
 
-    <div class="grid-container">
-        <div class="grid-box span-6 tall" style="background: url('https://images.unsplash.com/photo-1618331835717-801e976710b2?auto=format&fit=crop&q=80') center/cover; filter: grayscale(1);">
-            <h3 class="massive-type" style="color: white; font-size: 4rem;">V_KOVALEV</h3>
-        </div>
-        <div class="grid-box span-6 tall" style="background: var(--ink); color: white;">
-            <h3 class="massive-type" style="font-size: 4rem;">M_THORNE</h3>
-            <p style="margin-top: 20px; color: var(--accent); font-weight: 900;">MASTER OF FADE GEOMETRY</p>
-        </div>
-    </div>
+    <section style="background: var(--white); padding: 150px 5%;">
+        <div style="max-width: 900px; margin: 0 auto;">
+            <h2 style="font-family: 'Cormorant Garamond'; font-size: 3rem; text-align: center; margin-bottom: 80px;">The Service Menu</h2>
+            
+            <div style="display: flex; justify-content: space-between; padding: 40px 0; border-bottom: 1px solid #eee;" data-aos="fade-up">
+                <div><h3>The Signature Cut</h3><p>Wash, cut, and traditional finish.</p></div>
+                <div style="font-size: 2rem; font-family: 'Cormorant Garamond';">£55</div>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; padding: 40px 0; border-bottom: 1px solid #eee;" data-aos="fade-up">
+                <div><h3>Hot Towel Shave</h3><p>Straight-razor with essential oils.</p></div>
+                <div style="font-size: 2rem; font-family: 'Cormorant Garamond';">£40</div>
+            </div>
 
-    <section class="grid-container" style="padding: 150px 10px;">
-        <div class="grid-box span-6 short">
-            <h3 class="massive-type">HOURS</h3>
-            <p>MON - FRI // 09:00 - 21:00</p>
-            <p>SAT - SUN // 10:00 - 18:00</p>
-        </div>
-        <div class="grid-box span-6 short" style="background: var(--accent); color: white;">
-            <h3 class="massive-type">STATUS</h3>
-            <p>CURRENTLY_OPERATIONAL</p>
+            <div style="display: flex; justify-content: space-between; padding: 40px 0;" data-aos="fade-up">
+                <div><h3>The Full Works</h3><p>90 minutes of total grooming.</p></div>
+                <div style="font-size: 2rem; font-family: 'Cormorant Garamond';">£95</div>
+            </div>
         </div>
     </section>
 
-    <footer id="location" style="padding: 100px 5%; background: var(--ink); color: white;">
-        <h1 class="massive-type" style="font-size: 10vw;">JOIN<br>US.</h1>
-        <div style="display: flex; justify-content: space-between; margin-top: 50px;">
-            <div>
-                <p style="font-weight: 900; color: var(--accent);">LOCATION</p>
-                <p>122 BRUTALIST WAY, LONDON</p>
+    <section class="bento-grid">
+        <div class="bento-card" style="grid-column: span 3; text-align: center;">
+            <div class="stat-circle"><h2>15</h2><p>Years</p></div>
+        </div>
+        <div class="bento-card" style="grid-column: span 3; text-align: center;">
+            <div class="stat-circle"><h2>4k+</h2><p>Clients</p></div>
+        </div>
+        <div class="bento-card" style="grid-column: span 3; text-align: center;">
+            <div class="stat-circle"><h2>24k</h2><p>Shaves</p></div>
+        </div>
+        <div class="bento-card" style="grid-column: span 3; text-align: center;">
+            <div class="stat-circle"><h2>100%</h2><p>Craft</p></div>
+        </div>
+    </section>
+
+    <section style="padding: 100px 5%;">
+        <h2 style="font-family: 'Cormorant Garamond'; font-size: 3rem; margin-bottom: 50px;">From the Apothecary</h2>
+        <div class="bento-grid">
+            <div class="bento-card" style="grid-column: span 4; text-align: center;">
+                <div style="height: 200px; background: #eee; margin-bottom: 20px; border-radius: 10px;"></div>
+                <h4 style="font-family: 'Cormorant Garamond'; font-size: 1.5rem;">Sandalwood Oil</h4>
+                <p>£28.00</p>
+                <button class="btn-gold" style="padding: 10px 20px; font-size: 0.6rem; margin-top: 20px;">ADD TO KIT</button>
             </div>
-            <div>
-                <p style="font-weight: 900; color: var(--accent);">COMMS</p>
-                <p>WHATSAPP: +44 7700 900</p>
+            </div>
+    </section>
+
+    <section style="padding: 150px 5%; background: var(--ink); color: var(--white);">
+        <h2 style="font-family: 'Cormorant Garamond'; font-size: 5rem; text-align: center;">The Hands Behind the Steel.</h2>
+        <div class="bento-grid" style="margin-top: 80px;">
+            <div class="bento-card" style="grid-column: span 6; background: transparent; border: 1px solid rgba(255,255,255,0.1);">
+                <div style="height: 400px; background: url('https://images.unsplash.com/photo-1618331835717-801e976710b2?auto=format&fit=crop&q=80') center/cover; filter: sepia(0.5);"></div>
+                <h3 style="margin-top: 30px; font-family: 'Cormorant Garamond'; font-size: 2rem;">Master Artisan Kovalev</h3>
+            </div>
+            <div class="bento-card" style="grid-column: span 6; background: transparent; border: 1px solid rgba(255,255,255,0.1);">
+                <div style="height: 400px; background: #222;"></div>
+                <h3 style="margin-top: 30px; font-family: 'Cormorant Garamond'; font-size: 2rem;">Senior Artisan Thorne</h3>
             </div>
         </div>
+    </section>
+
+    <section class="bento-grid" style="padding: 100px 5%;">
+        <div class="bento-card" style="grid-column: span 8; height: 400px;">
+            <h2 style="font-family: 'Cormorant Garamond'; font-size: 2rem;">Visit the Shop</h2>
+            <p style="margin-top: 20px;">12 Heritage Row, St James's<br>London, SW1A 1ER</p>
+            <div style="height: 200px; background: #f0f0f0; margin-top: 30px; border-radius: 10px;"></div>
+        </div>
+        <div class="bento-card" style="grid-column: span 4; background: var(--accent); color: var(--white);">
+            <h3>HOURS</h3>
+            <p style="margin-top: 20px;">MON-FRI: 09:00 - 19:00</p>
+            <p>SAT: 10:00 - 17:00</p>
+            <p>SUN: BY APPOINTMENT</p>
+        </div>
+    </section>
+
+    <footer style="padding: 100px 5%; text-align: center; border-top: 1px solid #eee;">
+        <h1 class="hero-text" style="color: var(--ink); font-size: 3rem;">S&B</h1>
+        <p style="margin-top: 20px; font-weight: 900; letter-spacing: 5px;">A LEGACY IN EVERY CUT.</p>
     </footer>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         AOS.init();
-        
-        const slider = document.getElementById('slider');
-        const mask = document.getElementById('before-mask');
-        
-        slider.addEventListener('mousemove', (e) => {
-            let rect = slider.getBoundingClientRect();
-            let x = ((e.clientX - rect.left) / rect.width) * 100;
-            mask.style.width = x + "%";
-        });
+        // Remove entrance loader after delay
+        setTimeout(() => {
+            document.getElementById('loader').classList.add('open');
+        }, 2000);
     </script>
 </body>
 </html>
