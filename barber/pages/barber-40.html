@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>S&B HERITAGE // THE 2026 TRADITION</title>
+    <title>S&B HERITAGE // BOUTIQUE TERMINAL</title>
     
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -12,224 +12,203 @@
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,600&family=Outfit:wght@100;400;900&display=swap');
 
         :root {
-            --cream: #F9F7F2;
-            --ink: #1A1A1A;
-            --accent: #D4AF37; /* Brass/Gold */
-            --white: #FFFFFF;
-            --glass: rgba(255, 255, 255, 0.6);
+            --cream: #FDFBFA;
+            --ink: #1C1C1C;
+            --brass: #C5A059;
+            --glass: rgba(255, 255, 255, 0.7);
+            --shadow: 0 30px 60px rgba(0,0,0,0.05);
         }
 
+        /* --- THE 'APP' FEEL --- */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
         body { background: var(--cream); color: var(--ink); font-family: 'Outfit', sans-serif; overflow-x: hidden; }
-
-        /* --- 1. THE "SHOP ENTRANCE" ANIMATION --- */
-        .entrance-overlay {
-            position: fixed; inset: 0; background: var(--ink); z-index: 9999;
-            display: flex; align-items: center; justify-content: center;
-            transition: transform 1.2s cubic-bezier(0.85, 0, 0.15, 1);
-        }
-        .entrance-overlay.open { transform: translateY(-100%); }
-
-        /* --- NAVIGATION --- */
-        nav {
-            position: fixed; top: 0; width: 100%; z-index: 1000;
-            padding: 30px 5%; display: flex; justify-content: space-between;
-            background: linear-gradient(to bottom, var(--cream), transparent);
-        }
-
-        /* --- HERO: EXTERIOR VIEW --- */
-        .hero-spatial {
-            height: 100vh; display: flex; align-items: center; justify-content: center;
-            perspective: 1000px; padding: 0 5%;
-        }
-        .shop-facade {
-            width: 100%; max-width: 1200px; height: 70vh;
-            background: url('https://images.unsplash.com/photo-1512690196236-4bab0b544391?auto=format&fit=crop&q=80') center/cover;
-            border-radius: 4px; box-shadow: 0 50px 100px rgba(0,0,0,0.1);
-            transform: rotateX(5deg); transition: 0.8s ease;
-            display: flex; align-items: center; justify-content: center; position: relative;
-        }
-        .shop-facade:hover { transform: rotateX(0deg) scale(1.02); }
         
-        .hero-text { 
-            font-family: 'Cormorant Garamond', serif; font-size: clamp(3rem, 10vw, 8rem);
-            color: var(--white); text-align: center; font-style: italic;
+        h1, h2, .serif { font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; }
+        .bold { font-weight: 900; text-transform: uppercase; letter-spacing: 2px; font-size: 0.75rem; }
+
+        /* --- 1. THE SHOP ENTRANCE (MODAL LOADER) --- */
+        #entrance {
+            position: fixed; inset: 0; background: var(--ink); z-index: 9000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: 1.5s cubic-bezier(0.8, 0, 0.2, 1);
+        }
+        #entrance.open { transform: translateY(-100%); }
+
+        /* --- 5. NATIVE APP NAVIGATION --- */
+        .top-nav {
+            position: fixed; top: 0; width: 100%; z-index: 1000;
+            padding: 30px 5%; display: flex; justify-content: space-between; align-items: center;
         }
 
-        /* --- BENTO SECTION --- */
-        .bento-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 20px; padding: 20px; }
-        .bento-card { 
-            background: var(--white); border: 1px solid rgba(0,0,0,0.05);
-            border-radius: 20px; padding: 40px; position: relative; overflow: hidden;
-            transition: 0.5s cubic-bezier(0.2, 1, 0.3, 1);
-        }
-        .bento-card:hover { transform: translateY(-10px); box-shadow: 0 30px 60px rgba(0,0,0,0.05); }
-
-        /* --- TRADITIONAL ELEMENTS --- */
-        .barber-pole {
-            width: 10px; height: 100px; background: repeating-linear-gradient(45deg, #ff2e2e, #ff2e2e 10px, #fff 10px, #fff 20px, #2e5eff 20px, #2e5eff 30px, #fff 30px, #fff 40px);
-            animation: pole-spin 2s linear infinite; border-radius: 5px;
-        }
-        @keyframes pole-spin { from { background-position: 0 0; } to { background-position: 0 100px; } }
-
-        .btn-gold {
-            background: var(--ink); color: var(--white); border: none; padding: 20px 40px;
-            font-weight: 900; letter-spacing: 2px; text-transform: uppercase; cursor: pointer;
-            border-radius: 0; transition: 0.3s;
-        }
-        .btn-gold:hover { background: var(--accent); }
-
-        /* --- STATS --- */
-        .stat-circle {
-            width: 150px; height: 150px; border: 1px solid var(--accent);
-            border-radius: 50%; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; margin: 0 auto;
-        }
-
-        /* --- 2026 TABS --- */
-        .app-tabs {
+        .bottom-dock {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-            background: var(--white); padding: 10px 30px; border-radius: 100px;
-            display: flex; gap: 40px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); z-index: 1000;
+            width: 90%; max-width: 400px; height: 75px; background: var(--ink);
+            border-radius: 100px; z-index: 2000; display: flex; 
+            justify-content: space-around; align-items: center; box-shadow: 0 20px 40px rgba(0,0,0,0.2);
         }
-        .app-tabs i { font-size: 1.2rem; color: #ccc; cursor: pointer; }
-        .app-tabs i.active { color: var(--accent); }
+        .dock-link { color: #666; text-decoration: none; text-align: center; transition: 0.3s; }
+        .dock-link.active { color: var(--brass); }
+        .dock-link i { font-size: 1.4rem; display: block; margin-bottom: 4px; }
 
+        /* --- 2. THE HERO (EXTERIOR TO INTERIOR) --- */
+        .hero {
+            height: 100vh; display: flex; align-items: center; justify-content: center;
+            padding: 0 5%; position: relative; overflow: hidden;
+        }
+        .hero-bg {
+            position: absolute; width: 85%; height: 70%; 
+            background: url('https://images.unsplash.com/photo-1512690196236-4bab0b544391?auto=format&fit=crop&q=80') center/cover;
+            border-radius: 10px; filter: sepia(0.2) brightness(0.8);
+        }
+
+        /* --- 6. BENTO GILDED GRID --- */
+        .bento { display: grid; grid-template-columns: repeat(12, 1fr); gap: 20px; padding: 20px; }
+        .card { 
+            background: white; border-radius: 30px; padding: 40px; 
+            box-shadow: var(--shadow); transition: 0.5s; position: relative; overflow: hidden;
+        }
+        .card:hover { transform: translateY(-10px); }
+
+        /* --- BUTTONS --- */
+        .btn-brass {
+            background: var(--brass); color: white; border: none; padding: 20px 40px;
+            border-radius: 50px; font-weight: 900; cursor: pointer; transition: 0.3s;
+        }
+        .btn-brass:hover { background: var(--ink); }
+
+        /* --- PRICE LIST --- */
+        .service-row {
+            display: flex; justify-content: space-between; align-items: baseline;
+            padding: 25px 0; border-bottom: 1px solid #EEE;
+        }
+        .service-row h3 { font-size: 1.8rem; }
     </style>
 </head>
 <body>
 
-    <div class="entrance-overlay" id="loader" onclick="this.classList.add('open')">
-        <div style="text-align: center; color: var(--accent);">
-            <h1 class="hero-text" style="font-size: 2rem;">S&B HERITAGE</h1>
-            <p style="letter-spacing: 5px; margin-top: 10px; font-size: 0.7rem;">TAP TO ENTER SHOP</p>
-        </div>
+    <div id="entrance" onclick="this.classList.add('open')">
+        <h1 style="color: var(--brass); font-size: 3rem;">S&B Heritage</h1>
+        <p class="bold" style="color: white; margin-top: 20px;">[ Tap to Enter ]</p>
     </div>
 
-    <nav>
-        <div style="font-family: 'Cormorant Garamond'; font-size: 1.5rem; font-weight: bold;">S&B</div>
-        <div class="barber-pole"></div>
-        <div style="font-weight: 900; font-size: 0.7rem; letter-spacing: 2px;">EST. 2026</div>
+    <nav class="top-nav">
+        <div class="bold">S&B_TERMINAL</div>
+        <div class="bold">EST_2026</div>
     </nav>
 
-    <div class="app-tabs">
-        <i class="fas fa-door-open active"></i>
-        <i class="fas fa-chair"></i>
-        <i class="fas fa-calendar-alt"></i>
-        <i class="fas fa-shopping-bag"></i>
+    <div class="bottom-dock">
+        <a href="#" class="dock-link active"><i class="fas fa-home"></i></a>
+        <a href="#booking" class="dock-link"><i class="fas fa-calendar-check"></i></a>
+        <a href="#shop" class="dock-link"><i class="fas fa-shopping-bag"></i></a>
+        <a href="#location" class="dock-link"><i class="fas fa-map-marked-alt"></i></a>
     </div>
 
-    <section class="hero-spatial">
-        <div class="shop-facade" data-aos="zoom-out" data-aos-duration="1500">
-            <div style="z-index: 2;">
-                <h1 class="hero-text">Tradition<br>Refined.</h1>
-                <button class="btn-gold" style="margin-top: 30px;">BOOK THE CHAIR</button>
-            </div>
-            <div style="position:absolute; inset:0; background: rgba(0,0,0,0.3);"></div>
+    <section class="hero">
+        <div class="hero-bg" data-aos="zoom-out" data-aos-duration="2000"></div>
+        <div style="z-index: 10; text-align: center; color: white;">
+            <h1 style="font-size: 8vw;">The Gentleman's<br>Sanctuary.</h1>
+            <button class="btn-brass" style="margin-top: 30px;">SECURE A CHAIR</button>
         </div>
     </section>
 
-    <section style="padding: 100px 5%;">
-        <div class="bento-grid">
-            <div class="bento-card" style="grid-column: span 12; display: flex; align-items: center; gap: 50px;" data-aos="fade-up">
-                <div style="width: 40%; height: 400px; background: url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80') center/cover; border-radius: 10px;"></div>
-                <div style="width: 60%;">
-                    <h5 style="color: var(--accent); margin-bottom: 20px;">[ THE INTERIOR ]</h5>
-                    <h2 style="font-family: 'Cormorant Garamond'; font-size: 4rem; line-height: 1;">A Sanctuary of Stillness.</h2>
-                    <p style="margin-top: 20px; font-size: 1.2rem; opacity: 0.7;">Premium Italian leather chairs, warm ambient lighting, and the scent of sandalwood. This isn't just a haircut; it's a 45-minute departure from the world.</p>
-                </div>
+    <section style="padding: 150px 10%; text-align: center;">
+        <h5 class="bold" style="color: var(--brass);">01_OUR_STORY</h5>
+        <h2 style="font-size: 4rem; margin-top: 20px;">Traditional Hands.<br>Modern Precision.</h2>
+        <p style="max-width: 600px; margin: 40px auto; font-size: 1.2rem; line-height: 1.6; opacity: 0.7;">We don’t just cut hair; we curate confidence. Our shop is a blend of old-world hospitality and new-world technical excellence.</p>
+    </section>
+
+    <div class="bento">
+        <div class="card" style="grid-column: span 8; min-height: 500px; background: url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80') center/cover;">
+            <div style="position:absolute; inset:0; background: linear-gradient(transparent, rgba(0,0,0,0.8));"></div>
+            <div style="position:relative; color: white; height: 100%; display: flex; flex-direction: column; justify-content: flex-end;">
+                <h2 style="font-size: 4rem;">The Full<br>Protocol</h2>
+                <p>90 minutes of elite grooming.</p>
+            </div>
+        </div>
+        <div class="card" style="grid-column: span 4; background: var(--brass); color: white;">
+            <h5 class="bold">SESSION_02</h5>
+            <h2 style="font-size: 3rem; margin-top: 20px;">Hot Towel<br>Shave</h2>
+            <div style="font-size: 3rem; margin-top: 40px;">£45</div>
+        </div>
+
+        <div class="card" style="grid-column: span 4; text-align: center;">
+            <h2 style="font-size: 4rem; color: var(--brass);">12</h2>
+            <p class="bold">MASTER_ARTISANS</p>
+        </div>
+        <div class="card" style="grid-column: span 8;">
+            <div class="service-row">
+                <h3>Executive Cut</h3>
+                <span>£55</span>
+            </div>
+            <div class="service-row">
+                <h3>Beard Sculpting</h3>
+                <span>£35</span>
+            </div>
+        </div>
+    </div>
+
+    <section id="shop" style="padding: 100px 5%;">
+        <h2 style="font-size: 4rem; margin-bottom: 50px;">The Apothecary</h2>
+        <div class="bento">
+            <div class="card" style="grid-column: span 4; text-align: center;">
+                <div style="height: 200px; background: #f9f9f9; border-radius: 20px; margin-bottom: 20px;"></div>
+                <h3 style="font-size: 1.5rem;">HERITAGE OIL</h3>
+                <p>£24.00</p>
+                <button class="btn-brass" style="margin-top: 20px; padding: 10px 20px;">ADD</button>
+            </div>
+            <div class="card" style="grid-column: span 4; text-align: center;">
+                <div style="height: 200px; background: #f9f9f9; border-radius: 20px; margin-bottom: 20px;"></div>
+                <h3 style="font-size: 1.5rem;">BRASS CLAY</h3>
+                <p>£18.00</p>
+                <button class="btn-brass" style="margin-top: 20px; padding: 10px 20px;">ADD</button>
+            </div>
+            <div class="card" style="grid-column: span 4; text-align: center;">
+                <div style="height: 200px; background: #f9f9f9; border-radius: 20px; margin-bottom: 20px;"></div>
+                <h3 style="font-size: 1.5rem;">OAK WASH</h3>
+                <p>£20.00</p>
+                <button class="btn-brass" style="margin-top: 20px; padding: 10px 20px;">ADD</button>
             </div>
         </div>
     </section>
 
-    <section style="background: var(--white); padding: 150px 5%;">
-        <div style="max-width: 900px; margin: 0 auto;">
-            <h2 style="font-family: 'Cormorant Garamond'; font-size: 3rem; text-align: center; margin-bottom: 80px;">The Service Menu</h2>
-            
-            <div style="display: flex; justify-content: space-between; padding: 40px 0; border-bottom: 1px solid #eee;" data-aos="fade-up">
-                <div><h3>The Signature Cut</h3><p>Wash, cut, and traditional finish.</p></div>
-                <div style="font-size: 2rem; font-family: 'Cormorant Garamond';">£55</div>
+    <section style="background: var(--ink); color: white; padding: 150px 5%;">
+        <div class="bento">
+            <div class="card" style="grid-column: span 6; background: transparent; border: 1px solid #333;">
+                <div style="height: 400px; background: url('https://images.unsplash.com/photo-1618331835717-801e976710b2?auto=format&fit=crop&q=80') center/cover; filter: grayscale(1);"></div>
+                <h2 style="margin-top: 20px; font-size: 2.5rem; color: var(--brass);">V. Kovalev</h2>
+                <p class="bold">Founder & Chief Artisan</p>
             </div>
-            
-            <div style="display: flex; justify-content: space-between; padding: 40px 0; border-bottom: 1px solid #eee;" data-aos="fade-up">
-                <div><h3>Hot Towel Shave</h3><p>Straight-razor with essential oils.</p></div>
-                <div style="font-size: 2rem; font-family: 'Cormorant Garamond';">£40</div>
-            </div>
-
-            <div style="display: flex; justify-content: space-between; padding: 40px 0;" data-aos="fade-up">
-                <div><h3>The Full Works</h3><p>90 minutes of total grooming.</p></div>
-                <div style="font-size: 2rem; font-family: 'Cormorant Garamond';">£95</div>
-            </div>
-        </div>
-    </section>
-
-    <section class="bento-grid">
-        <div class="bento-card" style="grid-column: span 3; text-align: center;">
-            <div class="stat-circle"><h2>15</h2><p>Years</p></div>
-        </div>
-        <div class="bento-card" style="grid-column: span 3; text-align: center;">
-            <div class="stat-circle"><h2>4k+</h2><p>Clients</p></div>
-        </div>
-        <div class="bento-card" style="grid-column: span 3; text-align: center;">
-            <div class="stat-circle"><h2>24k</h2><p>Shaves</p></div>
-        </div>
-        <div class="bento-card" style="grid-column: span 3; text-align: center;">
-            <div class="stat-circle"><h2>100%</h2><p>Craft</p></div>
-        </div>
-    </section>
-
-    <section style="padding: 100px 5%;">
-        <h2 style="font-family: 'Cormorant Garamond'; font-size: 3rem; margin-bottom: 50px;">From the Apothecary</h2>
-        <div class="bento-grid">
-            <div class="bento-card" style="grid-column: span 4; text-align: center;">
-                <div style="height: 200px; background: #eee; margin-bottom: 20px; border-radius: 10px;"></div>
-                <h4 style="font-family: 'Cormorant Garamond'; font-size: 1.5rem;">Sandalwood Oil</h4>
-                <p>£28.00</p>
-                <button class="btn-gold" style="padding: 10px 20px; font-size: 0.6rem; margin-top: 20px;">ADD TO KIT</button>
-            </div>
-            </div>
-    </section>
-
-    <section style="padding: 150px 5%; background: var(--ink); color: var(--white);">
-        <h2 style="font-family: 'Cormorant Garamond'; font-size: 5rem; text-align: center;">The Hands Behind the Steel.</h2>
-        <div class="bento-grid" style="margin-top: 80px;">
-            <div class="bento-card" style="grid-column: span 6; background: transparent; border: 1px solid rgba(255,255,255,0.1);">
-                <div style="height: 400px; background: url('https://images.unsplash.com/photo-1618331835717-801e976710b2?auto=format&fit=crop&q=80') center/cover; filter: sepia(0.5);"></div>
-                <h3 style="margin-top: 30px; font-family: 'Cormorant Garamond'; font-size: 2rem;">Master Artisan Kovalev</h3>
-            </div>
-            <div class="bento-card" style="grid-column: span 6; background: transparent; border: 1px solid rgba(255,255,255,0.1);">
+            <div class="card" style="grid-column: span 6; background: transparent; border: 1px solid #333;">
                 <div style="height: 400px; background: #222;"></div>
-                <h3 style="margin-top: 30px; font-family: 'Cormorant Garamond'; font-size: 2rem;">Senior Artisan Thorne</h3>
+                <h2 style="margin-top: 20px; font-size: 2.5rem; color: var(--brass);">M. Thorne</h2>
+                <p class="bold">Senior Specialist</p>
             </div>
         </div>
     </section>
 
-    <section class="bento-grid" style="padding: 100px 5%;">
-        <div class="bento-card" style="grid-column: span 8; height: 400px;">
-            <h2 style="font-family: 'Cormorant Garamond'; font-size: 2rem;">Visit the Shop</h2>
-            <p style="margin-top: 20px;">12 Heritage Row, St James's<br>London, SW1A 1ER</p>
-            <div style="height: 200px; background: #f0f0f0; margin-top: 30px; border-radius: 10px;"></div>
+    <footer id="location" style="padding: 150px 5%; display: flex; justify-content: space-between; align-items: flex-end;">
+        <div>
+            <h1 style="font-size: 6rem;">S&B</h1>
+            <p style="max-width: 300px; opacity: 0.5;">12 Heritage Row, Mayfair, London. The final destination for the modern gentleman.</p>
         </div>
-        <div class="bento-card" style="grid-column: span 4; background: var(--accent); color: var(--white);">
-            <h3>HOURS</h3>
-            <p style="margin-top: 20px;">MON-FRI: 09:00 - 19:00</p>
-            <p>SAT: 10:00 - 17:00</p>
-            <p>SUN: BY APPOINTMENT</p>
+        <div style="text-align: right;">
+            <p class="bold">OPENING_HOURS</p>
+            <p>Mon - Fri: 09:00 - 20:00</p>
+            <p>Sat - Sun: 10:00 - 18:00</p>
+            <div style="margin-top: 30px;">
+                <i class="fab fa-instagram" style="font-size: 1.5rem; margin-left: 20px;"></i>
+                <i class="fab fa-whatsapp" style="font-size: 1.5rem; margin-left: 20px;"></i>
+            </div>
         </div>
-    </section>
-
-    <footer style="padding: 100px 5%; text-align: center; border-top: 1px solid #eee;">
-        <h1 class="hero-text" style="color: var(--ink); font-size: 3rem;">S&B</h1>
-        <p style="margin-top: 20px; font-weight: 900; letter-spacing: 5px;">A LEGACY IN EVERY CUT.</p>
     </footer>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         AOS.init();
-        // Remove entrance loader after delay
+        // Auto-open entrance for demo, but owner would love the 'Tap' experience
         setTimeout(() => {
-            document.getElementById('loader').classList.add('open');
-        }, 2000);
+            // document.getElementById('entrance').classList.add('open'); 
+        }, 3000);
     </script>
 </body>
 </html>
