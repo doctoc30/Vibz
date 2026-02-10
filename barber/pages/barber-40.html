@@ -3,210 +3,187 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SVRGN // SOLAR GOLD TERMINAL</title>
+    <title>SVRGN // MODERN TERMINAL</title>
     
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Outfit:wght@300;600;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;800&family=Space+Grotesk:wght@700&display=swap');
 
         :root {
-            --gold: #FFC300;
-            --orange: #FF5733;
-            --cream: #FFFDF5;
-            --ink: #121212;
-            --soft-gold: rgba(255, 195, 0, 0.1);
+            --accent-yellow: #FFD700;
+            --accent-orange: #FF5F1F;
+            --bg-light: #F8F9FA;
+            --card-white: #FFFFFF;
+            --text-dark: #121212;
+            --soft-shadow: 0 10px 30px rgba(0,0,0,0.04);
+            --border-radius: 24px;
         }
 
-        /* --- THE APP INTERFACE --- */
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        /* --- MODERN RESET --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
         body { 
-            background: var(--cream); 
-            color: var(--ink); 
-            font-family: 'Outfit', sans-serif;
+            background: var(--bg-light); 
+            color: var(--text-dark); 
+            font-family: 'Plus Jakarta Sans', sans-serif;
             overflow-x: hidden;
+            line-height: 1.6;
         }
 
-        .heavy { font-family: 'Archivo Black', sans-serif; text-transform: uppercase; line-height: 0.85; }
+        h1, h2 { font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; letter-spacing: -1px; }
 
-        /* --- 1. FLOATING APP NAV --- */
-        nav {
-            position: fixed; top: 20px; left: 5%; width: 90%; height: 70px;
-            background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px);
-            border-radius: 20px; border: 2px solid var(--gold);
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 0 25px; z-index: 2000;
-        }
-
-        /* --- 5. BOTTOM COMMAND DOCK --- */
-        .command-bar {
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            width: 90%; max-width: 450px; height: 80px; background: var(--ink);
+        /* --- SLEEK FLOATING NAVIGATION --- */
+        .app-shell-nav {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 450px; height: 75px;
+            background: rgba(18, 18, 18, 0.95); backdrop-filter: blur(15px);
             border-radius: 40px; display: flex; justify-content: space-around;
-            align-items: center; z-index: 2000; box-shadow: 0 20px 40px rgba(255, 87, 51, 0.3);
+            align-items: center; z-index: 2000; padding: 0 20px;
         }
-        .command-btn { color: white; text-align: center; text-decoration: none; font-size: 0.7rem; font-weight: 600; }
-        .command-btn.active { color: var(--gold); }
-        .command-btn i { font-size: 1.5rem; display: block; margin-bottom: 4px; }
+        .nav-link { color: #888; text-decoration: none; font-size: 0.75rem; font-weight: 700; text-align: center; transition: 0.3s; }
+        .nav-link.active { color: var(--accent-yellow); }
+        .nav-link i { font-size: 1.3rem; display: block; margin-bottom: 4px; }
 
-        /* --- 2. HERO: SOLAR FLARE --- */
+        /* --- 1. MINIMAL HERO --- */
         .hero {
-            height: 100vh; padding: 120px 5% 40px;
-            display: flex; flex-direction: column; justify-content: space-between;
-            background: radial-gradient(circle at 80% 20%, var(--soft-gold), transparent);
+            padding: 120px 6% 40px; min-height: 80vh;
+            display: flex; flex-direction: column; justify-content: center;
         }
-        .hero h1 { font-size: clamp(4rem, 15vw, 12rem); color: var(--ink); }
+        .hero-tag { background: var(--accent-yellow); padding: 6px 16px; border-radius: 100px; font-size: 0.7rem; font-weight: 800; width: fit-content; margin-bottom: 20px; }
+        .hero h1 { font-size: clamp(3.5rem, 10vw, 7rem); line-height: 0.95; margin-bottom: 24px; }
         
-        /* --- 6. FUNKY BENTO HUD --- */
-        .hud-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 15px; padding: 20px; }
-        .hud-card { 
-            background: white; border-radius: 35px; padding: 30px; 
-            border: 2px solid transparent; transition: 0.4s;
-            display: flex; flex-direction: column; justify-content: space-between;
+        /* --- 2. THE BENTO GRID (CLEAN & SLEEK) --- */
+        .bento-container {
+            display: grid; grid-template-columns: repeat(12, 1fr); gap: 20px; padding: 0 6% 120px;
         }
-        .hud-card:hover { border-color: var(--orange); transform: translateY(-5px); }
+        .bento-pod { 
+            background: var(--card-white); border-radius: var(--border-radius); padding: 35px;
+            box-shadow: var(--soft-shadow); transition: transform 0.4s ease;
+            position: relative; overflow: hidden;
+        }
+        .bento-pod:hover { transform: translateY(-8px); }
+        
         .span-12 { grid-column: span 12; }
         .span-8 { grid-column: span 8; }
         .span-4 { grid-column: span 4; }
         .span-6 { grid-column: span 6; }
 
-        /* --- STATS STRIP --- */
-        .stats { background: var(--gold); padding: 60px 5%; display: flex; justify-content: space-around; }
-        .stat-box h2 { font-size: 4rem; color: white; -webkit-text-stroke: 2px var(--ink); }
+        /* --- 6. SERVICE HUB --- */
+        .price-badge { background: var(--bg-light); padding: 8px 16px; border-radius: 12px; font-weight: 800; font-size: 0.9rem; }
+        .service-item { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid #f0f0f0; }
 
-        /* --- ARTISAN SWIPER --- */
-        .swiper-container { 
-            display: flex; overflow-x: auto; gap: 20px; padding: 40px 5%;
-            scroll-snap-type: x mandatory; scrollbar-width: none;
+        /* --- 9. ARTISAN CARDS (USER FRIENDLY) --- */
+        .artisan-strip { display: flex; gap: 20px; overflow-x: auto; padding: 20px 0; scrollbar-width: none; }
+        .artisan-strip::-webkit-scrollbar { display: none; }
+        .artisan-pill { 
+            min-width: 260px; height: 350px; background: #eee; border-radius: var(--border-radius);
+            position: relative; overflow: hidden;
         }
-        .artisan-card {
-            min-width: 280px; height: 400px; background: var(--light-yellow);
-            border-radius: 40px; scroll-snap-align: center; position: relative;
-            overflow: hidden; border: 3px solid var(--ink);
-        }
-        .artisan-img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); transition: 0.5s; }
-        .artisan-card:hover .artisan-img { filter: grayscale(0); transform: scale(1.1); }
 
         /* --- BUTTONS --- */
-        .btn-main {
-            background: var(--orange); color: white; border: none; padding: 25px 50px;
-            border-radius: 50px; font-family: 'Archivo Black'; font-size: 1.2rem;
-            cursor: pointer; box-shadow: 10px 10px 0px var(--ink); transition: 0.2s;
+        .btn-modern {
+            background: var(--text-dark); color: white; border: none; padding: 20px 40px;
+            border-radius: 18px; font-weight: 700; cursor: pointer; transition: 0.3s;
+            font-size: 1rem; width: fit-content;
         }
-        .btn-main:active { transform: translate(5px, 5px); box-shadow: 0px 0px 0px var(--ink); }
+        .btn-modern:hover { background: var(--accent-orange); }
+
+        /* --- 15. LIVE STATUS --- */
+        .status-dot { width: 10px; height: 10px; background: #00C853; border-radius: 50%; display: inline-block; margin-right: 8px; box-shadow: 0 0 10px #00C853; }
 
     </style>
 </head>
 <body>
 
-    <nav>
-        <div class="heavy" style="font-size: 1.8rem;">SVRGN<span style="color:var(--orange)">.</span></div>
-        <div class="heavy" style="font-size: 0.8rem; background: var(--gold); padding: 5px 15px; border-radius: 10px;">EST. 2026</div>
+    <header style="position: absolute; top: 0; width: 100%; padding: 40px 6%; display: flex; justify-content: space-between; align-items: center;">
+        <h2 style="font-size: 1.5rem;">SVRGN<span style="color:var(--accent-orange)">.</span></h2>
+        <div style="font-weight: 700; font-size: 0.8rem;"><span class="status-dot"></span>SHOP IS OPEN</div>
+    </header>
+
+    <nav class="app-shell-nav">
+        <a href="#" class="nav-link active"><i class="fas fa-th-large"></i>HOME</a>
+        <a href="#services" class="nav-link"><i class="fas fa-scissors"></i>CUTS</a>
+        <a href="#shop" class="nav-link"><i class="fas fa-shopping-bag"></i>LAB</a>
+        <a href="#book" class="nav-link"><i class="fas fa-calendar-alt"></i>BOOK</a>
     </nav>
 
-    <div class="command-bar">
-        <a href="#" class="command-btn active"><i class="fas fa-bolt"></i>CUTS</a>
-        <a href="#booking" class="command-btn"><i class="fas fa-calendar-alt"></i>BOOK</a>
-        <a href="#shop" class="command-btn"><i class="fas fa-flask"></i>LAB</a>
-        <a href="#map" class="command-btn"><i class="fas fa-map-pin"></i>HITS</a>
-    </div>
-
     <section class="hero">
-        <h1 class="heavy" data-aos="fade-up">STAY<br><span style="color:var(--orange)">SHARP</span><br>GO GOLD.</h1>
-        <div style="display: flex; justify-content: space-between; align-items: flex-end;">
-            <p style="font-weight: 600; max-width: 300px; text-transform: uppercase;">The high-frequency grooming terminal for the modern vanguard.</p>
-            <button class="btn-main">START CALIBRATION</button>
-        </div>
+        <div class="hero-tag">2026 PRECISION READY</div>
+        <h1 data-aos="fade-up" data-aos-duration="1000">Get Sharp.<br>Stay <span style="color: var(--accent-orange);">Gold.</span></h1>
+        <p style="max-width: 500px; font-size: 1.1rem; color: #666; margin-bottom: 40px;">Boutique grooming at the intersection of technical engineering and high-fashion aesthetics.</p>
+        <button class="btn-modern">RESERVE A SESSION</button>
     </section>
 
-    <div class="hud-grid">
-        <div class="hud-card span-8" style="background: var(--gold); min-height: 300px;">
-            <h2 class="heavy" style="font-size: 4rem;">01<br>THE ARCHITECT</h2>
-            <p class="heavy">£55 // 45 MINS</p>
-        </div>
-        <div class="hud-card span-4" style="background: var(--ink); color: white;">
-            <i class="fas fa-wind" style="font-size: 3rem; color: var(--gold);"></i>
-            <h3 class="heavy">OXY<br>FACIAL</h3>
-        </div>
-        <div class="hud-card span-4" style="background: var(--orange); color: white;">
-            <h3 class="heavy">BEARD<br>DESIGN</h3>
-            <h2 class="heavy">£35</h2>
-        </div>
-        <div class="hud-card span-8">
-            <h3 class="heavy">MEMBERSHIP STATUS</h3>
-            <div style="height: 10px; background: #eee; border-radius: 5px; margin: 20px 0;">
-                <div style="width: 75%; height: 100%; background: var(--gold); border-radius: 5px;"></div>
+    <div class="bento-container" id="services">
+        <div class="bento-pod span-8" data-aos="fade-up">
+            <h3 style="margin-bottom: 30px;">SERVICE CATALOGUE</h3>
+            <div class="service-item">
+                <div><h4>The Signature Fade</h4><p style="font-size: 0.8rem; opacity: 0.6;">45 Min • Scalp Therapy included</p></div>
+                <div class="price-badge">£55</div>
             </div>
-            <p>75% OF SLOTS BOOKED THIS WEEK</p>
+            <div class="service-item">
+                <div><h4>Beard Architecture</h4><p style="font-size: 0.8rem; opacity: 0.6;">30 Min • Hot towel & Razor finish</p></div>
+                <div class="price-badge">£35</div>
+            </div>
+            <div class="service-item" style="border: none;">
+                <div><h4>The Full Protocol</h4><p style="font-size: 0.8rem; opacity: 0.6;">90 Min • Complete transformation</p></div>
+                <div class="price-badge">£95</div>
+            </div>
+        </div>
+
+        <div class="bento-pod span-4" style="background: var(--accent-yellow); display: flex; flex-direction: column; justify-content: center; text-align: center;">
+            <h2 style="font-size: 4rem; line-height: 1;">99%</h2>
+            <p style="font-weight: 800; font-size: 0.7rem; margin-top: 10px;">CUSTOMER ACCURACY</p>
+        </div>
+
+        <div class="bento-pod span-12">
+            <h3 style="margin-bottom: 20px;">THE ARTISANS</h3>
+            <div class="artisan-strip">
+                <div class="artisan-pill" style="background: url('https://images.unsplash.com/photo-1618331835717-801e976710b2?auto=format&fit=crop&q=80') center/cover;">
+                    <div style="position: absolute; bottom: 0; width: 100%; padding: 20px; background: linear-gradient(transparent, rgba(0,0,0,0.8)); color: white;">
+                        <h4 class="bold">V. KOVALEV</h4>
+                        <p style="font-size: 0.7rem; opacity: 0.8;">CHIEF ARTISAN</p>
+                    </div>
+                </div>
+                <div class="artisan-pill" style="background: url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80') center/cover;">
+                    <div style="position: absolute; bottom: 0; width: 100%; padding: 20px; background: linear-gradient(transparent, rgba(0,0,0,0.8)); color: white;">
+                        <h4 class="bold">M. THORNE</h4>
+                        <p style="font-size: 0.7rem; opacity: 0.8;">SENIOR STYLIST</p>
+                    </div>
+                </div>
+                <div class="artisan-pill" style="background: #222; display: flex; align-items: center; justify-content: center;">
+                    <p style="color: #444; font-weight: 800;">RECRUITING...</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bento-pod span-6" id="shop">
+            <h3 style="margin-bottom: 20px;">PRODUCT LAB</h3>
+            <div style="display: flex; gap: 15px; align-items: center;">
+                <div style="width: 80px; height: 80px; background: var(--bg-light); border-radius: 15px;"></div>
+                <div>
+                    <h4 style="font-size: 0.9rem;">SVRGN CLAY</h4>
+                    <p style="font-weight: 800; color: var(--accent-orange);">£24.00</p>
+                </div>
+                <button style="margin-left: auto; border: none; background: #f0f0f0; width: 40px; height: 40px; border-radius: 12px;"><i class="fas fa-plus"></i></button>
+            </div>
+        </div>
+
+        <div class="bento-pod span-6">
+            <h3>LOCATION</h3>
+            <p style="margin-top: 15px; opacity: 0.6;">STATION 09, LONDON DOCKLANDS</p>
+            <div style="height: 100px; background: #f0f0f0; margin-top: 20px; border-radius: 15px;"></div>
         </div>
     </div>
 
-    <section class="stats">
-        <div class="stat-box"><h2>12</h2><p class="heavy">STATIONS</p></div>
-        <div class="stat-box"><h2>99%</h2><p class="heavy">FADE_SYNC</p></div>
-        <div class="stat-box"><h2>24h</h2><p class="heavy">PORTAL</p></div>
-    </section>
-
-    <div style="padding: 80px 5% 0;">
-        <h2 class="heavy" style="font-size: 3rem;">THE ARTISANS</h2>
-    </div>
-    <div class="swiper-container">
-        <div class="artisan-card">
-            <img src="https://images.unsplash.com/photo-1618331835717-801e976710b2?auto=format&fit=crop&q=80" class="artisan-img">
-            <div style="position:absolute; bottom:20px; left:20px; color:white; z-index:10;">
-                <h3 class="heavy">V. KOVALEV</h3>
-                <p class="heavy" style="color:var(--gold)">MASTER ARTISAN</p>
-            </div>
-        </div>
-        <div class="artisan-card">
-            <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80" class="artisan-img">
-            <div style="position:absolute; bottom:20px; left:20px; color:white; z-index:10;">
-                <h3 class="heavy">M. THORNE</h3>
-                <p class="heavy" style="color:var(--gold)">SENIOR FADE</p>
-            </div>
-        </div>
-    </div>
-
-    <section id="shop" style="padding: 100px 5%;">
-        <h2 class="heavy" style="font-size: 3rem; margin-bottom: 40px;">PRODUCTS LAB</h2>
-        <div class="hud-grid">
-            <div class="hud-card span-6" style="text-align: center;">
-                <div style="height: 200px; background: var(--soft-gold); border-radius: 20px; margin-bottom: 20px;"></div>
-                <h3 class="heavy">GOLD POMADE</h3>
-                <p>£24.00</p>
-                <button class="heavy" style="margin-top: 15px; border:none; background:none; color:var(--orange);">+ ADD TO KIT</button>
-            </div>
-            <div class="hud-card span-6" style="text-align: center;">
-                <div style="height: 200px; background: var(--soft-gold); border-radius: 20px; margin-bottom: 20px;"></div>
-                <h3 class="heavy">OAK SERUM</h3>
-                <p>£28.00</p>
-                <button class="heavy" style="margin-top: 15px; border:none; background:none; color:var(--orange);">+ ADD TO KIT</button>
-            </div>
-        </div>
-    </section>
-
-    <section id="map" style="padding: 100px 5%; background: var(--ink); color: white; border-radius: 60px 60px 0 0;">
-        <h1 class="heavy" style="font-size: 6rem; color: var(--gold);">DROP IN.</h1>
-        <div style="margin-top: 50px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
-            <div>
-                <h4 class="heavy" style="color: var(--orange);">LOCATION</h4>
-                <p>STATION 09, THE ARCHES<br>LONDON, SE1</p>
-            </div>
-            <div>
-                <h4 class="heavy" style="color: var(--orange);">HOURS</h4>
-                <p>MON-FRI: 08:00 - 21:00</p>
-                <p>SAT: 10:00 - 18:00</p>
-            </div>
-        </div>
-        <div style="margin-top: 80px; text-align: center; opacity: 0.2;">
-            <h2 class="heavy">SVRGN® TERMINAL 2026</h2>
-        </div>
-    </section>
+    <footer style="padding: 0 6% 150px; text-align: center;">
+        <p style="font-size: 0.8rem; font-weight: 800; opacity: 0.2;">SVRGN TERMINAL // VERSION 4.0 // 2026</p>
+    </footer>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        AOS.init();
+        AOS.init({ once: true });
     </script>
 </body>
 </html>
