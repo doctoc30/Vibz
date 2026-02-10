@@ -236,7 +236,6 @@
         .concept-info h3 { font-weight: 900; color: var(--primary); text-transform: uppercase; margin-bottom: 4px; }
         .concept-info p { font-size: 0.85rem; color: var(--gray); font-weight: 600; line-height: 1.4; }
         
-        /* Added for premium notice */
         .premium-notice {
             background: rgba(33, 150, 243, 0.1);
             border: 2px solid var(--premium);
@@ -255,7 +254,6 @@
             font-size: 1rem;
         }
         
-        /* Pricing cards styles */
         .pricing-cards-container {
             display: flex;
             flex-direction: column;
@@ -399,7 +397,6 @@
             margin-bottom: 10px;
         }
         
-        /* Payment button styles */
         .payment-button {
             width: 100%;
             background: linear-gradient(135deg, var(--primary) 0%, #FF8C42 100%);
@@ -446,7 +443,6 @@
             box-shadow: 0 15px 25px rgba(33, 150, 243, 0.3);
         }
         
-        /* Plan selection indicators */
         .plan-indicator {
             display: flex;
             justify-content: center;
@@ -474,18 +470,20 @@
             background: var(--premium);
         }
         
-        /* Feature list styles */
-        .feature-list-compact {
+        .note-box {
+            background: rgba(255, 107, 0, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 15px;
             font-size: 0.8rem;
             color: var(--gray);
-            margin-top: 5px;
-            line-height: 1.4;
+            line-height: 1.5;
         }
         
-        .feature-highlight {
-            font-weight: 700;
-            color: var(--text);
-            margin-bottom: 3px;
+        .note-box strong {
+            color: var(--primary);
+            font-weight: 900;
         }
     </style>
 </head>
@@ -504,7 +502,7 @@
             <a href="#" class="menu-item" onclick="toggleMenu()">Support</a>
         </div>
         <div class="menu-footer">VIBZ COLLECTIVE © 2026</div>
-</div>
+    </div>
 
     <div id="app-container">
         <header>
@@ -575,7 +573,7 @@
 
                     <div class="form-screen" id="step-7">
                       <div class="premium-notice">
-                          <i class="fas fa-crown"></i> Selected Standard features are included with Premium
+                          <i class="fas fa-crown"></i> Premium plans include ALL selected Standard features automatically
                       </div>
                       <div class="services-grid" id="master-service-grid"></div>
                       <div class="plan-indicator" id="plan-indicator"></div>
@@ -664,27 +662,41 @@
 
         // ===== UPDATED MONTHLY SUPPORT SERVICES =====
         const monthlyStandard = [
-            "Content updates (images, services, prices)",
+            "Content updates (new services, images, promotions)",
             "Security patches & backups",
             "Form & functionality checks",
             "SEO tweaks & meta tag updates",
-            "Speed / performance optimizations",
-            "Minor visual adjustments as needed",
+            "Speed / performance optimization",
+            "Minor design tweaks",
             "Analytics reporting (basic)",
             "Booking / payment checks"
         ];
 
         const monthlyPremium = [
-            "Content updates (images, services, promotions)",
+            "Content updates (new services, images, promotions)",
             "Security patches & backups",
             "Form & functionality checks",
-            "SEO optimizations & meta tag updates",
-            "Speed / performance tweaks",
-            "Minor design tweaks",
-            "Analytics & reporting",
-            "Multi-location booking/payment checks",
-            "Priority response / support",
-            "Maintain all premium features (hero video, app-like design, scroll animations, contact bar, etc.)"
+            "SEO & meta updates",
+            "Speed/performance optimization",
+            "Minor design tweaks & graphics refresh",
+            "Analytics & reporting with suggestions",
+            "Multi-location management (if applicable)",
+            "Booking/payment integration checks",
+            "Priority support"
+        ];
+
+        // Premium-only features for monthly plan (cannot duplicate Standard)
+        const monthlyPremiumOnly = [
+            "App-Like Website Design",
+            "Online Booking Form Embed",
+            "Stripe / PayPal Payment Buttons",
+            "Products Display (up to 10 items)",
+            "Digital Gift Card Display Page",
+            "Exit-Intent Popup (Desktop Only)",
+            "Interactive Reviews & Testimonials",
+            "Multi-Location Pages Setup",
+            "Custom Brand Graphics & Icons (up to 20)",
+            "Hero Background Video"
         ];
 
         function toggleMenu() {
@@ -698,7 +710,8 @@
             
             const isOutright = selections.planType === 'Buy Outright';
             const standardServices = isOutright ? buyOutrightStandard : monthlyStandard;
-            const premiumServices = isOutright ? buyOutrightPremium : monthlyPremium;
+            const premiumServices = isOutright ? buyOutrightPremium : (isOutright ? [] : monthlyPremiumOnly);
+            const ongoingServices = !isOutright ? monthlyPremium : [];
             
             // Add Standard Services
             standardServices.forEach(s => grid.innerHTML += `
@@ -712,17 +725,31 @@
                 </div>
             `);
             
-            // Add Premium Services
+            // Add Premium Services (for outright) or Premium-only features (for monthly)
             premiumServices.forEach(s => grid.innerHTML += `
                 <div class="service-card" onclick="toggleService('${s}', 'premium', this)">
                     <span class="tier-pill" style="background:#E3F2FD; color:#2196F3;">PREMIUM</span>
                     <div style="font-weight:700; font-size:0.95rem;">${s}</div>
                     <div style="font-size:0.7rem; color:var(--gray); font-weight:600; margin-top:4px;">
-                        <i class="fas ${isOutright ? 'fa-check' : 'fa-sync'}"></i> 
-                        ${isOutright ? 'One-time setup' : 'Monthly included'}
+                        <i class="fas ${isOutright ? 'fa-crown' : 'fa-crown'}"></i> 
+                        ${isOutright ? 'One-time setup' : 'Premium feature'}
                     </div>
                 </div>
             `);
+            
+            // Add ongoing monthly support services for monthly plans
+            if (!isOutright) {
+                ongoingServices.forEach(s => grid.innerHTML += `
+                    <div class="service-card" onclick="toggleService('${s}', 'ongoing', this)">
+                        <span class="tier-pill" style="background:#FFE0B2; color:var(--primary);">ONGOING</span>
+                        <div style="font-weight:700; font-size:0.95rem;">${s}</div>
+                        <div style="font-size:0.7rem; color:var(--gray); font-weight:600; margin-top:4px;">
+                            <i class="fas fa-sync"></i> 
+                            Monthly support included
+                        </div>
+                    </div>
+                `);
+            }
             
             updatePlanIndicator();
         }
@@ -731,7 +758,7 @@
             el.classList.toggle('selected'); 
             el.classList.toggle(tier);
             
-            const index = selections.services.findIndex(item => item.name === name);
+            const index = selections.services.findIndex(item => item.name === name && item.tier === tier);
             
             if (index > -1) {
                 selections.services.splice(index, 1);
@@ -744,7 +771,7 @@
         }
 
         function updateRecommendedPlan() {
-            const premSels = selections.services.filter(s => s.tier === 'premium');
+            const premSels = selections.services.filter(s => s.tier === 'premium' || s.tier === 'ongoing');
             const stdSels = selections.services.filter(s => s.tier === 'standard');
             
             if (premSels.length > 3) {
@@ -762,7 +789,7 @@
             const indicator = document.getElementById('plan-indicator');
             if (!indicator) return;
             
-            const premSels = selections.services.filter(s => s.tier === 'premium').length;
+            const premSels = selections.services.filter(s => s.tier === 'premium' || s.tier === 'ongoing').length;
             const stdSels = selections.services.filter(s => s.tier === 'standard').length;
             
             let html = `
@@ -827,28 +854,34 @@
         function renderPricingCards() {
             const container = document.getElementById('pricing-cards-display');
             const premSels = selections.services.filter(s => s.tier === 'premium');
-            const hasPremium = premSels.length > 0;
+            const ongoingSels = selections.services.filter(s => s.tier === 'ongoing');
+            const stdSels = selections.services.filter(s => s.tier === 'standard');
+            const hasPremium = premSels.length > 0 || ongoingSels.length > 0;
             const isOutright = selections.planType === 'Buy Outright';
             const isRecommendedPremium = selections.recommendedPlan === 'premium';
             
             let cardsHTML = '';
             
             if (isOutright) {
-                // UPDATED: Buy Outright Plans with correct pricing and details
+                // UPDATED: Buy Outright Plans with new pricing
                 cardsHTML = `
                     <div class="pricing-card standard ${isRecommendedPremium ? '' : 'recommended'}">
                         ${!isRecommendedPremium ? '<div class="plan-recommended-badge"><i class="fas fa-star"></i> Recommended</div>' : ''}
                         <div class="pricing-header">
-                            <div class="plan-type standard-type">STANDARD PLAN</div>
-                            <div class="plan-price">£2,500</div>
-                            <div class="plan-desc">One-Time Purchase • No ongoing fees</div>
+                            <div class="plan-type standard-type">STANDARD — ONE-TIME</div>
+                            <div class="plan-price">£1,500</div>
+                            <div class="plan-desc">One-Time Purchase • Full Ownership Immediately</div>
                         </div>
                         <div class="plan-features">
                             <div class="plan-feature"><i class="fas fa-file"></i> Up to 5 Pages</div>
                             <div class="plan-feature"><i class="fas fa-edit"></i> Up to 5 Revisions per Page</div>
                             <div class="plan-feature"><i class="fas fa-calendar"></i> Delivery: 15–20 Days</div>
                             <div class="plan-feature"><i class="fas fa-headset"></i> Support: 1 Month</div>
-                            <div class="plan-feature"><i class="fas fa-check" style="color:var(--standard);"></i> Includes all Standard features below</div>
+                            <div class="plan-feature"><i class="fas fa-check" style="color:var(--standard);"></i> All 15 Standard Features Included</div>
+                            <div class="plan-feature"><i class="fas fa-user-cog"></i> You manage hosting & updates</div>
+                        </div>
+                        <div class="note-box">
+                            <strong>Notes:</strong> Full ownership immediately • Ideal for small shops wanting full control • Barber manages hosting & future updates
                         </div>
                         <button class="payment-button secondary" onclick="proceedWithPlan('standard')">
                             <i class="fas fa-shopping-cart"></i> Select Standard Plan
@@ -858,16 +891,20 @@
                     <div class="pricing-card premium ${isRecommendedPremium ? 'recommended' : ''}">
                         ${isRecommendedPremium ? '<div class="plan-recommended-badge"><i class="fas fa-crown"></i> Recommended For You</div>' : ''}
                         <div class="pricing-header">
-                            <div class="plan-type premium-type">PREMIUM PLAN</div>
-                            <div class="plan-price">£5,000</div>
-                            <div class="plan-desc">One-Time Purchase • No ongoing fees</div>
+                            <div class="plan-type premium-type">PREMIUM — ONE-TIME</div>
+                            <div class="plan-price">£4,000</div>
+                            <div class="plan-desc">One-Time Purchase • Full Ownership Immediately</div>
                         </div>
                         <div class="plan-features">
                             <div class="plan-feature"><i class="fas fa-file"></i> Up to 15 Pages</div>
                             <div class="plan-feature"><i class="fas fa-edit"></i> Up to 10 Revisions per Page</div>
                             <div class="plan-feature"><i class="fas fa-calendar"></i> Delivery: 25–30 Days</div>
                             <div class="plan-feature"><i class="fas fa-headset"></i> Support: 3 Months</div>
-                            <div class="plan-feature"><i class="fas fa-crown" style="color:var(--premium);"></i> Includes ALL Standard & Premium features</div>
+                            <div class="plan-feature"><i class="fas fa-crown" style="color:var(--premium);"></i> All Standard + 20+ Premium Features</div>
+                            <div class="plan-feature"><i class="fas fa-user-cog"></i> You manage hosting & updates</div>
+                        </div>
+                        <div class="note-box">
+                            <strong>Notes:</strong> Premium features are high-value, non-duplicated, fully done once • Ideal for larger barber shops or multi-location setups
                         </div>
                         <button class="payment-button premium" onclick="proceedWithPlan('premium')">
                             <i class="fas fa-crown"></i> Select Premium Plan
@@ -875,21 +912,26 @@
                     </div>
                 `;
             } else {
-                // UPDATED: Monthly Support Plans with correct pricing and details
+                // UPDATED: Monthly Support Plans with new structure
                 cardsHTML = `
                     <div class="pricing-card monthly-standard ${isRecommendedPremium ? '' : 'recommended'}">
                         ${!isRecommendedPremium ? '<div class="plan-recommended-badge"><i class="fas fa-star"></i> Recommended</div>' : ''}
                         <div class="pricing-header">
-                            <div class="monthly-badge"><i class="fas fa-sync"></i> MONTHLY STANDARD SUPPORT</div>
+                            <div class="monthly-badge"><i class="fas fa-sync"></i> STANDARD — MONTHLY</div>
                             <div class="plan-price">£500</div>
-                            <div class="plan-desc">upfront + £150/month • 12-Month Contract</div>
-                            <div style="font-size:0.85rem; color:var(--gray); margin-top:5px; font-weight:700;">Total after 12 months: £2,300</div>
+                            <div class="plan-desc">upfront + £150/month × 12 months</div>
+                            <div style="font-size:0.85rem; color:var(--gray); margin-top:5px; font-weight:700; background:rgba(76,175,80,0.1); padding:8px; border-radius:10px;">
+                                Total after 12 months: <strong>£2,300</strong>
+                            </div>
                         </div>
                         <div class="plan-features">
-                            <div class="plan-feature"><i class="fas fa-check" style="color:var(--standard);"></i> Full Standard site setup included</div>
-                            <div class="plan-feature"><i class="fas fa-sync" style="color:var(--primary);"></i> Ongoing Monthly Support</div>
-                            <div class="plan-feature"><i class="fas fa-server"></i> We handle hosting & updates</div>
-                            <div class="plan-feature"><i class="fas fa-shield-alt"></i> Always up-to-date & secure</div>
+                            <div class="plan-feature"><i class="fas fa-check" style="color:var(--standard);"></i> Selected Standard features only (choose 10-15)</div>
+                            <div class="plan-feature"><i class="fas fa-sync" style="color:var(--primary);"></i> Ongoing Monthly Support Included</div>
+                            <div class="plan-feature"><i class="fas fa-server"></i> We handle hosting, security & updates</div>
+                            <div class="plan-feature"><i class="fas fa-shield-alt"></i> 8-point monthly maintenance plan</div>
+                        </div>
+                        <div class="note-box">
+                            <strong>Notes:</strong> Lower upfront, worry-free monthly support • After 12 months, you can continue support or manage the site yourself
                         </div>
                         <button class="payment-button secondary" onclick="proceedWithPlan('monthly-standard')">
                             <i class="fas fa-sync"></i> Select Monthly Standard
@@ -899,16 +941,21 @@
                     <div class="pricing-card monthly-premium ${isRecommendedPremium ? 'recommended' : ''}">
                         ${isRecommendedPremium ? '<div class="plan-recommended-badge"><i class="fas fa-crown"></i> Recommended For You</div>' : ''}
                         <div class="pricing-header">
-                            <div class="monthly-badge"><i class="fas fa-sync"></i> MONTHLY PREMIUM SUPPORT</div>
+                            <div class="monthly-badge"><i class="fas fa-sync"></i> PREMIUM — MONTHLY</div>
                             <div class="plan-price">£650</div>
-                            <div class="plan-desc">upfront + £200/month • 12-Month Contract</div>
-                            <div style="font-size:0.85rem; color:var(--gray); margin-top:5px; font-weight:700;">Total after 12 months: £3,050</div>
+                            <div class="plan-desc">upfront + £200/month × 12 months</div>
+                            <div style="font-size:0.85rem; color:var(--gray); margin-top:5px; font-weight:700; background:rgba(33,150,243,0.1); padding:8px; border-radius:10px;">
+                                Total after 12 months: <strong>£3,050</strong>
+                            </div>
                         </div>
                         <div class="plan-features">
-                            <div class="plan-feature"><i class="fas fa-crown" style="color:var(--premium);"></i> Full Premium site setup included</div>
-                            <div class="plan-feature"><i class="fas fa-sync" style="color:var(--primary);"></i> Ongoing Monthly Support</div>
-                            <div class="plan-feature"><i class="fas fa-server"></i> We handle hosting & updates</div>
-                            <div class="plan-feature"><i class="fas fa-shield-alt"></i> Always up-to-date & secure</div>
+                            <div class="plan-feature"><i class="fas fa-crown" style="color:var(--premium);"></i> Selected Standard + Premium-only features</div>
+                            <div class="plan-feature"><i class="fas fa-sync" style="color:var(--primary);"></i> Ongoing Monthly Support Included</div>
+                            <div class="plan-feature"><i class="fas fa-server"></i> We handle hosting, security & updates</div>
+                            <div class="plan-feature"><i class="fas fa-shield-alt"></i> 10-point premium monthly maintenance</div>
+                        </div>
+                        <div class="note-box">
+                            <strong>Notes:</strong> First month = full premium build • Subsequent months = maintenance and optimizations • After 12 months, you can continue support or take full ownership
                         </div>
                         <button class="payment-button premium" onclick="proceedWithPlan('monthly-premium')">
                             <i class="fas fa-crown"></i> Select Monthly Premium
@@ -918,8 +965,6 @@
             }
             
             // Add selected features section
-            const stdSels = selections.services.filter(s => s.tier === 'standard');
-            
             if (selections.services.length > 0) {
                 cardsHTML += `
                     <div class="final-summary-card" style="margin-top:20px;">
@@ -927,8 +972,8 @@
                         <div style="margin-top:20px;">
                             ${hasPremium ? `
                                 <div style="margin-bottom:15px;">
-                                    <div style="font-size:0.8rem; font-weight:900; color:var(--premium); margin-bottom:8px; text-transform:uppercase;">Premium Features</div>
-                                    ${premSels.map(s => `<div class="plan-feature"><i class="fas fa-crown" style="color:var(--premium);"></i> ${s.name}</div>`).join('')}
+                                    <div style="font-size:0.8rem; font-weight:900; color:var(--premium); margin-bottom:8px; text-transform:uppercase;">${isOutright ? 'Premium Features' : 'Premium-Only Features'}</div>
+                                    ${[...premSels, ...ongoingSels].map(s => `<div class="plan-feature"><i class="fas ${isOutright ? 'fa-crown' : 'fa-crown'}" style="color:var(--premium);"></i> ${s.name}</div>`).join('')}
                                 </div>
                             ` : ''}
                             
@@ -939,9 +984,15 @@
                                 </div>
                             ` : ''}
                             
-                            ${hasPremium && stdSels.length > 0 ? `
+                            ${hasPremium && stdSels.length > 0 && isOutright ? `
                                 <div class="premium-notice" style="margin:15px 0; padding:12px; font-size:0.8rem;">
-                                    <i class="fas fa-check-circle"></i> ${stdSels.length} selected Standard features included with Premium
+                                    <i class="fas fa-check-circle"></i> All ${stdSels.length} selected Standard features included automatically with Premium
+                                </div>
+                            ` : ''}
+                            
+                            ${!isOutright && hasPremium ? `
+                                <div class="note-box" style="margin:15px 0;">
+                                    <strong>Monthly Premium Plan Includes:</strong> Selected Standard features + Premium-only features (cannot duplicate Standard) • First month = full premium build • Subsequent months = maintenance
                                 </div>
                             ` : ''}
                         </div>
@@ -952,7 +1003,8 @@
                             <div><strong>Timeline:</strong> ${selections.urgency || 'Standard'}</div>
                             <div><strong>Plan:</strong> ${selections.planType}</div>
                             <div><strong>Type:</strong> ${isOutright ? 'One-Time Setup' : 'Monthly Managed Service (12-Month Contract)'}</div>
-                            ${!isOutright ? `<div><strong>After 12 Months:</strong> Continue support or end & retain ownership</div>` : ''}
+                            ${!isOutright ? `<div><strong>After 12 Months:</strong> Continue support or end & retain full ownership</div>` : ''}
+                            <div><strong>Selected Features:</strong> ${stdSels.length} Standard, ${premSels.length + ongoingSels.length} Premium</div>
                         </div>
                     </div>
                 `;
