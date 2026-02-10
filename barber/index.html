@@ -799,7 +799,6 @@
         </nav>
     </div>
 
-
 <script>
     let currentStep = 0;
     let selections = { 
@@ -812,109 +811,38 @@
         recommendedPlan: ''
     };
 
-    // ONE-TIME/OUTRIGHT STANDARD FEATURES
     const buyOutrightStandard = [
-        "Logo Design",
-        "Book Now Button", 
-        "Static Customer Reviews",
-        "WhatsApp Static Button",
-        "Contact Form",
-        "Service Menu & Pricing Tables",
-        "Staff Team Profile Pages",
-        "Portfolio Photo Gallery",
-        "Business Hours",
-        "Google Maps Embed",
-        "Click-to-Call Phone Button",
-        "FAQ Accordion Section",
-        "SEO Meta Tags Configuration",
-        "Social Media Links",
-        "Email Newsletter Signup Form"
+        "Logo Design","Book Now Button","Static Customer Reviews","WhatsApp Static Button",
+        "Contact Form","Service Menu & Pricing Tables","Staff Team Profile Pages","Portfolio Photo Gallery",
+        "Business Hours","Google Maps Embed","Click-to-Call Phone Button","FAQ Accordion Section",
+        "SEO Meta Tags Configuration","Social Media Links","Email Newsletter Signup Form"
     ];
 
-    // ONE-TIME/OUTRIGHT PREMIUM FEATURES
     const buyOutrightPremium = [
-        "App-Like Website Design",
-        "Online Booking Form Embed (Calendly/Fresha/Booksy)",
-        "Stripe / PayPal Payment Buttons",
-        "Products Display (up to 10 items)",
-        "Digital Gift Card Display Page",
-        "Exit-Intent Popup (Desktop Only)",
-        "New Customer Promo Popup",
-        "Interactive Reviews & Testimonials",
-        "Google Reviews Embed",
-        "Scroll UI Animations",
-        "Multi-Location Pages Setup",
-        "Custom Brand Graphics & Icons (up to 20)",
-        "Instagram Feed Embed",
-        "Before & After Image Slider",
-        "Google Analytics Setup",
-        "Google Search Console Setup",
-        "Full Website Branding",
-        "Hero Background Video",
-        "Dynamic Contact Bar (WhatsApp / Call / Text / Email)",
-        "Stat Counts"
+        "App-Like Website Design","Online Booking Form Embed (Calendly/Fresha/Booksy)",
+        "Stripe / PayPal Payment Buttons","Products Display (up to 10 items)","Digital Gift Card Display Page",
+        "Exit-Intent Popup (Desktop Only)","New Customer Promo Popup","Interactive Reviews & Testimonials",
+        "Google Reviews Embed","Scroll UI Animations","Multi-Location Pages Setup",
+        "Custom Brand Graphics & Icons (up to 20)","Instagram Feed Embed","Before & After Image Slider",
+        "Google Analytics Setup","Google Search Console Setup","Full Website Branding",
+        "Hero Background Video","Dynamic Contact Bar (WhatsApp / Call / Text / Email)","Stat Counts"
     ];
 
-    // MONTHLY STANDARD FEATURES (same as buy outright standard)
-    const monthlyStandard = [
-        "Logo Design",
-        "Book Now Button", 
-        "Static Customer Reviews",
-        "WhatsApp Static Button",
-        "Contact Form",
-        "Service Menu & Pricing Tables",
-        "Staff Team Profile Pages",
-        "Portfolio Photo Gallery",
-        "Business Hours",
-        "Google Maps Embed",
-        "Click-to-Call Phone Button",
-        "FAQ Accordion Section",
-        "SEO Meta Tags Configuration",
-        "Social Media Links",
-        "Email Newsletter Signup Form"
-    ];
-
-    // MONTHLY PREMIUM FEATURES (same as buy outright premium)
-    const monthlyPremiumOnly = [
-        "App-Like Website Design",
-        "Online Booking Form Embed (Calendly/Fresha/Booksy)",
-        "Stripe / PayPal Payment Buttons",
-        "Products Display (up to 10 items)",
-        "Digital Gift Card Display Page",
-        "Exit-Intent Popup (Desktop Only)",
-        "New Customer Promo Popup",
-        "Interactive Reviews & Testimonials",
-        "Google Reviews Embed",
-        "Scroll UI Animations",
-        "Multi-Location Pages Setup",
-        "Custom Brand Graphics & Icons (up to 20)",
-        "Instagram Feed Embed",
-        "Before & After Image Slider",
-        "Google Analytics Setup",
-        "Google Search Console Setup",
-        "Full Website Branding",
-        "Hero Background Video",
-        "Dynamic Contact Bar (WhatsApp / Call / Text / Email)",
-        "Stat Counts"
-    ];
-
-    // Monthly management services (these are additional services included in monthly plans)
+    const monthlyStandard = buyOutrightStandard.slice();
+    const monthlyPremiumOnly = buyOutrightPremium.slice();
     const monthlyManagementServices = [
-        "Content updates (new services, images, promotions)",
-        "Security patches & backups",
-        "Form & functionality checks",
-        "SEO tweaks & meta tag updates",
-        "Speed / performance optimization",
-        "Minor design tweaks",
-        "Analytics reporting (basic)",
-        "Booking / payment checks"
+        "Content updates (new services, images, promotions)","Security patches & backups",
+        "Form & functionality checks","SEO tweaks & meta tag updates","Speed / performance optimization",
+        "Minor design tweaks","Analytics reporting (basic)","Booking / payment checks"
     ];
 
-    // Stripe Price IDs
-    const STANDARD_BUILD_PRICE_ID = 'price_1SzNqPLBGmGftzSkVxVpMUFI'; // £500
-    const PREMIUM_BUILD_PRICE_ID = 'price_1SzNzULBGmGftzSkx0wGEXGO'; // £650
-    const STANDARD_MONTHLY_PRICE_ID = 'price_1SnSfeLBGmGftzSkeEmZmLMC'; // £150
-    const PREMIUM_MONTHLY_PRICE_ID = 'price_1SzO69LBGmGftzSkxYpd4s7M'; // £200
+    // STRIPE TEST CHECKOUT LINKS (updated)
+    const STRIPE_LINKS = {
+        BUY_STANDARD: 'https://buy.stripe.com/test_00wdRa2Lc7093305LxgMw01',
+        BUY_PREMIUM: 'https://buy.stripe.com/test_dRmaEYbhI84d1YW8XJgMw02',
+        MONTHLY_STANDARD_SETUP: 'https://buy.stripe.com/test_9B614oetUckt6fc7TFgMw04',
+        MONTHLY_PREMIUM_SETUP: 'https://buy.stripe.com/test_6oU5kE3Pgdox6fc6PBgMw03'
+    };
 
     function toggleMenu() {
         const menu = document.getElementById('app-menu-layer');
@@ -924,116 +852,83 @@
     function initServiceList() {
         const grid = document.getElementById('master-service-grid');
         grid.innerHTML = '';
-        
         const isOutright = selections.planType === 'Buy Outright';
         const standardServices = isOutright ? buyOutrightStandard : monthlyStandard;
         const premiumServices = isOutright ? buyOutrightPremium : monthlyPremiumOnly;
-        
-        // Add management services note for monthly plans
+
         if (!isOutright) {
             grid.innerHTML += `
                 <div class="service-card management-note">
                     <span class="tier-pill" style="background:#FFF3E0; color:#FF6B00;">MONTHLY CARE</span>
                     <div style="font-weight:700; font-size:0.95rem;">Monthly Management Services</div>
                     <div style="font-size:0.7rem; color:var(--gray); font-weight:600; margin-top:4px;">
-                        <i class="fas fa-sync"></i> 
-                        All monthly plans include: ${monthlyManagementServices.length} management services
+                        <i class="fas fa-sync"></i> All monthly plans include: ${monthlyManagementServices.length} services
                     </div>
                     <div style="font-size:0.75rem; color:var(--gray); margin-top:8px; line-height:1.2;">
-                        Includes: ${monthlyManagementServices.slice(0, 3).join(', ')}...
+                        Includes: ${monthlyManagementServices.slice(0,3).join(', ')}...
                     </div>
                 </div>
             `;
         }
-        
+
         standardServices.forEach(s => grid.innerHTML += `
             <div class="service-card" onclick="toggleService('${s}', 'standard', this)">
                 <span class="tier-pill" style="background:#E8F5E9; color:#4CAF50;">STANDARD</span>
                 <div style="font-weight:700; font-size:0.95rem;">${s}</div>
                 <div style="font-size:0.7rem; color:var(--gray); font-weight:600; margin-top:4px;">
-                    <i class="fas ${isOutright ? 'fa-check' : 'fa-check'}"></i> 
-                    ${isOutright ? 'One-time setup' : 'Included in build'}
+                    <i class="fas fa-check"></i> ${isOutright ? 'One-time setup' : 'Included in build'}
                 </div>
             </div>
         `);
-        
+
         premiumServices.forEach(s => grid.innerHTML += `
             <div class="service-card" onclick="toggleService('${s}', 'premium', this)">
                 <span class="tier-pill" style="background:#E3F2FD; color:#2196F3;">PREMIUM</span>
                 <div style="font-weight:700; font-size:0.95rem;">${s}</div>
                 <div style="font-size:0.7rem; color:var(--gray); font-weight:600; margin-top:4px;">
-                    <i class="fas fa-crown"></i> 
-                    ${isOutright ? 'One-time setup' : 'Premium feature'}
+                    <i class="fas fa-crown"></i> ${isOutright ? 'One-time setup' : 'Premium feature'}
                 </div>
             </div>
         `);
-        
+
         updatePlanIndicator();
     }
 
     function toggleService(name, tier, el) {
         el.classList.toggle('selected'); 
         el.classList.toggle(tier);
-        
         const index = selections.services.findIndex(item => item.name === name && item.tier === tier);
-        
-        if (index > -1) {
-            selections.services.splice(index, 1);
-        } else {
-            selections.services.push({ name, tier });
-        }
-        
+        if (index > -1) selections.services.splice(index, 1);
+        else selections.services.push({ name, tier });
         updateRecommendedPlan();
-        console.log("Current selections:", selections.services);
     }
 
     function updateRecommendedPlan() {
-        const premSels = selections.services.filter(s => s.tier === 'premium');
-        const stdSels = selections.services.filter(s => s.tier === 'standard');
-        
-        if (premSels.length > 3) {
-            selections.recommendedPlan = 'premium';
-        } else if (stdSels.length > 5) {
-            selections.recommendedPlan = 'premium';
-        } else {
-            selections.recommendedPlan = 'standard';
-        }
-        
+        const premCount = selections.services.filter(s => s.tier==='premium').length;
+        const stdCount = selections.services.filter(s => s.tier==='standard').length;
+        selections.recommendedPlan = (premCount>3 || stdCount>5) ? 'premium' : 'standard';
         updatePlanIndicator();
     }
 
     function updatePlanIndicator() {
         const indicator = document.getElementById('plan-indicator');
-        if (!indicator) return;
-        
-        const premSels = selections.services.filter(s => s.tier === 'premium').length;
-        const stdSels = selections.services.filter(s => s.tier === 'standard').length;
-        
-        let html = `
-            <div class="indicator-dot ${selections.recommendedPlan === 'standard' ? 'standard active' : 'standard'}"></div>
-            <div style="font-size:0.8rem; font-weight:700; color:var(--gray);">${stdSels} selected</div>
-            <div class="indicator-dot ${selections.recommendedPlan === 'premium' ? 'premium active' : 'premium'}"></div>
-            <div style="font-size:0.8rem; font-weight:700; color:var(--gray);">${premSels} selected</div>
+        if(!indicator) return;
+        const premCount = selections.services.filter(s=>s.tier==='premium').length;
+        const stdCount = selections.services.filter(s=>s.tier==='standard').length;
+        indicator.innerHTML = `
+            <div class="indicator-dot ${selections.recommendedPlan==='standard'?'standard active':'standard'}"></div>
+            <div style="font-size:0.8rem; font-weight:700; color:var(--gray);">${stdCount} selected</div>
+            <div class="indicator-dot ${selections.recommendedPlan==='premium'?'premium active':'premium'}"></div>
+            <div style="font-size:0.8rem; font-weight:700; color:var(--gray);">${premCount} selected</div>
         `;
-        
-        indicator.innerHTML = html;
     }
 
-    function startReady() { 
-        currentStep = 1; 
-        updateUI(); 
-    }
+    function startReady() { currentStep=1; updateUI(); }
 
     function handleStep1() {
         const input = document.getElementById('businessInput').value.trim();
-        if(input) { 
-            selections.businessName = input;
-            sessionStorage.setItem('barberShopName', input);
-            console.log("Shop name saved to session:", input);
-            next(); 
-        } else {
-            alert("Please enter a shop name");
-        }
+        if(input){ selections.businessName=input; sessionStorage.setItem('barberShopName', input); next(); }
+        else alert("Please enter a shop name");
     }
 
     function verifyDesign() {
@@ -1041,383 +936,126 @@
         const display = document.getElementById('concept-display-area');
         const entry = document.getElementById('code-entry-area');
         let conceptNum = input.match(/\d+/);
-        if(conceptNum && conceptNum[0] <= 446) {
-            const codeString = `barber-${conceptNum[0]}`;
+        if(conceptNum && conceptNum[0]<=446){
+            const codeString=`barber-${conceptNum[0]}`;
             selections.designCode = codeString.toUpperCase();
-            entry.style.display = 'none'; 
-            display.style.display = 'block';
+            entry.style.display='none';
+            display.style.display='block';
             display.innerHTML = `<div class="concept-preview"><img src="https://raw.githubusercontent.com/doctoc30/Vibz/main/images/${codeString}.jpg" onerror="this.src='https://via.placeholder.com/400x220'"><div class="concept-info"><h3>${selections.designCode}</h3><p>Selected for ${selections.businessName || 'your shop'}.</p></div></div><button class="vibz-btn primary" onclick="next()">Confirm & Continue</button><button class="vibz-btn back-btn" onclick="resetCodeEntry()">Different Code</button>`;
-        } else { 
-            alert("Enter a valid design code (e.g., Barber 446)"); 
-        }
+        } else alert("Enter a valid design code (e.g., Barber 446)");
     }
 
-    function resetCodeEntry() { 
-        document.getElementById('code-entry-area').style.display = 'block'; 
-        document.getElementById('concept-display-area').style.display = 'none'; 
+    function resetCodeEntry(){ 
+        document.getElementById('code-entry-area').style.display='block';
+        document.getElementById('concept-display-area').style.display='none';
     }
-    
-    function setPlanType(val) { 
-        selections.planType = val; 
-        console.log("Plan type saved:", selections.planType);
-        selections.services = [];
-        next(); 
-    }
-    
-    function setUrgency(val) { 
-        selections.urgency = val; 
-        next(); 
-    }
+
+    function setPlanType(val){ selections.planType=val; selections.services=[]; next(); }
+    function setUrgency(val){ selections.urgency=val; next(); }
 
     function renderPricingCards() {
         const container = document.getElementById('pricing-cards-display');
-        const premSels = selections.services.filter(s => s.tier === 'premium');
-        const stdSels = selections.services.filter(s => s.tier === 'standard');
-        const hasPremium = premSels.length > 0;
-        const hasStandard = stdSels.length > 0;
-        const isOutright = selections.planType === 'Buy Outright';
-        const isRecommendedPremium = selections.recommendedPlan === 'premium';
-        
-        let cardsHTML = '';
-        
-        if (isOutright) {
-            // Buy Outright Plans - Using proper Stripe links
+        const premSels = selections.services.filter(s=>s.tier==='premium');
+        const stdSels = selections.services.filter(s=>s.tier==='standard');
+        const hasPremium = premSels.length>0;
+        const hasStandard = stdSels.length>0;
+        const isOutright = selections.planType==='Buy Outright';
+        const isRecommendedPremium = selections.recommendedPlan==='premium';
+        let cardsHTML='';
+
+        if(isOutright){
             cardsHTML = `
-                <div class="pricing-card standard ${isRecommendedPremium ? '' : 'recommended'}">
-                    ${!isRecommendedPremium ? '<div class="plan-recommended-badge"><i class="fas fa-star"></i> Recommended</div>' : ''}
+                <div class="pricing-card standard ${isRecommendedPremium?'':'recommended'}">
+                    ${!isRecommendedPremium?'<div class="plan-recommended-badge"><i class="fas fa-star"></i> Recommended</div>':''}
                     <div class="pricing-header">
                         <div class="plan-type standard-type">STANDARD — ONE-TIME</div>
                         <div class="plan-price">£1,500</div>
                         <div class="plan-desc">Pay once, own forever</div>
                     </div>
-                    <div class="simple-highlight">
-                        <h4>What's Included:</h4>
-                        <p>Only the <strong>${stdSels.length} Standard features</strong> you selected below</p>
-                    </div>
-                    <div class="plan-features">
-                        <div class="simple-feature"><strong>Up to 5</strong> pages</div>
-                        <div class="simple-feature"><strong>5 revisions</strong> per page</div>
-                        <div class="simple-feature">Ready in <strong>15-20 days</strong></div>
-                        <div class="simple-feature"><strong>1 month</strong> support</div>
-                        <div class="simple-feature">You own everything</div>
-                        <div class="simple-feature">You manage hosting & updates</div>
-                    </div>
-                    <button class="payment-button secondary" onclick="window.open('https://buy.stripe.com/test_00wdRa2Lc7093305LxgMw01', '_blank')">
-                        Choose Standard
-                    </button>
-                    <div style="margin-top:10px; text-align:center;">
-                        <small style="color:var(--gray); font-size:0.8rem;">Test Mode: Use card 4242 4242 4242 4242</small>
-                    </div>
+                    <div class="simple-highlight"><h4>What's Included:</h4><p>${stdSels.length} Standard features selected</p></div>
+                    <button class="payment-button secondary" onclick="window.open('${STRIPE_LINKS.BUY_STANDARD}','_blank')">Choose Standard</button>
                 </div>
-                
-                <div class="pricing-card premium ${isRecommendedPremium ? 'recommended' : ''}">
-                    ${isRecommendedPremium ? '<div class="plan-recommended-badge"><i class="fas fa-crown"></i> Best Value</div>' : ''}
+                <div class="pricing-card premium ${isRecommendedPremium?'recommended':''}">
+                    ${isRecommendedPremium?'<div class="plan-recommended-badge"><i class="fas fa-crown"></i> Best Value</div>':''}
                     <div class="pricing-header">
                         <div class="plan-type premium-type">PREMIUM — ONE-TIME</div>
                         <div class="plan-price">£4,000</div>
                         <div class="plan-desc">Pay once, own forever</div>
                     </div>
-                    <div class="simple-highlight">
-                        <h4>What's Included:</h4>
-                        <p><strong>Your selected Standard features</strong> + <strong>${premSels.length} Premium features</strong></p>
-                        <div class="feature-note">✓ Only the Standard features you selected are included in Premium</div>
-                    </div>
-                    <div class="plan-features">
-                        <div class="simple-feature"><strong>Up to 15</strong> pages</div>
-                        <div class="simple-feature"><strong>10 revisions</strong> per page</div>
-                        <div class="simple-feature">Ready in <strong>25-30 days</strong></div>
-                        <div class="simple-feature"><strong>3 months</strong> support</div>
-                        <div class="simple-feature">You own everything</div>
-                        <div class="simple-feature">You manage hosting & updates</div>
-                    </div>
-                    <button class="payment-button premium" onclick="window.open('https://buy.stripe.com/test_dRmaEYbhI84d1YW8XJgMw02', '_blank')">
-                        Choose Premium
-                    </button>
-                    <div style="margin-top:10px; text-align:center;">
-                        <small style="color:var(--gray); font-size:0.8rem;">Test Mode: Use card 4242 4242 4242 4242</small>
-                    </div>
+                    <div class="simple-highlight"><h4>What's Included:</h4><p>${premSels.length} Premium features + your selected Standard features</p></div>
+                    <button class="payment-button premium" onclick="window.open('${STRIPE_LINKS.BUY_PREMIUM}','_blank')">Choose Premium</button>
                 </div>
             `;
         } else {
-            // Monthly Plans - with initial payment shown separately
             cardsHTML = `
-                <div class="pricing-card monthly-standard ${isRecommendedPremium ? '' : 'recommended'}">
-                    ${!isRecommendedPremium ? '<div class="plan-recommended-badge"><i class="fas fa-star"></i> Recommended</div>' : ''}
+                <div class="pricing-card monthly-standard ${isRecommendedPremium?'':'recommended'}">
                     <div class="pricing-header">
                         <div class="monthly-badge"><i class="fas fa-sync"></i> STANDARD — MONTHLY</div>
-                        <div class="initial-build-price">
-                            <div class="build-price">£500</div>
-                            <div class="build-label">Initial build payment</div>
-                        </div>
-                        <div class="monthly-payment-section">
-                            <div class="monthly-amount">£150</div>
-                            <div class="monthly-label">per month (months 2-12)</div>
-                        </div>
-                        <div class="total-overview">
-                            <div class="big-number">£2,300</div>
-                            <div class="total-desc">Total after 12 months</div>
-                        </div>
+                        <div class="initial-build-price"><div class="build-price">£500</div><div class="build-label">Initial build payment</div></div>
+                        <div class="monthly-payment-section"><div class="monthly-amount">£150</div><div class="monthly-label">per month (months 2-12)</div></div>
                     </div>
-                    <div class="simple-highlight">
-                        <h4>How it Works:</h4>
-                        <p><strong>Month 1:</strong> Pay £500 setup • <strong>Months 2-12:</strong> £150/month • <strong>Total:</strong> £2,300</p>
-                    </div>
-                    <div class="plan-features">
-                        <div class="simple-feature"><i class="fas fa-check"></i> <strong>${stdSels.length} selected Standard features</strong></div>
-                        <div class="simple-feature"><i class="fas fa-plus"></i> <strong>${monthlyManagementServices.length} monthly management services</strong></div>
-                        <div class="simple-feature"><i class="fas fa-server"></i> Premium hosting & security</div>
-                        <div class="simple-feature"><i class="fas fa-calendar-check"></i> After 12 months: keep or stop</div>
-                    </div>
-                    <button class="payment-button secondary" onclick="window.open('https://buy.stripe.com/test_9B614oetUckt6fc7TFgMw04', '_blank')">
-                        Pay £500 Setup Fee
-                    </button>
-                    <div style="margin-top:10px; text-align:center;">
-                        <small style="color:var(--gray); font-size:0.8rem;">Test Mode: Use card 4242 4242 4242 4242</small>
-                        <br><small style="color:var(--gray); font-size:0.8rem;">Monthly payments begin after site launch</small>
-                    </div>
+                    <button class="payment-button secondary" onclick="window.open('${STRIPE_LINKS.MONTHLY_STANDARD_SETUP}','_blank')">Pay £500 Setup Fee</button>
                 </div>
-                
-                <div class="pricing-card monthly-premium ${isRecommendedPremium ? 'recommended' : ''}">
-                    ${isRecommendedPremium ? '<div class="plan-recommended-badge"><i class="fas fa-crown"></i> Best Value</div>' : ''}
+                <div class="pricing-card monthly-premium ${isRecommendedPremium?'recommended':''}">
                     <div class="pricing-header">
                         <div class="monthly-badge"><i class="fas fa-sync"></i> PREMIUM — MONTHLY</div>
-                        <div class="initial-build-price">
-                            <div class="build-price">£650</div>
-                            <div class="build-label">Initial build payment</div>
-                        </div>
-                        <div class="monthly-payment-section">
-                            <div class="monthly-amount">£200</div>
-                            <div class="monthly-label">per month (months 2-12)</div>
-                        </div>
-                        <div class="total-overview">
-                            <div class="big-number">£3,050</div>
-                            <div class="total-desc">Total after 12 months</div>
-                        </div>
+                        <div class="initial-build-price"><div class="build-price">£650</div><div class="build-label">Initial build payment</div></div>
+                        <div class="monthly-payment-section"><div class="monthly-amount">£200</div><div class="monthly-label">per month (months 2-12)</div></div>
                     </div>
-                    <div class="simple-highlight">
-                        <h4>How it Works:</h4>
-                        <p><strong>Month 1:</strong> Pay £650 setup • <strong>Months 2-12:</strong> £200/month • <strong>Total:</strong> £3,050</p>
-                        <div class="feature-note">✓ Only the Standard features you selected are included in Premium</div>
-                    </div>
-                    <div class="plan-features">
-                        <div class="simple-feature"><i class="fas fa-check"></i> <strong>${stdSels.length} selected Standard features</strong></div>
-                        <div class="simple-feature"><i class="fas fa-crown"></i> <strong>${premSels.length} selected Premium features</strong></div>
-                        <div class="simple-feature"><i class="fas fa-plus"></i> <strong>${monthlyManagementServices.length} monthly management services</strong></div>
-                        <div class="simple-feature"><i class="fas fa-server"></i> Premium hosting & security</div>
-                        <div class="simple-feature"><i class="fas fa-calendar-check"></i> After 12 months: keep or stop</div>
-                    </div>
-                    <button class="payment-button premium" onclick="window.open('https://buy.stripe.com/test_6oU5kE3Pgdox6fc6PBgMw03', '_blank')">
-                        Pay £650 Setup Fee
-                    </button>
-                    <div style="margin-top:10px; text-align:center;">
-                        <small style="color:var(--gray); font-size:0.8rem;">Test Mode: Use card 4242 4242 4242 4242</small>
-                        <br><small style="color:var(--gray); font-size:0.8rem;">Monthly payments begin after site launch</small>
-                    </div>
+                    <button class="payment-button premium" onclick="window.open('${STRIPE_LINKS.MONTHLY_PREMIUM_SETUP}','_blank')">Pay £650 Setup Fee</button>
                 </div>
             `;
         }
-        
-        // Selected Features Summary
-        if (selections.services.length > 0) {
-            const stdCount = stdSels.length;
-            const premCount = premSels.length;
-            
-            cardsHTML += `
-                <div class="final-summary-card" style="margin-top:20px;">
-                    <div style="text-align:center; margin-bottom:20px;">
-                        <h3 style="color:var(--primary); font-weight:900;">Your Selected Features ✅</h3>
-                        <p style="color:var(--gray); font-size:0.9rem; margin-top:5px;">${selections.businessName || "Your Shop"} • ${selections.designCode || 'Custom Design'}</p>
-                    </div>
-                    <div style="display:flex; justify-content:center; gap:20px; margin:20px 0;">
-                        <div style="text-align:center;">
-                            <div style="font-size:1.8rem; font-weight:900; color:var(--standard);">${stdCount}</div>
-                            <div style="font-size:0.8rem; color:var(--gray);">Standard Features</div>
-                        </div>
-                        ${hasPremium ? `
-                        <div style="text-align:center;">
-                            <div style="font-size:1.8rem; font-weight:900; color:var(--premium);">${premCount}</div>
-                            <div style="font-size:0.8rem; color:var(--gray);">Premium Features</div>
-                        </div>` : ''}
-                    </div>
-                    <div class="selected-feature-list">
-                        ${stdCount > 0 ? `
-                            <div style="margin-bottom:10px;">
-                                <div style="font-size:0.8rem; font-weight:900; color:var(--standard); margin-bottom:5px; display:flex; align-items:center;">
-                                    <i class="fas fa-check" style="color:var(--standard); margin-right:8px;"></i>
-                                    Standard Features (${stdCount})
-                                </div>
-                                ${stdSels.map(s => `
-                                    <div class="selected-feature-item">
-                                        <i class="fas fa-check standard-check"></i>
-                                        <span>${s.name}</span>
-                                    </div>`).join('')}
-                            </div>` : ''}
-                        ${premCount > 0 ? `
-                            <div style="margin-top:${stdCount > 0 ? '15px' : '0'};">
-                                <div style="font-size:0.8rem; font-weight:900; color:var(--premium); margin-bottom:5px; display:flex; align-items:center;">
-                                    <i class="fas fa-crown" style="color:var(--premium); margin-right:8px;"></i>
-                                    Premium Features (${premCount})
-                                </div>
-                                ${premSels.map(s => `
-                                    <div class="selected-feature-item">
-                                        <i class="fas fa-crown premium-check"></i>
-                                        <span>${s.name}</span>
-                                    </div>`).join('')}
-                            </div>` : ''}
-                        ${!isOutright ? `
-                            <div style="margin-top:${stdCount > 0 || premCount > 0 ? '15px' : '0'};">
-                                <div style="font-size:0.8rem; font-weight:900; color:#FF6B00; margin-bottom:5px; display:flex; align-items:center;">
-                                    <i class="fas fa-sync" style="color:#FF6B00; margin-right:8px;"></i>
-                                    Monthly Management Services (${monthlyManagementServices.length})
-                                </div>
-                                ${monthlyManagementServices.slice(0, 5).map(s => `
-                                    <div class="selected-feature-item">
-                                        <i class="fas fa-sync" style="color:#FF6B00;"></i>
-                                        <span>${s}</span>
-                                    </div>`).join('')}
-                                ${monthlyManagementServices.length > 5 ? `
-                                    <div class="selected-feature-item">
-                                        <i class="fas fa-sync" style="color:#FF6B00;"></i>
-                                        <span>+${monthlyManagementServices.length - 5} more management services</span>
-                                    </div>` : ''}
-                            </div>` : ''}
-                    </div>
-                    <div style="text-align:center; margin-top:15px;">
-                        <div class="clear-selections" onclick="clearSelections()">
-                            <i class="fas fa-times"></i> Clear All Selections
-                        </div>
-                    </div>
-                    ${hasPremium && stdCount > 0 ? `
-                        <div class="simple-highlight" style="background:rgba(33,150,243,0.1); border-left-color:var(--premium); margin-top:20px;">
-                            <h4>Important Note:</h4>
-                            <p>Premium plans include <strong>only the Standard features you selected</strong> (not all Standard features).</p>
-                        </div>` : ''}
-                    ${!isOutright ? `
-                        <div class="simple-highlight" style="background:rgba(255,107,0,0.1); margin-top:15px;">
-                            <h4>Monthly Plan Notes</h4>
-                            <p><strong>Month 1:</strong> Pay setup fee • <strong>Months 2-12:</strong> Monthly payments begin • <strong>After 12 months:</strong> You choose to continue or stop</p>
-                            <p><strong>All monthly plans include:</strong> ${monthlyManagementServices.length} management services + premium hosting</p>
-                        </div>` : ''}
-                    <div style="margin-top:25px; padding:20px; background:rgba(255,107,0,0.05); border-radius:20px; border:1px solid var(--border); text-align:center;">
-                        <div style="font-weight:900; color:var(--primary); margin-bottom:10px;">Ready to Build?</div>
-                        <p style="font-size:0.9rem; color:var(--gray);">Select a plan above to continue with your ${selections.services.length} selected features</p>
-                        <p style="font-size:0.8rem; color:var(--gray); margin-top:5px;"><strong>Test Mode Active:</strong> Use card 4242 4242 4242 4242 for testing</p>
-                    </div>
-                </div>`;
-        } else {
-            cardsHTML += `
-                <div class="final-summary-card" style="margin-top:20px; text-align:center;">
-                    <h3 style="color:var(--primary); font-weight:900; margin-bottom:15px;">No Features Selected Yet</h3>
-                    <p style="color:var(--gray); font-size:0.9rem; margin-bottom:20px;">Go back and select the features you want included in your website</p>
-                    <button class="vibz-btn primary" onclick="goToStep(7)" style="max-width:200px; margin:0 auto;">
-                        <i class="fas fa-plus"></i> Select Features
-                    </button>
-                </div>`;
-        }
-        
+
         container.innerHTML = cardsHTML;
     }
 
-    function clearSelections() {
-        selections.services = [];
-        updatePlanIndicator();
-        renderPricingCards();
-    }
+    function clearSelections(){ selections.services=[]; updatePlanIndicator(); renderPricingCards(); }
 
-    function resetHeader() {
-        const header = document.querySelector('header');
-        const logo = document.querySelector('.header-logo');
-        
-        header.style.transform = '';
-        header.style.position = '';
-        header.style.top = '';
-        header.style.left = '';
-        header.style.right = '';
-        header.style.zIndex = '';
-        
-        logo.style.opacity = '1';
-        logo.style.visibility = 'visible';
-        logo.style.transform = '';
-        logo.style.position = '';
-        
+    function resetHeader(){
+        const header=document.querySelector('header');
+        const logo=document.querySelector('.header-logo');
+        ['transform','position','top','left','right','zIndex'].forEach(p=>header.style[p]='');
+        logo.style.opacity='1'; logo.style.visibility='visible'; logo.style.transform=''; logo.style.position='';
         header.offsetHeight;
     }
 
     function updateUI() {
         resetHeader();
-        document.querySelectorAll('.form-screen').forEach(s => {
-            s.classList.remove('active');
-            s.style.display = 'none';
-            s.style.opacity = '0';
-            s.style.transform = 'translateY(15px)';
-        });
-        const currentScreen = document.getElementById(`step-${currentStep}`);
-        currentScreen.style.display = 'block';
-        setTimeout(() => {
-            currentScreen.classList.add('active');
-            currentScreen.style.opacity = '1';
-            currentScreen.style.transform = 'translateY(0)';
-        }, 10);
+        document.querySelectorAll('.form-screen').forEach(s=>{ s.classList.remove('active'); s.style.display='none'; s.style.opacity='0'; s.style.transform='translateY(15px)'; });
+        const currentScreen=document.getElementById(`step-${currentStep}`);
+        currentScreen.style.display='block';
+        setTimeout(()=>{ currentScreen.classList.add('active'); currentScreen.style.opacity='1'; currentScreen.style.transform='translateY(0)'; },10);
 
-        const titles = { 
-            0: "Build your barber brand.", 
-            1: "Shop Name?", 
-            2: "Status?", 
-            3: "Design Choice?", 
-            4: "Verification", 
-            5: "Management?", 
-            6: "Timeline?", 
-            7: "Features", 
-            8: "Summary", 
-            9: "Details" 
-        };
-        document.getElementById('dynamic-title').textContent = titles[currentStep];
+        const titles={0:"Build your barber brand.",1:"Shop Name?",2:"Status?",3:"Design Choice?",4:"Verification",5:"Management?",6:"Timeline?",7:"Features",8:"Summary",9:"Details"};
+        document.getElementById('dynamic-title').textContent=titles[currentStep];
+        const subtitles={5:"Digital solutions for modern shops.",default:"Digital solutions for modern shops."};
+        document.getElementById('dynamic-subtitle').textContent=subtitles[currentStep]||subtitles.default;
+        document.getElementById('main-content-wrapper').className=(currentStep===0||currentStep===1)?"hero-centered":"hero-balanced";
 
-        const subtitles = { 5: "Digital solutions for modern shops.", default: "Digital solutions for modern shops." };
-        document.getElementById('dynamic-subtitle').textContent = subtitles[currentStep] || subtitles.default;
-
-        const mainContent = document.getElementById('main-content-wrapper');
-        mainContent.className = (currentStep === 0 || currentStep === 1) ? "hero-centered" : "hero-balanced";
-
-        if(currentStep === 7) {
-            initServiceList();
-            updateRecommendedPlan();
-        }
-        if(currentStep === 8) renderPricingCards();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-
-        const menu = document.getElementById('app-menu-layer');
-        if (menu.classList.contains('active')) menu.classList.remove('active');
+        if(currentStep===7){ initServiceList(); updateRecommendedPlan(); }
+        if(currentStep===8) renderPricingCards();
+        window.scrollTo({top:0,behavior:'smooth'});
+        const menu=document.getElementById('app-menu-layer'); if(menu.classList.contains('active')) menu.classList.remove('active');
     }
 
-    function next() { 
-        if(currentStep < 9) { currentStep++; updateUI(); } 
-    }
-    
-    function prev() { 
-        if(currentStep > 0) { currentStep--; updateUI(); } 
-    }
-    
-    function goToStep(s) { 
-        currentStep = s; 
-        updateUI(); 
-    }
+    function next(){ if(currentStep<9){ currentStep++; updateUI(); } }
+    function prev(){ if(currentStep>0){ currentStep--; updateUI(); } }
+    function goToStep(s){ currentStep=s; updateUI(); }
 
-    window.onload = function() {
-        const urlParams = new URLSearchParams(window.location.search);
-        if(urlParams.get('step') === '5') {
-            selections.designCode = sessionStorage.getItem('selectedBarberCode') || 'LIBRARY DESIGN';
-            selections.fromConceptLibrary = true;
-            currentStep = 5;
-            const savedShopName = sessionStorage.getItem('barberShopName');
-            if (savedShopName && !selections.businessName) selections.businessName = savedShopName;
+    window.onload=function(){
+        const urlParams=new URLSearchParams(window.location.search);
+        if(urlParams.get('step')==='5'){
+            selections.designCode=sessionStorage.getItem('selectedBarberCode')||'LIBRARY DESIGN';
+            selections.fromConceptLibrary=true;
+            currentStep=5;
+            const savedShopName=sessionStorage.getItem('barberShopName');
+            if(savedShopName&&!selections.businessName) selections.businessName=savedShopName;
         }
         updateUI();
     };
 
-    document.addEventListener('touchmove', function(e) {
-        if (e.target.classList.contains('content-scroll')) e.stopPropagation();
-    }, { passive: false });
+    document.addEventListener('touchmove',function(e){ if(e.target.classList.contains('content-scroll')) e.stopPropagation(); },{passive:false});
 </script>
     
 </body>
