@@ -543,20 +543,77 @@
             margin-right: 8px;
         }
         
-        .feature-count {
-            display: inline-block;
-            background: rgba(76, 175, 80, 0.1);
-            color: var(--standard);
-            padding: 3px 8px;
-            border-radius: 10px;
-            font-size: 0.7rem;
-            font-weight: 900;
-            margin-left: 5px;
+        .selected-feature-list {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 15px;
+            margin: 15px 0;
+            border: 1px solid var(--border);
+            max-height: 200px;
+            overflow-y: auto;
         }
         
-        .feature-count.premium-count {
-            background: rgba(33, 150, 243, 0.1);
+        .selected-feature-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 5px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .selected-feature-item:last-child {
+            border-bottom: none;
+        }
+        
+        .selected-feature-item i {
+            margin-right: 10px;
+            font-size: 0.8rem;
+            min-width: 20px;
+        }
+        
+        .selected-feature-item .standard-check {
+            color: var(--standard);
+        }
+        
+        .selected-feature-item .premium-check {
             color: var(--premium);
+        }
+        
+        .selected-feature-item span {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+        
+        .feature-count-badge {
+            display: inline-block;
+            background: var(--standard);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 900;
+            margin-left: 8px;
+        }
+        
+        .feature-count-badge.premium {
+            background: var(--premium);
+        }
+        
+        .clear-selections {
+            background: rgba(255, 107, 0, 0.1);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            border-radius: 10px;
+            padding: 8px 15px;
+            font-size: 0.75rem;
+            font-weight: 900;
+            cursor: pointer;
+            margin-top: 10px;
+            display: inline-block;
+        }
+        
+        .clear-selections:hover {
+            background: rgba(255, 107, 0, 0.2);
         }
     </style>
 </head>
@@ -646,7 +703,7 @@
 
                     <div class="form-screen" id="step-7">
                       <div class="premium-notice">
-                          <i class="fas fa-crown"></i> Premium plans include ALL selected Standard features automatically
+                          <i class="fas fa-crown"></i> Only selected features are included in your plan
                       </div>
                       <div class="services-grid" id="master-service-grid"></div>
                       <div class="plan-indicator" id="plan-indicator"></div>
@@ -711,34 +768,35 @@
 
         const buyOutrightPremium = [
             "App-Like Website Design",
-            "Online Booking Form Embed",
+            "Online Booking Form Embed (Calendly/Fresha/Booksy)",
             "Stripe / PayPal Payment Buttons",
             "Products Display (up to 10 items)",
             "Digital Gift Card Display Page",
-            "Exit-Intent Popup",
+            "Exit-Intent Popup (Desktop Only)",
+            "New Customer Promo Popup",
             "Interactive Reviews & Testimonials",
             "Google Reviews Embed",
             "Scroll UI Animations",
             "Multi-Location Pages Setup",
-            "Custom Brand Graphics & Icons",
+            "Custom Brand Graphics & Icons (up to 20)",
             "Instagram Feed Embed",
             "Before & After Image Slider",
             "Google Analytics Setup",
             "Google Search Console Setup",
             "Full Website Branding",
             "Hero Background Video",
-            "Dynamic Contact Bar",
+            "Dynamic Contact Bar (WhatsApp / Call / Text / Email)",
             "Stat Counts"
         ];
 
         const monthlyStandard = [
-            "Content updates (new services, images)",
+            "Content updates (new services, images, promotions)",
             "Security patches & backups",
             "Form & functionality checks",
-            "SEO tweaks & meta updates",
+            "SEO tweaks & meta tag updates",
             "Speed / performance optimization",
             "Minor design tweaks",
-            "Analytics reporting",
+            "Analytics reporting (basic)",
             "Booking / payment checks"
         ];
 
@@ -746,12 +804,12 @@
             "App-Like Website Design",
             "Online Booking Form Embed",
             "Stripe / PayPal Payment Buttons",
-            "Products Display",
-            "Digital Gift Card Page",
-            "Exit-Intent Popup",
-            "Interactive Reviews",
-            "Multi-Location Pages",
-            "Custom Brand Graphics",
+            "Products Display (up to 10 items)",
+            "Digital Gift Card Display Page",
+            "Exit-Intent Popup (Desktop Only)",
+            "Interactive Reviews & Testimonials",
+            "Multi-Location Pages Setup",
+            "Custom Brand Graphics & Icons (up to 20)",
             "Hero Background Video"
         ];
 
@@ -806,6 +864,7 @@
             }
             
             updateRecommendedPlan();
+            console.log("Current selections:", selections.services);
         }
 
         function updateRecommendedPlan() {
@@ -849,6 +908,7 @@
             const input = document.getElementById('businessInput').value.trim();
             if(input) { 
                 selections.businessName = input; 
+                console.log("Shop name saved:", selections.businessName);
                 next(); 
             } else {
                 alert("Please enter a shop name");
@@ -878,6 +938,7 @@
         
         function setPlanType(val) { 
             selections.planType = val; 
+            console.log("Plan type saved:", selections.planType);
             selections.services = [];
             next(); 
         }
@@ -892,6 +953,7 @@
             const premSels = selections.services.filter(s => s.tier === 'premium');
             const stdSels = selections.services.filter(s => s.tier === 'standard');
             const hasPremium = premSels.length > 0;
+            const hasStandard = stdSels.length > 0;
             const isOutright = selections.planType === 'Buy Outright';
             const isRecommendedPremium = selections.recommendedPlan === 'premium';
             
@@ -911,7 +973,7 @@
                         
                         <div class="simple-highlight">
                             <h4><span class="emoji-icon">📱</span> What's Included:</h4>
-                            <p><strong>15 Features:</strong> Logo, Booking Button, Reviews, Contact Form, Gallery, Maps, and more</p>
+                            <p>Only the <strong>${stdSels.length} features</strong> you selected below</p>
                         </div>
                         
                         <div class="plan-features">
@@ -939,7 +1001,7 @@
                         
                         <div class="simple-highlight">
                             <h4><span class="emoji-icon">🚀</span> What's Included:</h4>
-                            <p><strong>Everything in Standard + 19 Premium Features:</strong> Online Booking, Payments, Gift Cards, Video Background, and more</p>
+                            <p><strong>${stdSels.length} selected Standard features</strong> + <strong>${premSels.length} selected Premium features</strong></p>
                         </div>
                         
                         <div class="plan-features">
@@ -974,11 +1036,11 @@
                         
                         <div class="simple-highlight">
                             <h4><span class="emoji-icon">🛡️</span> How it Works:</h4>
-                            <p><strong>Choose 10-15 features</strong> • We build your site • <strong>We manage everything</strong> for 12 months</p>
+                            <p><strong>Only ${stdSels.length} selected features</strong> • We build your site • <strong>We manage everything</strong> for 12 months</p>
                         </div>
                         
                         <div class="plan-features">
-                            <div class="simple-feature"><i class="fas fa-check"></i> <strong>Choose features</strong> you want</div>
+                            <div class="simple-feature"><i class="fas fa-check"></i> <strong>${stdSels.length} selected features</strong></div>
                             <div class="simple-feature"><i class="fas fa-sync"></i> <strong>8 monthly services</strong> included</div>
                             <div class="simple-feature"><i class="fas fa-server"></i> We handle hosting & security</div>
                             <div class="simple-feature"><i class="fas fa-calendar-check"></i> After 12 months: keep or stop</div>
@@ -1004,11 +1066,12 @@
                         
                         <div class="simple-highlight">
                             <h4><span class="emoji-icon">⚡</span> How it Works:</h4>
-                            <p><strong>Premium features + Standard features</strong> • Full build in month 1 • <strong>We manage everything</strong> for 12 months</p>
+                            <p><strong>${stdSels.length} selected Standard + ${premSels.length} Premium features</strong> • Full build in month 1 • <strong>We manage everything</strong> for 12 months</p>
                         </div>
                         
                         <div class="plan-features">
-                            <div class="simple-feature"><i class="fas fa-crown"></i> <strong>10 premium features</strong> included</div>
+                            <div class="simple-feature"><i class="fas fa-check"></i> <strong>${stdSels.length} Standard features</strong></div>
+                            <div class="simple-feature"><i class="fas fa-crown"></i> <strong>${premSels.length} Premium features</strong></div>
                             <div class="simple-feature"><i class="fas fa-sync"></i> <strong>10 monthly services</strong> included</div>
                             <div class="simple-feature"><i class="fas fa-server"></i> We handle hosting & security</div>
                             <div class="simple-feature"><i class="fas fa-calendar-check"></i> After 12 months: keep or stop</div>
@@ -1021,7 +1084,7 @@
                 `;
             }
             
-            // SIMPLIFIED Selected Features Summary
+            // SHOW SELECTED FEATURES WITH TICKS
             if (selections.services.length > 0) {
                 const stdCount = stdSels.length;
                 const premCount = premSels.length;
@@ -1029,7 +1092,7 @@
                 cardsHTML += `
                     <div class="final-summary-card" style="margin-top:20px;">
                         <div style="text-align:center; margin-bottom:20px;">
-                            <h3 style="color:var(--primary); font-weight:900;">Your Selection</h3>
+                            <h3 style="color:var(--primary); font-weight:900;">Your Selected Features ✅</h3>
                             <p style="color:var(--gray); font-size:0.9rem; margin-top:5px;">${selections.businessName || "Your Shop"} • ${selections.designCode || 'Custom Design'}</p>
                         </div>
                         
@@ -1038,30 +1101,80 @@
                                 <div style="font-size:1.8rem; font-weight:900; color:var(--standard);">${stdCount}</div>
                                 <div style="font-size:0.8rem; color:var(--gray);">Standard Features</div>
                             </div>
+                            ${hasPremium ? `
                             <div style="text-align:center;">
                                 <div style="font-size:1.8rem; font-weight:900; color:var(--premium);">${premCount}</div>
                                 <div style="font-size:0.8rem; color:var(--gray);">Premium Features</div>
                             </div>
+                            ` : ''}
                         </div>
                         
-                        ${hasPremium && stdCount > 0 && isOutright ? `
-                            <div class="simple-highlight" style="background:rgba(33,150,243,0.1); border-left-color:var(--premium);">
-                                <h4><span class="emoji-icon">🎉</span> Good News!</h4>
-                                <p>All ${stdCount} Standard features are <strong>included automatically</strong> with Premium plan</p>
+                        <div class="selected-feature-list">
+                            ${stdCount > 0 ? `
+                                <div style="margin-bottom:10px;">
+                                    <div style="font-size:0.8rem; font-weight:900; color:var(--standard); margin-bottom:5px; display:flex; align-items:center;">
+                                        <i class="fas fa-check" style="color:var(--standard); margin-right:8px;"></i>
+                                        Standard Features (${stdCount})
+                                    </div>
+                                    ${stdSels.map(s => `
+                                        <div class="selected-feature-item">
+                                            <i class="fas fa-check standard-check"></i>
+                                            <span>${s.name}</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                            
+                            ${premCount > 0 ? `
+                                <div style="margin-top:${stdCount > 0 ? '15px' : '0'};">
+                                    <div style="font-size:0.8rem; font-weight:900; color:var(--premium); margin-bottom:5px; display:flex; align-items:center;">
+                                        <i class="fas fa-crown" style="color:var(--premium); margin-right:8px;"></i>
+                                        Premium Features (${premCount})
+                                    </div>
+                                    ${premSels.map(s => `
+                                        <div class="selected-feature-item">
+                                            <i class="fas fa-crown premium-check"></i>
+                                            <span>${s.name}</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+                        
+                        <div style="text-align:center; margin-top:15px;">
+                            <div class="clear-selections" onclick="clearSelections()">
+                                <i class="fas fa-times"></i> Clear All Selections
+                            </div>
+                        </div>
+                        
+                        ${hasPremium && stdCount > 0 ? `
+                            <div class="simple-highlight" style="background:rgba(33,150,243,0.1); border-left-color:var(--premium); margin-top:20px;">
+                                <h4><span class="emoji-icon">🎯</span> Premium Plan Includes:</h4>
+                                <p>Your <strong>${stdCount} selected Standard features</strong> + <strong>${premCount} selected Premium features</strong> • All built in month 1</p>
                             </div>
                         ` : ''}
                         
-                        ${!isOutright && hasPremium ? `
-                            <div class="simple-highlight" style="background:rgba(255,107,0,0.1);">
+                        ${!isOutright ? `
+                            <div class="simple-highlight" style="background:rgba(255,107,0,0.1); margin-top:15px;">
                                 <h4><span class="emoji-icon">📋</span> Monthly Plan Notes</h4>
-                                <p>Month 1: Full premium build • Months 2-12: We manage everything • After 12 months: You choose to continue or stop</p>
+                                <p>Month 1: Full build with selected features • Months 2-12: We manage everything • After 12 months: You choose to continue or stop</p>
                             </div>
                         ` : ''}
                         
                         <div style="margin-top:25px; padding:20px; background:rgba(255,107,0,0.05); border-radius:20px; border:1px solid var(--border); text-align:center;">
                             <div style="font-weight:900; color:var(--primary); margin-bottom:10px;">Ready to Build?</div>
-                            <p style="font-size:0.9rem; color:var(--gray);">Select a plan above to continue</p>
+                            <p style="font-size:0.9rem; color:var(--gray);">Select a plan above to continue with your ${selections.services.length} selected features</p>
                         </div>
+                    </div>
+                `;
+            } else {
+                cardsHTML += `
+                    <div class="final-summary-card" style="margin-top:20px; text-align:center;">
+                        <h3 style="color:var(--primary); font-weight:900; margin-bottom:15px;">No Features Selected Yet</h3>
+                        <p style="color:var(--gray); font-size:0.9rem; margin-bottom:20px;">Go back and select the features you want included in your website</p>
+                        <button class="vibz-btn primary" onclick="goToStep(7)" style="max-width:200px; margin:0 auto;">
+                            <i class="fas fa-plus"></i> Select Features
+                        </button>
                     </div>
                 `;
             }
@@ -1069,9 +1182,19 @@
             container.innerHTML = cardsHTML;
         }
 
+        function clearSelections() {
+            selections.services = [];
+            updatePlanIndicator();
+            renderPricingCards();
+        }
+
         function proceedWithPlan(planType) {
             selections.selectedPlan = planType;
-            alert(`Selected ${planType} plan! Next step: Contact details`);
+            
+            const stdSels = selections.services.filter(s => s.tier === 'standard').length;
+            const premSels = selections.services.filter(s => s.tier === 'premium').length;
+            
+            alert(`Selected ${planType} plan with ${stdSels} Standard features and ${premSels} Premium features!`);
             next();
         }
 
@@ -1195,6 +1318,7 @@
             if(input) { 
                 selections.businessName = input;
                 sessionStorage.setItem('barberShopName', input);
+                console.log("Shop name saved to session:", input);
                 next(); 
             } else {
                 alert("Please enter a shop name");
