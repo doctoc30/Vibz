@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>S&B TERMINAL | HYPER-ELITE</title>
+    <title>S&B TERMINAL | HYPER-ELITE HANDOVER</title>
     
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -18,230 +18,207 @@
             --text: #050505;
             --glass: rgba(255, 255, 255, 0.85);
             --border: rgba(255, 46, 46, 0.1);
-            --safe-bottom: env(safe-area-inset-bottom);
+            --shadow: 0 20px 40px rgba(0,0,0,0.05);
         }
 
-        /* --- 2026 NATIVE APP RESET --- */
-        * { 
-            margin: 0; padding: 0; box-sizing: border-box; 
-            -webkit-tap-highlight-color: transparent;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-        }
-        
-        body { 
-            background: var(--bg); 
-            color: var(--text); 
-            overflow-x: hidden;
-            scroll-behavior: smooth;
-        }
-
+        /* --- GLOBAL NATIVE APP STYLING --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: var(--bg); color: var(--text); overflow-x: hidden; scroll-behavior: smooth; }
         .hero-font { font-family: 'Syncopate', sans-serif; text-transform: uppercase; }
+        section { padding: 100px 6%; position: relative; }
+        .glass-card { background: var(--surface); border-radius: 32px; border: 1px solid var(--border); box-shadow: var(--shadow); transition: 0.4s ease; }
 
-        /* --- 5. APP NAVIGATION (TOP & BOTTOM) --- */
-        .app-header {
-            position: fixed; top: 0; width: 100%; z-index: 1000;
-            padding: 20px 6%; display: flex; justify-content: space-between;
-            align-items: center; background: var(--glass); backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border);
-        }
+        /* --- 5. APP NAVIGATION --- */
+        .app-nav { position: fixed; top: 0; width: 100%; z-index: 2000; padding: 20px 6%; display: flex; justify-content: space-between; align-items: center; background: var(--glass); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
+        .bottom-tabs { position: fixed; bottom: 0; width: 100%; height: 80px; background: var(--glass); backdrop-filter: blur(20px); display: flex; justify-content: space-around; align-items: center; z-index: 2000; border-top: 1px solid var(--border); }
+        .tab { text-align: center; color: #888; font-size: 0.7rem; font-weight: 800; }
+        .tab.active { color: var(--accent); }
 
-        .bottom-tabs {
-            position: fixed; bottom: 0; width: 100%; height: calc(70px + var(--safe-bottom));
-            background: var(--glass); backdrop-filter: blur(25px);
-            border-top: 1px solid var(--border); z-index: 1000;
-            display: flex; justify-content: space-around; align-items: center;
-            padding-bottom: var(--safe-bottom);
-        }
+        /* --- 1. HERO --- */
+        .hero { height: 100vh; display: flex; align-items: center; background: radial-gradient(circle at 90% 10%, rgba(255,46,46,0.1), transparent); }
+        .hero-title { font-size: clamp(3rem, 10vw, 8rem); line-height: 0.9; letter-spacing: -2px; }
 
-        .tab-item { text-align: center; color: #888; font-size: 0.7rem; font-weight: 800; cursor: pointer; }
-        .tab-item.active { color: var(--accent); }
-        .tab-item i { font-size: 1.4rem; margin-bottom: 4px; display: block; }
+        /* --- 6. BENTO GRID --- */
+        .bento-grid { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 200px; gap: 20px; }
+        .bento-item { overflow: hidden; padding: 30px; display: flex; flex-direction: column; justify-content: flex-end; }
+        .bento-1 { grid-column: span 2; grid-row: span 2; }
+        .bento-2 { grid-column: span 2; }
 
-        /* --- 1. HERO SECTION (APP STYLE) --- */
-        .hero {
-            height: 90vh; padding: 120px 6% 60px; display: flex; flex-direction: column;
-            justify-content: center; background: radial-gradient(circle at 100% 0%, rgba(255,46,46,0.08), transparent);
-        }
-        .hero h1 { font-size: clamp(2.5rem, 10vw, 7rem); line-height: 0.95; letter-spacing: -2px; }
+        /* --- SLIDER --- */
+        .ba-slider { position: relative; height: 600px; border-radius: 40px; overflow: hidden; }
+        .ba-before { position: absolute; top: 0; left: 0; width: 50%; height: 100%; border-right: 4px solid var(--accent); z-index: 2; overflow: hidden; }
 
-        /* --- 6. SERVICE CARDS (HORIZONTAL APP SWIPE) --- */
-        .section-header { padding: 40px 6% 20px; display: flex; justify-content: space-between; align-items: flex-end; }
-        
-        .horizontal-scroller {
-            display: flex; overflow-x: auto; gap: 20px; padding: 0 6% 40px;
-            scroll-snap-type: x mandatory; scrollbar-width: none;
-        }
-        .horizontal-scroller::-webkit-scrollbar { display: none; }
-
-        .service-card {
-            min-width: 300px; height: 400px; background: var(--surface);
-            border-radius: 32px; padding: 30px; scroll-snap-align: start;
-            border: 1px solid #eee; display: flex; flex-direction: column;
-            justify-content: space-between; transition: 0.4s cubic-bezier(0.2, 1, 0.3, 1);
-        }
-        .service-card:hover { border-color: var(--accent); transform: scale(0.98); }
-
-        /* --- 2. BOOKING ACTION SHEET --- */
-        .action-sheet {
-            background: var(--surface); border-radius: 40px 40px 0 0;
-            padding: 40px 6%; box-shadow: 0 -20px 40px rgba(0,0,0,0.05);
-        }
-
-        .btn-primary {
-            background: var(--accent); color: white; border: none;
-            width: 100%; padding: 20px; border-radius: 20px;
-            font-weight: 800; font-size: 1rem; letter-spacing: 1px;
-            cursor: pointer; box-shadow: 0 15px 30px rgba(255, 46, 46, 0.2);
-        }
-
-        /* --- 9. BEFORE/AFTER (NATIVE FEEL) --- */
-        .slider-wrap {
-            margin: 40px 6%; height: 500px; border-radius: 35px; overflow: hidden;
-            position: relative; border: 1px solid #eee;
-        }
-        .handle {
-            position: absolute; top: 0; left: 50%; width: 4px; height: 100%;
-            background: var(--accent); z-index: 10;
-        }
-        .handle::after {
-            content: '↔'; position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%); width: 40px; height: 40px;
-            background: var(--accent); color: white; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; font-weight: bold;
-        }
-
-        /* --- GRID GALLERY --- */
-        .gallery-grid {
-            display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 0 6%;
-        }
-        .gallery-item { height: 200px; background: #eee; border-radius: 20px; overflow: hidden; }
-
+        /* --- BUTTONS --- */
+        .btn-elite { background: var(--accent); color: white; border: none; padding: 20px 40px; border-radius: 100px; font-weight: 800; cursor: pointer; transition: 0.3s; }
+        .btn-elite:hover { transform: scale(1.05); box-shadow: 0 10px 30px rgba(255,46,46,0.3); }
     </style>
 </head>
 <body>
 
-    <header class="app-header">
-        <div class="hero-font" style="font-size: 1rem; font-weight: 900;">S&B<span style="color:var(--accent);">_</span>2026</div>
-        <div id="nav-trigger" style="font-size: 1.2rem;"><i class="fas fa-fingerprint" style="color: var(--accent);"></i></div>
-    </header>
-
-    <nav class="bottom-tabs">
-        <div class="tab-item active"><i class="fas fa-home"></i>HOME</div>
-        <div class="tab-item"><i class="fas fa-calendar-alt"></i>BOOK</div>
-        <div class="tab-item"><i class="fas fa-shopping-bag"></i>SHOP</div>
-        <div class="tab-item"><i class="fas fa-user-circle"></i>PROFILE</div>
+    <nav class="app-nav">
+        <div class="hero-font" style="font-size: 1.2rem;">S&B<span style="color:var(--accent)">_</span></div>
+        <div class="menu-btn"><i class="fas fa-bars"></i></div>
     </nav>
 
+    <div class="bottom-tabs">
+        <div class="tab active"><i class="fas fa-home"></i><br>HOME</div>
+        <div class="tab"><i class="fas fa-calendar-check"></i><br>BOOK</div>
+        <div class="tab"><i class="fas fa-images"></i><br>FEED</div>
+        <div class="tab"><i class="fas fa-shopping-cart"></i><br>SHOP</div>
+    </div>
+
     <section class="hero">
-        <div data-aos="fade-up">
-            <h5 style="color:var(--accent); font-weight:800; letter-spacing: 4px; margin-bottom: 10px;">PREMIUM INTERFACE</h5>
-            <h1 class="hero-font">CALIBRATED<br>PRECISION</h1>
-            <p style="margin-top: 25px; opacity: 0.5; max-width: 300px;">The only grooming terminal utilizing 2026 kinematic theory.</p>
+        <div data-aos="fade-up" data-aos-duration="1000">
+            <h5 class="hero-font" style="color: var(--accent); margin-bottom: 20px;">Precision Grooming 2026</h5>
+            <h1 class="hero-font hero-title">SURGICAL<br><span style="color: transparent; -webkit-text-stroke: 1px var(--text);">AESTHETIC</span></h1>
+            <p style="margin: 30px 0; max-width: 500px; font-size: 1.2rem; opacity: 0.6;">A native-app experience for the modern artisan. Calibrated hair, skin, and beard protocols.</p>
+            <button class="btn-elite">INITIALIZE SESSION</button>
         </div>
     </section>
 
-    <section class="action-sheet">
-        <h2 class="hero-font" style="font-size: 1.2rem; margin-bottom: 25px;">Fast-Track Appointment</h2>
-        <div style="display: flex; gap: 15px; margin-bottom: 20px;">
-            <select style="flex: 1; padding: 15px; border-radius: 15px; border: 1px solid #eee; background: #f9f9f9;">
-                <option>Select Protocol</option>
-                <option>Skin Fade Calibrator</option>
-            </select>
-            <button class="btn-primary" style="width: auto; padding: 15px 30px;">GO</button>
+    <section style="background: white;">
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); text-align: center;">
+            <div data-aos="zoom-in"><h2>12k+</h2><p>Sessions</p></div>
+            <div data-aos="zoom-in" data-aos-delay="100"><h2>0.01mm</h2><p>Precision</p></div>
+            <div data-aos="zoom-in" data-aos-delay="200"><h2>2026</h2><p>Era</p></div>
+            <div data-aos="zoom-in" data-aos-delay="300"><h2>99%</h2><p>Sync</p></div>
         </div>
     </section>
 
-    <div class="section-header">
-        <h2 class="hero-font" style="font-size: 1rem;">Protocol Menu</h2>
-        <span style="font-size: 0.8rem; font-weight: 800; color: var(--accent);">VIEW ALL</span>
-    </div>
-    <div class="horizontal-scroller">
-        <div class="service-card" data-aos="fade-right">
-            <div>
-                <span style="font-size: 0.7rem; font-weight: 900; color: var(--accent);">[ 01 ]</span>
-                <h3 class="hero-font" style="margin-top: 10px;">Executive<br>Calibration</h3>
-            </div>
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span style="font-size: 2rem; font-weight: 800;">£85</span>
-                <i class="fas fa-arrow-right"></i>
-            </div>
-        </div>
-        <div class="service-card" data-aos="fade-right" data-aos-delay="100">
-            <div>
-                <span style="font-size: 0.7rem; font-weight: 900; color: var(--accent);">[ 02 ]</span>
-                <h3 class="hero-font" style="margin-top: 10px;">Beard<br>Sculpting</h3>
-            </div>
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span style="font-size: 2rem; font-weight: 800;">£35</span>
-                <i class="fas fa-arrow-right"></i>
-            </div>
-        </div>
-    </div>
-
-    <div class="section-header">
-        <h2 class="hero-font" style="font-size: 1rem;">Transformations</h2>
-    </div>
-    <div class="slider-wrap" id="slider-container">
-        <div style="width:100%; height:100%; background: url('https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&q=80') center/cover;"></div>
-        <div id="before-mask" style="position:absolute; top:0; left:0; width:50%; height:100%; background: url('https://images.unsplash.com/photo-1593702295094-ada74bc4a19c?auto=format&fit=crop&q=80') center/cover; border-right: 2px solid var(--accent); overflow:hidden;">
-            <div style="width:100vw; height:500px; background: inherit;"></div>
-        </div>
-    </div>
-
-    <div class="section-header">
-        <h2 class="hero-font" style="font-size: 1rem;">Laboratory Inventory</h2>
-    </div>
-    <div class="gallery-grid">
-        <div class="service-card" style="min-width: auto; height: 280px; text-align: center;">
-            <div style="width: 100px; height: 100px; background: #f0f0f0; margin: 0 auto; border-radius: 20px;"></div>
-            <h4 style="margin-top: 15px; font-size: 0.8rem; font-weight: 800;">CRIMSON POMADE</h4>
-            <button class="btn-primary" style="padding: 10px; font-size: 0.7rem; margin-top: 10px;">£22 - ADD</button>
-        </div>
-        <div class="service-card" style="min-width: auto; height: 280px; text-align: center;">
-            <div style="width: 100px; height: 100px; background: #f0f0f0; margin: 0 auto; border-radius: 20px;"></div>
-            <h4 style="margin-top: 15px; font-size: 0.8rem; font-weight: 800;">STEEL CLAY</h4>
-            <button class="btn-primary" style="padding: 10px; font-size: 0.7rem; margin-top: 10px;">£18 - ADD</button>
-        </div>
-    </div>
-
-    <div class="section-header">
-        <h2 class="hero-font" style="font-size: 1rem;">The Artisans</h2>
-    </div>
-    <div class="horizontal-scroller" style="padding-bottom: 120px;">
-        <div class="service-card" style="min-width: 200px; height: 300px; background: #000; color: white;">
-            <div style="flex: 1;"></div>
-            <h4 class="hero-font" style="font-size: 0.8rem;">V. KOVALEV</h4>
-            <p style="font-size: 0.6rem; color: var(--accent); font-weight: 800; margin-top: 5px;">MASTER CALIBRATOR</p>
-        </div>
-    </div>
-
-    <section style="padding: 0 6% 150px;">
-        <div class="service-card" style="height: auto; min-width: auto; border-radius: 24px;">
-            <details style="padding: 15px 0; border-bottom: 1px solid #eee;">
-                <summary style="font-weight: 800; list-style: none; display: flex; justify-content: space-between;">FAQ <i class="fas fa-chevron-down"></i></summary>
-                <p style="margin-top: 15px; font-size: 0.8rem; opacity: 0.6;">Booking-only terminal. 24h cycle required for cancellations.</p>
-            </details>
+    <section id="booking" style="padding: 40px 6%;">
+        <div class="glass-card" style="padding: 40px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+            <select class="btn-elite" style="background: #f0f0f0; color: #000;"><option>Select Protocol</option></select>
+            <input type="date" class="btn-elite" style="background: #f0f0f0; color: #000;">
+            <button class="btn-elite">LOCK DATE</button>
         </div>
     </section>
+
+    <section>
+        <h2 class="hero-font" style="margin-bottom: 40px;">01_PROTOCOLS</h2>
+        <div class="bento-grid">
+            <div class="glass-card bento-item bento-1" style="background: url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80') center/cover;">
+                <h3 class="hero-font" style="color: white; z-index: 2;">Master Calibration</h3>
+            </div>
+            <div class="glass-card bento-item" style="background: var(--accent); color: white;">
+                <h3>Beard Sculp</h3>
+                <p>£35</p>
+            </div>
+            <div class="glass-card bento-item">
+                <h3>Skin Fade</h3>
+                <p>£45</p>
+            </div>
+            <div class="glass-card bento-item bento-2">
+                <h3>Scalp Therapy</h3>
+            </div>
+        </div>
+    </section>
+
+    <section style="background: #fff;">
+        <h2 class="hero-font">02_PRICING</h2>
+        <div style="margin-top: 40px;">
+            <div style="display: flex; justify-content: space-between; padding: 20px 0; border-bottom: 1px solid #eee;"><span>SCISSOR WORK</span><b>£55</b></div>
+            <div style="display: flex; justify-content: space-between; padding: 20px 0; border-bottom: 1px solid #eee;"><span>FADE CALIBRATION</span><b>£45</b></div>
+            <div style="display: flex; justify-content: space-between; padding: 20px 0; border-bottom: 1px solid #eee;"><span>ROYAL SHAVE</span><b>£40</b></div>
+        </div>
+    </section>
+
+    <section>
+        <h2 class="hero-font">03_INVENTORY</h2>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 40px;">
+            <div class="glass-card" style="padding: 40px; text-align: center;">
+                <div style="width: 120px; height: 120px; background: #f9f9f9; border-radius: 20px; margin: 0 auto;"></div>
+                <h4 style="margin-top: 20px;">CRIMSON CLAY</h4>
+                <p>£24.00</p>
+            </div>
+            <div class="glass-card" style="padding: 40px; text-align: center;">
+                <div style="width: 120px; height: 120px; background: #f9f9f9; border-radius: 20px; margin: 0 auto;"></div>
+                <h4>STEEL FIBRE</h4>
+                <p>£24.00</p>
+            </div>
+            <div class="glass-card" style="padding: 40px; text-align: center;">
+                <div style="width: 120px; height: 120px; background: #f9f9f9; border-radius: 20px; margin: 0 auto;"></div>
+                <h4>SCALP SERUM</h4>
+                <p>£32.00</p>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+            <div style="height: 300px; background: #eee;"></div>
+            <div style="height: 300px; background: #ddd;"></div>
+            <div style="height: 300px; background: #eee;"></div>
+            <div style="height: 300px; background: #ddd;"></div>
+        </div>
+    </section>
+
+    <section>
+        <h2 class="hero-font">04_TRANSFORMS</h2>
+        <div class="ba-slider" id="slider">
+            <div style="width:100%; height:100%; background: url('https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&q=80') center/cover;"></div>
+            <div class="ba-before" id="before">
+                <div style="width:100vw; height:600px; background: url('https://images.unsplash.com/photo-1593702295094-ada74bc4a19c?auto=format&fit=crop&q=80') center/cover;"></div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div style="display: flex; gap: 20px;">
+            <div class="glass-card" style="flex: 1; padding: 40px;">
+                <h3 class="hero-font">V. KOVALEV</h3>
+                <p style="color: var(--accent);">CHIEF ARTISAN</p>
+            </div>
+            <div class="glass-card" style="flex: 1; padding: 40px;">
+                <h3 class="hero-font">M. THORNE</h3>
+                <p style="color: var(--accent);">SENIOR CALIBRATOR</p>
+            </div>
+        </div>
+    </section>
+
+    <section style="background: white;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+            <div class="glass-card" style="padding: 40px;">
+                <h3>OPENING HOURS</h3>
+                <p>MON-FRI: 08:00 - 20:00</p>
+                <p>SAT: 10:00 - 18:00</p>
+            </div>
+            <div class="glass-card" style="padding: 40px;">
+                <h3>LOCATION</h3>
+                <p>STATION 12, TECH PLAZA, LONDON</p>
+                <button class="btn-elite" style="margin-top: 20px; width: 100%;">GET DIRECTIONS</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="faq">
+        <h2 class="hero-font">05_FAQ</h2>
+        <details style="padding: 20px; border-bottom: 1px solid #eee;"><summary>Booking Policy</summary><p>Online only. 24h notice required.</p></details>
+        <details style="padding: 20px; border-bottom: 1px solid #eee;"><summary>Walk-ins</summary><p>We are a booking-only terminal.</p></details>
+    </section>
+
+    <section style="text-align: center; background: var(--accent); color: white;">
+        <h1 class="hero-font">READY FOR UPGRADE?</h1>
+        <div style="margin-top: 40px;">
+            <button class="btn-elite" style="background: white; color: var(--accent);">WHATSAPP US</button>
+            <button class="btn-elite" style="background: transparent; border: 1px solid white; margin-left: 20px;">CALL STATION</button>
+        </div>
+    </section>
+
+    <footer style="padding: 60px 6%; text-align: center; border-top: 1px solid #eee; margin-bottom: 80px;">
+        <p>&copy; 2026 S&B TERMINAL. POWERED BY PRECISION.</p>
+    </footer>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        AOS.init({ duration: 1000, once: true });
+        AOS.init();
 
-        // Native-style slider logic
-        const sliderContainer = document.getElementById('slider-container');
-        const beforeMask = document.getElementById('before-mask');
-
-        sliderContainer.addEventListener('touchmove', (e) => {
-            let rect = sliderContainer.getBoundingClientRect();
-            let x = ((e.touches[0].clientX - rect.left) / rect.width) * 100;
-            if(x > 0 && x < 100) beforeMask.style.width = x + "%";
-        });
-
-        sliderContainer.addEventListener('mousemove', (e) => {
-            let rect = sliderContainer.getBoundingClientRect();
+        // Slider logic
+        const slider = document.getElementById('slider');
+        const before = document.getElementById('before');
+        slider.addEventListener('mousemove', (e) => {
+            let rect = slider.getBoundingClientRect();
             let x = ((e.clientX - rect.left) / rect.width) * 100;
-            if(x > 0 && x < 100) beforeMask.style.width = x + "%";
+            before.style.width = x + "%";
         });
     </script>
 </body>
