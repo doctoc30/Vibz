@@ -629,7 +629,7 @@
 
 
 
-    <!-- EXACT MENU FROM HOMEPAGE -->
+<!-- EXACT MENU FROM HOMEPAGE -->
 <div id="app-menu-layer">
     <div class="menu-header">
         <div class="menu-logo">VIBZ<span>.</span></div>
@@ -824,6 +824,12 @@
         "Hero Background Video"
     ];
 
+    // Stripe Price IDs
+    const STANDARD_BUILD_PRICE_ID = 'price_1SzNqPLBGmGftzSkVxVpMUFI'; // £500
+    const PREMIUM_BUILD_PRICE_ID = 'price_1SzNzULBGmGftzSkx0wGEXGO'; // £650
+    const STANDARD_MONTHLY_PRICE_ID = 'price_1SnSfeLBGmGftzSkeEmZmLMC'; // £150
+    const PREMIUM_MONTHLY_PRICE_ID = 'price_1SzO69LBGmGftzSkxYpd4s7M'; // £200
+
     function toggleMenu() {
         const menu = document.getElementById('app-menu-layer');
         menu.classList.toggle('active');
@@ -993,7 +999,7 @@
                         <div class="simple-feature">You own everything</div>
                         <div class="simple-feature">You manage hosting & updates</div>
                     </div>
-                    <button class="payment-button secondary" onclick="window.open('https://buy.stripe.com/test_00wdRa2Lc7093305LxgMw01', '_blank')">
+                    <button class="payment-button secondary" onclick="window.open('https://buy.stripe.com/checkout/test_00wdRa2Lc7093305LxgMw01', '_blank')">
                         Choose Standard
                     </button>
                 </div>
@@ -1018,28 +1024,34 @@
                         <div class="simple-feature">You own everything</div>
                         <div class="simple-feature">You manage hosting & updates</div>
                     </div>
-                    <button class="payment-button premium" onclick="window.open('https://buy.stripe.com/test_dRmaEYbhI84d1YW8XJgMw02', '_blank')">
+                    <button class="payment-button premium" onclick="window.open('https://buy.stripe.com/checkout/test_dRmaEYbhI84d1YW8XJgMw02', '_blank')">
                         Choose Premium
                     </button>
                 </div>
             `;
         } else {
-            // Monthly Plans
+            // Monthly Plans - with initial payment shown separately
             cardsHTML = `
                 <div class="pricing-card monthly-standard ${isRecommendedPremium ? '' : 'recommended'}">
                     ${!isRecommendedPremium ? '<div class="plan-recommended-badge"><i class="fas fa-star"></i> Recommended</div>' : ''}
                     <div class="pricing-header">
                         <div class="monthly-badge"><i class="fas fa-sync"></i> STANDARD — MONTHLY</div>
-                        <div class="price-breakdown">
-                            <div class="main-price">£500</div>
-                            <div class="monthly">+ £150/month</div>
+                        <div class="initial-build-price">
+                            <div class="build-price">£500</div>
+                            <div class="build-label">Initial build payment</div>
                         </div>
-                        <div class="big-number">£2,300</div>
-                        <div class="plan-desc">Total after 12 months</div>
+                        <div class="monthly-payment-section">
+                            <div class="monthly-amount">£150</div>
+                            <div class="monthly-label">per month (months 2-12)</div>
+                        </div>
+                        <div class="total-overview">
+                            <div class="big-number">£2,300</div>
+                            <div class="total-desc">Total after 12 months</div>
+                        </div>
                     </div>
                     <div class="simple-highlight">
                         <h4>How it Works:</h4>
-                        <p>Only <strong>${stdSels.length} selected Standard features</strong> • We build your site • <strong>We manage everything</strong> for 12 months</p>
+                        <p><strong>Month 1:</strong> Pay £500 setup • <strong>Months 2-12:</strong> £150/month • <strong>Total:</strong> £2,300</p>
                     </div>
                     <div class="plan-features">
                         <div class="simple-feature"><i class="fas fa-check"></i> <strong>${stdSels.length} selected Standard features</strong></div>
@@ -1047,25 +1059,34 @@
                         <div class="simple-feature"><i class="fas fa-server"></i> We handle hosting & security</div>
                         <div class="simple-feature"><i class="fas fa-calendar-check"></i> After 12 months: keep or stop</div>
                     </div>
-                    <button class="payment-button secondary" onclick="window.open('https://buy.stripe.com/test_9B614oetUckt6fc7TFgMw04', '_blank')">
-                        Choose Monthly Standard
+                    <button class="payment-button secondary" onclick="window.open('https://buy.stripe.com/checkout/${STANDARD_BUILD_PRICE_ID}', '_blank')">
+                        Pay £500 Setup Fee
                     </button>
+                    <div style="margin-top:10px; text-align:center;">
+                        <small style="color:var(--gray); font-size:0.8rem;">Monthly payments begin after site launch</small>
+                    </div>
                 </div>
                 
                 <div class="pricing-card monthly-premium ${isRecommendedPremium ? 'recommended' : ''}">
                     ${isRecommendedPremium ? '<div class="plan-recommended-badge"><i class="fas fa-crown"></i> Best Value</div>' : ''}
                     <div class="pricing-header">
                         <div class="monthly-badge"><i class="fas fa-sync"></i> PREMIUM — MONTHLY</div>
-                        <div class="price-breakdown">
-                            <div class="main-price">£650</div>
-                            <div class="monthly">+ £200/month</div>
+                        <div class="initial-build-price">
+                            <div class="build-price">£650</div>
+                            <div class="build-label">Initial build payment</div>
                         </div>
-                        <div class="big-number">£3,050</div>
-                        <div class="plan-desc">Total after 12 months</div>
+                        <div class="monthly-payment-section">
+                            <div class="monthly-amount">£200</div>
+                            <div class="monthly-label">per month (months 2-12)</div>
+                        </div>
+                        <div class="total-overview">
+                            <div class="big-number">£3,050</div>
+                            <div class="total-desc">Total after 12 months</div>
+                        </div>
                     </div>
                     <div class="simple-highlight">
                         <h4>How it Works:</h4>
-                        <p><strong>Your selected Standard features</strong> + <strong>${premSels.length} Premium features</strong> • Full build in month 1</p>
+                        <p><strong>Month 1:</strong> Pay £650 setup • <strong>Months 2-12:</strong> £200/month • <strong>Total:</strong> £3,050</p>
                         <div class="feature-note">✓ Only the Standard features you selected are included in Premium</div>
                     </div>
                     <div class="plan-features">
@@ -1075,9 +1096,12 @@
                         <div class="simple-feature"><i class="fas fa-server"></i> We handle hosting & security</div>
                         <div class="simple-feature"><i class="fas fa-calendar-check"></i> After 12 months: keep or stop</div>
                     </div>
-                    <button class="payment-button premium" onclick="window.open('https://buy.stripe.com/test_6oU5kE3Pgdox6fc6PBgMw03', '_blank')">
-                        Choose Monthly Premium
+                    <button class="payment-button premium" onclick="window.open('https://buy.stripe.com/checkout/${PREMIUM_BUILD_PRICE_ID}', '_blank')">
+                        Pay £650 Setup Fee
                     </button>
+                    <div style="margin-top:10px; text-align:center;">
+                        <small style="color:var(--gray); font-size:0.8rem;">Monthly payments begin after site launch</small>
+                    </div>
                 </div>
             `;
         }
@@ -1143,7 +1167,7 @@
                     ${!isOutright ? `
                         <div class="simple-highlight" style="background:rgba(255,107,0,0.1); margin-top:15px;">
                             <h4>Monthly Plan Notes</h4>
-                            <p>Month 1: Full build with selected features • Months 2-12: We manage everything • After 12 months: You choose to continue or stop</p>
+                            <p><strong>Month 1:</strong> Pay setup fee • <strong>Months 2-12:</strong> Monthly payments begin • <strong>After 12 months:</strong> You choose to continue or stop</p>
                         </div>` : ''}
                     <div style="margin-top:25px; padding:20px; background:rgba(255,107,0,0.05); border-radius:20px; border:1px solid var(--border); text-align:center;">
                         <div style="font-weight:900; color:var(--primary); margin-bottom:10px;">Ready to Build?</div>
