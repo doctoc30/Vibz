@@ -3,212 +3,210 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>S&B HERITAGE // BOUTIQUE TERMINAL</title>
+    <title>SVRGN // SOLAR GOLD TERMINAL</title>
     
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,600&family=Outfit:wght@100;400;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Outfit:wght@300;600;900&display=swap');
 
         :root {
-            --cream: #FDFBFA;
-            --ink: #1C1C1C;
-            --brass: #C5A059;
-            --glass: rgba(255, 255, 255, 0.7);
-            --shadow: 0 30px 60px rgba(0,0,0,0.05);
+            --gold: #FFC300;
+            --orange: #FF5733;
+            --cream: #FFFDF5;
+            --ink: #121212;
+            --soft-gold: rgba(255, 195, 0, 0.1);
         }
 
-        /* --- THE 'APP' FEEL --- */
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
-        body { background: var(--cream); color: var(--ink); font-family: 'Outfit', sans-serif; overflow-x: hidden; }
-        
-        h1, h2, .serif { font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; }
-        .bold { font-weight: 900; text-transform: uppercase; letter-spacing: 2px; font-size: 0.75rem; }
-
-        /* --- 1. THE SHOP ENTRANCE (MODAL LOADER) --- */
-        #entrance {
-            position: fixed; inset: 0; background: var(--ink); z-index: 9000;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: 1.5s cubic-bezier(0.8, 0, 0.2, 1);
-        }
-        #entrance.open { transform: translateY(-100%); }
-
-        /* --- 5. NATIVE APP NAVIGATION --- */
-        .top-nav {
-            position: fixed; top: 0; width: 100%; z-index: 1000;
-            padding: 30px 5%; display: flex; justify-content: space-between; align-items: center;
+        /* --- THE APP INTERFACE --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { 
+            background: var(--cream); 
+            color: var(--ink); 
+            font-family: 'Outfit', sans-serif;
+            overflow-x: hidden;
         }
 
-        .bottom-dock {
-            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-            width: 90%; max-width: 400px; height: 75px; background: var(--ink);
-            border-radius: 100px; z-index: 2000; display: flex; 
-            justify-content: space-around; align-items: center; box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-        }
-        .dock-link { color: #666; text-decoration: none; text-align: center; transition: 0.3s; }
-        .dock-link.active { color: var(--brass); }
-        .dock-link i { font-size: 1.4rem; display: block; margin-bottom: 4px; }
+        .heavy { font-family: 'Archivo Black', sans-serif; text-transform: uppercase; line-height: 0.85; }
 
-        /* --- 2. THE HERO (EXTERIOR TO INTERIOR) --- */
+        /* --- 1. FLOATING APP NAV --- */
+        nav {
+            position: fixed; top: 20px; left: 5%; width: 90%; height: 70px;
+            background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px);
+            border-radius: 20px; border: 2px solid var(--gold);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 25px; z-index: 2000;
+        }
+
+        /* --- 5. BOTTOM COMMAND DOCK --- */
+        .command-bar {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 450px; height: 80px; background: var(--ink);
+            border-radius: 40px; display: flex; justify-content: space-around;
+            align-items: center; z-index: 2000; box-shadow: 0 20px 40px rgba(255, 87, 51, 0.3);
+        }
+        .command-btn { color: white; text-align: center; text-decoration: none; font-size: 0.7rem; font-weight: 600; }
+        .command-btn.active { color: var(--gold); }
+        .command-btn i { font-size: 1.5rem; display: block; margin-bottom: 4px; }
+
+        /* --- 2. HERO: SOLAR FLARE --- */
         .hero {
-            height: 100vh; display: flex; align-items: center; justify-content: center;
-            padding: 0 5%; position: relative; overflow: hidden;
+            height: 100vh; padding: 120px 5% 40px;
+            display: flex; flex-direction: column; justify-content: space-between;
+            background: radial-gradient(circle at 80% 20%, var(--soft-gold), transparent);
         }
-        .hero-bg {
-            position: absolute; width: 85%; height: 70%; 
-            background: url('https://images.unsplash.com/photo-1512690196236-4bab0b544391?auto=format&fit=crop&q=80') center/cover;
-            border-radius: 10px; filter: sepia(0.2) brightness(0.8);
+        .hero h1 { font-size: clamp(4rem, 15vw, 12rem); color: var(--ink); }
+        
+        /* --- 6. FUNKY BENTO HUD --- */
+        .hud-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 15px; padding: 20px; }
+        .hud-card { 
+            background: white; border-radius: 35px; padding: 30px; 
+            border: 2px solid transparent; transition: 0.4s;
+            display: flex; flex-direction: column; justify-content: space-between;
         }
+        .hud-card:hover { border-color: var(--orange); transform: translateY(-5px); }
+        .span-12 { grid-column: span 12; }
+        .span-8 { grid-column: span 8; }
+        .span-4 { grid-column: span 4; }
+        .span-6 { grid-column: span 6; }
 
-        /* --- 6. BENTO GILDED GRID --- */
-        .bento { display: grid; grid-template-columns: repeat(12, 1fr); gap: 20px; padding: 20px; }
-        .card { 
-            background: white; border-radius: 30px; padding: 40px; 
-            box-shadow: var(--shadow); transition: 0.5s; position: relative; overflow: hidden;
+        /* --- STATS STRIP --- */
+        .stats { background: var(--gold); padding: 60px 5%; display: flex; justify-content: space-around; }
+        .stat-box h2 { font-size: 4rem; color: white; -webkit-text-stroke: 2px var(--ink); }
+
+        /* --- ARTISAN SWIPER --- */
+        .swiper-container { 
+            display: flex; overflow-x: auto; gap: 20px; padding: 40px 5%;
+            scroll-snap-type: x mandatory; scrollbar-width: none;
         }
-        .card:hover { transform: translateY(-10px); }
+        .artisan-card {
+            min-width: 280px; height: 400px; background: var(--light-yellow);
+            border-radius: 40px; scroll-snap-align: center; position: relative;
+            overflow: hidden; border: 3px solid var(--ink);
+        }
+        .artisan-img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); transition: 0.5s; }
+        .artisan-card:hover .artisan-img { filter: grayscale(0); transform: scale(1.1); }
 
         /* --- BUTTONS --- */
-        .btn-brass {
-            background: var(--brass); color: white; border: none; padding: 20px 40px;
-            border-radius: 50px; font-weight: 900; cursor: pointer; transition: 0.3s;
+        .btn-main {
+            background: var(--orange); color: white; border: none; padding: 25px 50px;
+            border-radius: 50px; font-family: 'Archivo Black'; font-size: 1.2rem;
+            cursor: pointer; box-shadow: 10px 10px 0px var(--ink); transition: 0.2s;
         }
-        .btn-brass:hover { background: var(--ink); }
+        .btn-main:active { transform: translate(5px, 5px); box-shadow: 0px 0px 0px var(--ink); }
 
-        /* --- PRICE LIST --- */
-        .service-row {
-            display: flex; justify-content: space-between; align-items: baseline;
-            padding: 25px 0; border-bottom: 1px solid #EEE;
-        }
-        .service-row h3 { font-size: 1.8rem; }
     </style>
 </head>
 <body>
 
-    <div id="entrance" onclick="this.classList.add('open')">
-        <h1 style="color: var(--brass); font-size: 3rem;">S&B Heritage</h1>
-        <p class="bold" style="color: white; margin-top: 20px;">[ Tap to Enter ]</p>
-    </div>
-
-    <nav class="top-nav">
-        <div class="bold">S&B_TERMINAL</div>
-        <div class="bold">EST_2026</div>
+    <nav>
+        <div class="heavy" style="font-size: 1.8rem;">SVRGN<span style="color:var(--orange)">.</span></div>
+        <div class="heavy" style="font-size: 0.8rem; background: var(--gold); padding: 5px 15px; border-radius: 10px;">EST. 2026</div>
     </nav>
 
-    <div class="bottom-dock">
-        <a href="#" class="dock-link active"><i class="fas fa-home"></i></a>
-        <a href="#booking" class="dock-link"><i class="fas fa-calendar-check"></i></a>
-        <a href="#shop" class="dock-link"><i class="fas fa-shopping-bag"></i></a>
-        <a href="#location" class="dock-link"><i class="fas fa-map-marked-alt"></i></a>
+    <div class="command-bar">
+        <a href="#" class="command-btn active"><i class="fas fa-bolt"></i>CUTS</a>
+        <a href="#booking" class="command-btn"><i class="fas fa-calendar-alt"></i>BOOK</a>
+        <a href="#shop" class="command-btn"><i class="fas fa-flask"></i>LAB</a>
+        <a href="#map" class="command-btn"><i class="fas fa-map-pin"></i>HITS</a>
     </div>
 
     <section class="hero">
-        <div class="hero-bg" data-aos="zoom-out" data-aos-duration="2000"></div>
-        <div style="z-index: 10; text-align: center; color: white;">
-            <h1 style="font-size: 8vw;">The Gentleman's<br>Sanctuary.</h1>
-            <button class="btn-brass" style="margin-top: 30px;">SECURE A CHAIR</button>
+        <h1 class="heavy" data-aos="fade-up">STAY<br><span style="color:var(--orange)">SHARP</span><br>GO GOLD.</h1>
+        <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+            <p style="font-weight: 600; max-width: 300px; text-transform: uppercase;">The high-frequency grooming terminal for the modern vanguard.</p>
+            <button class="btn-main">START CALIBRATION</button>
         </div>
     </section>
 
-    <section style="padding: 150px 10%; text-align: center;">
-        <h5 class="bold" style="color: var(--brass);">01_OUR_STORY</h5>
-        <h2 style="font-size: 4rem; margin-top: 20px;">Traditional Hands.<br>Modern Precision.</h2>
-        <p style="max-width: 600px; margin: 40px auto; font-size: 1.2rem; line-height: 1.6; opacity: 0.7;">We don’t just cut hair; we curate confidence. Our shop is a blend of old-world hospitality and new-world technical excellence.</p>
+    <div class="hud-grid">
+        <div class="hud-card span-8" style="background: var(--gold); min-height: 300px;">
+            <h2 class="heavy" style="font-size: 4rem;">01<br>THE ARCHITECT</h2>
+            <p class="heavy">£55 // 45 MINS</p>
+        </div>
+        <div class="hud-card span-4" style="background: var(--ink); color: white;">
+            <i class="fas fa-wind" style="font-size: 3rem; color: var(--gold);"></i>
+            <h3 class="heavy">OXY<br>FACIAL</h3>
+        </div>
+        <div class="hud-card span-4" style="background: var(--orange); color: white;">
+            <h3 class="heavy">BEARD<br>DESIGN</h3>
+            <h2 class="heavy">£35</h2>
+        </div>
+        <div class="hud-card span-8">
+            <h3 class="heavy">MEMBERSHIP STATUS</h3>
+            <div style="height: 10px; background: #eee; border-radius: 5px; margin: 20px 0;">
+                <div style="width: 75%; height: 100%; background: var(--gold); border-radius: 5px;"></div>
+            </div>
+            <p>75% OF SLOTS BOOKED THIS WEEK</p>
+        </div>
+    </div>
+
+    <section class="stats">
+        <div class="stat-box"><h2>12</h2><p class="heavy">STATIONS</p></div>
+        <div class="stat-box"><h2>99%</h2><p class="heavy">FADE_SYNC</p></div>
+        <div class="stat-box"><h2>24h</h2><p class="heavy">PORTAL</p></div>
     </section>
 
-    <div class="bento">
-        <div class="card" style="grid-column: span 8; min-height: 500px; background: url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80') center/cover;">
-            <div style="position:absolute; inset:0; background: linear-gradient(transparent, rgba(0,0,0,0.8));"></div>
-            <div style="position:relative; color: white; height: 100%; display: flex; flex-direction: column; justify-content: flex-end;">
-                <h2 style="font-size: 4rem;">The Full<br>Protocol</h2>
-                <p>90 minutes of elite grooming.</p>
+    <div style="padding: 80px 5% 0;">
+        <h2 class="heavy" style="font-size: 3rem;">THE ARTISANS</h2>
+    </div>
+    <div class="swiper-container">
+        <div class="artisan-card">
+            <img src="https://images.unsplash.com/photo-1618331835717-801e976710b2?auto=format&fit=crop&q=80" class="artisan-img">
+            <div style="position:absolute; bottom:20px; left:20px; color:white; z-index:10;">
+                <h3 class="heavy">V. KOVALEV</h3>
+                <p class="heavy" style="color:var(--gold)">MASTER ARTISAN</p>
             </div>
         </div>
-        <div class="card" style="grid-column: span 4; background: var(--brass); color: white;">
-            <h5 class="bold">SESSION_02</h5>
-            <h2 style="font-size: 3rem; margin-top: 20px;">Hot Towel<br>Shave</h2>
-            <div style="font-size: 3rem; margin-top: 40px;">£45</div>
-        </div>
-
-        <div class="card" style="grid-column: span 4; text-align: center;">
-            <h2 style="font-size: 4rem; color: var(--brass);">12</h2>
-            <p class="bold">MASTER_ARTISANS</p>
-        </div>
-        <div class="card" style="grid-column: span 8;">
-            <div class="service-row">
-                <h3>Executive Cut</h3>
-                <span>£55</span>
-            </div>
-            <div class="service-row">
-                <h3>Beard Sculpting</h3>
-                <span>£35</span>
+        <div class="artisan-card">
+            <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80" class="artisan-img">
+            <div style="position:absolute; bottom:20px; left:20px; color:white; z-index:10;">
+                <h3 class="heavy">M. THORNE</h3>
+                <p class="heavy" style="color:var(--gold)">SENIOR FADE</p>
             </div>
         </div>
     </div>
 
     <section id="shop" style="padding: 100px 5%;">
-        <h2 style="font-size: 4rem; margin-bottom: 50px;">The Apothecary</h2>
-        <div class="bento">
-            <div class="card" style="grid-column: span 4; text-align: center;">
-                <div style="height: 200px; background: #f9f9f9; border-radius: 20px; margin-bottom: 20px;"></div>
-                <h3 style="font-size: 1.5rem;">HERITAGE OIL</h3>
+        <h2 class="heavy" style="font-size: 3rem; margin-bottom: 40px;">PRODUCTS LAB</h2>
+        <div class="hud-grid">
+            <div class="hud-card span-6" style="text-align: center;">
+                <div style="height: 200px; background: var(--soft-gold); border-radius: 20px; margin-bottom: 20px;"></div>
+                <h3 class="heavy">GOLD POMADE</h3>
                 <p>£24.00</p>
-                <button class="btn-brass" style="margin-top: 20px; padding: 10px 20px;">ADD</button>
+                <button class="heavy" style="margin-top: 15px; border:none; background:none; color:var(--orange);">+ ADD TO KIT</button>
             </div>
-            <div class="card" style="grid-column: span 4; text-align: center;">
-                <div style="height: 200px; background: #f9f9f9; border-radius: 20px; margin-bottom: 20px;"></div>
-                <h3 style="font-size: 1.5rem;">BRASS CLAY</h3>
-                <p>£18.00</p>
-                <button class="btn-brass" style="margin-top: 20px; padding: 10px 20px;">ADD</button>
-            </div>
-            <div class="card" style="grid-column: span 4; text-align: center;">
-                <div style="height: 200px; background: #f9f9f9; border-radius: 20px; margin-bottom: 20px;"></div>
-                <h3 style="font-size: 1.5rem;">OAK WASH</h3>
-                <p>£20.00</p>
-                <button class="btn-brass" style="margin-top: 20px; padding: 10px 20px;">ADD</button>
+            <div class="hud-card span-6" style="text-align: center;">
+                <div style="height: 200px; background: var(--soft-gold); border-radius: 20px; margin-bottom: 20px;"></div>
+                <h3 class="heavy">OAK SERUM</h3>
+                <p>£28.00</p>
+                <button class="heavy" style="margin-top: 15px; border:none; background:none; color:var(--orange);">+ ADD TO KIT</button>
             </div>
         </div>
     </section>
 
-    <section style="background: var(--ink); color: white; padding: 150px 5%;">
-        <div class="bento">
-            <div class="card" style="grid-column: span 6; background: transparent; border: 1px solid #333;">
-                <div style="height: 400px; background: url('https://images.unsplash.com/photo-1618331835717-801e976710b2?auto=format&fit=crop&q=80') center/cover; filter: grayscale(1);"></div>
-                <h2 style="margin-top: 20px; font-size: 2.5rem; color: var(--brass);">V. Kovalev</h2>
-                <p class="bold">Founder & Chief Artisan</p>
+    <section id="map" style="padding: 100px 5%; background: var(--ink); color: white; border-radius: 60px 60px 0 0;">
+        <h1 class="heavy" style="font-size: 6rem; color: var(--gold);">DROP IN.</h1>
+        <div style="margin-top: 50px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+            <div>
+                <h4 class="heavy" style="color: var(--orange);">LOCATION</h4>
+                <p>STATION 09, THE ARCHES<br>LONDON, SE1</p>
             </div>
-            <div class="card" style="grid-column: span 6; background: transparent; border: 1px solid #333;">
-                <div style="height: 400px; background: #222;"></div>
-                <h2 style="margin-top: 20px; font-size: 2.5rem; color: var(--brass);">M. Thorne</h2>
-                <p class="bold">Senior Specialist</p>
+            <div>
+                <h4 class="heavy" style="color: var(--orange);">HOURS</h4>
+                <p>MON-FRI: 08:00 - 21:00</p>
+                <p>SAT: 10:00 - 18:00</p>
             </div>
+        </div>
+        <div style="margin-top: 80px; text-align: center; opacity: 0.2;">
+            <h2 class="heavy">SVRGN® TERMINAL 2026</h2>
         </div>
     </section>
-
-    <footer id="location" style="padding: 150px 5%; display: flex; justify-content: space-between; align-items: flex-end;">
-        <div>
-            <h1 style="font-size: 6rem;">S&B</h1>
-            <p style="max-width: 300px; opacity: 0.5;">12 Heritage Row, Mayfair, London. The final destination for the modern gentleman.</p>
-        </div>
-        <div style="text-align: right;">
-            <p class="bold">OPENING_HOURS</p>
-            <p>Mon - Fri: 09:00 - 20:00</p>
-            <p>Sat - Sun: 10:00 - 18:00</p>
-            <div style="margin-top: 30px;">
-                <i class="fab fa-instagram" style="font-size: 1.5rem; margin-left: 20px;"></i>
-                <i class="fab fa-whatsapp" style="font-size: 1.5rem; margin-left: 20px;"></i>
-            </div>
-        </div>
-    </footer>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         AOS.init();
-        // Auto-open entrance for demo, but owner would love the 'Tap' experience
-        setTimeout(() => {
-            // document.getElementById('entrance').classList.add('open'); 
-        }, 3000);
     </script>
 </body>
 </html>
