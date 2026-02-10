@@ -799,263 +799,423 @@
         </nav>
     </div>
 
-<script>
-    let currentStep = 0;
-    let selections = { 
-        businessName: '', 
-        services: [], 
-        planType: '', 
-        designCode: '', 
-        urgency: '',
-        fromConceptLibrary: false,
-        recommendedPlan: ''
-    };
 
-    const buyOutrightStandard = [
-        "Logo Design","Book Now Button","Static Customer Reviews","WhatsApp Static Button",
-        "Contact Form","Service Menu & Pricing Tables","Staff Team Profile Pages","Portfolio Photo Gallery",
-        "Business Hours","Google Maps Embed","Click-to-Call Phone Button","FAQ Accordion Section",
-        "SEO Meta Tags Configuration","Social Media Links","Email Newsletter Signup Form"
-    ];
 
-    const buyOutrightPremium = [
-        "App-Like Website Design","Online Booking Form Embed (Calendly/Fresha/Booksy)",
-        "Stripe / PayPal Payment Buttons","Products Display (up to 10 items)","Digital Gift Card Display Page",
-        "Exit-Intent Popup (Desktop Only)","New Customer Promo Popup","Interactive Reviews & Testimonials",
-        "Google Reviews Embed","Scroll UI Animations","Multi-Location Pages Setup",
-        "Custom Brand Graphics & Icons (up to 20)","Instagram Feed Embed","Before & After Image Slider",
-        "Google Analytics Setup","Google Search Console Setup","Full Website Branding",
-        "Hero Background Video","Dynamic Contact Bar (WhatsApp / Call / Text / Email)","Stat Counts"
-    ];
 
-    const monthlyStandard = buyOutrightStandard.slice();
-    const monthlyPremiumOnly = buyOutrightPremium.slice();
-    const monthlyManagementServices = [
-        "Content updates (new services, images, promotions)","Security patches & backups",
-        "Form & functionality checks","SEO tweaks & meta tag updates","Speed / performance optimization",
-        "Minor design tweaks","Analytics reporting (basic)","Booking / payment checks"
-    ];
+    <script>
+let currentStep = 0;
+let selections = { 
+    businessName: '', 
+    services: [], 
+    planType: '', 
+    designCode: '', 
+    urgency: '',
+    fromConceptLibrary: false,
+    recommendedPlan: ''
+};
 
-    // STRIPE TEST CHECKOUT LINKS (updated)
-    const STRIPE_LINKS = {
-        BUY_STANDARD: 'https://buy.stripe.com/test_00wdRa2Lc7093305LxgMw01',
-        BUY_PREMIUM: 'https://buy.stripe.com/test_dRmaEYbhI84d1YW8XJgMw02',
-        MONTHLY_STANDARD_SETUP: 'https://buy.stripe.com/test_9B614oetUckt6fc7TFgMw04',
-        MONTHLY_PREMIUM_SETUP: 'https://buy.stripe.com/test_6oU5kE3Pgdox6fc6PBgMw03'
-    };
+// ONE-TIME/OUTRIGHT STANDARD FEATURES
+const buyOutrightStandard = [
+    "Logo Design",
+    "Book Now Button", 
+    "Static Customer Reviews",
+    "WhatsApp Static Button",
+    "Contact Form",
+    "Service Menu & Pricing Tables",
+    "Staff Team Profile Pages",
+    "Portfolio Photo Gallery",
+    "Business Hours",
+    "Google Maps Embed",
+    "Click-to-Call Phone Button",
+    "FAQ Accordion Section",
+    "SEO Meta Tags Configuration",
+    "Social Media Links",
+    "Email Newsletter Signup Form"
+];
 
-    function toggleMenu() {
-        const menu = document.getElementById('app-menu-layer');
-        menu.classList.toggle('active');
-    }
+// ONE-TIME/OUTRIGHT PREMIUM FEATURES
+const buyOutrightPremium = [
+    "App-Like Website Design",
+    "Online Booking Form Embed (Calendly/Fresha/Booksy)",
+    "Stripe / PayPal Payment Buttons",
+    "Products Display (up to 10 items)",
+    "Digital Gift Card Display Page",
+    "Exit-Intent Popup (Desktop Only)",
+    "New Customer Promo Popup",
+    "Interactive Reviews & Testimonials",
+    "Google Reviews Embed",
+    "Scroll UI Animations",
+    "Multi-Location Pages Setup",
+    "Custom Brand Graphics & Icons (up to 20)",
+    "Instagram Feed Embed",
+    "Before & After Image Slider",
+    "Google Analytics Setup",
+    "Google Search Console Setup",
+    "Full Website Branding",
+    "Hero Background Video",
+    "Dynamic Contact Bar (WhatsApp / Call / Text / Email)",
+    "Stat Counts"
+];
 
-    function initServiceList() {
-        const grid = document.getElementById('master-service-grid');
-        grid.innerHTML = '';
-        const isOutright = selections.planType === 'Buy Outright';
-        const standardServices = isOutright ? buyOutrightStandard : monthlyStandard;
-        const premiumServices = isOutright ? buyOutrightPremium : monthlyPremiumOnly;
+// MONTHLY STANDARD FEATURES
+const monthlyStandard = buyOutrightStandard;
 
-        if (!isOutright) {
-            grid.innerHTML += `
-                <div class="service-card management-note">
-                    <span class="tier-pill" style="background:#FFF3E0; color:#FF6B00;">MONTHLY CARE</span>
-                    <div style="font-weight:700; font-size:0.95rem;">Monthly Management Services</div>
-                    <div style="font-size:0.7rem; color:var(--gray); font-weight:600; margin-top:4px;">
-                        <i class="fas fa-sync"></i> All monthly plans include: ${monthlyManagementServices.length} services
-                    </div>
-                    <div style="font-size:0.75rem; color:var(--gray); margin-top:8px; line-height:1.2;">
-                        Includes: ${monthlyManagementServices.slice(0,3).join(', ')}...
-                    </div>
-                </div>
-            `;
-        }
+// MONTHLY PREMIUM FEATURES
+const monthlyPremiumOnly = buyOutrightPremium;
 
-        standardServices.forEach(s => grid.innerHTML += `
-            <div class="service-card" onclick="toggleService('${s}', 'standard', this)">
-                <span class="tier-pill" style="background:#E8F5E9; color:#4CAF50;">STANDARD</span>
-                <div style="font-weight:700; font-size:0.95rem;">${s}</div>
+// Monthly management services
+const monthlyManagementServices = [
+    "Content updates (new services, images, promotions)",
+    "Security patches & backups",
+    "Form & functionality checks",
+    "SEO tweaks & meta tag updates",
+    "Speed / performance optimization",
+    "Minor design tweaks",
+    "Analytics reporting (basic)",
+    "Booking / payment checks"
+];
+
+// Stripe Price IDs
+const STANDARD_BUILD_PRICE_ID = 'price_1SzNqPLBGmGftzSkVxVpMUFI';
+const PREMIUM_BUILD_PRICE_ID = 'price_1SzNzULBGmGftzSkx0wGEXGO';
+const STANDARD_MONTHLY_PRICE_ID = 'price_1SnSfeLBGmGftzSkeEmZmLMC';
+const PREMIUM_MONTHLY_PRICE_ID = 'price_1SzO69LBGmGftzSkxYpd4s7M';
+
+function toggleMenu() {
+    const menu = document.getElementById('app-menu-layer');
+    menu.classList.toggle('active');
+}
+
+function initServiceList() {
+    const grid = document.getElementById('master-service-grid');
+    grid.innerHTML = '';
+    
+    const isOutright = selections.planType === 'Buy Outright';
+    const standardServices = isOutright ? buyOutrightStandard : monthlyStandard;
+    const premiumServices = isOutright ? buyOutrightPremium : monthlyPremiumOnly;
+    
+    if (!isOutright) {
+        grid.innerHTML += `
+            <div class="service-card management-note">
+                <span class="tier-pill" style="background:#FFF3E0; color:#FF6B00;">MONTHLY CARE</span>
+                <div style="font-weight:700; font-size:0.95rem;">Monthly Management Services</div>
                 <div style="font-size:0.7rem; color:var(--gray); font-weight:600; margin-top:4px;">
-                    <i class="fas fa-check"></i> ${isOutright ? 'One-time setup' : 'Included in build'}
+                    <i class="fas fa-sync"></i> 
+                    All monthly plans include: ${monthlyManagementServices.length} management services
+                </div>
+                <div style="font-size:0.75rem; color:var(--gray); margin-top:8px; line-height:1.2;">
+                    Includes: ${monthlyManagementServices.slice(0, 3).join(', ')}...
                 </div>
             </div>
-        `);
-
-        premiumServices.forEach(s => grid.innerHTML += `
-            <div class="service-card" onclick="toggleService('${s}', 'premium', this)">
-                <span class="tier-pill" style="background:#E3F2FD; color:#2196F3;">PREMIUM</span>
-                <div style="font-weight:700; font-size:0.95rem;">${s}</div>
-                <div style="font-size:0.7rem; color:var(--gray); font-weight:600; margin-top:4px;">
-                    <i class="fas fa-crown"></i> ${isOutright ? 'One-time setup' : 'Premium feature'}
-                </div>
-            </div>
-        `);
-
-        updatePlanIndicator();
-    }
-
-    function toggleService(name, tier, el) {
-        el.classList.toggle('selected'); 
-        el.classList.toggle(tier);
-        const index = selections.services.findIndex(item => item.name === name && item.tier === tier);
-        if (index > -1) selections.services.splice(index, 1);
-        else selections.services.push({ name, tier });
-        updateRecommendedPlan();
-    }
-
-    function updateRecommendedPlan() {
-        const premCount = selections.services.filter(s => s.tier==='premium').length;
-        const stdCount = selections.services.filter(s => s.tier==='standard').length;
-        selections.recommendedPlan = (premCount>3 || stdCount>5) ? 'premium' : 'standard';
-        updatePlanIndicator();
-    }
-
-    function updatePlanIndicator() {
-        const indicator = document.getElementById('plan-indicator');
-        if(!indicator) return;
-        const premCount = selections.services.filter(s=>s.tier==='premium').length;
-        const stdCount = selections.services.filter(s=>s.tier==='standard').length;
-        indicator.innerHTML = `
-            <div class="indicator-dot ${selections.recommendedPlan==='standard'?'standard active':'standard'}"></div>
-            <div style="font-size:0.8rem; font-weight:700; color:var(--gray);">${stdCount} selected</div>
-            <div class="indicator-dot ${selections.recommendedPlan==='premium'?'premium active':'premium'}"></div>
-            <div style="font-size:0.8rem; font-weight:700; color:var(--gray);">${premCount} selected</div>
         `;
     }
+    
+    standardServices.forEach(s => grid.innerHTML += `
+        <div class="service-card" onclick="toggleService('${s}', 'standard', this)">
+            <span class="tier-pill" style="background:#E8F5E9; color:#4CAF50;">STANDARD</span>
+            <div style="font-weight:700; font-size:0.95rem;">${s}</div>
+            <div style="font-size:0.7rem; color:var(--gray); font-weight:600; margin-top:4px;">
+                <i class="fas fa-check"></i> 
+                ${isOutright ? 'One-time setup' : 'Included in build'}
+            </div>
+        </div>
+    `);
+    
+    premiumServices.forEach(s => grid.innerHTML += `
+        <div class="service-card" onclick="toggleService('${s}', 'premium', this)">
+            <span class="tier-pill" style="background:#E3F2FD; color:#2196F3;">PREMIUM</span>
+            <div style="font-weight:700; font-size:0.95rem;">${s}</div>
+            <div style="font-size:0.7rem; color:var(--gray); font-weight:600; margin-top:4px;">
+                <i class="fas fa-crown"></i> 
+                ${isOutright ? 'One-time setup' : 'Premium feature'}
+            </div>
+        </div>
+    `);
+    
+    updatePlanIndicator();
+}
 
-    function startReady() { currentStep=1; updateUI(); }
-
-    function handleStep1() {
-        const input = document.getElementById('businessInput').value.trim();
-        if(input){ selections.businessName=input; sessionStorage.setItem('barberShopName', input); next(); }
-        else alert("Please enter a shop name");
+function toggleService(name, tier, el) {
+    el.classList.toggle('selected'); 
+    el.classList.toggle(tier);
+    
+    const index = selections.services.findIndex(item => item.name === name && item.tier === tier);
+    
+    if (index > -1) {
+        selections.services.splice(index, 1);
+    } else {
+        selections.services.push({ name, tier });
     }
+    
+    updateRecommendedPlan();
+}
 
-    function verifyDesign() {
-        const input = document.getElementById('designCode').value.trim().toLowerCase();
-        const display = document.getElementById('concept-display-area');
-        const entry = document.getElementById('code-entry-area');
-        let conceptNum = input.match(/\d+/);
-        if(conceptNum && conceptNum[0]<=446){
-            const codeString=`barber-${conceptNum[0]}`;
-            selections.designCode = codeString.toUpperCase();
-            entry.style.display='none';
-            display.style.display='block';
-            display.innerHTML = `<div class="concept-preview"><img src="https://raw.githubusercontent.com/doctoc30/Vibz/main/images/${codeString}.jpg" onerror="this.src='https://via.placeholder.com/400x220'"><div class="concept-info"><h3>${selections.designCode}</h3><p>Selected for ${selections.businessName || 'your shop'}.</p></div></div><button class="vibz-btn primary" onclick="next()">Confirm & Continue</button><button class="vibz-btn back-btn" onclick="resetCodeEntry()">Different Code</button>`;
-        } else alert("Enter a valid design code (e.g., Barber 446)");
+function updateRecommendedPlan() {
+    const premSels = selections.services.filter(s => s.tier === 'premium');
+    const stdSels = selections.services.filter(s => s.tier === 'standard');
+    
+    if (premSels.length > 3) {
+        selections.recommendedPlan = 'premium';
+    } else if (stdSels.length > 5) {
+        selections.recommendedPlan = 'premium';
+    } else {
+        selections.recommendedPlan = 'standard';
     }
+    
+    updatePlanIndicator();
+}
 
-    function resetCodeEntry(){ 
-        document.getElementById('code-entry-area').style.display='block';
-        document.getElementById('concept-display-area').style.display='none';
+function updatePlanIndicator() {
+    const indicator = document.getElementById('plan-indicator');
+    if (!indicator) return;
+    
+    const premSels = selections.services.filter(s => s.tier === 'premium').length;
+    const stdSels = selections.services.filter(s => s.tier === 'standard').length;
+    
+    let html = `
+        <div class="indicator-dot ${selections.recommendedPlan === 'standard' ? 'standard active' : 'standard'}"></div>
+        <div style="font-size:0.8rem; font-weight:700; color:var(--gray);">${stdSels} selected</div>
+        <div class="indicator-dot ${selections.recommendedPlan === 'premium' ? 'premium active' : 'premium'}"></div>
+        <div style="font-size:0.8rem; font-weight:700; color:var(--gray);">${premSels} selected</div>
+    `;
+    
+    indicator.innerHTML = html;
+}
+
+function startReady() { 
+    currentStep = 1; 
+    updateUI(); 
+}
+
+function handleStep1() {
+    const input = document.getElementById('businessInput').value.trim();
+    if(input) { 
+        selections.businessName = input;
+        sessionStorage.setItem('barberShopName', input);
+        next(); 
+    } else {
+        alert("Please enter a shop name");
     }
+}
 
-    function setPlanType(val){ selections.planType=val; selections.services=[]; next(); }
-    function setUrgency(val){ selections.urgency=val; next(); }
+function verifyDesign() {
+    const input = document.getElementById('designCode').value.trim().toLowerCase();
+    const display = document.getElementById('concept-display-area');
+    const entry = document.getElementById('code-entry-area');
+    let conceptNum = input.match(/\d+/);
+    if(conceptNum && conceptNum[0] <= 446) {
+        const codeString = `barber-${conceptNum[0]}`;
+        selections.designCode = codeString.toUpperCase();
+        entry.style.display = 'none'; 
+        display.style.display = 'block';
+        display.innerHTML = `<div class="concept-preview"><img src="https://raw.githubusercontent.com/doctoc30/Vibz/main/images/${codeString}.jpg" onerror="this.src='https://via.placeholder.com/400x220'"><div class="concept-info"><h3>${selections.designCode}</h3><p>Selected for ${selections.businessName || 'your shop'}.</p></div></div><button class="vibz-btn primary" onclick="next()">Confirm & Continue</button><button class="vibz-btn back-btn" onclick="resetCodeEntry()">Different Code</button>`;
+    } else { 
+        alert("Enter a valid design code (e.g., Barber 446)"); 
+    }
+}
 
-    function renderPricingCards() {
-        const container = document.getElementById('pricing-cards-display');
-        const premSels = selections.services.filter(s=>s.tier==='premium');
-        const stdSels = selections.services.filter(s=>s.tier==='standard');
-        const hasPremium = premSels.length>0;
-        const hasStandard = stdSels.length>0;
-        const isOutright = selections.planType==='Buy Outright';
-        const isRecommendedPremium = selections.recommendedPlan==='premium';
-        let cardsHTML='';
+function resetCodeEntry() { 
+    document.getElementById('code-entry-area').style.display = 'block'; 
+    document.getElementById('concept-display-area').style.display = 'none'; 
+}
 
-        if(isOutright){
-            cardsHTML = `
-                <div class="pricing-card standard ${isRecommendedPremium?'':'recommended'}">
-                    ${!isRecommendedPremium?'<div class="plan-recommended-badge"><i class="fas fa-star"></i> Recommended</div>':''}
-                    <div class="pricing-header">
-                        <div class="plan-type standard-type">STANDARD — ONE-TIME</div>
-                        <div class="plan-price">£1,500</div>
-                        <div class="plan-desc">Pay once, own forever</div>
-                    </div>
-                    <div class="simple-highlight"><h4>What's Included:</h4><p>${stdSels.length} Standard features selected</p></div>
-                    <button class="payment-button secondary" onclick="window.open('${STRIPE_LINKS.BUY_STANDARD}','_blank')">Choose Standard</button>
+function setPlanType(val) { 
+    selections.planType = val; 
+    selections.services = [];
+    next(); 
+}
+
+function setUrgency(val) { 
+    selections.urgency = val; 
+    next(); 
+}
+
+function renderPricingCards() {
+    const container = document.getElementById('pricing-cards-display');
+    const premSels = selections.services.filter(s => s.tier === 'premium');
+    const stdSels = selections.services.filter(s => s.tier === 'standard');
+    const hasPremium = premSels.length > 0;
+    const hasStandard = stdSels.length > 0;
+    const isOutright = selections.planType === 'Buy Outright';
+    const isRecommendedPremium = selections.recommendedPlan === 'premium';
+    
+    let cardsHTML = '';
+    
+    if (isOutright) {
+        cardsHTML = `
+            <div class="pricing-card standard ${isRecommendedPremium ? '' : 'recommended'}">
+                ${!isRecommendedPremium ? '<div class="plan-recommended-badge"><i class="fas fa-star"></i> Recommended</div>' : ''}
+                <div class="pricing-header">
+                    <div class="plan-type standard-type">STANDARD — ONE-TIME</div>
+                    <div class="plan-price">£1,500</div>
+                    <div class="plan-desc">Pay once, own forever</div>
                 </div>
-                <div class="pricing-card premium ${isRecommendedPremium?'recommended':''}">
-                    ${isRecommendedPremium?'<div class="plan-recommended-badge"><i class="fas fa-crown"></i> Best Value</div>':''}
-                    <div class="pricing-header">
-                        <div class="plan-type premium-type">PREMIUM — ONE-TIME</div>
-                        <div class="plan-price">£4,000</div>
-                        <div class="plan-desc">Pay once, own forever</div>
-                    </div>
-                    <div class="simple-highlight"><h4>What's Included:</h4><p>${premSels.length} Premium features + your selected Standard features</p></div>
-                    <button class="payment-button premium" onclick="window.open('${STRIPE_LINKS.BUY_PREMIUM}','_blank')">Choose Premium</button>
+                <div class="simple-highlight">
+                    <h4>What's Included:</h4>
+                    <p>${stdSels.length} selected Standard features</p>
                 </div>
-            `;
-        } else {
-            cardsHTML = `
-                <div class="pricing-card monthly-standard ${isRecommendedPremium?'':'recommended'}">
-                    <div class="pricing-header">
-                        <div class="monthly-badge"><i class="fas fa-sync"></i> STANDARD — MONTHLY</div>
-                        <div class="initial-build-price"><div class="build-price">£500</div><div class="build-label">Initial build payment</div></div>
-                        <div class="monthly-payment-section"><div class="monthly-amount">£150</div><div class="monthly-label">per month (months 2-12)</div></div>
-                    </div>
-                    <button class="payment-button secondary" onclick="window.open('${STRIPE_LINKS.MONTHLY_STANDARD_SETUP}','_blank')">Pay £500 Setup Fee</button>
+                <button class="payment-button secondary" onclick="createCheckout('${STANDARD_BUILD_PRICE_ID}')">Choose Standard</button>
+            </div>
+            
+            <div class="pricing-card premium ${isRecommendedPremium ? 'recommended' : ''}">
+                ${isRecommendedPremium ? '<div class="plan-recommended-badge"><i class="fas fa-crown"></i> Best Value</div>' : ''}
+                <div class="pricing-header">
+                    <div class="plan-type premium-type">PREMIUM — ONE-TIME</div>
+                    <div class="plan-price">£4,000</div>
+                    <div class="plan-desc">Pay once, own forever</div>
                 </div>
-                <div class="pricing-card monthly-premium ${isRecommendedPremium?'recommended':''}">
-                    <div class="pricing-header">
-                        <div class="monthly-badge"><i class="fas fa-sync"></i> PREMIUM — MONTHLY</div>
-                        <div class="initial-build-price"><div class="build-price">£650</div><div class="build-label">Initial build payment</div></div>
-                        <div class="monthly-payment-section"><div class="monthly-amount">£200</div><div class="monthly-label">per month (months 2-12)</div></div>
-                    </div>
-                    <button class="payment-button premium" onclick="window.open('${STRIPE_LINKS.MONTHLY_PREMIUM_SETUP}','_blank')">Pay £650 Setup Fee</button>
+                <div class="simple-highlight">
+                    <h4>What's Included:</h4>
+                    <p>Selected Standard features (${stdSels.length}) included at no extra cost</p>
+                    <p>${premSels.length > 0 ? premSels.length + " Premium features included" : ""}</p>
                 </div>
-            `;
-        }
+                <button class="payment-button premium" onclick="createCheckout('${PREMIUM_BUILD_PRICE_ID}')">Choose Premium</button>
+            </div>`;
+    } else {
+        cardsHTML = `
+            <div class="pricing-card monthly-standard ${!isRecommendedPremium?'recommended':''}">
+                ${!isRecommendedPremium?'<div class="plan-recommended-badge"><i class="fas fa-star"></i> Recommended</div>':''}
+                <div class="pricing-header">
+                    <div class="monthly-badge">STANDARD — MONTHLY</div>
+                    <div class="initial-build-price">£500 initial</div>
+                    <div class="monthly-payment-section">£150/month</div>
+                    <div class="contract-label">12 months contract</div>
+                </div>
+                <div class="simple-highlight">
+                    <p>Month 1: £500 setup • Months 2-12: £150/month</p>
+                </div>
+                <div class="plan-features">
+                    <div>${stdSels.length} selected Standard features</div>
+                    <div>${monthlyManagementServices.length} management services included</div>
+                </div>
+                <button class="payment-button secondary" onclick="createCheckout('${STANDARD_MONTHLY_PRICE_ID}')">Pay £500 Setup Fee</button>
+            </div>
 
-        container.innerHTML = cardsHTML;
+            <div class="pricing-card monthly-premium ${isRecommendedPremium?'recommended':''}">
+                ${isRecommendedPremium?'<div class="plan-recommended-badge"><i class="fas fa-crown"></i> Best Value</div>':''}
+                <div class="pricing-header">
+                    <div class="monthly-badge">PREMIUM — MONTHLY</div>
+                    <div class="initial-build-price">£650 initial</div>
+                    <div class="monthly-payment-section">£200/month</div>
+                    <div class="contract-label">12 months contract</div>
+                </div>
+                <div class="simple-highlight">
+                    <p>Selected Standard features included (${stdSels.length}) at no extra cost</p>
+                    ${premSels.length>0?`<p>${premSels.length} Premium features included</p>`:''}
+                    <p>Month 1: £650 setup • Months 2-12: £200/month</p>
+                </div>
+                <div class="plan-features">
+                    <div>${monthlyManagementServices.length} management services included</div>
+                </div>
+                <button class="payment-button premium" onclick="createCheckout('${PREMIUM_MONTHLY_PRICE_ID}')">Pay £650 Setup Fee</button>
+            </div>`;
     }
 
-    function clearSelections(){ selections.services=[]; updatePlanIndicator(); renderPricingCards(); }
+    container.innerHTML = cardsHTML;
+}
 
-    function resetHeader(){
-        const header=document.querySelector('header');
-        const logo=document.querySelector('.header-logo');
-        ['transform','position','top','left','right','zIndex'].forEach(p=>header.style[p]='');
-        logo.style.opacity='1'; logo.style.visibility='visible'; logo.style.transform=''; logo.style.position='';
-        header.offsetHeight;
-    }
+function createCheckout(priceId) {
+    window.open(`https://buy.stripe.com/test_${priceId}`, '_blank');
+}
 
-    function updateUI() {
-        resetHeader();
-        document.querySelectorAll('.form-screen').forEach(s=>{ s.classList.remove('active'); s.style.display='none'; s.style.opacity='0'; s.style.transform='translateY(15px)'; });
-        const currentScreen=document.getElementById(`step-${currentStep}`);
-        currentScreen.style.display='block';
-        setTimeout(()=>{ currentScreen.classList.add('active'); currentScreen.style.opacity='1'; currentScreen.style.transform='translateY(0)'; },10);
+function clearSelections() {
+    selections.services = [];
+    updatePlanIndicator();
+    renderPricingCards();
+}
 
-        const titles={0:"Build your barber brand.",1:"Shop Name?",2:"Status?",3:"Design Choice?",4:"Verification",5:"Management?",6:"Timeline?",7:"Features",8:"Summary",9:"Details"};
-        document.getElementById('dynamic-title').textContent=titles[currentStep];
-        const subtitles={5:"Digital solutions for modern shops.",default:"Digital solutions for modern shops."};
-        document.getElementById('dynamic-subtitle').textContent=subtitles[currentStep]||subtitles.default;
-        document.getElementById('main-content-wrapper').className=(currentStep===0||currentStep===1)?"hero-centered":"hero-balanced";
+function resetHeader() {
+    const header = document.querySelector('header');
+    const logo = document.querySelector('.header-logo');
+    
+    header.style.transform = '';
+    header.style.position = '';
+    header.style.top = '';
+    header.style.left = '';
+    header.style.right = '';
+    header.style.zIndex = '';
+    
+    logo.style.opacity = '1';
+    logo.style.visibility = 'visible';
+    logo.style.transform = '';
+    logo.style.position = '';
+    
+    header.offsetHeight;
+}
 
-        if(currentStep===7){ initServiceList(); updateRecommendedPlan(); }
-        if(currentStep===8) renderPricingCards();
-        window.scrollTo({top:0,behavior:'smooth'});
-        const menu=document.getElementById('app-menu-layer'); if(menu.classList.contains('active')) menu.classList.remove('active');
-    }
+function updateUI() {
+    resetHeader();
+    document.querySelectorAll('.form-screen').forEach(s => {
+        s.classList.remove('active');
+        s.style.display = 'none';
+        s.style.opacity = '0';
+        s.style.transform = 'translateY(15px)';
+    });
+    const currentScreen = document.getElementById(`step-${currentStep}`);
+    currentScreen.style.display = 'block';
+    setTimeout(() => {
+        currentScreen.classList.add('active');
+        currentScreen.style.opacity = '1';
+        currentScreen.style.transform = 'translateY(0)';
+    }, 10);
 
-    function next(){ if(currentStep<9){ currentStep++; updateUI(); } }
-    function prev(){ if(currentStep>0){ currentStep--; updateUI(); } }
-    function goToStep(s){ currentStep=s; updateUI(); }
-
-    window.onload=function(){
-        const urlParams=new URLSearchParams(window.location.search);
-        if(urlParams.get('step')==='5'){
-            selections.designCode=sessionStorage.getItem('selectedBarberCode')||'LIBRARY DESIGN';
-            selections.fromConceptLibrary=true;
-            currentStep=5;
-            const savedShopName=sessionStorage.getItem('barberShopName');
-            if(savedShopName&&!selections.businessName) selections.businessName=savedShopName;
-        }
-        updateUI();
+    const titles = { 
+        0: "Build your barber brand.", 
+        1: "Shop Name?", 
+        2: "Status?", 
+        3: "Design Choice?", 
+        4: "Verification", 
+        5: "Management?", 
+        6: "Timeline?", 
+        7: "Features", 
+        8: "Summary", 
+        9: "Details" 
     };
+    document.getElementById('dynamic-title').textContent = titles[currentStep];
 
-    document.addEventListener('touchmove',function(e){ if(e.target.classList.contains('content-scroll')) e.stopPropagation(); },{passive:false});
+    const subtitles = { 5: "Digital solutions for modern shops.", default: "Digital solutions for modern shops." };
+    document.getElementById('dynamic-subtitle').textContent = subtitles[currentStep] || subtitles.default;
+
+    const mainContent = document.getElementById('main-content-wrapper');
+    mainContent.className = (currentStep === 0 || currentStep === 1) ? "hero-centered" : "hero-balanced";
+
+    if(currentStep === 7) {
+        initServiceList();
+        updateRecommendedPlan();
+    }
+    if(currentStep === 8) renderPricingCards();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    const menu = document.getElementById('app-menu-layer');
+    if (menu.classList.contains('active')) menu.classList.remove('active');
+}
+
+function next() { 
+    if(currentStep < 9) { currentStep++; updateUI(); } 
+}
+function prev() { 
+    if(currentStep > 0) { currentStep--; updateUI(); } 
+}
+function goToStep(s) { 
+    currentStep = s; 
+    updateUI(); 
+}
+
+window.onload = function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if(urlParams.get('step') === '5') {
+        selections.designCode = sessionStorage.getItem('selectedBarberCode') || 'LIBRARY DESIGN';
+        selections.fromConceptLibrary = true;
+        currentStep = 5;
+        const savedShopName = sessionStorage.getItem('barberShopName');
+        if (savedShopName && !selections.businessName) selections.businessName = savedShopName;
+    }
+    updateUI();
+};
+
+document.addEventListener('touchmove', function(e) {
+    if (e.target.classList.contains('content-scroll')) e.stopPropagation();
+}, { passive: false });
 </script>
     
 </body>
