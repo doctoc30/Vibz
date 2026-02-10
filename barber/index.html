@@ -473,6 +473,20 @@
         .indicator-dot.premium {
             background: var(--premium);
         }
+        
+        /* Feature list styles */
+        .feature-list-compact {
+            font-size: 0.8rem;
+            color: var(--gray);
+            margin-top: 5px;
+            line-height: 1.4;
+        }
+        
+        .feature-highlight {
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 3px;
+        }
     </style>
 </head>
 <body>
@@ -603,91 +617,74 @@
             designCode: '', 
             urgency: '',
             fromConceptLibrary: false,
-            recommendedPlan: '' // Store the recommended plan type
+            recommendedPlan: ''
         };
 
-        // ===== BUY OUTRIGHT SERVICES (One-time setup) - UPDATED WITH STATIC FEATURES =====
+        // ===== UPDATED BUY OUTRIGHT SERVICES =====
         const buyOutrightStandard = [
-            "Professional Logo Design & Integration",
-            "Static Customer Reviews Display",
-            "WhatsApp Business Integration",
-            "Contact Form with Email Setup",
-            "Service Menu & Pricing Tables", 
+            "Logo Design",
+            "Book Now Button", 
+            "Static Customer Reviews",
+            "WhatsApp Static Button",
+            "Contact Form",
+            "Service Menu & Pricing Tables",
             "Staff Team Profile Pages",
             "Portfolio Photo Gallery",
-            "Business Hours & Location Display",
-            "Google Maps Embed Integration",
-            "Click-to-Call Phone Links",
+            "Business Hours",
+            "Google Maps Embed",
+            "Click-to-Call Phone Button",
             "FAQ Accordion Section",
             "SEO Meta Tags Configuration",
-            "Social Media Links Integration",
-            "Mobile Responsive Design",
-            "Basic SEO Setup"
+            "Social Media Links",
+            "Email Newsletter Signup Form"
         ];
 
         const buyOutrightPremium = [
-            "Premium Logo Animation Design",
-            "Interactive Reviews & Testimonials",
-            "WhatsApp Chat Automation Setup",
-            "Advanced Contact Form with CRM",
-            "Online Booking Form Integration",
-            "Stripe Payment Button Setup",
+            "App-Like Website Design",
+            "Online Booking Form Embed (Calendly/Fresha/Booksy)",
+            "Stripe / PayPal Payment Buttons",
+            "Products Display (up to 10 items)",
             "Digital Gift Card Display Page",
-            "Waitlist Notification System",
-            "Exit-Intent Popup Design",
-            "Google Analytics Implementation",
-            "Custom Brand Illustrations",
+            "Exit-Intent Popup (Desktop Only)",
+            "New Customer Promo Popup",
+            "Interactive Reviews & Testimonials",
+            "Google Reviews Embed",
+            "Scroll UI Animations",
             "Multi-Location Pages Setup",
-            "Google Reviews Embed System",
-            "Customer Contact Form Database",
-            "Email Newsletter Signup Form",
-            "Mobile Text Interface Design",
-            "VIP Members Area Page Design",
-            "Business Stats Dashboard",
-            "Blog/News Publishing Template",
-            "Advanced SEO Strategy"
+            "Custom Brand Graphics & Icons (up to 20)",
+            "Instagram Feed Embed",
+            "Before & After Image Slider",
+            "Google Analytics Setup",
+            "Google Search Console Setup",
+            "Full Website Branding",
+            "Hero Background Video",
+            "Dynamic Contact Bar (WhatsApp / Call / Text / Email)",
+            "Stat Counts"
         ];
 
-        // ===== MONTHLY SUPPORT SERVICES (Ongoing maintenance) - UPDATED =====
+        // ===== UPDATED MONTHLY SUPPORT SERVICES =====
         const monthlyStandard = [
-            "Monthly Content Updates (5 pages)",
-            "Regular Security Patches",
-            "Website Performance Monitoring",
-            "Uptime & Backup Management",
-            "Basic SEO Optimization",
-            "Google Analytics Reporting",
-            "Mobile Responsive Maintenance",
-            "Form & Functionality Checks",
-            "Broken Link Monitoring",
-            "Browser Compatibility Updates",
-            "Speed Optimization Tweaks",
-            "Monthly Security Scans",
-            "Backup & Recovery Management",
-            "Domain & SSL Monitoring",
-            "Logo & Brand Asset Updates"
+            "Content updates (images, services, prices)",
+            "Security patches & backups",
+            "Form & functionality checks",
+            "SEO tweaks & meta tag updates",
+            "Speed / performance optimizations",
+            "Minor visual adjustments as needed",
+            "Analytics reporting (basic)",
+            "Booking / payment checks"
         ];
 
         const monthlyPremium = [
-            "Priority Monthly Content Updates",
-            "Advanced Security Management",
-            "Performance Optimization Suite",
-            "Proactive Uptime Monitoring",
-            "Advanced SEO Strategy",
-            "Conversion Rate Optimization",
-            "Multi-Device Testing",
-            "Form & Integration Maintenance",
-            "Comprehensive Link Management",
-            "Cross-Browser Optimization",
-            "Speed & Performance Tuning",
-            "Security Vulnerability Scans",
-            "Automated Backup Systems",
-            "SSL & Domain Management",
-            "Content Strategy Implementation",
-            "Social Media Integration",
-            "Review & Reputation Management",
-            "Analytics & Reporting Suite",
-            "Competitor Analysis Updates",
-            "Monthly Strategy Consultations"
+            "Content updates (images, services, promotions)",
+            "Security patches & backups",
+            "Form & functionality checks",
+            "SEO optimizations & meta tag updates",
+            "Speed / performance tweaks",
+            "Minor design tweaks",
+            "Analytics & reporting",
+            "Multi-location booking/payment checks",
+            "Priority response / support",
+            "Maintain all premium features (hero video, app-like design, scroll animations, contact bar, etc.)"
         ];
 
         function toggleMenu() {
@@ -727,7 +724,6 @@
                 </div>
             `);
             
-            // Update plan indicator
             updatePlanIndicator();
         }
 
@@ -738,14 +734,11 @@
             const index = selections.services.findIndex(item => item.name === name);
             
             if (index > -1) {
-                // Remove if already selected
                 selections.services.splice(index, 1);
             } else {
-                // Add if not selected
                 selections.services.push({ name, tier });
             }
             
-            // Update recommended plan based on selections
             updateRecommendedPlan();
             console.log("Current selections:", selections.services);
         }
@@ -754,7 +747,6 @@
             const premSels = selections.services.filter(s => s.tier === 'premium');
             const stdSels = selections.services.filter(s => s.tier === 'standard');
             
-            // Determine recommended plan
             if (premSels.length > 3) {
                 selections.recommendedPlan = 'premium';
             } else if (stdSels.length > 5) {
@@ -823,7 +815,6 @@
         function setPlanType(val) { 
             selections.planType = val; 
             console.log("Plan type saved:", selections.planType);
-            // Clear previous selections when plan changes
             selections.services = [];
             next(); 
         }
@@ -843,23 +834,21 @@
             let cardsHTML = '';
             
             if (isOutright) {
-                // Buy Outright Plans
+                // UPDATED: Buy Outright Plans with correct pricing and details
                 cardsHTML = `
                     <div class="pricing-card standard ${isRecommendedPremium ? '' : 'recommended'}">
                         ${!isRecommendedPremium ? '<div class="plan-recommended-badge"><i class="fas fa-star"></i> Recommended</div>' : ''}
                         <div class="pricing-header">
                             <div class="plan-type standard-type">STANDARD PLAN</div>
                             <div class="plan-price">£2,500</div>
-                            <div class="plan-desc">One-Time Payment (No ongoing fees)</div>
+                            <div class="plan-desc">One-Time Purchase • No ongoing fees</div>
                         </div>
                         <div class="plan-features">
-                            <div class="plan-feature"><i class="fas fa-file"></i> Upto 5 Pages</div>
-                            <div class="plan-feature"><i class="fas fa-edit"></i> Upto 5 Revisions Per Page</div>
-                            <div class="plan-feature"><i class="fas fa-calendar"></i> Delivery 15 - 20 days</div>
-                            <div class="plan-feature"><i class="fas fa-headset"></i> 1 month support</div>
-                            <div class="plan-feature"><i class="fas fa-mobile-alt"></i> Mobile responsive</div>
-                            <div class="plan-feature"><i class="fas fa-key"></i> You own everything</div>
-                            <div class="plan-feature"><i class="fas fa-server"></i> You handle hosting & updates</div>
+                            <div class="plan-feature"><i class="fas fa-file"></i> Up to 5 Pages</div>
+                            <div class="plan-feature"><i class="fas fa-edit"></i> Up to 5 Revisions per Page</div>
+                            <div class="plan-feature"><i class="fas fa-calendar"></i> Delivery: 15–20 Days</div>
+                            <div class="plan-feature"><i class="fas fa-headset"></i> Support: 1 Month</div>
+                            <div class="plan-feature"><i class="fas fa-check" style="color:var(--standard);"></i> Includes all Standard features below</div>
                         </div>
                         <button class="payment-button secondary" onclick="proceedWithPlan('standard')">
                             <i class="fas fa-shopping-cart"></i> Select Standard Plan
@@ -871,16 +860,14 @@
                         <div class="pricing-header">
                             <div class="plan-type premium-type">PREMIUM PLAN</div>
                             <div class="plan-price">£5,000</div>
-                            <div class="plan-desc">One-Time Payment (No ongoing fees)</div>
+                            <div class="plan-desc">One-Time Purchase • No ongoing fees</div>
                         </div>
                         <div class="plan-features">
-                            <div class="plan-feature"><i class="fas fa-file"></i> Upto 15 Pages</div>
-                            <div class="plan-feature"><i class="fas fa-edit"></i> Upto 10 Revisions Per Page</div>
-                            <div class="plan-feature"><i class="fas fa-calendar"></i> Delivery 25 - 30 days</div>
-                            <div class="plan-feature"><i class="fas fa-headset"></i> 3 months support</div>
-                            <div class="plan-feature"><i class="fas fa-mobile-alt"></i> Mobile responsive</div>
-                            <div class="plan-feature"><i class="fas fa-key"></i> You own everything</div>
-                            <div class="plan-feature"><i class="fas fa-server"></i> You handle hosting & updates</div>
+                            <div class="plan-feature"><i class="fas fa-file"></i> Up to 15 Pages</div>
+                            <div class="plan-feature"><i class="fas fa-edit"></i> Up to 10 Revisions per Page</div>
+                            <div class="plan-feature"><i class="fas fa-calendar"></i> Delivery: 25–30 Days</div>
+                            <div class="plan-feature"><i class="fas fa-headset"></i> Support: 3 Months</div>
+                            <div class="plan-feature"><i class="fas fa-crown" style="color:var(--premium);"></i> Includes ALL Standard & Premium features</div>
                         </div>
                         <button class="payment-button premium" onclick="proceedWithPlan('premium')">
                             <i class="fas fa-crown"></i> Select Premium Plan
@@ -888,20 +875,21 @@
                     </div>
                 `;
             } else {
-                // Monthly Support Plans
+                // UPDATED: Monthly Support Plans with correct pricing and details
                 cardsHTML = `
                     <div class="pricing-card monthly-standard ${isRecommendedPremium ? '' : 'recommended'}">
                         ${!isRecommendedPremium ? '<div class="plan-recommended-badge"><i class="fas fa-star"></i> Recommended</div>' : ''}
                         <div class="pricing-header">
                             <div class="monthly-badge"><i class="fas fa-sync"></i> MONTHLY STANDARD SUPPORT</div>
                             <div class="plan-price">£500</div>
-                            <div class="plan-desc">setup + £100/month</div>
+                            <div class="plan-desc">upfront + £150/month • 12-Month Contract</div>
+                            <div style="font-size:0.85rem; color:var(--gray); margin-top:5px; font-weight:700;">Total after 12 months: £2,300</div>
                         </div>
                         <div class="plan-features">
-                            <div class="plan-feature"><i class="fas fa-file"></i> Upto 5 Pages</div>
-                            <div class="plan-feature"><i class="fas fa-edit"></i> Upto 5 Revisions Per month</div>
-                            <div class="plan-feature"><i class="fas fa-check" style="color:#4CAF50;"></i> We handle hosting & updates</div>
-                            <div class="plan-feature"><i class="fas fa-check" style="color:#4CAF50;"></i> Always up-to-date & secure</div>
+                            <div class="plan-feature"><i class="fas fa-check" style="color:var(--standard);"></i> Full Standard site setup included</div>
+                            <div class="plan-feature"><i class="fas fa-sync" style="color:var(--primary);"></i> Ongoing Monthly Support</div>
+                            <div class="plan-feature"><i class="fas fa-server"></i> We handle hosting & updates</div>
+                            <div class="plan-feature"><i class="fas fa-shield-alt"></i> Always up-to-date & secure</div>
                         </div>
                         <button class="payment-button secondary" onclick="proceedWithPlan('monthly-standard')">
                             <i class="fas fa-sync"></i> Select Monthly Standard
@@ -913,13 +901,14 @@
                         <div class="pricing-header">
                             <div class="monthly-badge"><i class="fas fa-sync"></i> MONTHLY PREMIUM SUPPORT</div>
                             <div class="plan-price">£650</div>
-                            <div class="plan-desc">setup + £150/month</div>
+                            <div class="plan-desc">upfront + £200/month • 12-Month Contract</div>
+                            <div style="font-size:0.85rem; color:var(--gray); margin-top:5px; font-weight:700;">Total after 12 months: £3,050</div>
                         </div>
                         <div class="plan-features">
-                            <div class="plan-feature"><i class="fas fa-file"></i> Upto 15 Pages</div>
-                            <div class="plan-feature"><i class="fas fa-edit"></i> Upto 20 Revisions Per month</div>
-                            <div class="plan-feature"><i class="fas fa-check" style="color:#2196F3;"></i> We handle hosting & updates</div>
-                            <div class="plan-feature"><i class="fas fa-check" style="color:#2196F3;"></i> Always up-to-date & secure</div>
+                            <div class="plan-feature"><i class="fas fa-crown" style="color:var(--premium);"></i> Full Premium site setup included</div>
+                            <div class="plan-feature"><i class="fas fa-sync" style="color:var(--primary);"></i> Ongoing Monthly Support</div>
+                            <div class="plan-feature"><i class="fas fa-server"></i> We handle hosting & updates</div>
+                            <div class="plan-feature"><i class="fas fa-shield-alt"></i> Always up-to-date & secure</div>
                         </div>
                         <button class="payment-button premium" onclick="proceedWithPlan('monthly-premium')">
                             <i class="fas fa-crown"></i> Select Monthly Premium
@@ -962,7 +951,8 @@
                             <div><strong>Design:</strong> ${selections.designCode || 'Custom'}</div>
                             <div><strong>Timeline:</strong> ${selections.urgency || 'Standard'}</div>
                             <div><strong>Plan:</strong> ${selections.planType}</div>
-                            <div><strong>Type:</strong> ${isOutright ? 'One-Time Setup' : 'Monthly Managed Service'}</div>
+                            <div><strong>Type:</strong> ${isOutright ? 'One-Time Setup' : 'Monthly Managed Service (12-Month Contract)'}</div>
+                            ${!isOutright ? `<div><strong>After 12 Months:</strong> Continue support or end & retain ownership</div>` : ''}
                         </div>
                     </div>
                 `;
@@ -972,18 +962,11 @@
         }
 
         function proceedWithPlan(planType) {
-            // Store the selected plan for checkout
             selections.selectedPlan = planType;
             
             // Show payment modal or redirect to checkout
             alert(`Proceeding to checkout with ${planType} plan...`);
             
-            // In a real implementation, you would:
-            // 1. Collect payment details
-            // 2. Process payment via Stripe/PayPal
-            // 3. Redirect to success page
-            
-            // For now, just go to the next step
             next();
         }
 
@@ -1054,7 +1037,6 @@
             
             if(currentStep === 7) {
                 initServiceList();
-                // Initialize recommended plan
                 updateRecommendedPlan();
             }
             if(currentStep === 8) renderPricingCards();
