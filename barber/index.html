@@ -628,7 +628,6 @@
 <body>
 
 
-
 <!-- EXACT MENU FROM HOMEPAGE -->
 <div id="app-menu-layer">
     <div class="menu-header">
@@ -759,6 +758,7 @@
         recommendedPlan: ''
     };
 
+    // ONE-TIME/OUTRIGHT STANDARD FEATURES
     const buyOutrightStandard = [
         "Logo Design",
         "Book Now Button", 
@@ -777,6 +777,7 @@
         "Email Newsletter Signup Form"
     ];
 
+    // ONE-TIME/OUTRIGHT PREMIUM FEATURES
     const buyOutrightPremium = [
         "App-Like Website Design",
         "Online Booking Form Embed (Calendly/Fresha/Booksy)",
@@ -800,7 +801,51 @@
         "Stat Counts"
     ];
 
+    // MONTHLY STANDARD FEATURES (same as buy outright standard)
     const monthlyStandard = [
+        "Logo Design",
+        "Book Now Button", 
+        "Static Customer Reviews",
+        "WhatsApp Static Button",
+        "Contact Form",
+        "Service Menu & Pricing Tables",
+        "Staff Team Profile Pages",
+        "Portfolio Photo Gallery",
+        "Business Hours",
+        "Google Maps Embed",
+        "Click-to-Call Phone Button",
+        "FAQ Accordion Section",
+        "SEO Meta Tags Configuration",
+        "Social Media Links",
+        "Email Newsletter Signup Form"
+    ];
+
+    // MONTHLY PREMIUM FEATURES (same as buy outright premium)
+    const monthlyPremiumOnly = [
+        "App-Like Website Design",
+        "Online Booking Form Embed (Calendly/Fresha/Booksy)",
+        "Stripe / PayPal Payment Buttons",
+        "Products Display (up to 10 items)",
+        "Digital Gift Card Display Page",
+        "Exit-Intent Popup (Desktop Only)",
+        "New Customer Promo Popup",
+        "Interactive Reviews & Testimonials",
+        "Google Reviews Embed",
+        "Scroll UI Animations",
+        "Multi-Location Pages Setup",
+        "Custom Brand Graphics & Icons (up to 20)",
+        "Instagram Feed Embed",
+        "Before & After Image Slider",
+        "Google Analytics Setup",
+        "Google Search Console Setup",
+        "Full Website Branding",
+        "Hero Background Video",
+        "Dynamic Contact Bar (WhatsApp / Call / Text / Email)",
+        "Stat Counts"
+    ];
+
+    // Monthly management services (these are additional services included in monthly plans)
+    const monthlyManagementServices = [
         "Content updates (new services, images, promotions)",
         "Security patches & backups",
         "Form & functionality checks",
@@ -809,19 +854,6 @@
         "Minor design tweaks",
         "Analytics reporting (basic)",
         "Booking / payment checks"
-    ];
-
-    const monthlyPremiumOnly = [
-        "App-Like Website Design",
-        "Online Booking Form Embed",
-        "Stripe / PayPal Payment Buttons",
-        "Products Display (up to 10 items)",
-        "Digital Gift Card Display Page",
-        "Exit-Intent Popup (Desktop Only)",
-        "Interactive Reviews & Testimonials",
-        "Multi-Location Pages Setup",
-        "Custom Brand Graphics & Icons (up to 20)",
-        "Hero Background Video"
     ];
 
     // Stripe Price IDs
@@ -843,13 +875,30 @@
         const standardServices = isOutright ? buyOutrightStandard : monthlyStandard;
         const premiumServices = isOutright ? buyOutrightPremium : monthlyPremiumOnly;
         
+        // Add management services note for monthly plans
+        if (!isOutright) {
+            grid.innerHTML += `
+                <div class="service-card management-note">
+                    <span class="tier-pill" style="background:#FFF3E0; color:#FF6B00;">MONTHLY CARE</span>
+                    <div style="font-weight:700; font-size:0.95rem;">Monthly Management Services</div>
+                    <div style="font-size:0.7rem; color:var(--gray); font-weight:600; margin-top:4px;">
+                        <i class="fas fa-sync"></i> 
+                        All monthly plans include: ${monthlyManagementServices.length} management services
+                    </div>
+                    <div style="font-size:0.75rem; color:var(--gray); margin-top:8px; line-height:1.2;">
+                        Includes: ${monthlyManagementServices.slice(0, 3).join(', ')}...
+                    </div>
+                </div>
+            `;
+        }
+        
         standardServices.forEach(s => grid.innerHTML += `
             <div class="service-card" onclick="toggleService('${s}', 'standard', this)">
                 <span class="tier-pill" style="background:#E8F5E9; color:#4CAF50;">STANDARD</span>
                 <div style="font-weight:700; font-size:0.95rem;">${s}</div>
                 <div style="font-size:0.7rem; color:var(--gray); font-weight:600; margin-top:4px;">
-                    <i class="fas ${isOutright ? 'fa-check' : 'fa-sync'}"></i> 
-                    ${isOutright ? 'One-time setup' : 'Monthly included'}
+                    <i class="fas ${isOutright ? 'fa-check' : 'fa-check'}"></i> 
+                    ${isOutright ? 'One-time setup' : 'Included in build'}
                 </div>
             </div>
         `);
@@ -999,7 +1048,7 @@
                         <div class="simple-feature">You own everything</div>
                         <div class="simple-feature">You manage hosting & updates</div>
                     </div>
-                    <button class="payment-button secondary" onclick="window.open('https://buy.stripe.com/checkout/test_00wdRa2Lc7093305LxgMw01', '_blank')">
+                    <button class="payment-button secondary" onclick="window.open('https://buy.stripe.com/test_00wdRa2Lc7093305LxgMw01', '_blank')">
                         Choose Standard
                     </button>
                 </div>
@@ -1024,7 +1073,7 @@
                         <div class="simple-feature">You own everything</div>
                         <div class="simple-feature">You manage hosting & updates</div>
                     </div>
-                    <button class="payment-button premium" onclick="window.open('https://buy.stripe.com/checkout/test_dRmaEYbhI84d1YW8XJgMw02', '_blank')">
+                    <button class="payment-button premium" onclick="window.open('https://buy.stripe.com/test_dRmaEYbhI84d1YW8XJgMw02', '_blank')">
                         Choose Premium
                     </button>
                 </div>
@@ -1055,11 +1104,11 @@
                     </div>
                     <div class="plan-features">
                         <div class="simple-feature"><i class="fas fa-check"></i> <strong>${stdSels.length} selected Standard features</strong></div>
-                        <div class="simple-feature"><i class="fas fa-sync"></i> <strong>8 monthly services</strong> included</div>
-                        <div class="simple-feature"><i class="fas fa-server"></i> We handle hosting & security</div>
+                        <div class="simple-feature"><i class="fas fa-plus"></i> <strong>${monthlyManagementServices.length} monthly management services</strong></div>
+                        <div class="simple-feature"><i class="fas fa-server"></i> Premium hosting & security</div>
                         <div class="simple-feature"><i class="fas fa-calendar-check"></i> After 12 months: keep or stop</div>
                     </div>
-                    <button class="payment-button secondary" onclick="window.open('https://buy.stripe.com/checkout/${STANDARD_BUILD_PRICE_ID}', '_blank')">
+                    <button class="payment-button secondary" onclick="window.open('https://buy.stripe.com/checkout/test_${STANDARD_BUILD_PRICE_ID}', '_blank')">
                         Pay £500 Setup Fee
                     </button>
                     <div style="margin-top:10px; text-align:center;">
@@ -1092,11 +1141,11 @@
                     <div class="plan-features">
                         <div class="simple-feature"><i class="fas fa-check"></i> <strong>${stdSels.length} selected Standard features</strong></div>
                         <div class="simple-feature"><i class="fas fa-crown"></i> <strong>${premSels.length} selected Premium features</strong></div>
-                        <div class="simple-feature"><i class="fas fa-sync"></i> <strong>10 monthly services</strong> included</div>
-                        <div class="simple-feature"><i class="fas fa-server"></i> We handle hosting & security</div>
+                        <div class="simple-feature"><i class="fas fa-plus"></i> <strong>${monthlyManagementServices.length} monthly management services</strong></div>
+                        <div class="simple-feature"><i class="fas fa-server"></i> Premium hosting & security</div>
                         <div class="simple-feature"><i class="fas fa-calendar-check"></i> After 12 months: keep or stop</div>
                     </div>
-                    <button class="payment-button premium" onclick="window.open('https://buy.stripe.com/checkout/${PREMIUM_BUILD_PRICE_ID}', '_blank')">
+                    <button class="payment-button premium" onclick="window.open('https://buy.stripe.com/checkout/test_${PREMIUM_BUILD_PRICE_ID}', '_blank')">
                         Pay £650 Setup Fee
                     </button>
                     <div style="margin-top:10px; text-align:center;">
@@ -1153,6 +1202,23 @@
                                         <span>${s.name}</span>
                                     </div>`).join('')}
                             </div>` : ''}
+                        ${!isOutright ? `
+                            <div style="margin-top:${stdCount > 0 || premCount > 0 ? '15px' : '0'};">
+                                <div style="font-size:0.8rem; font-weight:900; color:#FF6B00; margin-bottom:5px; display:flex; align-items:center;">
+                                    <i class="fas fa-sync" style="color:#FF6B00; margin-right:8px;"></i>
+                                    Monthly Management Services (${monthlyManagementServices.length})
+                                </div>
+                                ${monthlyManagementServices.slice(0, 5).map(s => `
+                                    <div class="selected-feature-item">
+                                        <i class="fas fa-sync" style="color:#FF6B00;"></i>
+                                        <span>${s}</span>
+                                    </div>`).join('')}
+                                ${monthlyManagementServices.length > 5 ? `
+                                    <div class="selected-feature-item">
+                                        <i class="fas fa-sync" style="color:#FF6B00;"></i>
+                                        <span>+${monthlyManagementServices.length - 5} more management services</span>
+                                    </div>` : ''}
+                            </div>` : ''}
                     </div>
                     <div style="text-align:center; margin-top:15px;">
                         <div class="clear-selections" onclick="clearSelections()">
@@ -1168,6 +1234,7 @@
                         <div class="simple-highlight" style="background:rgba(255,107,0,0.1); margin-top:15px;">
                             <h4>Monthly Plan Notes</h4>
                             <p><strong>Month 1:</strong> Pay setup fee • <strong>Months 2-12:</strong> Monthly payments begin • <strong>After 12 months:</strong> You choose to continue or stop</p>
+                            <p><strong>All monthly plans include:</strong> ${monthlyManagementServices.length} management services + premium hosting</p>
                         </div>` : ''}
                     <div style="margin-top:25px; padding:20px; background:rgba(255,107,0,0.05); border-radius:20px; border:1px solid var(--border); text-align:center;">
                         <div style="font-weight:900; color:var(--primary); margin-bottom:10px;">Ready to Build?</div>
