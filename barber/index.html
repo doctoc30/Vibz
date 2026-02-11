@@ -508,38 +508,42 @@
                     <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
                 </div>
 
-                <!-- STEP 5: BUILD FEE TIER SELECTION (Standard or Premium) -->
+                <!-- STEP 5: EXACT PLAN SELECTION (Buy Outright vs Monthly License) -->
                 <div class="form-screen" id="step-5">
-                    <button class="vibz-btn" onclick="setPlanType('standard')">
-                        <strong>Build Fee — Standard</strong>
-                        <span class="btn-desc">£500 one-time. Includes selected Standard features. Monthly management subscription starts after build (12-month minimum).</span>
+                    <button class="vibz-btn" onclick="setPlanType('Buy Outright')">
+                        <strong>Buy Outright</strong>
+                        <span class="btn-desc">You own the full website files. Hosting and monthly management is your responsibility.</span>
                     </button>
-                    <button class="vibz-btn" onclick="setPlanType('premium')">
-                        <strong>Build Fee — Premium</strong>
-                        <span class="btn-desc">£650 one-time. Includes selected Standard + Premium features. Monthly management subscription starts after build (12-month minimum).</span>
+                    <button class="vibz-btn" onclick="setPlanType('Monthly License')">
+                        <strong>Monthly License</strong>
+                        <span class="btn-desc">We build and manage everything. Website is licensed, not owned. Includes 12 months support.</span>
                     </button>
                     <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
                 </div>
 
+                <!-- STEP 6: Timeline / Urgency -->
                 <div class="form-screen" id="step-6">
                     <button class="vibz-btn" onclick="setUrgency('Start ASAP')"><i class="fas fa-bolt"></i> Start ASAP</button>
                     <button class="vibz-btn" onclick="setUrgency('Need Info')"><i class="fas fa-info-circle"></i> Need More Info</button>
                     <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
                 </div>
 
+                <!-- STEP 7: Feature Selection (Tier selection removed; now only features) -->
                 <div class="form-screen" id="step-7">
                     <div class="services-grid" id="master-service-grid"></div>
                     <div class="plan-indicator" id="plan-indicator"></div>
-                    <button class="vibz-btn primary" onclick="next()">See Build Fee & Pay</button>
+                    <button class="vibz-btn primary" onclick="next()">See Pricing & Pay</button>
                     <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
                 </div>
 
+                <!-- STEP 8: Summary & Payment -->
                 <div class="form-screen" id="step-8">
                     <div class="pricing-cards-container" id="pricing-cards-display"></div>
                     <button class="vibz-btn back-btn" onclick="goToStep(7)" style="margin-top:20px;">Edit Features</button>
                     <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
                 </div>
 
+                <!-- STEP 9: Contact Details -->
                 <div class="form-screen" id="step-9">
                     <input type="text" class="vibz-input" placeholder="Full Name">
                     <input type="email" class="vibz-input" placeholder="Email Address">
@@ -602,7 +606,7 @@
     };
 
     // =========================================================================
-    // 2. MANAGEMENT SERVICES (mentioned in monthly subscription info only)
+    // 2. MANAGEMENT SERVICES (shown only for Monthly License)
     // =========================================================================
     const MANAGEMENT_SERVICES = [
         "Monthly content updates",
@@ -614,21 +618,17 @@
     ];
 
     // =========================================================================
-    // 3. PRICING CONFIGURATION
+    // 3. PRICING CONFIGURATION (Build fees for Monthly License model)
     // =========================================================================
     const PRICING_CONFIG = {
         buildFee: {
             standard: 500,
             premium: 650
-        },
-        monthly: {
-            standard: 125,
-            premium: 225
         }
     };
 
     // =========================================================================
-    // 4. STRIPE LINKS CONFIGURATION (BUILD FEE ONLY)
+    // 4. STRIPE LINKS CONFIGURATION (Build fees for Monthly License)
     // =========================================================================
     const STRIPE_LINKS = {
         buildFee: { 
@@ -641,9 +641,13 @@
     // 5. PLAN & TIER CONFIG
     // =========================================================================
     const PLAN_CONFIG = {
-        build: {
-            name: 'Build Fee',
-            description: 'Initial payment covers website creation only. After this, you will be redirected to start your monthly management subscription (12-month minimum).'
+        outright: {
+            name: 'Buy Outright',
+            description: 'You own the full website files. Hosting and monthly management is your responsibility.'
+        },
+        monthly: {
+            name: 'Monthly License',
+            description: 'We build and manage everything. Website is licensed, not owned. Includes 12 months support.'
         }
     };
 
@@ -659,14 +663,14 @@
     let selections = { 
         businessName: '', 
         services: [], 
-        selectedTier: null,  // 'standard' or 'premium' from step 5
+        planType: '',      // 'Buy Outright' or 'Monthly License'
         designCode: '', 
         urgency: '', 
-        recommendedPlan: ''
+        recommendedPlan: 'standard'
     };
 
     // =========================================================================
-    // 7. INIT SERVICE LIST
+    // 7. INIT SERVICE LIST (Show all Standard + Premium features)
     // =========================================================================
     function initServiceList() {
         const grid = document.getElementById('master-service-grid');
@@ -675,49 +679,49 @@
         const standardFeatures = FEATURE_CONFIG.standard;
         const premiumFeatures = FEATURE_CONFIG.premium;
 
-        // Only show Standard features if user selected Standard tier
-        if (selections.selectedTier === 'standard') {
-            standardFeatures.forEach(s => grid.innerHTML += `
-                <div class="service-card" onclick="toggleService('${s}', 'standard', this)">
-                    <span class="tier-pill" style="background:${TIER_CONFIG.standard.bgColor}; color:${TIER_CONFIG.standard.color};">${TIER_CONFIG.standard.name}</span>
-                    <div style="font-weight:700; font-size:0.95rem;">${s}</div>
-                    <div style="font-size:0.7rem; color:var(--gray); font-weight:600; margin-top:4px;">
-                        <i class="fas fa-check"></i> Select this feature
-                    </div>
+        // Always show both Standard and Premium features
+        standardFeatures.forEach(s => grid.innerHTML += `
+            <div class="service-card" onclick="toggleService('${s}', 'standard', this)">
+                <span class="tier-pill" style="background:${TIER_CONFIG.standard.bgColor}; color:${TIER_CONFIG.standard.color};">${TIER_CONFIG.standard.name}</span>
+                <div style="font-weight:700; font-size:0.95rem;">${s}</div>
+                <div style="font-size:0.7rem; color:var(--gray); font-weight:600; margin-top:4px;">
+                    <i class="fas fa-check"></i> Select this feature
                 </div>
-            `);
-        }
+            </div>
+        `);
 
-        // If Premium tier selected, show both Standard + Premium features
-        if (selections.selectedTier === 'premium') {
-            standardFeatures.forEach(s => grid.innerHTML += `
-                <div class="service-card" onclick="toggleService('${s}', 'standard', this)">
-                    <span class="tier-pill" style="background:${TIER_CONFIG.standard.bgColor}; color:${TIER_CONFIG.standard.color};">${TIER_CONFIG.standard.name}</span>
-                    <div style="font-weight:700; font-size:0.95rem;">${s}</div>
-                    <div style="font-size:0.7rem; color:var(--gray); font-weight:600; margin-top:4px;">
-                        <i class="fas fa-check"></i> Select this feature
+        premiumFeatures.forEach(s => grid.innerHTML += `
+            <div class="service-card" onclick="toggleService('${s}', 'premium', this)">
+                <span class="tier-pill" style="background:${TIER_CONFIG.premium.bgColor}; color:${TIER_CONFIG.premium.color};">${TIER_CONFIG.premium.name}</span>
+                <div style="font-weight:700; font-size:0.95rem;">${s}</div>
+                <div style="font-size:0.7rem; color:var(--gray); font-weight:600; margin-top:4px;">
+                    <i class="fas fa-crown"></i> Select this feature
+                </div>
+            </div>
+        `);
+
+        // Add management services note for Monthly License
+        if (selections.planType === PLAN_CONFIG.monthly.name) {
+            grid.innerHTML += `
+                <div style="background:#FFF9E6; border:2px solid #FFE0B2; border-radius:16px; padding:16px; margin-top:16px; text-align:left;">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <i class="fas fa-sync" style="color:var(--primary); font-size:1.2rem;"></i>
+                        <div>
+                            <div style="font-weight:800; color:var(--primary);">✨ Monthly License Includes</div>
+                            <div style="font-size:0.8rem; color:var(--gray); margin-top:4px;">
+                                ${MANAGEMENT_SERVICES.join(' • ')}
+                            </div>
+                            <div style="font-size:0.8rem; color:var(--primary); font-weight:700; margin-top:8px;">
+                                Website is licensed, not owned • Files remain our property
+                            </div>
+                        </div>
                     </div>
                 </div>
-            `);
-            premiumFeatures.forEach(s => grid.innerHTML += `
-                <div class="service-card" onclick="toggleService('${s}', 'premium', this)">
-                    <span class="tier-pill" style="background:${TIER_CONFIG.premium.bgColor}; color:${TIER_CONFIG.premium.color};">${TIER_CONFIG.premium.name}</span>
-                    <div style="font-weight:700; font-size:0.95rem;">${s}</div>
-                    <div style="font-size:0.7rem; color:var(--gray); font-weight:600; margin-top:4px;">
-                        <i class="fas fa-crown"></i> Select this feature
-                    </div>
-                </div>
-            `);
+            `;
         }
     }
 
     function toggleService(name, tier, el) {
-        // Prevent selecting Premium features if user chose Standard tier
-        if (selections.selectedTier === 'standard' && tier === 'premium') {
-            alert('Premium features are not available with the Standard build fee. Please upgrade to Premium.');
-            return;
-        }
-
         el.classList.toggle('selected'); 
         el.classList.toggle(tier);
 
@@ -729,13 +733,9 @@
     }
 
     function updateRecommendedPlan() {
-        if (selections.selectedTier === 'standard') {
-            selections.recommendedPlan = 'standard';
-        } else {
-            const premSels = selections.services.filter(s => s.tier === 'premium').length;
-            const stdSels = selections.services.filter(s => s.tier === 'standard').length;
-            selections.recommendedPlan = (premSels > 3 || stdSels > 8) ? 'premium' : 'standard';
-        }
+        const premSels = selections.services.filter(s => s.tier === 'premium').length;
+        const stdSels = selections.services.filter(s => s.tier === 'standard').length;
+        selections.recommendedPlan = (premSels > 3 || stdSels > 8) ? 'premium' : 'standard';
         updatePlanIndicator();
     }
 
@@ -746,36 +746,24 @@
         const premSels = selections.services.filter(s => s.tier === 'premium').length;
         const stdSels = selections.services.filter(s => s.tier === 'standard').length;
         
-        let html = '';
-        if (selections.selectedTier === 'standard') {
-            html = `
-                <div style="display:flex; align-items:center; gap:20px; justify-content:center;">
-                    <div style="display:flex; align-items:center; gap:8px;">
-                        <div class="indicator-dot standard active"></div>
-                        <span style="font-size:0.9rem; font-weight:700;">${stdSels} ${TIER_CONFIG.standard.name}</span>
-                    </div>
+        let html = `
+            <div style="display:flex; align-items:center; gap:20px; justify-content:center;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <div class="indicator-dot ${selections.recommendedPlan === 'standard' ? 'standard active' : 'standard'}"></div>
+                    <span style="font-size:0.9rem; font-weight:700;">${stdSels} ${TIER_CONFIG.standard.name}</span>
                 </div>
-            `;
-        } else {
-            html = `
-                <div style="display:flex; align-items:center; gap:20px; justify-content:center;">
-                    <div style="display:flex; align-items:center; gap:8px;">
-                        <div class="indicator-dot ${selections.recommendedPlan === 'standard' ? 'standard active' : 'standard'}"></div>
-                        <span style="font-size:0.9rem; font-weight:700;">${stdSels} ${TIER_CONFIG.standard.name}</span>
-                    </div>
-                    <div style="display:flex; align-items:center; gap:8px;">
-                        <div class="indicator-dot ${selections.recommendedPlan === 'premium' ? 'premium active' : 'premium'}"></div>
-                        <span style="font-size:0.9rem; font-weight:700;">${premSels} ${TIER_CONFIG.premium.name}</span>
-                    </div>
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <div class="indicator-dot ${selections.recommendedPlan === 'premium' ? 'premium active' : 'premium'}"></div>
+                    <span style="font-size:0.9rem; font-weight:700;">${premSels} ${TIER_CONFIG.premium.name}</span>
                 </div>
-            `;
-        }
+            </div>
+        `;
         
         indicator.innerHTML = html;
     }
 
     // =========================================================================
-    // 8. RENDER PRICING CARDS (BUILD FEE ONLY)
+    // 8. RENDER PRICING CARDS (Build fee options)
     // =========================================================================
     function renderPricingCards() {
         const container = document.getElementById('pricing-cards-display');
@@ -785,48 +773,59 @@
 
         let cardsHTML = '';
 
-        // Only show the card for the tier the user selected in step 5
-        if (selections.selectedTier === 'standard') {
-            cardsHTML += `
-                <div class="pricing-card recommended">
-                    <div class="plan-recommended-badge">👍 YOUR SELECTION</div>
-                    <div class="pricing-header">
-                        <div class="plan-type standard-type">${TIER_CONFIG.standard.name} — ${PLAN_CONFIG.build.name}</div>
-                        <div class="plan-price">£${PRICING_CONFIG.buildFee.standard}</div>
-                    </div>
-                    <div class="feature-summary">
-                        <strong>${stdSels.length} ${TIER_CONFIG.standard.name} features</strong> selected
-                    </div>
-                    <div class="important-note">
-                        ${PLAN_CONFIG.build.description}
-                    </div>
-                    <button class="payment-button secondary" onclick="window.open('${STRIPE_LINKS.buildFee.standard}', '_blank')">
-                        <i class="fas fa-bolt"></i> Pay Build Fee - £${PRICING_CONFIG.buildFee.standard}
-                    </button>
+        // Standard Build Fee Card
+        cardsHTML += `
+            <div class="pricing-card ${!isRecommendedPremium ? 'recommended' : ''}">
+                ${!isRecommendedPremium ? '<div class="plan-recommended-badge">👍 RECOMMENDED</div>' : ''}
+                <div class="pricing-header">
+                    <div class="plan-type standard-type">${TIER_CONFIG.standard.name} — Build Fee</div>
+                    <div class="plan-price">£${PRICING_CONFIG.buildFee.standard}</div>
+                    <div class="plan-desc">One-time payment</div>
                 </div>
-            `;
-        }
+                <div class="feature-summary">
+                    <strong>${stdSels.length} ${TIER_CONFIG.standard.name} features</strong> selected
+                </div>
+                ${selections.planType === PLAN_CONFIG.monthly.name ? 
+                    `<div class="important-note">
+                        ${PLAN_CONFIG.monthly.description}<br>
+                        <span style="font-size:0.75rem;">12-month minimum term. Website is licensed, not owned.</span>
+                    </div>` : 
+                    `<div class="important-note">
+                        ${PLAN_CONFIG.outright.description}
+                    </div>`
+                }
+                <button class="payment-button secondary" onclick="window.open('${STRIPE_LINKS.buildFee.standard}', '_blank')">
+                    <i class="fas fa-bolt"></i> Pay Build Fee - £${PRICING_CONFIG.buildFee.standard}
+                </button>
+            </div>
+        `;
 
-        if (selections.selectedTier === 'premium') {
-            cardsHTML += `
-                <div class="pricing-card recommended">
-                    <div class="plan-recommended-badge">👑 YOUR SELECTION</div>
-                    <div class="pricing-header">
-                        <div class="plan-type premium-type">${TIER_CONFIG.premium.name} — ${PLAN_CONFIG.build.name}</div>
-                        <div class="plan-price">£${PRICING_CONFIG.buildFee.premium}</div>
-                    </div>
-                    <div class="feature-summary">
-                        <strong>${stdSels.length} ${TIER_CONFIG.standard.name} + ${premSels.length} ${TIER_CONFIG.premium.name}</strong> features
-                    </div>
-                    <div class="important-note">
-                        ${PLAN_CONFIG.build.description}
-                    </div>
-                    <button class="payment-button premium" onclick="window.open('${STRIPE_LINKS.buildFee.premium}', '_blank')">
-                        <i class="fas fa-crown"></i> Pay Build Fee - £${PRICING_CONFIG.buildFee.premium}
-                    </button>
+        // Premium Build Fee Card
+        cardsHTML += `
+            <div class="pricing-card ${isRecommendedPremium ? 'recommended' : ''}">
+                ${isRecommendedPremium ? '<div class="plan-recommended-badge">👑 BEST VALUE</div>' : ''}
+                <div class="pricing-header">
+                    <div class="plan-type premium-type">${TIER_CONFIG.premium.name} — Build Fee</div>
+                    <div class="plan-price">£${PRICING_CONFIG.buildFee.premium}</div>
+                    <div class="plan-desc">One-time payment</div>
                 </div>
-            `;
-        }
+                <div class="feature-summary">
+                    <strong>${stdSels.length} ${TIER_CONFIG.standard.name} + ${premSels.length} ${TIER_CONFIG.premium.name}</strong> features
+                </div>
+                ${selections.planType === PLAN_CONFIG.monthly.name ? 
+                    `<div class="important-note">
+                        ${PLAN_CONFIG.monthly.description}<br>
+                        <span style="font-size:0.75rem;">12-month minimum term. Website is licensed, not owned.</span>
+                    </div>` : 
+                    `<div class="important-note">
+                        ${PLAN_CONFIG.outright.description}
+                    </div>`
+                }
+                <button class="payment-button premium" onclick="window.open('${STRIPE_LINKS.buildFee.premium}', '_blank')">
+                    <i class="fas fa-crown"></i> Pay Build Fee - £${PRICING_CONFIG.buildFee.premium}
+                </button>
+            </div>
+        `;
 
         // Selected Features Summary
         if (selections.services.length > 0) {
@@ -930,9 +929,9 @@
         document.getElementById('concept-display-area').style.display = 'none'; 
     }
 
-    function setPlanType(tier) { 
-        selections.selectedTier = tier;
-        selections.services = []; // Reset features when changing tier
+    function setPlanType(val) { 
+        selections.planType = val;
+        selections.services = []; // Reset features when changing plan type
         next(); 
     }
 
@@ -1009,7 +1008,7 @@
             2: "Status?", 
             3: "Design Choice?", 
             4: "Verification", 
-            5: "Choose Your Build Fee", 
+            5: "Choose Your Plan", 
             6: "Timeline?", 
             7: "Select Features", 
             8: "Summary & Payment", 
