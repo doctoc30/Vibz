@@ -514,16 +514,22 @@
 
     <script>
         // -------------------------------------------------------------
-        //  CONFIG
+        //  CONFIG - MATCHING INDEX.HTML EXACTLY
         // -------------------------------------------------------------
         const PRICING_CONFIG = {
             outright: { standard: 1500, premium: 3000 },
-            monthly:  { standard: 125,  premium: 225 }
+            monthly: { 
+                standard: 125,  
+                premium: 225,
+                buildFee: { standard: 500, premium: 650 }
+            }
         };
+        
         const PLAN_CONFIG = {
             outright: { name: 'Buy Outright', shortName: 'OWN IT' },
             monthly:  { name: 'Monthly License', shortName: 'LICENSE' }
         };
+        
         const TIER_CONFIG = {
             standard: { name: 'STANDARD', color: '#4CAF50' },
             premium:  { name: 'PREMIUM', color: '#2196F3' }
@@ -538,70 +544,81 @@
         }
 
         // -------------------------------------------------------------
-        //  LOAD ORDER FROM STORAGE
+        //  LOAD ORDER FROM STORAGE - FIXED TO USE ACTUAL PURCHASED PLAN
         // -------------------------------------------------------------
         function loadOrderFromStorage() {
-            let selections = {
-                businessName: sessionStorage.getItem('barberShopName') || localStorage.getItem('barberShopName') || 'Your Shop',
-                planType: sessionStorage.getItem('vibz_planType') || sessionStorage.getItem('selectedPlanType') || '',
-                designCode: sessionStorage.getItem('selectedBarberCode') || '',
-                urgency: sessionStorage.getItem('vibz_urgency') || '',
-                services: [],
-                recommendedPlan: 'standard'
-            };
-
-            // Load services if needed for plan determination
+            // --- PRIORITY 1: Get the EXACT plan type the customer purchased ---
+            let planType = sessionStorage.getItem('vibz_planType') || 
+                          sessionStorage.getItem('selectedPlanType') || 
+                          localStorage.getItem('selectedPlanType') || 
+                          'Buy Outright'; // Only fallback if absolutely nothing exists
+            
+            // --- PRIORITY 2: Get the EXACT tier (standard/premium) they purchased ---
+            let tier = sessionStorage.getItem('vibz_tier') || 
+                      localStorage.getItem('vibz_tier') || 
+                      'standard'; // Default to standard only if nothing stored
+            
+            // --- Get business name ---
+            let businessName = sessionStorage.getItem('barberShopName') || 
+                              localStorage.getItem('barberShopName') || 
+                              'Your Shop';
+            
+            // --- Get design code ---
+            let designCode = sessionStorage.getItem('selectedBarberCode') || 
+                            localStorage.getItem('selectedBarberCode') || 
+                            '';
+            
+            // --- Get urgency (optional) ---
+            let urgency = sessionStorage.getItem('vibz_urgency') || '';
+            
+            // --- Get services (for display only, NOT for determining plan) ---
+            let services = [];
             try {
-                const saved = sessionStorage.getItem('selectedServices');
+                const saved = sessionStorage.getItem('selectedServices') || 
+                             localStorage.getItem('selectedServices');
                 if (saved && saved !== 'undefined' && saved !== 'null') {
-                    selections.services = JSON.parse(saved);
-                } else {
-                    const local = localStorage.getItem('selectedServices');
-                    if (local && local !== 'undefined' && local !== 'null') {
-                        selections.services = JSON.parse(local);
-                    }
+                    services = JSON.parse(saved);
                 }
             } catch (e) {
-                selections.services = [];
+                services = [];
             }
-
-            // Fallback plan type
-            if (!selections.planType) {
-                selections.planType = localStorage.getItem('selectedPlanType') || 'Buy Outright';
-            }
-
-            // Determine recommended plan based on features
-            const premCount = selections.services.filter(s => s.tier === 'premium').length;
-            const stdCount = selections.services.filter(s => s.tier === 'standard').length;
             
-            if (premCount > 3 || stdCount > 8) {
-                selections.recommendedPlan = 'premium';
-            } else {
-                selections.recommendedPlan = 'standard';
-            }
-
-            // Clean business name
-            if (!selections.businessName || selections.businessName === 'Your Shop' || selections.businessName === 'Barber Shop') {
+            // --- Clean business name ---
+            if (businessName === 'Your Shop' || businessName === 'Barber Shop') {
                 const localName = localStorage.getItem('barberShopName');
-                if (localName) selections.businessName = localName;
+                if (localName) businessName = localName;
             }
-
-            return selections;
+            
+            // Log what we found for debugging
+            console.log('✅ Thank You Page Loaded:', { planType, tier, businessName, designCode });
+            
+            return {
+                businessName: businessName,
+                planType: planType,        // ← CRITICAL: This is the actual selected plan
+                tier: tier,               // ← CRITICAL: This is the actual selected tier
+                designCode: designCode,
+                urgency: urgency,
+                services: services
+            };
         }
 
         // -------------------------------------------------------------
-        //  RENDER THANK YOU PAGE - NO FEATURES TILE
+        //  RENDER THANK YOU PAGE - USING ACTUAL PURCHASED PLAN/TIER
         // -------------------------------------------------------------
         function renderThankYou() {
             const order = loadOrderFromStorage();
+            
+            // --- Use ACTUAL purchased plan type and tier ---
             const isMonthly = (order.planType === PLAN_CONFIG.monthly.name);
-            const tier = order.recommendedPlan;
+            const tier = order.tier;  // ← NO recalculation, use what was purchased
             const tierName = tier === 'standard' ? 'STANDARD' : 'PREMIUM';
-            const planDisplayName = order.planType || 'Buy Outright';
+            const planDisplayName = order.planType; // ← EXACT plan name they chose
 
             // ----- HEADER -----
             const firstName = order.businessName.split(' ')[0] || 'friend';
             document.getElementById('businessShortName').innerText = firstName;
+            
+            // Show EXACTLY what they purchased
             document.getElementById('orderStatus').innerHTML = `Your <strong>${tierName}</strong> ${isMonthly ? 'license' : 'outright'} order is confirmed`;
 
             // ----- ORDER CARD -----
@@ -609,51 +626,83 @@
             tierBadge.innerText = tierName;
             tierBadge.className = `plan-badge-large ${tier}`;
             
+            // ← FIX: This now shows "Monthly License" or "Buy Outright" correctly
             document.getElementById('paymentModelBadge').innerText = planDisplayName;
 
-            // Price
+            // ----- PRICING - Use correct pricing based on ACTUAL purchase -----
             let oneTimePrice = 0, monthlyPrice = 0;
+            
             if (isMonthly) {
-                oneTimePrice = tier === 'standard' ? 500 : 650;
-                monthlyPrice = tier === 'standard' ? 125 : 225;
+                // Monthly License pricing
+                if (tier === 'standard') {
+                    oneTimePrice = PRICING_CONFIG.monthly.buildFee.standard; // £500
+                    monthlyPrice = PRICING_CONFIG.monthly.standard; // £125
+                } else {
+                    oneTimePrice = PRICING_CONFIG.monthly.buildFee.premium; // £650
+                    monthlyPrice = PRICING_CONFIG.monthly.premium; // £225
+                }
+                
                 document.getElementById('priceAmount').innerHTML = `£${oneTimePrice}`;
                 document.getElementById('pricePeriod').innerHTML = 'build fee (one-time)';
                 
+                // Show monthly commitment box
                 const monthlyBox = document.getElementById('monthlyCommitmentBox');
                 monthlyBox.style.display = 'block';
                 document.getElementById('monthlyRateDisplay').innerHTML = `£${monthlyPrice}/month`;
             } else {
-                oneTimePrice = tier === 'standard' ? 1500 : 3000;
+                // Buy Outright pricing
+                if (tier === 'standard') {
+                    oneTimePrice = PRICING_CONFIG.outright.standard; // £1500
+                } else {
+                    oneTimePrice = PRICING_CONFIG.outright.premium; // £3000
+                }
+                
                 document.getElementById('priceAmount').innerHTML = `£${oneTimePrice.toLocaleString()}`;
                 document.getElementById('pricePeriod').innerHTML = 'one-time';
                 document.getElementById('monthlyCommitmentBox').style.display = 'none';
             }
 
-            // Business & Design
+            // ----- Business & Design -----
             document.getElementById('businessNameDisplay').innerText = order.businessName;
             
             let designDisplay = 'Custom design';
             if (order.designCode && order.designCode !== '' && order.designCode !== 'CUSTOM' && order.designCode !== 'null' && order.designCode !== 'undefined') {
                 designDisplay = order.designCode.toUpperCase();
-            } else {
-                const code = sessionStorage.getItem('selectedBarberCode');
-                if (code && code !== '' && code !== 'null' && code !== 'undefined') {
-                    designDisplay = code.toUpperCase();
-                }
             }
             document.getElementById('designCodeDisplay').innerText = designDisplay;
 
-            // ----- BUTTON ACTIONS - ONLY 48H BUTTON HAS ONCLICK -----
-            // START NOW BUTTON IS NOW A PURE <a> LINK - NO JAVASCRIPT INTERFERENCE
-
+            // ----- 48H BUTTON ACTION -----
             const fortyEightBtn = document.getElementById('fortyEightHourBtn');
             if (fortyEightBtn) {
                 fortyEightBtn.onclick = function(e) {
                     e.preventDefault();
                     alert(`⏰ You've chosen to complete this within 48 hours. Remember: this is your responsibility as part of the agreement.`);
-                    // Track selection or redirect to thank you page
                 };
             }
+            
+            // ----- Debug: Show what was loaded (remove in production) -----
+            console.log('✅ Thank You Page Rendered:', {
+                plan: planDisplayName,
+                tier: tierName,
+                price: isMonthly ? `£${oneTimePrice} + £${monthlyPrice}/mo` : `£${oneTimePrice}`,
+                business: order.businessName,
+                design: designDisplay
+            });
+        }
+
+        // -------------------------------------------------------------
+        //  CLEAR STORAGE AFTER LOAD? (Optional - uncomment to clear after showing)
+        // -------------------------------------------------------------
+        function clearOrderStorage() {
+            // Uncomment if you want to clear after the thank you page loads
+            // This prevents accidental re-orders from the same session
+            /*
+            sessionStorage.removeItem('vibz_planType');
+            sessionStorage.removeItem('vibz_tier');
+            sessionStorage.removeItem('selectedPlanType');
+            localStorage.removeItem('selectedPlanType');
+            localStorage.removeItem('vibz_tier');
+            */
         }
 
         // -------------------------------------------------------------
@@ -661,6 +710,8 @@
         // -------------------------------------------------------------
         function initialize() {
             renderThankYou();
+            // clearOrderStorage(); // Uncomment if you want to clear after viewing
+            
             const menu = document.getElementById('app-menu-layer');
             if (menu.classList.contains('active')) menu.classList.remove('active');
         }
