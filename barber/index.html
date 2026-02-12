@@ -157,14 +157,70 @@
         .vibz-btn.primary { background: var(--primary); color: #fff; border: none; }
         .vibz-btn.back-btn { background: transparent; border: none; color: #999; margin-top: 10px; box-shadow: none; font-weight: 700; }
 
-        .services-grid { display: grid; grid-template-columns: 1fr; gap: 10px; text-align: left; margin-bottom: 30px; }
-        .service-card {
-            background: #fff; border: 2px solid var(--border); border-radius: 20px;
-            padding: 16px; cursor: pointer; transition: 0.3s;
+        .services-grid { 
+            display: grid; 
+            grid-template-columns: 1fr; 
+            gap: 12px; 
+            text-align: left; 
+            margin-bottom: 30px; 
         }
-        .service-card.selected.standard { border-color: var(--standard); background: rgba(76,175,80,0.06); }
-        .service-card.selected.premium { border-color: var(--premium); background: rgba(33,150,243,0.06); }
-        .tier-pill { font-size: 0.65rem; font-weight: 900; padding: 4px 10px; border-radius: 8px; display: inline-block; margin-bottom: 6px; }
+        
+        .service-card {
+            background: #fff; 
+            border: 2px solid var(--border); 
+            border-radius: 20px;
+            padding: 18px; 
+            cursor: pointer; 
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        
+        .service-card:hover {
+            border-color: var(--primary);
+            background: rgba(255, 107, 0, 0.02);
+        }
+        
+        .service-card.selected {
+            border-width: 2px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.05);
+        }
+        
+        .service-card.selected.standard { 
+            border-color: var(--standard); 
+            background: rgba(76,175,80,0.04);
+        }
+        
+        .service-card.selected.premium { 
+            border-color: var(--premium); 
+            background: rgba(33,150,243,0.04);
+        }
+        
+        .service-card.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            font-size: 1.2rem;
+            font-weight: 900;
+            color: var(--primary);
+        }
+        
+        .service-card.selected.standard::after {
+            color: var(--standard);
+        }
+        
+        .service-card.selected.premium::after {
+            color: var(--premium);
+        }
+        
+        .tier-pill { 
+            font-size: 0.65rem; 
+            font-weight: 900; 
+            padding: 4px 10px; 
+            border-radius: 8px; 
+            display: inline-block; 
+            margin-bottom: 8px; 
+        }
 
         .form-screen { 
             display: none; 
@@ -436,12 +492,6 @@
             background: #000;
         }
         
-        .build-fee-section {
-            margin-bottom: 16px;
-            padding-bottom: 16px;
-            border-bottom: 2px dashed rgba(255,107,0,0.2);
-        }
-        
         .build-fee-title {
             font-weight: 800;
             font-size: 0.9rem;
@@ -449,6 +499,68 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             margin-bottom: 12px;
+        }
+        
+        .plan-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .indicator-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ddd;
+            transition: background 0.3s ease;
+        }
+        
+        .indicator-dot.active {
+            background: var(--primary);
+        }
+        
+        .indicator-dot.standard {
+            background: var(--standard);
+        }
+        
+        .indicator-dot.premium {
+            background: var(--premium);
+        }
+        
+        .clear-selections {
+            color: var(--primary);
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-decoration: underline;
+            cursor: pointer;
+            margin-top: 12px;
+            display: inline-block;
+        }
+        
+        .subscription-terms {
+            background: #f8f9fa;
+            border-radius: 16px;
+            padding: 16px;
+            margin-top: 16px;
+            text-align: left;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .subscription-terms i {
+            color: var(--primary);
+            margin-right: 8px;
+        }
+        
+        .subscription-terms strong {
+            color: var(--text);
+        }
+        
+        .subscription-terms p {
+            font-size: 0.8rem;
+            color: var(--gray);
+            margin-top: 6px;
+            line-height: 1.5;
         }
     </style>
 </head>
@@ -538,7 +650,7 @@
                     <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
                 </div>
 
-                <!-- STEP 7: Feature Selection (dynamic) -->
+                <!-- STEP 7: Feature Selection (dynamic with visual highlights) -->
                 <div class="form-screen" id="step-7">
                     <div class="services-grid" id="master-service-grid"></div>
                     <div class="plan-indicator" id="plan-indicator"></div>
@@ -726,7 +838,7 @@
         const actionText = isOutright ? 'One-time setup' : 'Select this feature';
         
         standardFeatures.forEach(s => grid.innerHTML += `
-            <div class="service-card" onclick="toggleService('${s}', 'standard', this)">
+            <div class="service-card ${selections.services.find(item => item.name === s && item.tier === 'standard') ? 'selected standard' : ''}" onclick="toggleService('${s}', 'standard', this)">
                 <span class="tier-pill" style="background:${TIER_CONFIG.standard.bgColor}; color:${TIER_CONFIG.standard.color};">${TIER_CONFIG.standard.name}</span>
                 <div style="font-weight:700; font-size:0.95rem;">${s}</div>
                 <div style="font-size:0.7rem; color:var(--gray); font-weight:600; margin-top:4px;">
@@ -736,7 +848,7 @@
         `);
         
         premiumFeatures.forEach(s => grid.innerHTML += `
-            <div class="service-card" onclick="toggleService('${s}', 'premium', this)">
+            <div class="service-card ${selections.services.find(item => item.name === s && item.tier === 'premium') ? 'selected premium' : ''}" onclick="toggleService('${s}', 'premium', this)">
                 <span class="tier-pill" style="background:${TIER_CONFIG.premium.bgColor}; color:${TIER_CONFIG.premium.color};">${TIER_CONFIG.premium.name}</span>
                 <div style="font-weight:700; font-size:0.95rem;">${s}</div>
                 <div style="font-size:0.7rem; color:var(--gray); font-weight:600; margin-top:4px;">
@@ -882,9 +994,12 @@
         
         html += `
                 </div>
-                
-                <!-- CLEAR INHERITANCE MESSAGING -->
-                ${selections.planType === PLAN_CONFIG.monthly.name && premSels.length > 0 ? `
+        `;
+        
+        // CLEAR INHERITANCE MESSAGING
+        if (selections.planType === PLAN_CONFIG.monthly.name) {
+            if (premSels.length > 0) {
+                html += `
                     <div style="background:rgba(33,150,243,0.08); border-radius:16px; padding:16px; margin-top:20px; border-left:4px solid var(--premium);">
                         <i class="fas fa-crown" style="color:var(--premium); margin-right:8px;"></i>
                         <strong style="color:var(--premium);">Premium includes ALL your selected Standard features</strong>
@@ -892,7 +1007,9 @@
                             You've selected ${stdSels.length} Standard ${stdSels.length === 1 ? 'feature' : 'features'}. These are automatically included when you choose Premium.
                         </p>
                     </div>
-                ` : selections.planType === PLAN_CONFIG.monthly.name && stdSels.length > 0 ? `
+                `;
+            } else if (stdSels.length > 0) {
+                html += `
                     <div style="background:rgba(76,175,80,0.08); border-radius:16px; padding:16px; margin-top:20px; border-left:4px solid var(--standard);">
                         <i class="fas fa-check-circle" style="color:var(--standard); margin-right:8px;"></i>
                         <strong style="color:var(--standard);">Standard plan includes ONLY the features you selected</strong>
@@ -900,8 +1017,11 @@
                             To add Premium features, upgrade to the Premium build fee and monthly plan.
                         </p>
                     </div>
-                ` : ''}
-                
+                `;
+            }
+        }
+        
+        html += `
                 <div style="text-align:center; margin-top:20px;">
                     <span class="clear-selections" onclick="clearSelections()">
                         <i class="fas fa-times"></i> Clear all selections
@@ -964,9 +1084,9 @@
                 </div>
             `;
         } else {
-            // ========= MONTHLY LICENSE - Build fee + Monthly management =========
+            // ========= MONTHLY LICENSE - Build fee + Monthly management (NO payment buttons on monthly) =========
             html += `
-                <!-- BUILD FEE SECTION (One-time, shown separately) -->
+                <!-- BUILD FEE SECTION (One-time, Stripe payment) -->
                 <div style="margin-bottom: 8px;">
                     <div class="build-fee-title"><i class="fas fa-tools"></i> ONE-TIME BUILD FEE</div>
                 </div>
@@ -995,10 +1115,13 @@
                     </button>
                 </div>
                 
-                <!-- MONTHLY MANAGEMENT PLANS (No delivery mentioned) -->
+                <!-- MONTHLY MANAGEMENT PLANS - NO PAYMENT BUTTONS, CLEAR LEGAL TERMS -->
                 <div style="margin: 24px 0 8px;">
                     <div class="build-fee-title"><i class="fas fa-sync"></i> MONTHLY MANAGEMENT</div>
-                    <p style="font-size:0.8rem; color:var(--gray); margin-top:4px;">12-month minimum term. Subscription continues monthly after 12 months unless cancelled.</p>
+                    <p style="font-size:0.8rem; color:var(--gray); margin-top:4px;">
+                        <strong>12-month minimum term.</strong> Subscription renews monthly and continues after 12 months unless cancelled.
+                        Early cancellation does not waive the remaining contract balance.
+                    </p>
                 </div>
                 
                 <div class="pricing-card recommended">
@@ -1017,9 +1140,13 @@
                         <li><i class="fas fa-check"></i> Mobile responsiveness upkeep</li>
                         <li><i class="fas fa-check"></i> Support response within 72 hours</li>
                     </ul>
-                    <button class="payment-button secondary" onclick="alert('Monthly subscription starts after website delivery. You will be contacted to set up direct debit.')">
-                        <i class="fas fa-sync"></i> Start Monthly Management - £125/mo
-                    </button>
+                    
+                    <!-- NO PAYMENT BUTTON - JUST TERMS -->
+                    <div class="subscription-terms">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Monthly subscription starts after build fee is paid.</strong>
+                        <p>You will be onboarded to direct debit after website delivery. 12-month minimum term applies from start date.</p>
+                    </div>
                 </div>
                 
                 <div class="pricing-card">
@@ -1040,16 +1167,21 @@
                         <li><i class="fas fa-crown"></i> Ongoing site optimisation</li>
                         <li><i class="fas fa-crown"></i> Priority change requests</li>
                     </ul>
-                    <button class="payment-button premium" onclick="alert('Monthly subscription starts after website delivery. You will be contacted to set up direct debit.')">
-                        <i class="fas fa-crown"></i> Start Monthly Management - £225/mo
-                    </button>
+                    
+                    <!-- NO PAYMENT BUTTON - JUST TERMS -->
+                    <div class="subscription-terms">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Monthly subscription starts after build fee is paid.</strong>
+                        <p>You will be onboarded to direct debit after website delivery. 12-month minimum term applies from start date.</p>
+                    </div>
                 </div>
                 
-                <!-- IMPORTANT CLARITY LINE (exactly as specified) -->
+                <!-- IMPORTANT CLARITY LINE -->
                 <div class="important-clarity">
                     <i class="fas fa-info-circle"></i> 
                     <strong>Monthly management begins after the website is completed.</strong><br>
                     12-month minimum term. Subscription continues monthly after 12 months unless cancelled.
+                    Early cancellation does not waive the remaining contract balance.
                 </div>
             `;
         }
