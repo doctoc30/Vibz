@@ -9,15 +9,14 @@
     
     <style>
         /* -------------------------------------------------------------
-           EXACT VIBZ BRAND — STICKY HEADER, SCROLLABLE CONTENT, NO DOCK
-           FULL WIDTH TILES, TRANSPARENT BRAND BACKGROUND
-        ------------------------------------------------------------- */
+           EXACT HOMEPAGE LOOK — BACKGROUND, TILES, DOCK, MENU
+           ------------------------------------------------------------- */
         :root {
             --primary: #FF6B00;
             --primary-light: #FFF5EE;
             --bg: #FFFFFF;
             --text: #121212;
-            --gray: #666;
+            --card-bg: rgba(255, 255, 255, 0.9);
             --border: rgba(255, 107, 0, 0.1);
             --safe-top: env(safe-area-inset-top);
             --safe-bottom: env(safe-area-inset-bottom);
@@ -26,357 +25,24 @@
         }
 
         * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+            margin: 0; padding: 0; box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
             font-family: 'Inter', sans-serif;
         }
 
         body, html {
             height: 100%;
-            width: 100%;
-            background-color: var(--primary-light); /* brand colour – no white frame */
+            background-color: var(--primary-light); /* EXACT BRAND BACKGROUND */
             color: var(--text);
-            overflow: hidden; /* prevent double scroll, scroll handled by flex child */
-        }
-
-        #app-container {
-            height: 100vh;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            background-color: var(--primary-light);
-            position: relative;
-            overflow: hidden; /* container doesn't scroll, header stays fixed */
-        }
-
-        /* ———— STICKY HEADER ———— */
-        header {
-            padding: calc(var(--safe-top) + 20px) 25px 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 100;
-            position: sticky;
-            top: 0;
-            background: var(--primary-light);
-            width: 100%;
-            flex-shrink: 0; /* prevents header from compressing */
-            box-shadow: 0 2px 10px rgba(255,107,0,0.03); /* subtle separation */
-        }
-
-        .header-logo { 
-            font-size: 1.8rem; 
-            font-weight: 900; 
-            letter-spacing: -1.5px; 
-            color: var(--primary); 
-        }
-        .header-logo span { color: #000000; }
-
-        /* ———— SCROLLABLE CONTENT AREA ———— */
-        .content-scroll {
-            flex: 1;
-            overflow-y: auto;
+            overscroll-behavior-y: contain;
             overflow-x: hidden;
-            padding: 0 0 30px 0; /* no horizontal padding on container, tiles become full width */
-            display: flex;
-            flex-direction: column;
-            -webkit-overflow-scrolling: touch;
-            width: 100%;
+            overflow-y: auto;
         }
 
-        /* full-width tile wrapper – removes outer padding, tiles stretch edge to edge */
-        .thank-you-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            padding: 0; /* zero padding, tiles go full width */
-        }
-
-        /* cards are full width with internal padding, no outer margin */
-        .thank-you-card {
-            background: white;
-            border-radius: 0; /* flat edges for full width on mobile */
-            padding: 30px 24px;
-            border-top: 2px solid var(--border);
-            border-bottom: 2px solid var(--border);
-            width: 100%;
-            max-width: 100%;
-            margin: 0 0 16px 0; /* spacing between cards */
-            box-shadow: 0 8px 25px rgba(0,0,0,0.03);
-            animation: fadeInUp 0.4s ease-out forwards;
-        }
-
-        /* first card has no top border (clean edge below header) */
-        .thank-you-card:first-of-type {
-            border-top: none;
-        }
-
-        @keyframes fadeInUp { 
-            from { opacity: 0; transform: translateY(15px); } 
-            to { opacity: 1; transform: translateY(0); } 
-        }
-
-        .thank-you-icon {
-            font-size: 4rem;
-            color: var(--primary);
-            margin-bottom: 1rem;
-            text-align: center;
-        }
-
-        h1 {
-            font-size: 2.2rem; 
-            font-weight: 900; 
-            line-height: 1.1;
-            letter-spacing: -1.2px; 
-            color: var(--primary);
-            margin-bottom: 0.5rem;
-            text-align: center;
-        }
-
-        .subhead {
-            color: var(--gray); 
-            font-weight: 500; 
-            font-size: 1.1rem;
-            margin-bottom: 1.5rem;
-            text-align: center;
-        }
-
-        /* ———— ORDER CARD (FULL WIDTH, INSIDE WHITE TILE) ———— */
-        .order-card {
-            background: #fff;
-            border-radius: 24px;
-            padding: 24px;
-            border: 2px solid var(--border);
-            margin-bottom: 0; /* handled by parent padding */
-            width: 100%;
-        }
-
-        .order-card.recommended {
-            border-color: var(--primary);
-            background: linear-gradient(to bottom, #fff, rgba(255,107,0,0.02));
-        }
-
-        .badge {
-            display: inline-block;
-            background: var(--primary);
-            color: white;
-            padding: 6px 16px;
-            border-radius: 30px;
-            font-size: 0.75rem;
-            font-weight: 800;
-            letter-spacing: 0.5px;
-            margin-bottom: 16px;
-        }
-        .badge.standard { background: var(--standard); }
-        .badge.premium { background: var(--premium); }
-
-        .plan-type {
-            font-size: 0.8rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: var(--gray);
-            margin-bottom: 6px;
-        }
-        .plan-type.standard-type { color: var(--standard); }
-        .plan-type.premium-type { color: var(--premium); }
-
-        .price-row {
-            display: flex;
-            align-items: baseline;
-            flex-wrap: wrap;
-            gap: 8px 16px;
-            margin: 12px 0 4px;
-        }
-
-        .price-value {
-            font-size: 2rem;
-            font-weight: 900;
-            line-height: 1;
-            color: var(--text);
-        }
-        .price-value.small { font-size: 1.4rem; }
-
-        .price-period {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--gray);
-        }
-
-        .detail-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-top: 20px;
-        }
-
-        @media (max-width: 480px) {
-            .detail-grid {
-                grid-template-columns: 1fr; /* stack on mobile */
-            }
-        }
-
-        .detail-item {
-            background: #f9f9f9;
-            border-radius: 20px;
-            padding: 16px;
-            border: 2px solid var(--border);
-        }
-        .detail-label {
-            font-size: 0.7rem;
-            font-weight: 800;
-            color: var(--gray);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 4px;
-        }
-        .detail-value {
-            font-weight: 800;
-            font-size: 1.1rem;
-            color: var(--text);
-            word-break: break-word;
-        }
-
-        /* ———— FEATURE GRID – FULL WIDTH, MOBILE OPTIMIZED ———— */
-        .features-section {
-            margin-top: 8px;
-            width: 100%;
-        }
-        .features-title {
-            font-size: 1.3rem;
-            font-weight: 900;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--text);
-        }
-        .features-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            width: 100%;
-        }
-
-        @media (max-width: 480px) {
-            .features-grid {
-                grid-template-columns: 1fr; /* single column on mobile */
-                gap: 12px;
-            }
-        }
-
-        .feature-card {
-            background: #fff;
-            border: 2px solid var(--border);
-            border-radius: 20px;
-            padding: 16px;
-            position: relative;
-            transition: 0.2s;
-            width: 100%;
-        }
-        .feature-card.standard { border-left: 6px solid var(--standard); }
-        .feature-card.premium { border-left: 6px solid var(--premium); }
-
-        .feature-tier {
-            font-size: 0.65rem;
-            font-weight: 900;
-            padding: 4px 10px;
-            border-radius: 8px;
-            display: inline-block;
-            margin-bottom: 8px;
-        }
-        .feature-tier.standard { background: rgba(76,175,80,0.12); color: var(--standard); }
-        .feature-tier.premium { background: rgba(33,150,243,0.12); color: var(--premium); }
-
-        .feature-name {
-            font-weight: 700;
-            font-size: 0.95rem;
-            color: var(--text);
-        }
-
-        /* ———— NEXT STEPS – FULL WIDTH TILES ———— */
-        .next-steps {
-            margin-top: 8px;
-            width: 100%;
-        }
-
-        .step-card {
-            background: white;
-            border-radius: 24px;
-            padding: 24px;
-            margin-bottom: 16px;
-            border: 2px solid var(--border);
-            transition: 0.2s;
-            width: 100%;
-        }
-        .step-card:hover { border-color: var(--primary); }
-
-        .step-card h4 {
-            font-size: 1.3rem;
-            font-weight: 900;
-            color: var(--primary);
-            margin-bottom: 6px;
-        }
-
-        .time-badge {
-            background: var(--primary);
-            color: white;
-            padding: 4px 14px;
-            border-radius: 30px;
-            font-size: 0.7rem;
-            font-weight: 800;
-            display: inline-block;
-            margin-bottom: 12px;
-        }
-
-        /* ———— VIBZ BUTTONS (SAME AS INDEX) ———— */
-        .vibz-btn {
-            width: 100%; 
-            padding: 18px 18px; 
-            border-radius: 20px; 
-            border: 1px solid var(--border);
-            background: #fff; 
-            color: var(--text); 
-            font-size: 1rem; 
-            font-weight: 800;
-            margin-top: 16px; 
-            cursor: pointer; 
-            transition: 0.2s; 
-            text-align: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
-            text-decoration: none; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 8px;
-        }
-        .vibz-btn.primary { background: var(--primary); color: #fff; border: none; }
-        .vibz-btn.secondary { background: white; color: var(--text); border: 2px solid var(--border); }
-        .vibz-btn:active { transform: scale(0.97); }
-
-        .terms-note {
-            font-size: 0.85rem;
-            color: var(--gray);
-            text-align: center;
-            margin-top: 24px;
-            padding-top: 20px;
-            border-top: 2px solid var(--border);
-            font-weight: 500;
-            width: 100%;
-        }
-
-        /* ———— NO DOCK, NO WHITE FRAME ———— */
-        .app-dock {
-            display: none; /* removed completely */
-        }
-
-        /* ———— MENU LAYER (KEPT FROM INDEX, BUT DOCK REMOVED) ———— */
+        /* ==== APP MENU LAYER - EXACT FROM HOMEPAGE ==== */
         #app-menu-layer {
             position: fixed; inset: 0; background: var(--primary-light);
-            z-index: 3000; display: flex; flex-direction: column;
+            z-index: 9500; display: flex; flex-direction: column;
             padding: calc(var(--safe-top) + 20px) 25px;
             transform: translateY(100%); transition: transform 0.6s cubic-bezier(0.32, 0.72, 0, 1);
         }
@@ -386,14 +52,21 @@
             display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 20px;
         }
-        .menu-logo {
-            font-size: 2rem; font-weight: 900; letter-spacing: -1.5px; color: var(--primary);
+
+        .app-logo { 
+            font-size: 1.8rem; font-weight: 900; letter-spacing: -1.5px; color: var(--primary); 
         }
-        .menu-logo span { color: #000000; }
+        .app-logo span { color: #000000; }
+
         .menu-links {
-            display: flex; flex-direction: column; gap: 20px;
-            flex: 1; justify-content: center; align-items: center;
+            display: flex; flex-direction: column; 
+            gap: 20px;
+            flex: 1;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
         }
+
         .menu-item {
             font-size: 4.5rem; font-weight: 900; color: var(--text);
             text-decoration: none; letter-spacing: -3px; line-height: 1;
@@ -405,314 +78,571 @@
         #app-menu-layer.active .menu-item:nth-child(2) { transition-delay: 0.2s; }
         #app-menu-layer.active .menu-item:nth-child(3) { transition-delay: 0.3s; }
         #app-menu-layer.active .menu-item:nth-child(4) { transition-delay: 0.4s; }
+
         .menu-footer {
-            margin-top: auto; font-weight: 800; font-size: 0.8rem; letter-spacing: 1px; color: #bbb;
-            text-align: center; padding-bottom: 20px;
+            margin-top: auto; padding-bottom: calc(var(--safe-bottom) + 20px);
+            font-weight: 800; font-size: 0.8rem; letter-spacing: 1px; color: #bbb;
+            text-align: center;
         }
 
-        @media (min-width: 768px) {
-            .menu-item { font-size: 6rem; }
-            .thank-you-card {
-                padding: 40px 32px;
+        .close-btn {
+            width: 60px; height: 60px; background: var(--primary);
+            color: white; border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; font-size: 1.5rem; box-shadow: 0 10px 20px rgba(255, 107, 0, 0.2);
+            cursor: pointer;
+        }
+
+        /* ==== APP SHELL - EXACT HOMEPAGE ==== */
+        #app-container {
+            min-height: 100vh; display: flex; flex-direction: column;
+            background-color: var(--primary-light);
+        }
+
+        header {
+            padding: calc(var(--safe-top) + 20px) 25px 15px;
+            display: flex; justify-content: space-between; align-items: center;
+            background: var(--primary-light);
+            position: sticky; top: 0; z-index: 800;
+        }
+
+        .header-spacer {
+            width: 60%; height: 2px; margin: 0 auto;
+            background: radial-gradient(circle, var(--primary) 0%, rgba(255, 107, 0, 0) 90%);
+            opacity: 0.6;
+        }
+
+        .content-scroll {
+            flex: 1; padding: 0 25px 160px; /* bottom padding for dock */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* ==== HOMEPAGE TILE STYLING - EXACT MATCH ==== */
+        .hero-area { 
+            text-align: center; 
+            padding: 40px 0 30px; 
+            width: 100%;
+            max-width: 800px;
+        }
+        
+        .hero-area h1 {
+            font-size: 3.2rem; font-weight: 900; line-height: 1;
+            letter-spacing: -2px; margin-bottom: 10px; color: var(--primary);
+        }
+
+        .subhead-large {
+            font-size: 1.4rem; font-weight: 700; color: var(--text);
+            margin-bottom: 15px;
+        }
+
+        .order-badge {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 8px 24px;
+            border-radius: 40px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        /* ==== APP GRID - EXACT TILE STYLING FROM HOMEPAGE ==== */
+        .app-grid {
+            display: grid; 
+            grid-template-columns: 1fr; 
+            gap: 20px; 
+            max-width: 600px; 
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .app-tile {
+            background: var(--card-bg); 
+            padding: 30px 25px; 
+            border-radius: 30px;
+            border: 1px solid rgba(255, 107, 0, 0.1); 
+            display: flex;
+            flex-direction: column; 
+            align-items: flex-start; 
+            gap: 15px; 
+            transition: 0.2s;
+            cursor: default;
+            backdrop-filter: blur(10px);
+            width: 100%;
+        }
+
+        .app-tile:active { transform: scale(0.98); background: #fff; }
+
+        .tile-icon {
+            width: 60px; height: 60px; background: var(--primary); color: white;
+            border-radius: 18px; display: flex; align-items: center; justify-content: center;
+            font-size: 1.6rem; box-shadow: 0 8px 15px rgba(255, 107, 0, 0.2);
+        }
+
+        .app-tile h3 { 
+            font-size: 1.4rem; 
+            font-weight: 900; 
+            line-height: 1.2; 
+            text-align: left;
+            color: var(--text);
+        }
+
+        .tile-desc {
+            font-size: 0.95rem;
+            color: var(--gray);
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        .price-tag {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--primary);
+            margin-top: 5px;
+        }
+
+        .price-period {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--gray);
+            margin-left: 5px;
+        }
+
+        .detail-pill {
+            display: inline-block;
+            background: var(--standard);
+            color: white;
+            padding: 4px 14px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+        .detail-pill.premium { background: var(--premium); }
+        .detail-pill.standard { background: var(--standard); }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 480px) {
+            .feature-grid {
+                grid-template-columns: 1fr;
             }
         }
+
+        .feature-item {
+            background: white;
+            border-radius: 16px;
+            padding: 12px;
+            border-left: 6px solid var(--standard);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .feature-item.premium {
+            border-left-color: var(--premium);
+        }
+
+        /* ==== VIBZ BUTTONS ==== */
+        .vibz-btn {
+            width: 100%; 
+            padding: 18px; 
+            border-radius: 20px; 
+            border: 1px solid var(--border);
+            background: #fff; 
+            color: var(--text); 
+            font-size: 1.1rem; 
+            font-weight: 800;
+            margin-top: 16px; 
+            cursor: pointer; 
+            transition: 0.2s; 
+            text-align: center;
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 8px;
+            text-decoration: none;
+        }
+        .vibz-btn.primary { background: var(--primary); color: #fff; border: none; }
+        .vibz-btn:active { transform: scale(0.97); }
+
+        /* ==== DOCK - EXACT HOMEPAGE ==== */
+        .app-dock {
+            position: fixed; bottom: 25px; left: 20px; right: 20px;
+            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px);
+            height: 80px; border-radius: 40px; display: flex; justify-content: space-around;
+            align-items: center; box-shadow: 0 15px 35px rgba(0,0,0,0.1); z-index: 1000;
+        }
+
+        .dock-btn { 
+            display: flex; flex-direction: column; align-items: center; 
+            color: #A0A0A0; text-decoration: none; gap: 4px; 
+            background: none; border: none; cursor: pointer;
+        }
+        .dock-btn.active { color: var(--primary); }
+        .dock-btn i { font-size: 1.5rem; }
+        .dock-btn span { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; }
+
+        .dock-center {
+            width: 65px; height: 65px; background: var(--primary); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; color: #fff;
+            font-size: 1.8rem; margin-top: -50px; border: 6px solid var(--primary-light);
+            box-shadow: 0 10px 20px rgba(255, 107, 0, 0.3);
+            cursor: pointer;
+        }
+
+        /* tablet optimization */
+        @media (min-width: 768px) {
+            .content-scroll {
+                padding-top: 5vh;
+                padding-bottom: 180px;
+            }
+            .app-grid {
+                max-width: 700px;
+            }
+            .menu-item { font-size: 6rem; }
+        }
+
+        .mt-4 { margin-top: 24px; }
+        .mt-2 { margin-top: 16px; }
+        .text-center { text-align: center; }
+        .w-100 { width: 100%; }
     </style>
 </head>
 <body>
 
-<!-- ==================== SAME MENU LAYER AS INDEX ==================== -->
-<div id="app-menu-layer">
-    <div class="menu-header">
-        <div class="menu-logo">VIBZ<span>.</span></div>
-        <div class="close-btn" style="margin-top:0; border:none; background:none; font-size:1.8rem; cursor:pointer; color:#666;" onclick="toggleMenu()"><i class="fa-solid fa-xmark"></i></div>
-    </div>
-    <div class="menu-links">
-        <a href="https://www.vibz.co.uk/new-design.html" class="menu-item" onclick="toggleMenu()">Home</a>
-        <a href="https://www.vibz.co.uk/barber/concepts.html" class="menu-item" onclick="toggleMenu()">Explore</a>
-        <a href="#" class="menu-item" onclick="toggleMenu()">Portal</a>
-        <a href="#" class="menu-item" onclick="toggleMenu()">Support</a>
-    </div>
-    <div class="menu-footer">VIBZ COLLECTIVE © 2026</div>
-</div>
-
-<!-- ==================== APP CONTAINER – STICKY HEADER + SCROLLABLE CONTENT ==================== -->
-<div id="app-container">
-    <!-- STICKY HEADER -->
-    <header>
-        <div class="header-logo">VIBZ<span>.</span></div>
-        <i class="fa-solid fa-circle-user" style="font-size: 1.8rem; color: #ddd;" onclick="toggleMenu()"></i>
-    </header>
-
-    <!-- SCROLLABLE CONTENT – FULL WIDTH TILES, TRANSPARENT BACKGROUND -->
-    <main class="content-scroll">
-        <div class="thank-you-wrapper">
-            
-            <!-- TILE 1: THANK YOU & ORDER SUMMARY -->
-            <div class="thank-you-card">
-                <div class="thank-you-icon">
-                    <i class="fas fa-check-circle"></i>
-                </div>
-
-                <h1 id="dynamicThankYouTitle">Thank you!</h1>
-                <div class="subhead" id="dynamicSubhead">Your order is confirmed</div>
-
-                <div class="order-card recommended" id="orderSummaryCard">
-                    <div class="badge" id="planBadge">STANDARD</div>
-                    
-                    <div class="plan-type" id="planTypeLabel">BUY OUTRIGHT — STANDARD</div>
-                    
-                    <div class="price-row" id="priceRowContainer">
-                        <div class="price-value" id="priceValue">£1,500</div>
-                        <div class="price-period" id="pricePeriod">one-time</div>
-                    </div>
-                    
-                    <div class="plan-desc" id="planDescription">
-                        You own the full website files. Hosting and updates are your responsibility.
-                    </div>
-
-                    <div class="detail-grid">
-                        <div class="detail-item">
-                            <div class="detail-label">Business</div>
-                            <div class="detail-value" id="businessNameDisplay">Barber Shop</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Payment model</div>
-                            <div class="detail-value" id="paymentModelDisplay">Buy Outright</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Tier</div>
-                            <div class="detail-value" id="tierDisplay">Standard</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Design concept</div>
-                            <div class="detail-value" id="designCodeDisplay">Custom</div>
-                        </div>
-                    </div>
-
-                    <!-- Monthly commitment notice (visible only for Monthly License) -->
-                    <div id="monthlyCommitmentBox" style="margin-top: 20px; background: rgba(33,150,243,0.05); border-radius: 16px; padding: 16px; border-left: 4px solid var(--premium); display: none;">
-                        <i class="fas fa-sync" style="color: var(--premium);"></i>
-                        <strong style="color: var(--premium);">12-month minimum term.</strong> 
-                        <span id="monthlyRateDisplay">£125/month</span> starts after delivery.
-                    </div>
-                </div>
-            </div>
-
-            <!-- TILE 2: SELECTED FEATURES -->
-            <div class="thank-you-card" id="featuresTile">
-                <div class="features-section">
-                    <div class="features-title">
-                        <i class="fas fa-cog" style="color: var(--primary);"></i> Your selected features
-                    </div>
-                    <div class="features-grid" id="featuresGridContainer">
-                        <!-- JS will populate -->
-                    </div>
-                    <div id="noFeaturesMessage" style="display: none; text-align: center; padding: 32px 24px; background: white; border-radius: 20px; border: 2px solid var(--border); margin-top: 12px;">
-                        <i class="fas fa-info-circle" style="font-size: 2rem; color: var(--gray); margin-bottom: 12px;"></i>
-                        <p style="font-weight: 600; color: var(--gray);">No features selected — you’ll work with our team.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TILE 3: NEXT STEPS -->
-            <div class="thank-you-card">
-                <div class="next-steps">
-                    <h3 style="font-size: 1.5rem; font-weight: 900; margin-bottom: 20px; color: var(--text);">🚀 Next steps</h3>
-                    
-                    <div class="step-card">
-                        <h4>Complete project brief</h4>
-                        <div class="time-badge">START NOW</div>
-                        <p style="color: var(--gray); font-weight: 500; font-size: 0.95rem;">Fill out the detailed form so we can start building immediately.</p>
-                        <button class="vibz-btn primary" id="completeNowBtn">
-                            <i class="fas fa-bolt"></i> Complete details
-                        </button>
-                    </div>
-
-                    <div class="step-card">
-                        <h4>Schedule kickoff call</h4>
-                        <div class="time-badge">WITHIN 24H</div>
-                        <p style="color: var(--gray); font-weight: 500; font-size: 0.95rem;">Prefer to talk? Book a 15‑min call with our design team.</p>
-                        <button class="vibz-btn secondary" id="scheduleCallBtn">
-                            <i class="fas fa-calendar"></i> Schedule call
-                        </button>
-                    </div>
-
-                    <div class="terms-note">
-                        <i class="fas fa-exclamation-circle" style="color: var(--primary); margin-right: 6px;"></i>
-                        A project manager will contact you within 24 hours. Timeline starts after we receive all details.
-                    </div>
-                </div>
-            </div>
+    <!-- ==================== EXACT MENU LAYER FROM HOMEPAGE ==================== -->
+    <div id="app-menu-layer">
+        <div class="menu-header">
+            <div class="app-logo">VIBZ<span>.</span></div>
+            <div class="close-btn" onclick="toggleMenu()"><i class="fa-solid fa-xmark"></i></div>
         </div>
-    </main>
-</div>
+        <div class="menu-links">
+            <a href="#" class="menu-item" onclick="toggleMenu()">Home</a>
+            <a href="https://www.vibz.co.uk/barber/concepts.html" class="menu-item">Explore</a>
+            <a href="#" class="menu-item">Portal</a>
+            <a href="#" class="menu-item">Support</a>
+        </div>
+        <div class="menu-footer">VIBZ COLLECTIVE © 2026</div>
+    </div>
 
-<script>
-    // -------------------------------------------------------------
-    //  EXACT SAME CONFIG AS INDEX — MIRRORED FROM FUNNEL
-    // -------------------------------------------------------------
-    const PRICING_CONFIG = {
-        outright: { standard: 1500, premium: 3000 },
-        monthly:  { standard: 125,  premium: 225 }
-    };
-    const PLAN_CONFIG = {
-        outright: { name: 'Buy Outright', shortName: 'OWN IT' },
-        monthly:  { name: 'Monthly License', shortName: 'LICENSE' }
-    };
-    const TIER_CONFIG = {
-        standard: { name: 'STANDARD', color: '#4CAF50' },
-        premium:  { name: 'PREMIUM', color: '#2196F3' }
-    };
+    <!-- ==================== APP CONTAINER ==================== -->
+    <div id="app-container">
+        <header>
+            <div class="app-logo">VIBZ<span>.</span></div>
+            <i class="fa-solid fa-circle-user" style="font-size: 1.8rem; color: #ddd;" onclick="toggleMenu()"></i>
+        </header>
+        <div class="header-spacer"></div>
 
-    // -------------------------------------------------------------
-    //  TOGGLE MENU (SAME AS INDEX)
-    // -------------------------------------------------------------
-    function toggleMenu() {
-        const menu = document.getElementById('app-menu-layer');
-        menu.classList.toggle('active');
-    }
+        <main class="content-scroll">
+            <!-- HERO AREA - EXACT HOMEPAGE STYLE -->
+            <div class="hero-area">
+                <div class="order-badge" id="orderBadge">✓ ORDER CONFIRMED</div>
+                <h1 id="dynamicThankYouTitle">Thank you!</h1>
+                <div class="subhead-large" id="dynamicSubhead">Your website order is confirmed</div>
+            </div>
 
-    // -------------------------------------------------------------
-    //  LOAD ORDER FROM sessionStorage (SET BY INDEX FUNNEL)
-    // -------------------------------------------------------------
-    function loadOrderFromStorage() {
-        let selections = {
-            businessName: sessionStorage.getItem('barberShopName') || 'Your shop',
-            planType: sessionStorage.getItem('vibz_planType') || sessionStorage.getItem('selectedPlanType') || '',
-            designCode: sessionStorage.getItem('selectedBarberCode') || '',
-            urgency: sessionStorage.getItem('vibz_urgency') || '',
-            services: [],
-            recommendedPlan: 'standard'
+            <!-- ========== ORDER SUMMARY TILE - EXACT APP TILE STYLE ========== -->
+            <div class="app-grid">
+                <!-- TILE 1: ORDER SUMMARY -->
+                <div class="app-tile">
+                    <div class="tile-icon"><i class="fa-solid fa-file-invoice"></i></div>
+                    <div style="width: 100%;">
+                        <h3 id="orderSummaryTitle">Order Summary</h3>
+                        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0;">
+                            <span class="detail-pill" id="planTierBadge">STANDARD</span>
+                            <span class="detail-pill" id="planTypeBadge">BUY OUTRIGHT</span>
+                        </div>
+                        
+                        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; margin-top: 8px;">
+                            <span style="font-weight: 800; color: var(--gray);">Total</span>
+                            <span class="price-tag" id="priceValue">£1,500</span>
+                            <span class="price-period" id="pricePeriod">one-time</span>
+                        </div>
+
+                        <div style="margin-top: 20px; border-top: 1px solid var(--border); padding-top: 20px;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                                <div>
+                                    <div style="font-size: 0.7rem; font-weight: 800; color: var(--gray); text-transform: uppercase;">Business</div>
+                                    <div style="font-weight: 900; font-size: 1.1rem;" id="businessNameDisplay">Your Shop</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 0.7rem; font-weight: 800; color: var(--gray); text-transform: uppercase;">Design concept</div>
+                                    <div style="font-weight: 900; font-size: 1.1rem;" id="designCodeDisplay">Custom</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Monthly commitment notice (visible only for monthly license) -->
+                        <div id="monthlyCommitmentBox" style="margin-top: 20px; background: rgba(33,150,243,0.08); border-radius: 16px; padding: 16px; border-left: 4px solid var(--premium); display: none;">
+                            <i class="fas fa-sync" style="color: var(--premium);"></i>
+                            <strong style="color: var(--premium);">12-month minimum term.</strong> 
+                            <span id="monthlyRateDisplay">£125/month</span> starts after delivery.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TILE 2: SELECTED FEATURES -->
+                <div class="app-tile" id="featuresTile">
+                    <div class="tile-icon"><i class="fa-solid fa-cog"></i></div>
+                    <div style="width: 100%;">
+                        <h3>Your Selected Features</h3>
+                        <div id="noFeaturesMessage" style="display: none; text-align: center; padding: 24px; color: var(--gray); font-weight: 600;">
+                            <i class="fas fa-info-circle" style="font-size: 2rem; margin-bottom: 12px;"></i>
+                            <p>No features selected — you'll work with our team.</p>
+                        </div>
+                        <div class="feature-grid" id="featuresGridContainer">
+                            <!-- JS will populate with actual selected features -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TILE 3: NEXT STEPS -->
+                <div class="app-tile">
+                    <div class="tile-icon"><i class="fa-solid fa-rocket"></i></div>
+                    <div style="width: 100%;">
+                        <h3>Next Steps</h3>
+                        
+                        <div style="background: white; border-radius: 20px; padding: 20px; margin-top: 16px; border: 1px solid var(--border);">
+                            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
+                                <div style="background: var(--primary); width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white;">
+                                    <i class="fas fa-pencil"></i>
+                                </div>
+                                <div style="flex: 1;">
+                                    <div style="font-weight: 900;">Complete project brief</div>
+                                    <div style="font-size: 0.85rem; color: var(--gray);">Fill out the detailed form</div>
+                                </div>
+                            </div>
+                            <button class="vibz-btn primary" id="completeNowBtn">
+                                <i class="fas fa-bolt"></i> Complete details
+                            </button>
+                        </div>
+
+                        <div style="background: white; border-radius: 20px; padding: 20px; margin-top: 16px; border: 1px solid var(--border);">
+                            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
+                                <div style="background: var(--premium); width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white;">
+                                    <i class="fas fa-calendar"></i>
+                                </div>
+                                <div style="flex: 1;">
+                                    <div style="font-weight: 900;">Schedule kickoff call</div>
+                                    <div style="font-size: 0.85rem; color: var(--gray);">Within 24 hours</div>
+                                </div>
+                            </div>
+                            <button class="vibz-btn" id="scheduleCallBtn">
+                                <i class="fas fa-calendar-check"></i> Schedule call
+                            </button>
+                        </div>
+
+                        <div style="margin-top: 24px; font-size: 0.85rem; color: var(--gray); text-align: center; padding-top: 16px; border-top: 1px solid var(--border);">
+                            <i class="fas fa-exclamation-circle" style="color: var(--primary);"></i>
+                            A project manager will contact you within 24 hours.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- ==================== EXACT DOCK FROM HOMEPAGE ==================== -->
+        <nav class="app-dock">
+            <a href="#" class="dock-btn active"><i class="fa-solid fa-house-chimney"></i><span>Home</span></a>
+            <a href="https://www.vibz.co.uk/barber/concepts.html" class="dock-btn"><i class="fa-solid fa-compass"></i><span>Library</span></a>
+            <div class="dock-center" onclick="window.location.href='/'"><i class="fa-solid fa-bolt"></i></div>
+            <a href="#" class="dock-btn"><i class="fa-solid fa-briefcase"></i><span>Portal</span></a>
+            <div class="dock-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i><span>Menu</span></div>
+        </nav>
+    </div>
+
+    <script>
+        // -------------------------------------------------------------
+        //  EXACT CONFIG FROM INDEX FUNNEL
+        // -------------------------------------------------------------
+        const PRICING_CONFIG = {
+            outright: { standard: 1500, premium: 3000 },
+            monthly:  { standard: 125,  premium: 225 }
+        };
+        const PLAN_CONFIG = {
+            outright: { name: 'Buy Outright', shortName: 'OWN IT' },
+            monthly:  { name: 'Monthly License', shortName: 'LICENSE' }
+        };
+        const TIER_CONFIG = {
+            standard: { name: 'STANDARD', color: '#4CAF50' },
+            premium:  { name: 'PREMIUM', color: '#2196F3' }
         };
 
-        try {
-            const saved = sessionStorage.getItem('selectedServices');
-            if (saved) {
-                selections.services = JSON.parse(saved);
-            } else {
-                const local = localStorage.getItem('selectedServices');
-                if (local) selections.services = JSON.parse(local);
+        // -------------------------------------------------------------
+        //  TOGGLE MENU (EXACT FROM HOMEPAGE)
+        // -------------------------------------------------------------
+        function toggleMenu() {
+            const menu = document.getElementById('app-menu-layer');
+            menu.classList.toggle('active');
+        }
+
+        // -------------------------------------------------------------
+        //  LOAD ORDER FROM sessionStorage (SET BY INDEX FUNNEL)
+        // -------------------------------------------------------------
+        function loadOrderFromStorage() {
+            let selections = {
+                businessName: sessionStorage.getItem('barberShopName') || localStorage.getItem('barberShopName') || 'Your shop',
+                planType: sessionStorage.getItem('vibz_planType') || sessionStorage.getItem('selectedPlanType') || '',
+                designCode: sessionStorage.getItem('selectedBarberCode') || '',
+                urgency: sessionStorage.getItem('vibz_urgency') || '',
+                services: [],
+                recommendedPlan: 'standard'
+            };
+
+            // Load services array
+            try {
+                const saved = sessionStorage.getItem('selectedServices');
+                if (saved) {
+                    selections.services = JSON.parse(saved);
+                } else {
+                    const local = localStorage.getItem('selectedServices');
+                    if (local) selections.services = JSON.parse(local);
+                }
+            } catch (e) {
+                selections.services = [];
             }
-        } catch (e) {
-            selections.services = [];
+
+            // Fallback plan type
+            if (!selections.planType) {
+                selections.planType = localStorage.getItem('selectedPlanType') || 'Buy Outright';
+            }
+
+            // Determine recommended plan based on features
+            const premCount = selections.services.filter(s => s.tier === 'premium').length;
+            const stdCount = selections.services.filter(s => s.tier === 'standard').length;
+            if (premCount > 3 || stdCount > 8) {
+                selections.recommendedPlan = 'premium';
+            } else {
+                selections.recommendedPlan = 'standard';
+            }
+
+            // Clean business name
+            if (!selections.businessName || selections.businessName === 'Your shop' || selections.businessName === 'Barber Shop') {
+                const localName = localStorage.getItem('barberShopName');
+                if (localName) selections.businessName = localName;
+            }
+
+            return selections;
         }
 
-        if (!selections.planType) {
-            selections.planType = localStorage.getItem('selectedPlanType') || 'Buy Outright';
+        // -------------------------------------------------------------
+        //  RENDER THANK YOU PAGE - HOMEPAGE TILE STYLE
+        // -------------------------------------------------------------
+        function renderThankYou() {
+            const order = loadOrderFromStorage();
+            const isMonthly = (order.planType === PLAN_CONFIG.monthly.name);
+            const tier = order.recommendedPlan;
+            const tierName = tier === 'standard' ? 'STANDARD' : 'PREMIUM';
+            const planDisplayName = order.planType || 'Buy Outright';
+
+            // ----- HEADER & BADGES -----
+            document.getElementById('dynamicThankYouTitle').innerText = `Thank you, ${order.businessName.split(' ')[0] || 'friend'}!`;
+            document.getElementById('dynamicSubhead').innerHTML = `Your <span style="color: var(--primary); font-weight: 900;">${tierName}</span> ${isMonthly ? 'license' : 'outright'} order is confirmed`;
+            
+            // Plan badge
+            const badge = document.getElementById('planTierBadge');
+            badge.innerText = tierName;
+            badge.className = `detail-pill ${tier}`;
+            
+            // Payment model badge
+            document.getElementById('planTypeBadge').innerText = planDisplayName.toUpperCase();
+            
+            // ----- PRICE -----
+            let oneTimePrice = 0, monthlyPrice = 0;
+            if (isMonthly) {
+                oneTimePrice = tier === 'standard' ? 500 : 650;
+                monthlyPrice = tier === 'standard' ? 125 : 225;
+                document.getElementById('priceValue').innerHTML = `£${oneTimePrice}`;
+                document.getElementById('pricePeriod').innerHTML = 'build fee (one-time)';
+                
+                const monthlyBox = document.getElementById('monthlyCommitmentBox');
+                monthlyBox.style.display = 'block';
+                document.getElementById('monthlyRateDisplay').innerHTML = `£${monthlyPrice}/month`;
+            } else {
+                oneTimePrice = tier === 'standard' ? 1500 : 3000;
+                document.getElementById('priceValue').innerHTML = `£${oneTimePrice.toLocaleString()}`;
+                document.getElementById('pricePeriod').innerHTML = 'one-time';
+                document.getElementById('monthlyCommitmentBox').style.display = 'none';
+            }
+
+            // ----- BUSINESS & DESIGN CODE -----
+            document.getElementById('businessNameDisplay').innerText = order.businessName;
+            
+            // ✅ FIXED: Show actual design concept from sessionStorage
+            let designDisplay = 'Custom design';
+            if (order.designCode && order.designCode !== '' && order.designCode !== 'CUSTOM') {
+                designDisplay = order.designCode.toUpperCase();
+            } else {
+                // Try to get from sessionStorage again
+                const code = sessionStorage.getItem('selectedBarberCode');
+                if (code && code !== '') {
+                    designDisplay = code.toUpperCase();
+                }
+            }
+            document.getElementById('designCodeDisplay').innerText = designDisplay;
+
+            // ----- FEATURES GRID - DYNAMIC FROM USER SELECTION -----
+            const featuresGrid = document.getElementById('featuresGridContainer');
+            const noFeaturesMsg = document.getElementById('noFeaturesMessage');
+            featuresGrid.innerHTML = '';
+
+            if (order.services && order.services.length > 0) {
+                noFeaturesMsg.style.display = 'none';
+                
+                // Group by tier
+                const standardFeats = order.services.filter(s => s.tier === 'standard');
+                const premiumFeats = order.services.filter(s => s.tier === 'premium');
+
+                // Add standard features
+                standardFeats.forEach(f => {
+                    const div = document.createElement('div');
+                    div.className = 'feature-item';
+                    div.innerHTML = `<span style="display: inline-block; background: var(--standard); color: white; padding: 2px 10px; border-radius: 20px; font-size: 0.65rem; font-weight: 800; margin-right: 8px;">STD</span> ${f.name}`;
+                    featuresGrid.appendChild(div);
+                });
+
+                // Add premium features
+                premiumFeats.forEach(f => {
+                    const div = document.createElement('div');
+                    div.className = 'feature-item premium';
+                    div.innerHTML = `<span style="display: inline-block; background: var(--premium); color: white; padding: 2px 10px; border-radius: 20px; font-size: 0.65rem; font-weight: 800; margin-right: 8px;">PRE</span> ${f.name}`;
+                    featuresGrid.appendChild(div);
+                });
+            } else {
+                noFeaturesMsg.style.display = 'block';
+            }
+
+            // ----- BUTTON ACTIONS -----
+            document.getElementById('completeNowBtn').onclick = function(e) {
+                e.preventDefault();
+                alert(`📋 Project brief for ${order.businessName} (${tierName} ${planDisplayName}) – opening form.`);
+                // In production: window.location.href = 'https://...';
+            };
+
+            document.getElementById('scheduleCallBtn').onclick = function() {
+                alert(`📅 Call scheduling link sent – we'll contact ${order.businessName} within 24h.`);
+            };
         }
 
-        const premCount = selections.services.filter(s => s.tier === 'premium').length;
-        const stdCount = selections.services.filter(s => s.tier === 'standard').length;
-        if (premCount > 3 || stdCount > 8) {
-            selections.recommendedPlan = 'premium';
-        } else {
-            selections.recommendedPlan = 'standard';
-        }
-
-        if (selections.businessName === 'Your shop' || !selections.businessName) {
-            const localName = localStorage.getItem('barberShopName');
-            if (localName) selections.businessName = localName;
-        }
-
-        return selections;
-    }
-
-    // -------------------------------------------------------------
-    //  RENDER THANK YOU PAGE – FULL WIDTH, BRAND BACKGROUND
-    // -------------------------------------------------------------
-    function renderThankYou() {
-        const order = loadOrderFromStorage();
-        const isMonthly = (order.planType === PLAN_CONFIG.monthly.name);
-        const tier = order.recommendedPlan;
-        const tierName = tier === 'standard' ? 'STANDARD' : 'PREMIUM';
-        const planDisplayName = order.planType || 'Buy Outright';
-
-        document.getElementById('dynamicThankYouTitle').innerText = `Thank you, ${order.businessName}!`;
-        document.getElementById('dynamicSubhead').innerText = 
-            `Your ${tierName} ${isMonthly ? 'license' : 'outright'} order is confirmed`;
-
-        const badgeEl = document.getElementById('planBadge');
-        badgeEl.innerText = tierName;
-        badgeEl.className = `badge ${tier}`;
-
-        document.getElementById('planTypeLabel').innerHTML = 
-            `${planDisplayName.toUpperCase()} — ${tierName}`;
-        
-        let oneTimePrice = 0, monthlyPrice = 0;
-        if (isMonthly) {
-            oneTimePrice = tier === 'standard' ? 500 : 650;
-            monthlyPrice = tier === 'standard' ? 125 : 225;
-            document.getElementById('priceValue').innerHTML = `£${oneTimePrice}`;
-            document.getElementById('pricePeriod').innerHTML = 'build fee (one-time)';
-            document.getElementById('planDescription').innerHTML = 
-                '12-month minimum term. Website is licensed, not owned.';
-            const monthlyBox = document.getElementById('monthlyCommitmentBox');
-            monthlyBox.style.display = 'block';
-            document.getElementById('monthlyRateDisplay').innerHTML = `£${monthlyPrice}/month`;
-        } else {
-            oneTimePrice = tier === 'standard' ? 1500 : 3000;
-            document.getElementById('priceValue').innerHTML = `£${oneTimePrice.toLocaleString()}`;
-            document.getElementById('pricePeriod').innerHTML = 'one-time';
-            document.getElementById('planDescription').innerHTML = 
-                'You own the full website files. Hosting and updates are your responsibility.';
-            document.getElementById('monthlyCommitmentBox').style.display = 'none';
-        }
-
-        document.getElementById('businessNameDisplay').innerText = order.businessName;
-        document.getElementById('paymentModelDisplay').innerText = planDisplayName;
-        document.getElementById('tierDisplay').innerText = tierName;
-        document.getElementById('designCodeDisplay').innerText = 
-            order.designCode ? order.designCode.toUpperCase() : 'Custom design';
-
-        const featuresGrid = document.getElementById('featuresGridContainer');
-        const noFeaturesMsg = document.getElementById('noFeaturesMessage');
-        featuresGrid.innerHTML = '';
-
-        if (order.services && order.services.length > 0) {
-            noFeaturesMsg.style.display = 'none';
-            const standardFeats = order.services.filter(s => s.tier === 'standard');
-            const premiumFeats = order.services.filter(s => s.tier === 'premium');
-
-            standardFeats.forEach(f => {
-                const card = document.createElement('div');
-                card.className = 'feature-card standard';
-                card.innerHTML = `
-                    <span class="feature-tier standard">STANDARD</span>
-                    <div class="feature-name">${f.name}</div>
-                `;
-                featuresGrid.appendChild(card);
-            });
-            premiumFeats.forEach(f => {
-                const card = document.createElement('div');
-                card.className = 'feature-card premium';
-                card.innerHTML = `
-                    <span class="feature-tier premium">PREMIUM</span>
-                    <div class="feature-name">${f.name}</div>
-                `;
-                featuresGrid.appendChild(card);
-            });
-        } else {
-            noFeaturesMsg.style.display = 'block';
-        }
-
-        const completeBtn = document.getElementById('completeNowBtn');
-        completeBtn.onclick = function(e) {
-            e.preventDefault();
-            alert(`Project brief for ${order.businessName} (${tierName} ${planDisplayName}) – opening form.`);
+        // -------------------------------------------------------------
+        //  RUN ON LOAD
+        // -------------------------------------------------------------
+        window.onload = function() {
+            renderThankYou();
+            // Ensure menu is closed
+            const menu = document.getElementById('app-menu-layer');
+            if (menu.classList.contains('active')) menu.classList.remove('active');
         };
-
-        const scheduleBtn = document.getElementById('scheduleCallBtn');
-        scheduleBtn.onclick = function() {
-            alert(`Call scheduling link sent – we’ll contact ${order.businessName} within 24h.`);
-        };
-    }
-
-    window.onload = function() {
-        renderThankYou();
-        const menu = document.getElementById('app-menu-layer');
-        if (menu.classList.contains('active')) menu.classList.remove('active');
-    };
-</script>
-
+    </script>
 </body>
 </html>
