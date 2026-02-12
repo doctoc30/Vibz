@@ -8,6 +8,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <style>
+        /* STYLES - EXACTLY AS PROVIDED */
         :root {
             --primary: #FF6B00;
             --primary-light: #FFF5EE;
@@ -110,7 +111,7 @@
         }
 
         .content-scroll {
-            flex: 1; overflow-y: auto; padding: 0 20px 180px; /* increased bottom padding to clear dock */
+            flex: 1; overflow-y: auto; padding: 0 20px 180px;
             scroll-behavior: smooth;
             display: flex; flex-direction: column;
             -webkit-overflow-scrolling: touch;
@@ -160,7 +161,6 @@
         .vibz-btn.primary { background: var(--primary); color: #fff; border: none; }
         .vibz-btn.back-btn { background: transparent; border: none; color: #999; margin-top: 10px; box-shadow: none; font-weight: 700; }
 
-        /* ———— CATEGORY BUTTONS ———— */
         .vibz-btn.category-highlight {
             background: var(--primary);
             color: white;
@@ -258,7 +258,6 @@
             } 
         }
 
-        /* ———— DOCK PUSHED DOWN ———— */
         .app-dock {
             position: fixed; 
             bottom: calc(25px + var(--safe-bottom, 0px)); 
@@ -300,7 +299,6 @@
         .concept-info h3 { font-weight: 900; color: var(--primary); text-transform: uppercase; margin-bottom: 4px; }
         .concept-info p { font-size: 0.85rem; color: var(--gray); font-weight: 600; line-height: 1.4; }
         
-        /* ===== PRICING CARD STYLES - REDESIGNED FOR CLARITY ===== */
         .pricing-cards-container {
             display: flex;
             flex-direction: column;
@@ -354,7 +352,6 @@
         .plan-type.standard-type { color: var(--standard); }
         .plan-type.premium-type { color: var(--premium); }
         
-        /* Combined pricing display */
         .price-row {
             display: flex;
             align-items: baseline;
@@ -721,7 +718,7 @@
         </div>
     </main>
 
-    <!-- DOCK: moved down via .app-dock bottom increased and content-scroll padding-bottom increased -->
+    <!-- DOCK -->
     <nav class="app-dock">
         <a href="https://www.vibz.co.uk/barber/index.html" class="dock-btn active"><i class="fa-solid fa-house-chimney"></i><span>Home</span></a>
         <a href="https://www.vibz.co.uk/barber/concepts.html" class="dock-btn"><i class="fa-solid fa-compass"></i><span>Library</span></a>
@@ -733,25 +730,7 @@
 
 <script>
     // =========================================================================
-    // 0. CATEGORY HIGHLIGHT — on click, remove others, highlight current
-    // =========================================================================
-    function highlightCategoryButton(clickedBtn) {
-        // Remove highlight from all .vibz-btn inside the same parent step
-        const parentStep = clickedBtn.closest('.form-screen');
-        if (parentStep) {
-            const allButtons = parentStep.querySelectorAll('.vibz-btn:not(.back-btn)'); // only category btns
-            allButtons.forEach(btn => {
-                btn.classList.remove('category-highlight');
-            });
-        }
-        // Add highlight to clicked button (skip back buttons)
-        if (!clickedBtn.classList.contains('back-btn')) {
-            clickedBtn.classList.add('category-highlight');
-        }
-    }
-
-    // =========================================================================
-    // 1. FEATURE CONFIGURATION
+    // CONFIGURATION
     // =========================================================================
     const FEATURE_CONFIG = {
         standard: [
@@ -795,9 +774,6 @@
         ]
     };
 
-    // =========================================================================
-    // 2. MONTHLY MANAGEMENT SERVICES
-    // =========================================================================
     const MANAGEMENT_SERVICES = [
         "Monthly content updates",
         "Security monitoring",
@@ -807,23 +783,11 @@
         "Analytics reporting"
     ];
 
-    // =========================================================================
-    // 3. PRICING CONFIGURATION - UPDATED
-    // =========================================================================
     const PRICING_CONFIG = {
-        outright: {
-            standard: 1500,
-            premium: 3000
-        },
-        monthly: {
-            standard: 125,
-            premium: 225
-        }
+        outright: { standard: 1500, premium: 3000 },
+        monthly: { standard: 125, premium: 225, buildFee: { standard: 500, premium: 650 } }
     };
 
-    // =========================================================================
-    // 4. STRIPE LINKS CONFIGURATION - UPDATED WITH CORRECT LINKS
-    // =========================================================================
     const STRIPE_LINKS = {
         outright: {
             standard: 'https://buy.stripe.com/test_4gMfZidpQ709gTQ4HtgMw0b',
@@ -835,22 +799,9 @@
         }
     };
 
-    // =========================================================================
-    // 5. PLAN & TIER CONFIG
-    // =========================================================================
     const PLAN_CONFIG = {
-        outright: {
-            name: 'Buy Outright',
-            shortName: 'OWN IT',
-            description: 'You own the full website files. Hosting and monthly management is your responsibility.',
-            badge: 'ONE-TIME'
-        },
-        monthly: {
-            name: 'Monthly License',
-            shortName: 'LICENSE',
-            description: 'We build and manage everything. Website is licensed, not owned. Includes 12 months support.',
-            badge: 'MONTHLY'
-        }
+        outright: { name: 'Buy Outright', shortName: 'OWN IT' },
+        monthly: { name: 'Monthly License', shortName: 'LICENSE' }
     };
 
     const TIER_CONFIG = {
@@ -869,7 +820,73 @@
     };
 
     // =========================================================================
-    // 6. SELECTIONS & STEP MANAGEMENT
+    // STORAGE FUNCTIONS - CRITICAL FOR THANK YOU PAGE
+    // =========================================================================
+    function saveOrderToStorage(planType, tier) {
+        // Save plan type in multiple locations for redundancy
+        sessionStorage.setItem('vibz_planType', planType);
+        sessionStorage.setItem('selectedPlanType', planType);
+        localStorage.setItem('selectedPlanType', planType);
+        
+        // Save tier (standard/premium)
+        sessionStorage.setItem('vibz_tier', tier);
+        localStorage.setItem('vibz_tier', tier);
+        
+        // Save business name
+        if (selections.businessName) {
+            sessionStorage.setItem('barberShopName', selections.businessName);
+            localStorage.setItem('barberShopName', selections.businessName);
+        }
+        
+        // Save design code
+        if (selections.designCode) {
+            sessionStorage.setItem('selectedBarberCode', selections.designCode);
+            localStorage.setItem('selectedBarberCode', selections.designCode);
+        }
+        
+        // Save selected services
+        if (selections.services && selections.services.length > 0) {
+            sessionStorage.setItem('selectedServices', JSON.stringify(selections.services));
+            localStorage.setItem('selectedServices', JSON.stringify(selections.services));
+        }
+        
+        // Save urgency
+        if (selections.urgency) {
+            sessionStorage.setItem('vibz_urgency', selections.urgency);
+        }
+        
+        console.log('✅ Order saved:', { planType, tier, businessName: selections.businessName });
+    }
+
+    function loadOrderFromStorage() {
+        selections.planType = sessionStorage.getItem('vibz_planType') || 
+                             sessionStorage.getItem('selectedPlanType') || 
+                             localStorage.getItem('selectedPlanType') || '';
+        
+        const savedTier = sessionStorage.getItem('vibz_tier') || localStorage.getItem('vibz_tier') || '';
+        if (savedTier) {
+            selections.recommendedPlan = savedTier;
+        }
+        
+        selections.businessName = sessionStorage.getItem('barberShopName') || 
+                                 localStorage.getItem('barberShopName') || '';
+        
+        selections.designCode = sessionStorage.getItem('selectedBarberCode') || 
+                               localStorage.getItem('selectedBarberCode') || '';
+        
+        try {
+            const savedServices = sessionStorage.getItem('selectedServices') || 
+                                localStorage.getItem('selectedServices');
+            if (savedServices && savedServices !== 'undefined' && savedServices !== 'null') {
+                selections.services = JSON.parse(savedServices);
+            }
+        } catch (e) {}
+        
+        selections.urgency = sessionStorage.getItem('vibz_urgency') || '';
+    }
+
+    // =========================================================================
+    // SELECTIONS & STEP MANAGEMENT
     // =========================================================================
     let currentStep = 0;
     let selections = { 
@@ -889,6 +906,19 @@
     function toggleMenu() {
         const menu = document.getElementById('app-menu-layer');
         menu.classList.toggle('active');
+    }
+
+    function highlightCategoryButton(clickedBtn) {
+        const parentStep = clickedBtn.closest('.form-screen');
+        if (parentStep) {
+            const allButtons = parentStep.querySelectorAll('.vibz-btn:not(.back-btn)');
+            allButtons.forEach(btn => {
+                btn.classList.remove('category-highlight');
+            });
+        }
+        if (!clickedBtn.classList.contains('back-btn')) {
+            clickedBtn.classList.add('category-highlight');
+        }
     }
 
     function initServiceList() {
@@ -992,9 +1022,6 @@
         indicator.innerHTML = html;
     }
 
-    // =========================================================================
-    // 7. RENDER SELECTED FEATURES SUMMARY
-    // =========================================================================
     function renderSelectedFeaturesSummary() {
         const container = document.getElementById('selected-features-summary');
         if (!container) return;
@@ -1093,7 +1120,7 @@
     }
 
     // =========================================================================
-    // 8. RENDER PRICING CARDS
+    // RENDER PRICING CARDS WITH STORAGE INTEGRATION
     // =========================================================================
     function renderPricingCards() {
         const container = document.getElementById('pricing-cards-display');
@@ -1124,7 +1151,7 @@
                         <li><i class="fas fa-check-circle"></i> No recurring license fees</li>
                         <li><i class="fas fa-check-circle"></i> 1 month post-launch support</li>
                     </ul>
-                    <button class="payment-button secondary" onclick="window.open('${STRIPE_LINKS.outright.standard}', '_blank')">
+                    <button class="payment-button secondary" onclick="saveOrderToStorage('Buy Outright', 'standard'); window.open('${STRIPE_LINKS.outright.standard}', '_blank')">
                         <i class="fas fa-bolt"></i> Standard (One Time) - £${PRICING_CONFIG.outright.standard}
                     </button>
                 </div>
@@ -1147,7 +1174,7 @@
                         <li><i class="fas fa-crown"></i> 3 months post-launch support</li>
                         <li><i class="fas fa-crown"></i> Premium feature set</li>
                     </ul>
-                    <button class="payment-button premium" onclick="window.open('${STRIPE_LINKS.outright.premium}', '_blank')">
+                    <button class="payment-button premium" onclick="saveOrderToStorage('Buy Outright', 'premium'); window.open('${STRIPE_LINKS.outright.premium}', '_blank')">
                         <i class="fas fa-crown"></i> Premium (One Time) - £${PRICING_CONFIG.outright.premium}
                     </button>
             `;
@@ -1178,12 +1205,12 @@
                         <div class="price-row">
                             <div class="price-item">
                                 <span class="price-label">Build fee:</span>
-                                <span class="price-value small">£500</span>
+                                <span class="price-value small">£${PRICING_CONFIG.monthly.buildFee.standard}</span>
                                 <span class="price-period">one-time</span>
                             </div>
                             <div class="price-item">
                                 <span class="price-label">then</span>
-                                <span class="price-value">£125</span>
+                                <span class="price-value">£${PRICING_CONFIG.monthly.standard}</span>
                                 <span class="price-period">/month</span>
                             </div>
                         </div>
@@ -1203,13 +1230,13 @@
                         <li><i class="fas fa-check"></i> 72h support response</li>
                     </ul>
                     
-                    <button class="payment-button secondary" onclick="window.open('${STRIPE_LINKS.monthly.standard}', '_blank')">
-                        <i class="fas fa-bolt"></i> Standard Build Fee - £500
+                    <button class="payment-button secondary" onclick="saveOrderToStorage('Monthly License', 'standard'); window.open('${STRIPE_LINKS.monthly.standard}', '_blank')">
+                        <i class="fas fa-bolt"></i> Standard Build Fee - £${PRICING_CONFIG.monthly.buildFee.standard}
                     </button>
                     
                     <div class="terms-box">
                         <i class="fas fa-info-circle"></i>
-                        <strong>12-month minimum term.</strong> Monthly management (£125/mo) starts after website delivery. 
+                        <strong>12-month minimum term.</strong> Monthly management (£${PRICING_CONFIG.monthly.standard}/mo) starts after website delivery. 
                         Early cancellation does not waive the remaining contract balance.
                     </div>
                 </div>
@@ -1222,12 +1249,12 @@
                         <div class="price-row">
                             <div class="price-item">
                                 <span class="price-label">Build fee:</span>
-                                <span class="price-value small">£650</span>
+                                <span class="price-value small">£${PRICING_CONFIG.monthly.buildFee.premium}</span>
                                 <span class="price-period">one-time</span>
                             </div>
                             <div class="price-item">
                                 <span class="price-label">then</span>
-                                <span class="price-value">£225</span>
+                                <span class="price-value">£${PRICING_CONFIG.monthly.premium}</span>
                                 <span class="price-period">/month</span>
                             </div>
                         </div>
@@ -1249,13 +1276,13 @@
                         <li><i class="fas fa-crown"></i> Priority change requests</li>
                     </ul>
                     
-                    <button class="payment-button premium" onclick="window.open('${STRIPE_LINKS.monthly.premium}', '_blank')">
-                        <i class="fas fa-crown"></i> Premium Build Fee - £650
+                    <button class="payment-button premium" onclick="saveOrderToStorage('Monthly License', 'premium'); window.open('${STRIPE_LINKS.monthly.premium}', '_blank')">
+                        <i class="fas fa-crown"></i> Premium Build Fee - £${PRICING_CONFIG.monthly.buildFee.premium}
                     </button>
                     
                     <div class="terms-box">
                         <i class="fas fa-info-circle"></i>
-                        <strong>12-month minimum term.</strong> Monthly management (£225/mo) starts after website delivery. 
+                        <strong>12-month minimum term.</strong> Monthly management (£${PRICING_CONFIG.monthly.premium}/mo) starts after website delivery. 
                         Early cancellation does not waive the remaining contract balance.
                     </div>
             `;
@@ -1318,6 +1345,7 @@
         if(input) { 
             selections.businessName = input;
             sessionStorage.setItem('barberShopName', input);
+            localStorage.setItem('barberShopName', input);
             next(); 
         } else {
             alert("Please enter a shop name");
@@ -1332,6 +1360,8 @@
         if(conceptNum && conceptNum[0] <= 446) {
             const codeString = `barber-${conceptNum[0]}`;
             selections.designCode = codeString.toUpperCase();
+            sessionStorage.setItem('selectedBarberCode', codeString.toUpperCase());
+            localStorage.setItem('selectedBarberCode', codeString.toUpperCase());
             entry.style.display = 'none'; 
             display.style.display = 'block';
             display.innerHTML = `<div class="concept-preview"><img src="https://raw.githubusercontent.com/doctoc30/Vibz/main/images/${codeString}.jpg" onerror="this.src='https://via.placeholder.com/400x220'"><div class="concept-info"><h3>${selections.designCode}</h3><p>Selected for ${selections.businessName || 'your shop'}.</p></div></div><button class="vibz-btn primary" onclick="next()">Confirm & Continue</button><button class="vibz-btn back-btn" onclick="resetCodeEntry()">Different Code</button>`;
@@ -1346,13 +1376,15 @@
     }
     
     function setPlanType(val) { 
-        selections.planType = val; 
+        selections.planType = val;
         selections.services = [];
+        saveOrderToStorage(val, selections.recommendedPlan || 'standard');
         next(); 
     }
     
     function setUrgency(val) { 
-        selections.urgency = val; 
+        selections.urgency = val;
+        sessionStorage.setItem('vibz_urgency', val);
         next(); 
     }
 
@@ -1435,6 +1467,9 @@
     }
 
     window.onload = function() {
+        // Load any existing selections from storage
+        loadOrderFromStorage();
+        
         const urlParams = new URLSearchParams(window.location.search);
         
         if(urlParams.get('step') === '5') {
@@ -1455,6 +1490,7 @@
         const shopName = document.getElementById('businessInput').value.trim();
         if (shopName) {
             sessionStorage.setItem('barberShopName', shopName);
+            localStorage.setItem('barberShopName', shopName);
         }
     }
 
