@@ -131,6 +131,16 @@
             margin-bottom: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.03);
             border: 1px solid rgba(255, 107, 0, 0.05);
             cursor: pointer;
+            transition: background 0.1s ease, border 0.1s ease, box-shadow 0.1s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* ✦✦✦ HIGHLIGHT ON CLICK — ONLY CHANGE ✦✦✦ */
+        .cat-item.click-highlight {
+            background: var(--primary) !important;
+            color: white !important;
+            border: 1px solid var(--primary) !important;
+            box-shadow: 0 12px 25px rgba(255, 107, 0, 0.35) !important;
         }
 
         .close-btn {
@@ -300,7 +310,8 @@
     <div id="category-layer">
         <h2 id="cat-title" style="color: var(--primary); margin-bottom: 20px; font-weight: 900; letter-spacing: -1px;">Niche Selection</h2>
         <div id="cat-list" style="width: 100%; display: flex; flex-direction: column; align-items: center; overflow-y: auto; max-height: 60vh;">
-            </div>
+            <!-- dynamic categories injected here -->
+        </div>
         <div class="close-btn" onclick="toggleCategories()"><i class="fa-solid fa-xmark"></i></div>
     </div>
 
@@ -377,6 +388,22 @@
         function toggleMenu() { document.getElementById('app-menu-layer').classList.toggle('active'); }
         function toggleCategories() { document.getElementById('category-layer').classList.toggle('active'); }
 
+        // ✦✦✦ HIGHLIGHT ON CLICK — ONLY ADDITION ✦✦✦
+        function highlightCatItem(element) {
+            // remove any existing highlight from other items
+            const allCatItems = document.querySelectorAll('.cat-item');
+            allCatItems.forEach(el => el.classList.remove('click-highlight'));
+            
+            // add highlight to clicked item
+            if (element) {
+                element.classList.add('click-highlight');
+                // auto remove highlight after 250ms to mimic feedback but keep button state
+                setTimeout(() => {
+                    element.classList.remove('click-highlight');
+                }, 280);
+            }
+        }
+
         function openNiche(sector) {
             const list = document.getElementById('cat-list');
             const title = document.getElementById('cat-title');
@@ -386,9 +413,16 @@
                 const div = document.createElement('div');
                 div.className = "cat-item";
                 div.textContent = niche;
-                div.onclick = () => {
-                    document.getElementById('mainSearch').value = niche;
-                    triggerFlow(niche);
+                // ✦ highlight on click — this is the exact requested behaviour ✦
+                div.onclick = (e) => {
+                    e.stopPropagation();  // avoid bubbling
+                    highlightCatItem(div); // 💥 visual tap highlight 💥
+                    
+                    // after a tiny flash, perform original action (set search & navigate)
+                    setTimeout(() => {
+                        document.getElementById('mainSearch').value = niche;
+                        triggerFlow(niche);
+                    }, 80); // slight delay so highlight is perceptible
                 };
                 list.appendChild(div);
             });
