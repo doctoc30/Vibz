@@ -763,11 +763,11 @@
     ];
 
     // =========================================================================
-    // 3. PRICING CONFIGURATION
+    // 3. PRICING CONFIGURATION - UPDATED
     // =========================================================================
     const PRICING_CONFIG = {
         outright: {
-            standard: 500,
+            standard: 1500,  // Updated from 500 to 1500
             premium: 3000
         },
         monthly: {
@@ -781,7 +781,7 @@
     // =========================================================================
     const STRIPE_LINKS = {
         outright: {
-            standard: 'https://buy.stripe.com/test_dRmdRa2Lcckt9ro2zlgMw0a', // Standard Build Fee - £500
+            standard: 'https://buy.stripe.com/test_4gMfZidpQ709gTQ4HtgMw0b', // Standard (One Time) - £1,500
             premium: 'https://buy.stripe.com/test_4gM3cw0D42JTavs1vhgMw0c'     // Premium (One Time) - £3,000
         },
         monthly: {
@@ -1013,29 +1013,27 @@
                 </div>
         `;
         
-        // CLEAR INHERITANCE MESSAGING
-        if (selections.planType === PLAN_CONFIG.monthly.name) {
-            if (premSels.length > 0) {
-                html += `
-                    <div style="background:rgba(33,150,243,0.08); border-radius:16px; padding:16px; margin-top:20px; border-left:4px solid var(--premium);">
-                        <i class="fas fa-crown" style="color:var(--premium); margin-right:8px;"></i>
-                        <strong style="color:var(--premium);">Premium includes ALL your selected Standard features</strong>
-                        <p style="font-size:0.8rem; color:var(--gray); margin-top:6px;">
-                            You've selected ${stdSels.length} Standard ${stdSels.length === 1 ? 'feature' : 'features'}. These are automatically included when you choose Premium.
-                        </p>
-                    </div>
-                `;
-            } else if (stdSels.length > 0) {
-                html += `
-                    <div style="background:rgba(76,175,80,0.08); border-radius:16px; padding:16px; margin-top:20px; border-left:4px solid var(--standard);">
-                        <i class="fas fa-check-circle" style="color:var(--standard); margin-right:8px;"></i>
-                        <strong style="color:var(--standard);">Standard plan includes ONLY the features you selected</strong>
-                        <p style="font-size:0.8rem; color:var(--gray); margin-top:6px;">
-                            To add Premium features, upgrade to the Premium build fee and monthly plan.
-                        </p>
-                    </div>
-                `;
-            }
+        // INHERITANCE MESSAGING - NOW FOR BOTH MONTHLY AND OUTRIGHT
+        if (premSels.length > 0) {
+            html += `
+                <div style="background:rgba(33,150,243,0.08); border-radius:16px; padding:16px; margin-top:20px; border-left:4px solid var(--premium);">
+                    <i class="fas fa-crown" style="color:var(--premium); margin-right:8px;"></i>
+                    <strong style="color:var(--premium);">Premium includes ALL your selected Standard features</strong>
+                    <p style="font-size:0.8rem; color:var(--gray); margin-top:6px;">
+                        You've selected ${stdSels.length} Standard ${stdSels.length === 1 ? 'feature' : 'features'}. These are automatically included when you choose Premium.
+                    </p>
+                </div>
+            `;
+        } else if (stdSels.length > 0 && selections.planType === PLAN_CONFIG.monthly.name) {
+            html += `
+                <div style="background:rgba(76,175,80,0.08); border-radius:16px; padding:16px; margin-top:20px; border-left:4px solid var(--standard);">
+                    <i class="fas fa-check-circle" style="color:var(--standard); margin-right:8px;"></i>
+                    <strong style="color:var(--standard);">Standard plan includes ONLY the features you selected</strong>
+                    <p style="font-size:0.8rem; color:var(--gray); margin-top:6px;">
+                        To add Premium features, upgrade to the Premium build fee and monthly plan.
+                    </p>
+                </div>
+            `;
         }
         
         html += `
@@ -1051,7 +1049,7 @@
     }
 
     // =========================================================================
-    // 8. RENDER PRICING CARDS - UPDATED WITH SPECIFICATIONS
+    // 8. RENDER PRICING CARDS - UPDATED WITH SPECIFICATIONS AND INHERITANCE
     // =========================================================================
     function renderPricingCards() {
         const container = document.getElementById('pricing-cards-display');
@@ -1060,6 +1058,10 @@
         let html = '';
 
         if (selections.planType === PLAN_CONFIG.outright.name) {
+            // Get selected features for inheritance messaging
+            const stdSels = selections.services.filter(s => s.tier === 'standard');
+            const premSels = selections.services.filter(s => s.tier === 'premium');
+            
             // ========= BUY OUTRIGHT - One-time ownership with page/revision specs =========
             html += `
                 <div class="pricing-card recommended">
@@ -1081,7 +1083,7 @@
                         <li><i class="fas fa-check-circle"></i> 1 month post-launch support</li>
                     </ul>
                     <button class="payment-button secondary" onclick="window.open('${STRIPE_LINKS.outright.standard}', '_blank')">
-                        <i class="fas fa-bolt"></i> Standard Build Fee - £${PRICING_CONFIG.outright.standard}
+                        <i class="fas fa-bolt"></i> Standard (One Time) - £${PRICING_CONFIG.outright.standard}
                     </button>
                 </div>
                 
@@ -1106,10 +1108,29 @@
                     <button class="payment-button premium" onclick="window.open('${STRIPE_LINKS.outright.premium}', '_blank')">
                         <i class="fas fa-crown"></i> Premium (One Time) - £${PRICING_CONFIG.outright.premium}
                     </button>
-                </div>
             `;
+            
+            // ADD INHERITANCE MESSAGING TO OUTRIGHT PREMIUM CARD
+            if (premSels.length > 0) {
+                html += `
+                    <div style="background:rgba(33,150,243,0.08); border-radius:16px; padding:16px; margin-top:16px; border-left:4px solid var(--premium);">
+                        <i class="fas fa-crown" style="color:var(--premium); margin-right:8px;"></i>
+                        <strong style="color:var(--premium);">Premium includes ALL your selected Standard features</strong>
+                        <p style="font-size:0.8rem; color:var(--gray); margin-top:6px;">
+                            You've selected ${stdSels.length} Standard ${stdSels.length === 1 ? 'feature' : 'features'}. These are automatically included when you choose Premium.
+                        </p>
+                    </div>
+                `;
+            }
+            
+            html += `</div>`;
+            
         } else {
             // ========= MONTHLY LICENSE - COMBINED CARD PER TIER =========
+            // Get selected features for inheritance messaging
+            const stdSels = selections.services.filter(s => s.tier === 'standard');
+            const premSels = selections.services.filter(s => s.tier === 'premium');
+            
             // Standard Tier Card
             html += `
                 <div class="pricing-card recommended">
@@ -1210,8 +1231,22 @@
                         <strong>12-month minimum term.</strong> Monthly management (£225/mo) starts after website delivery. 
                         Early cancellation does not waive the remaining contract balance.
                     </div>
-                </div>
             `;
+            
+            // ADD INHERITANCE MESSAGING TO MONTHLY PREMIUM CARD
+            if (premSels.length > 0) {
+                html += `
+                    <div style="background:rgba(33,150,243,0.08); border-radius:16px; padding:16px; margin-top:16px; border-left:4px solid var(--premium);">
+                        <i class="fas fa-crown" style="color:var(--premium); margin-right:8px;"></i>
+                        <strong style="color:var(--premium);">Premium includes ALL your selected Standard features</strong>
+                        <p style="font-size:0.8rem; color:var(--gray); margin-top:6px;">
+                            You've selected ${stdSels.length} Standard ${stdSels.length === 1 ? 'feature' : 'features'}. These are automatically included when you choose Premium.
+                        </p>
+                    </div>
+                `;
+            }
+            
+            html += `</div>`;
         }
 
         container.innerHTML = html;
