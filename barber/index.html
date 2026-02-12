@@ -16,6 +16,7 @@
             --gray: #666;
             --border: rgba(255, 107, 0, 0.1);
             --safe-top: env(safe-area-inset-top);
+            --safe-bottom: env(safe-area-inset-bottom);
             --standard: #4CAF50;
             --premium: #2196F3;
         }
@@ -35,6 +36,7 @@
 
         #app-container {
             height: 100vh; display: flex; flex-direction: column;
+            position: relative;
         }
 
         header {
@@ -108,7 +110,8 @@
         }
 
         .content-scroll {
-            flex: 1; overflow-y: auto; padding: 0 20px 160px; scroll-behavior: smooth;
+            flex: 1; overflow-y: auto; padding: 0 20px 180px; /* increased bottom padding to clear dock */
+            scroll-behavior: smooth;
             display: flex; flex-direction: column;
             -webkit-overflow-scrolling: touch;
         }
@@ -156,6 +159,18 @@
         .vibz-btn:active { transform: scale(0.97); }
         .vibz-btn.primary { background: var(--primary); color: #fff; border: none; }
         .vibz-btn.back-btn { background: transparent; border: none; color: #999; margin-top: 10px; box-shadow: none; font-weight: 700; }
+
+        /* ———— CATEGORY BUTTONS ———— */
+        .vibz-btn.category-highlight {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            transform: scale(0.98);
+            box-shadow: 0 8px 20px rgba(255,107,0,0.25);
+        }
+        .vibz-btn.category-highlight span.btn-desc {
+            color: white;
+        }
 
         .services-grid { 
             display: grid; 
@@ -243,11 +258,22 @@
             } 
         }
 
+        /* ———— DOCK PUSHED DOWN ———— */
         .app-dock {
-            position: fixed; bottom: 25px; left: 20px; right: 20px;
-            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px);
-            height: 80px; border-radius: 40px; display: flex; justify-content: space-around;
-            align-items: center; box-shadow: 0 15px 35px rgba(0,0,0,0.1); z-index: 2000;
+            position: fixed; 
+            bottom: calc(25px + var(--safe-bottom, 0px)); 
+            left: 20px; 
+            right: 20px;
+            background: rgba(255, 255, 255, 0.85); 
+            backdrop-filter: blur(20px);
+            height: 80px; 
+            border-radius: 40px; 
+            display: flex; 
+            justify-content: space-around;
+            align-items: center; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1); 
+            z-index: 2000;
+            margin-bottom: env(safe-area-inset-bottom, 0px);
         }
         .dock-btn { 
             display: flex; flex-direction: column; align-items: center; 
@@ -649,11 +675,11 @@
 
                 <!-- STEP 5: EXACT PLAN SELECTION -->
                 <div class="form-screen" id="step-5">
-                    <button class="vibz-btn" onclick="setPlanType('Buy Outright')">
+                    <button class="vibz-btn" onclick="setPlanType('Buy Outright'); highlightCategoryButton(this)">
                         <strong>Buy Outright</strong>
                         <span class="btn-desc">You own the full website files. Hosting and monthly management is your responsibility.</span>
                     </button>
-                    <button class="vibz-btn" onclick="setPlanType('Monthly License')">
+                    <button class="vibz-btn" onclick="setPlanType('Monthly License'); highlightCategoryButton(this)">
                         <strong>Monthly License</strong>
                         <span class="btn-desc">We build and manage everything. Website is licensed, not owned. Includes 12 months support.</span>
                     </button>
@@ -662,8 +688,8 @@
 
                 <!-- STEP 6: Timeline / Urgency -->
                 <div class="form-screen" id="step-6">
-                    <button class="vibz-btn" onclick="setUrgency('Start ASAP')"><i class="fas fa-bolt"></i> Start ASAP</button>
-                    <button class="vibz-btn" onclick="setUrgency('I\'m flexible, no rush')"><i class="fas fa-clock"></i> I'm flexible, no rush</button>
+                    <button class="vibz-btn" onclick="setUrgency('Start ASAP'); highlightCategoryButton(this)"><i class="fas fa-bolt"></i> Start ASAP</button>
+                    <button class="vibz-btn" onclick="setUrgency('I\'m flexible, no rush'); highlightCategoryButton(this)"><i class="fas fa-clock"></i> I'm flexible, no rush</button>
                     <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
                 </div>
 
@@ -695,6 +721,7 @@
         </div>
     </main>
 
+    <!-- DOCK: moved down via .app-dock bottom increased and content-scroll padding-bottom increased -->
     <nav class="app-dock">
         <a href="https://www.vibz.co.uk/barber/index.html" class="dock-btn active"><i class="fa-solid fa-house-chimney"></i><span>Home</span></a>
         <a href="https://www.vibz.co.uk/barber/concepts.html" class="dock-btn"><i class="fa-solid fa-compass"></i><span>Library</span></a>
@@ -705,6 +732,24 @@
 </div>
 
 <script>
+    // =========================================================================
+    // 0. CATEGORY HIGHLIGHT — on click, remove others, highlight current
+    // =========================================================================
+    function highlightCategoryButton(clickedBtn) {
+        // Remove highlight from all .vibz-btn inside the same parent step
+        const parentStep = clickedBtn.closest('.form-screen');
+        if (parentStep) {
+            const allButtons = parentStep.querySelectorAll('.vibz-btn:not(.back-btn)'); // only category btns
+            allButtons.forEach(btn => {
+                btn.classList.remove('category-highlight');
+            });
+        }
+        // Add highlight to clicked button (skip back buttons)
+        if (!clickedBtn.classList.contains('back-btn')) {
+            clickedBtn.classList.add('category-highlight');
+        }
+    }
+
     // =========================================================================
     // 1. FEATURE CONFIGURATION
     // =========================================================================
@@ -767,7 +812,7 @@
     // =========================================================================
     const PRICING_CONFIG = {
         outright: {
-            standard: 1500,  // Updated from 500 to 1500
+            standard: 1500,
             premium: 3000
         },
         monthly: {
@@ -781,12 +826,12 @@
     // =========================================================================
     const STRIPE_LINKS = {
         outright: {
-            standard: 'https://buy.stripe.com/test_4gMfZidpQ709gTQ4HtgMw0b', // Standard (One Time) - £1,500
-            premium: 'https://buy.stripe.com/test_4gM3cw0D42JTavs1vhgMw0c'     // Premium (One Time) - £3,000
+            standard: 'https://buy.stripe.com/test_4gMfZidpQ709gTQ4HtgMw0b',
+            premium: 'https://buy.stripe.com/test_4gM3cw0D42JTavs1vhgMw0c'
         },
         monthly: {
-            standard: 'https://buy.stripe.com/test_dRmdRa2Lcckt9ro2zlgMw0a', // Standard Build Fee - £500
-            premium: 'https://buy.stripe.com/test_3cI14odpQdox7jg7TFgMw09'     // Premium Build Fee - £650
+            standard: 'https://buy.stripe.com/test_dRmdRa2Lcckt9ro2zlgMw0a',
+            premium: 'https://buy.stripe.com/test_3cI14odpQdox7jg7TFgMw09'
         }
     };
 
@@ -1013,7 +1058,6 @@
                 </div>
         `;
         
-        // INHERITANCE MESSAGING - NOW FOR BOTH MONTHLY AND OUTRIGHT
         if (premSels.length > 0) {
             html += `
                 <div style="background:rgba(33,150,243,0.08); border-radius:16px; padding:16px; margin-top:20px; border-left:4px solid var(--premium);">
@@ -1049,7 +1093,7 @@
     }
 
     // =========================================================================
-    // 8. RENDER PRICING CARDS - UPDATED WITH SPECIFICATIONS AND INHERITANCE
+    // 8. RENDER PRICING CARDS
     // =========================================================================
     function renderPricingCards() {
         const container = document.getElementById('pricing-cards-display');
@@ -1058,11 +1102,9 @@
         let html = '';
 
         if (selections.planType === PLAN_CONFIG.outright.name) {
-            // Get selected features for inheritance messaging
             const stdSels = selections.services.filter(s => s.tier === 'standard');
             const premSels = selections.services.filter(s => s.tier === 'premium');
             
-            // ========= BUY OUTRIGHT - One-time ownership with page/revision specs =========
             html += `
                 <div class="pricing-card recommended">
                     <div class="plan-recommended-badge">👍 OWN IT</div>
@@ -1110,7 +1152,6 @@
                     </button>
             `;
             
-            // ADD INHERITANCE MESSAGING TO OUTRIGHT PREMIUM CARD
             if (premSels.length > 0) {
                 html += `
                     <div style="background:rgba(33,150,243,0.08); border-radius:16px; padding:16px; margin-top:16px; border-left:4px solid var(--premium);">
@@ -1126,19 +1167,14 @@
             html += `</div>`;
             
         } else {
-            // ========= MONTHLY LICENSE - COMBINED CARD PER TIER =========
-            // Get selected features for inheritance messaging
             const stdSels = selections.services.filter(s => s.tier === 'standard');
             const premSels = selections.services.filter(s => s.tier === 'premium');
             
-            // Standard Tier Card
             html += `
                 <div class="pricing-card recommended">
                     <div class="plan-recommended-badge">👍 STANDARD</div>
                     <div class="pricing-header">
                         <div class="plan-type standard-type">${TIER_CONFIG.standard.name} — MONTHLY LICENSE</div>
-                        
-                        <!-- Combined pricing: Build fee + Monthly -->
                         <div class="price-row">
                             <div class="price-item">
                                 <span class="price-label">Build fee:</span>
@@ -1156,7 +1192,6 @@
                         </div>
                     </div>
                     
-                    <!-- Monthly management features with specifications -->
                     <ul class="feature-list">
                         <li><i class="fas fa-file"></i> Up to 5 pages</li>
                         <li><i class="fas fa-pencil"></i> Up to 5 revisions per page</li>
@@ -1168,12 +1203,10 @@
                         <li><i class="fas fa-check"></i> 72h support response</li>
                     </ul>
                     
-                    <!-- Build fee payment button ONLY -->
                     <button class="payment-button secondary" onclick="window.open('${STRIPE_LINKS.monthly.standard}', '_blank')">
                         <i class="fas fa-bolt"></i> Standard Build Fee - £500
                     </button>
                     
-                    <!-- Clear terms box -->
                     <div class="terms-box">
                         <i class="fas fa-info-circle"></i>
                         <strong>12-month minimum term.</strong> Monthly management (£125/mo) starts after website delivery. 
@@ -1182,13 +1215,10 @@
                 </div>
             `;
             
-            // Premium Tier Card
             html += `
                 <div class="pricing-card">
                     <div class="pricing-header">
                         <div class="plan-type premium-type">${TIER_CONFIG.premium.name} — MONTHLY LICENSE</div>
-                        
-                        <!-- Combined pricing: Build fee + Monthly -->
                         <div class="price-row">
                             <div class="price-item">
                                 <span class="price-label">Build fee:</span>
@@ -1206,7 +1236,6 @@
                         </div>
                     </div>
                     
-                    <!-- Monthly management features with specifications -->
                     <ul class="feature-list">
                         <li><i class="fas fa-file"></i> Up to 15 pages</li>
                         <li><i class="fas fa-pencil"></i> Up to 10 revisions per page</li>
@@ -1220,12 +1249,10 @@
                         <li><i class="fas fa-crown"></i> Priority change requests</li>
                     </ul>
                     
-                    <!-- Build fee payment button ONLY -->
                     <button class="payment-button premium" onclick="window.open('${STRIPE_LINKS.monthly.premium}', '_blank')">
                         <i class="fas fa-crown"></i> Premium Build Fee - £650
                     </button>
                     
-                    <!-- Clear terms box -->
                     <div class="terms-box">
                         <i class="fas fa-info-circle"></i>
                         <strong>12-month minimum term.</strong> Monthly management (£225/mo) starts after website delivery. 
@@ -1233,7 +1260,6 @@
                     </div>
             `;
             
-            // ADD INHERITANCE MESSAGING TO MONTHLY PREMIUM CARD
             if (premSels.length > 0) {
                 html += `
                     <div style="background:rgba(33,150,243,0.08); border-radius:16px; padding:16px; margin-top:16px; border-left:4px solid var(--premium);">
