@@ -749,7 +749,11 @@
 
         const PRICING_CONFIG = {
             outright: { standard: 1500, premium: 3000 },
-            monthly:  { standard: 125,  premium: 225 }
+            monthly: { 
+                standard: 125,  
+                premium: 225,
+                buildFee: { standard: 500, premium: 650 }
+            }
         };
 
         // =========================================================================
@@ -768,36 +772,49 @@
         };
 
         // =========================================================================
-        //  LOAD ORDER FROM INDEX.HTML SESSIONSTORAGE
+        //  LOAD ORDER FROM INDEX.HTML SESSIONSTORAGE - FIXED TO USE STORED TIER
         // =========================================================================
         function loadOrderFromIndex() {
             try {
                 // Business name
-                orderData.businessName = sessionStorage.getItem('barberShopName') || localStorage.getItem('barberShopName') || 'Your Shop';
+                orderData.businessName = sessionStorage.getItem('barberShopName') || 
+                                        localStorage.getItem('barberShopName') || 
+                                        'Your Shop';
                 
-                // Plan type
-                orderData.planType = sessionStorage.getItem('vibz_planType') || sessionStorage.getItem('selectedPlanType') || 'Buy Outright';
+                // Plan type - READ EXACT VALUE
+                orderData.planType = sessionStorage.getItem('vibz_planType') || 
+                                    sessionStorage.getItem('selectedPlanType') || 
+                                    localStorage.getItem('selectedPlanType') || 
+                                    'Buy Outright';
+                
+                // TIER - FIXED: READ THE STORED TIER VALUE, DON'T RECALCULATE
+                orderData.tier = sessionStorage.getItem('vibz_tier') || 
+                                localStorage.getItem('vibz_tier') || 
+                                'standard';
                 
                 // Design code
-                orderData.designCode = sessionStorage.getItem('selectedBarberCode') || '';
+                orderData.designCode = sessionStorage.getItem('selectedBarberCode') || 
+                                      localStorage.getItem('selectedBarberCode') || 
+                                      '';
                 
-                // Selected services (for future use)
-                const savedServices = sessionStorage.getItem('selectedServices');
-                if (savedServices) orderData.services = JSON.parse(savedServices);
-                
-                // Determine tier from services or default to standard
-                if (orderData.services.length > 0) {
-                    const premCount = orderData.services.filter(s => s.tier === 'premium').length;
-                    orderData.tier = (premCount > 3) ? 'premium' : 'standard';
-                } else {
-                    // Fallback to URL param or standard
-                    const urlParams = new URLSearchParams(window.location.search);
-                    orderData.tier = urlParams.get('tier') || 'standard';
+                // Selected services (for display only, NOT for tier determination)
+                const savedServices = sessionStorage.getItem('selectedServices') || 
+                                    localStorage.getItem('selectedServices');
+                if (savedServices && savedServices !== 'undefined' && savedServices !== 'null') {
+                    orderData.services = JSON.parse(savedServices);
                 }
                 
-                // Set page count based on tier
+                // Set page count based on STORED TIER, not recalculated
                 orderData.pageCount = TIER_CONFIG[orderData.tier].pages;
                 orderData.delivery = TIER_CONFIG[orderData.tier].delivery;
+                
+                // DEBUG - Remove in production
+                console.log('✅ Order form loaded:', {
+                    planType: orderData.planType,
+                    tier: orderData.tier,
+                    pages: orderData.pageCount,
+                    design: orderData.designCode
+                });
                 
             } catch (e) {
                 console.warn('Error loading from sessionStorage, using defaults');
@@ -808,15 +825,19 @@
             // Pre-fill business name field if exists
             setTimeout(() => {
                 const businessField = document.getElementById('businessName');
-                if (businessField && orderData.businessName) businessField.value = orderData.businessName;
+                if (businessField && orderData.businessName) {
+                    businessField.value = orderData.businessName;
+                }
             }, 100);
         }
 
         // =========================================================================
-        //  RENDER PLAN SUMMARY (STEP 1)
+        //  RENDER PLAN SUMMARY (STEP 1) - FIXED MONTHLY PREMIUM PRICING
         // =========================================================================
         function renderPlanSummary() {
             const container = document.getElementById('planSummaryContainer');
+            if (!container) return;
+            
             const tierData = TIER_CONFIG[orderData.tier];
             const planDisplay = orderData.planType;
             
@@ -824,6 +845,7 @@
             if (orderData.planType === PLAN_CONFIG.outright.name) {
                 price = orderData.tier === 'standard' ? '£1,500' : '£3,000';
             } else {
+                // FIXED: Monthly premium now shows correct pricing
                 price = orderData.tier === 'standard' ? '£500 + £125/mo' : '£650 + £225/mo';
             }
             
@@ -847,6 +869,8 @@
         // =========================================================================
         function renderPageCards() {
             const container = document.getElementById('pagesDynamicContainer');
+            if (!container) return;
+            
             const pageCount = orderData.pageCount;
             let html = '';
             
@@ -898,14 +922,19 @@
         // =========================================================================
         function renderReview() {
             const container = document.getElementById('reviewContainer');
+            if (!container) return;
+            
             const businessName = document.getElementById('businessName')?.value || orderData.businessName;
             const email = document.getElementById('contactEmail')?.value || 'provided';
             const keyword = document.getElementById('seoKeyword1')?.value || 'not specified';
             
             let pagesSummary = '';
             for (let i = 1; i <= orderData.pageCount; i++) {
-                const brief = document.querySelector(`.page-brief-text[data-page-index="${i}"]`)?.value || '';
-                const aiCheck = document.querySelector(`.ai-page-checkbox[data-page="${i}"]`)?.checked;
+                const briefEl = document.querySelector(`.page-brief-text[data-page-index="${i}"]`);
+                const aiEl = document.querySelector(`.ai-page-checkbox[data-page="${i}"]`);
+                const brief = briefEl?.value || '';
+                const aiCheck = aiEl?.checked || false;
+                
                 if (brief || aiCheck) {
                     pagesSummary += `<div style="margin-bottom: 8px;"><strong>Page ${i}:</strong> ${brief.substring(0, 50)}${brief.length > 50 ? '…' : ''} ${aiCheck ? '✨ AI assisted' : ''}</div>`;
                 }
@@ -952,9 +981,9 @@
                     });
                     submitBtn.disabled = !consentCheck.checked;
                 }
+                renderReview();
             }
             
-            if (currentStep === totalSteps) renderReview();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -1074,7 +1103,7 @@
             renderPageCards();
             setupFormSubmission();
             
-            // File upload triggers (mock - would connect to storage in production)
+            // File upload triggers
             document.querySelectorAll('.file-upload-area').forEach(area => {
                 area.addEventListener('click', function(e) {
                     const input = this.querySelector('input[type="file"]');
