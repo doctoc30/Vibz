@@ -9,8 +9,9 @@
     
     <style>
         /* -------------------------------------------------------------
-           EXACT VIBZ STYLES — 100% IDENTICAL TO INDEX.HTML (APP LOOK)
-           ------------------------------------------------------------- */
+           EXACT VIBZ BRAND — STICKY HEADER, SCROLLABLE CONTENT, NO DOCK
+           FULL WIDTH TILES, TRANSPARENT BRAND BACKGROUND
+        ------------------------------------------------------------- */
         :root {
             --primary: #FF6B00;
             --primary-light: #FFF5EE;
@@ -25,116 +26,92 @@
         }
 
         * {
-            margin: 0; padding: 0; box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
             font-family: 'Inter', sans-serif;
         }
 
         body, html {
             height: 100%;
-            background-color: var(--primary-light);
+            width: 100%;
+            background-color: var(--primary-light); /* brand colour – no white frame */
             color: var(--text);
-            overflow: hidden;
+            overflow: hidden; /* prevent double scroll, scroll handled by flex child */
         }
 
         #app-container {
-            height: 100vh; display: flex; flex-direction: column;
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--primary-light);
             position: relative;
+            overflow: hidden; /* container doesn't scroll, header stays fixed */
         }
 
-        /* ———— HEADER ———— */
+        /* ———— STICKY HEADER ———— */
         header {
-            padding: calc(var(--safe-top) + 20px) 25px 10px;
-            display: flex; justify-content: space-between; align-items: center;
-            z-index: 10;
-            position: relative;
+            padding: calc(var(--safe-top) + 20px) 25px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            position: sticky;
+            top: 0;
             background: var(--primary-light);
-            will-change: transform;
+            width: 100%;
+            flex-shrink: 0; /* prevents header from compressing */
+            box-shadow: 0 2px 10px rgba(255,107,0,0.03); /* subtle separation */
         }
 
         .header-logo { 
-            font-size: 1.8rem; font-weight: 900; letter-spacing: -1.5px; color: var(--primary); 
-            opacity: 1;
-            visibility: visible;
+            font-size: 1.8rem; 
+            font-weight: 900; 
+            letter-spacing: -1.5px; 
+            color: var(--primary); 
         }
         .header-logo span { color: #000000; }
 
-        /* ———— MENU LAYER (SAME AS INDEX) ———— */
-        #app-menu-layer {
-            position: fixed; inset: 0; background: var(--primary-light);
-            z-index: 3000; display: flex; flex-direction: column;
-            padding: calc(var(--safe-top) + 20px) 25px;
-            transform: translateY(100%); transition: transform 0.6s cubic-bezier(0.32, 0.72, 0, 1);
-        }
-        #app-menu-layer.active { transform: translateY(0); }
-
-        .menu-header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .menu-logo {
-            font-size: 2rem; font-weight: 900; letter-spacing: -1.5px; color: var(--primary);
-        }
-        .menu-logo span { color: #000000; }
-
-        .menu-links {
-            display: flex; flex-direction: column; 
-            gap: 20px;
-            flex: 1;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-        }
-
-        .menu-item {
-            font-size: 4.5rem; font-weight: 900; color: var(--text);
-            text-decoration: none; letter-spacing: -3px; line-height: 1;
-            opacity: 0; transform: translateY(30px);
-            transition: 0.5s cubic-bezier(0.32, 0.72, 0, 1);
-        }
-        #app-menu-layer.active .menu-item { 
-            opacity: 1; transform: translateY(0); 
-        }
-        #app-menu-layer.active .menu-item:nth-child(1) { transition-delay: 0.1s; }
-        #app-menu-layer.active .menu-item:nth-child(2) { transition-delay: 0.2s; }
-        #app-menu-layer.active .menu-item:nth-child(3) { transition-delay: 0.3s; }
-        #app-menu-layer.active .menu-item:nth-child(4) { transition-delay: 0.4s; }
-
-        .menu-footer {
-            margin-top: auto; 
-            font-weight: 800; font-size: 0.8rem; letter-spacing: 1px; color: #bbb;
-            text-align: center;
-            padding-bottom: 20px;
-        }
-
-        /* ———— MAIN SCROLL AREA ———— */
+        /* ———— SCROLLABLE CONTENT AREA ———— */
         .content-scroll {
-            flex: 1; overflow-y: auto; 
-            padding: 0 20px 180px; /* room for dock */
-            scroll-behavior: smooth;
-            display: flex; flex-direction: column;
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 0 0 30px 0; /* no horizontal padding on container, tiles become full width */
+            display: flex;
+            flex-direction: column;
             -webkit-overflow-scrolling: touch;
-        }
-
-        .thank-you-wrapper {
-            display: flex; flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100%;
             width: 100%;
         }
 
+        /* full-width tile wrapper – removes outer padding, tiles stretch edge to edge */
+        .thank-you-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            padding: 0; /* zero padding, tiles go full width */
+        }
+
+        /* cards are full width with internal padding, no outer margin */
         .thank-you-card {
             background: white;
-            border-radius: 40px;
+            border-radius: 0; /* flat edges for full width on mobile */
             padding: 30px 24px;
-            border: 2px solid var(--border);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.05);
-            animation: fadeInUp 0.4s ease-out forwards;
+            border-top: 2px solid var(--border);
+            border-bottom: 2px solid var(--border);
             width: 100%;
-            max-width: 700px;
-            margin: 20px auto;
+            max-width: 100%;
+            margin: 0 0 16px 0; /* spacing between cards */
+            box-shadow: 0 8px 25px rgba(0,0,0,0.03);
+            animation: fadeInUp 0.4s ease-out forwards;
+        }
+
+        /* first card has no top border (clean edge below header) */
+        .thank-you-card:first-of-type {
+            border-top: none;
         }
 
         @keyframes fadeInUp { 
@@ -150,8 +127,11 @@
         }
 
         h1 {
-            font-size: 2.4rem; font-weight: 900; line-height: 1.1;
-            letter-spacing: -1.2px; color: var(--primary);
+            font-size: 2.2rem; 
+            font-weight: 900; 
+            line-height: 1.1;
+            letter-spacing: -1.2px; 
+            color: var(--primary);
             margin-bottom: 0.5rem;
             text-align: center;
         }
@@ -159,18 +139,19 @@
         .subhead {
             color: var(--gray); 
             font-weight: 500; 
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
             text-align: center;
         }
 
-        /* ———— ORDER CARD (LIKE PRICING CARD) ———— */
+        /* ———— ORDER CARD (FULL WIDTH, INSIDE WHITE TILE) ———— */
         .order-card {
             background: #fff;
-            border-radius: 30px;
+            border-radius: 24px;
             padding: 24px;
             border: 2px solid var(--border);
-            margin-bottom: 24px;
+            margin-bottom: 0; /* handled by parent padding */
+            width: 100%;
         }
 
         .order-card.recommended {
@@ -212,7 +193,7 @@
         }
 
         .price-value {
-            font-size: 1.8rem;
+            font-size: 2rem;
             font-weight: 900;
             line-height: 1;
             color: var(--text);
@@ -220,7 +201,7 @@
         .price-value.small { font-size: 1.4rem; }
 
         .price-period {
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             font-weight: 600;
             color: var(--gray);
         }
@@ -229,7 +210,13 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
-            margin-top: 16px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 480px) {
+            .detail-grid {
+                grid-template-columns: 1fr; /* stack on mobile */
+            }
         }
 
         .detail-item {
@@ -243,6 +230,7 @@
             font-weight: 800;
             color: var(--gray);
             text-transform: uppercase;
+            letter-spacing: 0.5px;
             margin-bottom: 4px;
         }
         .detail-value {
@@ -252,25 +240,32 @@
             word-break: break-word;
         }
 
-        /* ———— FEATURE GRID (EXACT SERVICE CARD LOOK) ———— */
+        /* ———— FEATURE GRID – FULL WIDTH, MOBILE OPTIMIZED ———— */
         .features-section {
-            margin-top: 24px;
+            margin-top: 8px;
+            width: 100%;
         }
         .features-title {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             font-weight: 900;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
             gap: 8px;
+            color: var(--text);
         }
         .features-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
+            width: 100%;
         }
+
         @media (max-width: 480px) {
-            .features-grid { grid-template-columns: 1fr; }
+            .features-grid {
+                grid-template-columns: 1fr; /* single column on mobile */
+                gap: 12px;
+            }
         }
 
         .feature-card {
@@ -280,6 +275,7 @@
             padding: 16px;
             position: relative;
             transition: 0.2s;
+            width: 100%;
         }
         .feature-card.standard { border-left: 6px solid var(--standard); }
         .feature-card.premium { border-left: 6px solid var(--premium); }
@@ -297,31 +293,29 @@
 
         .feature-name {
             font-weight: 700;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             color: var(--text);
         }
 
-        /* ———— NEXT STEPS (VIBZ BUTTON STYLE) ———— */
+        /* ———— NEXT STEPS – FULL WIDTH TILES ———— */
         .next-steps {
-            margin-top: 30px;
-            background: rgba(255,107,0,0.03);
-            border-radius: 30px;
-            padding: 24px;
-            border: 2px solid var(--border);
+            margin-top: 8px;
+            width: 100%;
         }
 
         .step-card {
             background: white;
             border-radius: 24px;
-            padding: 20px;
-            margin-bottom: 20px;
+            padding: 24px;
+            margin-bottom: 16px;
             border: 2px solid var(--border);
             transition: 0.2s;
+            width: 100%;
         }
         .step-card:hover { border-color: var(--primary); }
 
         .step-card h4 {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             font-weight: 900;
             color: var(--primary);
             margin-bottom: 6px;
@@ -338,7 +332,7 @@
             margin-bottom: 12px;
         }
 
-        /* ———— VIBZ BUTTONS (100% SAME AS INDEX) ———— */
+        /* ———— VIBZ BUTTONS (SAME AS INDEX) ———— */
         .vibz-btn {
             width: 100%; 
             padding: 18px 18px; 
@@ -348,7 +342,7 @@
             color: var(--text); 
             font-size: 1rem; 
             font-weight: 800;
-            margin-top: 12px; 
+            margin-top: 16px; 
             cursor: pointer; 
             transition: 0.2s; 
             text-align: center;
@@ -364,50 +358,63 @@
         .vibz-btn:active { transform: scale(0.97); }
 
         .terms-note {
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             color: var(--gray);
             text-align: center;
             margin-top: 24px;
             padding-top: 20px;
             border-top: 2px solid var(--border);
             font-weight: 500;
+            width: 100%;
         }
 
-        /* ———— DOCK (EXACT) ———— */
+        /* ———— NO DOCK, NO WHITE FRAME ———— */
         .app-dock {
-            position: fixed; 
-            bottom: calc(25px + var(--safe-bottom, 0px)); 
-            left: 20px; 
-            right: 20px;
-            background: rgba(255, 255, 255, 0.85); 
-            backdrop-filter: blur(20px);
-            height: 80px; 
-            border-radius: 40px; 
-            display: flex; 
-            justify-content: space-around;
-            align-items: center; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1); 
-            z-index: 2000;
-            margin-bottom: env(safe-area-inset-bottom, 0px);
+            display: none; /* removed completely */
         }
-        .dock-btn { 
-            display: flex; flex-direction: column; align-items: center; 
-            color: #A0A0A0; text-decoration: none; gap: 4px; 
-            background: none; border: none; cursor: pointer;
+
+        /* ———— MENU LAYER (KEPT FROM INDEX, BUT DOCK REMOVED) ———— */
+        #app-menu-layer {
+            position: fixed; inset: 0; background: var(--primary-light);
+            z-index: 3000; display: flex; flex-direction: column;
+            padding: calc(var(--safe-top) + 20px) 25px;
+            transform: translateY(100%); transition: transform 0.6s cubic-bezier(0.32, 0.72, 0, 1);
         }
-        .dock-btn.active { color: var(--primary); }
-        .dock-btn i { font-size: 1.4rem; }
-        .dock-btn span { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; }
-        .dock-center {
-            width: 65px; height: 65px; background: var(--primary); border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; color: #fff;
-            font-size: 1.8rem; margin-top: -50px; border: 6px solid var(--primary-light);
-            box-shadow: 0 10px 20px rgba(255, 107, 0, 0.3);
-            cursor: pointer;
+        #app-menu-layer.active { transform: translateY(0); }
+
+        .menu-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px;
+        }
+        .menu-logo {
+            font-size: 2rem; font-weight: 900; letter-spacing: -1.5px; color: var(--primary);
+        }
+        .menu-logo span { color: #000000; }
+        .menu-links {
+            display: flex; flex-direction: column; gap: 20px;
+            flex: 1; justify-content: center; align-items: center;
+        }
+        .menu-item {
+            font-size: 4.5rem; font-weight: 900; color: var(--text);
+            text-decoration: none; letter-spacing: -3px; line-height: 1;
+            opacity: 0; transform: translateY(30px);
+            transition: 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+        }
+        #app-menu-layer.active .menu-item { opacity: 1; transform: translateY(0); }
+        #app-menu-layer.active .menu-item:nth-child(1) { transition-delay: 0.1s; }
+        #app-menu-layer.active .menu-item:nth-child(2) { transition-delay: 0.2s; }
+        #app-menu-layer.active .menu-item:nth-child(3) { transition-delay: 0.3s; }
+        #app-menu-layer.active .menu-item:nth-child(4) { transition-delay: 0.4s; }
+        .menu-footer {
+            margin-top: auto; font-weight: 800; font-size: 0.8rem; letter-spacing: 1px; color: #bbb;
+            text-align: center; padding-bottom: 20px;
         }
 
         @media (min-width: 768px) {
             .menu-item { font-size: 6rem; }
+            .thank-you-card {
+                padding: 40px 32px;
+            }
         }
     </style>
 </head>
@@ -428,27 +435,27 @@
     <div class="menu-footer">VIBZ COLLECTIVE © 2026</div>
 </div>
 
-<!-- ==================== APP CONTAINER ==================== -->
+<!-- ==================== APP CONTAINER – STICKY HEADER + SCROLLABLE CONTENT ==================== -->
 <div id="app-container">
+    <!-- STICKY HEADER -->
     <header>
         <div class="header-logo">VIBZ<span>.</span></div>
-        <i class="fa-solid fa-circle-user" style="font-size: 1.8rem; color: #ddd;"></i>
+        <i class="fa-solid fa-circle-user" style="font-size: 1.8rem; color: #ddd;" onclick="toggleMenu()"></i>
     </header>
 
+    <!-- SCROLLABLE CONTENT – FULL WIDTH TILES, TRANSPARENT BACKGROUND -->
     <main class="content-scroll">
         <div class="thank-you-wrapper">
+            
+            <!-- TILE 1: THANK YOU & ORDER SUMMARY -->
             <div class="thank-you-card">
-                
-                <!-- SUCCESS ICON -->
                 <div class="thank-you-icon">
                     <i class="fas fa-check-circle"></i>
                 </div>
 
-                <!-- DYNAMIC TITLE (POPULATED BY JS) -->
                 <h1 id="dynamicThankYouTitle">Thank you!</h1>
                 <div class="subhead" id="dynamicSubhead">Your order is confirmed</div>
 
-                <!-- ========== ORDER SUMMARY – EXACT PRICING CARD STYLE ========== -->
                 <div class="order-card recommended" id="orderSummaryCard">
                     <div class="badge" id="planBadge">STANDARD</div>
                     
@@ -463,7 +470,6 @@
                         You own the full website files. Hosting and updates are your responsibility.
                     </div>
 
-                    <!-- DETAIL GRID -->
                     <div class="detail-grid">
                         <div class="detail-item">
                             <div class="detail-label">Business</div>
@@ -483,29 +489,33 @@
                         </div>
                     </div>
 
-                    <!-- MONTHLY COMMITMENT NOTICE (if monthly license) -->
+                    <!-- Monthly commitment notice (visible only for Monthly License) -->
                     <div id="monthlyCommitmentBox" style="margin-top: 20px; background: rgba(33,150,243,0.05); border-radius: 16px; padding: 16px; border-left: 4px solid var(--premium); display: none;">
                         <i class="fas fa-sync" style="color: var(--premium);"></i>
                         <strong style="color: var(--premium);">12-month minimum term.</strong> 
                         <span id="monthlyRateDisplay">£125/month</span> starts after delivery.
                     </div>
                 </div>
+            </div>
 
-                <!-- ========== SELECTED FEATURES (SAME AS INDEX SERVICE CARDS) ========== -->
-                <div class="features-section" id="featuresSection">
+            <!-- TILE 2: SELECTED FEATURES -->
+            <div class="thank-you-card" id="featuresTile">
+                <div class="features-section">
                     <div class="features-title">
                         <i class="fas fa-cog" style="color: var(--primary);"></i> Your selected features
                     </div>
                     <div class="features-grid" id="featuresGridContainer">
                         <!-- JS will populate -->
                     </div>
-                    <div id="noFeaturesMessage" style="display: none; text-align: center; padding: 24px; background: white; border-radius: 20px; border: 2px solid var(--border);">
+                    <div id="noFeaturesMessage" style="display: none; text-align: center; padding: 32px 24px; background: white; border-radius: 20px; border: 2px solid var(--border); margin-top: 12px;">
                         <i class="fas fa-info-circle" style="font-size: 2rem; color: var(--gray); margin-bottom: 12px;"></i>
-                        <p style="font-weight: 600;">No features selected — you’ll work with our team.</p>
+                        <p style="font-weight: 600; color: var(--gray);">No features selected — you’ll work with our team.</p>
                     </div>
                 </div>
+            </div>
 
-                <!-- ========== NEXT STEPS ========== -->
+            <!-- TILE 3: NEXT STEPS -->
+            <div class="thank-you-card">
                 <div class="next-steps">
                     <h3 style="font-size: 1.5rem; font-weight: 900; margin-bottom: 20px; color: var(--text);">🚀 Next steps</h3>
                     
@@ -526,25 +536,15 @@
                             <i class="fas fa-calendar"></i> Schedule call
                         </button>
                     </div>
-                </div>
 
-                <div class="terms-note">
-                    <i class="fas fa-exclamation-circle" style="color: var(--primary); margin-right: 6px;"></i>
-                    A project manager will contact you within 24 hours. Timeline starts after we receive all details.
+                    <div class="terms-note">
+                        <i class="fas fa-exclamation-circle" style="color: var(--primary); margin-right: 6px;"></i>
+                        A project manager will contact you within 24 hours. Timeline starts after we receive all details.
+                    </div>
                 </div>
-
-            </div> <!-- end thank-you-card -->
-        </div> <!-- end wrapper -->
+            </div>
+        </div>
     </main>
-
-    <!-- ==================== DOCK – EXACT SAME AS INDEX ==================== -->
-    <nav class="app-dock">
-        <a href="https://www.vibz.co.uk/barber/index.html" class="dock-btn active"><i class="fa-solid fa-house-chimney"></i><span>Home</span></a>
-        <a href="https://www.vibz.co.uk/barber/concepts.html" class="dock-btn"><i class="fa-solid fa-compass"></i><span>Library</span></a>
-        <div class="dock-center" onclick="window.location.href='https://www.vibz.co.uk/barber/index.html'"><i class="fa-solid fa-bolt"></i></div>
-        <a href="#" class="dock-btn"><i class="fa-solid fa-briefcase"></i><span>Portal</span></a>
-        <button class="dock-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i><span>Menu</span></button>
-    </nav>
 </div>
 
 <script>
@@ -585,7 +585,6 @@
             recommendedPlan: 'standard'
         };
 
-        // 1) services array
         try {
             const saved = sessionStorage.getItem('selectedServices');
             if (saved) {
@@ -595,16 +594,13 @@
                 if (local) selections.services = JSON.parse(local);
             }
         } catch (e) {
-            console.warn('no services');
             selections.services = [];
         }
 
-        // 2) fallback planType
         if (!selections.planType) {
             selections.planType = localStorage.getItem('selectedPlanType') || 'Buy Outright';
         }
 
-        // 3) determine recommendedPlan based on selected features (same logic as index)
         const premCount = selections.services.filter(s => s.tier === 'premium').length;
         const stdCount = selections.services.filter(s => s.tier === 'standard').length;
         if (premCount > 3 || stdCount > 8) {
@@ -613,7 +609,6 @@
             selections.recommendedPlan = 'standard';
         }
 
-        // 4) fallback business name
         if (selections.businessName === 'Your shop' || !selections.businessName) {
             const localName = localStorage.getItem('barberShopName');
             if (localName) selections.businessName = localName;
@@ -623,21 +618,19 @@
     }
 
     // -------------------------------------------------------------
-    //  RENDER THANK YOU PAGE WITH EXACT ORDER DETAILS
+    //  RENDER THANK YOU PAGE – FULL WIDTH, BRAND BACKGROUND
     // -------------------------------------------------------------
     function renderThankYou() {
         const order = loadOrderFromStorage();
         const isMonthly = (order.planType === PLAN_CONFIG.monthly.name);
-        const tier = order.recommendedPlan; // 'standard' or 'premium'
+        const tier = order.recommendedPlan;
         const tierName = tier === 'standard' ? 'STANDARD' : 'PREMIUM';
         const planDisplayName = order.planType || 'Buy Outright';
 
-        // ----- 1. HEADER -----
         document.getElementById('dynamicThankYouTitle').innerText = `Thank you, ${order.businessName}!`;
         document.getElementById('dynamicSubhead').innerText = 
             `Your ${tierName} ${isMonthly ? 'license' : 'outright'} order is confirmed`;
 
-        // ----- 2. ORDER CARD (badge, price, plan type) -----
         const badgeEl = document.getElementById('planBadge');
         badgeEl.innerText = tierName;
         badgeEl.className = `badge ${tier}`;
@@ -645,7 +638,6 @@
         document.getElementById('planTypeLabel').innerHTML = 
             `${planDisplayName.toUpperCase()} — ${tierName}`;
         
-        // price
         let oneTimePrice = 0, monthlyPrice = 0;
         if (isMonthly) {
             oneTimePrice = tier === 'standard' ? 500 : 650;
@@ -654,7 +646,6 @@
             document.getElementById('pricePeriod').innerHTML = 'build fee (one-time)';
             document.getElementById('planDescription').innerHTML = 
                 '12-month minimum term. Website is licensed, not owned.';
-            // show monthly commitment box
             const monthlyBox = document.getElementById('monthlyCommitmentBox');
             monthlyBox.style.display = 'block';
             document.getElementById('monthlyRateDisplay').innerHTML = `£${monthlyPrice}/month`;
@@ -667,14 +658,12 @@
             document.getElementById('monthlyCommitmentBox').style.display = 'none';
         }
 
-        // ----- 3. DETAIL GRID -----
         document.getElementById('businessNameDisplay').innerText = order.businessName;
         document.getElementById('paymentModelDisplay').innerText = planDisplayName;
         document.getElementById('tierDisplay').innerText = tierName;
         document.getElementById('designCodeDisplay').innerText = 
             order.designCode ? order.designCode.toUpperCase() : 'Custom design';
 
-        // ----- 4. FEATURES GRID -----
         const featuresGrid = document.getElementById('featuresGridContainer');
         const noFeaturesMsg = document.getElementById('noFeaturesMessage');
         featuresGrid.innerHTML = '';
@@ -684,7 +673,6 @@
             const standardFeats = order.services.filter(s => s.tier === 'standard');
             const premiumFeats = order.services.filter(s => s.tier === 'premium');
 
-            // show standard first
             standardFeats.forEach(f => {
                 const card = document.createElement('div');
                 card.className = 'feature-card standard';
@@ -707,12 +695,10 @@
             noFeaturesMsg.style.display = 'block';
         }
 
-        // ----- 5. NEXT STEP BUTTONS WITH CONTEXT -----
         const completeBtn = document.getElementById('completeNowBtn');
         completeBtn.onclick = function(e) {
             e.preventDefault();
             alert(`Project brief for ${order.businessName} (${tierName} ${planDisplayName}) – opening form.`);
-            // in production: window.location.href = `https://...`;
         };
 
         const scheduleBtn = document.getElementById('scheduleCallBtn');
@@ -721,12 +707,8 @@
         };
     }
 
-    // -------------------------------------------------------------
-    //  RUN ON LOAD
-    // -------------------------------------------------------------
     window.onload = function() {
         renderThankYou();
-        // ensure menu is closed
         const menu = document.getElementById('app-menu-layer');
         if (menu.classList.contains('active')) menu.classList.remove('active');
     };
