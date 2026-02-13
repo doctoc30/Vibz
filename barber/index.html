@@ -8,7 +8,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        /* STYLES - EXACTLY AS PROVIDED */
+        /* STYLES - EXACTLY AS PROVIDED (keep all existing styles) */
         :root {
             --primary: #FF6B00;
             --primary-light: #FFF5EE;
@@ -660,7 +660,8 @@
                 
                 <div class="form-screen active" id="step-0">
                     <button class="vibz-btn primary" onclick="startReady()">I'm Ready to Start</button>
-                    <a href="#" class="vibz-btn" onclick="openConceptLibrary(); return false;">Exploring Designs First</a>
+                    <!-- FIXED: Opens concept library in same tab with return URL -->
+                    <a href="https://www.vibz.co.uk/barber/concepts.html?returnTo=index&step=5" class="vibz-btn">Exploring Designs First</a>
                 </div>
 
                 <div class="form-screen" id="step-1">
@@ -677,7 +678,8 @@
 
                 <div class="form-screen" id="step-3">
                     <button class="vibz-btn" onclick="goToStep(4)">I Have a Design Code</button>
-                    <a href="#" class="vibz-btn primary" onclick="openConceptLibrary(); return false;">Browse Concept Library</a>
+                    <!-- FIXED: Opens concept library in same tab with return URL -->
+                    <a href="https://www.vibz.co.uk/barber/concepts.html?returnTo=index&step=5" class="vibz-btn primary">Browse Concept Library</a>
                     <button class="vibz-btn" onclick="next()">Request Custom Design</button>
                     <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
                 </div>
@@ -745,7 +747,8 @@
     <!-- DOCK -->
     <nav class="app-dock">
         <a href="https://www.vibz.co.uk/barber/index.html" class="dock-btn active"><i class="fa-solid fa-house-chimney"></i><span>Home</span></a>
-        <a href="#" class="dock-btn" onclick="openConceptLibrary(); return false;"><i class="fa-solid fa-compass"></i><span>Library</span></a>
+        <!-- FIXED: Opens concept library in same tab with return URL -->
+        <a href="https://www.vibz.co.uk/barber/concepts.html?returnTo=index&step=5" class="dock-btn"><i class="fa-solid fa-compass"></i><span>Library</span></a>
         <div class="dock-center" onclick="next()"><i class="fa-solid fa-bolt"></i></div>
         <a href="#" class="dock-btn"><i class="fa-solid fa-briefcase"></i><span>Portal</span></a>
         <button class="dock-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i><span>Menu</span></button>
@@ -867,40 +870,44 @@
     }
 
     // =========================================================================
-    // CONCEPT LIBRARY FUNCTION - FIXED! Opens directly to order form with design code
+    // CHECK FOR RETURN FROM CONCEPT LIBRARY WITH SELECTED DESIGN CODE
     // =========================================================================
-    function openConceptLibrary() {
-        // Set a sample design code
-        const designCode = 'BARBER-446';
-        selections.designCode = designCode;
-        selections.fromConceptLibrary = true;
+    function checkForConceptLibraryReturn() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const selectedCode = urlParams.get('selectedCode');
+        const returnStep = urlParams.get('step');
         
-        // Save to storage
-        sessionStorage.setItem('selectedBarberCode', designCode);
-        localStorage.setItem('selectedBarberCode', designCode);
-        
-        // Save business name if exists
-        if (selections.businessName) {
-            sessionStorage.setItem('barberShopName', selections.businessName);
-            localStorage.setItem('barberShopName', selections.businessName);
+        if (selectedCode) {
+            // Format the design code
+            let formattedCode = selectedCode.toUpperCase();
+            if (!formattedCode.startsWith('BARBER-')) {
+                formattedCode = `BARBER-${formattedCode.replace(/[^0-9]/g, '')}`;
+            }
+            
+            // Save to selections and storage
+            selections.designCode = formattedCode;
+            selections.fromConceptLibrary = true;
+            sessionStorage.setItem('selectedBarberCode', formattedCode);
+            localStorage.setItem('selectedBarberCode', formattedCode);
+            
+            // Auto-fill the design code input if on step 4
+            const designCodeInput = document.getElementById('designCode');
+            if (designCodeInput) {
+                designCodeInput.value = formattedCode;
+            }
+            
+            // Show success message
+            alert(`✅ Design code ${formattedCode} selected!`);
+            
+            // Go to specified step or default to step 5
+            if (returnStep) {
+                currentStep = parseInt(returnStep);
+            } else {
+                currentStep = 5;
+            }
+            
+            updateUI();
         }
-        
-        // Set default plan type if not set
-        if (!selections.planType) {
-            selections.planType = 'Monthly License';
-            sessionStorage.setItem('vibz_planType', 'Monthly License');
-            sessionStorage.setItem('selectedPlanType', 'Monthly License');
-            localStorage.setItem('selectedPlanType', 'Monthly License');
-        }
-        
-        // Set default tier
-        sessionStorage.setItem('vibz_tier', 'standard');
-        localStorage.setItem('vibz_tier', 'standard');
-        
-        console.log('📚 Concept library selected:', designCode);
-        
-        // REDIRECT DIRECTLY TO ORDER FORM
-        window.location.href = 'order-form.html';
     }
 
     // =========================================================================
@@ -1592,6 +1599,9 @@
     window.onload = function() {
         // Load any existing selections from storage
         loadOrderFromStorage();
+        
+        // Check if returning from concept library with selected code
+        checkForConceptLibraryReturn();
         
         const urlParams = new URLSearchParams(window.location.search);
         
