@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* STYLES - EXACTLY AS PROVIDED */
+        /* STYLES - EXACTLY AS PROVIDED + minor additions for new fields */
         :root {
             --primary: #FF6B00;
             --primary-light: #FFF5EE;
@@ -529,6 +529,7 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            flex-wrap: wrap;
         }
 
         .page-number {
@@ -543,6 +544,106 @@
             font-size: 0.75rem;
             font-weight: 700;
             color: var(--standard);
+        }
+
+        /* New styles for step2 enhancements */
+        .file-upload-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 10px;
+        }
+        .file-upload-box {
+            background: white;
+            border: 2px dashed var(--border);
+            border-radius: 16px;
+            padding: 12px 6px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: border 0.2s;
+        }
+        .file-upload-box:hover {
+            border-color: var(--primary);
+        }
+        .file-upload-box i {
+            font-size: 1.2rem;
+            color: var(--gray);
+            margin-bottom: 4px;
+        }
+        .file-upload-box span {
+            display: block;
+            font-weight: 600;
+            color: var(--text);
+            word-break: break-word;
+        }
+        .file-upload-box small {
+            color: var(--gray);
+            font-size: 0.65rem;
+        }
+        .placement-select {
+            margin-top: 8px;
+            width: 100%;
+            padding: 8px;
+            border-radius: 30px;
+            border: 1px solid var(--border);
+            background: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .keyword-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .keyword-input {
+            flex: 1;
+            min-width: 120px;
+        }
+        .vibz-btn.small {
+            padding: 8px 16px;
+            font-size: 0.8rem;
+            border-radius: 40px;
+        }
+        .vibz-btn.outline-help {
+            background: white;
+            border: 2px solid var(--help);
+            color: var(--help);
+        }
+        .vibz-btn.outline-help:hover {
+            background: var(--help-light);
+        }
+        .skip-badge {
+            display: inline-flex;
+            align-items: center;
+            background: var(--light-gray);
+            border-radius: 30px;
+            padding: 5px 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--gray);
+            cursor: pointer;
+            border: 1px solid var(--border);
+        }
+        .skip-badge i {
+            margin-right: 4px;
+            color: var(--help);
+        }
+        .skip-badge.active {
+            background: var(--help-light);
+            color: var(--help);
+            border-color: var(--help);
+        }
+        .duplicate-warning {
+            color: #d32f2f;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 4px;
+            display: none;
+        }
+        .duplicate-warning.visible {
+            display: block;
         }
 
         .file-upload-area {
@@ -638,6 +739,7 @@
             .dynamic-grid { grid-template-columns: 1fr; }
             .button-group { flex-direction: column; gap: 12px; }
             .field-row { grid-template-columns: 1fr; }
+            .file-upload-grid { grid-template-columns: 1fr; }
         }
 
         .text-muted { color: var(--gray); font-size: 0.8rem; }
@@ -689,11 +791,11 @@
                     </div>
                 </div>
 
-                <!-- STEP 2: PAGE CUSTOMIZATION -->
+                <!-- STEP 2: PAGE CUSTOMIZATION (UPDATED) -->
                 <div class="step" id="step2">
                     <div class="step-header">
                         <h2 class="step-title">Customize your pages</h2>
-                        <p class="step-subtitle">Tell us what each page should do</p>
+                        <p class="step-subtitle">Tell us what each page should do. Add photos/videos, description, and SEO keywords.</p>
                     </div>
                     <div id="pagesDynamicContainer"></div>
                 </div>
@@ -954,6 +1056,34 @@
             ]
         };
 
+        // Barber-specific page name suggestions (for dropdown)
+        const PAGE_NAME_SUGGESTIONS = [
+            "Pricing / Services",
+            "About Us",
+            "Our Team",
+            "Gallery / Portfolio",
+            "Book Online",
+            "Contact Us",
+            "Products / Shop",
+            "Reviews / Testimonials",
+            "FAQ",
+            "Blog / News",
+            "Special Offers",
+            "Membership / Loyalty",
+            "Hair Styles Gallery",
+            "Beard Gallery",
+            "Kids Haircuts",
+            "Bridal / Special Occasion",
+            "Aftercare / Products",
+            "Career / Join Us",
+            "Location / Find Us",
+            "Gift Cards",
+            "Wedding Packages",
+            "Virtual Tour",
+            "Appointment Policy",
+            "Before & After"
+        ];
+
         // =========================================================================
         //  GLOBAL STATE
         // =========================================================================
@@ -1041,13 +1171,6 @@
             // Separate by tier
             const standardServices = orderData.services.filter(s => s.tier === 'standard');
             const premiumServices = orderData.services.filter(s => s.tier === 'premium');
-            
-            console.log('🔍 Filtering services:', {
-                total: orderData.services.length,
-                standard: standardServices.length,
-                premium: premiumServices.length,
-                isPremium: isPremium
-            });
             
             // For premium plans: show ALL services (both standard and premium)
             // For standard plans: show ONLY standard services
@@ -1200,7 +1323,7 @@
         }
 
         // =========================================================================
-        //  RENDER PAGE CARDS
+        //  RENDER PAGE CARDS (UPDATED with file uploads, description box, SEO keywords)
         // =========================================================================
         function renderPageCards() {
             const container = document.getElementById('pagesDynamicContainer');
@@ -1209,27 +1332,168 @@
             let html = '';
             for (let i = 1; i <= orderData.pageCount; i++) {
                 const isHome = (i === 1);
+                // For page name: Home (locked) or dropdown with suggestions
+                let nameField = '';
+                if (isHome) {
+                    nameField = `<input type="text" class="form-control" value="Home" readonly>`;
+                } else {
+                    // Build dropdown options
+                    let options = `<option value="">-- Select page name --</option>`;
+                    PAGE_NAME_SUGGESTIONS.forEach(name => {
+                        options += `<option value="${name}">${name}</option>`;
+                    });
+                    nameField = `
+                        <select class="form-control page-name-select" data-page="${i}" id="page_name_${i}">
+                            ${options}
+                        </select>
+                        <div class="duplicate-warning" id="dup_warn_${i}">⚠️ This name is already used on another page. Please choose a unique name.</div>
+                    `;
+                }
+
+                // File upload grid (3 boxes)
+                const fileUploadGrid = `
+                    <div class="file-upload-grid">
+                        <div class="file-upload-box" data-page="${i}" data-num="1">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>Upload 1</span>
+                            <small>PNG, JPG, MP4</small>
+                            <input type="file" id="page_${i}_file1" accept=".png,.jpg,.jpeg,.mp4,.mov" style="display: none;">
+                            <select class="placement-select" id="page_${i}_place1">
+                                <option value="">Placement</option>
+                                <option value="top">Top section</option>
+                                <option value="mid">Mid section</option>
+                                <option value="bottom">Bottom section</option>
+                            </select>
+                        </div>
+                        <div class="file-upload-box" data-page="${i}" data-num="2">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>Upload 2</span>
+                            <small>PNG, JPG, MP4</small>
+                            <input type="file" id="page_${i}_file2" accept=".png,.jpg,.jpeg,.mp4,.mov" style="display: none;">
+                            <select class="placement-select" id="page_${i}_place2">
+                                <option value="">Placement</option>
+                                <option value="top">Top section</option>
+                                <option value="mid">Mid section</option>
+                                <option value="bottom">Bottom section</option>
+                            </select>
+                        </div>
+                        <div class="file-upload-box" data-page="${i}" data-num="3">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>Upload 3</span>
+                            <small>PNG, JPG, MP4</small>
+                            <input type="file" id="page_${i}_file3" accept=".png,.jpg,.jpeg,.mp4,.mov" style="display: none;">
+                            <select class="placement-select" id="page_${i}_place3">
+                                <option value="">Placement</option>
+                                <option value="top">Top section</option>
+                                <option value="mid">Mid section</option>
+                                <option value="bottom">Bottom section</option>
+                            </select>
+                        </div>
+                    </div>
+                `;
+
+                // Description box with "Let Vibz provide" hint
+                const descField = `
+                    <textarea class="form-control" id="page_brief_${i}" placeholder="Paste full website description, or brief description. If unsure, write 'Let Vibz provide based on brief'"></textarea>
+                    <small style="color: var(--gray);">You can copy-paste a full description or let Vibz create it.</small>
+                `;
+
+                // SEO keywords (2 fields) with skip button / let vibz provide
+                const seoField = `
+                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                        <input type="text" class="form-control keyword-input" id="page_seo1_${i}" placeholder="SEO keyword 1 (e.g., barber manchester)">
+                        <input type="text" class="form-control keyword-input" id="page_seo2_${i}" placeholder="SEO keyword 2 (e.g., haircut)">
+                        <div class="skip-badge" id="skip_seo_${i}" onclick="toggleSkipSeo(${i})">
+                            <i class="fas fa-forward"></i> Let Vibz provide
+                        </div>
+                        <div class="skip-badge" id="skip_keywords_${i}" style="display:none;" onclick="toggleSkipSeo(${i})">
+                            <i class="fas fa-check"></i> Skipped
+                        </div>
+                    </div>
+                `;
+
                 html += `
-                    <div class="page-card">
+                    <div class="page-card" id="page_card_${i}">
                         <div class="page-header">
                             <div class="page-number">Page ${i}</div>
                             ${isHome ? '<div class="page-locked">Homepage</div>' : ''}
                         </div>
                         <div class="form-group">
                             <label class="form-label">Page name</label>
-                            ${isHome ? 
-                                '<input type="text" class="form-control" value="Home" readonly>' : 
-                                '<input type="text" class="form-control" id="page_name_' + i + '" placeholder="e.g., About, Services">'
-                            }
+                            ${nameField}
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Brief description</label>
-                            <textarea class="form-control" id="page_brief_' + i + '" placeholder="What should this page do?"></textarea>
+                            <label class="form-label">Upload files (max 3 per page) & placement</label>
+                            ${fileUploadGrid}
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Page description</label>
+                            ${descField}
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">SEO keywords for this page (up to 2)</label>
+                            ${seoField}
                         </div>
                     </div>
                 `;
             }
             container.innerHTML = html;
+
+            // Attach file upload click handlers
+            document.querySelectorAll('.file-upload-box').forEach(box => {
+                box.addEventListener('click', function(e) {
+                    // Prevent if clicked on select
+                    if (e.target.tagName === 'SELECT') return;
+                    const fileInput = this.querySelector('input[type="file"]');
+                    if (fileInput) fileInput.click();
+                });
+            });
+
+            // Attach change event to dropdowns for duplicate detection (non-home)
+            document.querySelectorAll('.page-name-select').forEach(select => {
+                select.addEventListener('change', function() {
+                    const currentPage = this.dataset.page;
+                    const currentVal = this.value;
+                    // Check all other dropdowns
+                    let duplicate = false;
+                    document.querySelectorAll('.page-name-select').forEach(otherSelect => {
+                        if (otherSelect.dataset.page !== currentPage && otherSelect.value === currentVal && currentVal !== '') {
+                            duplicate = true;
+                        }
+                    });
+                    const warnDiv = document.getElementById(`dup_warn_${currentPage}`);
+                    if (warnDiv) {
+                        if (duplicate) {
+                            warnDiv.classList.add('visible');
+                        } else {
+                            warnDiv.classList.remove('visible');
+                        }
+                    }
+                });
+            });
+        }
+
+        // Toggle skip SEO function
+        window.toggleSkipSeo = function(pageId) {
+            const seo1 = document.getElementById(`page_seo1_${pageId}`);
+            const seo2 = document.getElementById(`page_seo2_${pageId}`);
+            const skipBtn = document.getElementById(`skip_seo_${pageId}`);
+            const skippedBtn = document.getElementById(`skip_keywords_${pageId}`);
+            if (seo1.disabled) {
+                // enable
+                seo1.disabled = false;
+                seo2.disabled = false;
+                skipBtn.style.display = 'inline-flex';
+                skippedBtn.style.display = 'none';
+            } else {
+                // disable and clear
+                seo1.value = '';
+                seo2.value = '';
+                seo1.disabled = true;
+                seo2.disabled = true;
+                skipBtn.style.display = 'none';
+                skippedBtn.style.display = 'inline-flex';
+            }
         }
 
         // =========================================================================
@@ -1368,6 +1632,7 @@
                         return;
                     }
                 }
+                // Optional: validate page names no duplicate before leaving step2? could add but not required.
                 
                 currentStep++;
                 updateProgress();
