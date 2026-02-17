@@ -730,6 +730,34 @@
             margin: 0 auto 24px;
         }
 
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
         @media (max-width: 600px) {
             .container { padding: 16px; }
             .form-card { padding: 24px 20px; }
@@ -935,6 +963,12 @@
                 <a href="https://www.vibz.co.uk" class="vibz-btn primary" style="display: block; margin-top: 20px; text-decoration: none; text-align: center;">Back to VIBZ</a>
             </div>
         </div>
+    </div>
+
+    <!-- LOADING OVERLAY -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <div style="font-weight: 600; color: var(--primary);">Submitting your order...</div>
     </div>
 
     <script>
@@ -2050,6 +2084,186 @@
         };
 
         // =========================================================================
+        //  COLLECT ALL FORM DATA FOR SUBMISSION
+        // =========================================================================
+        function collectAllFormData() {
+            // Get filtered services
+            const filtered = getFilteredServices();
+            const allFilteredServices = [...filtered.standard, ...filtered.premium];
+            
+            // Collect page data
+            const pageData = [];
+            for (let i = 1; i <= orderData.pageCount; i++) {
+                const pageNameInput = document.getElementById(`page_name_${i}`);
+                const pageName = pageNameInput ? (pageNameInput.value || `Page ${i}`) : `Page ${i}`;
+                
+                // Collect file uploads info
+                const fileUploads = [];
+                for (let f = 1; f <= 3; f++) {
+                    const fileInput = document.getElementById(`page_${i}_file${f}`);
+                    const placementSelect = document.getElementById(`page_${i}_place${f}`);
+                    
+                    if (fileInput && fileInput.files.length > 0) {
+                        fileUploads.push({
+                            fileName: fileInput.files[0].name,
+                            fileType: fileInput.files[0].type,
+                            placement: placementSelect ? placementSelect.value : ''
+                        });
+                    }
+                }
+                
+                const pageBrief = document.getElementById(`page_brief_${i}`)?.value || '';
+                const seo1 = document.getElementById(`page_seo1_${i}`)?.value || '';
+                const seo2 = document.getElementById(`page_seo2_${i}`)?.value || '';
+                const seo1Disabled = document.getElementById(`page_seo1_${i}`)?.disabled || false;
+                const seo2Disabled = document.getElementById(`page_seo2_${i}`)?.disabled || false;
+                
+                pageData.push({
+                    pageNumber: i,
+                    pageName: pageName,
+                    isHome: i === 1,
+                    fileUploads: fileUploads,
+                    description: pageBrief || (seo1Disabled ? 'Vibz to provide' : ''),
+                    seoKeywords: {
+                        keyword1: seo1,
+                        keyword2: seo2,
+                        vibzToProvide: seo1Disabled
+                    }
+                });
+            }
+            
+            // Collect asset data
+            const assetData = {};
+            allFilteredServices.forEach(service => {
+                const config = FEATURE_ASSETS[service.name];
+                if (config && config.fields) {
+                    const serviceData = {};
+                    config.fields.forEach((field, index) => {
+                        const fieldId = `feature_${service.name.replace(/\s+/g, '_')}_${index}`;
+                        const element = document.getElementById(fieldId);
+                        if (element) {
+                            if (field.type === 'file') {
+                                serviceData[field.label] = element.files ? Array.from(element.files).map(f => f.name) : [];
+                            } else {
+                                serviceData[field.label] = element.value;
+                            }
+                        }
+                    });
+                    assetData[service.name] = serviceData;
+                }
+            });
+            
+            // Compile complete order data
+            return {
+                orderId: 'VIBZ-' + Date.now().toString().slice(-6),
+                timestamp: new Date().toISOString(),
+                formType: 'vibz_order_form',
+                plan: {
+                    tier: orderData.tier,
+                    type: orderData.planType,
+                    pages: orderData.pageCount,
+                    designCode: orderData.designCode,
+                    price: orderData.planType === PLAN_CONFIG.monthly.name 
+                        ? (orderData.tier === 'standard' ? '500+125' : '650+225')
+                        : (orderData.tier === 'standard' ? '1500' : '3000')
+                },
+                customFeatures: allFilteredServices,
+                allSelectedFeatures: orderData.services,
+                helpRequests: orderData.helpRequests,
+                featureAssets: assetData,
+                pages: pageData,
+                business: {
+                    name: document.getElementById('businessName')?.value || orderData.businessName,
+                    address: document.getElementById('businessAddress')?.value || '',
+                    email: document.getElementById('contactEmail')?.value || '',
+                    phone: document.getElementById('contactPhone')?.value || '',
+                    logo: document.getElementById('noLogoCheckbox')?.checked ? 'needs-ai-logo' : 'uploaded'
+                },
+                seo: {
+                    primaryKeyword: document.getElementById('seoKeyword1')?.value || '',
+                    secondaryKeywords: document.getElementById('seoKeywords')?.value || '',
+                    location: document.getElementById('seoLocation')?.value || ''
+                },
+                consent: {
+                    gdpr: document.getElementById('consentGDPR')?.checked || false,
+                    final: document.getElementById('finalConsentCheckbox')?.checked || false
+                }
+            };
+        }
+
+        // =========================================================================
+        //  FORM SUBMISSION TO APPS SCRIPT WEB APP
+        // =========================================================================
+        function setupFormSubmission() {
+            const form = document.getElementById('vibzOrderForm');
+            
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Validate final consent
+                const finalCheck = document.getElementById('finalConsentCheckbox');
+                if (!finalCheck || !finalCheck.checked) {
+                    alert('Please confirm your consent.');
+                    return;
+                }
+                
+                // Validate GDPR consent
+                const gdprCheck = document.getElementById('consentGDPR');
+                if (!gdprCheck || !gdprCheck.checked) {
+                    alert('Please agree to the GDPR terms to submit your order.');
+                    return;
+                }
+                
+                // Show loading overlay
+                document.getElementById('loadingOverlay').style.display = 'flex';
+                
+                // Collect all form data
+                const orderData = collectAllFormData();
+                
+                console.log('📦 Submitting order to Apps Script:', {
+                    webAppUrl: 'https://script.google.com/macros/s/AKfycbz5dNjGMzp67NgGiwtYzNcHVzPrtHFgoPyvInyv2CLi2P2yXL9xK2hiRaA9oraTdQy9Wg/exec',
+                    planTier: orderData.plan.tier,
+                    featuresIncluded: orderData.customFeatures.length,
+                    pagesCount: orderData.pages.length
+                });
+                
+                // Send to Apps Script Web App using fetch with CORS mode
+                fetch('https://script.google.com/macros/s/AKfycbz5dNjGMzp67NgGiwtYzNcHVzPrtHFgoPyvInyv2CLi2P2yXL9xK2hiRaA9oraTdQy9Wg/exec', {
+                    method: 'POST',
+                    mode: 'no-cors', // Important for Apps Script
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(orderData)
+                })
+                .then(() => {
+                    // Hide loading overlay
+                    document.getElementById('loadingOverlay').style.display = 'none';
+                    
+                    // Show success screen
+                    document.getElementById('orderFormCard').style.display = 'none';
+                    document.querySelector('.progress').style.display = 'none';
+                    document.getElementById('successScreen').style.display = 'block';
+                    
+                    // Clear any stored data
+                    try {
+                        sessionStorage.removeItem('selectedServices');
+                        sessionStorage.removeItem('helpRequests');
+                    } catch (e) {}
+                })
+                .catch(error => {
+                    // Hide loading overlay
+                    document.getElementById('loadingOverlay').style.display = 'none';
+                    
+                    console.error('Submission error:', error);
+                    
+                    // Show user-friendly error message
+                    alert('There was an error submitting your order. Please check your internet connection and try again. If the problem persists, please contact support@vibz.co.uk');
+                });
+            });
+        }
+
+        // =========================================================================
         //  NAVIGATION
         // =========================================================================
         function updateProgress() {
@@ -2062,8 +2276,8 @@
                 el.classList.toggle('active', i + 1 === currentStep);
             });
             
-            document.getElementById('prevBtn').style.display = currentStep > 1 ? 'flex' : 'none';
-            document.getElementById('nextBtn').style.display = currentStep < totalSteps ? 'flex' : 'none';
+            document.getElementById('prevBtn').style.display = currentStep > 1 ? 'inline-flex' : 'none';
+            document.getElementById('nextBtn').style.display = currentStep < totalSteps ? 'inline-flex' : 'none';
             
             // Render asset collection when reaching step 4
             if (currentStep === 4) {
@@ -2077,11 +2291,11 @@
                     // Remove existing listeners to prevent duplicates
                     const newCheck = check.cloneNode(true);
                     check.parentNode.replaceChild(newCheck, check);
-                    document.getElementById('finalConsentCheckbox', newCheck);
                     
-                    newCheck.addEventListener('change', () => {
-                        btn.disabled = !newCheck.checked;
+                    newCheck.addEventListener('change', function() {
+                        btn.disabled = !this.checked;
                     });
+                    
                     btn.disabled = !newCheck.checked;
                 }
                 renderReview();
@@ -2092,7 +2306,7 @@
 
         window.nextStep = function() {
             if (currentStep < totalSteps) {
-                // Validation
+                // Validation for step 3
                 if (currentStep === 3) {
                     const gdpr = document.getElementById('consentGDPR');
                     if (!gdpr || !gdpr.checked) {
@@ -2103,6 +2317,13 @@
                     const email = document.getElementById('contactEmail');
                     if (!email || !email.value) {
                         alert('Please enter your contact email.');
+                        return;
+                    }
+                    
+                    // Basic email validation
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(email.value)) {
+                        alert('Please enter a valid email address.');
                         return;
                     }
                 }
@@ -2118,100 +2339,6 @@
                 updateProgress();
             }
         };
-
-        // =========================================================================
-        //  FORM SUBMISSION - WITH FILTERED FEATURES
-        // =========================================================================
-        function setupFormSubmission() {
-            const form = document.getElementById('vibzOrderForm');
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const finalCheck = document.getElementById('finalConsentCheckbox');
-                if (!finalCheck || !finalCheck.checked) {
-                    alert('Please confirm your consent.');
-                    return;
-                }
-                
-                const filtered = getFilteredServices();
-                const allFilteredServices = [...filtered.standard, ...filtered.premium];
-                
-                // Collect all asset data
-                const assetData = {};
-                allFilteredServices.forEach(service => {
-                    const config = FEATURE_ASSETS[service.name];
-                    if (config && config.fields) {
-                        const serviceData = {};
-                        config.fields.forEach((field, index) => {
-                            const fieldId = `feature_${service.name.replace(/\s+/g, '_')}_${index}`;
-                            const element = document.getElementById(fieldId);
-                            if (element) {
-                                if (field.type === 'file') {
-                                    serviceData[field.label] = element.files ? Array.from(element.files).map(f => f.name) : [];
-                                } else {
-                                    serviceData[field.label] = element.value;
-                                }
-                            }
-                        });
-                        assetData[service.name] = serviceData;
-                    }
-                });
-                
-                // Compile complete order data
-                const data = {
-                    orderId: 'VIBZ-' + Date.now().toString().slice(-6),
-                    timestamp: new Date().toISOString(),
-                    plan: {
-                        tier: orderData.tier,
-                        type: orderData.planType,
-                        pages: orderData.pageCount,
-                        designCode: orderData.designCode,
-                        price: orderData.planType === PLAN_CONFIG.monthly.name 
-                            ? (orderData.tier === 'standard' ? '500+125' : '650+225')
-                            : (orderData.tier === 'standard' ? '1500' : '3000')
-                    },
-                    customFeatures: allFilteredServices,
-                    allSelectedFeatures: orderData.services,
-                    helpRequests: orderData.helpRequests,
-                    featureAssets: assetData,
-                    business: {
-                        name: document.getElementById('businessName')?.value || orderData.businessName,
-                        address: document.getElementById('businessAddress')?.value || '',
-                        email: document.getElementById('contactEmail')?.value || '',
-                        phone: document.getElementById('contactPhone')?.value || '',
-                        logo: document.getElementById('noLogoCheckbox')?.checked ? 'needs-ai-logo' : 'uploaded'
-                    },
-                    consent: {
-                        gdpr: document.getElementById('consentGDPR')?.checked || false,
-                        final: finalCheck.checked
-                    }
-                };
-                
-                console.log('📦 Submitting order with feature assets:', {
-                    planTier: orderData.tier,
-                    planType: orderData.planType,
-                    featuresIncluded: allFilteredServices.length,
-                    helpRequests: data.helpRequests.length,
-                    assetsCollected: Object.keys(assetData).length
-                });
-                
-                // Send to Formspree
-                fetch('https://formspree.io/f/mykkzwvy', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                })
-                .then(() => {
-                    document.getElementById('orderFormCard').style.display = 'none';
-                    document.querySelector('.progress').style.display = 'none';
-                    document.getElementById('successScreen').style.display = 'block';
-                })
-                .catch(err => {
-                    alert('There was an error. Please try again or contact support.');
-                    console.error(err);
-                });
-            });
-        }
 
         // =========================================================================
         //  INITIALISE
@@ -2231,10 +2358,22 @@
             });
             
             // Logo toggle
-            document.getElementById('noLogoToggle')?.addEventListener('click', function() {
-                const cb = document.getElementById('noLogoCheckbox');
-                cb.checked = !cb.checked;
-            });
+            const logoToggle = document.getElementById('noLogoToggle');
+            if (logoToggle) {
+                logoToggle.addEventListener('click', function() {
+                    const cb = document.getElementById('noLogoCheckbox');
+                    if (cb) cb.checked = !cb.checked;
+                });
+            }
+            
+            // Logo file upload trigger
+            const logoUploadTrigger = document.getElementById('logoUploadTrigger');
+            const logoFile = document.getElementById('logoFile');
+            if (logoUploadTrigger && logoFile) {
+                logoUploadTrigger.addEventListener('click', function() {
+                    logoFile.click();
+                });
+            }
         };
     </script>
 </body>
