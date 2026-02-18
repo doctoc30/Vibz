@@ -1511,49 +1511,36 @@
 
         // Update UI to show file selected
         function updateFileUploadUI(input) {
+            if (!input || !input.files || input.files.length === 0) return;
+            
+            const file = input.files[0];
+            const fileName = file.name;
+            const shortName = fileName.length > 15 ? fileName.substring(0, 12) + '...' : fileName;
+            
+            // Find the parent container
             const parent = input.closest('.file-upload-box') || input.closest('.file-upload-area') || input.closest('.file-upload-small');
-            if (parent && input.files.length > 0) {
-                const fileName = input.files[0].name;
-                const shortName = fileName.length > 20 ? fileName.substring(0, 17) + '...' : fileName;
-                
+            
+            if (parent) {
                 if (parent.classList.contains('file-upload-box')) {
+                    // Update the box content
+                    const icon = parent.querySelector('i');
                     const span = parent.querySelector('span');
                     if (span) {
                         span.innerHTML = `<i class="fas fa-check-circle" style="color: var(--standard);"></i> ${shortName}`;
                     }
                     parent.style.borderColor = 'var(--standard)';
                     parent.style.backgroundColor = 'rgba(76, 175, 80, 0.05)';
-                } else if (parent.classList.contains('file-upload-area') || parent.classList.contains('file-upload-small')) {
-                    // For upload areas, we'll just show a checkmark
-                    const originalContent = parent.innerHTML;
-                    if (!parent.querySelector('.file-selected-indicator')) {
-                        parent.innerHTML = `<i class="fas fa-check-circle" style="color: var(--standard);"></i> ${shortName}`;
-                    }
+                } else {
+                    // For other upload areas, just show file name
+                    parent.innerHTML = `<i class="fas fa-check-circle" style="color: var(--standard);"></i> ${shortName}`;
                 }
             }
         }
 
-        // Initialize file upload handlers
-        function initFileUploadHandlers() {
-            // Handle all file input changes
-            document.querySelectorAll('input[type="file"]').forEach(input => {
-                // Remove any existing listeners to prevent duplicates
-                input.removeEventListener('change', handleFileChange);
-                input.addEventListener('change', handleFileChange);
-            });
-
-            // Handle placement select changes
-            document.querySelectorAll('.placement-select').forEach(select => {
-                select.removeEventListener('change', handlePlacementChange);
-                select.addEventListener('change', handlePlacementChange);
-            });
-        }
-
-        function handleFileChange(e) {
-            e.preventDefault();
-            e.stopPropagation();
+        // Handle file selection
+        function handleFileSelect(input) {
+            if (!input) return;
             
-            const input = e.target;
             const file = input.files[0];
             if (!file) return;
             
@@ -1573,15 +1560,80 @@
                 }
             }
             
-            // Update UI to show file selected
+            // Update UI
             updateFileUploadUI(input);
         }
 
-        function handlePlacementChange(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            // Store placement preference (you might want to save this)
-            console.log('Placement selected:', e.target.id, e.target.value);
+        // Initialize file upload triggers
+        function initFileUploadTriggers() {
+            // Logo upload
+            const logoTrigger = document.getElementById('logoUploadTrigger');
+            const logoInput = document.getElementById('logoFile');
+            if (logoTrigger && logoInput) {
+                // Remove existing listeners
+                logoTrigger.replaceWith(logoTrigger.cloneNode(true));
+                logoInput.replaceWith(logoInput.cloneNode(true));
+                
+                // Get fresh references
+                const newLogoTrigger = document.getElementById('logoUploadTrigger');
+                const newLogoInput = document.getElementById('logoFile');
+                
+                newLogoTrigger.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    newLogoInput.click();
+                });
+                
+                newLogoInput.addEventListener('change', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleFileSelect(this);
+                });
+            }
+            
+            // Page file upload boxes
+            document.querySelectorAll('.file-upload-box').forEach(box => {
+                const fileInput = box.querySelector('input[type="file"]');
+                if (fileInput) {
+                    // Clone to remove old listeners
+                    const newInput = fileInput.cloneNode(true);
+                    fileInput.parentNode.replaceChild(newInput, fileInput);
+                    
+                    newInput.addEventListener('change', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleFileSelect(this);
+                    });
+                }
+                
+                // Add click handler to the box
+                box.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (e.target.tagName === 'SELECT') return;
+                    const input = this.querySelector('input[type="file"]');
+                    if (input) input.click();
+                });
+            });
+            
+            // Small file upload areas (feature assets)
+            document.querySelectorAll('.file-upload-small').forEach(area => {
+                const inputId = area.getAttribute('onclick')?.match(/'([^']+)'/)?.[1];
+                if (inputId) {
+                    const input = document.getElementById(inputId);
+                    if (input) {
+                        // Clone to remove old listeners
+                        const newInput = input.cloneNode(true);
+                        input.parentNode.replaceChild(newInput, input);
+                        
+                        newInput.addEventListener('change', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleFileSelect(this);
+                        });
+                    }
+                }
+            });
         }
 
         // =========================================================================
@@ -1923,42 +1975,9 @@
                 `;
             }
             container.innerHTML = html;
-
-            // Attach file upload click handlers
-            document.querySelectorAll('.file-upload-box').forEach(box => {
-                box.addEventListener('click', function(e) {
-                    // Prevent if clicked on select
-                    if (e.target.tagName === 'SELECT') return;
-                    const fileInput = this.querySelector('input[type="file"]');
-                    if (fileInput) fileInput.click();
-                });
-            });
-
-            // Attach change event to dropdowns for duplicate detection (non-home)
-            document.querySelectorAll('.page-name-select').forEach(select => {
-                select.addEventListener('change', function() {
-                    const currentPage = this.dataset.page;
-                    const currentVal = this.value;
-                    // Check all other dropdowns
-                    let duplicate = false;
-                    document.querySelectorAll('.page-name-select').forEach(otherSelect => {
-                        if (otherSelect.dataset.page !== currentPage && otherSelect.value === currentVal && currentVal !== '') {
-                            duplicate = true;
-                        }
-                    });
-                    const warnDiv = document.getElementById(`dup_warn_${currentPage}`);
-                    if (warnDiv) {
-                        if (duplicate) {
-                            warnDiv.classList.add('visible');
-                        } else {
-                            warnDiv.classList.remove('visible');
-                        }
-                    }
-                });
-            });
             
-            // Re-initialize file upload handlers for the new inputs
-            initFileUploadHandlers();
+            // Re-initialize file upload triggers after rendering
+            setTimeout(initFileUploadTriggers, 100);
         }
 
         // Toggle skip SEO function
@@ -2125,8 +2144,8 @@
             
             container.innerHTML = html;
             
-            // Re-initialize file upload handlers for the new inputs
-            initFileUploadHandlers();
+            // Re-initialize file upload triggers after rendering
+            setTimeout(initFileUploadTriggers, 100);
         }
 
         // =========================================================================
@@ -2310,11 +2329,7 @@
         function setupFormSubmission() {
             const form = document.getElementById('vibzOrderForm');
             
-            // Remove any existing submit listeners
-            const newForm = form.cloneNode(true);
-            form.parentNode.replaceChild(newForm, form);
-            
-            newForm.addEventListener('submit', function(e) {
+            form.addEventListener('submit', function(e) {
                 e.preventDefault();
                 
                 // Validate final consent
@@ -2377,8 +2392,6 @@
                     alert('There was an error submitting your order. Please check your internet connection and try again. If the problem persists, please contact support@vibz.co.uk');
                 });
             });
-            
-            return newForm;
         }
 
         // =========================================================================
@@ -2406,15 +2419,10 @@
                 const check = document.getElementById('finalConsentCheckbox');
                 const btn = document.getElementById('submitOrderBtn');
                 if (check && btn) {
-                    // Remove existing listeners to prevent duplicates
-                    const newCheck = check.cloneNode(true);
-                    check.parentNode.replaceChild(newCheck, check);
-                    
-                    newCheck.addEventListener('change', function() {
+                    check.addEventListener('change', function() {
                         btn.disabled = !this.checked;
                     });
-                    
-                    btn.disabled = !newCheck.checked;
+                    btn.disabled = !check.checked;
                 }
                 renderReview();
             }
@@ -2467,50 +2475,11 @@
             renderDynamicFeatures();
             renderPageCards();
             
-            // Initialize file upload handlers
-            initFileUploadHandlers();
+            // Initialize file upload triggers
+            setTimeout(initFileUploadTriggers, 200);
             
-            // Setup form submission with file handling
-            const form = setupFormSubmission();
-            
-            // Re-attach navigation buttons to the new form if needed
-            document.getElementById('prevBtn').onclick = prevStep;
-            document.getElementById('nextBtn').onclick = nextStep;
-            
-            // File upload triggers
-            document.querySelectorAll('.file-upload-area').forEach(area => {
-                area.addEventListener('click', function() {
-                    const fileInput = this.querySelector('input[type="file"]');
-                    if (fileInput) fileInput.click();
-                });
-            });
-            
-            // Logo toggle
-            const logoToggle = document.getElementById('noLogoToggle');
-            if (logoToggle) {
-                logoToggle.addEventListener('click', function() {
-                    const cb = document.getElementById('noLogoCheckbox');
-                    if (cb) cb.checked = !cb.checked;
-                    
-                    // Visual feedback
-                    if (cb.checked) {
-                        this.style.backgroundColor = 'rgba(76, 175, 80, 0.1)';
-                        this.style.borderColor = 'var(--standard)';
-                    } else {
-                        this.style.backgroundColor = 'rgba(255,107,0,0.04)';
-                        this.style.borderColor = 'var(--border)';
-                    }
-                });
-            }
-            
-            // Logo file upload trigger
-            const logoUploadTrigger = document.getElementById('logoUploadTrigger');
-            const logoFile = document.getElementById('logoFile');
-            if (logoUploadTrigger && logoFile) {
-                logoUploadTrigger.addEventListener('click', function() {
-                    logoFile.click();
-                });
-            }
+            // Setup form submission
+            setupFormSubmission();
             
             // Initial progress update
             updateProgress();
