@@ -788,6 +788,18 @@
             margin-top: 4px;
             word-break: break-all;
         }
+        
+        /* Make file inputs accessible but hidden */
+        .hidden-file-input {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
     </style>
 </head>
 <body>
@@ -875,8 +887,8 @@
                             <i class="fas fa-cloud-upload-alt"></i>
                             <p>Click to upload your logo</p>
                             <small>PNG, JPG, SVG • Max 5MB</small>
-                            <input type="file" id="logoFile" name="logoFile" accept=".png,.jpg,.jpeg,.svg" style="display: none;">
                         </div>
+                        <input type="file" id="logoFile" name="logoFile" accept=".png,.jpg,.jpeg,.svg" class="hidden-file-input">
                         <div class="ai-toggle" id="noLogoToggle">
                             <i class="fas fa-magic"></i>
                             <span>I don't have a logo — create one for me</span>
@@ -1513,9 +1525,6 @@
             pageCount: 5
         };
 
-        // Track selected files
-        let selectedFiles = {};
-
         // =========================================================================
         //  LOAD FROM INDEX.HTML - INCLUDING HELP REQUESTS
         // =========================================================================
@@ -1770,36 +1779,33 @@
                 // File upload grid (3 boxes)
                 const fileUploadGrid = `
                     <div class="file-upload-grid">
-                        <div class="file-upload-box" data-page="${i}" data-num="1" id="page_${i}_box1" onclick="document.getElementById('page_${i}_file1').click(); return false;">
+                        <div class="file-upload-box" data-page="${i}" data-num="1" id="page_${i}_box1">
                             <i class="fas fa-cloud-upload-alt"></i>
                             <span id="page_${i}_file1_label">Upload 1</span>
                             <small>PNG, JPG, MP4</small>
-                            <input type="file" id="page_${i}_file1" name="page_${i}_file1" accept=".png,.jpg,.jpeg,.mp4,.mov" style="display: none;" onchange="handleFileSelect('page_${i}_file1', 'page_${i}_file1_label')">
-                            <select class="placement-select" id="page_${i}_place1" name="page_${i}_place1" onclick="event.stopPropagation();">
+                            <select class="placement-select" id="page_${i}_place1" name="page_${i}_place1">
                                 <option value="">Placement</option>
                                 <option value="top">Top section</option>
                                 <option value="mid">Mid section</option>
                                 <option value="bottom">Bottom section</option>
                             </select>
                         </div>
-                        <div class="file-upload-box" data-page="${i}" data-num="2" id="page_${i}_box2" onclick="document.getElementById('page_${i}_file2').click(); return false;">
+                        <div class="file-upload-box" data-page="${i}" data-num="2" id="page_${i}_box2">
                             <i class="fas fa-cloud-upload-alt"></i>
                             <span id="page_${i}_file2_label">Upload 2</span>
                             <small>PNG, JPG, MP4</small>
-                            <input type="file" id="page_${i}_file2" name="page_${i}_file2" accept=".png,.jpg,.jpeg,.mp4,.mov" style="display: none;" onchange="handleFileSelect('page_${i}_file2', 'page_${i}_file2_label')">
-                            <select class="placement-select" id="page_${i}_place2" name="page_${i}_place2" onclick="event.stopPropagation();">
+                            <select class="placement-select" id="page_${i}_place2" name="page_${i}_place2">
                                 <option value="">Placement</option>
                                 <option value="top">Top section</option>
                                 <option value="mid">Mid section</option>
                                 <option value="bottom">Bottom section</option>
                             </select>
                         </div>
-                        <div class="file-upload-box" data-page="${i}" data-num="3" id="page_${i}_box3" onclick="document.getElementById('page_${i}_file3').click(); return false;">
+                        <div class="file-upload-box" data-page="${i}" data-num="3" id="page_${i}_box3">
                             <i class="fas fa-cloud-upload-alt"></i>
                             <span id="page_${i}_file3_label">Upload 3</span>
                             <small>PNG, JPG, MP4</small>
-                            <input type="file" id="page_${i}_file3" name="page_${i}_file3" accept=".png,.jpg,.jpeg,.mp4,.mov" style="display: none;" onchange="handleFileSelect('page_${i}_file3', 'page_${i}_file3_label')">
-                            <select class="placement-select" id="page_${i}_place3" name="page_${i}_place3" onclick="event.stopPropagation();">
+                            <select class="placement-select" id="page_${i}_place3" name="page_${i}_place3">
                                 <option value="">Placement</option>
                                 <option value="top">Top section</option>
                                 <option value="mid">Mid section</option>
@@ -1856,6 +1862,48 @@
             }
             container.innerHTML = html;
             
+            // Create hidden file inputs and attach click handlers
+            for (let i = 1; i <= orderData.pageCount; i++) {
+                for (let f = 1; f <= 3; f++) {
+                    // Create hidden file input
+                    const fileInput = document.createElement('input');
+                    fileInput.type = 'file';
+                    fileInput.id = `page_${i}_file${f}`;
+                    fileInput.name = `page_${i}_file${f}`;
+                    fileInput.accept = '.png,.jpg,.jpeg,.mp4,.mov';
+                    fileInput.className = 'hidden-file-input';
+                    fileInput.onchange = function(e) {
+                        const inputId = this.id;
+                        const labelId = inputId.replace('file', 'file_label');
+                        const label = document.getElementById(labelId);
+                        if (label && this.files.length > 0) {
+                            const fileName = this.files[0].name;
+                            const shortName = fileName.length > 20 ? fileName.substring(0, 17) + '...' : fileName;
+                            label.innerHTML = `<i class="fas fa-check-circle" style="color: var(--standard);"></i> ${shortName}`;
+                            
+                            // Add visual feedback to parent box
+                            const boxId = inputId.replace('file', 'box');
+                            const box = document.getElementById(boxId);
+                            if (box) {
+                                box.style.borderColor = 'var(--standard)';
+                                box.style.backgroundColor = 'rgba(76, 175, 80, 0.05)';
+                            }
+                        }
+                    };
+                    document.body.appendChild(fileInput);
+                    
+                    // Attach click handler to box
+                    const box = document.getElementById(`page_${i}_box${f}`);
+                    if (box) {
+                        box.onclick = function(e) {
+                            if (e.target.tagName === 'SELECT') return;
+                            e.preventDefault();
+                            document.getElementById(`page_${i}_file${f}`).click();
+                        };
+                    }
+                }
+            }
+            
             // Re-attach duplicate detection
             document.querySelectorAll('.page-name-select').forEach(select => {
                 select.addEventListener('change', function() {
@@ -1878,30 +1926,6 @@
                 });
             });
         }
-
-        // Handle file selection
-        window.handleFileSelect = function(inputId, labelId) {
-            const input = document.getElementById(inputId);
-            const label = document.getElementById(labelId);
-            if (input && input.files.length > 0) {
-                const fileName = input.files[0].name;
-                const shortName = fileName.length > 20 ? fileName.substring(0, 17) + '...' : fileName;
-                label.innerHTML = `<i class="fas fa-check-circle" style="color: var(--standard);"></i> ${shortName}`;
-                
-                // Store in selectedFiles
-                if (!selectedFiles[inputId]) {
-                    selectedFiles[inputId] = [];
-                }
-                selectedFiles[inputId] = Array.from(input.files);
-                
-                // Add visual feedback to parent box
-                const box = input.closest('.file-upload-box');
-                if (box) {
-                    box.style.borderColor = 'var(--standard)';
-                    box.style.backgroundColor = 'rgba(76, 175, 80, 0.05)';
-                }
-            }
-        };
 
         // Toggle skip SEO function
         window.toggleSkipSeo = function(pageId) {
@@ -2004,12 +2028,11 @@
                             <div class="field-row">
                                 <div class="field-label">${field.label}:</div>
                                 <div>
-                                    <div class="file-upload-small" onclick="document.getElementById('${fieldId}').click(); return false;">
+                                    <div class="file-upload-small" id="${fieldId}_trigger">
                                         <i class="fas fa-cloud-upload-alt"></i>
                                         <span id="${fieldId}_label">Click to upload</span>
                                         <small>${field.help || 'PNG, JPG, PDF'}</small>
                                     </div>
-                                    <input type="file" id="${fieldId}" name="${fieldName}" accept="${field.accept || '.png,.jpg,.jpeg'}" ${field.multiple ? 'multiple' : ''} style="display: none;" onchange="handleFeatureFileSelect('${fieldId}', '${fieldId}_label'${field.multiple ? ', true' : ''})">
                                 </div>
                             </div>
                         `;
@@ -2077,36 +2100,55 @@
             });
             
             container.innerHTML = html;
+            
+            // Create hidden file inputs and attach click handlers for feature files
+            allFilteredServices.forEach(service => {
+                const assetConfig = FEATURE_ASSETS[service.name] || { fields: [] };
+                assetConfig.fields.forEach((field, index) => {
+                    if (field.type === 'file') {
+                        const fieldId = `feature_${service.name.replace(/\s+/g, '_')}_${index}`;
+                        
+                        // Create hidden file input
+                        const fileInput = document.createElement('input');
+                        fileInput.type = 'file';
+                        fileInput.id = fieldId;
+                        fileInput.name = fieldId;
+                        fileInput.accept = field.accept || '.png,.jpg,.jpeg';
+                        if (field.multiple) fileInput.multiple = true;
+                        fileInput.className = 'hidden-file-input';
+                        fileInput.onchange = function(e) {
+                            const label = document.getElementById(fieldId + '_label');
+                            if (label && this.files.length > 0) {
+                                if (this.files.length === 1) {
+                                    const fileName = this.files[0].name;
+                                    const shortName = fileName.length > 20 ? fileName.substring(0, 17) + '...' : fileName;
+                                    label.innerHTML = `<i class="fas fa-check-circle" style="color: var(--standard);"></i> ${shortName}`;
+                                } else {
+                                    label.innerHTML = `<i class="fas fa-check-circle" style="color: var(--standard);"></i> ${this.files.length} files selected`;
+                                }
+                                
+                                // Add visual feedback
+                                const trigger = document.getElementById(fieldId + '_trigger');
+                                if (trigger) {
+                                    trigger.style.borderColor = 'var(--standard)';
+                                    trigger.style.backgroundColor = 'rgba(76, 175, 80, 0.05)';
+                                }
+                            }
+                        };
+                        document.body.appendChild(fileInput);
+                        
+                        // Attach click handler
+                        const trigger = document.getElementById(fieldId + '_trigger');
+                        if (trigger) {
+                            trigger.onclick = function(e) {
+                                e.preventDefault();
+                                document.getElementById(fieldId).click();
+                            };
+                        }
+                    }
+                });
+            });
         }
-
-        // Handle feature file selection
-        window.handleFeatureFileSelect = function(inputId, labelId, isMultiple) {
-            const input = document.getElementById(inputId);
-            const label = document.getElementById(labelId);
-            if (input && input.files.length > 0) {
-                const fileCount = input.files.length;
-                if (fileCount === 1) {
-                    const fileName = input.files[0].name;
-                    const shortName = fileName.length > 20 ? fileName.substring(0, 17) + '...' : fileName;
-                    label.innerHTML = `<i class="fas fa-check-circle" style="color: var(--standard);"></i> ${shortName}`;
-                } else {
-                    label.innerHTML = `<i class="fas fa-check-circle" style="color: var(--standard);"></i> ${fileCount} files selected`;
-                }
-                
-                // Store in selectedFiles
-                if (!selectedFiles[inputId]) {
-                    selectedFiles[inputId] = [];
-                }
-                selectedFiles[inputId] = Array.from(input.files);
-                
-                // Add visual feedback
-                const uploadDiv = input.closest('.field-row')?.querySelector('.file-upload-small');
-                if (uploadDiv) {
-                    uploadDiv.style.borderColor = 'var(--standard)';
-                    uploadDiv.style.backgroundColor = 'rgba(76, 175, 80, 0.05)';
-                }
-            }
-        };
 
         // =========================================================================
         //  REQUEST HELP FOR A FEATURE
@@ -2328,7 +2370,30 @@
             // Set up logo upload
             const logoTrigger = document.getElementById('logoUploadTrigger');
             const logoInput = document.getElementById('logoFile');
-            if (logoTrigger && logoInput) {
+            if (!logoInput) {
+                // Create logo file input if it doesn't exist
+                const newLogoInput = document.createElement('input');
+                newLogoInput.type = 'file';
+                newLogoInput.id = 'logoFile';
+                newLogoInput.name = 'logoFile';
+                newLogoInput.accept = '.png,.jpg,.jpeg,.svg';
+                newLogoInput.className = 'hidden-file-input';
+                newLogoInput.onchange = function(e) {
+                    if (e.target.files.length > 0) {
+                        const fileName = e.target.files[0].name;
+                        const shortName = fileName.length > 20 ? fileName.substring(0, 17) + '...' : fileName;
+                        logoTrigger.innerHTML = `<i class="fas fa-check-circle" style="color: var(--standard);"></i> ${shortName}`;
+                        logoTrigger.style.borderColor = 'var(--standard)';
+                        logoTrigger.style.backgroundColor = 'rgba(76, 175, 80, 0.05)';
+                    }
+                };
+                document.body.appendChild(newLogoInput);
+                
+                logoTrigger.onclick = function(e) {
+                    e.preventDefault();
+                    newLogoInput.click();
+                };
+            } else {
                 logoTrigger.onclick = function(e) {
                     e.preventDefault();
                     logoInput.click();
