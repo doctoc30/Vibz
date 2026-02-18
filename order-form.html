@@ -780,6 +780,14 @@
             border-color: var(--standard) !important;
             background-color: rgba(76, 175, 80, 0.05) !important;
         }
+        
+        .selected-file-name {
+            color: var(--standard);
+            font-weight: 600;
+            font-size: 0.7rem;
+            margin-top: 4px;
+            word-break: break-all;
+        }
     </style>
 </head>
 <body>
@@ -1506,11 +1514,7 @@
         };
 
         // Track selected files
-        let selectedFiles = {
-            logo: null,
-            pageFiles: {},
-            featureFiles: {}
-        };
+        let selectedFiles = {};
 
         // =========================================================================
         //  LOAD FROM INDEX.HTML - INCLUDING HELP REQUESTS
@@ -1766,36 +1770,36 @@
                 // File upload grid (3 boxes)
                 const fileUploadGrid = `
                     <div class="file-upload-grid">
-                        <div class="file-upload-box" data-page="${i}" data-num="1" id="page_${i}_box1">
+                        <div class="file-upload-box" data-page="${i}" data-num="1" id="page_${i}_box1" onclick="document.getElementById('page_${i}_file1').click(); return false;">
                             <i class="fas fa-cloud-upload-alt"></i>
-                            <span>Upload 1</span>
+                            <span id="page_${i}_file1_label">Upload 1</span>
                             <small>PNG, JPG, MP4</small>
-                            <input type="file" id="page_${i}_file1" name="page_${i}_file1" accept=".png,.jpg,.jpeg,.mp4,.mov" style="display: none;">
-                            <select class="placement-select" id="page_${i}_place1" name="page_${i}_place1">
+                            <input type="file" id="page_${i}_file1" name="page_${i}_file1" accept=".png,.jpg,.jpeg,.mp4,.mov" style="display: none;" onchange="handleFileSelect('page_${i}_file1', 'page_${i}_file1_label')">
+                            <select class="placement-select" id="page_${i}_place1" name="page_${i}_place1" onclick="event.stopPropagation();">
                                 <option value="">Placement</option>
                                 <option value="top">Top section</option>
                                 <option value="mid">Mid section</option>
                                 <option value="bottom">Bottom section</option>
                             </select>
                         </div>
-                        <div class="file-upload-box" data-page="${i}" data-num="2" id="page_${i}_box2">
+                        <div class="file-upload-box" data-page="${i}" data-num="2" id="page_${i}_box2" onclick="document.getElementById('page_${i}_file2').click(); return false;">
                             <i class="fas fa-cloud-upload-alt"></i>
-                            <span>Upload 2</span>
+                            <span id="page_${i}_file2_label">Upload 2</span>
                             <small>PNG, JPG, MP4</small>
-                            <input type="file" id="page_${i}_file2" name="page_${i}_file2" accept=".png,.jpg,.jpeg,.mp4,.mov" style="display: none;">
-                            <select class="placement-select" id="page_${i}_place2" name="page_${i}_place2">
+                            <input type="file" id="page_${i}_file2" name="page_${i}_file2" accept=".png,.jpg,.jpeg,.mp4,.mov" style="display: none;" onchange="handleFileSelect('page_${i}_file2', 'page_${i}_file2_label')">
+                            <select class="placement-select" id="page_${i}_place2" name="page_${i}_place2" onclick="event.stopPropagation();">
                                 <option value="">Placement</option>
                                 <option value="top">Top section</option>
                                 <option value="mid">Mid section</option>
                                 <option value="bottom">Bottom section</option>
                             </select>
                         </div>
-                        <div class="file-upload-box" data-page="${i}" data-num="3" id="page_${i}_box3">
+                        <div class="file-upload-box" data-page="${i}" data-num="3" id="page_${i}_box3" onclick="document.getElementById('page_${i}_file3').click(); return false;">
                             <i class="fas fa-cloud-upload-alt"></i>
-                            <span>Upload 3</span>
+                            <span id="page_${i}_file3_label">Upload 3</span>
                             <small>PNG, JPG, MP4</small>
-                            <input type="file" id="page_${i}_file3" name="page_${i}_file3" accept=".png,.jpg,.jpeg,.mp4,.mov" style="display: none;">
-                            <select class="placement-select" id="page_${i}_place3" name="page_${i}_place3">
+                            <input type="file" id="page_${i}_file3" name="page_${i}_file3" accept=".png,.jpg,.jpeg,.mp4,.mov" style="display: none;" onchange="handleFileSelect('page_${i}_file3', 'page_${i}_file3_label')">
+                            <select class="placement-select" id="page_${i}_place3" name="page_${i}_place3" onclick="event.stopPropagation();">
                                 <option value="">Placement</option>
                                 <option value="top">Top section</option>
                                 <option value="mid">Mid section</option>
@@ -1852,96 +1856,52 @@
             }
             container.innerHTML = html;
             
-            // Initialize file upload handlers for page files
-            initializeFileUploads();
-        }
-
-        // Initialize all file upload handlers
-        function initializeFileUploads() {
-            // Logo upload
-            const logoTrigger = document.getElementById('logoUploadTrigger');
-            const logoInput = document.getElementById('logoFile');
-            if (logoTrigger && logoInput) {
-                logoTrigger.onclick = (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    logoInput.click();
-                };
-                
-                logoInput.onchange = (e) => {
-                    if (e.target.files.length > 0) {
-                        selectedFiles.logo = e.target.files[0];
-                        logoTrigger.innerHTML = `<i class="fas fa-check-circle" style="color: var(--standard);"></i> ${e.target.files[0].name}`;
-                        logoTrigger.classList.add('file-selected');
-                    }
-                };
-            }
-            
-            // Page file uploads
-            for (let i = 1; i <= orderData.pageCount; i++) {
-                for (let f = 1; f <= 3; f++) {
-                    const box = document.getElementById(`page_${i}_box${f}`);
-                    const input = document.getElementById(`page_${i}_file${f}`);
-                    
-                    if (box && input) {
-                        box.onclick = (e) => {
-                            if (e.target.tagName === 'SELECT') return;
-                            e.preventDefault();
-                            e.stopPropagation();
-                            input.click();
-                        };
-                        
-                        input.onchange = (e) => {
-                            if (e.target.files.length > 0) {
-                                const file = e.target.files[0];
-                                const key = `page_${i}_file${f}`;
-                                selectedFiles.pageFiles[key] = file;
-                                
-                                // Update UI
-                                const span = box.querySelector('span');
-                                if (span) {
-                                    span.innerHTML = `<i class="fas fa-check-circle" style="color: var(--standard);"></i> ${file.name.substring(0, 15)}...`;
-                                }
-                                box.classList.add('file-selected');
-                            }
-                        };
-                    }
-                }
-            }
-            
-            // Feature asset file uploads
-            document.querySelectorAll('[id^="feature_"]').forEach(input => {
-                if (input.type === 'file') {
-                    const parent = input.closest('.field-row');
-                    if (parent) {
-                        const uploadDiv = parent.querySelector('.file-upload-small');
-                        if (uploadDiv) {
-                            uploadDiv.onclick = (e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                input.click();
-                            };
-                            
-                            input.onchange = (e) => {
-                                if (e.target.files.length > 0) {
-                                    const key = e.target.id;
-                                    if (!selectedFiles.featureFiles[key]) {
-                                        selectedFiles.featureFiles[key] = [];
-                                    }
-                                    for (let i = 0; i < e.target.files.length; i++) {
-                                        selectedFiles.featureFiles[key].push(e.target.files[i]);
-                                    }
-                                    
-                                    // Update UI
-                                    uploadDiv.innerHTML = `<i class="fas fa-check-circle" style="color: var(--standard);"></i> ${e.target.files.length} file(s) selected`;
-                                    uploadDiv.classList.add('file-selected');
-                                }
-                            };
+            // Re-attach duplicate detection
+            document.querySelectorAll('.page-name-select').forEach(select => {
+                select.addEventListener('change', function() {
+                    const currentPage = this.dataset.page;
+                    const currentVal = this.value;
+                    let duplicate = false;
+                    document.querySelectorAll('.page-name-select').forEach(otherSelect => {
+                        if (otherSelect.dataset.page !== currentPage && otherSelect.value === currentVal && currentVal !== '') {
+                            duplicate = true;
+                        }
+                    });
+                    const warnDiv = document.getElementById(`dup_warn_${currentPage}`);
+                    if (warnDiv) {
+                        if (duplicate) {
+                            warnDiv.classList.add('visible');
+                        } else {
+                            warnDiv.classList.remove('visible');
                         }
                     }
-                }
+                });
             });
         }
+
+        // Handle file selection
+        window.handleFileSelect = function(inputId, labelId) {
+            const input = document.getElementById(inputId);
+            const label = document.getElementById(labelId);
+            if (input && input.files.length > 0) {
+                const fileName = input.files[0].name;
+                const shortName = fileName.length > 20 ? fileName.substring(0, 17) + '...' : fileName;
+                label.innerHTML = `<i class="fas fa-check-circle" style="color: var(--standard);"></i> ${shortName}`;
+                
+                // Store in selectedFiles
+                if (!selectedFiles[inputId]) {
+                    selectedFiles[inputId] = [];
+                }
+                selectedFiles[inputId] = Array.from(input.files);
+                
+                // Add visual feedback to parent box
+                const box = input.closest('.file-upload-box');
+                if (box) {
+                    box.style.borderColor = 'var(--standard)';
+                    box.style.backgroundColor = 'rgba(76, 175, 80, 0.05)';
+                }
+            }
+        };
 
         // Toggle skip SEO function
         window.toggleSkipSeo = function(pageId) {
@@ -1979,13 +1939,22 @@
             const filtered = getFilteredServices();
             const totalFeatures = filtered.standard.length + filtered.premium.length;
             
+            // Count files
+            let fileCount = 0;
+            if (document.getElementById('logoFile')?.files.length > 0) fileCount++;
+            for (let i = 1; i <= orderData.pageCount; i++) {
+                for (let f = 1; f <= 3; f++) {
+                    if (document.getElementById(`page_${i}_file${f}`)?.files.length > 0) fileCount++;
+                }
+            }
+            
             container.innerHTML = `
                 <div style="margin-bottom: 16px;"><strong>Plan:</strong> ${TIER_CONFIG[orderData.tier].name} / ${orderData.planType}</div>
                 ${totalFeatures > 0 ? `<div style="margin-bottom: 16px;"><strong>Custom features:</strong> ${totalFeatures} selected</div>` : ''}
                 <div style="margin-bottom: 16px;"><strong>Business:</strong> ${business}</div>
                 <div style="margin-bottom: 16px;"><strong>Contact:</strong> ${email}</div>
                 <div><strong>Pages:</strong> ${orderData.pageCount} total</div>
-                <div style="margin-top: 12px;"><strong>Files:</strong> ${Object.keys(selectedFiles.pageFiles).length + (selectedFiles.logo ? 1 : 0) + Object.keys(selectedFiles.featureFiles).length} file(s) selected</div>
+                <div style="margin-top: 12px;"><strong>Files:</strong> ${fileCount} file(s) selected</div>
                 ${orderData.designCode ? `<div style="margin-top: 12px;"><strong>Design:</strong> ${orderData.designCode}</div>` : ''}
             `;
             
@@ -2035,12 +2004,12 @@
                             <div class="field-row">
                                 <div class="field-label">${field.label}:</div>
                                 <div>
-                                    <div class="file-upload-small" id="${fieldId}_trigger">
+                                    <div class="file-upload-small" onclick="document.getElementById('${fieldId}').click(); return false;">
                                         <i class="fas fa-cloud-upload-alt"></i>
-                                        <span>Click to upload</span>
+                                        <span id="${fieldId}_label">Click to upload</span>
                                         <small>${field.help || 'PNG, JPG, PDF'}</small>
                                     </div>
-                                    <input type="file" id="${fieldId}" name="${fieldName}" accept="${field.accept || '.png,.jpg,.jpeg'}" ${field.multiple ? 'multiple' : ''} style="display: none;">
+                                    <input type="file" id="${fieldId}" name="${fieldName}" accept="${field.accept || '.png,.jpg,.jpeg'}" ${field.multiple ? 'multiple' : ''} style="display: none;" onchange="handleFeatureFileSelect('${fieldId}', '${fieldId}_label'${field.multiple ? ', true' : ''})">
                                 </div>
                             </div>
                         `;
@@ -2108,12 +2077,36 @@
             });
             
             container.innerHTML = html;
-            
-            // Initialize feature file uploads
-            setTimeout(() => {
-                initializeFileUploads();
-            }, 100);
         }
+
+        // Handle feature file selection
+        window.handleFeatureFileSelect = function(inputId, labelId, isMultiple) {
+            const input = document.getElementById(inputId);
+            const label = document.getElementById(labelId);
+            if (input && input.files.length > 0) {
+                const fileCount = input.files.length;
+                if (fileCount === 1) {
+                    const fileName = input.files[0].name;
+                    const shortName = fileName.length > 20 ? fileName.substring(0, 17) + '...' : fileName;
+                    label.innerHTML = `<i class="fas fa-check-circle" style="color: var(--standard);"></i> ${shortName}`;
+                } else {
+                    label.innerHTML = `<i class="fas fa-check-circle" style="color: var(--standard);"></i> ${fileCount} files selected`;
+                }
+                
+                // Store in selectedFiles
+                if (!selectedFiles[inputId]) {
+                    selectedFiles[inputId] = [];
+                }
+                selectedFiles[inputId] = Array.from(input.files);
+                
+                // Add visual feedback
+                const uploadDiv = input.closest('.field-row')?.querySelector('.file-upload-small');
+                if (uploadDiv) {
+                    uploadDiv.style.borderColor = 'var(--standard)';
+                    uploadDiv.style.backgroundColor = 'rgba(76, 175, 80, 0.05)';
+                }
+            }
+        };
 
         // =========================================================================
         //  REQUEST HELP FOR A FEATURE
@@ -2180,21 +2173,26 @@
                 return;
             }
             
+            // Validate email
+            const email = document.getElementById('contactEmail');
+            if (!email || !email.value) {
+                alert('Please enter your contact email.');
+                return;
+            }
+            
             // Show loading overlay
             document.getElementById('loadingOverlay').style.display = 'flex';
             
-            // Create FormData object
-            const formData = new FormData();
+            // Create FormData object from the form
+            const form = document.getElementById('vibzOrderForm');
+            const formData = new FormData(form);
             
-            // Add order metadata
+            // Add additional data
             formData.append('orderId', 'VIBZ-' + Date.now().toString().slice(-6));
             formData.append('timestamp', new Date().toISOString());
             formData.append('formType', 'vibz_order_form');
-            
-            // Add plan data
             formData.append('planTier', orderData.tier);
             formData.append('planType', orderData.planType);
-            formData.append('pageCount', orderData.pageCount);
             formData.append('designCode', orderData.designCode || '');
             
             // Add selected features
@@ -2203,74 +2201,7 @@
             formData.append('customFeatures', JSON.stringify(allFilteredServices));
             formData.append('helpRequests', JSON.stringify(orderData.helpRequests));
             
-            // Add business details
-            formData.append('businessName', document.getElementById('businessName')?.value || '');
-            formData.append('businessAddress', document.getElementById('businessAddress')?.value || '');
-            formData.append('contactEmail', document.getElementById('contactEmail')?.value || '');
-            formData.append('contactPhone', document.getElementById('contactPhone')?.value || '');
-            formData.append('noLogo', document.getElementById('noLogoCheckbox')?.checked ? 'true' : 'false');
-            
-            // Add SEO data
-            formData.append('seoKeyword1', document.getElementById('seoKeyword1')?.value || '');
-            formData.append('seoKeywords', document.getElementById('seoKeywords')?.value || '');
-            formData.append('seoLocation', document.getElementById('seoLocation')?.value || '');
-            
-            // Add consent data
-            formData.append('consentGDPR', document.getElementById('consentGDPR')?.checked ? 'true' : 'false');
-            
-            // Add page data
-            for (let i = 1; i <= orderData.pageCount; i++) {
-                const pageName = document.getElementById(`page_name_${i}`)?.value || `Page ${i}`;
-                formData.append(`page_${i}_name`, pageName);
-                formData.append(`page_${i}_brief`, document.getElementById(`page_brief_${i}`)?.value || '');
-                formData.append(`page_${i}_seo1`, document.getElementById(`page_seo1_${i}`)?.value || '');
-                formData.append(`page_${i}_seo2`, document.getElementById(`page_seo2_${i}`)?.value || '');
-                
-                // Add placement data
-                for (let f = 1; f <= 3; f++) {
-                    const placeSelect = document.getElementById(`page_${i}_place${f}`);
-                    if (placeSelect) {
-                        formData.append(`page_${i}_place${f}`, placeSelect.value || '');
-                    }
-                }
-            }
-            
-            // Add logo file
-            if (selectedFiles.logo) {
-                formData.append('logoFile', selectedFiles.logo);
-            }
-            
-            // Add page files
-            Object.keys(selectedFiles.pageFiles).forEach(key => {
-                formData.append(key, selectedFiles.pageFiles[key]);
-            });
-            
-            // Add feature files
-            Object.keys(selectedFiles.featureFiles).forEach(key => {
-                selectedFiles.featureFiles[key].forEach(file => {
-                    formData.append(key, file);
-                });
-            });
-            
-            // Add feature text data
-            allFilteredServices.forEach(service => {
-                const config = FEATURE_ASSETS[service.name];
-                if (config && config.fields) {
-                    config.fields.forEach((field, index) => {
-                        const fieldId = `feature_${service.name.replace(/\s+/g, '_')}_${index}`;
-                        const element = document.getElementById(fieldId);
-                        if (element && field.type !== 'file') {
-                            formData.append(fieldId, element.value || '');
-                        }
-                    });
-                }
-            });
-            
-            console.log('📦 Submitting order with files:', {
-                hasLogo: !!selectedFiles.logo,
-                pageFiles: Object.keys(selectedFiles.pageFiles).length,
-                featureFiles: Object.keys(selectedFiles.featureFiles).length
-            });
+            console.log('📦 Submitting order...');
             
             // Send to Apps Script Web App
             fetch('https://script.google.com/macros/s/AKfycbz5dNjGMzp67NgGiwtYzNcHVzPrtHFgoPyvInyv2CLi2P2yXL9xK2hiRaA9oraTdQy9Wg/exec', {
@@ -2290,8 +2221,7 @@
                 document.getElementById('successScreen').style.display = 'block';
                 
                 // Update confirmation email
-                const email = document.getElementById('contactEmail')?.value || '';
-                document.getElementById('confirmationEmailDisplay').innerText = email;
+                document.getElementById('confirmationEmailDisplay').innerText = email.value;
                 
                 // Clear any stored data
                 try {
@@ -2395,14 +2325,31 @@
             const form = document.getElementById('vibzOrderForm');
             form.onsubmit = submitForm;
             
-            // Initial progress update
-            updateProgress();
+            // Set up logo upload
+            const logoTrigger = document.getElementById('logoUploadTrigger');
+            const logoInput = document.getElementById('logoFile');
+            if (logoTrigger && logoInput) {
+                logoTrigger.onclick = function(e) {
+                    e.preventDefault();
+                    logoInput.click();
+                };
+                
+                logoInput.onchange = function(e) {
+                    if (e.target.files.length > 0) {
+                        const fileName = e.target.files[0].name;
+                        const shortName = fileName.length > 20 ? fileName.substring(0, 17) + '...' : fileName;
+                        logoTrigger.innerHTML = `<i class="fas fa-check-circle" style="color: var(--standard);"></i> ${shortName}`;
+                        logoTrigger.style.borderColor = 'var(--standard)';
+                        logoTrigger.style.backgroundColor = 'rgba(76, 175, 80, 0.05)';
+                    }
+                };
+            }
             
             // Logo toggle
             const logoToggle = document.getElementById('noLogoToggle');
             const logoCheckbox = document.getElementById('noLogoCheckbox');
             if (logoToggle && logoCheckbox) {
-                logoToggle.onclick = (e) => {
+                logoToggle.onclick = function(e) {
                     e.preventDefault();
                     logoCheckbox.checked = !logoCheckbox.checked;
                     if (logoCheckbox.checked) {
@@ -2414,6 +2361,9 @@
                     }
                 };
             }
+            
+            // Initial progress update
+            updateProgress();
         };
     </script>
 </body>
