@@ -1509,49 +1509,6 @@
             logoFile: null
         };
 
-        // Initialize file upload handlers
-        function initFileUploadHandlers() {
-            // Handle all file input changes
-            document.querySelectorAll('input[type="file"]').forEach(input => {
-                input.addEventListener('change', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    const file = this.files[0];
-                    if (!file) return;
-                    
-                    // Store the file
-                    const inputId = this.id;
-                    if (inputId === 'logoFile') {
-                        uploadedFiles.logoFile = file;
-                    } else if (inputId.startsWith('page_')) {
-                        uploadedFiles.pageFiles[inputId] = file;
-                    } else if (inputId.startsWith('feature_')) {
-                        if (!uploadedFiles.featureFiles[inputId]) {
-                            uploadedFiles.featureFiles[inputId] = [];
-                        }
-                        // Handle multiple files
-                        for (let i = 0; i < this.files.length; i++) {
-                            uploadedFiles.featureFiles[inputId].push(this.files[i]);
-                        }
-                    }
-                    
-                    // Update UI to show file selected
-                    updateFileUploadUI(this);
-                });
-            });
-
-            // Handle placement select changes
-            document.querySelectorAll('.placement-select').forEach(select => {
-                select.addEventListener('change', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    // Store placement preference
-                    console.log('Placement selected:', this.id, this.value);
-                });
-            });
-        }
-
         // Update UI to show file selected
         function updateFileUploadUI(input) {
             const parent = input.closest('.file-upload-box') || input.closest('.file-upload-area') || input.closest('.file-upload-small');
@@ -1560,7 +1517,6 @@
                 const shortName = fileName.length > 20 ? fileName.substring(0, 17) + '...' : fileName;
                 
                 if (parent.classList.contains('file-upload-box')) {
-                    const icon = parent.querySelector('i');
                     const span = parent.querySelector('span');
                     if (span) {
                         span.innerHTML = `<i class="fas fa-check-circle" style="color: var(--standard);"></i> ${shortName}`;
@@ -1568,111 +1524,65 @@
                     parent.style.borderColor = 'var(--standard)';
                     parent.style.backgroundColor = 'rgba(76, 175, 80, 0.05)';
                 } else if (parent.classList.contains('file-upload-area') || parent.classList.contains('file-upload-small')) {
-                    parent.innerHTML = `<i class="fas fa-check-circle" style="color: var(--standard);"></i> ${shortName}`;
+                    // For upload areas, we'll just show a checkmark
+                    const originalContent = parent.innerHTML;
+                    if (!parent.querySelector('.file-selected-indicator')) {
+                        parent.innerHTML = `<i class="fas fa-check-circle" style="color: var(--standard);"></i> ${shortName}`;
+                    }
                 }
             }
         }
 
-        // Override the collectAllFormData function to include file data
-        const originalCollectAllFormData = collectAllFormData;
-        collectAllFormData = function() {
-            const data = originalCollectAllFormData();
-            
-            // Add file information to the data
-            data.uploadedFiles = {
-                hasLogo: uploadedFiles.logoFile !== null,
-                logoFileName: uploadedFiles.logoFile ? uploadedFiles.logoFile.name : null,
-                pageFiles: Object.keys(uploadedFiles.pageFiles).map(key => ({
-                    inputId: key,
-                    fileName: uploadedFiles.pageFiles[key].name,
-                    fileType: uploadedFiles.pageFiles[key].type,
-                    fileSize: uploadedFiles.pageFiles[key].size
-                })),
-                featureFiles: Object.keys(uploadedFiles.featureFiles).map(key => ({
-                    inputId: key,
-                    fileNames: uploadedFiles.featureFiles[key].map(f => f.name),
-                    fileCount: uploadedFiles.featureFiles[key].length
-                }))
-            };
-            
-            return data;
-        };
-
-        // Override the form submission to handle files properly
-        const originalSetupFormSubmission = setupFormSubmission;
-        setupFormSubmission = function() {
-            const form = document.getElementById('vibzOrderForm');
-            
-            // Remove existing submit listener if any
-            const newForm = form.cloneNode(true);
-            form.parentNode.replaceChild(newForm, form);
-            
-            newForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                // Validate final consent
-                const finalCheck = document.getElementById('finalConsentCheckbox');
-                if (!finalCheck || !finalCheck.checked) {
-                    alert('Please confirm your consent.');
-                    return;
-                }
-                
-                // Validate GDPR consent
-                const gdprCheck = document.getElementById('consentGDPR');
-                if (!gdprCheck || !gdprCheck.checked) {
-                    alert('Please agree to the GDPR terms to submit your order.');
-                    return;
-                }
-                
-                // Show loading overlay
-                document.getElementById('loadingOverlay').style.display = 'flex';
-                
-                // Collect all form data
-                const orderData = collectAllFormData();
-                
-                console.log('📦 Submitting order with files:', {
-                    hasLogo: uploadedFiles.logoFile !== null,
-                    pageFiles: Object.keys(uploadedFiles.pageFiles).length,
-                    featureFiles: Object.keys(uploadedFiles.featureFiles).length
-                });
-                
-                // Send to Apps Script Web App using fetch with CORS mode
-                fetch('https://script.google.com/macros/s/AKfycbz5dNjGMzp67NgGiwtYzNcHVzPrtHFgoPyvInyv2CLi2P2yXL9xK2hiRaA9oraTdQy9Wg/exec', {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(orderData)
-                })
-                .then(() => {
-                    // Hide loading overlay
-                    document.getElementById('loadingOverlay').style.display = 'none';
-                    
-                    // Show success screen
-                    document.getElementById('orderFormCard').style.display = 'none';
-                    document.querySelector('.progress').style.display = 'none';
-                    document.getElementById('successScreen').style.display = 'block';
-                    
-                    // Clear any stored data
-                    try {
-                        sessionStorage.removeItem('selectedServices');
-                        sessionStorage.removeItem('helpRequests');
-                    } catch (e) {}
-                })
-                .catch(error => {
-                    // Hide loading overlay
-                    document.getElementById('loadingOverlay').style.display = 'none';
-                    
-                    console.error('Submission error:', error);
-                    
-                    alert('There was an error submitting your order. Please check your internet connection and try again. If the problem persists, please contact support@vibz.co.uk');
-                });
+        // Initialize file upload handlers
+        function initFileUploadHandlers() {
+            // Handle all file input changes
+            document.querySelectorAll('input[type="file"]').forEach(input => {
+                // Remove any existing listeners to prevent duplicates
+                input.removeEventListener('change', handleFileChange);
+                input.addEventListener('change', handleFileChange);
             });
+
+            // Handle placement select changes
+            document.querySelectorAll('.placement-select').forEach(select => {
+                select.removeEventListener('change', handlePlacementChange);
+                select.addEventListener('change', handlePlacementChange);
+            });
+        }
+
+        function handleFileChange(e) {
+            e.preventDefault();
+            e.stopPropagation();
             
-            // Re-attach file upload handlers to the new form
-            initFileUploadHandlers();
-        };
+            const input = e.target;
+            const file = input.files[0];
+            if (!file) return;
+            
+            // Store the file
+            const inputId = input.id;
+            if (inputId === 'logoFile') {
+                uploadedFiles.logoFile = file;
+            } else if (inputId.startsWith('page_')) {
+                uploadedFiles.pageFiles[inputId] = file;
+            } else if (inputId.startsWith('feature_')) {
+                if (!uploadedFiles.featureFiles[inputId]) {
+                    uploadedFiles.featureFiles[inputId] = [];
+                }
+                // Handle multiple files
+                for (let i = 0; i < input.files.length; i++) {
+                    uploadedFiles.featureFiles[inputId].push(input.files[i]);
+                }
+            }
+            
+            // Update UI to show file selected
+            updateFileUploadUI(input);
+        }
+
+        function handlePlacementChange(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            // Store placement preference (you might want to save this)
+            console.log('Placement selected:', e.target.id, e.target.value);
+        }
 
         // =========================================================================
         //  LOAD FROM INDEX.HTML - INCLUDING HELP REQUESTS
@@ -2046,6 +1956,9 @@
                     }
                 });
             });
+            
+            // Re-initialize file upload handlers for the new inputs
+            initFileUploadHandlers();
         }
 
         // Toggle skip SEO function
@@ -2211,6 +2124,9 @@
             });
             
             container.innerHTML = html;
+            
+            // Re-initialize file upload handlers for the new inputs
+            initFileUploadHandlers();
         }
 
         // =========================================================================
@@ -2328,6 +2244,27 @@
                 }
             });
             
+            // Add file information to the data
+            const fileData = {
+                hasLogo: uploadedFiles.logoFile !== null,
+                logoFileName: uploadedFiles.logoFile ? uploadedFiles.logoFile.name : null,
+                logoFileSize: uploadedFiles.logoFile ? uploadedFiles.logoFile.size : null,
+                logoFileType: uploadedFiles.logoFile ? uploadedFiles.logoFile.type : null,
+                pageFiles: Object.keys(uploadedFiles.pageFiles).map(key => ({
+                    inputId: key,
+                    fileName: uploadedFiles.pageFiles[key].name,
+                    fileType: uploadedFiles.pageFiles[key].type,
+                    fileSize: uploadedFiles.pageFiles[key].size
+                })),
+                featureFiles: Object.keys(uploadedFiles.featureFiles).map(key => ({
+                    inputId: key,
+                    fileNames: uploadedFiles.featureFiles[key].map(f => f.name),
+                    fileTypes: uploadedFiles.featureFiles[key].map(f => f.type),
+                    fileSizes: uploadedFiles.featureFiles[key].map(f => f.size),
+                    fileCount: uploadedFiles.featureFiles[key].length
+                }))
+            };
+            
             // Compile complete order data
             return {
                 orderId: 'VIBZ-' + Date.now().toString().slice(-6),
@@ -2347,12 +2284,13 @@
                 helpRequests: orderData.helpRequests,
                 featureAssets: assetData,
                 pages: pageData,
+                files: fileData,
                 business: {
                     name: document.getElementById('businessName')?.value || orderData.businessName,
                     address: document.getElementById('businessAddress')?.value || '',
                     email: document.getElementById('contactEmail')?.value || '',
                     phone: document.getElementById('contactPhone')?.value || '',
-                    logo: document.getElementById('noLogoCheckbox')?.checked ? 'needs-ai-logo' : 'uploaded'
+                    logo: document.getElementById('noLogoCheckbox')?.checked ? 'needs-ai-logo' : (uploadedFiles.logoFile ? 'uploaded' : 'none')
                 },
                 seo: {
                     primaryKeyword: document.getElementById('seoKeyword1')?.value || '',
@@ -2364,6 +2302,83 @@
                     final: document.getElementById('finalConsentCheckbox')?.checked || false
                 }
             };
+        }
+
+        // =========================================================================
+        //  FORM SUBMISSION TO APPS SCRIPT WEB APP
+        // =========================================================================
+        function setupFormSubmission() {
+            const form = document.getElementById('vibzOrderForm');
+            
+            // Remove any existing submit listeners
+            const newForm = form.cloneNode(true);
+            form.parentNode.replaceChild(newForm, form);
+            
+            newForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Validate final consent
+                const finalCheck = document.getElementById('finalConsentCheckbox');
+                if (!finalCheck || !finalCheck.checked) {
+                    alert('Please confirm your consent.');
+                    return;
+                }
+                
+                // Validate GDPR consent
+                const gdprCheck = document.getElementById('consentGDPR');
+                if (!gdprCheck || !gdprCheck.checked) {
+                    alert('Please agree to the GDPR terms to submit your order.');
+                    return;
+                }
+                
+                // Show loading overlay
+                document.getElementById('loadingOverlay').style.display = 'flex';
+                
+                // Collect all form data
+                const formData = collectAllFormData();
+                
+                console.log('📦 Submitting order with files:', {
+                    hasLogo: uploadedFiles.logoFile !== null,
+                    pageFiles: Object.keys(uploadedFiles.pageFiles).length,
+                    featureFiles: Object.keys(uploadedFiles.featureFiles).length
+                });
+                
+                // Send to Apps Script Web App using fetch with CORS mode
+                fetch('https://script.google.com/macros/s/AKfycbz5dNjGMzp67NgGiwtYzNcHVzPrtHFgoPyvInyv2CLi2P2yXL9xK2hiRaA9oraTdQy9Wg/exec', {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                })
+                .then(() => {
+                    // Hide loading overlay
+                    document.getElementById('loadingOverlay').style.display = 'none';
+                    
+                    // Show success screen
+                    document.getElementById('orderFormCard').style.display = 'none';
+                    document.querySelector('.progress').style.display = 'none';
+                    document.getElementById('successScreen').style.display = 'block';
+                    
+                    // Clear any stored data
+                    try {
+                        sessionStorage.removeItem('selectedServices');
+                        sessionStorage.removeItem('helpRequests');
+                    } catch (e) {}
+                })
+                .catch(error => {
+                    // Hide loading overlay
+                    document.getElementById('loadingOverlay').style.display = 'none';
+                    
+                    console.error('Submission error:', error);
+                    
+                    // Show user-friendly error message
+                    alert('There was an error submitting your order. Please check your internet connection and try again. If the problem persists, please contact support@vibz.co.uk');
+                });
+            });
+            
+            return newForm;
         }
 
         // =========================================================================
@@ -2456,12 +2471,17 @@
             initFileUploadHandlers();
             
             // Setup form submission with file handling
-            setupFormSubmission();
+            const form = setupFormSubmission();
+            
+            // Re-attach navigation buttons to the new form if needed
+            document.getElementById('prevBtn').onclick = prevStep;
+            document.getElementById('nextBtn').onclick = nextStep;
             
             // File upload triggers
             document.querySelectorAll('.file-upload-area').forEach(area => {
                 area.addEventListener('click', function() {
-                    this.querySelector('input[type="file"]')?.click();
+                    const fileInput = this.querySelector('input[type="file"]');
+                    if (fileInput) fileInput.click();
                 });
             });
             
@@ -2471,6 +2491,15 @@
                 logoToggle.addEventListener('click', function() {
                     const cb = document.getElementById('noLogoCheckbox');
                     if (cb) cb.checked = !cb.checked;
+                    
+                    // Visual feedback
+                    if (cb.checked) {
+                        this.style.backgroundColor = 'rgba(76, 175, 80, 0.1)';
+                        this.style.borderColor = 'var(--standard)';
+                    } else {
+                        this.style.backgroundColor = 'rgba(255,107,0,0.04)';
+                        this.style.borderColor = 'var(--border)';
+                    }
                 });
             }
             
@@ -2482,6 +2511,9 @@
                     logoFile.click();
                 });
             }
+            
+            // Initial progress update
+            updateProgress();
         };
     </script>
 </body>
