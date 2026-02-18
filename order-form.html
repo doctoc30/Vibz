@@ -774,6 +774,12 @@
         .mt-4 { margin-top: 24px; }
         .mt-2 { margin-top: 16px; }
         .d-none { display: none; }
+        
+        /* File selected indicator */
+        .file-selected {
+            border-color: var(--standard) !important;
+            background-color: rgba(76, 175, 80, 0.05) !important;
+        }
     </style>
 </head>
 <body>
@@ -793,7 +799,7 @@
         </div>
 
         <div class="form-card" id="orderFormCard">
-            <form id="vibzOrderForm" novalidate>
+            <form id="vibzOrderForm" novalidate enctype="multipart/form-data">
                 
                 <!-- STEP 1: PLAN CARD + DYNAMIC FEATURES CARD -->
                 <div class="step active" id="step1">
@@ -837,22 +843,22 @@
 
                     <div class="form-group">
                         <label class="form-label">Business name *</label>
-                        <input type="text" class="form-control" id="businessName" required>
+                        <input type="text" class="form-control" id="businessName" name="businessName" required>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label">Business address <small>(for Google Maps)</small></label>
-                        <input type="text" class="form-control" id="businessAddress" placeholder="Street, city, postcode">
+                        <input type="text" class="form-control" id="businessAddress" name="businessAddress" placeholder="Street, city, postcode">
                     </div>
 
                     <div class="form-group">
                         <label class="form-label">Contact email *</label>
-                        <input type="email" class="form-control" id="contactEmail" required>
+                        <input type="email" class="form-control" id="contactEmail" name="contactEmail" required>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label">Phone number</label>
-                        <input type="tel" class="form-control" id="contactPhone" placeholder="+44 1234 567890">
+                        <input type="tel" class="form-control" id="contactPhone" name="contactPhone" placeholder="+44 1234 567890">
                     </div>
 
                     <div class="form-group">
@@ -861,12 +867,12 @@
                             <i class="fas fa-cloud-upload-alt"></i>
                             <p>Click to upload your logo</p>
                             <small>PNG, JPG, SVG • Max 5MB</small>
-                            <input type="file" id="logoFile" accept=".png,.jpg,.jpeg,.svg" style="display: none;">
+                            <input type="file" id="logoFile" name="logoFile" accept=".png,.jpg,.jpeg,.svg" style="display: none;">
                         </div>
                         <div class="ai-toggle" id="noLogoToggle">
                             <i class="fas fa-magic"></i>
                             <span>I don't have a logo — create one for me</span>
-                            <input type="checkbox" id="noLogoCheckbox" style="display: none;">
+                            <input type="checkbox" id="noLogoCheckbox" name="noLogoCheckbox" style="display: none;">
                         </div>
                     </div>
 
@@ -879,7 +885,7 @@
                                     We'll only use your details to deliver your website. This is in accordance with UK GDPR.
                                 </p>
                                 <label style="display: flex; align-items: center; gap: 8px; font-weight: 600;">
-                                    <input type="checkbox" id="consentGDPR" style="width: 18px; height: 18px;"> 
+                                    <input type="checkbox" id="consentGDPR" name="consentGDPR" style="width: 18px; height: 18px;"> 
                                     I agree to the processing of my data
                                 </label>
                             </div>
@@ -906,17 +912,17 @@
                         
                         <div class="form-group">
                             <label class="form-label">Primary keyword</label>
-                            <input type="text" class="form-control" id="seoKeyword1" placeholder="e.g., barber in London">
+                            <input type="text" class="form-control" id="seoKeyword1" name="seoKeyword1" placeholder="e.g., barber in London">
                         </div>
 
                         <div class="form-group">
                             <label class="form-label">Secondary keywords</label>
-                            <input type="text" class="form-control" id="seoKeywords" placeholder="e.g., haircut, beard trim">
+                            <input type="text" class="form-control" id="seoKeywords" name="seoKeywords" placeholder="e.g., haircut, beard trim">
                         </div>
 
                         <div class="form-group">
                             <label class="form-label">Target location</label>
-                            <input type="text" class="form-control" id="seoLocation" placeholder="e.g., Manchester, UK">
+                            <input type="text" class="form-control" id="seoLocation" name="seoLocation" placeholder="e.g., Manchester, UK">
                         </div>
                     </div>
                 </div>
@@ -932,7 +938,7 @@
 
                     <div style="background: white; border-radius: 20px; padding: 20px; border: 2px solid var(--border); margin-bottom: 20px;">
                         <label style="display: flex; align-items: center; gap: 12px; font-weight: 600;">
-                            <input type="checkbox" id="finalConsentCheckbox" style="width: 20px; height: 20px;">
+                            <input type="checkbox" id="finalConsentCheckbox" name="finalConsent" style="width: 20px; height: 20px;">
                             I confirm the information provided is accurate and complete
                         </label>
                     </div>
@@ -1499,142 +1505,12 @@
             pageCount: 5
         };
 
-        // =========================================================================
-        //  FILE UPLOAD HANDLING - FIX FOR REFRESH ISSUE
-        // =========================================================================
-        // Store files in memory for submission
-        let uploadedFiles = {
-            pageFiles: {},  // Format: { "page_1_file1": file, etc. }
-            featureFiles: {}, // Format: { "feature_file_input_id": [files] }
-            logoFile: null
+        // Track selected files
+        let selectedFiles = {
+            logo: null,
+            pageFiles: {},
+            featureFiles: {}
         };
-
-        // Update UI to show file selected
-        function updateFileUploadUI(input) {
-            if (!input || !input.files || input.files.length === 0) return;
-            
-            const file = input.files[0];
-            const fileName = file.name;
-            const shortName = fileName.length > 15 ? fileName.substring(0, 12) + '...' : fileName;
-            
-            // Find the parent container
-            const parent = input.closest('.file-upload-box') || input.closest('.file-upload-area') || input.closest('.file-upload-small');
-            
-            if (parent) {
-                if (parent.classList.contains('file-upload-box')) {
-                    // Update the box content
-                    const icon = parent.querySelector('i');
-                    const span = parent.querySelector('span');
-                    if (span) {
-                        span.innerHTML = `<i class="fas fa-check-circle" style="color: var(--standard);"></i> ${shortName}`;
-                    }
-                    parent.style.borderColor = 'var(--standard)';
-                    parent.style.backgroundColor = 'rgba(76, 175, 80, 0.05)';
-                } else {
-                    // For other upload areas, just show file name
-                    parent.innerHTML = `<i class="fas fa-check-circle" style="color: var(--standard);"></i> ${shortName}`;
-                }
-            }
-        }
-
-        // Handle file selection
-        function handleFileSelect(input) {
-            if (!input) return;
-            
-            const file = input.files[0];
-            if (!file) return;
-            
-            // Store the file
-            const inputId = input.id;
-            if (inputId === 'logoFile') {
-                uploadedFiles.logoFile = file;
-            } else if (inputId.startsWith('page_')) {
-                uploadedFiles.pageFiles[inputId] = file;
-            } else if (inputId.startsWith('feature_')) {
-                if (!uploadedFiles.featureFiles[inputId]) {
-                    uploadedFiles.featureFiles[inputId] = [];
-                }
-                // Handle multiple files
-                for (let i = 0; i < input.files.length; i++) {
-                    uploadedFiles.featureFiles[inputId].push(input.files[i]);
-                }
-            }
-            
-            // Update UI
-            updateFileUploadUI(input);
-        }
-
-        // Initialize file upload triggers
-        function initFileUploadTriggers() {
-            // Logo upload
-            const logoTrigger = document.getElementById('logoUploadTrigger');
-            const logoInput = document.getElementById('logoFile');
-            if (logoTrigger && logoInput) {
-                // Remove existing listeners
-                logoTrigger.replaceWith(logoTrigger.cloneNode(true));
-                logoInput.replaceWith(logoInput.cloneNode(true));
-                
-                // Get fresh references
-                const newLogoTrigger = document.getElementById('logoUploadTrigger');
-                const newLogoInput = document.getElementById('logoFile');
-                
-                newLogoTrigger.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    newLogoInput.click();
-                });
-                
-                newLogoInput.addEventListener('change', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    handleFileSelect(this);
-                });
-            }
-            
-            // Page file upload boxes
-            document.querySelectorAll('.file-upload-box').forEach(box => {
-                const fileInput = box.querySelector('input[type="file"]');
-                if (fileInput) {
-                    // Clone to remove old listeners
-                    const newInput = fileInput.cloneNode(true);
-                    fileInput.parentNode.replaceChild(newInput, fileInput);
-                    
-                    newInput.addEventListener('change', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        handleFileSelect(this);
-                    });
-                }
-                
-                // Add click handler to the box
-                box.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    if (e.target.tagName === 'SELECT') return;
-                    const input = this.querySelector('input[type="file"]');
-                    if (input) input.click();
-                });
-            });
-            
-            // Small file upload areas (feature assets)
-            document.querySelectorAll('.file-upload-small').forEach(area => {
-                const inputId = area.getAttribute('onclick')?.match(/'([^']+)'/)?.[1];
-                if (inputId) {
-                    const input = document.getElementById(inputId);
-                    if (input) {
-                        // Clone to remove old listeners
-                        const newInput = input.cloneNode(true);
-                        input.parentNode.replaceChild(newInput, input);
-                        
-                        newInput.addEventListener('change', function(e) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            handleFileSelect(this);
-                        });
-                    }
-                }
-            });
-        }
 
         // =========================================================================
         //  LOAD FROM INDEX.HTML - INCLUDING HELP REQUESTS
@@ -1880,7 +1756,7 @@
                         options += `<option value="${name}">${name}</option>`;
                     });
                     nameField = `
-                        <select class="form-control page-name-select" data-page="${i}" id="page_name_${i}">
+                        <select class="form-control page-name-select" data-page="${i}" id="page_name_${i}" name="page_name_${i}">
                             ${options}
                         </select>
                         <div class="duplicate-warning" id="dup_warn_${i}">⚠️ This name is already used on another page. Please choose a unique name.</div>
@@ -1890,36 +1766,36 @@
                 // File upload grid (3 boxes)
                 const fileUploadGrid = `
                     <div class="file-upload-grid">
-                        <div class="file-upload-box" data-page="${i}" data-num="1">
+                        <div class="file-upload-box" data-page="${i}" data-num="1" id="page_${i}_box1">
                             <i class="fas fa-cloud-upload-alt"></i>
                             <span>Upload 1</span>
                             <small>PNG, JPG, MP4</small>
-                            <input type="file" id="page_${i}_file1" accept=".png,.jpg,.jpeg,.mp4,.mov" style="display: none;">
-                            <select class="placement-select" id="page_${i}_place1">
+                            <input type="file" id="page_${i}_file1" name="page_${i}_file1" accept=".png,.jpg,.jpeg,.mp4,.mov" style="display: none;">
+                            <select class="placement-select" id="page_${i}_place1" name="page_${i}_place1">
                                 <option value="">Placement</option>
                                 <option value="top">Top section</option>
                                 <option value="mid">Mid section</option>
                                 <option value="bottom">Bottom section</option>
                             </select>
                         </div>
-                        <div class="file-upload-box" data-page="${i}" data-num="2">
+                        <div class="file-upload-box" data-page="${i}" data-num="2" id="page_${i}_box2">
                             <i class="fas fa-cloud-upload-alt"></i>
                             <span>Upload 2</span>
                             <small>PNG, JPG, MP4</small>
-                            <input type="file" id="page_${i}_file2" accept=".png,.jpg,.jpeg,.mp4,.mov" style="display: none;">
-                            <select class="placement-select" id="page_${i}_place2">
+                            <input type="file" id="page_${i}_file2" name="page_${i}_file2" accept=".png,.jpg,.jpeg,.mp4,.mov" style="display: none;">
+                            <select class="placement-select" id="page_${i}_place2" name="page_${i}_place2">
                                 <option value="">Placement</option>
                                 <option value="top">Top section</option>
                                 <option value="mid">Mid section</option>
                                 <option value="bottom">Bottom section</option>
                             </select>
                         </div>
-                        <div class="file-upload-box" data-page="${i}" data-num="3">
+                        <div class="file-upload-box" data-page="${i}" data-num="3" id="page_${i}_box3">
                             <i class="fas fa-cloud-upload-alt"></i>
                             <span>Upload 3</span>
                             <small>PNG, JPG, MP4</small>
-                            <input type="file" id="page_${i}_file3" accept=".png,.jpg,.jpeg,.mp4,.mov" style="display: none;">
-                            <select class="placement-select" id="page_${i}_place3">
+                            <input type="file" id="page_${i}_file3" name="page_${i}_file3" accept=".png,.jpg,.jpeg,.mp4,.mov" style="display: none;">
+                            <select class="placement-select" id="page_${i}_place3" name="page_${i}_place3">
                                 <option value="">Placement</option>
                                 <option value="top">Top section</option>
                                 <option value="mid">Mid section</option>
@@ -1931,15 +1807,15 @@
 
                 // Description box with "Let Vibz provide" hint
                 const descField = `
-                    <textarea class="form-control" id="page_brief_${i}" placeholder="Paste full website description, or brief description. If unsure, write 'Let Vibz provide based on brief'"></textarea>
+                    <textarea class="form-control" id="page_brief_${i}" name="page_brief_${i}" placeholder="Paste full website description, or brief description. If unsure, write 'Let Vibz provide based on brief'"></textarea>
                     <small style="color: var(--gray);">You can copy-paste a full description or let Vibz create it.</small>
                 `;
 
                 // SEO keywords (2 fields) with skip button / let vibz provide
                 const seoField = `
                     <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                        <input type="text" class="form-control keyword-input" id="page_seo1_${i}" placeholder="SEO keyword 1 (e.g., barber manchester)">
-                        <input type="text" class="form-control keyword-input" id="page_seo2_${i}" placeholder="SEO keyword 2 (e.g., haircut)">
+                        <input type="text" class="form-control keyword-input" id="page_seo1_${i}" name="page_seo1_${i}" placeholder="SEO keyword 1 (e.g., barber manchester)">
+                        <input type="text" class="form-control keyword-input" id="page_seo2_${i}" name="page_seo2_${i}" placeholder="SEO keyword 2 (e.g., haircut)">
                         <div class="skip-badge" id="skip_seo_${i}" onclick="toggleSkipSeo(${i})">
                             <i class="fas fa-forward"></i> Let Vibz provide
                         </div>
@@ -1976,8 +1852,95 @@
             }
             container.innerHTML = html;
             
-            // Re-initialize file upload triggers after rendering
-            setTimeout(initFileUploadTriggers, 100);
+            // Initialize file upload handlers for page files
+            initializeFileUploads();
+        }
+
+        // Initialize all file upload handlers
+        function initializeFileUploads() {
+            // Logo upload
+            const logoTrigger = document.getElementById('logoUploadTrigger');
+            const logoInput = document.getElementById('logoFile');
+            if (logoTrigger && logoInput) {
+                logoTrigger.onclick = (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    logoInput.click();
+                };
+                
+                logoInput.onchange = (e) => {
+                    if (e.target.files.length > 0) {
+                        selectedFiles.logo = e.target.files[0];
+                        logoTrigger.innerHTML = `<i class="fas fa-check-circle" style="color: var(--standard);"></i> ${e.target.files[0].name}`;
+                        logoTrigger.classList.add('file-selected');
+                    }
+                };
+            }
+            
+            // Page file uploads
+            for (let i = 1; i <= orderData.pageCount; i++) {
+                for (let f = 1; f <= 3; f++) {
+                    const box = document.getElementById(`page_${i}_box${f}`);
+                    const input = document.getElementById(`page_${i}_file${f}`);
+                    
+                    if (box && input) {
+                        box.onclick = (e) => {
+                            if (e.target.tagName === 'SELECT') return;
+                            e.preventDefault();
+                            e.stopPropagation();
+                            input.click();
+                        };
+                        
+                        input.onchange = (e) => {
+                            if (e.target.files.length > 0) {
+                                const file = e.target.files[0];
+                                const key = `page_${i}_file${f}`;
+                                selectedFiles.pageFiles[key] = file;
+                                
+                                // Update UI
+                                const span = box.querySelector('span');
+                                if (span) {
+                                    span.innerHTML = `<i class="fas fa-check-circle" style="color: var(--standard);"></i> ${file.name.substring(0, 15)}...`;
+                                }
+                                box.classList.add('file-selected');
+                            }
+                        };
+                    }
+                }
+            }
+            
+            // Feature asset file uploads
+            document.querySelectorAll('[id^="feature_"]').forEach(input => {
+                if (input.type === 'file') {
+                    const parent = input.closest('.field-row');
+                    if (parent) {
+                        const uploadDiv = parent.querySelector('.file-upload-small');
+                        if (uploadDiv) {
+                            uploadDiv.onclick = (e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                input.click();
+                            };
+                            
+                            input.onchange = (e) => {
+                                if (e.target.files.length > 0) {
+                                    const key = e.target.id;
+                                    if (!selectedFiles.featureFiles[key]) {
+                                        selectedFiles.featureFiles[key] = [];
+                                    }
+                                    for (let i = 0; i < e.target.files.length; i++) {
+                                        selectedFiles.featureFiles[key].push(e.target.files[i]);
+                                    }
+                                    
+                                    // Update UI
+                                    uploadDiv.innerHTML = `<i class="fas fa-check-circle" style="color: var(--standard);"></i> ${e.target.files.length} file(s) selected`;
+                                    uploadDiv.classList.add('file-selected');
+                                }
+                            };
+                        }
+                    }
+                }
+            });
         }
 
         // Toggle skip SEO function
@@ -2022,6 +1985,7 @@
                 <div style="margin-bottom: 16px;"><strong>Business:</strong> ${business}</div>
                 <div style="margin-bottom: 16px;"><strong>Contact:</strong> ${email}</div>
                 <div><strong>Pages:</strong> ${orderData.pageCount} total</div>
+                <div style="margin-top: 12px;"><strong>Files:</strong> ${Object.keys(selectedFiles.pageFiles).length + (selectedFiles.logo ? 1 : 0) + Object.keys(selectedFiles.featureFiles).length} file(s) selected</div>
                 ${orderData.designCode ? `<div style="margin-top: 12px;"><strong>Design:</strong> ${orderData.designCode}</div>` : ''}
             `;
             
@@ -2064,18 +2028,19 @@
                 let fieldsHtml = '';
                 assetConfig.fields.forEach((field, index) => {
                     const fieldId = `feature_${service.name.replace(/\s+/g, '_')}_${index}`;
+                    const fieldName = `feature_${service.name.replace(/\s+/g, '_')}_${index}`;
                     
                     if (field.type === 'file') {
                         fieldsHtml += `
                             <div class="field-row">
                                 <div class="field-label">${field.label}:</div>
                                 <div>
-                                    <div class="file-upload-small" onclick="document.getElementById('${fieldId}').click()">
+                                    <div class="file-upload-small" id="${fieldId}_trigger">
                                         <i class="fas fa-cloud-upload-alt"></i>
                                         <span>Click to upload</span>
                                         <small>${field.help || 'PNG, JPG, PDF'}</small>
                                     </div>
-                                    <input type="file" id="${fieldId}" accept="${field.accept || '.png,.jpg,.jpeg'}" ${field.multiple ? 'multiple' : ''} style="display: none;">
+                                    <input type="file" id="${fieldId}" name="${fieldName}" accept="${field.accept || '.png,.jpg,.jpeg'}" ${field.multiple ? 'multiple' : ''} style="display: none;">
                                 </div>
                             </div>
                         `;
@@ -2087,7 +2052,7 @@
                         fieldsHtml += `
                             <div class="field-row">
                                 <div class="field-label">${field.label}:</div>
-                                <select class="form-control" id="${fieldId}">
+                                <select class="form-control" id="${fieldId}" name="${fieldName}">
                                     ${optionsHtml}
                                 </select>
                             </div>
@@ -2096,21 +2061,21 @@
                         fieldsHtml += `
                             <div class="field-row">
                                 <div class="field-label">${field.label}:</div>
-                                <textarea class="form-control" id="${fieldId}" placeholder="${field.label}"></textarea>
+                                <textarea class="form-control" id="${fieldId}" name="${fieldName}" placeholder="${field.label}"></textarea>
                             </div>
                         `;
                     } else if (field.type === 'date' || field.type === 'datetime-local') {
                         fieldsHtml += `
                             <div class="field-row">
                                 <div class="field-label">${field.label}:</div>
-                                <input type="${field.type}" class="form-control" id="${fieldId}">
+                                <input type="${field.type}" class="form-control" id="${fieldId}" name="${fieldName}">
                             </div>
                         `;
                     } else {
                         fieldsHtml += `
                             <div class="field-row">
                                 <div class="field-label">${field.label}:</div>
-                                <input type="${field.type || 'text'}" class="form-control" id="${fieldId}" placeholder="${field.label}">
+                                <input type="${field.type || 'text'}" class="form-control" id="${fieldId}" name="${fieldName}" placeholder="${field.label}">
                             </div>
                         `;
                     }
@@ -2144,8 +2109,10 @@
             
             container.innerHTML = html;
             
-            // Re-initialize file upload triggers after rendering
-            setTimeout(initFileUploadTriggers, 100);
+            // Initialize feature file uploads
+            setTimeout(() => {
+                initializeFileUploads();
+            }, 100);
         }
 
         // =========================================================================
@@ -2194,203 +2161,152 @@
         };
 
         // =========================================================================
-        //  COLLECT ALL FORM DATA FOR SUBMISSION
+        //  FORM SUBMISSION TO APPS SCRIPT WEB APP
         // =========================================================================
-        function collectAllFormData() {
-            // Get filtered services
-            const filtered = getFilteredServices();
-            const allFilteredServices = [...filtered.standard, ...filtered.premium];
+        function submitForm(e) {
+            e.preventDefault();
             
-            // Collect page data
-            const pageData = [];
-            for (let i = 1; i <= orderData.pageCount; i++) {
-                const pageNameInput = document.getElementById(`page_name_${i}`);
-                const pageName = pageNameInput ? (pageNameInput.value || `Page ${i}`) : `Page ${i}`;
-                
-                // Collect file uploads info
-                const fileUploads = [];
-                for (let f = 1; f <= 3; f++) {
-                    const fileInput = document.getElementById(`page_${i}_file${f}`);
-                    const placementSelect = document.getElementById(`page_${i}_place${f}`);
-                    
-                    if (fileInput && fileInput.files.length > 0) {
-                        fileUploads.push({
-                            fileName: fileInput.files[0].name,
-                            fileType: fileInput.files[0].type,
-                            placement: placementSelect ? placementSelect.value : ''
-                        });
-                    }
-                }
-                
-                const pageBrief = document.getElementById(`page_brief_${i}`)?.value || '';
-                const seo1 = document.getElementById(`page_seo1_${i}`)?.value || '';
-                const seo2 = document.getElementById(`page_seo2_${i}`)?.value || '';
-                const seo1Disabled = document.getElementById(`page_seo1_${i}`)?.disabled || false;
-                const seo2Disabled = document.getElementById(`page_seo2_${i}`)?.disabled || false;
-                
-                pageData.push({
-                    pageNumber: i,
-                    pageName: pageName,
-                    isHome: i === 1,
-                    fileUploads: fileUploads,
-                    description: pageBrief || (seo1Disabled ? 'Vibz to provide' : ''),
-                    seoKeywords: {
-                        keyword1: seo1,
-                        keyword2: seo2,
-                        vibzToProvide: seo1Disabled
-                    }
-                });
+            // Validate final consent
+            const finalCheck = document.getElementById('finalConsentCheckbox');
+            if (!finalCheck || !finalCheck.checked) {
+                alert('Please confirm your consent.');
+                return;
             }
             
-            // Collect asset data
-            const assetData = {};
+            // Validate GDPR consent
+            const gdprCheck = document.getElementById('consentGDPR');
+            if (!gdprCheck || !gdprCheck.checked) {
+                alert('Please agree to the GDPR terms to submit your order.');
+                return;
+            }
+            
+            // Show loading overlay
+            document.getElementById('loadingOverlay').style.display = 'flex';
+            
+            // Create FormData object
+            const formData = new FormData();
+            
+            // Add order metadata
+            formData.append('orderId', 'VIBZ-' + Date.now().toString().slice(-6));
+            formData.append('timestamp', new Date().toISOString());
+            formData.append('formType', 'vibz_order_form');
+            
+            // Add plan data
+            formData.append('planTier', orderData.tier);
+            formData.append('planType', orderData.planType);
+            formData.append('pageCount', orderData.pageCount);
+            formData.append('designCode', orderData.designCode || '');
+            
+            // Add selected features
+            const filtered = getFilteredServices();
+            const allFilteredServices = [...filtered.standard, ...filtered.premium];
+            formData.append('customFeatures', JSON.stringify(allFilteredServices));
+            formData.append('helpRequests', JSON.stringify(orderData.helpRequests));
+            
+            // Add business details
+            formData.append('businessName', document.getElementById('businessName')?.value || '');
+            formData.append('businessAddress', document.getElementById('businessAddress')?.value || '');
+            formData.append('contactEmail', document.getElementById('contactEmail')?.value || '');
+            formData.append('contactPhone', document.getElementById('contactPhone')?.value || '');
+            formData.append('noLogo', document.getElementById('noLogoCheckbox')?.checked ? 'true' : 'false');
+            
+            // Add SEO data
+            formData.append('seoKeyword1', document.getElementById('seoKeyword1')?.value || '');
+            formData.append('seoKeywords', document.getElementById('seoKeywords')?.value || '');
+            formData.append('seoLocation', document.getElementById('seoLocation')?.value || '');
+            
+            // Add consent data
+            formData.append('consentGDPR', document.getElementById('consentGDPR')?.checked ? 'true' : 'false');
+            
+            // Add page data
+            for (let i = 1; i <= orderData.pageCount; i++) {
+                const pageName = document.getElementById(`page_name_${i}`)?.value || `Page ${i}`;
+                formData.append(`page_${i}_name`, pageName);
+                formData.append(`page_${i}_brief`, document.getElementById(`page_brief_${i}`)?.value || '');
+                formData.append(`page_${i}_seo1`, document.getElementById(`page_seo1_${i}`)?.value || '');
+                formData.append(`page_${i}_seo2`, document.getElementById(`page_seo2_${i}`)?.value || '');
+                
+                // Add placement data
+                for (let f = 1; f <= 3; f++) {
+                    const placeSelect = document.getElementById(`page_${i}_place${f}`);
+                    if (placeSelect) {
+                        formData.append(`page_${i}_place${f}`, placeSelect.value || '');
+                    }
+                }
+            }
+            
+            // Add logo file
+            if (selectedFiles.logo) {
+                formData.append('logoFile', selectedFiles.logo);
+            }
+            
+            // Add page files
+            Object.keys(selectedFiles.pageFiles).forEach(key => {
+                formData.append(key, selectedFiles.pageFiles[key]);
+            });
+            
+            // Add feature files
+            Object.keys(selectedFiles.featureFiles).forEach(key => {
+                selectedFiles.featureFiles[key].forEach(file => {
+                    formData.append(key, file);
+                });
+            });
+            
+            // Add feature text data
             allFilteredServices.forEach(service => {
                 const config = FEATURE_ASSETS[service.name];
                 if (config && config.fields) {
-                    const serviceData = {};
                     config.fields.forEach((field, index) => {
                         const fieldId = `feature_${service.name.replace(/\s+/g, '_')}_${index}`;
                         const element = document.getElementById(fieldId);
-                        if (element) {
-                            if (field.type === 'file') {
-                                serviceData[field.label] = element.files ? Array.from(element.files).map(f => f.name) : [];
-                            } else {
-                                serviceData[field.label] = element.value;
-                            }
+                        if (element && field.type !== 'file') {
+                            formData.append(fieldId, element.value || '');
                         }
                     });
-                    assetData[service.name] = serviceData;
                 }
             });
             
-            // Add file information to the data
-            const fileData = {
-                hasLogo: uploadedFiles.logoFile !== null,
-                logoFileName: uploadedFiles.logoFile ? uploadedFiles.logoFile.name : null,
-                logoFileSize: uploadedFiles.logoFile ? uploadedFiles.logoFile.size : null,
-                logoFileType: uploadedFiles.logoFile ? uploadedFiles.logoFile.type : null,
-                pageFiles: Object.keys(uploadedFiles.pageFiles).map(key => ({
-                    inputId: key,
-                    fileName: uploadedFiles.pageFiles[key].name,
-                    fileType: uploadedFiles.pageFiles[key].type,
-                    fileSize: uploadedFiles.pageFiles[key].size
-                })),
-                featureFiles: Object.keys(uploadedFiles.featureFiles).map(key => ({
-                    inputId: key,
-                    fileNames: uploadedFiles.featureFiles[key].map(f => f.name),
-                    fileTypes: uploadedFiles.featureFiles[key].map(f => f.type),
-                    fileSizes: uploadedFiles.featureFiles[key].map(f => f.size),
-                    fileCount: uploadedFiles.featureFiles[key].length
-                }))
-            };
+            console.log('📦 Submitting order with files:', {
+                hasLogo: !!selectedFiles.logo,
+                pageFiles: Object.keys(selectedFiles.pageFiles).length,
+                featureFiles: Object.keys(selectedFiles.featureFiles).length
+            });
             
-            // Compile complete order data
-            return {
-                orderId: 'VIBZ-' + Date.now().toString().slice(-6),
-                timestamp: new Date().toISOString(),
-                formType: 'vibz_order_form',
-                plan: {
-                    tier: orderData.tier,
-                    type: orderData.planType,
-                    pages: orderData.pageCount,
-                    designCode: orderData.designCode,
-                    price: orderData.planType === PLAN_CONFIG.monthly.name 
-                        ? (orderData.tier === 'standard' ? '500+125' : '650+225')
-                        : (orderData.tier === 'standard' ? '1500' : '3000')
-                },
-                customFeatures: allFilteredServices,
-                allSelectedFeatures: orderData.services,
-                helpRequests: orderData.helpRequests,
-                featureAssets: assetData,
-                pages: pageData,
-                files: fileData,
-                business: {
-                    name: document.getElementById('businessName')?.value || orderData.businessName,
-                    address: document.getElementById('businessAddress')?.value || '',
-                    email: document.getElementById('contactEmail')?.value || '',
-                    phone: document.getElementById('contactPhone')?.value || '',
-                    logo: document.getElementById('noLogoCheckbox')?.checked ? 'needs-ai-logo' : (uploadedFiles.logoFile ? 'uploaded' : 'none')
-                },
-                seo: {
-                    primaryKeyword: document.getElementById('seoKeyword1')?.value || '',
-                    secondaryKeywords: document.getElementById('seoKeywords')?.value || '',
-                    location: document.getElementById('seoLocation')?.value || ''
-                },
-                consent: {
-                    gdpr: document.getElementById('consentGDPR')?.checked || false,
-                    final: document.getElementById('finalConsentCheckbox')?.checked || false
-                }
-            };
-        }
-
-        // =========================================================================
-        //  FORM SUBMISSION TO APPS SCRIPT WEB APP
-        // =========================================================================
-        function setupFormSubmission() {
-            const form = document.getElementById('vibzOrderForm');
-            
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
+            // Send to Apps Script Web App
+            fetch('https://script.google.com/macros/s/AKfycbz5dNjGMzp67NgGiwtYzNcHVzPrtHFgoPyvInyv2CLi2P2yXL9xK2hiRaA9oraTdQy9Wg/exec', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(result => {
+                console.log('Success:', result);
                 
-                // Validate final consent
-                const finalCheck = document.getElementById('finalConsentCheckbox');
-                if (!finalCheck || !finalCheck.checked) {
-                    alert('Please confirm your consent.');
-                    return;
-                }
+                // Hide loading overlay
+                document.getElementById('loadingOverlay').style.display = 'none';
                 
-                // Validate GDPR consent
-                const gdprCheck = document.getElementById('consentGDPR');
-                if (!gdprCheck || !gdprCheck.checked) {
-                    alert('Please agree to the GDPR terms to submit your order.');
-                    return;
-                }
+                // Show success screen
+                document.getElementById('orderFormCard').style.display = 'none';
+                document.querySelector('.progress').style.display = 'none';
+                document.getElementById('successScreen').style.display = 'block';
                 
-                // Show loading overlay
-                document.getElementById('loadingOverlay').style.display = 'flex';
+                // Update confirmation email
+                const email = document.getElementById('contactEmail')?.value || '';
+                document.getElementById('confirmationEmailDisplay').innerText = email;
                 
-                // Collect all form data
-                const formData = collectAllFormData();
+                // Clear any stored data
+                try {
+                    sessionStorage.removeItem('selectedServices');
+                    sessionStorage.removeItem('helpRequests');
+                } catch (e) {}
+            })
+            .catch(error => {
+                // Hide loading overlay
+                document.getElementById('loadingOverlay').style.display = 'none';
                 
-                console.log('📦 Submitting order with files:', {
-                    hasLogo: uploadedFiles.logoFile !== null,
-                    pageFiles: Object.keys(uploadedFiles.pageFiles).length,
-                    featureFiles: Object.keys(uploadedFiles.featureFiles).length
-                });
+                console.error('Submission error:', error);
                 
-                // Send to Apps Script Web App using fetch with CORS mode
-                fetch('https://script.google.com/macros/s/AKfycbz5dNjGMzp67NgGiwtYzNcHVzPrtHFgoPyvInyv2CLi2P2yXL9xK2hiRaA9oraTdQy9Wg/exec', {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData)
-                })
-                .then(() => {
-                    // Hide loading overlay
-                    document.getElementById('loadingOverlay').style.display = 'none';
-                    
-                    // Show success screen
-                    document.getElementById('orderFormCard').style.display = 'none';
-                    document.querySelector('.progress').style.display = 'none';
-                    document.getElementById('successScreen').style.display = 'block';
-                    
-                    // Clear any stored data
-                    try {
-                        sessionStorage.removeItem('selectedServices');
-                        sessionStorage.removeItem('helpRequests');
-                    } catch (e) {}
-                })
-                .catch(error => {
-                    // Hide loading overlay
-                    document.getElementById('loadingOverlay').style.display = 'none';
-                    
-                    console.error('Submission error:', error);
-                    
-                    // Show user-friendly error message
-                    alert('There was an error submitting your order. Please check your internet connection and try again. If the problem persists, please contact support@vibz.co.uk');
-                });
+                // Show user-friendly error message
+                alert('There was an error submitting your order. Please check your internet connection and try again. If the problem persists, please contact support@vibz.co.uk');
             });
         }
 
@@ -2419,9 +2335,9 @@
                 const check = document.getElementById('finalConsentCheckbox');
                 const btn = document.getElementById('submitOrderBtn');
                 if (check && btn) {
-                    check.addEventListener('change', function() {
+                    check.onchange = function() {
                         btn.disabled = !this.checked;
-                    });
+                    };
                     btn.disabled = !check.checked;
                 }
                 renderReview();
@@ -2475,14 +2391,29 @@
             renderDynamicFeatures();
             renderPageCards();
             
-            // Initialize file upload triggers
-            setTimeout(initFileUploadTriggers, 200);
-            
-            // Setup form submission
-            setupFormSubmission();
+            // Set up form submission
+            const form = document.getElementById('vibzOrderForm');
+            form.onsubmit = submitForm;
             
             // Initial progress update
             updateProgress();
+            
+            // Logo toggle
+            const logoToggle = document.getElementById('noLogoToggle');
+            const logoCheckbox = document.getElementById('noLogoCheckbox');
+            if (logoToggle && logoCheckbox) {
+                logoToggle.onclick = (e) => {
+                    e.preventDefault();
+                    logoCheckbox.checked = !logoCheckbox.checked;
+                    if (logoCheckbox.checked) {
+                        logoToggle.style.backgroundColor = 'rgba(76, 175, 80, 0.1)';
+                        logoToggle.style.borderColor = 'var(--standard)';
+                    } else {
+                        logoToggle.style.backgroundColor = 'rgba(255,107,0,0.04)';
+                        logoToggle.style.borderColor = 'var(--border)';
+                    }
+                };
+            }
         };
     </script>
 </body>
