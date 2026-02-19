@@ -2380,222 +2380,189 @@
 
 
 <script>
-  // =========================================================================
-  // ORDER DATA OBJECT
-  // =========================================================================
-  let orderData = {
-    planType: '',
-    tier: '',
-    pages: [],           // {title, description, media, SEO keywords}
-    features: [],        // selected features
-    seo: {},             // primary/secondary keywords, location
-    business: {},        // name, address, email, phone, logo, noLogo
-    revisionsUsed: {}    // track revisions per page
+// ==========================
+// ORDER DATA OBJECT
+// ==========================
+let orderData = {
+  planType: '',
+  tier: '',
+  pages: [],           // {title, description, media, SEO keywords}
+  features: [],        // selected features
+  seo: {},             // primary/secondary keywords, location
+  business: {},        // name, address, email, phone, logo, noLogo
+};
+
+// ==========================
+// STEP NAVIGATION
+// ==========================
+let currentStep = 1;
+const totalSteps = 5; // Update if steps increase
+
+function showStep(step) {
+  for (let i = 1; i <= totalSteps; i++) {
+    document.getElementById(`step${i}`).classList.remove('active');
+  }
+  document.getElementById(`step${step}`).classList.add('active');
+
+  document.getElementById('prevBtn').style.display = step === 1 ? 'none' : 'inline-block';
+  document.getElementById('nextBtn').style.display = step === totalSteps ? 'none' : 'inline-block';
+
+  if(step === totalSteps) generateReview();
+}
+
+function nextStep() {
+  if(currentStep < totalSteps){
+    currentStep++;
+    showStep(currentStep);
+  }
+}
+
+function prevStep() {
+  if(currentStep > 1){
+    currentStep--;
+    showStep(currentStep);
+  }
+}
+
+// ==========================
+// PLAN & FEATURES
+// ==========================
+function setPlan(plan, tier) {
+  orderData.planType = plan;
+  orderData.tier = tier;
+}
+
+function selectFeature(feature) {
+  if(!orderData.features.includes(feature)) orderData.features.push(feature);
+}
+
+function deselectFeature(feature) {
+  orderData.features = orderData.features.filter(f => f !== feature);
+}
+
+// ==========================
+// PAGE DATA
+// ==========================
+function savePageData(index, data) {
+  orderData.pages[index] = data; // {title, description, media, seo}
+}
+
+// ==========================
+// SEO INFO
+// ==========================
+function saveSEO(primary, secondary, location){
+  orderData.seo = { primary, secondary, location };
+}
+
+// ==========================
+// BUSINESS INFO (LAST STEP)
+// ==========================
+function saveBusinessInfo() {
+  const logoFile = document.getElementById('logoFile').files[0] || null;
+  orderData.business = {
+    name: document.getElementById('businessName').value.trim(),
+    address: document.getElementById('businessAddress').value.trim(),
+    email: document.getElementById('contactEmail').value.trim(),
+    phone: document.getElementById('contactPhone').value.trim(),
+    noLogo: document.getElementById('noLogoCheckbox').checked,
+    logoFile: logoFile
   };
 
-  const planLimits = {
-    standard: { maxPages: 5, maxRevisions: 5 },
-    premium: { maxPages: 15, maxRevisions: 10 }
-  };
-
-  // =========================================================================
-  // STEP NAVIGATION
-  // =========================================================================
-  let currentStep = 1;
-  const totalSteps = 5; // plan, pages, features, business, review
-
-  function showStep(step) {
-    for (let i = 1; i <= totalSteps; i++) {
-      document.getElementById(`step${i}`).classList.remove('active');
-    }
-    document.getElementById(`step${step}`).classList.add('active');
-
-    document.getElementById('prevBtn').style.display = step === 1 ? 'none' : 'inline-block';
-    document.getElementById('nextBtn').style.display = step === totalSteps ? 'none' : 'inline-block';
+  // Show uploaded file name visually
+  if(logoFile){
+    const display = document.createElement('p');
+    display.textContent = `Uploaded: ${logoFile.name}`;
+    display.style.fontSize = "0.9rem";
+    display.style.color = "green";
+    document.getElementById('logoUploadTrigger').appendChild(display);
   }
+}
 
-  function nextStep() {
-    if (currentStep < totalSteps) {
-      currentStep++;
-      showStep(currentStep);
-      if (currentStep === totalSteps) generateReview();
-    }
-  }
+// ==========================
+// REVIEW GENERATION
+// ==========================
+function generateReview(){
+  saveBusinessInfo();
+  const reviewContainer = document.getElementById('reviewContainer');
+  reviewContainer.innerHTML = '';
 
-  function prevStep() {
-    if (currentStep > 1) {
-      currentStep--;
-      showStep(currentStep);
-    }
-  }
+  reviewContainer.innerHTML += `<p><strong>Plan:</strong> ${orderData.planType} (${orderData.tier})</p>`;
 
-  // =========================================================================
-  // PLAN & FEATURE SELECTION
-  // =========================================================================
-  function setPlan(plan, tier) {
-    orderData.planType = plan;
-    orderData.tier = tier;
-    // initialize revisionsUsed
-    orderData.revisionsUsed = {};
-    const pages = planLimits[tier].maxPages;
-    for (let i = 1; i <= pages; i++) {
-      orderData.revisionsUsed[`Page ${i}`] = 0;
-    }
-  }
-
-  function selectFeature(feature) {
-    if (!orderData.features.includes(feature)) orderData.features.push(feature);
-  }
-
-  function deselectFeature(feature) {
-    orderData.features = orderData.features.filter(f => f !== feature);
-  }
-
-  // =========================================================================
-  // PAGE CUSTOMIZATION
-  // =========================================================================
-  function savePageData(pageIndex, data) {
-    orderData.pages[pageIndex] = data; // {title, description, media, SEO}
-  }
-
-  function useRevision(pageNumber) {
-    const pageKey = `Page ${pageNumber}`;
-    const max = planLimits[orderData.tier].maxRevisions;
-    if (!orderData.revisionsUsed[pageKey]) orderData.revisionsUsed[pageKey] = 0;
-    if (orderData.revisionsUsed[pageKey] >= max) {
-      alert(`No revisions left for ${pageKey} (${max}/${max})`);
-      return false;
-    }
-    orderData.revisionsUsed[pageKey]++;
-    return true;
-  }
-
-  // =========================================================================
-  // SEO INFO
-  // =========================================================================
-  function saveSEO(primary, secondary, location) {
-    orderData.seo = { primary, secondary, location };
-  }
-
-  // =========================================================================
-  // BUSINESS INFO
-  // =========================================================================
-  function saveBusinessInfo() {
-    orderData.business = {
-      name: document.getElementById('businessName').value.trim(),
-      address: document.getElementById('businessAddress').value.trim(),
-      email: document.getElementById('contactEmail').value.trim(),
-      phone: document.getElementById('contactPhone').value.trim(),
-      noLogo: document.getElementById('noLogoCheckbox').checked,
-      logoFile: document.getElementById('logoFile').files[0] || null
-    };
-  }
-
-  // =========================================================================
-  // FILE UPLOADS WITH VISUAL FEEDBACK
-  // =========================================================================
-  function setupFileUpload(triggerId, inputId, displayId) {
-    const trigger = document.getElementById(triggerId);
-    const input = document.getElementById(inputId);
-    const display = document.getElementById(displayId);
-
-    if (!trigger || !input) return;
-
-    trigger.addEventListener('click', () => input.click());
-    input.addEventListener('change', () => {
-      const file = input.files[0];
-      if (!file) return;
-      const maxSizeMB = 50;
-      if (file.size / (1024*1024) > maxSizeMB) {
-        alert(`File too large! Max size ${maxSizeMB}MB`);
-        input.value = '';
-        return;
-      }
-      orderData.business.logoFile = file;
-      if (display) display.innerText = `Uploaded: ${file.name}`;
-    });
-  }
-
-  setupFileUpload('logoUploadTrigger','logoFile', 'logoFileName');
-
-  // =========================================================================
-  // REVIEW GENERATION
-  // =========================================================================
-  function generateReview() {
-    saveBusinessInfo(); // ensure last step info saved
-    const reviewContainer = document.getElementById('reviewContainer');
-    reviewContainer.innerHTML = '';
-
-    // Plan
-    reviewContainer.innerHTML += `<p><strong>Plan:</strong> ${orderData.planType} (${orderData.tier})</p>`;
-
-    // Pages
-    orderData.pages.forEach((page, idx) => {
-      reviewContainer.innerHTML += `
-        <p><strong>Page ${idx+1}:</strong> ${page.title || '-'}<br>
-        Description: ${page.description || '-'}<br>
-        Media: ${page.media ? page.media.name || page.media : '-'}<br>
-        SEO: ${page.seo ? page.seo : '-'}</p>
-      `;
-    });
-
-    // Features
-    if (orderData.features.length > 0)
-      reviewContainer.innerHTML += `<p><strong>Features:</strong> ${orderData.features.join(', ')}</p>`;
-
-    // SEO
-    if (orderData.seo.primary)
-      reviewContainer.innerHTML += `<p><strong>SEO:</strong> ${orderData.seo.primary}, ${orderData.seo.secondary}, Location: ${orderData.seo.location}</p>`;
-
-    // Business
-    const b = orderData.business;
-    reviewContainer.innerHTML += `<p><strong>Business:</strong> ${b.name}<br>Email: ${b.email}<br>Phone: ${b.phone || '-'}<br>Address: ${b.address || '-'}</p>`;
-  }
-
-  // =========================================================================
-  // ENABLE SUBMIT BUTTON
-  // =========================================================================
-  const finalConsent = document.getElementById('finalConsentCheckbox');
-  const submitBtn = document.getElementById('submitOrderBtn');
-
-  finalConsent.addEventListener('change', () => {
-    submitBtn.disabled = !finalConsent.checked || !document.getElementById('consentGDPR').checked;
-  });
-  document.getElementById('consentGDPR').addEventListener('change', () => {
-    submitBtn.disabled = !finalConsent.checked || !document.getElementById('consentGDPR').checked;
+  orderData.pages.forEach((page, idx) => {
+    reviewContainer.innerHTML += `
+      <p><strong>Page ${idx+1}:</strong> ${page.title || '-'}<br>
+      Description: ${page.description || '-'}<br>
+      Media: ${page.media ? page.media.name || page.media : '-'}<br>
+      SEO: ${page.seo ? page.seo : '-'}</p>
+    `;
   });
 
-  // =========================================================================
-  // FORM SUBMISSION + GAS + WhatsApp
-  // =========================================================================
-  document.getElementById('vibzOrderForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    saveBusinessInfo();
-    submitBtn.disabled = true;
-    document.getElementById('loadingOverlay').style.display = 'flex';
-
-    // Call your Apps Script function
-    google.script.run.withSuccessHandler(onOrderSuccess).submitOrder(orderData);
-  });
-
-  function onOrderSuccess() {
-    // WhatsApp notification (opens chat with prefilled message)
-    const waNumber = '447706345874';
-    const waMessage = encodeURIComponent(`New order received for ${orderData.business.name}`);
-    const waLink = `https://wa.me/${waNumber}?text=${waMessage}`;
-    window.open(waLink, '_blank');
-
-    // Show success screen
-    document.getElementById('loadingOverlay').style.display = 'none';
-    document.getElementById('orderFormCard').style.display = 'none';
-    document.getElementById('successScreen').style.display = 'block';
-    document.getElementById('confirmationEmailDisplay').innerText = orderData.business.email;
+  if(orderData.features.length){
+    reviewContainer.innerHTML += `<p><strong>Features:</strong> ${orderData.features.join(', ')}</p>`;
   }
 
-  // =========================================================================
-  // INITIALIZE
-  // =========================================================================
-  showStep(currentStep);
+  if(orderData.seo.primary){
+    reviewContainer.innerHTML += `<p><strong>SEO:</strong> ${orderData.seo.primary}, ${orderData.seo.secondary}, Location: ${orderData.seo.location}</p>`;
+  }
+
+  const b = orderData.business;
+  reviewContainer.innerHTML += `<p><strong>Business:</strong> ${b.name}<br>Email: ${b.email}<br>Phone: ${b.phone || '-'}<br>Address: ${b.address || '-'}</p>`;
+}
+
+// ==========================
+// FINAL CONSENT ENABLE SUBMIT
+// ==========================
+const finalConsent = document.getElementById('finalConsentCheckbox');
+const submitBtn = document.getElementById('submitOrderBtn');
+
+finalConsent.addEventListener('change', () => {
+  submitBtn.disabled = !finalConsent.checked || !document.getElementById('consentGDPR').checked;
+});
+document.getElementById('consentGDPR').addEventListener('change', () => {
+  submitBtn.disabled = !finalConsent.checked || !document.getElementById('consentGDPR').checked;
+});
+
+// ==========================
+// FORM SUBMISSION TO GAS
+// ==========================
+document.getElementById('vibzOrderForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  saveBusinessInfo();
+  submitBtn.disabled = true;
+  document.getElementById('loadingOverlay').style.display = 'flex';
+
+  // Send to GAS
+  google.script.run.withSuccessHandler(onSuccess).submitOrder(orderData);
+});
+
+// Success handler
+function onSuccess(response){
+  document.getElementById('loadingOverlay').style.display = 'none';
+  document.getElementById('orderFormCard').style.display = 'none';
+  document.getElementById('successScreen').style.display = 'block';
+  document.getElementById('confirmationEmailDisplay').innerText = orderData.business.email;
+
+  // WhatsApp notification
+  const message = encodeURIComponent(`New order received for ${orderData.business.name}`);
+  const waLink = `https://wa.me/447706345874?text=${message}`;
+  window.open(waLink,'_blank'); // manual send
+}
+
+// ==========================
+// INITIALIZE STEP
+// ==========================
+showStep(currentStep);
+
+// ==========================
+// LOGO UPLOAD TRIGGER
+// ==========================
+const logoUploadTrigger = document.getElementById('logoUploadTrigger');
+const logoFile = document.getElementById('logoFile');
+if(logoUploadTrigger && logoFile){
+  logoUploadTrigger.addEventListener('click', function(){
+    logoFile.click();
+  });
+}
 </script>
     
 </body>
