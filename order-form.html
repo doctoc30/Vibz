@@ -2386,43 +2386,44 @@
   let orderData = {
     planType: '',
     tier: '',
-    pages: [],           // {title, description, media, SEO}
+    pages: [],           // {title, description, media, SEO keywords}
     features: [],        // selected features
-    seo: {},             // {primary, secondary, location}
-    business: {},        // {name, address, email, phone, logo, noLogo}
+    seo: {},             // primary/secondary keywords, location
+    business: {},        // name, address, email, phone, logo, noLogo
+    revisionsUsed: {}    // track revisions per page
+  };
+
+  const planLimits = {
+    standard: { maxPages: 5, maxRevisions: 5 },
+    premium: { maxPages: 15, maxRevisions: 10 }
   };
 
   // =========================================================================
   // STEP NAVIGATION
   // =========================================================================
   let currentStep = 1;
-  const totalSteps = 5; // adjust based on your HTML steps
+  const totalSteps = 5; // plan, pages, features, business, review
 
   function showStep(step) {
     for (let i = 1; i <= totalSteps; i++) {
-      const s = document.getElementById(`step${i}`);
-      if(s) s.classList.remove('active');
+      document.getElementById(`step${i}`).classList.remove('active');
     }
-    const activeStep = document.getElementById(`step${step}`);
-    if(activeStep) activeStep.classList.add('active');
+    document.getElementById(`step${step}`).classList.add('active');
 
-    // Prev/Next button display
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    if(prevBtn) prevBtn.style.display = step === 1 ? 'none' : 'inline-block';
-    if(nextBtn) nextBtn.style.display = step === totalSteps ? 'none' : 'inline-block';
+    document.getElementById('prevBtn').style.display = step === 1 ? 'none' : 'inline-block';
+    document.getElementById('nextBtn').style.display = step === totalSteps ? 'none' : 'inline-block';
   }
 
   function nextStep() {
-    if(currentStep < totalSteps) {
+    if (currentStep < totalSteps) {
       currentStep++;
       showStep(currentStep);
-      if(currentStep === totalSteps) generateReview();
+      if (currentStep === totalSteps) generateReview();
     }
   }
 
   function prevStep() {
-    if(currentStep > 1) {
+    if (currentStep > 1) {
       currentStep--;
       showStep(currentStep);
     }
@@ -2434,10 +2435,16 @@
   function setPlan(plan, tier) {
     orderData.planType = plan;
     orderData.tier = tier;
+    // initialize revisionsUsed
+    orderData.revisionsUsed = {};
+    const pages = planLimits[tier].maxPages;
+    for (let i = 1; i <= pages; i++) {
+      orderData.revisionsUsed[`Page ${i}`] = 0;
+    }
   }
 
   function selectFeature(feature) {
-    if(!orderData.features.includes(feature)) orderData.features.push(feature);
+    if (!orderData.features.includes(feature)) orderData.features.push(feature);
   }
 
   function deselectFeature(feature) {
@@ -2447,8 +2454,20 @@
   // =========================================================================
   // PAGE CUSTOMIZATION
   // =========================================================================
-  function savePageData(index, data) {
-    orderData.pages[index] = data; // {title, description, media, SEO}
+  function savePageData(pageIndex, data) {
+    orderData.pages[pageIndex] = data; // {title, description, media, SEO}
+  }
+
+  function useRevision(pageNumber) {
+    const pageKey = `Page ${pageNumber}`;
+    const max = planLimits[orderData.tier].maxRevisions;
+    if (!orderData.revisionsUsed[pageKey]) orderData.revisionsUsed[pageKey] = 0;
+    if (orderData.revisionsUsed[pageKey] >= max) {
+      alert(`No revisions left for ${pageKey} (${max}/${max})`);
+      return false;
+    }
+    orderData.revisionsUsed[pageKey]++;
+    return true;
   }
 
   // =========================================================================
@@ -2459,59 +2478,76 @@
   }
 
   // =========================================================================
-  // BUSINESS INFO (LAST STEP)
+  // BUSINESS INFO
   // =========================================================================
   function saveBusinessInfo() {
-    const logoFileInput = document.getElementById('logoFile');
     orderData.business = {
       name: document.getElementById('businessName').value.trim(),
       address: document.getElementById('businessAddress').value.trim(),
       email: document.getElementById('contactEmail').value.trim(),
       phone: document.getElementById('contactPhone').value.trim(),
       noLogo: document.getElementById('noLogoCheckbox').checked,
-      logoFile: logoFileInput && logoFileInput.files.length > 0 ? logoFileInput.files[0] : null
+      logoFile: document.getElementById('logoFile').files[0] || null
     };
   }
 
   // =========================================================================
-  // LOGO UPLOAD TRIGGER
+  // FILE UPLOADS WITH VISUAL FEEDBACK
   // =========================================================================
-  const logoUploadTrigger = document.getElementById('logoUploadTrigger');
-  const logoFile = document.getElementById('logoFile');
-  if(logoUploadTrigger && logoFile) {
-    logoUploadTrigger.addEventListener('click', () => logoFile.click());
+  function setupFileUpload(triggerId, inputId, displayId) {
+    const trigger = document.getElementById(triggerId);
+    const input = document.getElementById(inputId);
+    const display = document.getElementById(displayId);
+
+    if (!trigger || !input) return;
+
+    trigger.addEventListener('click', () => input.click());
+    input.addEventListener('change', () => {
+      const file = input.files[0];
+      if (!file) return;
+      const maxSizeMB = 50;
+      if (file.size / (1024*1024) > maxSizeMB) {
+        alert(`File too large! Max size ${maxSizeMB}MB`);
+        input.value = '';
+        return;
+      }
+      orderData.business.logoFile = file;
+      if (display) display.innerText = `Uploaded: ${file.name}`;
+    });
   }
+
+  setupFileUpload('logoUploadTrigger','logoFile', 'logoFileName');
 
   // =========================================================================
   // REVIEW GENERATION
   // =========================================================================
   function generateReview() {
-    saveBusinessInfo(); // make sure last step info is saved
+    saveBusinessInfo(); // ensure last step info saved
     const reviewContainer = document.getElementById('reviewContainer');
-    if(!reviewContainer) return;
     reviewContainer.innerHTML = '';
 
+    // Plan
     reviewContainer.innerHTML += `<p><strong>Plan:</strong> ${orderData.planType} (${orderData.tier})</p>`;
 
-    if(orderData.pages.length > 0) {
-      orderData.pages.forEach((page, idx) => {
-        reviewContainer.innerHTML += `
-          <p><strong>Page ${idx+1}:</strong> ${page.title || '-'}<br>
-          Description: ${page.description || '-'}<br>
-          Media: ${page.media ? page.media.name || page.media : '-'}<br>
-          SEO: ${page.seo ? page.seo : '-'}</p>
-        `;
-      });
-    }
+    // Pages
+    orderData.pages.forEach((page, idx) => {
+      reviewContainer.innerHTML += `
+        <p><strong>Page ${idx+1}:</strong> ${page.title || '-'}<br>
+        Description: ${page.description || '-'}<br>
+        Media: ${page.media ? page.media.name || page.media : '-'}<br>
+        SEO: ${page.seo ? page.seo : '-'}</p>
+      `;
+    });
 
-    if(orderData.features.length > 0) {
+    // Features
+    if (orderData.features.length > 0)
       reviewContainer.innerHTML += `<p><strong>Features:</strong> ${orderData.features.join(', ')}</p>`;
-    }
 
-    if(orderData.seo.primary) {
+    // SEO
+    if (orderData.seo.primary)
       reviewContainer.innerHTML += `<p><strong>SEO:</strong> ${orderData.seo.primary}, ${orderData.seo.secondary}, Location: ${orderData.seo.location}</p>`;
-    }
 
+    // Business
     const b = orderData.business;
     reviewContainer.innerHTML += `<p><strong>Business:</strong> ${b.name}<br>Email: ${b.email}<br>Phone: ${b.phone || '-'}<br>Address: ${b.address || '-'}</p>`;
   }
@@ -2522,44 +2558,42 @@
   const finalConsent = document.getElementById('finalConsentCheckbox');
   const submitBtn = document.getElementById('submitOrderBtn');
 
-  if(finalConsent && submitBtn) {
-    finalConsent.addEventListener('change', () => {
-      submitBtn.disabled = !finalConsent.checked || !document.getElementById('consentGDPR').checked;
-    });
-    const gdprCheckbox = document.getElementById('consentGDPR');
-    if(gdprCheckbox) {
-      gdprCheckbox.addEventListener('change', () => {
-        submitBtn.disabled = !finalConsent.checked || !gdprCheckbox.checked;
-      });
-    }
+  finalConsent.addEventListener('change', () => {
+    submitBtn.disabled = !finalConsent.checked || !document.getElementById('consentGDPR').checked;
+  });
+  document.getElementById('consentGDPR').addEventListener('change', () => {
+    submitBtn.disabled = !finalConsent.checked || !document.getElementById('consentGDPR').checked;
+  });
+
+  // =========================================================================
+  // FORM SUBMISSION + GAS + WhatsApp
+  // =========================================================================
+  document.getElementById('vibzOrderForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    saveBusinessInfo();
+    submitBtn.disabled = true;
+    document.getElementById('loadingOverlay').style.display = 'flex';
+
+    // Call your Apps Script function
+    google.script.run.withSuccessHandler(onOrderSuccess).submitOrder(orderData);
+  });
+
+  function onOrderSuccess() {
+    // WhatsApp notification (opens chat with prefilled message)
+    const waNumber = '447706345874';
+    const waMessage = encodeURIComponent(`New order received for ${orderData.business.name}`);
+    const waLink = `https://wa.me/${waNumber}?text=${waMessage}`;
+    window.open(waLink, '_blank');
+
+    // Show success screen
+    document.getElementById('loadingOverlay').style.display = 'none';
+    document.getElementById('orderFormCard').style.display = 'none';
+    document.getElementById('successScreen').style.display = 'block';
+    document.getElementById('confirmationEmailDisplay').innerText = orderData.business.email;
   }
 
   // =========================================================================
-  // FORM SUBMISSION
-  // =========================================================================
-  const orderForm = document.getElementById('vibzOrderForm');
-  if(orderForm) {
-    orderForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      saveBusinessInfo();
-      submitBtn.disabled = true;
-      document.getElementById('loadingOverlay').style.display = 'flex';
-
-      // Example: replace with google.script.run call
-      // google.script.run.withSuccessHandler(onSuccess).submitOrder(orderData);
-
-      // Fake delay for demo
-      setTimeout(() => {
-        document.getElementById('loadingOverlay').style.display = 'none';
-        document.getElementById('orderFormCard').style.display = 'none';
-        document.getElementById('successScreen').style.display = 'block';
-        document.getElementById('confirmationEmailDisplay').innerText = orderData.business.email;
-      }, 1500);
-    });
-  }
-
-  // =========================================================================
-  // INITIALIZE STEP
+  // INITIALIZE
   // =========================================================================
   showStep(currentStep);
 </script>
