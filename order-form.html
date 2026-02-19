@@ -971,6 +971,9 @@
         <div style="font-weight: 600; color: var(--primary);">Submitting your order...</div>
     </div>
 
+
+
+    
     <script>
         // =========================================================================
         //  CONFIGURATION - UPDATED WITH NEW SERVICES FROM INDEX
@@ -2390,13 +2393,14 @@ let orderData = {
   features: [],        // selected features
   seo: {},             // primary/secondary keywords, location
   business: {},        // name, address, email, phone, logo, noLogo
+  files: []            // {fileName, mimeType, fileBase64, fileType}
 };
 
 // ==========================
 // STEP NAVIGATION
 // ==========================
 let currentStep = 1;
-const totalSteps = 5; // Update if steps increase
+const totalSteps = 5;
 
 function showStep(step) {
   for (let i = 1; i <= totalSteps; i++) {
@@ -2458,24 +2462,53 @@ function saveSEO(primary, secondary, location){
 // BUSINESS INFO (LAST STEP)
 // ==========================
 function saveBusinessInfo() {
-  const logoFile = document.getElementById('logoFile').files[0] || null;
   orderData.business = {
     name: document.getElementById('businessName').value.trim(),
     address: document.getElementById('businessAddress').value.trim(),
     email: document.getElementById('contactEmail').value.trim(),
     phone: document.getElementById('contactPhone').value.trim(),
-    noLogo: document.getElementById('noLogoCheckbox').checked,
-    logoFile: logoFile
+    noLogo: document.getElementById('noLogoCheckbox').checked
   };
+}
 
-  // Show uploaded file name visually
-  if(logoFile){
-    const display = document.createElement('p');
-    display.textContent = `Uploaded: ${logoFile.name}`;
-    display.style.fontSize = "0.9rem";
-    display.style.color = "green";
-    document.getElementById('logoUploadTrigger').appendChild(display);
-  }
+// ==========================
+// FILES BASE64 UTILITY
+// ==========================
+function readFileAsBase64(file, type){
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onload = function(e){
+      const base64Data = e.target.result.split(',')[1];
+      orderData.files.push({
+        fileName: file.name,
+        mimeType: file.type,
+        fileBase64: base64Data,
+        fileType: type
+      });
+      resolve();
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+// ==========================
+// READ ALL UPLOADS
+// ==========================
+async function collectUploads() {
+  orderData.files = []; // reset
+
+  const logo = document.getElementById('logoFile').files[0];
+  if(logo) await readFileAsBase64(logo, 'logo');
+
+  const images = document.getElementById('imageFiles')?.files || [];
+  for(const f of images) await readFileAsBase64(f, 'image');
+
+  const videos = document.getElementById('videoFiles')?.files || [];
+  for(const f of videos) await readFileAsBase64(f, 'video');
+
+  const branding = document.getElementById('brandingFiles')?.files || [];
+  for(const f of branding) await readFileAsBase64(f, 'branding');
 }
 
 // ==========================
@@ -2525,28 +2558,42 @@ document.getElementById('consentGDPR').addEventListener('change', () => {
 // ==========================
 // FORM SUBMISSION TO GAS
 // ==========================
-document.getElementById('vibzOrderForm').addEventListener('submit', function(e){
+document.getElementById('vibzOrderForm').addEventListener('submit', async function(e){
   e.preventDefault();
-  saveBusinessInfo();
   submitBtn.disabled = true;
   document.getElementById('loadingOverlay').style.display = 'flex';
 
-  // Send to GAS
-  google.script.run.withSuccessHandler(onSuccess).submitOrder(orderData);
+  saveBusinessInfo();
+  await collectUploads();
+
+  fetch("YOUR_DEPLOYED_WEB_APP_URL", {
+    method: "POST",
+    body: JSON.stringify(orderData),
+    headers: { "Content-Type": "application/json" }
+  })
+  .then(res => res.json())
+  .then(response => {
+    document.getElementById('loadingOverlay').style.display = 'none';
+    if(response.success){
+      document.getElementById('orderFormCard').style.display = 'none';
+      document.getElementById('successScreen').style.display = 'block';
+      document.getElementById('confirmationEmailDisplay').innerText = orderData.business.email;
+
+      // Open WhatsApp notification
+      window.open(`https://wa.me/447706345874?text=New order from ${encodeURIComponent(orderData.business.name)}`, '_blank');
+
+      // Optional: send confirmation email from GAS
+    } else {
+      alert("Error submitting order: " + response.error);
+      submitBtn.disabled = false;
+    }
+  })
+  .catch(err => {
+    alert("Submission failed: " + err);
+    submitBtn.disabled = false;
+    document.getElementById('loadingOverlay').style.display = 'none';
+  });
 });
-
-// Success handler
-function onSuccess(response){
-  document.getElementById('loadingOverlay').style.display = 'none';
-  document.getElementById('orderFormCard').style.display = 'none';
-  document.getElementById('successScreen').style.display = 'block';
-  document.getElementById('confirmationEmailDisplay').innerText = orderData.business.email;
-
-  // WhatsApp notification
-  const message = encodeURIComponent(`New order received for ${orderData.business.name}`);
-  const waLink = `https://wa.me/447706345874?text=${message}`;
-  window.open(waLink,'_blank'); // manual send
-}
 
 // ==========================
 // INITIALIZE STEP
@@ -2554,15 +2601,15 @@ function onSuccess(response){
 showStep(currentStep);
 
 // ==========================
-// LOGO UPLOAD TRIGGER
+// UPLOAD TRIGGERS
 // ==========================
-const logoUploadTrigger = document.getElementById('logoUploadTrigger');
-const logoFile = document.getElementById('logoFile');
-if(logoUploadTrigger && logoFile){
-  logoUploadTrigger.addEventListener('click', function(){
-    logoFile.click();
-  });
-}
+['logoUploadTrigger','imageUploadTrigger','videoUploadTrigger','brandingUploadTrigger'].forEach(id=>{
+  const trigger = document.getElementById(id);
+  const input = document.getElementById(id.replace('Trigger','Files')) || document.getElementById(id.replace('Trigger','File'));
+  if(trigger && input){
+    trigger.addEventListener('click', ()=> input.click());
+  }
+});
 </script>
     
 </body>
