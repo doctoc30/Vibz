@@ -2376,5 +2376,187 @@
             }
         };
     </script>
+
+
+
+ <script>
+  // =========================================================================
+  // ORDER DATA OBJECT
+  // =========================================================================
+  let orderData = {
+    planType: '',
+    tier: '',
+    pages: [],           // {title, description, media, SEO keywords}
+    features: [],        // selected features
+    seo: {},             // primary/secondary keywords, location
+    business: {},        // name, address, email, phone, logo, noLogo
+  };
+
+  // =========================================================================
+  // STEP NAVIGATION
+  // =========================================================================
+  let currentStep = 1;
+  const totalSteps = 4;
+
+  function showStep(step) {
+    for (let i = 1; i <= totalSteps; i++) {
+      document.getElementById(`step${i}`).classList.remove('active');
+    }
+    document.getElementById(`step${step}`).classList.add('active');
+
+    // Show/hide prev/next buttons
+    document.getElementById('prevBtn').style.display = step === 1 ? 'none' : 'inline-block';
+    document.getElementById('nextBtn').style.display = step === totalSteps ? 'none' : 'inline-block';
+  }
+
+  function nextStep() {
+    if (currentStep < totalSteps) {
+      currentStep++;
+      showStep(currentStep);
+      if (currentStep === totalSteps) generateReview();
+    }
+  }
+
+  function prevStep() {
+    if (currentStep > 1) {
+      currentStep--;
+      showStep(currentStep);
+    }
+  }
+
+  // =========================================================================
+  // PLAN & FEATURE SELECTION
+  // =========================================================================
+  function setPlan(plan, tier) {
+    orderData.planType = plan;
+    orderData.tier = tier;
+  }
+
+  function selectFeature(feature) {
+    if (!orderData.features.includes(feature)) orderData.features.push(feature);
+  }
+
+  function deselectFeature(feature) {
+    orderData.features = orderData.features.filter(f => f !== feature);
+  }
+
+  // =========================================================================
+  // PAGE CUSTOMIZATION
+  // =========================================================================
+  function savePageData(pageIndex, data) {
+    orderData.pages[pageIndex] = data; // {title, description, media, SEO}
+  }
+
+  // =========================================================================
+  // SEO INFO
+  // =========================================================================
+  function saveSEO(primary, secondary, location) {
+    orderData.seo = { primary, secondary, location };
+  }
+
+  // =========================================================================
+  // BUSINESS INFO (STEP 4)
+  // =========================================================================
+  function saveBusinessInfo() {
+    orderData.business = {
+      name: document.getElementById('businessName').value.trim(),
+      address: document.getElementById('businessAddress').value.trim(),
+      email: document.getElementById('contactEmail').value.trim(),
+      phone: document.getElementById('contactPhone').value.trim(),
+      noLogo: document.getElementById('noLogoCheckbox').checked,
+      logoFile: document.getElementById('logoFile').files[0] || null
+    };
+  }
+
+  // =========================================================================
+  // REVIEW GENERATION
+  // =========================================================================
+  function generateReview() {
+    saveBusinessInfo(); // ensure last step info saved
+    const reviewContainer = document.getElementById('reviewContainer');
+    reviewContainer.innerHTML = '';
+
+    // Plan
+    reviewContainer.innerHTML += `<p><strong>Plan:</strong> ${orderData.planType} (${orderData.tier})</p>`;
+
+    // Pages
+    if (orderData.pages.length > 0) {
+      orderData.pages.forEach((page, idx) => {
+        reviewContainer.innerHTML += `
+          <p><strong>Page ${idx+1}:</strong> ${page.title || '-'}<br>
+          Description: ${page.description || '-'}<br>
+          Media: ${page.media ? page.media.name || page.media : '-'}<br>
+          SEO: ${page.seo ? page.seo : '-'}</p>
+        `;
+      });
+    }
+
+    // Features
+    if (orderData.features.length > 0) {
+      reviewContainer.innerHTML += `<p><strong>Features:</strong> ${orderData.features.join(', ')}</p>`;
+    }
+
+    // SEO
+    if (orderData.seo.primary) {
+      reviewContainer.innerHTML += `<p><strong>SEO:</strong> ${orderData.seo.primary}, ${orderData.seo.secondary}, Location: ${orderData.seo.location}</p>`;
+    }
+
+    // Business
+    const b = orderData.business;
+    reviewContainer.innerHTML += `<p><strong>Business:</strong> ${b.name}<br>Email: ${b.email}<br>Phone: ${b.phone || '-'}<br>Address: ${b.address || '-'}</p>`;
+  }
+
+  // =========================================================================
+  // ENABLE SUBMIT BUTTON
+  // =========================================================================
+  const finalConsent = document.getElementById('finalConsentCheckbox');
+  const submitBtn = document.getElementById('submitOrderBtn');
+
+  finalConsent.addEventListener('change', () => {
+    submitBtn.disabled = !finalConsent.checked || !document.getElementById('consentGDPR').checked;
+  });
+
+  document.getElementById('consentGDPR').addEventListener('change', () => {
+    submitBtn.disabled = !finalConsent.checked || !document.getElementById('consentGDPR').checked;
+  });
+
+  // =========================================================================
+  // FORM SUBMISSION
+  // =========================================================================
+  document.getElementById('vibzOrderForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    saveBusinessInfo();
+    submitBtn.disabled = true;
+    document.getElementById('loadingOverlay').style.display = 'flex';
+
+    // Here, implement App Script call or backend submission
+    // Example: google.script.run.withSuccessHandler(onSuccess).submitOrder(orderData);
+
+    // Fake success delay for demo
+    setTimeout(() => {
+      document.getElementById('loadingOverlay').style.display = 'none';
+      document.getElementById('orderFormCard').style.display = 'none';
+      document.getElementById('successScreen').style.display = 'block';
+      document.getElementById('confirmationEmailDisplay').innerText = orderData.business.email;
+    }, 1500);
+  });
+
+  // =========================================================================
+  // INITIALIZE STEP
+  // =========================================================================
+  showStep(currentStep);
+
+  // =========================================================================
+  // LOGO UPLOAD TRIGGER
+  // =========================================================================
+  const logoUploadTrigger = document.getElementById('logoUploadTrigger');
+  const logoFile = document.getElementById('logoFile');
+  if (logoUploadTrigger && logoFile) {
+    logoUploadTrigger.addEventListener('click', function() {
+      logoFile.click();
+    });
+  }
+</script>
+    
 </body>
 </html>
