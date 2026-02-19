@@ -2379,46 +2379,50 @@
 
 
 
- <script>
+<script>
   // =========================================================================
   // ORDER DATA OBJECT
   // =========================================================================
   let orderData = {
     planType: '',
     tier: '',
-    pages: [],           // {title, description, media, SEO keywords}
+    pages: [],           // {title, description, media, SEO}
     features: [],        // selected features
-    seo: {},             // primary/secondary keywords, location
-    business: {},        // name, address, email, phone, logo, noLogo
+    seo: {},             // {primary, secondary, location}
+    business: {},        // {name, address, email, phone, logo, noLogo}
   };
 
   // =========================================================================
   // STEP NAVIGATION
   // =========================================================================
   let currentStep = 1;
-  const totalSteps = 4;
+  const totalSteps = 5; // adjust based on your HTML steps
 
   function showStep(step) {
     for (let i = 1; i <= totalSteps; i++) {
-      document.getElementById(`step${i}`).classList.remove('active');
+      const s = document.getElementById(`step${i}`);
+      if(s) s.classList.remove('active');
     }
-    document.getElementById(`step${step}`).classList.add('active');
+    const activeStep = document.getElementById(`step${step}`);
+    if(activeStep) activeStep.classList.add('active');
 
-    // Show/hide prev/next buttons
-    document.getElementById('prevBtn').style.display = step === 1 ? 'none' : 'inline-block';
-    document.getElementById('nextBtn').style.display = step === totalSteps ? 'none' : 'inline-block';
+    // Prev/Next button display
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    if(prevBtn) prevBtn.style.display = step === 1 ? 'none' : 'inline-block';
+    if(nextBtn) nextBtn.style.display = step === totalSteps ? 'none' : 'inline-block';
   }
 
   function nextStep() {
-    if (currentStep < totalSteps) {
+    if(currentStep < totalSteps) {
       currentStep++;
       showStep(currentStep);
-      if (currentStep === totalSteps) generateReview();
+      if(currentStep === totalSteps) generateReview();
     }
   }
 
   function prevStep() {
-    if (currentStep > 1) {
+    if(currentStep > 1) {
       currentStep--;
       showStep(currentStep);
     }
@@ -2433,7 +2437,7 @@
   }
 
   function selectFeature(feature) {
-    if (!orderData.features.includes(feature)) orderData.features.push(feature);
+    if(!orderData.features.includes(feature)) orderData.features.push(feature);
   }
 
   function deselectFeature(feature) {
@@ -2443,8 +2447,8 @@
   // =========================================================================
   // PAGE CUSTOMIZATION
   // =========================================================================
-  function savePageData(pageIndex, data) {
-    orderData.pages[pageIndex] = data; // {title, description, media, SEO}
+  function savePageData(index, data) {
+    orderData.pages[index] = data; // {title, description, media, SEO}
   }
 
   // =========================================================================
@@ -2455,32 +2459,41 @@
   }
 
   // =========================================================================
-  // BUSINESS INFO (STEP 4)
+  // BUSINESS INFO (LAST STEP)
   // =========================================================================
   function saveBusinessInfo() {
+    const logoFileInput = document.getElementById('logoFile');
     orderData.business = {
       name: document.getElementById('businessName').value.trim(),
       address: document.getElementById('businessAddress').value.trim(),
       email: document.getElementById('contactEmail').value.trim(),
       phone: document.getElementById('contactPhone').value.trim(),
       noLogo: document.getElementById('noLogoCheckbox').checked,
-      logoFile: document.getElementById('logoFile').files[0] || null
+      logoFile: logoFileInput && logoFileInput.files.length > 0 ? logoFileInput.files[0] : null
     };
+  }
+
+  // =========================================================================
+  // LOGO UPLOAD TRIGGER
+  // =========================================================================
+  const logoUploadTrigger = document.getElementById('logoUploadTrigger');
+  const logoFile = document.getElementById('logoFile');
+  if(logoUploadTrigger && logoFile) {
+    logoUploadTrigger.addEventListener('click', () => logoFile.click());
   }
 
   // =========================================================================
   // REVIEW GENERATION
   // =========================================================================
   function generateReview() {
-    saveBusinessInfo(); // ensure last step info saved
+    saveBusinessInfo(); // make sure last step info is saved
     const reviewContainer = document.getElementById('reviewContainer');
+    if(!reviewContainer) return;
     reviewContainer.innerHTML = '';
 
-    // Plan
     reviewContainer.innerHTML += `<p><strong>Plan:</strong> ${orderData.planType} (${orderData.tier})</p>`;
 
-    // Pages
-    if (orderData.pages.length > 0) {
+    if(orderData.pages.length > 0) {
       orderData.pages.forEach((page, idx) => {
         reviewContainer.innerHTML += `
           <p><strong>Page ${idx+1}:</strong> ${page.title || '-'}<br>
@@ -2491,17 +2504,14 @@
       });
     }
 
-    // Features
-    if (orderData.features.length > 0) {
+    if(orderData.features.length > 0) {
       reviewContainer.innerHTML += `<p><strong>Features:</strong> ${orderData.features.join(', ')}</p>`;
     }
 
-    // SEO
-    if (orderData.seo.primary) {
+    if(orderData.seo.primary) {
       reviewContainer.innerHTML += `<p><strong>SEO:</strong> ${orderData.seo.primary}, ${orderData.seo.secondary}, Location: ${orderData.seo.location}</p>`;
     }
 
-    // Business
     const b = orderData.business;
     reviewContainer.innerHTML += `<p><strong>Business:</strong> ${b.name}<br>Email: ${b.email}<br>Phone: ${b.phone || '-'}<br>Address: ${b.address || '-'}</p>`;
   }
@@ -2512,50 +2522,46 @@
   const finalConsent = document.getElementById('finalConsentCheckbox');
   const submitBtn = document.getElementById('submitOrderBtn');
 
-  finalConsent.addEventListener('change', () => {
-    submitBtn.disabled = !finalConsent.checked || !document.getElementById('consentGDPR').checked;
-  });
-
-  document.getElementById('consentGDPR').addEventListener('change', () => {
-    submitBtn.disabled = !finalConsent.checked || !document.getElementById('consentGDPR').checked;
-  });
+  if(finalConsent && submitBtn) {
+    finalConsent.addEventListener('change', () => {
+      submitBtn.disabled = !finalConsent.checked || !document.getElementById('consentGDPR').checked;
+    });
+    const gdprCheckbox = document.getElementById('consentGDPR');
+    if(gdprCheckbox) {
+      gdprCheckbox.addEventListener('change', () => {
+        submitBtn.disabled = !finalConsent.checked || !gdprCheckbox.checked;
+      });
+    }
+  }
 
   // =========================================================================
   // FORM SUBMISSION
   // =========================================================================
-  document.getElementById('vibzOrderForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    saveBusinessInfo();
-    submitBtn.disabled = true;
-    document.getElementById('loadingOverlay').style.display = 'flex';
+  const orderForm = document.getElementById('vibzOrderForm');
+  if(orderForm) {
+    orderForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      saveBusinessInfo();
+      submitBtn.disabled = true;
+      document.getElementById('loadingOverlay').style.display = 'flex';
 
-    // Here, implement App Script call or backend submission
-    // Example: google.script.run.withSuccessHandler(onSuccess).submitOrder(orderData);
+      // Example: replace with google.script.run call
+      // google.script.run.withSuccessHandler(onSuccess).submitOrder(orderData);
 
-    // Fake success delay for demo
-    setTimeout(() => {
-      document.getElementById('loadingOverlay').style.display = 'none';
-      document.getElementById('orderFormCard').style.display = 'none';
-      document.getElementById('successScreen').style.display = 'block';
-      document.getElementById('confirmationEmailDisplay').innerText = orderData.business.email;
-    }, 1500);
-  });
+      // Fake delay for demo
+      setTimeout(() => {
+        document.getElementById('loadingOverlay').style.display = 'none';
+        document.getElementById('orderFormCard').style.display = 'none';
+        document.getElementById('successScreen').style.display = 'block';
+        document.getElementById('confirmationEmailDisplay').innerText = orderData.business.email;
+      }, 1500);
+    });
+  }
 
   // =========================================================================
   // INITIALIZE STEP
   // =========================================================================
   showStep(currentStep);
-
-  // =========================================================================
-  // LOGO UPLOAD TRIGGER
-  // =========================================================================
-  const logoUploadTrigger = document.getElementById('logoUploadTrigger');
-  const logoFile = document.getElementById('logoFile');
-  if (logoUploadTrigger && logoFile) {
-    logoUploadTrigger.addEventListener('click', function() {
-      logoFile.click();
-    });
-  }
 </script>
     
 </body>
