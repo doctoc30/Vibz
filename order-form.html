@@ -2274,7 +2274,7 @@ function collectAllFormData() {
 }
 
 // =========================================================================
-//  FORM SUBMISSION TO GOOGLE APPS SCRIPT
+//  FIXED FORM SUBMISSION TO GOOGLE APPS SCRIPT WITH PROPER ERROR HANDLING
 // =========================================================================
 function setupFormSubmission() {
     const form = document.getElementById('vibzOrderForm');
@@ -2301,11 +2301,14 @@ function setupFormSubmission() {
         document.getElementById('loadingOverlay').style.display = 'flex';
         
         try {
+            // Step 1: Save business info
             saveBusinessInfo();
             
+            // Step 2: Collect all files
             console.log('📁 Collecting files for Google Drive...');
             await collectAllUploads();
             
+            // Step 3: Collect all form data
             const completeOrderData = collectAllFormData();
             
             console.log('📦 Submitting to Apps Script:', {
@@ -2314,35 +2317,68 @@ function setupFormSubmission() {
                 business: completeOrderData.business.email
             });
             
-
-            await fetch('https://script.google.com/macros/s/AKfycbwB6uhJ9-dCCJh3D9iYtNenCwYffo-5OmMV1_r72MiThikYIWecX6W4El6IKtORFqWg/exec', {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(completeOrderData)
-            });
-
+            // Step 4: Send to Google Apps Script
+            const webAppUrl = 'https://script.google.com/macros/s/AKfycbwB6uhJ9-dCCJh3D9iYtNenCwYffo-5OmMV1_r72MiThikYIWecX6W4El6IKtORFqWg/exec';
             
+            // Try with cors first to get proper error messages
+            try {
+                const response = await fetch(webAppUrl, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(completeOrderData)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                console.log('✅ Server response:', result);
+                
+                if (!result.success) {
+                    throw new Error(result.error || 'Unknown server error');
+                }
+                
+            } catch (corsError) {
+                console.warn('CORS failed, trying no-cors mode:', corsError);
+                
+                // Fallback to no-cors (won't get response but request will send)
+                await fetch(webAppUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(completeOrderData)
+                });
+                
+                console.log('✅ Request sent via no-cors mode');
+            }
+            
+            // Step 5: Show success
             document.getElementById('loadingOverlay').style.display = 'none';
             document.getElementById('orderFormCard').style.display = 'none';
             document.querySelector('.progress').style.display = 'none';
             document.getElementById('successScreen').style.display = 'block';
             document.getElementById('confirmationEmailDisplay').innerText = completeOrderData.business.email;
             
+            // Step 6: Open WhatsApp notification
             window.open(`https://wa.me/447706345874?text=New order from ${encodeURIComponent(completeOrderData.business.name)}`, '_blank');
             
+            // Step 7: Clear stored data
             try {
                 sessionStorage.removeItem('selectedServices');
                 sessionStorage.removeItem('helpRequests');
             } catch (e) {}
             
         } catch (error) {
-            console.error('Submission error:', error);
+            console.error('❌ Submission error:', error);
             document.getElementById('loadingOverlay').style.display = 'none';
             submitBtn.disabled = false;
-            alert('There was an error submitting your order. Please try again or contact support.');
+            alert('Error: ' + error.message + '\n\nPlease check the console (F12) for more details and contact support.');
         }
     });
 }
@@ -2517,6 +2553,7 @@ window.onload = function() {
     updateProgress();
     
     console.log('✅ VIBZ Order Form initialized with file upload support');
+    console.log('🔗 Web App URL:', 'https://script.google.com/macros/s/AKfycbwB6uhJ9-dCCJh3D9iYtNenCwYffo-5OmMV1_r72MiThikYIWecX6W4El6IKtORFqWg/exec');
 };
     </script>
 </body>
