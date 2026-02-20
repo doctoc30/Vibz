@@ -774,6 +774,27 @@
         .mt-4 { margin-top: 24px; }
         .mt-2 { margin-top: 16px; }
         .d-none { display: none; }
+        
+        /* File upload success badge */
+        .upload-success-badge {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #4CAF50;
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .file-upload-box {
+            position: relative;
+        }
     </style>
 </head>
 <body>
@@ -971,20 +992,505 @@
         <div style="font-weight: 600; color: var(--primary);">Submitting your order...</div>
     </div>
 
-
-
-    
     <script>
 // =========================================================================
-//  CONFIGURATION - KEEP ALL YOUR EXISTING CONFIG OBJECTS HERE
+//  CONFIGURATION - COMPLETELY FILLED IN (NO MORE {...} PLACEHOLDERS)
 // =========================================================================
-const PLAN_CONFIG = { ... }; // Keep all your config objects as they are
-const TIER_CONFIG = { ... };
-const PRICING_CONFIG = { ... };
-const BASE_FEATURES = { ... };
-const ALL_FEATURES = { ... };
-const FEATURE_ASSETS = { ... };
-const PAGE_NAME_SUGGESTIONS = [ ... ];
+const PLAN_CONFIG = {
+    outright: { name: 'Buy Outright' },
+    monthly:  { name: 'Monthly License' }
+};
+
+const TIER_CONFIG = {
+    standard: { 
+        name: 'STANDARD', 
+        pages: 5, 
+        revisions: 5, 
+        delivery: '15-20 days' 
+    },
+    premium: { 
+        name: 'PREMIUM', 
+        pages: 15, 
+        revisions: 10, 
+        delivery: '20-25 days' 
+    }
+};
+
+const PRICING_CONFIG = {
+    outright: { standard: 1500, premium: 3000 },
+    monthly: { 
+        standard: 125,  
+        premium: 225,
+        buildFee: { standard: 500, premium: 650 }
+    }
+};
+
+const BASE_FEATURES = {
+    monthly: {
+        standard: [
+            'Mobile responsive',
+            'Monthly content updates',
+            'Security monitoring',
+            'Daily backups',
+            '72h support response'
+        ],
+        premium: [
+            'Mobile responsive',
+            'Priority support (24h)',
+            'Performance optimisation',
+            'Booking/payment support',
+            'Analytics review',
+            'Ongoing optimisation',
+            'Priority change requests'
+        ]
+    },
+    outright: {
+        standard: [
+            'Mobile responsive',
+            'Complete website files',
+            'Full ownership & copyright',
+            'No recurring license fees',
+            '1 month post-launch support'
+        ],
+        premium: [
+            'Mobile responsive',
+            'Complete website files',
+            'Full ownership & copyright',
+            'No recurring license fees',
+            '3 months post-launch support',
+            'Premium feature set'
+        ]
+    }
+};
+
+const ALL_FEATURES = {
+    standard: [
+        "Professional Logo / Text Logo",
+        "Services & Pricing Section",
+        "Gallery (Haircuts / Before & After)",
+        "WhatsApp Chat Button",
+        "Click-to-Call Button",
+        "Contact Form",
+        "Customer Reviews Section",
+        "Google Maps Location",
+        "Book Now CTA Buttons",
+        "Promo Banner / First-Time Visitor Offer"
+    ],
+    premium: [
+        "Full Branding (colors, fonts, favicon, overall visual identity)",
+        "Staff / Barber Profiles",
+        "Online Booking Integration",
+        "Stripe Payment Links",
+        "Digital Gift Cards",
+        "Waitlist System",
+        "Exit-Intent Popup",
+        "Promo Popup (offer modal)",
+        "Sticky CTA Bar (Book / Call / WhatsApp)",
+        "WhatsApp Quick Message (pre-written)",
+        "Email Signup Form",
+        "First-Time Visitor Offer Section",
+        "Countdown Timer (limited offers)",
+        "Google Reviews Embed (live feed from Google Business)",
+        "Interactive Reviews (filterable/animated testimonials)",
+        "Testimonials Slider (text/images for client reviews)",
+        "Blog / News Section",
+        "Customer Database (email/phone capture)",
+        "Mobile Text CTA (tap-to-message SMS)",
+        "Promotions / Offers Page",
+        "Simple Business Dashboard",
+        "Lead Source Tracking",
+        "Loyalty / VIP Members Section",
+        "Custom Page Layouts / Sections",
+        "Multi-Location Pages",
+        "Appointment Reminders / Notifications",
+        "Gift Card & Loyalty Program Tracker",
+        "Service Analytics Dashboard",
+        "Social Proof Widgets (badges, awards, “Top Barber”)",
+        "Custom Call-to-Action Widgets (multiple CTAs per page)",
+        "Scroll Animations (fade-in, slide-in, interactive on-scroll effects)",
+        "Back-to-Top Button",
+        "Chatbot Integration (Tawk.to or similar)",
+        "App-Like Website Design (mobile-first, smooth transitions, native app feel)",
+        "Animated Stats / Counters Section (clients served, haircuts done, awards)"
+    ]
+};
+
+const FEATURE_ASSETS = {
+    "Professional Logo / Text Logo": {
+        fields: [
+            { type: 'file', label: 'Upload logo file', accept: '.png,.jpg,.jpeg,.svg,.ai,.eps', help: 'PNG, JPG, SVG, AI, EPS • Max 10MB' },
+            { type: 'text', label: 'Business name (if text logo only)' },
+            { type: 'text', label: 'Tagline (optional)' },
+            { type: 'select', label: 'Preferred font style', options: ['Modern', 'Classic', 'Handwritten', 'Bold/Edy', 'Minimal', 'Not sure - help me choose'] },
+            { type: 'text', label: 'Color preferences (e.g., black and gold)' }
+        ]
+    },
+    "Services & Pricing Section": {
+        fields: [
+            { type: 'textarea', label: 'List your services with descriptions and prices (one per line, e.g., "Classic Haircut - £25 - 30min")' },
+            { type: 'text', label: 'Service categories (e.g., Haircuts, Beard, Kids)' },
+            { type: 'text', label: 'Average service duration (optional)' }
+        ]
+    },
+    "Gallery (Haircuts / Before & After)": {
+        fields: [
+            { type: 'file', label: 'Upload photos (haircuts, before/after, shop interior)', accept: '.png,.jpg,.jpeg', multiple: true, help: 'PNG, JPG • You can upload multiple' },
+            { type: 'textarea', label: 'Photo captions/descriptions (optional)' },
+            { type: 'select', label: 'Preferred gallery layout', options: ['Grid', 'Masonry', 'Slideshow/Carousel', 'Not sure - surprise me'] }
+        ]
+    },
+    "WhatsApp Chat Button": {
+        fields: [
+            { type: 'text', label: 'WhatsApp business number (with country code, e.g., +44 1234 567890)' },
+            { type: 'text', label: 'Default welcome message (optional)' },
+            { type: 'text', label: 'Business hours for chat availability (optional)' }
+        ]
+    },
+    "Click-to-Call Button": {
+        fields: [
+            { type: 'text', label: 'Primary phone number' },
+            { type: 'text', label: 'Secondary phone number (optional)' },
+            { type: 'text', label: 'Call hours (optional)' }
+        ]
+    },
+    "Contact Form": {
+        fields: [
+            { type: 'email', label: 'Email address where form submissions should go' },
+            { type: 'text', label: 'Fields to include (comma separated, e.g., Name, Email, Phone, Message)' },
+            { type: 'textarea', label: 'Auto-reply message (optional)' }
+        ]
+    },
+    "Customer Reviews Section": {
+        fields: [
+            { type: 'textarea', label: 'Existing reviews (one per line: Name, Rating 1-5, Review text)' },
+            { type: 'url', label: 'Link to Google Reviews, Trustpilot, etc. (optional)' },
+            { type: 'select', label: 'Preferred display style', options: ['Grid', 'Carousel/Slider', 'List', 'Not sure - recommend for me'] }
+        ]
+    },
+    "Google Maps Location": {
+        fields: [
+            { type: 'text', label: 'Full business address' },
+            { type: 'text', label: 'Google Maps Place ID or link (optional)' },
+            { type: 'text', label: 'Multiple locations? Provide all addresses (one per line)' }
+        ]
+    },
+    "Book Now CTA Buttons": {
+        fields: [
+            { type: 'url', label: 'Booking URL (if using external system)' },
+            { type: 'text', label: 'Booking phone number (if phone booking)' },
+            { type: 'text', label: 'Button text preference (e.g., "Book Now", "Book Appointment")' }
+        ]
+    },
+    "Promo Banner / First-Time Visitor Offer": {
+        fields: [
+            { type: 'text', label: 'Offer text/title' },
+            { type: 'textarea', label: 'Offer description/details' },
+            { type: 'date', label: 'Expiry date (if applicable)' },
+            { type: 'url', label: 'Link URL for banner click' },
+            { type: 'text', label: 'Background color preference (e.g., #FF6B00 or "orange")' }
+        ]
+    },
+    "Full Branding (colors, fonts, favicon, overall visual identity)": {
+        fields: [
+            { type: 'file', label: 'Upload brand guidelines (PDF if available)', accept: '.pdf', help: 'PDF only' },
+            { type: 'text', label: 'Primary color (HEX code, e.g., #FF6B00)' },
+            { type: 'text', label: 'Secondary color (HEX code)' },
+            { type: 'text', label: 'Font preferences (e.g., "Inter for headings, Open Sans for body")' },
+            { type: 'file', label: 'Upload favicon image (square, 512x512px)', accept: '.png,.jpg,.jpeg,.ico', help: 'PNG, JPG, ICO' },
+            { type: 'select', label: 'Brand voice/tone', options: ['Professional', 'Friendly/Casual', 'Edgy/Modern', 'Luxury/Premium', 'Minimal/Clean', 'Not sure - help me define'] }
+        ]
+    },
+    "Staff / Barber Profiles": {
+        fields: [
+            { type: 'file', label: 'Upload staff photos (headshots)', accept: '.png,.jpg,.jpeg', multiple: true, help: 'Upload multiple files' },
+            { type: 'textarea', label: 'Names and roles/titles (one per line, e.g., "John Smith - Master Barber")' },
+            { type: 'textarea', label: 'Bios/descriptions for each staff member' },
+            { type: 'text', label: 'Specialties (e.g., fades, beard shaping)' },
+            { type: 'text', label: 'Social media links (Instagram, etc.)' },
+            { type: 'text', label: 'Booking links per staff (if applicable)' }
+        ]
+    },
+    "Online Booking Integration": {
+        fields: [
+            { type: 'url', label: 'Booking system URL (if using external)' },
+            { type: 'text', label: 'API key or credentials (if custom integration needed)' },
+            { type: 'select', label: 'Preferred booking platform', options: ['Booksy', 'Fresha', 'Treatwell', 'Square', 'Own system', 'Not sure - recommend'] },
+            { type: 'textarea', label: 'Cancellation policy text' }
+        ]
+    },
+    "Stripe Payment Links": {
+        fields: [
+            { type: 'email', label: 'Stripe account email' },
+            { type: 'url', label: 'Payment link(s) for services/products (one per line)' },
+            { type: 'select', label: 'Payment type', options: ['One-time payments', 'Subscriptions', 'Both'] }
+        ]
+    },
+    "Digital Gift Cards": {
+        fields: [
+            { type: 'text', label: 'Gift card values available (comma separated, e.g., 25, 50, 100)' },
+            { type: 'textarea', label: 'Custom message option for buyer' },
+            { type: 'text', label: 'Expiry period (e.g., "12 months")' },
+            { type: 'textarea', label: 'Terms and conditions' }
+        ]
+    },
+    "Waitlist System": {
+        fields: [
+            { type: 'email', label: 'Notification email for waitlist signups' },
+            { type: 'text', label: 'Max party size (if applicable)' },
+            { type: 'textarea', label: 'Default notification message' }
+        ]
+    },
+    "Exit-Intent Popup": {
+        fields: [
+            { type: 'text', label: 'Popup headline' },
+            { type: 'textarea', label: 'Offer/CTA text' },
+            { type: 'text', label: 'Button text' },
+            { type: 'textarea', label: 'Success message (after submission)' },
+            { type: 'select', label: 'Email collection?', options: ['Yes, collect email', 'No, just offer'] }
+        ]
+    },
+    "Promo Popup (offer modal)": {
+        fields: [
+            { type: 'text', label: 'Popup title' },
+            { type: 'textarea', label: 'Offer details' },
+            { type: 'text', label: 'Button text' },
+            { type: 'url', label: 'Button link' },
+            { type: 'file', label: 'Upload image/icon (optional)', accept: '.png,.jpg,.jpeg', help: 'PNG, JPG' },
+            { type: 'number', label: 'Display delay (seconds)' }
+        ]
+    },
+    "Sticky CTA Bar (Book / Call / WhatsApp)": {
+        fields: [
+            { type: 'text', label: 'Button 1 text (e.g., "Book Now")' },
+            { type: 'url', label: 'Button 1 link' },
+            { type: 'text', label: 'Button 2 text (optional)' },
+            { type: 'url', label: 'Button 2 link (optional)' },
+            { type: 'text', label: 'Background color (HEX)' },
+            { type: 'text', label: 'Text color (HEX)' }
+        ]
+    },
+    "WhatsApp Quick Message (pre-written)": {
+        fields: [
+            { type: 'text', label: 'WhatsApp number' },
+            { type: 'textarea', label: 'Pre-written message template' },
+            { type: 'text', label: 'Button text (e.g., "Message us")' }
+        ]
+    },
+    "Email Signup Form": {
+        fields: [
+            { type: 'select', label: 'Email service provider', options: ['Mailchimp', 'Klaviyo', 'ConvertKit', 'SendinBlue', 'Other', 'Not sure - help me'] },
+            { type: 'text', label: 'API key or list ID' },
+            { type: 'textarea', label: 'Success/confirmation message' }
+        ]
+    },
+    "First-Time Visitor Offer Section": {
+        fields: [
+            { type: 'text', label: 'Offer headline' },
+            { type: 'textarea', label: 'Offer details' },
+            { type: 'text', label: 'Offer code (if applicable)' },
+            { type: 'date', label: 'Expiry details' },
+            { type: 'text', label: 'CTA button text' },
+            { type: 'url', label: 'CTA button link' }
+        ]
+    },
+    "Countdown Timer (limited offers)": {
+        fields: [
+            { type: 'datetime-local', label: 'Target date/time for offer expiry' },
+            { type: 'text', label: 'Timer label (e.g., "Offer ends in:")' },
+            { type: 'select', label: 'Expiry action', options: ['Hide timer', 'Show message', 'Redirect to another page'] }
+        ]
+    },
+    "Google Reviews Embed (live feed from Google Business)": {
+        fields: [
+            { type: 'text', label: 'Google Business Profile name/ID' },
+            { type: 'url', label: 'Google Reviews link (if known)' },
+            { type: 'number', label: 'Minimum rating to show (1-5)' },
+            { type: 'number', label: 'Number of reviews to display' }
+        ]
+    },
+    "Interactive Reviews (filterable/animated testimonials)": {
+        fields: [
+            { type: 'textarea', label: 'Review data (one per line: Name, Rating 1-5, Review text, Date)' },
+            { type: 'text', label: 'Filter options (e.g., "5 star, 4 star, with photos")' },
+            { type: 'select', label: 'Animation preference', options: ['Fade', 'Slide', 'Bounce', 'None'] }
+        ]
+    },
+    "Testimonials Slider (text/images for client reviews)": {
+        fields: [
+            { type: 'file', label: 'Upload client photos', accept: '.png,.jpg,.jpeg', multiple: true, help: 'Optional' },
+            { type: 'textarea', label: 'Client testimonials (one per line: Name, Review text)' },
+            { type: 'number', label: 'Autoplay speed (seconds)' },
+            { type: 'select', label: 'Navigation style', options: ['Dots', 'Arrows', 'Both'] }
+        ]
+    },
+    "Blog / News Section": {
+        fields: [
+            { type: 'text', label: 'Blog title (e.g., "The VIBZ Blog")' },
+            { type: 'textarea', label: 'Initial posts (titles and brief descriptions)' },
+            { type: 'text', label: 'Categories/tags (comma separated)' },
+            { type: 'text', label: 'Author names' }
+        ]
+    },
+    "Customer Database (email/phone capture)": {
+        fields: [
+            { type: 'textarea', label: 'Data collection consent text' },
+            { type: 'text', label: 'Fields to collect (comma separated, e.g., Email, Phone, Name)' },
+            { type: 'select', label: 'Export format preference', options: ['CSV', 'Excel', 'Both'] }
+        ]
+    },
+    "Mobile Text CTA (tap-to-message SMS)": {
+        fields: [
+            { type: 'text', label: 'Phone number for SMS' },
+            { type: 'textarea', label: 'Pre-written message template' },
+            { type: 'text', label: 'Button text (e.g., "Text us")' }
+        ]
+    },
+    "Promotions / Offers Page": {
+        fields: [
+            { type: 'textarea', label: 'Promotions list (one per line: Title, Description, Dates, Code)' },
+            { type: 'text', label: 'Featured offer (optional)' },
+            { type: 'textarea', label: 'Terms and conditions' }
+        ]
+    },
+    "Simple Business Dashboard": {
+        fields: [
+            { type: 'email', label: 'Admin email for access' },
+            { type: 'text', label: 'Metrics to display (e.g., appointments, revenue, popular services)' },
+            { type: 'select', label: 'Update frequency', options: ['Real-time', 'Daily', 'Weekly'] }
+        ]
+    },
+    "Lead Source Tracking": {
+        fields: [
+            { type: 'text', label: 'Google Analytics ID (if existing)' },
+            { type: 'text', label: 'UTM parameters to track' },
+            { type: 'email', label: 'Report email recipients' }
+        ]
+    },
+    "Loyalty / VIP Members Section": {
+        fields: [
+            { type: 'text', label: 'Membership tiers/levels' },
+            { type: 'textarea', label: 'Benefits per tier' },
+            { type: 'textarea', label: 'Signup requirements' },
+            { type: 'textarea', label: 'Points system details (if applicable)' }
+        ]
+    },
+    "Custom Page Layouts / Sections": {
+        fields: [
+            { type: 'textarea', label: 'Description of custom layout needed' },
+            { type: 'url', label: 'Reference websites (URLs)' },
+            { type: 'textarea', label: 'Specific elements to include' }
+        ]
+    },
+    "Multi-Location Pages": {
+        fields: [
+            { type: 'textarea', label: 'List of all locations (one per line: Address, Phone, Email)' },
+            { type: 'textarea', label: 'Location-specific hours' },
+            { type: 'textarea', label: 'Location-specific staff' },
+            { type: 'text', label: 'Location manager names' }
+        ]
+    },
+    "Appointment Reminders / Notifications": {
+        fields: [
+            { type: 'text', label: 'SMS reminder number' },
+            { type: 'email', label: 'Email for reminders' },
+            { type: 'text', label: 'Reminder timing (e.g., "24h before, 2h before")' },
+            { type: 'textarea', label: 'Reminder message template' }
+        ]
+    },
+    "Gift Card & Loyalty Program Tracker": {
+        fields: [
+            { type: 'textarea', label: 'Loyalty program rules' },
+            { type: 'text', label: 'Gift card balance check method' },
+            { type: 'text', label: 'Integration with existing system?' }
+        ]
+    },
+    "Service Analytics Dashboard": {
+        fields: [
+            { type: 'text', label: 'Analytics focus (bookings, revenue, popular services)' },
+            { type: 'select', label: 'Report frequency', options: ['Daily', 'Weekly', 'Monthly'] },
+            { type: 'email', label: 'Email for reports' }
+        ]
+    },
+    "Social Proof Widgets (badges, awards, “Top Barber”)": {
+        fields: [
+            { type: 'file', label: 'Upload awards/badges images', accept: '.png,.jpg,.jpeg,.svg', multiple: true, help: 'Upload multiple' },
+            { type: 'textarea', label: '"As featured in" logos/text' },
+            { type: 'text', label: 'Certifications' },
+            { type: 'url', label: 'Links to verify (if applicable)' }
+        ]
+    },
+    "Custom Call-to-Action Widgets (multiple CTAs per page)": {
+        fields: [
+            { type: 'number', label: 'Number of CTAs needed' },
+            { type: 'textarea', label: 'Each CTA: text, link, icon preference (one per line)' },
+            { type: 'text', label: 'Placement on pages' }
+        ]
+    },
+    "Scroll Animations (fade-in, slide-in, interactive on-scroll effects)": {
+        fields: [
+            { type: 'select', label: 'Animation style preference', options: ['Fade', 'Slide', 'Bounce', 'Scale', 'Mix of all', 'Not sure - surprise me'] },
+            { type: 'text', label: 'Elements to animate (e.g., "headings, images, cards")' },
+            { type: 'select', label: 'Speed preference', options: ['Slow', 'Medium', 'Fast'] }
+        ]
+    },
+    "Back-to-Top Button": {
+        fields: [
+            { type: 'select', label: 'Button style', options: ['Circle with arrow', 'Square with arrow', 'Text button', 'Not sure - choose for me'] },
+            { type: 'text', label: 'Color preference (HEX)' },
+            { type: 'number', label: 'Appearance scroll distance (pixels, e.g., 300)' }
+        ]
+    },
+    "Chatbot Integration (Tawk.to or similar)": {
+        fields: [
+            { type: 'select', label: 'Chatbot platform', options: ['Tawk.to', 'Tidio', 'Drift', 'Intercom', 'Other', 'Not sure - recommend'] },
+            { type: 'text', label: 'Widget ID or embed code' },
+            { type: 'text', label: 'Business hours for live chat' },
+            { type: 'textarea', label: 'Auto-greeting message' }
+        ]
+    },
+    "App-Like Website Design (mobile-first, smooth transitions, native app feel)": {
+        fields: [
+            { type: 'select', label: 'Preferred navigation style', options: ['Bottom tabs', 'Hamburger menu', 'Both', 'Not sure - recommend'] },
+            { type: 'select', label: 'Gesture preferences', options: ['Swipe between pages', 'Pull to refresh', 'Both', 'None'] },
+            { type: 'select', label: 'Transition effects', options: ['Slide', 'Fade', 'Scale', 'Smooth (default)', 'Not sure'] }
+        ]
+    },
+    "Animated Stats / Counters Section (clients served, haircuts done, awards)": {
+        fields: [
+            { type: 'textarea', label: 'Stats to display (one per line, e.g., "10,000+ Haircuts", "5+ Years")' },
+            { type: 'text', label: 'Start and end numbers (if applicable)' },
+            { type: 'number', label: 'Duration of animation (seconds)' },
+            { type: 'select', label: 'Icon style', options: ['Simple line icons', 'Colored icons', 'No icons'] }
+        ]
+    }
+};
+
+const PAGE_NAME_SUGGESTIONS = [
+    "Pricing / Services",
+    "About Us",
+    "Our Team",
+    "Gallery / Portfolio",
+    "Book Online",
+    "Contact Us",
+    "Products / Shop",
+    "Reviews / Testimonials",
+    "FAQ",
+    "Blog / News",
+    "Special Offers",
+    "Membership / Loyalty",
+    "Hair Styles Gallery",
+    "Beard Gallery",
+    "Kids Haircuts",
+    "Bridal / Special Occasion",
+    "Aftercare / Products",
+    "Career / Join Us",
+    "Location / Find Us",
+    "Gift Cards",
+    "Wedding Packages",
+    "Virtual Tour",
+    "Appointment Policy",
+    "Before & After"
+];
 
 // =========================================================================
 //  MERGED GLOBAL STATE
@@ -1080,10 +1586,270 @@ function getFilteredServices() {
 // =========================================================================
 //  RENDER FUNCTIONS (keep ALL your existing render functions)
 // =========================================================================
-function renderPlanCard() { ... } // Keep your existing function
-function renderDynamicFeatures() { ... } // Keep your existing function
-function renderAssetCollection() { ... } // Keep your existing function
-function renderReview() { ... } // Keep your existing function
+function renderPlanCard() {
+    const container = document.getElementById('planSummaryContainer');
+    if (!container) return;
+    
+    const isMonthly = (orderData.planType === PLAN_CONFIG.monthly.name);
+    const tier = orderData.tier;
+    const tierData = TIER_CONFIG[tier];
+    const planType = isMonthly ? 'monthly' : 'outright';
+    
+    const features = BASE_FEATURES[planType]?.[tier] || [];
+    
+    let price = '';
+    if (!isMonthly) {
+        price = tier === 'standard' ? '£1,500' : '£3,000';
+    } else {
+        price = tier === 'standard' ? '£500 + £125/mo' : '£650 + £225/mo';
+    }
+    
+    let featuresHtml = '';
+    features.forEach(f => {
+        featuresHtml += `<div class="feature-item">• ${f}</div>`;
+    });
+    
+    let monthlyNotice = '';
+    if (isMonthly) {
+        monthlyNotice = `
+            <div class="monthly-note">
+                <strong>12-month minimum term.</strong> Monthly fee: ${tier === 'standard' ? '£125' : '£225'}/mo
+            </div>
+        `;
+    }
+    
+    const html = `
+        <div class="plan-card">
+            <div class="plan-header">
+                <div class="plan-name">${tierData.name} Plan</div>
+                <div class="plan-badge">${orderData.planType}</div>
+            </div>
+            
+            <div class="plan-metrics">
+                <div class="metric">${tierData.pages} pages</div>
+                <div class="metric">${tierData.revisions} revisions</div>
+                <div class="metric">Delivery ${tierData.delivery}</div>
+                <div class="metric">${price}</div>
+            </div>
+            
+            ${orderData.designCode ? `
+                <div class="design-concept">
+                    Design concept: <span>${orderData.designCode}</span>
+                </div>
+            ` : ''}
+            
+            <div class="features-title">What's included</div>
+            <div class="features-grid">
+                ${featuresHtml}
+            </div>
+            
+            ${monthlyNotice}
+        </div>
+    `;
+    
+    container.innerHTML = html;
+}
+
+function renderDynamicFeatures() {
+    const container = document.getElementById('selectedFeaturesContainer');
+    if (!container) return;
+    
+    const filtered = getFilteredServices();
+    const standard = filtered.standard;
+    const premium = filtered.premium;
+    const totalFeatures = standard.length + premium.length;
+    
+    if (totalFeatures === 0) {
+        container.innerHTML = `
+            <div class="dynamic-card" style="border: 2px dashed var(--border);">
+                <div class="dynamic-badge">CUSTOM SELECTION</div>
+                <div class="dynamic-header">
+                    <h3>Your custom features</h3>
+                </div>
+                <div class="no-features">
+                    No additional features selected
+                </div>
+            </div>
+        `;
+        return;
+    }
+    
+    const helpMap = {};
+    orderData.helpRequests.forEach(h => { helpMap[h.feature] = true; });
+    
+    let itemsHtml = '';
+    
+    standard.forEach(f => {
+        const hasHelp = helpMap[f.name] ? `<span class="help-indicator"><i class="fas fa-question-circle"></i> Help</span>` : '';
+        itemsHtml += `<div class="dynamic-item standard">• ${f.name} ${hasHelp}</div>`;
+    });
+    
+    premium.forEach(f => {
+        const hasHelp = helpMap[f.name] ? `<span class="help-indicator"><i class="fas fa-question-circle"></i> Help</span>` : '';
+        itemsHtml += `<div class="dynamic-item premium">• ${f.name} ${hasHelp}</div>`;
+    });
+    
+    const helpCount = orderData.helpRequests?.length || 0;
+    
+    let premiumNote = '';
+    if (orderData.tier === 'premium' && standard.length > 0) {
+        premiumNote = `
+            <div style="margin-top: 20px; padding: 16px; background: rgba(33,150,243,0.06); border-radius: 16px; border-left: 4px solid var(--premium);">
+                <i class="fas fa-crown" style="color: var(--premium); margin-right: 8px;"></i>
+                <strong>Premium includes all ${standard.length} Standard feature${standard.length !== 1 ? 's' : ''}</strong>
+            </div>
+        `;
+    }
+    
+    const html = `
+        <div class="dynamic-card">
+            <div class="dynamic-badge">CUSTOM SELECTION</div>
+            <div class="dynamic-header">
+                <h3>Your custom selected features</h3>
+                <div class="dynamic-count">${totalFeatures}</div>
+                ${helpCount > 0 ? `<span class="help-badge"><i class="fas fa-question-circle"></i> ${helpCount} need help</span>` : ''}
+            </div>
+            <div class="dynamic-grid">
+                ${itemsHtml}
+            </div>
+            ${premiumNote}
+        </div>
+    `;
+    
+    container.innerHTML = html;
+}
+
+function renderAssetCollection() {
+    const container = document.getElementById('assetCollectionContainer');
+    if (!container) return;
+    
+    const filtered = getFilteredServices();
+    const standard = filtered.standard;
+    const premium = filtered.premium;
+    const allFilteredServices = [...standard, ...premium];
+    
+    if (allFilteredServices.length === 0) {
+        container.innerHTML = `
+            <div style="background: var(--light-gray); border-radius: 24px; padding: 32px; text-align: center;">
+                <i class="fas fa-info-circle" style="font-size: 2rem; color: var(--gray); margin-bottom: 16px;"></i>
+                <h3 style="font-size: 1.2rem; font-weight: 900; margin-bottom: 8px;">No features selected</h3>
+                <p style="color: var(--gray);">You haven't selected any custom features that require additional information.</p>
+            </div>
+        `;
+        return;
+    }
+    
+    let html = '';
+    const helpMap = {};
+    orderData.helpRequests.forEach(h => { helpMap[h.feature] = true; });
+    
+    allFilteredServices.forEach(service => {
+        const assetConfig = FEATURE_ASSETS[service.name] || { fields: [] };
+        
+        let fieldsHtml = '';
+        assetConfig.fields.forEach((field, index) => {
+            const fieldId = `feature_${service.name.replace(/\s+/g, '_')}_${index}`;
+            
+            if (field.type === 'file') {
+                fieldsHtml += `
+                    <div class="field-row">
+                        <div class="field-label">${field.label}:</div>
+                        <div>
+                            <div class="file-upload-small" onclick="document.getElementById('${fieldId}').click()">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <span>Click to upload</span>
+                                <small>${field.help || 'PNG, JPG, PDF'}</small>
+                            </div>
+                            <input type="file" id="${fieldId}" accept="${field.accept || '.png,.jpg,.jpeg'}" ${field.multiple ? 'multiple' : ''} style="display: none;">
+                        </div>
+                    </div>
+                `;
+            } else if (field.type === 'select') {
+                let optionsHtml = '';
+                field.options.forEach(opt => {
+                    optionsHtml += `<option value="${opt}">${opt}</option>`;
+                });
+                fieldsHtml += `
+                    <div class="field-row">
+                        <div class="field-label">${field.label}:</div>
+                        <select class="form-control" id="${fieldId}">
+                            ${optionsHtml}
+                        </select>
+                    </div>
+                `;
+            } else if (field.type === 'textarea') {
+                fieldsHtml += `
+                    <div class="field-row">
+                        <div class="field-label">${field.label}:</div>
+                        <textarea class="form-control" id="${fieldId}" placeholder="${field.label}"></textarea>
+                    </div>
+                `;
+            } else if (field.type === 'date' || field.type === 'datetime-local') {
+                fieldsHtml += `
+                    <div class="field-row">
+                        <div class="field-label">${field.label}:</div>
+                        <input type="${field.type}" class="form-control" id="${fieldId}">
+                    </div>
+                `;
+            } else {
+                fieldsHtml += `
+                    <div class="field-row">
+                        <div class="field-label">${field.label}:</div>
+                        <input type="${field.type || 'text'}" class="form-control" id="${fieldId}" placeholder="${field.label}">
+                    </div>
+                `;
+            }
+        });
+        
+        const helpButtonId = `help_btn_${service.name.replace(/\s+/g, '_')}`;
+        const isHelpRequested = helpMap[service.name];
+        
+        html += `
+            <div class="feature-asset-section" id="asset-${service.name.replace(/\s+/g, '-')}">
+                <div class="feature-asset-title">
+                    <h4><i class="fas ${service.tier === 'premium' ? 'fa-crown' : 'fa-check-circle'}" style="color: ${service.tier === 'premium' ? 'var(--premium)' : 'var(--standard)'};"></i> ${service.name}</h4>
+                    ${isHelpRequested ? `
+                        <span class="help-request-badge">
+                            <i class="fas fa-question-circle"></i> Help requested
+                        </span>
+                    ` : ''}
+                </div>
+                <div class="feature-asset-fields">
+                    ${fieldsHtml || '<p class="text-muted">No additional information needed for this feature.</p>'}
+                    <div style="display: flex; justify-content: flex-end; margin-top: 16px;">
+                        <button type="button" class="vibz-btn small outline-help" id="${helpButtonId}" onclick="requestFeatureHelp('${service.name}')" ${isHelpRequested ? 'disabled' : ''}>
+                            <i class="fas fa-question-circle"></i> ${isHelpRequested ? 'Help Requested' : 'I need help with this'}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    container.innerHTML = html;
+}
+
+function renderReview() {
+    const container = document.getElementById('reviewContainer');
+    if (!container) return;
+    
+    const business = document.getElementById('businessName')?.value || orderData.businessName;
+    const email = document.getElementById('contactEmail')?.value || 'provided';
+    
+    const filtered = getFilteredServices();
+    const totalFeatures = filtered.standard.length + filtered.premium.length;
+    
+    container.innerHTML = `
+        <div style="margin-bottom: 16px;"><strong>Plan:</strong> ${TIER_CONFIG[orderData.tier].name} / ${orderData.planType}</div>
+        ${totalFeatures > 0 ? `<div style="margin-bottom: 16px;"><strong>Custom features:</strong> ${totalFeatures} selected</div>` : ''}
+        <div style="margin-bottom: 16px;"><strong>Business:</strong> ${business}</div>
+        <div style="margin-bottom: 16px;"><strong>Contact:</strong> ${email}</div>
+        <div><strong>Pages:</strong> ${orderData.pageCount} total</div>
+        ${orderData.designCode ? `<div style="margin-top: 12px;"><strong>Design:</strong> ${orderData.designCode}</div>` : ''}
+    `;
+    
+    document.getElementById('confirmationEmailDisplay').innerText = email;
+}
 
 // =========================================================================
 //  ENHANCED PAGE RENDER with file upload fixes
@@ -1096,7 +1862,6 @@ function renderPageCards() {
     for (let i = 1; i <= orderData.pageCount; i++) {
         const isHome = (i === 1);
         
-        // Page name field
         let nameField = '';
         if (isHome) {
             nameField = `<input type="text" class="form-control" value="Home" readonly>`;
@@ -1113,7 +1878,6 @@ function renderPageCards() {
             `;
         }
 
-        // IMPROVED file upload grid with visual feedback
         const fileUploadGrid = `
             <div class="file-upload-grid">
                 <div class="file-upload-box" data-page="${i}" data-num="1" id="box_page_${i}_1">
@@ -1203,28 +1967,44 @@ function renderPageCards() {
     }
     container.innerHTML = html;
     
-    // Set up file upload handlers
     setupFileUploadHandlers();
+    
+    document.querySelectorAll('.page-name-select').forEach(select => {
+        select.addEventListener('change', function() {
+            const currentPage = this.dataset.page;
+            const currentVal = this.value;
+            let duplicate = false;
+            document.querySelectorAll('.page-name-select').forEach(otherSelect => {
+                if (otherSelect.dataset.page !== currentPage && otherSelect.value === currentVal && currentVal !== '') {
+                    duplicate = true;
+                }
+            });
+            const warnDiv = document.getElementById(`dup_warn_${currentPage}`);
+            if (warnDiv) {
+                if (duplicate) {
+                    warnDiv.classList.add('visible');
+                } else {
+                    warnDiv.classList.remove('visible');
+                }
+            }
+        });
+    });
 }
 
 // =========================================================================
 //  FILE UPLOAD HANDLERS (NEW - makes uploads work)
 // =========================================================================
 function setupFileUploadHandlers() {
-    // Make upload boxes clickable
     document.querySelectorAll('.file-upload-box').forEach(box => {
-        // Remove old handlers and add new ones
         box.removeEventListener('click', handleBoxClick);
         box.addEventListener('click', handleBoxClick);
     });
     
-    // Add change handlers to file inputs
     document.querySelectorAll('input[type="file"][id^="page_"]').forEach(input => {
         input.removeEventListener('change', handleFileSelected);
         input.addEventListener('change', handleFileSelected);
     });
     
-    // Logo upload handler
     const logoFile = document.getElementById('logoFile');
     if (logoFile) {
         logoFile.removeEventListener('change', handleLogoSelected);
@@ -1233,7 +2013,6 @@ function setupFileUploadHandlers() {
 }
 
 function handleBoxClick(e) {
-    // Don't trigger if clicking on select dropdown
     if (e.target.tagName === 'SELECT') return;
     
     const fileInput = this.querySelector('input[type="file"]');
@@ -1257,7 +2036,6 @@ function handleFileSelected(e) {
         const file = input.files[0];
         const fileName = file.name.length > 20 ? file.name.substring(0, 17) + '...' : file.name;
         
-        // Update UI to show file selected
         icon.className = 'fas fa-check-circle';
         icon.style.color = '#4CAF50';
         text.textContent = fileName;
@@ -1265,11 +2043,9 @@ function handleFileSelected(e) {
         box.classList.add('has-file');
         if (successBadge) successBadge.style.display = 'block';
         
-        // Determine file type for folder routing
         const isVideo = file.type.includes('video');
         console.log(`✅ File selected: ${file.name} (${isVideo ? 'video' : 'image'})`);
     } else {
-        // Reset UI
         icon.className = 'fas fa-cloud-upload-alt';
         icon.style.color = '';
         text.textContent = `Upload ${box.dataset.num}`;
@@ -1301,7 +2077,7 @@ function handleLogoSelected(e) {
 }
 
 // =========================================================================
-//  FILE COLLECTION FOR GOOGLE DRIVE (UPDATED for your Apps Script)
+//  FILE COLLECTION FOR GOOGLE DRIVE
 // =========================================================================
 function readFileAsBase64(file, type, metadata = {}) {
     return new Promise((resolve, reject) => {
@@ -1309,10 +2085,8 @@ function readFileAsBase64(file, type, metadata = {}) {
         reader.onload = function(e) {
             const base64Data = e.target.result.split(',')[1];
             
-            // Determine correct folder type for Google Drive
             let driveFolderType = type;
             if (type === 'page') {
-                // Check if it's video or image
                 driveFolderType = file.type.includes('video') ? 'video' : 'image';
             }
             
@@ -1320,7 +2094,7 @@ function readFileAsBase64(file, type, metadata = {}) {
                 fileName: file.name,
                 mimeType: file.type,
                 fileBase64: base64Data,
-                fileType: driveFolderType, // 'logo', 'image', 'video', 'branding'
+                fileType: driveFolderType,
                 metadata: metadata,
                 fileSize: file.size
             });
@@ -1332,15 +2106,13 @@ function readFileAsBase64(file, type, metadata = {}) {
 }
 
 async function collectAllUploads() {
-    orderData.files = []; // Reset
+    orderData.files = [];
     
-    // 1. Collect logo
     const logoInput = document.getElementById('logoFile');
     if (logoInput && logoInput.files.length > 0) {
         await readFileAsBase64(logoInput.files[0], 'logo');
     }
     
-    // 2. Collect page files (3 per page)
     for (let page = 1; page <= orderData.pageCount; page++) {
         for (let fileNum = 1; fileNum <= 3; fileNum++) {
             const fileInput = document.getElementById(`page_${page}_file${fileNum}`);
@@ -1357,7 +2129,6 @@ async function collectAllUploads() {
         }
     }
     
-    // 3. Collect feature asset files
     const filtered = getFilteredServices();
     const allFilteredServices = [...filtered.standard, ...filtered.premium];
     
@@ -1394,7 +2165,7 @@ async function collectAllUploads() {
 }
 
 // =========================================================================
-//  BUSINESS INFO (from second script)
+//  BUSINESS INFO
 // =========================================================================
 function saveBusinessInfo() {
     orderData.business = {
@@ -1408,19 +2179,17 @@ function saveBusinessInfo() {
 }
 
 // =========================================================================
-//  COLLECT ALL FORM DATA (enhanced from first script)
+//  COLLECT ALL FORM DATA
 // =========================================================================
 function collectAllFormData() {
     const filtered = getFilteredServices();
     const allFilteredServices = [...filtered.standard, ...filtered.premium];
     
-    // Collect page data
     const pageData = [];
     for (let i = 1; i <= orderData.pageCount; i++) {
         const pageNameInput = document.getElementById(`page_name_${i}`);
         const pageName = pageNameInput ? (pageNameInput.value || `Page ${i}`) : `Page ${i}`;
         
-        // Collect file uploads info (just metadata, files are in orderData.files)
         const fileUploads = [];
         for (let f = 1; f <= 3; f++) {
             const fileInput = document.getElementById(`page_${i}_file${f}`);
@@ -1455,7 +2224,6 @@ function collectAllFormData() {
         });
     }
     
-    // Collect asset data (text fields only)
     const assetData = {};
     allFilteredServices.forEach(service => {
         const config = FEATURE_ASSETS[service.name];
@@ -1464,7 +2232,7 @@ function collectAllFormData() {
             config.fields.forEach((field, index) => {
                 const fieldId = `feature_${service.name.replace(/\s+/g, '_')}_${index}`;
                 const element = document.getElementById(fieldId);
-                if (element && field.type !== 'file') { // Skip files, they're in orderData.files
+                if (element && field.type !== 'file') {
                     serviceData[field.label] = element.value;
                 }
             });
@@ -1472,7 +2240,6 @@ function collectAllFormData() {
         }
     });
     
-    // Save to orderData.pages for second script compatibility
     orderData.pages = pageData;
     orderData.features = allFilteredServices.map(s => s.name);
     orderData.seo = {
@@ -1481,7 +2248,6 @@ function collectAllFormData() {
         location: document.getElementById('seoLocation')?.value || ''
     };
     
-    // Return complete data for Apps Script
     return {
         orderId: 'VIBZ-' + Date.now().toString().slice(-6),
         timestamp: new Date().toISOString(),
@@ -1503,12 +2269,12 @@ function collectAllFormData() {
             gdpr: document.getElementById('consentGDPR')?.checked || false,
             final: document.getElementById('finalConsentCheckbox')?.checked || false
         },
-        files: orderData.files // THIS is what your Apps Script needs
+        files: orderData.files
     };
 }
 
 // =========================================================================
-//  FORM SUBMISSION TO GOOGLE APPS SCRIPT (UPDATED with your URL)
+//  FORM SUBMISSION TO GOOGLE APPS SCRIPT
 // =========================================================================
 function setupFormSubmission() {
     const form = document.getElementById('vibzOrderForm');
@@ -1516,7 +2282,6 @@ function setupFormSubmission() {
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
         
-        // Validate consents
         const finalCheck = document.getElementById('finalConsentCheckbox');
         const gdprCheck = document.getElementById('consentGDPR');
         
@@ -1525,27 +2290,22 @@ function setupFormSubmission() {
             return;
         }
         
-        // Validate email
         const email = document.getElementById('contactEmail');
         if (!email || !email.value) {
             alert('Please enter your contact email.');
             return;
         }
         
-        // Disable button and show loading
         const submitBtn = document.getElementById('submitOrderBtn');
         submitBtn.disabled = true;
         document.getElementById('loadingOverlay').style.display = 'flex';
         
         try {
-            // Save business info
             saveBusinessInfo();
             
-            // COLLECT ALL FILES (THIS IS THE KEY PART)
             console.log('📁 Collecting files for Google Drive...');
             await collectAllUploads();
             
-            // Collect complete order data
             const completeOrderData = collectAllFormData();
             
             console.log('📦 Submitting to Apps Script:', {
@@ -1554,27 +2314,23 @@ function setupFormSubmission() {
                 business: completeOrderData.business.email
             });
             
-            // Send to YOUR Google Apps Script URL
-            const response = await fetch('https://script.google.com/macros/s/AKfycbz5dNjGMzp67NgGiwtYzNcHVzPrtHFgoPyvInyv2CLi2P2yXL9xK2hiRaA9oraTdQy9Wg/exec', {
+            await fetch('https://script.google.com/macros/s/AKfycbz5dNjGMzp67NgGiwtYzNcHVzPrtHFgoPyvInyv2CLi2P2yXL9xK2hiRaA9oraTdQy9Wg/exec', {
                 method: 'POST',
-                mode: 'no-cors', // Important for Apps Script
+                mode: 'no-cors',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(completeOrderData)
             });
             
-            // Show success (with no-cors we can't read response)
             document.getElementById('loadingOverlay').style.display = 'none';
             document.getElementById('orderFormCard').style.display = 'none';
             document.querySelector('.progress').style.display = 'none';
             document.getElementById('successScreen').style.display = 'block';
             document.getElementById('confirmationEmailDisplay').innerText = completeOrderData.business.email;
             
-            // Open WhatsApp notification
             window.open(`https://wa.me/447706345874?text=New order from ${encodeURIComponent(completeOrderData.business.name)}`, '_blank');
             
-            // Clear stored data
             try {
                 sessionStorage.removeItem('selectedServices');
                 sessionStorage.removeItem('helpRequests');
@@ -1590,7 +2346,7 @@ function setupFormSubmission() {
 }
 
 // =========================================================================
-//  NAVIGATION (from first script, but keep showStep from second)
+//  NAVIGATION
 // =========================================================================
 function updateProgress() {
     document.querySelectorAll('.progress-step').forEach((el, i) => {
@@ -1663,7 +2419,7 @@ window.prevStep = function() {
 };
 
 // =========================================================================
-//  TOGGLE SKIP SEO (from first script)
+//  TOGGLE SKIP SEO
 // =========================================================================
 window.toggleSkipSeo = function(pageId) {
     const seo1 = document.getElementById(`page_seo1_${pageId}`);
@@ -1687,7 +2443,7 @@ window.toggleSkipSeo = function(pageId) {
 };
 
 // =========================================================================
-//  REQUEST FEATURE HELP (from first script)
+//  REQUEST FEATURE HELP
 // =========================================================================
 window.requestFeatureHelp = function(featureName) {
     const existing = orderData.helpRequests.find(h => h.feature === featureName);
@@ -1715,24 +2471,18 @@ window.requestFeatureHelp = function(featureName) {
 };
 
 // =========================================================================
-//  INITIALIZE (COMBINED from both scripts)
+//  INITIALIZE
 // =========================================================================
 window.onload = function() {
-    // Load data
     loadOrderFromIndex();
     
-    // Render components
     renderPlanCard();
     renderDynamicFeatures();
     renderPageCards();
     
-    // Set up form submission
     setupFormSubmission();
-    
-    // Set up file upload triggers
     setupFileUploadHandlers();
     
-    // Logo toggle
     const logoToggle = document.getElementById('noLogoToggle');
     if (logoToggle) {
         logoToggle.addEventListener('click', function() {
@@ -1741,7 +2491,6 @@ window.onload = function() {
         });
     }
     
-    // Logo upload trigger
     const logoUploadTrigger = document.getElementById('logoUploadTrigger');
     const logoFile = document.getElementById('logoFile');
     if (logoUploadTrigger && logoFile) {
@@ -1750,7 +2499,6 @@ window.onload = function() {
         });
     }
     
-    // GDPR and final consent listeners
     const finalConsent = document.getElementById('finalConsentCheckbox');
     const gdprConsent = document.getElementById('consentGDPR');
     const submitBtn = document.getElementById('submitOrderBtn');
@@ -1764,15 +2512,10 @@ window.onload = function() {
         gdprConsent.addEventListener('change', updateSubmitButton);
     }
     
-    // Show first step
     updateProgress();
     
     console.log('✅ VIBZ Order Form initialized with file upload support');
 };
-
-        </script>
-
-
-    
+    </script>
 </body>
 </html>
