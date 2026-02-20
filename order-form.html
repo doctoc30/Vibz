@@ -975,1642 +975,804 @@
 
     
     <script>
-        // =========================================================================
-        //  CONFIGURATION - UPDATED WITH NEW SERVICES FROM INDEX
-        // =========================================================================
-        const PLAN_CONFIG = {
-            outright: { name: 'Buy Outright' },
-            monthly:  { name: 'Monthly License' }
-        };
+// =========================================================================
+//  CONFIGURATION - KEEP ALL YOUR EXISTING CONFIG OBJECTS HERE
+// =========================================================================
+const PLAN_CONFIG = { ... }; // Keep all your config objects as they are
+const TIER_CONFIG = { ... };
+const PRICING_CONFIG = { ... };
+const BASE_FEATURES = { ... };
+const ALL_FEATURES = { ... };
+const FEATURE_ASSETS = { ... };
+const PAGE_NAME_SUGGESTIONS = [ ... ];
 
-        const TIER_CONFIG = {
-            standard: { 
-                name: 'STANDARD', 
-                pages: 5, 
-                revisions: 5, 
-                delivery: '15-20 days' 
-            },
-            premium: { 
-                name: 'PREMIUM', 
-                pages: 15, 
-                revisions: 10, 
-                delivery: '20-25 days' 
-            }
-        };
-
-        const PRICING_CONFIG = {
-            outright: { standard: 1500, premium: 3000 },
-            monthly: { 
-                standard: 125,  
-                premium: 225,
-                buildFee: { standard: 500, premium: 650 }
-            }
-        };
-
-        // =========================================================================
-        //  HARDCODED BASE FEATURES - NO DUPLICATION OF PAGES/REVISIONS/DELIVERY
-        // =========================================================================
-        const BASE_FEATURES = {
-            monthly: {
-                standard: [
-                    'Mobile responsive',
-                    'Monthly content updates',
-                    'Security monitoring',
-                    'Daily backups',
-                    '72h support response'
-                ],
-                premium: [
-                    'Mobile responsive',
-                    'Priority support (24h)',
-                    'Performance optimisation',
-                    'Booking/payment support',
-                    'Analytics review',
-                    'Ongoing optimisation',
-                    'Priority change requests'
-                ]
-            },
-            outright: {
-                standard: [
-                    'Mobile responsive',
-                    'Complete website files',
-                    'Full ownership & copyright',
-                    'No recurring license fees',
-                    '1 month post-launch support'
-                ],
-                premium: [
-                    'Mobile responsive',
-                    'Complete website files',
-                    'Full ownership & copyright',
-                    'No recurring license fees',
-                    '3 months post-launch support',
-                    'Premium feature set'
-                ]
-            }
-        };
-
-        // =========================================================================
-        //  COMPLETE FEATURE CONFIGURATION FROM INDEX.HTML (UPDATED)
-        // =========================================================================
-        const ALL_FEATURES = {
-            standard: [
-                "Professional Logo / Text Logo",
-                "Services & Pricing Section",
-                "Gallery (Haircuts / Before & After)",
-                "WhatsApp Chat Button",
-                "Click-to-Call Button",
-                "Contact Form",
-                "Customer Reviews Section",
-                "Google Maps Location",
-                "Book Now CTA Buttons",
-                "Promo Banner / First-Time Visitor Offer"
-            ],
-            premium: [
-                "Full Branding (colors, fonts, favicon, overall visual identity)",
-                "Staff / Barber Profiles",
-                "Online Booking Integration",
-                "Stripe Payment Links",
-                "Digital Gift Cards",
-                "Waitlist System",
-                "Exit-Intent Popup",
-                "Promo Popup (offer modal)",
-                "Sticky CTA Bar (Book / Call / WhatsApp)",
-                "WhatsApp Quick Message (pre-written)",
-                "Email Signup Form",
-                "First-Time Visitor Offer Section",
-                "Countdown Timer (limited offers)",
-                "Google Reviews Embed (live feed from Google Business)",
-                "Interactive Reviews (filterable/animated testimonials)",
-                "Testimonials Slider (text/images for client reviews)",
-                "Blog / News Section",
-                "Customer Database (email/phone capture)",
-                "Mobile Text CTA (tap-to-message SMS)",
-                "Promotions / Offers Page",
-                "Simple Business Dashboard",
-                "Lead Source Tracking",
-                "Loyalty / VIP Members Section",
-                "Custom Page Layouts / Sections",
-                "Multi-Location Pages",
-                "Appointment Reminders / Notifications",
-                "Gift Card & Loyalty Program Tracker",
-                "Service Analytics Dashboard",
-                "Social Proof Widgets (badges, awards, “Top Barber”)",
-                "Custom Call-to-Action Widgets (multiple CTAs per page)",
-                "Scroll Animations (fade-in, slide-in, interactive on-scroll effects)",
-                "Back-to-Top Button",
-                "Chatbot Integration (Tawk.to or similar)",
-                "App-Like Website Design (mobile-first, smooth transitions, native app feel)",
-                "Animated Stats / Counters Section (clients served, haircuts done, awards)"
-            ]
-        };
-
-        // =========================================================================
-        //  FEATURE ASSET QUESTIONS CONFIGURATION
-        // =========================================================================
-        const FEATURE_ASSETS = {
-            // Standard Features
-            "Professional Logo / Text Logo": {
-                fields: [
-                    { type: 'file', label: 'Upload logo file', accept: '.png,.jpg,.jpeg,.svg,.ai,.eps', help: 'PNG, JPG, SVG, AI, EPS • Max 10MB' },
-                    { type: 'text', label: 'Business name (if text logo only)' },
-                    { type: 'text', label: 'Tagline (optional)' },
-                    { type: 'select', label: 'Preferred font style', options: ['Modern', 'Classic', 'Handwritten', 'Bold/Edy', 'Minimal', 'Not sure - help me choose'] },
-                    { type: 'text', label: 'Color preferences (e.g., black and gold)' }
-                ]
-            },
-            "Services & Pricing Section": {
-                fields: [
-                    { type: 'textarea', label: 'List your services with descriptions and prices (one per line, e.g., "Classic Haircut - £25 - 30min")' },
-                    { type: 'text', label: 'Service categories (e.g., Haircuts, Beard, Kids)' },
-                    { type: 'text', label: 'Average service duration (optional)' }
-                ]
-            },
-            "Gallery (Haircuts / Before & After)": {
-                fields: [
-                    { type: 'file', label: 'Upload photos (haircuts, before/after, shop interior)', accept: '.png,.jpg,.jpeg', multiple: true, help: 'PNG, JPG • You can upload multiple' },
-                    { type: 'textarea', label: 'Photo captions/descriptions (optional)' },
-                    { type: 'select', label: 'Preferred gallery layout', options: ['Grid', 'Masonry', 'Slideshow/Carousel', 'Not sure - surprise me'] }
-                ]
-            },
-            "WhatsApp Chat Button": {
-                fields: [
-                    { type: 'text', label: 'WhatsApp business number (with country code, e.g., +44 1234 567890)' },
-                    { type: 'text', label: 'Default welcome message (optional)' },
-                    { type: 'text', label: 'Business hours for chat availability (optional)' }
-                ]
-            },
-            "Click-to-Call Button": {
-                fields: [
-                    { type: 'text', label: 'Primary phone number' },
-                    { type: 'text', label: 'Secondary phone number (optional)' },
-                    { type: 'text', label: 'Call hours (optional)' }
-                ]
-            },
-            "Contact Form": {
-                fields: [
-                    { type: 'email', label: 'Email address where form submissions should go' },
-                    { type: 'text', label: 'Fields to include (comma separated, e.g., Name, Email, Phone, Message)' },
-                    { type: 'textarea', label: 'Auto-reply message (optional)' }
-                ]
-            },
-            "Customer Reviews Section": {
-                fields: [
-                    { type: 'textarea', label: 'Existing reviews (one per line: Name, Rating 1-5, Review text)' },
-                    { type: 'url', label: 'Link to Google Reviews, Trustpilot, etc. (optional)' },
-                    { type: 'select', label: 'Preferred display style', options: ['Grid', 'Carousel/Slider', 'List', 'Not sure - recommend for me'] }
-                ]
-            },
-            "Google Maps Location": {
-                fields: [
-                    { type: 'text', label: 'Full business address' },
-                    { type: 'text', label: 'Google Maps Place ID or link (optional)' },
-                    { type: 'text', label: 'Multiple locations? Provide all addresses (one per line)' }
-                ]
-            },
-            "Book Now CTA Buttons": {
-                fields: [
-                    { type: 'url', label: 'Booking URL (if using external system)' },
-                    { type: 'text', label: 'Booking phone number (if phone booking)' },
-                    { type: 'text', label: 'Button text preference (e.g., "Book Now", "Book Appointment")' }
-                ]
-            },
-            "Promo Banner / First-Time Visitor Offer": {
-                fields: [
-                    { type: 'text', label: 'Offer text/title' },
-                    { type: 'textarea', label: 'Offer description/details' },
-                    { type: 'date', label: 'Expiry date (if applicable)' },
-                    { type: 'url', label: 'Link URL for banner click' },
-                    { type: 'text', label: 'Background color preference (e.g., #FF6B00 or "orange")' }
-                ]
-            },
-            
-            // Premium Features
-            "Full Branding (colors, fonts, favicon, overall visual identity)": {
-                fields: [
-                    { type: 'file', label: 'Upload brand guidelines (PDF if available)', accept: '.pdf', help: 'PDF only' },
-                    { type: 'text', label: 'Primary color (HEX code, e.g., #FF6B00)' },
-                    { type: 'text', label: 'Secondary color (HEX code)' },
-                    { type: 'text', label: 'Font preferences (e.g., "Inter for headings, Open Sans for body")' },
-                    { type: 'file', label: 'Upload favicon image (square, 512x512px)', accept: '.png,.jpg,.jpeg,.ico', help: 'PNG, JPG, ICO' },
-                    { type: 'select', label: 'Brand voice/tone', options: ['Professional', 'Friendly/Casual', 'Edgy/Modern', 'Luxury/Premium', 'Minimal/Clean', 'Not sure - help me define'] }
-                ]
-            },
-            "Staff / Barber Profiles": {
-                fields: [
-                    { type: 'file', label: 'Upload staff photos (headshots)', accept: '.png,.jpg,.jpeg', multiple: true, help: 'Upload multiple files' },
-                    { type: 'textarea', label: 'Names and roles/titles (one per line, e.g., "John Smith - Master Barber")' },
-                    { type: 'textarea', label: 'Bios/descriptions for each staff member' },
-                    { type: 'text', label: 'Specialties (e.g., fades, beard shaping)' },
-                    { type: 'text', label: 'Social media links (Instagram, etc.)' },
-                    { type: 'text', label: 'Booking links per staff (if applicable)' }
-                ]
-            },
-            "Online Booking Integration": {
-                fields: [
-                    { type: 'url', label: 'Booking system URL (if using external)' },
-                    { type: 'text', label: 'API key or credentials (if custom integration needed)' },
-                    { type: 'select', label: 'Preferred booking platform', options: ['Booksy', 'Fresha', 'Treatwell', 'Square', 'Own system', 'Not sure - recommend'] },
-                    { type: 'textarea', label: 'Cancellation policy text' }
-                ]
-            },
-            "Stripe Payment Links": {
-                fields: [
-                    { type: 'email', label: 'Stripe account email' },
-                    { type: 'url', label: 'Payment link(s) for services/products (one per line)' },
-                    { type: 'select', label: 'Payment type', options: ['One-time payments', 'Subscriptions', 'Both'] }
-                ]
-            },
-            "Digital Gift Cards": {
-                fields: [
-                    { type: 'text', label: 'Gift card values available (comma separated, e.g., 25, 50, 100)' },
-                    { type: 'textarea', label: 'Custom message option for buyer' },
-                    { type: 'text', label: 'Expiry period (e.g., "12 months")' },
-                    { type: 'textarea', label: 'Terms and conditions' }
-                ]
-            },
-            "Waitlist System": {
-                fields: [
-                    { type: 'email', label: 'Notification email for waitlist signups' },
-                    { type: 'text', label: 'Max party size (if applicable)' },
-                    { type: 'textarea', label: 'Default notification message' }
-                ]
-            },
-            "Exit-Intent Popup": {
-                fields: [
-                    { type: 'text', label: 'Popup headline' },
-                    { type: 'textarea', label: 'Offer/CTA text' },
-                    { type: 'text', label: 'Button text' },
-                    { type: 'textarea', label: 'Success message (after submission)' },
-                    { type: 'select', label: 'Email collection?', options: ['Yes, collect email', 'No, just offer'] }
-                ]
-            },
-            "Promo Popup (offer modal)": {
-                fields: [
-                    { type: 'text', label: 'Popup title' },
-                    { type: 'textarea', label: 'Offer details' },
-                    { type: 'text', label: 'Button text' },
-                    { type: 'url', label: 'Button link' },
-                    { type: 'file', label: 'Upload image/icon (optional)', accept: '.png,.jpg,.jpeg', help: 'PNG, JPG' },
-                    { type: 'number', label: 'Display delay (seconds)' }
-                ]
-            },
-            "Sticky CTA Bar (Book / Call / WhatsApp)": {
-                fields: [
-                    { type: 'text', label: 'Button 1 text (e.g., "Book Now")' },
-                    { type: 'url', label: 'Button 1 link' },
-                    { type: 'text', label: 'Button 2 text (optional)' },
-                    { type: 'url', label: 'Button 2 link (optional)' },
-                    { type: 'text', label: 'Background color (HEX)' },
-                    { type: 'text', label: 'Text color (HEX)' }
-                ]
-            },
-            "WhatsApp Quick Message (pre-written)": {
-                fields: [
-                    { type: 'text', label: 'WhatsApp number' },
-                    { type: 'textarea', label: 'Pre-written message template' },
-                    { type: 'text', label: 'Button text (e.g., "Message us")' }
-                ]
-            },
-            "Email Signup Form": {
-                fields: [
-                    { type: 'select', label: 'Email service provider', options: ['Mailchimp', 'Klaviyo', 'ConvertKit', 'SendinBlue', 'Other', 'Not sure - help me'] },
-                    { type: 'text', label: 'API key or list ID' },
-                    { type: 'textarea', label: 'Success/confirmation message' }
-                ]
-            },
-            "First-Time Visitor Offer Section": {
-                fields: [
-                    { type: 'text', label: 'Offer headline' },
-                    { type: 'textarea', label: 'Offer details' },
-                    { type: 'text', label: 'Offer code (if applicable)' },
-                    { type: 'date', label: 'Expiry details' },
-                    { type: 'text', label: 'CTA button text' },
-                    { type: 'url', label: 'CTA button link' }
-                ]
-            },
-            "Countdown Timer (limited offers)": {
-                fields: [
-                    { type: 'datetime-local', label: 'Target date/time for offer expiry' },
-                    { type: 'text', label: 'Timer label (e.g., "Offer ends in:")' },
-                    { type: 'select', label: 'Expiry action', options: ['Hide timer', 'Show message', 'Redirect to another page'] }
-                ]
-            },
-            "Google Reviews Embed (live feed from Google Business)": {
-                fields: [
-                    { type: 'text', label: 'Google Business Profile name/ID' },
-                    { type: 'url', label: 'Google Reviews link (if known)' },
-                    { type: 'number', label: 'Minimum rating to show (1-5)' },
-                    { type: 'number', label: 'Number of reviews to display' }
-                ]
-            },
-            "Interactive Reviews (filterable/animated testimonials)": {
-                fields: [
-                    { type: 'textarea', label: 'Review data (one per line: Name, Rating 1-5, Review text, Date)' },
-                    { type: 'text', label: 'Filter options (e.g., "5 star, 4 star, with photos")' },
-                    { type: 'select', label: 'Animation preference', options: ['Fade', 'Slide', 'Bounce', 'None'] }
-                ]
-            },
-            "Testimonials Slider (text/images for client reviews)": {
-                fields: [
-                    { type: 'file', label: 'Upload client photos', accept: '.png,.jpg,.jpeg', multiple: true, help: 'Optional' },
-                    { type: 'textarea', label: 'Client testimonials (one per line: Name, Review text)' },
-                    { type: 'number', label: 'Autoplay speed (seconds)' },
-                    { type: 'select', label: 'Navigation style', options: ['Dots', 'Arrows', 'Both'] }
-                ]
-            },
-            "Blog / News Section": {
-                fields: [
-                    { type: 'text', label: 'Blog title (e.g., "The VIBZ Blog")' },
-                    { type: 'textarea', label: 'Initial posts (titles and brief descriptions)' },
-                    { type: 'text', label: 'Categories/tags (comma separated)' },
-                    { type: 'text', label: 'Author names' }
-                ]
-            },
-            "Customer Database (email/phone capture)": {
-                fields: [
-                    { type: 'textarea', label: 'Data collection consent text' },
-                    { type: 'text', label: 'Fields to collect (comma separated, e.g., Email, Phone, Name)' },
-                    { type: 'select', label: 'Export format preference', options: ['CSV', 'Excel', 'Both'] }
-                ]
-            },
-            "Mobile Text CTA (tap-to-message SMS)": {
-                fields: [
-                    { type: 'text', label: 'Phone number for SMS' },
-                    { type: 'textarea', label: 'Pre-written message template' },
-                    { type: 'text', label: 'Button text (e.g., "Text us")' }
-                ]
-            },
-            "Promotions / Offers Page": {
-                fields: [
-                    { type: 'textarea', label: 'Promotions list (one per line: Title, Description, Dates, Code)' },
-                    { type: 'text', label: 'Featured offer (optional)' },
-                    { type: 'textarea', label: 'Terms and conditions' }
-                ]
-            },
-            "Simple Business Dashboard": {
-                fields: [
-                    { type: 'email', label: 'Admin email for access' },
-                    { type: 'text', label: 'Metrics to display (e.g., appointments, revenue, popular services)' },
-                    { type: 'select', label: 'Update frequency', options: ['Real-time', 'Daily', 'Weekly'] }
-                ]
-            },
-            "Lead Source Tracking": {
-                fields: [
-                    { type: 'text', label: 'Google Analytics ID (if existing)' },
-                    { type: 'text', label: 'UTM parameters to track' },
-                    { type: 'email', label: 'Report email recipients' }
-                ]
-            },
-            "Loyalty / VIP Members Section": {
-                fields: [
-                    { type: 'text', label: 'Membership tiers/levels' },
-                    { type: 'textarea', label: 'Benefits per tier' },
-                    { type: 'textarea', label: 'Signup requirements' },
-                    { type: 'textarea', label: 'Points system details (if applicable)' }
-                ]
-            },
-            "Custom Page Layouts / Sections": {
-                fields: [
-                    { type: 'textarea', label: 'Description of custom layout needed' },
-                    { type: 'url', label: 'Reference websites (URLs)' },
-                    { type: 'textarea', label: 'Specific elements to include' }
-                ]
-            },
-            "Multi-Location Pages": {
-                fields: [
-                    { type: 'textarea', label: 'List of all locations (one per line: Address, Phone, Email)' },
-                    { type: 'textarea', label: 'Location-specific hours' },
-                    { type: 'textarea', label: 'Location-specific staff' },
-                    { type: 'text', label: 'Location manager names' }
-                ]
-            },
-            "Appointment Reminders / Notifications": {
-                fields: [
-                    { type: 'text', label: 'SMS reminder number' },
-                    { type: 'email', label: 'Email for reminders' },
-                    { type: 'text', label: 'Reminder timing (e.g., "24h before, 2h before")' },
-                    { type: 'textarea', label: 'Reminder message template' }
-                ]
-            },
-            "Gift Card & Loyalty Program Tracker": {
-                fields: [
-                    { type: 'textarea', label: 'Loyalty program rules' },
-                    { type: 'text', label: 'Gift card balance check method' },
-                    { type: 'text', label: 'Integration with existing system?' }
-                ]
-            },
-            "Service Analytics Dashboard": {
-                fields: [
-                    { type: 'text', label: 'Analytics focus (bookings, revenue, popular services)' },
-                    { type: 'select', label: 'Report frequency', options: ['Daily', 'Weekly', 'Monthly'] },
-                    { type: 'email', label: 'Email for reports' }
-                ]
-            },
-            "Social Proof Widgets (badges, awards, “Top Barber”)": {
-                fields: [
-                    { type: 'file', label: 'Upload awards/badges images', accept: '.png,.jpg,.jpeg,.svg', multiple: true, help: 'Upload multiple' },
-                    { type: 'textarea', label: '"As featured in" logos/text' },
-                    { type: 'text', label: 'Certifications' },
-                    { type: 'url', label: 'Links to verify (if applicable)' }
-                ]
-            },
-            "Custom Call-to-Action Widgets (multiple CTAs per page)": {
-                fields: [
-                    { type: 'number', label: 'Number of CTAs needed' },
-                    { type: 'textarea', label: 'Each CTA: text, link, icon preference (one per line)' },
-                    { type: 'text', label: 'Placement on pages' }
-                ]
-            },
-            "Scroll Animations (fade-in, slide-in, interactive on-scroll effects)": {
-                fields: [
-                    { type: 'select', label: 'Animation style preference', options: ['Fade', 'Slide', 'Bounce', 'Scale', 'Mix of all', 'Not sure - surprise me'] },
-                    { type: 'text', label: 'Elements to animate (e.g., "headings, images, cards")' },
-                    { type: 'select', label: 'Speed preference', options: ['Slow', 'Medium', 'Fast'] }
-                ]
-            },
-            "Back-to-Top Button": {
-                fields: [
-                    { type: 'select', label: 'Button style', options: ['Circle with arrow', 'Square with arrow', 'Text button', 'Not sure - choose for me'] },
-                    { type: 'text', label: 'Color preference (HEX)' },
-                    { type: 'number', label: 'Appearance scroll distance (pixels, e.g., 300)' }
-                ]
-            },
-            "Chatbot Integration (Tawk.to or similar)": {
-                fields: [
-                    { type: 'select', label: 'Chatbot platform', options: ['Tawk.to', 'Tidio', 'Drift', 'Intercom', 'Other', 'Not sure - recommend'] },
-                    { type: 'text', label: 'Widget ID or embed code' },
-                    { type: 'text', label: 'Business hours for live chat' },
-                    { type: 'textarea', label: 'Auto-greeting message' }
-                ]
-            },
-            "App-Like Website Design (mobile-first, smooth transitions, native app feel)": {
-                fields: [
-                    { type: 'select', label: 'Preferred navigation style', options: ['Bottom tabs', 'Hamburger menu', 'Both', 'Not sure - recommend'] },
-                    { type: 'select', label: 'Gesture preferences', options: ['Swipe between pages', 'Pull to refresh', 'Both', 'None'] },
-                    { type: 'select', label: 'Transition effects', options: ['Slide', 'Fade', 'Scale', 'Smooth (default)', 'Not sure'] }
-                ]
-            },
-            "Animated Stats / Counters Section (clients served, haircuts done, awards)": {
-                fields: [
-                    { type: 'textarea', label: 'Stats to display (one per line, e.g., "10,000+ Haircuts", "5+ Years")' },
-                    { type: 'text', label: 'Start and end numbers (if applicable)' },
-                    { type: 'number', label: 'Duration of animation (seconds)' },
-                    { type: 'select', label: 'Icon style', options: ['Simple line icons', 'Colored icons', 'No icons'] }
-                ]
-            }
-        };
-
-        // Barber-specific page name suggestions (for dropdown)
-        const PAGE_NAME_SUGGESTIONS = [
-            "Pricing / Services",
-            "About Us",
-            "Our Team",
-            "Gallery / Portfolio",
-            "Book Online",
-            "Contact Us",
-            "Products / Shop",
-            "Reviews / Testimonials",
-            "FAQ",
-            "Blog / News",
-            "Special Offers",
-            "Membership / Loyalty",
-            "Hair Styles Gallery",
-            "Beard Gallery",
-            "Kids Haircuts",
-            "Bridal / Special Occasion",
-            "Aftercare / Products",
-            "Career / Join Us",
-            "Location / Find Us",
-            "Gift Cards",
-            "Wedding Packages",
-            "Virtual Tour",
-            "Appointment Policy",
-            "Before & After"
-        ];
-
-        // =========================================================================
-        //  GLOBAL STATE
-        // =========================================================================
-        let currentStep = 1;
-        const totalSteps = 5;
-        let orderData = {
-            businessName: '',
-            planType: 'Buy Outright',
-            tier: 'standard',
-            designCode: '',
-            services: [],
-            helpRequests: [],
-            pageCount: 5
-        };
-
-        // =========================================================================
-        //  LOAD FROM INDEX.HTML - INCLUDING HELP REQUESTS
-        // =========================================================================
-        function loadOrderFromIndex() {
-            try {
-                // Business details
-                orderData.businessName = sessionStorage.getItem('barberShopName') || 
-                                        localStorage.getItem('barberShopName') || 
-                                        'Your Shop';
-                
-                orderData.planType = sessionStorage.getItem('vibz_planType') || 
-                                    sessionStorage.getItem('selectedPlanType') || 
-                                    localStorage.getItem('selectedPlanType') || 
-                                    'Buy Outright';
-                
-                orderData.tier = sessionStorage.getItem('vibz_tier') || 
-                                localStorage.getItem('vibz_tier') || 
-                                'standard';
-                
-                orderData.designCode = sessionStorage.getItem('selectedBarberCode') || 
-                                      localStorage.getItem('selectedBarberCode') || 
-                                      '';
-                
-                // Load selected services
-                const savedServices = sessionStorage.getItem('selectedServices') || 
-                                    localStorage.getItem('selectedServices');
-                if (savedServices) {
-                    orderData.services = JSON.parse(savedServices);
-                    console.log('✅ Loaded services:', orderData.services.length);
-                }
-                
-                // Load help requests
-                const savedHelp = sessionStorage.getItem('helpRequests') || 
-                                localStorage.getItem('helpRequests');
-                if (savedHelp) {
-                    orderData.helpRequests = JSON.parse(savedHelp);
-                    console.log('✅ Loaded help requests:', orderData.helpRequests.length);
-                }
-                
-                orderData.pageCount = TIER_CONFIG[orderData.tier].pages;
-                
-                console.log('📦 Order data loaded:', {
-                    planType: orderData.planType,
-                    tier: orderData.tier,
-                    services: orderData.services.length,
-                    helpRequests: orderData.helpRequests.length
-                });
-                
-            } catch (e) {
-                console.warn('Using defaults', e);
-            }
-            
-            // Pre-fill business name
-            setTimeout(() => {
-                const field = document.getElementById('businessName');
-                if (field && orderData.businessName) field.value = orderData.businessName;
-            }, 100);
-        }
-
-        // =========================================================================
-        //  FILTER SERVICES BASED ON SELECTED PLAN TIER
-        // =========================================================================
-        function getFilteredServices() {
-            if (!orderData.services || orderData.services.length === 0) {
-                return { standard: [], premium: [] };
-            }
-            
-            const isPremium = orderData.tier === 'premium';
-            
-            // Separate by tier
-            const standardServices = orderData.services.filter(s => s.tier === 'standard');
-            const premiumServices = orderData.services.filter(s => s.tier === 'premium');
-            
-            // For premium plans: show ALL services (both standard and premium)
-            // For standard plans: show ONLY standard services
-            return {
-                standard: standardServices,
-                premium: isPremium ? premiumServices : [] // Only show premium if plan is premium
-            };
-        }
-
-        // =========================================================================
-        //  RENDER PLAN CARD
-        // =========================================================================
-        function renderPlanCard() {
-            const container = document.getElementById('planSummaryContainer');
-            if (!container) return;
-            
-            const isMonthly = (orderData.planType === PLAN_CONFIG.monthly.name);
-            const tier = orderData.tier;
-            const tierData = TIER_CONFIG[tier];
-            const planType = isMonthly ? 'monthly' : 'outright';
-            
-            const features = BASE_FEATURES[planType]?.[tier] || [];
-            
-            let price = '';
-            if (!isMonthly) {
-                price = tier === 'standard' ? '£1,500' : '£3,000';
-            } else {
-                price = tier === 'standard' ? '£500 + £125/mo' : '£650 + £225/mo';
-            }
-            
-            let featuresHtml = '';
-            features.forEach(f => {
-                featuresHtml += `<div class="feature-item">• ${f}</div>`;
-            });
-            
-            let monthlyNotice = '';
-            if (isMonthly) {
-                monthlyNotice = `
-                    <div class="monthly-note">
-                        <strong>12-month minimum term.</strong> Monthly fee: ${tier === 'standard' ? '£125' : '£225'}/mo
-                    </div>
-                `;
-            }
-            
-            const html = `
-                <div class="plan-card">
-                    <div class="plan-header">
-                        <div class="plan-name">${tierData.name} Plan</div>
-                        <div class="plan-badge">${orderData.planType}</div>
-                    </div>
-                    
-                    <div class="plan-metrics">
-                        <div class="metric">${tierData.pages} pages</div>
-                        <div class="metric">${tierData.revisions} revisions</div>
-                        <div class="metric">Delivery ${tierData.delivery}</div>
-                        <div class="metric">${price}</div>
-                    </div>
-                    
-                    ${orderData.designCode ? `
-                        <div class="design-concept">
-                            Design concept: <span>${orderData.designCode}</span>
-                        </div>
-                    ` : ''}
-                    
-                    <div class="features-title">What's included</div>
-                    <div class="features-grid">
-                        ${featuresHtml}
-                    </div>
-                    
-                    ${monthlyNotice}
-                </div>
-            `;
-            
-            container.innerHTML = html;
-        }
-
-        // =========================================================================
-        //  RENDER DYNAMIC FEATURES - FILTERED BY PLAN TIER
-        // =========================================================================
-        function renderDynamicFeatures() {
-            const container = document.getElementById('selectedFeaturesContainer');
-            if (!container) return;
-            
-            const filtered = getFilteredServices();
-            const standard = filtered.standard;
-            const premium = filtered.premium;
-            const totalFeatures = standard.length + premium.length;
-            
-            if (totalFeatures === 0) {
-                container.innerHTML = `
-                    <div class="dynamic-card" style="border: 2px dashed var(--border);">
-                        <div class="dynamic-badge">CUSTOM SELECTION</div>
-                        <div class="dynamic-header">
-                            <h3>Your custom features</h3>
-                        </div>
-                        <div class="no-features">
-                            No additional features selected
-                        </div>
-                    </div>
-                `;
-                return;
-            }
-            
-            // Map help requests for quick lookup
-            const helpMap = {};
-            orderData.helpRequests.forEach(h => { helpMap[h.feature] = true; });
-            
-            let itemsHtml = '';
-            
-            // Show standard features
-            standard.forEach(f => {
-                const hasHelp = helpMap[f.name] ? `<span class="help-indicator"><i class="fas fa-question-circle"></i> Help</span>` : '';
-                itemsHtml += `<div class="dynamic-item standard">• ${f.name} ${hasHelp}</div>`;
-            });
-            
-            // Show premium features (only if plan is premium)
-            premium.forEach(f => {
-                const hasHelp = helpMap[f.name] ? `<span class="help-indicator"><i class="fas fa-question-circle"></i> Help</span>` : '';
-                itemsHtml += `<div class="dynamic-item premium">• ${f.name} ${hasHelp}</div>`;
-            });
-            
-            const helpCount = orderData.helpRequests?.length || 0;
-            
-            let premiumNote = '';
-            if (orderData.tier === 'premium' && standard.length > 0) {
-                premiumNote = `
-                    <div style="margin-top: 20px; padding: 16px; background: rgba(33,150,243,0.06); border-radius: 16px; border-left: 4px solid var(--premium);">
-                        <i class="fas fa-crown" style="color: var(--premium); margin-right: 8px;"></i>
-                        <strong>Premium includes all ${standard.length} Standard feature${standard.length !== 1 ? 's' : ''}</strong>
-                    </div>
-                `;
-            }
-            
-            const html = `
-                <div class="dynamic-card">
-                    <div class="dynamic-badge">CUSTOM SELECTION</div>
-                    <div class="dynamic-header">
-                        <h3>Your custom selected features</h3>
-                        <div class="dynamic-count">${totalFeatures}</div>
-                        ${helpCount > 0 ? `<span class="help-badge"><i class="fas fa-question-circle"></i> ${helpCount} need help</span>` : ''}
-                    </div>
-                    <div class="dynamic-grid">
-                        ${itemsHtml}
-                    </div>
-                    ${premiumNote}
-                </div>
-            `;
-            
-            container.innerHTML = html;
-        }
-
-        // =========================================================================
-        //  RENDER PAGE CARDS (UPDATED with file uploads, description box, SEO keywords)
-        // =========================================================================
-        function renderPageCards() {
-            const container = document.getElementById('pagesDynamicContainer');
-            if (!container) return;
-            
-            let html = '';
-            for (let i = 1; i <= orderData.pageCount; i++) {
-                const isHome = (i === 1);
-                // For page name: Home (locked) or dropdown with suggestions
-                let nameField = '';
-                if (isHome) {
-                    nameField = `<input type="text" class="form-control" value="Home" readonly>`;
-                } else {
-                    // Build dropdown options
-                    let options = `<option value="">-- Select page name --</option>`;
-                    PAGE_NAME_SUGGESTIONS.forEach(name => {
-                        options += `<option value="${name}">${name}</option>`;
-                    });
-                    nameField = `
-                        <select class="form-control page-name-select" data-page="${i}" id="page_name_${i}">
-                            ${options}
-                        </select>
-                        <div class="duplicate-warning" id="dup_warn_${i}">⚠️ This name is already used on another page. Please choose a unique name.</div>
-                    `;
-                }
-
-                // File upload grid (3 boxes)
-                const fileUploadGrid = `
-                    <div class="file-upload-grid">
-                        <div class="file-upload-box" data-page="${i}" data-num="1">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                            <span>Upload 1</span>
-                            <small>PNG, JPG, MP4</small>
-                            <input type="file" id="page_${i}_file1" accept=".png,.jpg,.jpeg,.mp4,.mov" style="display: none;">
-                            <select class="placement-select" id="page_${i}_place1">
-                                <option value="">Placement</option>
-                                <option value="top">Top section</option>
-                                <option value="mid">Mid section</option>
-                                <option value="bottom">Bottom section</option>
-                            </select>
-                        </div>
-                        <div class="file-upload-box" data-page="${i}" data-num="2">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                            <span>Upload 2</span>
-                            <small>PNG, JPG, MP4</small>
-                            <input type="file" id="page_${i}_file2" accept=".png,.jpg,.jpeg,.mp4,.mov" style="display: none;">
-                            <select class="placement-select" id="page_${i}_place2">
-                                <option value="">Placement</option>
-                                <option value="top">Top section</option>
-                                <option value="mid">Mid section</option>
-                                <option value="bottom">Bottom section</option>
-                            </select>
-                        </div>
-                        <div class="file-upload-box" data-page="${i}" data-num="3">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                            <span>Upload 3</span>
-                            <small>PNG, JPG, MP4</small>
-                            <input type="file" id="page_${i}_file3" accept=".png,.jpg,.jpeg,.mp4,.mov" style="display: none;">
-                            <select class="placement-select" id="page_${i}_place3">
-                                <option value="">Placement</option>
-                                <option value="top">Top section</option>
-                                <option value="mid">Mid section</option>
-                                <option value="bottom">Bottom section</option>
-                            </select>
-                        </div>
-                    </div>
-                `;
-
-                // Description box with "Let Vibz provide" hint
-                const descField = `
-                    <textarea class="form-control" id="page_brief_${i}" placeholder="Paste full website description, or brief description. If unsure, write 'Let Vibz provide based on brief'"></textarea>
-                    <small style="color: var(--gray);">You can copy-paste a full description or let Vibz create it.</small>
-                `;
-
-                // SEO keywords (2 fields) with skip button / let vibz provide
-                const seoField = `
-                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                        <input type="text" class="form-control keyword-input" id="page_seo1_${i}" placeholder="SEO keyword 1 (e.g., barber manchester)">
-                        <input type="text" class="form-control keyword-input" id="page_seo2_${i}" placeholder="SEO keyword 2 (e.g., haircut)">
-                        <div class="skip-badge" id="skip_seo_${i}" onclick="toggleSkipSeo(${i})">
-                            <i class="fas fa-forward"></i> Let Vibz provide
-                        </div>
-                        <div class="skip-badge" id="skip_keywords_${i}" style="display:none;" onclick="toggleSkipSeo(${i})">
-                            <i class="fas fa-check"></i> Skipped
-                        </div>
-                    </div>
-                `;
-
-                html += `
-                    <div class="page-card" id="page_card_${i}">
-                        <div class="page-header">
-                            <div class="page-number">Page ${i}</div>
-                            ${isHome ? '<div class="page-locked">Homepage</div>' : ''}
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Page name</label>
-                            ${nameField}
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Upload files (max 3 per page) & placement</label>
-                            ${fileUploadGrid}
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Page description</label>
-                            ${descField}
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">SEO keywords for this page (up to 2)</label>
-                            ${seoField}
-                        </div>
-                    </div>
-                `;
-            }
-            container.innerHTML = html;
-
-            // Attach file upload click handlers
-            document.querySelectorAll('.file-upload-box').forEach(box => {
-                box.addEventListener('click', function(e) {
-                    // Prevent if clicked on select
-                    if (e.target.tagName === 'SELECT') return;
-                    const fileInput = this.querySelector('input[type="file"]');
-                    if (fileInput) fileInput.click();
-                });
-            });
-
-            // Attach change event to dropdowns for duplicate detection (non-home)
-            document.querySelectorAll('.page-name-select').forEach(select => {
-                select.addEventListener('change', function() {
-                    const currentPage = this.dataset.page;
-                    const currentVal = this.value;
-                    // Check all other dropdowns
-                    let duplicate = false;
-                    document.querySelectorAll('.page-name-select').forEach(otherSelect => {
-                        if (otherSelect.dataset.page !== currentPage && otherSelect.value === currentVal && currentVal !== '') {
-                            duplicate = true;
-                        }
-                    });
-                    const warnDiv = document.getElementById(`dup_warn_${currentPage}`);
-                    if (warnDiv) {
-                        if (duplicate) {
-                            warnDiv.classList.add('visible');
-                        } else {
-                            warnDiv.classList.remove('visible');
-                        }
-                    }
-                });
-            });
-        }
-
-        // Toggle skip SEO function
-        window.toggleSkipSeo = function(pageId) {
-            const seo1 = document.getElementById(`page_seo1_${pageId}`);
-            const seo2 = document.getElementById(`page_seo2_${pageId}`);
-            const skipBtn = document.getElementById(`skip_seo_${pageId}`);
-            const skippedBtn = document.getElementById(`skip_keywords_${pageId}`);
-            if (seo1.disabled) {
-                // enable
-                seo1.disabled = false;
-                seo2.disabled = false;
-                skipBtn.style.display = 'inline-flex';
-                skippedBtn.style.display = 'none';
-            } else {
-                // disable and clear
-                seo1.value = '';
-                seo2.value = '';
-                seo1.disabled = true;
-                seo2.disabled = true;
-                skipBtn.style.display = 'none';
-                skippedBtn.style.display = 'inline-flex';
-            }
-        }
-
-        // =========================================================================
-        //  RENDER REVIEW - WITH FILTERED FEATURES
-        // =========================================================================
-        function renderReview() {
-            const container = document.getElementById('reviewContainer');
-            if (!container) return;
-            
-            const business = document.getElementById('businessName')?.value || orderData.businessName;
-            const email = document.getElementById('contactEmail')?.value || 'provided';
-            
-            const filtered = getFilteredServices();
-            const totalFeatures = filtered.standard.length + filtered.premium.length;
-            
-            container.innerHTML = `
-                <div style="margin-bottom: 16px;"><strong>Plan:</strong> ${TIER_CONFIG[orderData.tier].name} / ${orderData.planType}</div>
-                ${totalFeatures > 0 ? `<div style="margin-bottom: 16px;"><strong>Custom features:</strong> ${totalFeatures} selected</div>` : ''}
-                <div style="margin-bottom: 16px;"><strong>Business:</strong> ${business}</div>
-                <div style="margin-bottom: 16px;"><strong>Contact:</strong> ${email}</div>
-                <div><strong>Pages:</strong> ${orderData.pageCount} total</div>
-                ${orderData.designCode ? `<div style="margin-top: 12px;"><strong>Design:</strong> ${orderData.designCode}</div>` : ''}
-            `;
-            
-            document.getElementById('confirmationEmailDisplay').innerText = email;
-        }
-
-        // =========================================================================
-        //  RENDER ASSET COLLECTION - FILTERED BY PLAN TIER WITH DYNAMIC FIELDS
-        // =========================================================================
-        function renderAssetCollection() {
-            const container = document.getElementById('assetCollectionContainer');
-            if (!container) return;
-            
-            const filtered = getFilteredServices();
-            const standard = filtered.standard;
-            const premium = filtered.premium;
-            const allFilteredServices = [...standard, ...premium];
-            
-            if (allFilteredServices.length === 0) {
-                container.innerHTML = `
-                    <div style="background: var(--light-gray); border-radius: 24px; padding: 32px; text-align: center;">
-                        <i class="fas fa-info-circle" style="font-size: 2rem; color: var(--gray); margin-bottom: 16px;"></i>
-                        <h3 style="font-size: 1.2rem; font-weight: 900; margin-bottom: 8px;">No features selected</h3>
-                        <p style="color: var(--gray);">You haven't selected any custom features that require additional information.</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            let html = '';
-            
-            // Map help requests for quick lookup
-            const helpMap = {};
-            orderData.helpRequests.forEach(h => { helpMap[h.feature] = true; });
-            
-            allFilteredServices.forEach(service => {
-                const assetConfig = FEATURE_ASSETS[service.name] || { fields: [] };
-                
-                // Build fields HTML
-                let fieldsHtml = '';
-                assetConfig.fields.forEach((field, index) => {
-                    const fieldId = `feature_${service.name.replace(/\s+/g, '_')}_${index}`;
-                    
-                    if (field.type === 'file') {
-                        fieldsHtml += `
-                            <div class="field-row">
-                                <div class="field-label">${field.label}:</div>
-                                <div>
-                                    <div class="file-upload-small" onclick="document.getElementById('${fieldId}').click()">
-                                        <i class="fas fa-cloud-upload-alt"></i>
-                                        <span>Click to upload</span>
-                                        <small>${field.help || 'PNG, JPG, PDF'}</small>
-                                    </div>
-                                    <input type="file" id="${fieldId}" accept="${field.accept || '.png,.jpg,.jpeg'}" ${field.multiple ? 'multiple' : ''} style="display: none;">
-                                </div>
-                            </div>
-                        `;
-                    } else if (field.type === 'select') {
-                        let optionsHtml = '';
-                        field.options.forEach(opt => {
-                            optionsHtml += `<option value="${opt}">${opt}</option>`;
-                        });
-                        fieldsHtml += `
-                            <div class="field-row">
-                                <div class="field-label">${field.label}:</div>
-                                <select class="form-control" id="${fieldId}">
-                                    ${optionsHtml}
-                                </select>
-                            </div>
-                        `;
-                    } else if (field.type === 'textarea') {
-                        fieldsHtml += `
-                            <div class="field-row">
-                                <div class="field-label">${field.label}:</div>
-                                <textarea class="form-control" id="${fieldId}" placeholder="${field.label}"></textarea>
-                            </div>
-                        `;
-                    } else if (field.type === 'date' || field.type === 'datetime-local') {
-                        fieldsHtml += `
-                            <div class="field-row">
-                                <div class="field-label">${field.label}:</div>
-                                <input type="${field.type}" class="form-control" id="${fieldId}">
-                            </div>
-                        `;
-                    } else {
-                        fieldsHtml += `
-                            <div class="field-row">
-                                <div class="field-label">${field.label}:</div>
-                                <input type="${field.type || 'text'}" class="form-control" id="${fieldId}" placeholder="${field.label}">
-                            </div>
-                        `;
-                    }
-                });
-                
-                // Add "I need help" button
-                const helpButtonId = `help_btn_${service.name.replace(/\s+/g, '_')}`;
-                const isHelpRequested = helpMap[service.name];
-                
-                html += `
-                    <div class="feature-asset-section" id="asset-${service.name.replace(/\s+/g, '-')}">
-                        <div class="feature-asset-title">
-                            <h4><i class="fas ${service.tier === 'premium' ? 'fa-crown' : 'fa-check-circle'}" style="color: ${service.tier === 'premium' ? 'var(--premium)' : 'var(--standard)'};"></i> ${service.name}</h4>
-                            ${isHelpRequested ? `
-                                <span class="help-request-badge">
-                                    <i class="fas fa-question-circle"></i> Help requested
-                                </span>
-                            ` : ''}
-                        </div>
-                        <div class="feature-asset-fields">
-                            ${fieldsHtml || '<p class="text-muted">No additional information needed for this feature.</p>'}
-                            <div style="display: flex; justify-content: flex-end; margin-top: 16px;">
-                                <button type="button" class="vibz-btn small outline-help" id="${helpButtonId}" onclick="requestFeatureHelp('${service.name}')" ${isHelpRequested ? 'disabled' : ''}>
-                                    <i class="fas fa-question-circle"></i> ${isHelpRequested ? 'Help Requested' : 'I need help with this'}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            container.innerHTML = html;
-        }
-
-        // =========================================================================
-        //  REQUEST HELP FOR A FEATURE
-        // =========================================================================
-        window.requestFeatureHelp = function(featureName) {
-            // Check if already requested
-            const existing = orderData.helpRequests.find(h => h.feature === featureName);
-            if (existing) {
-                alert(`✅ Help already requested for "${featureName}". We'll be in touch!`);
-                return;
-            }
-            
-            // Add to help requests
-            orderData.helpRequests.push({
-                feature: featureName,
-                timestamp: new Date().toISOString()
-            });
-            
-            // Save to storage
-            sessionStorage.setItem('helpRequests', JSON.stringify(orderData.helpRequests));
-            localStorage.setItem('helpRequests', JSON.stringify(orderData.helpRequests));
-            
-            // Update UI
-            alert(`✅ Help requested for "${featureName}". We'll contact you to assist with this feature.`);
-            
-            // Disable the button
-            const btnId = `help_btn_${featureName.replace(/\s+/g, '_')}`;
-            const btn = document.getElementById(btnId);
-            if (btn) {
-                btn.disabled = true;
-                btn.innerHTML = '<i class="fas fa-check"></i> Help Requested';
-            }
-            
-            // Add badge if not present
-            const section = document.getElementById(`asset-${featureName.replace(/\s+/g, '-')}`);
-            if (section) {
-                const titleDiv = section.querySelector('.feature-asset-title');
-                if (titleDiv && !titleDiv.querySelector('.help-request-badge')) {
-                    const badge = document.createElement('span');
-                    badge.className = 'help-request-badge';
-                    badge.innerHTML = '<i class="fas fa-question-circle"></i> Help requested';
-                    titleDiv.appendChild(badge);
-                }
-            }
-        };
-
-        // =========================================================================
-        //  COLLECT ALL FORM DATA FOR SUBMISSION
-        // =========================================================================
-        function collectAllFormData() {
-            // Get filtered services
-            const filtered = getFilteredServices();
-            const allFilteredServices = [...filtered.standard, ...filtered.premium];
-            
-            // Collect page data
-            const pageData = [];
-            for (let i = 1; i <= orderData.pageCount; i++) {
-                const pageNameInput = document.getElementById(`page_name_${i}`);
-                const pageName = pageNameInput ? (pageNameInput.value || `Page ${i}`) : `Page ${i}`;
-                
-                // Collect file uploads info
-                const fileUploads = [];
-                for (let f = 1; f <= 3; f++) {
-                    const fileInput = document.getElementById(`page_${i}_file${f}`);
-                    const placementSelect = document.getElementById(`page_${i}_place${f}`);
-                    
-                    if (fileInput && fileInput.files.length > 0) {
-                        fileUploads.push({
-                            fileName: fileInput.files[0].name,
-                            fileType: fileInput.files[0].type,
-                            placement: placementSelect ? placementSelect.value : ''
-                        });
-                    }
-                }
-                
-                const pageBrief = document.getElementById(`page_brief_${i}`)?.value || '';
-                const seo1 = document.getElementById(`page_seo1_${i}`)?.value || '';
-                const seo2 = document.getElementById(`page_seo2_${i}`)?.value || '';
-                const seo1Disabled = document.getElementById(`page_seo1_${i}`)?.disabled || false;
-                const seo2Disabled = document.getElementById(`page_seo2_${i}`)?.disabled || false;
-                
-                pageData.push({
-                    pageNumber: i,
-                    pageName: pageName,
-                    isHome: i === 1,
-                    fileUploads: fileUploads,
-                    description: pageBrief || (seo1Disabled ? 'Vibz to provide' : ''),
-                    seoKeywords: {
-                        keyword1: seo1,
-                        keyword2: seo2,
-                        vibzToProvide: seo1Disabled
-                    }
-                });
-            }
-            
-            // Collect asset data
-            const assetData = {};
-            allFilteredServices.forEach(service => {
-                const config = FEATURE_ASSETS[service.name];
-                if (config && config.fields) {
-                    const serviceData = {};
-                    config.fields.forEach((field, index) => {
-                        const fieldId = `feature_${service.name.replace(/\s+/g, '_')}_${index}`;
-                        const element = document.getElementById(fieldId);
-                        if (element) {
-                            if (field.type === 'file') {
-                                serviceData[field.label] = element.files ? Array.from(element.files).map(f => f.name) : [];
-                            } else {
-                                serviceData[field.label] = element.value;
-                            }
-                        }
-                    });
-                    assetData[service.name] = serviceData;
-                }
-            });
-            
-            // Compile complete order data
-            return {
-                orderId: 'VIBZ-' + Date.now().toString().slice(-6),
-                timestamp: new Date().toISOString(),
-                formType: 'vibz_order_form',
-                plan: {
-                    tier: orderData.tier,
-                    type: orderData.planType,
-                    pages: orderData.pageCount,
-                    designCode: orderData.designCode,
-                    price: orderData.planType === PLAN_CONFIG.monthly.name 
-                        ? (orderData.tier === 'standard' ? '500+125' : '650+225')
-                        : (orderData.tier === 'standard' ? '1500' : '3000')
-                },
-                customFeatures: allFilteredServices,
-                allSelectedFeatures: orderData.services,
-                helpRequests: orderData.helpRequests,
-                featureAssets: assetData,
-                pages: pageData,
-                business: {
-                    name: document.getElementById('businessName')?.value || orderData.businessName,
-                    address: document.getElementById('businessAddress')?.value || '',
-                    email: document.getElementById('contactEmail')?.value || '',
-                    phone: document.getElementById('contactPhone')?.value || '',
-                    logo: document.getElementById('noLogoCheckbox')?.checked ? 'needs-ai-logo' : 'uploaded'
-                },
-                seo: {
-                    primaryKeyword: document.getElementById('seoKeyword1')?.value || '',
-                    secondaryKeywords: document.getElementById('seoKeywords')?.value || '',
-                    location: document.getElementById('seoLocation')?.value || ''
-                },
-                consent: {
-                    gdpr: document.getElementById('consentGDPR')?.checked || false,
-                    final: document.getElementById('finalConsentCheckbox')?.checked || false
-                }
-            };
-        }
-
-        // =========================================================================
-        //  FORM SUBMISSION TO APPS SCRIPT WEB APP
-        // =========================================================================
-        function setupFormSubmission() {
-            const form = document.getElementById('vibzOrderForm');
-            
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                // Validate final consent
-                const finalCheck = document.getElementById('finalConsentCheckbox');
-                if (!finalCheck || !finalCheck.checked) {
-                    alert('Please confirm your consent.');
-                    return;
-                }
-                
-                // Validate GDPR consent
-                const gdprCheck = document.getElementById('consentGDPR');
-                if (!gdprCheck || !gdprCheck.checked) {
-                    alert('Please agree to the GDPR terms to submit your order.');
-                    return;
-                }
-                
-                // Show loading overlay
-                document.getElementById('loadingOverlay').style.display = 'flex';
-                
-                // Collect all form data
-                const orderData = collectAllFormData();
-                
-                console.log('📦 Submitting order to Apps Script:', {
-                    webAppUrl: 'https://script.google.com/macros/s/AKfycbz5dNjGMzp67NgGiwtYzNcHVzPrtHFgoPyvInyv2CLi2P2yXL9xK2hiRaA9oraTdQy9Wg/exec',
-                    planTier: orderData.plan.tier,
-                    featuresIncluded: orderData.customFeatures.length,
-                    pagesCount: orderData.pages.length
-                });
-                
-                // Send to Apps Script Web App using fetch with CORS mode
-                fetch('https://script.google.com/macros/s/AKfycbz5dNjGMzp67NgGiwtYzNcHVzPrtHFgoPyvInyv2CLi2P2yXL9xK2hiRaA9oraTdQy9Wg/exec', {
-                    method: 'POST',
-                    mode: 'no-cors', // Important for Apps Script
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(orderData)
-                })
-                .then(() => {
-                    // Hide loading overlay
-                    document.getElementById('loadingOverlay').style.display = 'none';
-                    
-                    // Show success screen
-                    document.getElementById('orderFormCard').style.display = 'none';
-                    document.querySelector('.progress').style.display = 'none';
-                    document.getElementById('successScreen').style.display = 'block';
-                    
-                    // Clear any stored data
-                    try {
-                        sessionStorage.removeItem('selectedServices');
-                        sessionStorage.removeItem('helpRequests');
-                    } catch (e) {}
-                })
-                .catch(error => {
-                    // Hide loading overlay
-                    document.getElementById('loadingOverlay').style.display = 'none';
-                    
-                    console.error('Submission error:', error);
-                    
-                    // Show user-friendly error message
-                    alert('There was an error submitting your order. Please check your internet connection and try again. If the problem persists, please contact support@vibz.co.uk');
-                });
-            });
-        }
-
-        // =========================================================================
-        //  NAVIGATION
-        // =========================================================================
-        function updateProgress() {
-            document.querySelectorAll('.progress-step').forEach((el, i) => {
-                el.classList.toggle('active', i + 1 === currentStep);
-                el.classList.toggle('completed', i + 1 < currentStep);
-            });
-            
-            document.querySelectorAll('.step').forEach((el, i) => {
-                el.classList.toggle('active', i + 1 === currentStep);
-            });
-            
-            document.getElementById('prevBtn').style.display = currentStep > 1 ? 'inline-flex' : 'none';
-            document.getElementById('nextBtn').style.display = currentStep < totalSteps ? 'inline-flex' : 'none';
-            
-            // Render asset collection when reaching step 4
-            if (currentStep === 4) {
-                renderAssetCollection();
-            }
-            
-            if (currentStep === totalSteps) {
-                const check = document.getElementById('finalConsentCheckbox');
-                const btn = document.getElementById('submitOrderBtn');
-                if (check && btn) {
-                    // Remove existing listeners to prevent duplicates
-                    const newCheck = check.cloneNode(true);
-                    check.parentNode.replaceChild(newCheck, check);
-                    
-                    newCheck.addEventListener('change', function() {
-                        btn.disabled = !this.checked;
-                    });
-                    
-                    btn.disabled = !newCheck.checked;
-                }
-                renderReview();
-            }
-            
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        window.nextStep = function() {
-            if (currentStep < totalSteps) {
-                // Validation for step 3
-                if (currentStep === 3) {
-                    const gdpr = document.getElementById('consentGDPR');
-                    if (!gdpr || !gdpr.checked) {
-                        alert('Please agree to the GDPR terms to continue.');
-                        return;
-                    }
-                    
-                    const email = document.getElementById('contactEmail');
-                    if (!email || !email.value) {
-                        alert('Please enter your contact email.');
-                        return;
-                    }
-                    
-                    // Basic email validation
-                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                    if (!emailRegex.test(email.value)) {
-                        alert('Please enter a valid email address.');
-                        return;
-                    }
-                }
-                
-                currentStep++;
-                updateProgress();
-            }
-        };
-
-        window.prevStep = function() {
-            if (currentStep > 1) {
-                currentStep--;
-                updateProgress();
-            }
-        };
-
-        // =========================================================================
-        //  INITIALISE
-        // =========================================================================
-        window.onload = function() {
-            loadOrderFromIndex();
-            renderPlanCard();
-            renderDynamicFeatures();
-            renderPageCards();
-            setupFormSubmission();
-            
-            // File upload triggers
-            document.querySelectorAll('.file-upload-area').forEach(area => {
-                area.addEventListener('click', function() {
-                    this.querySelector('input[type="file"]')?.click();
-                });
-            });
-            
-            // Logo toggle
-            const logoToggle = document.getElementById('noLogoToggle');
-            if (logoToggle) {
-                logoToggle.addEventListener('click', function() {
-                    const cb = document.getElementById('noLogoCheckbox');
-                    if (cb) cb.checked = !cb.checked;
-                });
-            }
-            
-            // Logo file upload trigger
-            const logoUploadTrigger = document.getElementById('logoUploadTrigger');
-            const logoFile = document.getElementById('logoFile');
-            if (logoUploadTrigger && logoFile) {
-                logoUploadTrigger.addEventListener('click', function() {
-                    logoFile.click();
-                });
-            }
-        };
-    </script>
-
-
-
-<script>
-// ==========================
-// ORDER DATA OBJECT
-// ==========================
-let orderData = {
-  planType: '',
-  tier: '',
-  pages: [],           // {title, description, media, SEO keywords}
-  features: [],        // selected features
-  seo: {},             // primary/secondary keywords, location
-  business: {},        // name, address, email, phone, logo, noLogo
-  files: []            // {fileName, mimeType, fileBase64, fileType}
-};
-
-// ==========================
-// STEP NAVIGATION
-// ==========================
+// =========================================================================
+//  MERGED GLOBAL STATE
+// =========================================================================
 let currentStep = 1;
 const totalSteps = 5;
 
-function showStep(step) {
-  for (let i = 1; i <= totalSteps; i++) {
-    document.getElementById(`step${i}`).classList.remove('active');
-  }
-  document.getElementById(`step${step}`).classList.add('active');
+// COMBINED orderData from both scripts
+let orderData = {
+    // From first script
+    businessName: '',
+    planType: 'Buy Outright',
+    tier: 'standard',
+    designCode: '',
+    services: [],
+    helpRequests: [],
+    pageCount: 5,
+    
+    // From second script (ADD THESE)
+    pages: [],           // Will store page data
+    features: [],        // Selected features
+    seo: {},             // SEO keywords
+    business: {},        // Business details
+    files: []            // ALL uploaded files will go here
+};
 
-  document.getElementById('prevBtn').style.display = step === 1 ? 'none' : 'inline-block';
-  document.getElementById('nextBtn').style.display = step === totalSteps ? 'none' : 'inline-block';
-
-  if(step === totalSteps) generateReview();
-}
-
-function nextStep() {
-  if(currentStep < totalSteps){
-    currentStep++;
-    showStep(currentStep);
-  }
-}
-
-function prevStep() {
-  if(currentStep > 1){
-    currentStep--;
-    showStep(currentStep);
-  }
-}
-
-// ==========================
-// PLAN & FEATURES
-// ==========================
-function setPlan(plan, tier) {
-  orderData.planType = plan;
-  orderData.tier = tier;
-}
-
-function selectFeature(feature) {
-  if(!orderData.features.includes(feature)) orderData.features.push(feature);
-}
-
-function deselectFeature(feature) {
-  orderData.features = orderData.features.filter(f => f !== feature);
-}
-
-// ==========================
-// PAGE DATA
-// ==========================
-function savePageData(index, data) {
-  orderData.pages[index] = data; // {title, description, media, seo}
-}
-
-// ==========================
-// SEO INFO
-// ==========================
-function saveSEO(primary, secondary, location){
-  orderData.seo = { primary, secondary, location };
-}
-
-// ==========================
-// BUSINESS INFO (LAST STEP)
-// ==========================
-function saveBusinessInfo() {
-  orderData.business = {
-    name: document.getElementById('businessName').value.trim(),
-    address: document.getElementById('businessAddress').value.trim(),
-    email: document.getElementById('contactEmail').value.trim(),
-    phone: document.getElementById('contactPhone').value.trim(),
-    noLogo: document.getElementById('noLogoCheckbox').checked
-  };
-}
-
-// ==========================
-// FILES BASE64 UTILITY
-// ==========================
-function readFileAsBase64(file, type){
-  return new Promise((resolve, reject)=>{
-    const reader = new FileReader();
-    reader.onload = function(e){
-      const base64Data = e.target.result.split(',')[1];
-      orderData.files.push({
-        fileName: file.name,
-        mimeType: file.type,
-        fileBase64: base64Data,
-        fileType: type
-      });
-      resolve();
-    };
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-}
-
-// ==========================
-// READ ALL UPLOADS
-// ==========================
-async function collectUploads() {
-  orderData.files = []; // reset
-
-  const logo = document.getElementById('logoFile').files[0];
-  if(logo) await readFileAsBase64(logo, 'logo');
-
-  const images = document.getElementById('imageFiles')?.files || [];
-  for(const f of images) await readFileAsBase64(f, 'image');
-
-  const videos = document.getElementById('videoFiles')?.files || [];
-  for(const f of videos) await readFileAsBase64(f, 'video');
-
-  const branding = document.getElementById('brandingFiles')?.files || [];
-  for(const f of branding) await readFileAsBase64(f, 'branding');
-}
-
-// ==========================
-// REVIEW GENERATION
-// ==========================
-function generateReview(){
-  saveBusinessInfo();
-  const reviewContainer = document.getElementById('reviewContainer');
-  reviewContainer.innerHTML = '';
-
-  reviewContainer.innerHTML += `<p><strong>Plan:</strong> ${orderData.planType} (${orderData.tier})</p>`;
-
-  orderData.pages.forEach((page, idx) => {
-    reviewContainer.innerHTML += `
-      <p><strong>Page ${idx+1}:</strong> ${page.title || '-'}<br>
-      Description: ${page.description || '-'}<br>
-      Media: ${page.media ? page.media.name || page.media : '-'}<br>
-      SEO: ${page.seo ? page.seo : '-'}</p>
-    `;
-  });
-
-  if(orderData.features.length){
-    reviewContainer.innerHTML += `<p><strong>Features:</strong> ${orderData.features.join(', ')}</p>`;
-  }
-
-  if(orderData.seo.primary){
-    reviewContainer.innerHTML += `<p><strong>SEO:</strong> ${orderData.seo.primary}, ${orderData.seo.secondary}, Location: ${orderData.seo.location}</p>`;
-  }
-
-  const b = orderData.business;
-  reviewContainer.innerHTML += `<p><strong>Business:</strong> ${b.name}<br>Email: ${b.email}<br>Phone: ${b.phone || '-'}<br>Address: ${b.address || '-'}</p>`;
-}
-
-// ==========================
-// FINAL CONSENT ENABLE SUBMIT
-// ==========================
-const finalConsent = document.getElementById('finalConsentCheckbox');
-const submitBtn = document.getElementById('submitOrderBtn');
-
-finalConsent.addEventListener('change', () => {
-  submitBtn.disabled = !finalConsent.checked || !document.getElementById('consentGDPR').checked;
-});
-document.getElementById('consentGDPR').addEventListener('change', () => {
-  submitBtn.disabled = !finalConsent.checked || !document.getElementById('consentGDPR').checked;
-});
-
-// ==========================
-// FORM SUBMISSION TO GAS
-// ==========================
-document.getElementById('vibzOrderForm').addEventListener('submit', async function(e){
-  e.preventDefault();
-  submitBtn.disabled = true;
-  document.getElementById('loadingOverlay').style.display = 'flex';
-
-  saveBusinessInfo();
-  await collectUploads();
-
-  fetch("YOUR_DEPLOYED_WEB_APP_URL", {
-    method: "POST",
-    body: JSON.stringify(orderData),
-    headers: { "Content-Type": "application/json" }
-  })
-  .then(res => res.json())
-  .then(response => {
-    document.getElementById('loadingOverlay').style.display = 'none';
-    if(response.success){
-      document.getElementById('orderFormCard').style.display = 'none';
-      document.getElementById('successScreen').style.display = 'block';
-      document.getElementById('confirmationEmailDisplay').innerText = orderData.business.email;
-
-      // Open WhatsApp notification
-      window.open(`https://wa.me/447706345874?text=New order from ${encodeURIComponent(orderData.business.name)}`, '_blank');
-
-      // Optional: send confirmation email from GAS
-    } else {
-      alert("Error submitting order: " + response.error);
-      submitBtn.disabled = false;
+// =========================================================================
+//  LOAD FROM INDEX.HTML (from first script)
+// =========================================================================
+function loadOrderFromIndex() {
+    try {
+        orderData.businessName = sessionStorage.getItem('barberShopName') || 
+                                localStorage.getItem('barberShopName') || 
+                                'Your Shop';
+        
+        orderData.planType = sessionStorage.getItem('vibz_planType') || 
+                            sessionStorage.getItem('selectedPlanType') || 
+                            localStorage.getItem('selectedPlanType') || 
+                            'Buy Outright';
+        
+        orderData.tier = sessionStorage.getItem('vibz_tier') || 
+                        localStorage.getItem('vibz_tier') || 
+                        'standard';
+        
+        orderData.designCode = sessionStorage.getItem('selectedBarberCode') || 
+                              localStorage.getItem('selectedBarberCode') || 
+                              '';
+        
+        const savedServices = sessionStorage.getItem('selectedServices') || 
+                            localStorage.getItem('selectedServices');
+        if (savedServices) {
+            orderData.services = JSON.parse(savedServices);
+            console.log('✅ Loaded services:', orderData.services.length);
+        }
+        
+        const savedHelp = sessionStorage.getItem('helpRequests') || 
+                        localStorage.getItem('helpRequests');
+        if (savedHelp) {
+            orderData.helpRequests = JSON.parse(savedHelp);
+            console.log('✅ Loaded help requests:', orderData.helpRequests.length);
+        }
+        
+        orderData.pageCount = TIER_CONFIG[orderData.tier].pages;
+        
+    } catch (e) {
+        console.warn('Using defaults', e);
     }
-  })
-  .catch(err => {
-    alert("Submission failed: " + err);
-    submitBtn.disabled = false;
-    document.getElementById('loadingOverlay').style.display = 'none';
-  });
-});
+    
+    setTimeout(() => {
+        const field = document.getElementById('businessName');
+        if (field && orderData.businessName) field.value = orderData.businessName;
+    }, 100);
+}
 
-// ==========================
-// INITIALIZE STEP
-// ==========================
-showStep(currentStep);
+// =========================================================================
+//  FILTER SERVICES (from first script)
+// =========================================================================
+function getFilteredServices() {
+    if (!orderData.services || orderData.services.length === 0) {
+        return { standard: [], premium: [] };
+    }
+    
+    const isPremium = orderData.tier === 'premium';
+    const standardServices = orderData.services.filter(s => s.tier === 'standard');
+    const premiumServices = orderData.services.filter(s => s.tier === 'premium');
+    
+    return {
+        standard: standardServices,
+        premium: isPremium ? premiumServices : []
+    };
+}
 
-// ==========================
-// UPLOAD TRIGGERS
-// ==========================
-['logoUploadTrigger','imageUploadTrigger','videoUploadTrigger','brandingUploadTrigger'].forEach(id=>{
-  const trigger = document.getElementById(id);
-  const input = document.getElementById(id.replace('Trigger','Files')) || document.getElementById(id.replace('Trigger','File'));
-  if(trigger && input){
-    trigger.addEventListener('click', ()=> input.click());
-  }
-});
-</script>
+// =========================================================================
+//  RENDER FUNCTIONS (keep ALL your existing render functions)
+// =========================================================================
+function renderPlanCard() { ... } // Keep your existing function
+function renderDynamicFeatures() { ... } // Keep your existing function
+function renderAssetCollection() { ... } // Keep your existing function
+function renderReview() { ... } // Keep your existing function
+
+// =========================================================================
+//  ENHANCED PAGE RENDER with file upload fixes
+// =========================================================================
+function renderPageCards() {
+    const container = document.getElementById('pagesDynamicContainer');
+    if (!container) return;
+    
+    let html = '';
+    for (let i = 1; i <= orderData.pageCount; i++) {
+        const isHome = (i === 1);
+        
+        // Page name field
+        let nameField = '';
+        if (isHome) {
+            nameField = `<input type="text" class="form-control" value="Home" readonly>`;
+        } else {
+            let options = `<option value="">-- Select page name --</option>`;
+            PAGE_NAME_SUGGESTIONS.forEach(name => {
+                options += `<option value="${name}">${name}</option>`;
+            });
+            nameField = `
+                <select class="form-control page-name-select" data-page="${i}" id="page_name_${i}">
+                    ${options}
+                </select>
+                <div class="duplicate-warning" id="dup_warn_${i}">⚠️ This name is already used</div>
+            `;
+        }
+
+        // IMPROVED file upload grid with visual feedback
+        const fileUploadGrid = `
+            <div class="file-upload-grid">
+                <div class="file-upload-box" data-page="${i}" data-num="1" id="box_page_${i}_1">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <span class="upload-text">Upload 1</span>
+                    <small class="upload-hint">PNG, JPG, MP4</small>
+                    <input type="file" id="page_${i}_file1" accept=".png,.jpg,.jpeg,.mp4,.mov" style="display: none;">
+                    <select class="placement-select" id="page_${i}_place1">
+                        <option value="">Placement</option>
+                        <option value="top">Top section</option>
+                        <option value="mid">Mid section</option>
+                        <option value="bottom">Bottom section</option>
+                    </select>
+                    <div class="upload-success-badge" style="display: none;">✓</div>
+                </div>
+                <div class="file-upload-box" data-page="${i}" data-num="2" id="box_page_${i}_2">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <span class="upload-text">Upload 2</span>
+                    <small class="upload-hint">PNG, JPG, MP4</small>
+                    <input type="file" id="page_${i}_file2" accept=".png,.jpg,.jpeg,.mp4,.mov" style="display: none;">
+                    <select class="placement-select" id="page_${i}_place2">
+                        <option value="">Placement</option>
+                        <option value="top">Top section</option>
+                        <option value="mid">Mid section</option>
+                        <option value="bottom">Bottom section</option>
+                    </select>
+                    <div class="upload-success-badge" style="display: none;">✓</div>
+                </div>
+                <div class="file-upload-box" data-page="${i}" data-num="3" id="box_page_${i}_3">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <span class="upload-text">Upload 3</span>
+                    <small class="upload-hint">PNG, JPG, MP4</small>
+                    <input type="file" id="page_${i}_file3" accept=".png,.jpg,.jpeg,.mp4,.mov" style="display: none;">
+                    <select class="placement-select" id="page_${i}_place3">
+                        <option value="">Placement</option>
+                        <option value="top">Top section</option>
+                        <option value="mid">Mid section</option>
+                        <option value="bottom">Bottom section</option>
+                    </select>
+                    <div class="upload-success-badge" style="display: none;">✓</div>
+                </div>
+            </div>
+        `;
+
+        const descField = `
+            <textarea class="form-control" id="page_brief_${i}" placeholder="Paste full website description..."></textarea>
+            <small style="color: var(--gray);">You can copy-paste a full description or let Vibz create it.</small>
+        `;
+
+        const seoField = `
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                <input type="text" class="form-control keyword-input" id="page_seo1_${i}" placeholder="SEO keyword 1">
+                <input type="text" class="form-control keyword-input" id="page_seo2_${i}" placeholder="SEO keyword 2">
+                <div class="skip-badge" id="skip_seo_${i}" onclick="toggleSkipSeo(${i})">
+                    <i class="fas fa-forward"></i> Let Vibz provide
+                </div>
+                <div class="skip-badge" id="skip_keywords_${i}" style="display:none;" onclick="toggleSkipSeo(${i})">
+                    <i class="fas fa-check"></i> Skipped
+                </div>
+            </div>
+        `;
+
+        html += `
+            <div class="page-card" id="page_card_${i}">
+                <div class="page-header">
+                    <div class="page-number">Page ${i}</div>
+                    ${isHome ? '<div class="page-locked">Homepage</div>' : ''}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Page name</label>
+                    ${nameField}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Upload files (max 3 per page) & placement</label>
+                    ${fileUploadGrid}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Page description</label>
+                    ${descField}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">SEO keywords for this page</label>
+                    ${seoField}
+                </div>
+            </div>
+        `;
+    }
+    container.innerHTML = html;
+    
+    // Set up file upload handlers
+    setupFileUploadHandlers();
+}
+
+// =========================================================================
+//  FILE UPLOAD HANDLERS (NEW - makes uploads work)
+// =========================================================================
+function setupFileUploadHandlers() {
+    // Make upload boxes clickable
+    document.querySelectorAll('.file-upload-box').forEach(box => {
+        // Remove old handlers and add new ones
+        box.removeEventListener('click', handleBoxClick);
+        box.addEventListener('click', handleBoxClick);
+    });
+    
+    // Add change handlers to file inputs
+    document.querySelectorAll('input[type="file"][id^="page_"]').forEach(input => {
+        input.removeEventListener('change', handleFileSelected);
+        input.addEventListener('change', handleFileSelected);
+    });
+    
+    // Logo upload handler
+    const logoFile = document.getElementById('logoFile');
+    if (logoFile) {
+        logoFile.removeEventListener('change', handleLogoSelected);
+        logoFile.addEventListener('change', handleLogoSelected);
+    }
+}
+
+function handleBoxClick(e) {
+    // Don't trigger if clicking on select dropdown
+    if (e.target.tagName === 'SELECT') return;
+    
+    const fileInput = this.querySelector('input[type="file"]');
+    if (fileInput) {
+        console.log('📁 Opening file selector');
+        fileInput.click();
+    }
+}
+
+function handleFileSelected(e) {
+    const input = e.target;
+    const box = input.closest('.file-upload-box');
+    if (!box) return;
+    
+    const icon = box.querySelector('i');
+    const text = box.querySelector('.upload-text');
+    const hint = box.querySelector('.upload-hint');
+    const successBadge = box.querySelector('.upload-success-badge');
+    
+    if (input.files && input.files.length > 0) {
+        const file = input.files[0];
+        const fileName = file.name.length > 20 ? file.name.substring(0, 17) + '...' : file.name;
+        
+        // Update UI to show file selected
+        icon.className = 'fas fa-check-circle';
+        icon.style.color = '#4CAF50';
+        text.textContent = fileName;
+        hint.textContent = 'Click to change';
+        box.classList.add('has-file');
+        if (successBadge) successBadge.style.display = 'block';
+        
+        // Determine file type for folder routing
+        const isVideo = file.type.includes('video');
+        console.log(`✅ File selected: ${file.name} (${isVideo ? 'video' : 'image'})`);
+    } else {
+        // Reset UI
+        icon.className = 'fas fa-cloud-upload-alt';
+        icon.style.color = '';
+        text.textContent = `Upload ${box.dataset.num}`;
+        hint.textContent = 'PNG, JPG, MP4';
+        box.classList.remove('has-file');
+        if (successBadge) successBadge.style.display = 'none';
+    }
+}
+
+function handleLogoSelected(e) {
+    const input = e.target;
+    const trigger = document.getElementById('logoUploadTrigger');
+    if (!trigger) return;
+    
+    if (input.files && input.files.length > 0) {
+        const file = input.files[0];
+        trigger.innerHTML = `
+            <i class="fas fa-check-circle" style="color: #4CAF50;"></i>
+            <p>${file.name.length > 30 ? file.name.substring(0, 27) + '...' : file.name}</p>
+            <small>Logo selected • Click to change</small>
+        `;
+    } else {
+        trigger.innerHTML = `
+            <i class="fas fa-cloud-upload-alt"></i>
+            <p>Click to upload your logo</p>
+            <small>PNG, JPG, SVG • Max 5MB</small>
+        `;
+    }
+}
+
+// =========================================================================
+//  FILE COLLECTION FOR GOOGLE DRIVE (UPDATED for your Apps Script)
+// =========================================================================
+function readFileAsBase64(file, type, metadata = {}) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const base64Data = e.target.result.split(',')[1];
+            
+            // Determine correct folder type for Google Drive
+            let driveFolderType = type;
+            if (type === 'page') {
+                // Check if it's video or image
+                driveFolderType = file.type.includes('video') ? 'video' : 'image';
+            }
+            
+            orderData.files.push({
+                fileName: file.name,
+                mimeType: file.type,
+                fileBase64: base64Data,
+                fileType: driveFolderType, // 'logo', 'image', 'video', 'branding'
+                metadata: metadata,
+                fileSize: file.size
+            });
+            resolve();
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
+async function collectAllUploads() {
+    orderData.files = []; // Reset
+    
+    // 1. Collect logo
+    const logoInput = document.getElementById('logoFile');
+    if (logoInput && logoInput.files.length > 0) {
+        await readFileAsBase64(logoInput.files[0], 'logo');
+    }
+    
+    // 2. Collect page files (3 per page)
+    for (let page = 1; page <= orderData.pageCount; page++) {
+        for (let fileNum = 1; fileNum <= 3; fileNum++) {
+            const fileInput = document.getElementById(`page_${page}_file${fileNum}`);
+            const placementSelect = document.getElementById(`page_${page}_place${fileNum}`);
+            
+            if (fileInput && fileInput.files.length > 0) {
+                await readFileAsBase64(fileInput.files[0], 'page', {
+                    pageNumber: page,
+                    fileNumber: fileNum,
+                    placement: placementSelect ? placementSelect.value : '',
+                    pageName: document.getElementById(`page_name_${page}`)?.value || `Page ${page}`
+                });
+            }
+        }
+    }
+    
+    // 3. Collect feature asset files
+    const filtered = getFilteredServices();
+    const allFilteredServices = [...filtered.standard, ...filtered.premium];
+    
+    for (const service of allFilteredServices) {
+        const config = FEATURE_ASSETS[service.name];
+        if (config && config.fields) {
+            for (let index = 0; index < config.fields.length; index++) {
+                const field = config.fields[index];
+                if (field.type === 'file') {
+                    const fieldId = `feature_${service.name.replace(/\s+/g, '_')}_${index}`;
+                    const fileInput = document.getElementById(fieldId);
+                    
+                    if (fileInput && fileInput.files) {
+                        if (field.multiple) {
+                            for (let i = 0; i < fileInput.files.length; i++) {
+                                await readFileAsBase64(fileInput.files[i], 'branding', {
+                                    featureName: service.name,
+                                    fieldLabel: field.label
+                                });
+                            }
+                        } else if (fileInput.files.length > 0) {
+                            await readFileAsBase64(fileInput.files[0], 'branding', {
+                                featureName: service.name,
+                                fieldLabel: field.label
+                            });
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    console.log(`✅ Collected ${orderData.files.length} files for Google Drive`);
+}
+
+// =========================================================================
+//  BUSINESS INFO (from second script)
+// =========================================================================
+function saveBusinessInfo() {
+    orderData.business = {
+        name: document.getElementById('businessName')?.value?.trim() || '',
+        address: document.getElementById('businessAddress')?.value?.trim() || '',
+        email: document.getElementById('contactEmail')?.value?.trim() || '',
+        phone: document.getElementById('contactPhone')?.value?.trim() || '',
+        noLogo: document.getElementById('noLogoCheckbox')?.checked || false,
+        hasLogo: document.getElementById('logoFile')?.files.length > 0 || false
+    };
+}
+
+// =========================================================================
+//  COLLECT ALL FORM DATA (enhanced from first script)
+// =========================================================================
+function collectAllFormData() {
+    const filtered = getFilteredServices();
+    const allFilteredServices = [...filtered.standard, ...filtered.premium];
+    
+    // Collect page data
+    const pageData = [];
+    for (let i = 1; i <= orderData.pageCount; i++) {
+        const pageNameInput = document.getElementById(`page_name_${i}`);
+        const pageName = pageNameInput ? (pageNameInput.value || `Page ${i}`) : `Page ${i}`;
+        
+        // Collect file uploads info (just metadata, files are in orderData.files)
+        const fileUploads = [];
+        for (let f = 1; f <= 3; f++) {
+            const fileInput = document.getElementById(`page_${i}_file${f}`);
+            const placementSelect = document.getElementById(`page_${i}_place${f}`);
+            
+            if (fileInput && fileInput.files.length > 0) {
+                fileUploads.push({
+                    fileName: fileInput.files[0].name,
+                    fileType: fileInput.files[0].type,
+                    placement: placementSelect ? placementSelect.value : '',
+                    fileNumber: f
+                });
+            }
+        }
+        
+        const pageBrief = document.getElementById(`page_brief_${i}`)?.value || '';
+        const seo1 = document.getElementById(`page_seo1_${i}`)?.value || '';
+        const seo2 = document.getElementById(`page_seo2_${i}`)?.value || '';
+        const seo1Disabled = document.getElementById(`page_seo1_${i}`)?.disabled || false;
+        
+        pageData.push({
+            pageNumber: i,
+            pageName: pageName,
+            isHome: i === 1,
+            fileUploads: fileUploads,
+            description: pageBrief || (seo1Disabled ? 'Vibz to provide' : ''),
+            seoKeywords: {
+                keyword1: seo1,
+                keyword2: seo2,
+                vibzToProvide: seo1Disabled
+            }
+        });
+    }
+    
+    // Collect asset data (text fields only)
+    const assetData = {};
+    allFilteredServices.forEach(service => {
+        const config = FEATURE_ASSETS[service.name];
+        if (config && config.fields) {
+            const serviceData = {};
+            config.fields.forEach((field, index) => {
+                const fieldId = `feature_${service.name.replace(/\s+/g, '_')}_${index}`;
+                const element = document.getElementById(fieldId);
+                if (element && field.type !== 'file') { // Skip files, they're in orderData.files
+                    serviceData[field.label] = element.value;
+                }
+            });
+            assetData[service.name] = serviceData;
+        }
+    });
+    
+    // Save to orderData.pages for second script compatibility
+    orderData.pages = pageData;
+    orderData.features = allFilteredServices.map(s => s.name);
+    orderData.seo = {
+        primary: document.getElementById('seoKeyword1')?.value || '',
+        secondary: document.getElementById('seoKeywords')?.value || '',
+        location: document.getElementById('seoLocation')?.value || ''
+    };
+    
+    // Return complete data for Apps Script
+    return {
+        orderId: 'VIBZ-' + Date.now().toString().slice(-6),
+        timestamp: new Date().toISOString(),
+        formType: 'vibz_order_form',
+        plan: {
+            tier: orderData.tier,
+            type: orderData.planType,
+            pages: orderData.pageCount,
+            designCode: orderData.designCode
+        },
+        customFeatures: allFilteredServices,
+        allSelectedFeatures: orderData.services,
+        helpRequests: orderData.helpRequests,
+        featureAssets: assetData,
+        pages: pageData,
+        business: orderData.business,
+        seo: orderData.seo,
+        consent: {
+            gdpr: document.getElementById('consentGDPR')?.checked || false,
+            final: document.getElementById('finalConsentCheckbox')?.checked || false
+        },
+        files: orderData.files // THIS is what your Apps Script needs
+    };
+}
+
+// =========================================================================
+//  FORM SUBMISSION TO GOOGLE APPS SCRIPT (UPDATED with your URL)
+// =========================================================================
+function setupFormSubmission() {
+    const form = document.getElementById('vibzOrderForm');
+    
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Validate consents
+        const finalCheck = document.getElementById('finalConsentCheckbox');
+        const gdprCheck = document.getElementById('consentGDPR');
+        
+        if (!finalCheck || !finalCheck.checked || !gdprCheck || !gdprCheck.checked) {
+            alert('Please agree to the GDPR terms and confirm your consent.');
+            return;
+        }
+        
+        // Validate email
+        const email = document.getElementById('contactEmail');
+        if (!email || !email.value) {
+            alert('Please enter your contact email.');
+            return;
+        }
+        
+        // Disable button and show loading
+        const submitBtn = document.getElementById('submitOrderBtn');
+        submitBtn.disabled = true;
+        document.getElementById('loadingOverlay').style.display = 'flex';
+        
+        try {
+            // Save business info
+            saveBusinessInfo();
+            
+            // COLLECT ALL FILES (THIS IS THE KEY PART)
+            console.log('📁 Collecting files for Google Drive...');
+            await collectAllUploads();
+            
+            // Collect complete order data
+            const completeOrderData = collectAllFormData();
+            
+            console.log('📦 Submitting to Apps Script:', {
+                orderId: completeOrderData.orderId,
+                files: completeOrderData.files.length,
+                business: completeOrderData.business.email
+            });
+            
+            // Send to YOUR Google Apps Script URL
+            const response = await fetch('https://script.google.com/macros/s/AKfycbz5dNjGMzp67NgGiwtYzNcHVzPrtHFgoPyvInyv2CLi2P2yXL9xK2hiRaA9oraTdQy9Wg/exec', {
+                method: 'POST',
+                mode: 'no-cors', // Important for Apps Script
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(completeOrderData)
+            });
+            
+            // Show success (with no-cors we can't read response)
+            document.getElementById('loadingOverlay').style.display = 'none';
+            document.getElementById('orderFormCard').style.display = 'none';
+            document.querySelector('.progress').style.display = 'none';
+            document.getElementById('successScreen').style.display = 'block';
+            document.getElementById('confirmationEmailDisplay').innerText = completeOrderData.business.email;
+            
+            // Open WhatsApp notification
+            window.open(`https://wa.me/447706345874?text=New order from ${encodeURIComponent(completeOrderData.business.name)}`, '_blank');
+            
+            // Clear stored data
+            try {
+                sessionStorage.removeItem('selectedServices');
+                sessionStorage.removeItem('helpRequests');
+            } catch (e) {}
+            
+        } catch (error) {
+            console.error('Submission error:', error);
+            document.getElementById('loadingOverlay').style.display = 'none';
+            submitBtn.disabled = false;
+            alert('There was an error submitting your order. Please try again or contact support.');
+        }
+    });
+}
+
+// =========================================================================
+//  NAVIGATION (from first script, but keep showStep from second)
+// =========================================================================
+function updateProgress() {
+    document.querySelectorAll('.progress-step').forEach((el, i) => {
+        el.classList.toggle('active', i + 1 === currentStep);
+        el.classList.toggle('completed', i + 1 < currentStep);
+    });
+    
+    document.querySelectorAll('.step').forEach((el, i) => {
+        el.classList.toggle('active', i + 1 === currentStep);
+    });
+    
+    document.getElementById('prevBtn').style.display = currentStep > 1 ? 'inline-flex' : 'none';
+    document.getElementById('nextBtn').style.display = currentStep < totalSteps ? 'inline-flex' : 'none';
+    
+    if (currentStep === 4) {
+        renderAssetCollection();
+    }
+    
+    if (currentStep === totalSteps) {
+        const check = document.getElementById('finalConsentCheckbox');
+        const btn = document.getElementById('submitOrderBtn');
+        if (check && btn) {
+            const newCheck = check.cloneNode(true);
+            check.parentNode.replaceChild(newCheck, check);
+            
+            newCheck.addEventListener('change', function() {
+                btn.disabled = !this.checked || !document.getElementById('consentGDPR').checked;
+            });
+            
+            btn.disabled = !newCheck.checked || !document.getElementById('consentGDPR').checked;
+        }
+        renderReview();
+    }
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+window.nextStep = function() {
+    if (currentStep < totalSteps) {
+        if (currentStep === 3) {
+            const gdpr = document.getElementById('consentGDPR');
+            if (!gdpr || !gdpr.checked) {
+                alert('Please agree to the GDPR terms to continue.');
+                return;
+            }
+            
+            const email = document.getElementById('contactEmail');
+            if (!email || !email.value) {
+                alert('Please enter your contact email.');
+                return;
+            }
+            
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email.value)) {
+                alert('Please enter a valid email address.');
+                return;
+            }
+        }
+        
+        currentStep++;
+        updateProgress();
+    }
+};
+
+window.prevStep = function() {
+    if (currentStep > 1) {
+        currentStep--;
+        updateProgress();
+    }
+};
+
+// =========================================================================
+//  TOGGLE SKIP SEO (from first script)
+// =========================================================================
+window.toggleSkipSeo = function(pageId) {
+    const seo1 = document.getElementById(`page_seo1_${pageId}`);
+    const seo2 = document.getElementById(`page_seo2_${pageId}`);
+    const skipBtn = document.getElementById(`skip_seo_${pageId}`);
+    const skippedBtn = document.getElementById(`skip_keywords_${pageId}`);
+    
+    if (seo1.disabled) {
+        seo1.disabled = false;
+        seo2.disabled = false;
+        skipBtn.style.display = 'inline-flex';
+        skippedBtn.style.display = 'none';
+    } else {
+        seo1.value = '';
+        seo2.value = '';
+        seo1.disabled = true;
+        seo2.disabled = true;
+        skipBtn.style.display = 'none';
+        skippedBtn.style.display = 'inline-flex';
+    }
+};
+
+// =========================================================================
+//  REQUEST FEATURE HELP (from first script)
+// =========================================================================
+window.requestFeatureHelp = function(featureName) {
+    const existing = orderData.helpRequests.find(h => h.feature === featureName);
+    if (existing) {
+        alert(`✅ Help already requested for "${featureName}"`);
+        return;
+    }
+    
+    orderData.helpRequests.push({
+        feature: featureName,
+        timestamp: new Date().toISOString()
+    });
+    
+    sessionStorage.setItem('helpRequests', JSON.stringify(orderData.helpRequests));
+    localStorage.setItem('helpRequests', JSON.stringify(orderData.helpRequests));
+    
+    alert(`✅ Help requested for "${featureName}"`);
+    
+    const btnId = `help_btn_${featureName.replace(/\s+/g, '_')}`;
+    const btn = document.getElementById(btnId);
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-check"></i> Help Requested';
+    }
+};
+
+// =========================================================================
+//  INITIALIZE (COMBINED from both scripts)
+// =========================================================================
+window.onload = function() {
+    // Load data
+    loadOrderFromIndex();
+    
+    // Render components
+    renderPlanCard();
+    renderDynamicFeatures();
+    renderPageCards();
+    
+    // Set up form submission
+    setupFormSubmission();
+    
+    // Set up file upload triggers
+    setupFileUploadHandlers();
+    
+    // Logo toggle
+    const logoToggle = document.getElementById('noLogoToggle');
+    if (logoToggle) {
+        logoToggle.addEventListener('click', function() {
+            const cb = document.getElementById('noLogoCheckbox');
+            if (cb) cb.checked = !cb.checked;
+        });
+    }
+    
+    // Logo upload trigger
+    const logoUploadTrigger = document.getElementById('logoUploadTrigger');
+    const logoFile = document.getElementById('logoFile');
+    if (logoUploadTrigger && logoFile) {
+        logoUploadTrigger.addEventListener('click', function() {
+            logoFile.click();
+        });
+    }
+    
+    // GDPR and final consent listeners
+    const finalConsent = document.getElementById('finalConsentCheckbox');
+    const gdprConsent = document.getElementById('consentGDPR');
+    const submitBtn = document.getElementById('submitOrderBtn');
+    
+    if (finalConsent && gdprConsent && submitBtn) {
+        function updateSubmitButton() {
+            submitBtn.disabled = !finalConsent.checked || !gdprConsent.checked;
+        }
+        
+        finalConsent.addEventListener('change', updateSubmitButton);
+        gdprConsent.addEventListener('change', updateSubmitButton);
+    }
+    
+    // Show first step
+    updateProgress();
+    
+    console.log('✅ VIBZ Order Form initialized with file upload support');
+};
+
+        </script>
+
+
     
 </body>
 </html>
