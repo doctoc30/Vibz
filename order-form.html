@@ -2182,8 +2182,30 @@ function saveBusinessInfo() {
 //  COLLECT ALL FORM DATA
 // =========================================================================
 function collectAllFormData() {
+    console.log("🔍 COLLECTING FORM DATA...");
+    
     const filtered = getFilteredServices();
     const allFilteredServices = [...filtered.standard, ...filtered.premium];
+    
+    console.log("📋 Services that need assets:", allFilteredServices.length);
+    
+    // Log each service that should have fields
+    allFilteredServices.forEach(service => {
+        console.log("  - " + service.name + " (" + service.tier + ")");
+    });
+    
+    // Check if fields actually exist in the DOM
+    allFilteredServices.forEach(service => {
+        const config = FEATURE_ASSETS[service.name];
+        if (config && config.fields) {
+            console.log(`  🔍 ${service.name} has ${config.fields.length} fields`);
+            config.fields.forEach((field, index) => {
+                const fieldId = `feature_${service.name.replace(/\s+/g, '_')}_${index}`;
+                const element = document.getElementById(fieldId);
+                console.log(`    Field ${index}: ${field.label} - ${element ? '✅ Found' : '❌ MISSING'} (ID: ${fieldId})`);
+            });
+        }
+    });
     
     const pageData = [];
     for (let i = 1; i <= orderData.pageCount; i++) {
@@ -2232,8 +2254,23 @@ function collectAllFormData() {
             config.fields.forEach((field, index) => {
                 const fieldId = `feature_${service.name.replace(/\s+/g, '_')}_${index}`;
                 const element = document.getElementById(fieldId);
-                if (element && field.type !== 'file') {
-                    serviceData[field.label] = element.value;
+                
+                // Log what we're collecting
+                if (element) {
+                    if (field.type === 'file') {
+                        if (element.files && element.files.length > 0) {
+                            console.log(`  ✅ File field ${field.label} has ${element.files.length} file(s)`);
+                        } else {
+                            console.log(`  ⚠️ File field ${field.label} is empty`);
+                        }
+                    } else {
+                        console.log(`  📝 Text field ${field.label}: "${element.value}"`);
+                        if (element.value) {
+                            serviceData[field.label] = element.value;
+                        }
+                    }
+                } else {
+                    console.log(`  ❌ Field NOT FOUND: ${fieldId}`);
                 }
             });
             assetData[service.name] = serviceData;
@@ -2247,6 +2284,8 @@ function collectAllFormData() {
         secondary: document.getElementById('seoKeywords')?.value || '',
         location: document.getElementById('seoLocation')?.value || ''
     };
+    
+    console.log("📦 Final assetData:", assetData);
     
     return {
         orderId: 'VIBZ-' + Date.now().toString().slice(-6),
@@ -2272,6 +2311,7 @@ function collectAllFormData() {
         files: orderData.files
     };
 }
+        
 
 // =========================================================================
 //  FIXED FORM SUBMISSION TO GOOGLE APPS SCRIPT WITH PROPER ERROR HANDLING
