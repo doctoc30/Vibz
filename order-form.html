@@ -2357,47 +2357,29 @@ function setupFormSubmission() {
                 business: completeOrderData.business.email
             });
             
+
             // Step 4: Send to Google Apps Script
-            const webAppUrl = 'https://script.google.com/macros/s/AKfycbytYDK0CNurTph8DvZA7161zSu_w_SM3vCgOqOftG9sQFbALPQ9mVY9-s2BnigZObna/exec';
-            
-            // Try with cors first to get proper error messages
-            try {
-                const response = await fetch(webAppUrl, {
-                    method: 'POST',
-                    mode: 'cors',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(completeOrderData)
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const result = await response.json();
-                console.log('✅ Server response:', result);
-                
-                if (!result.success) {
-                    throw new Error(result.error || 'Unknown server error');
-                }
-                
-            } catch (corsError) {
-                console.warn('CORS failed, trying no-cors mode:', corsError);
-                
-                // Fallback to no-cors (won't get response but request will send)
-                await fetch(webAppUrl, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(completeOrderData)
-                });
-                
-                console.log('✅ Request sent via no-cors mode');
-            }
-            
+const webAppUrl = 'https://script.google.com/macros/s/AKfycbytYDK0CNurTph8DvZA7161zSu_w_SM3vCgOqOftG9sQFbALPQ9mVY9-s2BnigZObna/exec';
+
+console.log("📤 SENDING DATA:", JSON.stringify(completeOrderData, null, 2));
+console.log("📤 Total files:", completeOrderData.files.length);
+
+try {
+    await fetch(webAppUrl, {
+        method: 'POST',
+        mode: 'no-cors',  // Use no-cors only
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(completeOrderData)
+    });
+    
+    console.log('✅ Request sent via no-cors mode');
+    
+} catch (error) {
+    console.error('❌ Fetch error:', error);
+    throw error;
+}
             // Step 5: Show success
             document.getElementById('loadingOverlay').style.display = 'none';
             document.getElementById('orderFormCard').style.display = 'none';
