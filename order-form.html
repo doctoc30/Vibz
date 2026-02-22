@@ -2357,41 +2357,36 @@ function setupFormSubmission() {
                 business: completeOrderData.business.email
             });
 
-
-
             // Step 4: Send to Google Apps Script
-const webAppUrl = 'https://script.google.com/macros/s/AKfycbytYDK0CNurTph8DvZA7161zSu_w_SM3vCgOqOftG9sQFbALPQ9mVY9-s2BnigZObna/exec';
+            const webAppUrl = 'https://script.google.com/macros/s/AKfycbytYDK0CNurTph8DvZA7161zSu_w_SM3vCgOqOftG9sQFbALPQ9mVY9-s2BnigZObna/exec';
 
-console.log("📤 SENDING DATA:", JSON.stringify(completeOrderData, null, 2));
-console.log("📤 Total files:", completeOrderData.files.length);
-console.log("📤 About to send fetch request to:", webAppUrl);
-console.log("📤 Data size:", JSON.stringify(completeOrderData).length, "bytes");
+            console.log("📤 SENDING DATA SUMMARY:", {
+                orderId: completeOrderData.orderId,
+                business: completeOrderData.business?.email,
+                files: completeOrderData.files.length,
+                dataSize: JSON.stringify(completeOrderData).length + " bytes"
+            });
 
-try {
-    const fetchPromise = fetch(webAppUrl, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(completeOrderData)
-    });
-    
-    console.log("📤 Fetch promise created, waiting for response...");
-    await fetchPromise;
-    console.log('✅ Request completed (no-cors mode - cannot read response)');
-    
-    // Force a small delay to ensure the request completes
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-} catch (error) {
-    console.error('❌ Fetch error:', error);
-    throw error;
-}
-
-console.log("📤 Fetch finished, checking if data was received...");
-
-            /
+            try {
+                const response = await fetch(webAppUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(completeOrderData)
+                });
+                
+                console.log('✅ Request sent successfully (no-cors mode)');
+                
+                // Small delay to ensure request completes
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+            } catch (error) {
+                console.error('❌ Fetch error:', error);
+                throw error;
+            }
+            
             // Step 5: Show success
             document.getElementById('loadingOverlay').style.display = 'none';
             document.getElementById('orderFormCard').style.display = 'none';
