@@ -2,564 +2,587 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-  <title>LEP · 24/7 plumbing</title>
-  <!-- font & icons (clean, native feel) -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>LEP · London Emergency Plumbing · native app</title>
+  <!-- Font + Icons (custom graphic style) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      font-family: 'Inter', -apple-system, 'Helvetica Neue', sans-serif;
     }
 
     body {
-      background-color: #ffffff;
-      color: #1e2b3c;        /* deep navy text (almost black with depth) */
-      line-height: 1.4;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    /* main container – card / native app feel */
-    .app-wrapper {
-      max-width: 480px;       /* like a mobile screen */
-      margin: 0 auto;
-      background: white;
-      box-shadow: 0 0 40px rgba(0,0,0,0.02);
+      background: #0a141f; /* deep navy base */
+      display: flex;
+      justify-content: center;
+      align-items: center;
       min-height: 100vh;
+      padding: 8px;
+    }
+
+    /* phone-mock container – super premium, huge border radius, glossy */
+    .app-screen {
+      max-width: 390px;  /* like iPhone 15 native width */
+      width: 100%;
+      background: #ffffff;
+      border-radius: 48px;
+      box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.6), 0 0 0 8px rgba(245, 176, 27, 0.1), inset 0 0 0 1px rgba(255,255,255,0.5);
+      overflow: hidden;
       position: relative;
-      border-radius: 0;       /* full width mobile */
+      backdrop-filter: blur(2px);
+      transition: all 0.2s ease;
     }
 
-    /* header stripe: LEP branding from image (dark blue/gold) */
-    .top-ribbon {
-      background-color: #0b1a2b;   /* deep navy from logo area */
-      padding: 14px 20px 10px 20px;
+    /* dynamic status bar (custom graphic) */
+    .status-bar {
+      background: #0b1a2b; /* exact navy from image */
+      padding: 12px 24px 6px 24px;
       display: flex;
-      align-items: center;
-      gap: 8px;
-      border-bottom: 3px solid #f5b01b;   /* exact gold accent */
-    }
-    .top-ribbon span {
-      font-weight: 800;
-      font-size: 1.9rem;
-      letter-spacing: -0.5px;
-      color: #ffffff;
-      line-height: 1;
-    }
-    .top-ribbon .lepid {
-      background: #f5b01b;
-      color: #0b1a2b;
-      font-size: 0.85rem;
-      font-weight: 700;
-      padding: 4px 12px;
-      border-radius: 40px;
-      margin-left: auto;
-      text-transform: uppercase;
-    }
-
-    /* available now chip */
-    .avail-badge {
-      background: #eef2f5;
-      padding: 8px 20px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: #0b1a2b;
-      border-bottom: 1px solid #dbe1e7;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .avail-badge i {
-      color: #f5b01b;
-      font-size: 1rem;
-    }
-
-    /* main call 24/7 + rating */
-    .hero-section {
-      padding: 18px 20px 10px 20px;
-      background: white;
-    }
-    .call-now-block {
-      display: flex;
-      align-items: center;
       justify-content: space-between;
+      color: #f5b01b;
+      font-weight: 600;
+      font-size: 0.85rem;
+      letter-spacing: 0.2px;
+      border-bottom: 2px solid #f5b01b;
     }
-    .call-icon-number {
+    .status-bar i {
+      color: #f5b01b;
+      margin-right: 4px;
+    }
+    .status-bar .time {
+      background: #1f344a;
+      padding: 2px 14px;
+      border-radius: 40px;
+      color: white;
+    }
+
+    /* custom header with LEP logo + 24/7 graphic */
+    .lep-header-graphic {
+      background: #0b1a2b;
+      padding: 8px 20px 16px 20px;
       display: flex;
-      align-items: center;
+      flex-direction: column;
       gap: 8px;
-      background: #f5b01b;     /* gold background for phone */
-      padding: 6px 16px 6px 12px;
-      border-radius: 50px;
-      font-weight: 700;
-      color: #0b1a2b;
+      border-bottom-left-radius: 32px;
+      border-bottom-right-radius: 32px;
+      box-shadow: 0 10px 0 #0a1a27, 0 20px 25px -8px rgba(0,0,0,0.4);
+      position: relative;
+      z-index: 5;
     }
-    .call-icon-number i {
+    .lep-header-graphic::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 20px;
+      right: 20px;
+      height: 4px;
+      background: #f5b01b;
+      border-radius: 20px;
+      opacity: 0.5;
+    }
+    .row-brand {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .lep-big {
+      font-size: 3rem;
+      font-weight: 900;
+      color: white;
+      letter-spacing: -2px;
+      line-height: 1;
+      text-shadow: 3px 3px 0 #f5b01b;
+    }
+    .chip-247 {
+      background: #f5b01b;
+      padding: 8px 20px;
+      border-radius: 60px;
+      color: #0b1a2b;
+      font-weight: 800;
+      font-size: 1.1rem;
+      box-shadow: 0 4px 0 #996f10;
+    }
+    .service-flags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+    .flag {
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(2px);
+      border: 1px solid #f5b01b40;
+      padding: 6px 18px;
+      border-radius: 60px;
+      color: white;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    /* hero with glow rating */
+    .hero-glow {
+      background: linear-gradient(145deg, #ffffff 0%, #f8fafd 100%);
+      margin: 12px 16px 0 16px;
+      border-radius: 32px;
+      padding: 22px 18px;
+      box-shadow: 0 15px 25px -12px rgba(0,0,0,0.2), inset 0 1px 4px white;
+      border: 1px solid rgba(245,176,27,0.3);
+      position: relative;
+      z-index: 6;
+    }
+    .rating-orb {
+      display: inline-flex;
+      align-items: center;
+      background: #0b1a2b;
+      border-radius: 60px;
+      padding: 5px 18px 5px 10px;
+      gap: 8px;
+      border: 2px solid #f5b01b;
+    }
+    .rating-orb i {
+      color: #f5b01b;
       font-size: 1.2rem;
     }
-    .rating-badge {
-      background: #eef2f5;
-      border-radius: 40px;
-      padding: 8px 14px;
-      font-weight: 700;
-      font-size: 1rem;
+    .rating-orb span {
+      color: white;
+      font-weight: 800;
+      font-size: 1.1rem;
+    }
+    .big-headline {
+      font-size: 2.5rem;
+      font-weight: 800;
+      line-height: 1;
+      margin-top: 16px;
       color: #0b1a2b;
+    }
+    .big-headline .gold-stroke {
+      color: #f5b01b;
+      text-shadow: 2px 2px 0 #0b1a2b20;
+      display: block;
+    }
+    .fast-tag {
+      background: #feeed6;
+      border-radius: 40px;
+      padding: 8px 20px;
+      font-weight: 600;
+      color: #0b1a2b;
+      display: inline-block;
+      margin: 16px 0 8px;
+      border-left: 5px solid #f5b01b;
+    }
+
+    /* primary cta (huge & glossy) */
+    .phone-cta-gold {
+      background: linear-gradient(145deg, #f5b01b, #e09c10);
+      margin: 8px 16px;
+      border-radius: 48px;
+      padding: 6px;
+      box-shadow: 0 20px 25px -10px #f5b01b80, 0 8px 0 #a06d0e, 0 0 0 2px white;
+    }
+    .phone-cta-gold a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      background: #0b1a2b;
+      border-radius: 44px;
+      padding: 22px 10px;
+      text-decoration: none;
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: white;
+      letter-spacing: -1px;
+      border: 2px solid #f5b01b;
+    }
+    .phone-cta-gold a i {
+      color: #f5b01b;
+      font-size: 2.5rem;
+      filter: drop-shadow(0 2px 2px black);
+    }
+    .sub-247 {
+      text-align: center;
+      font-weight: 700;
+      color: #0b1a2b;
+      background: #f5b01b;
+      width: fit-content;
+      margin: 8px auto 20px;
+      padding: 8px 38px;
+      border-radius: 60px;
+      font-size: 1.1rem;
+      box-shadow: inset 0 -2px 0 #966f1a;
+    }
+
+    /* graphic stats card (like modern widget) */
+    .stats-graphic {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 20px 16px;
+    }
+    .stat-tile {
+      background: white;
+      border-radius: 28px;
+      padding: 16px 0;
+      flex: 1 0 40%;
+      box-shadow: 0 6px 0 #cad5e2, 0 15px 20px -10px #0b1a2b40;
+      border: 1px solid #ffffff;
+      text-align: center;
+    }
+    .stat-tile .num {
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: #0b1a2b;
+    }
+    .stat-tile .label {
+      color: #f5b01b;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      background: #0b1a2b;
+      display: inline-block;
+      padding: 3px 20px;
+      border-radius: 40px;
+      font-size: 0.85rem;
+    }
+
+    /* service cards with icons + graphics */
+    .service-cards-premium {
+      margin: 30px 16px;
+    }
+    .section-title-custom {
+      font-size: 1.9rem;
+      font-weight: 800;
+      color: #0b1a2b;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .section-title-custom i {
+      color: #f5b01b;
+      font-size: 2.4rem;
+      background: #0b1a2b;
+      border-radius: 60px;
+      padding: 12px;
+    }
+    .card-gold-edge {
+      background: white;
+      border-radius: 36px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 20px 30px -12px #091e30, 0 4px 0 #f5b01b, 0 0 0 1px #ffffff inset;
+      border: 1px solid #f5b01b60;
+    }
+    .card-gold-edge h3 {
+      font-size: 1.7rem;
+      font-weight: 800;
+      color: #0b1a2b;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .card-gold-edge h3 i {
+      background: #f5b01b;
+      border-radius: 60px;
+      padding: 12px;
+      color: #0b1a2b;
+      font-size: 1.6rem;
+    }
+    .card-gold-edge p {
+      color: #314d6b;
+      font-size: 1.05rem;
+      margin-left: 58px;
+      font-weight: 500;
+      border-left: 3px solid #f5b01b;
+      padding-left: 18px;
+    }
+
+    /* review bubble cluster */
+    .review-cluster {
+      background: #0b1a2b;
+      border-radius: 48px 48px 28px 28px;
+      padding: 30px 16px;
+      margin: 30px 0;
+      background-image: radial-gradient(circle at 10% 20%, #f5b01b20 0%, transparent 30%);
+    }
+    .review-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .review-bubble {
+      background: white;
+      border-radius: 36px 36px 36px 8px;
+      padding: 20px 14px;
+      box-shadow: 8px 8px 0 #f5b01b;
+    }
+    .review-bubble .name {
+      font-weight: 800;
+      color: #0b1a2b;
+      font-size: 1.2rem;
       display: flex;
       align-items: center;
       gap: 6px;
     }
-    .rating-badge i {
+    .review-bubble .location {
       color: #f5b01b;
-      margin-right: 2px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin: 5px 0 10px;
     }
 
-    /* main headline */
-    .main-headline {
-      font-size: 2rem;
-      font-weight: 800;
-      line-height: 1.1;
-      margin-top: 20px;
-      margin-bottom: 8px;
-      color: #0b1a2b;
+    /* steps with graphic progress */
+    .steps-graphic {
+      background: linear-gradient(125deg, #0b1a2b, #102433);
+      border-radius: 48px;
+      padding: 30px 20px;
+      margin: 20px 16px;
+      border: 3px solid #f5b01b;
+      box-shadow: 0 20px 0 #050e17;
     }
-    .main-headline span {
-      color: #f5b01b;
-      display: block;
-      font-size: 2.2rem;
-    }
-    .subhead {
-      font-size: 1.1rem;
-      color: #3a4c62;
-      margin-bottom: 6px;
-      font-weight: 500;
-    }
-    .subhead i {
-      color: #f5b01b;
-      margin-right: 4px;
-    }
-
-    /* service tags (plumbing heating drainage electics) */
-    .service-tags {
+    .step-row-graphic {
       display: flex;
-      flex-wrap: wrap;
-      gap: 10px 12px;
-      margin: 18px 0 12px;
-      padding: 8px 0;
-      border-top: 1px solid #e2e9f0;
-      border-bottom: 1px solid #e2e9f0;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 28px;
     }
-    .service-tags span {
-      background: #f2f5f8;
-      padding: 4px 16px;
-      border-radius: 40px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: #0b1a2b;
-      letter-spacing: 0.3px;
-    }
-
-    /* CTA button big (phone) */
-    .big-phone-cta {
+    .step-marker {
       background: #f5b01b;
-      border-radius: 60px;
-      padding: 20px 20px;
-      margin: 18px 0 0;
+      width: 58px;
+      height: 58px;
+      border-radius: 29px;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 12px;
-      box-shadow: 0 6px 0 #c07f0e;
-      transition: all 0.1s ease;
-    }
-    .big-phone-cta a {
-      text-decoration: none;
-      color: #0b1a2b;
-      font-weight: 800;
-      font-size: 1.8rem;
-      letter-spacing: -0.5px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .big-phone-cta i {
       font-size: 2rem;
+      font-weight: 900;
+      color: #0b1a2b;
+      border: 4px solid white;
+      box-shadow: 0 6px 0 #8f6913;
+    }
+    .step-text-graphic strong {
+      color: white;
+      font-size: 1.5rem;
+      display: block;
+    }
+    .step-text-graphic p {
+      color: #c0d2e5;
     }
 
-    /* stats grid (25k+ jobs, arrival, local, 24h) */
-    .stats-modern {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin: 30px 0 20px;
+    /* FAQ with gold toggles (interactive only visually) */
+    .faq-premium {
+      background: #eef3f9;
+      border-radius: 42px;
+      margin: 30px 16px;
+      padding: 24px;
     }
-    .stat-item {
-      background: #eef2f5;
-      border-radius: 20px;
-      padding: 16px 8px;
-      text-align: center;
-      box-shadow: inset 0 -1px 0 #d4dee8;
+    .faq-row {
+      border-bottom: 2px solid #f5b01b70;
+      padding: 16px 0;
     }
-    .stat-number {
-      font-size: 1.8rem;
+    .faq-q {
       font-weight: 800;
       color: #0b1a2b;
-      line-height: 1;
-    }
-    .stat-label {
-      font-size: 0.85rem;
-      color: #3a4c62;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-    }
-
-    /* description block */
-    .desc-block {
-      background: #0b1a2b;      /* navy background from image */
-      color: white;
-      padding: 24px 20px;
-      border-radius: 24px;
-      margin: 10px 0 24px;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.15);
-    }
-    .desc-block h2 {
-      font-size: 1.6rem;
-      font-weight: 700;
-      margin-bottom: 8px;
-      color: white;
-    }
-    .desc-block h2 i {
-      color: #f5b01b;
-      margin-right: 6px;
-    }
-    .desc-block p {
-      font-size: 1rem;
-      color: #e0e9f2;
-      margin-bottom: 16px;
-    }
-
-    /* service cards (3) */
-    .services-grid {
       display: flex;
-      flex-direction: column;
-      gap: 16px;
-      margin: 30px 0;
+      justify-content: space-between;
     }
-    .service-card {
-      background: #f8fafc;
-      border-left: 5px solid #f5b01b;
-      border-radius: 20px;
-      padding: 18px 18px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.02);
-    }
-    .service-card h3 {
-      font-size: 1.3rem;
-      font-weight: 700;
-      color: #0b1a2b;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 8px;
-    }
-    .service-card h3 i {
+    .faq-q i {
       color: #f5b01b;
-      font-size: 1.5rem;
-    }
-    .service-card p {
-      color: #2e4055;
-      font-size: 0.95rem;
-      margin-left: 40px;
-    }
-
-    /* reviews (3 mini cards) */
-    .reviews-section {
-      margin: 20px 0 30px;
-    }
-    .reviews-section h2 {
-      color: #0b1a2b;
-      font-weight: 700;
-      font-size: 1.5rem;
-      margin-bottom: 16px;
-    }
-    .review-row {
-      display: flex;
-      gap: 14px;
-      overflow-x: auto;
-      padding: 4px 2px 16px;
-      scroll-snap-type: x mandatory;
-    }
-    .review-card {
-      background: #ffffff;
-      border: 1px solid #dce5ed;
-      border-radius: 28px;
-      padding: 20px 18px;
-      min-width: 250px;
-      scroll-snap-align: start;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.02);
-    }
-    .review-card .name {
-      font-weight: 800;
-      color: #0b1a2b;
-      font-size: 1.2rem;
-    }
-    .review-card .location {
-      font-size: 0.85rem;
-      color: #f5b01b;
-      font-weight: 600;
-      margin-bottom: 10px;
-    }
-    .review-card .quote {
-      color: #374f67;
-      font-style: italic;
-    }
-
-    /* steps (1-2-3) */
-    .steps {
       background: #0b1a2b;
-      border-radius: 28px;
-      padding: 26px 20px;
-      margin: 30px 0;
-      color: white;
+      border-radius: 60px;
+      padding: 5px;
     }
-    .steps h3 {
-      font-size: 1.8rem;
-      font-weight: 700;
+    .faq-a {
+      color: #2f4763;
+      padding-top: 8px;
+      font-size: 0.95rem;
+    }
+
+    /* footer super detailed */
+    .footer-luxury {
+      background: #0b1a2b;
+      border-top: 8px solid #f5b01b;
+      border-radius: 48px 48px 0 0;
+      padding: 40px 24px 30px;
       color: white;
+      margin-top: 40px;
+      position: relative;
+    }
+    .footer-luxury::before {
+      content: '⏤ ⏤ ⏤ ⏤ ⏤';
+      letter-spacing: 6px;
+      color: #f5b01b;
+      font-size: 1.8rem;
+      text-align: center;
+      display: block;
+      opacity: 0.5;
       margin-bottom: 20px;
     }
-    .step-item {
-      display: flex;
-      gap: 16px;
-      margin-bottom: 26px;
-    }
-    .step-num {
-      background: #f5b01b;
-      color: #0b1a2b;
-      width: 48px;
-      height: 48px;
-      border-radius: 30px;
+    .footer-phone-big {
+      font-size: 2.6rem;
+      font-weight: 900;
       display: flex;
       align-items: center;
+      gap: 14px;
+      background: #1d334c;
+      padding: 14px 24px;
+      border-radius: 120px;
+      width: fit-content;
+      border: 3px solid #f5b01b;
+    }
+    .footer-phone-big i {
+      color: #f5b01b;
+      font-size: 2.4rem;
+    }
+
+    /* extra custom graphics (tiny icons) */
+    .graphic-dots {
+      display: flex;
+      gap: 5px;
       justify-content: center;
-      font-weight: 800;
-      font-size: 1.8rem;
+      margin: 18px 0;
     }
-    .step-desc strong {
-      font-size: 1.2rem;
-      display: block;
-      color: white;
-    }
-    .step-desc p {
-      color: #cbd6e4;
-    }
-
-    /* FAQ accordion style (simple) */
-    .faq-block {
-      margin: 20px 0 30px;
-    }
-    .faq-item {
-      border-bottom: 1px solid #e2e9f0;
-      padding: 18px 0;
-    }
-    .faq-question {
-      font-weight: 700;
-      color: #0b1a2b;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 1.05rem;
-    }
-    .faq-question i {
-      color: #f5b01b;
-    }
-    .faq-answer {
-      padding-top: 8px;
-      color: #4b627c;
-      font-size: 0.95rem;
-    }
-
-    /* footer exact contact/address */
-    .footer-app {
-      background: #0b1a2b;
-      padding: 28px 20px;
-      border-radius: 32px 32px 0 0;
-      color: white;
-      margin-top: 30px;
-    }
-    .footer-app .phone-big {
-      font-size: 2rem;
-      font-weight: 800;
-      color: white;
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .footer-app .phone-big i {
-      color: #f5b01b;
-    }
-    .footer-app .address {
-      font-size: 1rem;
-      color: #bcd0e5;
-      line-height: 1.6;
-      margin-top: 20px;
-    }
-    .footer-app .vat {
-      font-size: 0.85rem;
-      color: #a0b8d0;
-      border-top: 1px solid #253d57;
-      margin-top: 18px;
-      padding-top: 16px;
-      display: flex;
-      justify-content: space-between;
-    }
-
-    /* micro */
-    .gold {
-      color: #f5b01b;
-    }
-    .bg-gold {
+    .dot-gold {
+      width: 10px;
+      height: 10px;
       background: #f5b01b;
+      border-radius: 10px;
     }
-    i {
-      color: #f5b01b;
+    .dot-navy {
+      width: 10px;
+      height: 10px;
+      background: #0b1a2b;
+      border-radius: 10px;
     }
-    hr {
-      border: 0.5px solid #e2e9f0;
-      margin: 20px 0;
-    }
-    .small-note {
-      font-size: 0.8rem;
-      color: #6c859e;
+    .badge-60min {
+      background: #f5b01b;
+      color: #0b1a2b;
+      font-weight: 800;
+      padding: 6px 30px;
+      border-radius: 80px;
+      transform: rotate(-2deg);
+      display: inline-block;
+      margin: 10px 0;
+      box-shadow: 0 4px 0 #a07012;
     }
   </style>
 </head>
 <body>
-<div class="app-wrapper">
-  <!-- top bar with LEP logo & gold accent (exact image style) -->
-  <div class="top-ribbon">
-    <span>LEP</span>
-    <div class="lepid">24/7</div>
+<div class="app-screen">
+  <!-- dynamic status bar graphic -->
+  <div class="status-bar">
+    <div><i class="fas fa-signal"></i> <i class="fas fa-wifi"></i> LEP</div>
+    <div class="time">24:7 <i class="fas fa-clock"></i></div>
+    <div><i class="fas fa-battery-full"></i> 100%</div>
   </div>
 
-  <!-- available now + rating -->
-  <div class="avail-badge">
-    <i class="fas fa-check-circle"></i> AVAILABLE NOW
-  </div>
-
-  <div class="hero-section">
-    <div class="call-now-block">
-      <div class="call-icon-number">
-        <i class="fas fa-phone-alt"></i> <span>Call 24/7</span>
-      </div>
-      <div class="rating-badge">
-        <i class="fas fa-star"></i> 4.8 <span style="font-weight:400; margin-left:4px;">(200+ reviews)</span>
-      </div>
+  <!-- big header with LEP and 24/7 chip (exact image branding) -->
+  <div class="lep-header-graphic">
+    <div class="row-brand">
+      <div class="lep-big">LEP</div>
+      <div class="chip-247">24/7</div>
     </div>
-
-    <!-- main headline "24/7 Plumbing Services in Your Area" with gold -->
-    <div class="main-headline">
-      24/7 <span>Plumbing Services</span> in Your Area
-    </div>
-    <div class="subhead">
-      <i class="fas fa-tools"></i> Things Go Wrong. We Make Them Right — Fast.
-    </div>
-    <div style="font-size:1rem; margin: 8px 0 0 0; color:#2a3f58;">
-      <i class="fas fa-clock gold"></i> 24/7 Help With Plumbing, Blocked Drains & Leaks.
+    <div class="service-flags">
+      <span class="flag"><i class="fas fa-wrench"></i> PLUMBING</span>
+      <span class="flag"><i class="fas fa-temperature-high"></i> HEATING</span>
+      <span class="flag"><i class="fas fa-water"></i> DRAINAGE</span>
+      <span class="flag"><i class="fas fa-bolt"></i> ELECTRICS</span>
     </div>
   </div>
 
-  <!-- service tags exactly as image: PLUMBING HEATING DRAINAGE ELECTRICS -->
-  <div style="padding: 0 20px;">
-    <div class="service-tags">
-      <span>PLUMBING</span><span>HEATING</span><span>DRAINAGE</span><span>ELECTRICS</span>
+  <!-- hero with rating and 4.8 graphic -->
+  <div class="hero-glow">
+    <div class="rating-orb">
+      <i class="fas fa-star"></i> <span>4.8</span> <span style="color:#a5b9d0; font-weight:400;">(200+ reviews)</span>
+    </div>
+    <div class="big-headline">
+      24/7 <span class="gold-stroke">Plumbing Services</span> in Your Area
+    </div>
+    <div class="fast-tag"><i class="fas fa-bolt"></i> Things go wrong. We make them right — fast.</div>
+    <div style="display: flex; gap: 10px; margin: 15px 0 5px;"><i class="fas fa-check-circle" style="color:#f5b01b;"></i><span style="font-weight:500;">24/7 help: blocked drains, leaks, electrics</span></div>
+  </div>
+
+  <!-- primary phone CTA with 3D effect -->
+  <div class="phone-cta-gold">
+    <a href="#"><i class="fas fa-phone-alt"></i> 020 8064 1046</a>
+  </div>
+  <div class="sub-247"><i class="fas fa-clock"></i> 24/7 SERVICE · CALL NOW</div>
+
+  <!-- stats graphic tiles -->
+  <div class="stats-graphic">
+    <div class="stat-tile"><div class="num">25k+</div><div class="label">JOBS DONE</div></div>
+    <div class="stat-tile"><div class="num">45-60m</div><div class="label">ARRIVAL</div></div>
+    <div class="stat-tile"><div class="num">LONDON</div><div class="label">LOCAL</div></div>
+    <div class="stat-tile"><div class="num">24HR</div><div class="label">EMERGENCY</div></div>
+  </div>
+
+  <!-- badge "arrive in 60min" graphic -->
+  <div style="text-align: center;">
+    <span class="badge-60min"><i class="fas fa-stopwatch"></i> at your doorstep in 60min</span>
+  </div>
+
+  <!-- navy block with description -->
+  <div style="background: #0b1a2b; border-radius: 32px; margin: 24px 16px; padding: 26px; border: 2px solid #f5b01b;">
+    <h2 style="color:white; font-size:2rem;"><i class="fas fa-moon" style="color:#f5b01b;"></i> Day or night</h2>
+    <p style="color:#d1e0f0; font-size:1.1rem; margin-top: 8px;">London’s 24/7 plumbing has you covered. Emergencies don’t wait — we arrive in 45-60 mins, fix leaks, boilers, drains.</p>
+    <div class="graphic-dots"><span class="dot-gold"></span><span class="dot-navy"></span><span class="dot-gold"></span><span class="dot-navy"></span><span class="dot-gold"></span></div>
+  </div>
+
+  <!-- services cards with custom icons -->
+  <div class="service-cards-premium">
+    <div class="section-title-custom"><i class="fas fa-tools"></i> our services</div>
+    <div class="card-gold-edge"><h3><i class="fas fa-search"></i> Leak detection</h3><p>Advanced diagnostic tools – find & repair leaks in pipes, boilers, heating. Stop water damage fast.</p></div>
+    <div class="card-gold-edge"><h3><i class="fas fa-drain"></i> Drain unblocking</h3><p>Blocked toilet, sink, or shower? Cleared fast, no pipe damage, 24/7.</p></div>
+    <div class="card-gold-edge"><h3><i class="fas fa-fire"></i> Boiler & heating</h3><p>Gas engineers, same visit fix. No hot water? we restore warmth quickly.</p></div>
+  </div>
+
+  <!-- review cluster graphic 3 items (two columns) -->
+  <div class="review-cluster">
+    <div style="font-size:2rem; font-weight:800; color:white; margin-bottom:20px;"><i class="fas fa-quote-right" style="color:#f5b01b;"></i> customer love</div>
+    <div class="review-grid">
+      <div class="review-bubble"><div class="name"><i class="fas fa-user-circle"></i> Rauri M.</div><div class="location">PADDINGTON</div>“fixed my bathroom leak late night – very happy”</div>
+      <div class="review-bubble"><div class="name"><i class="fas fa-user-circle"></i> Emily</div><div class="location">CENTRAL LDN</div>“Idris unblocked drains, professional & fast”</div>
+      <div class="review-bubble"><div class="name"><i class="fas fa-user-circle"></i> Harry M.</div><div class="location">ENFIELD</div>“Boiler broke Sunday – fixed same day, saved us”</div>
+      <div class="review-bubble"><div class="name"><i class="fas fa-user-circle"></i> S. Khan</div><div class="location">SOUTH KENS</div>“arrived in 40 mins, leak sorted. 10/10”</div>
     </div>
   </div>
 
-  <!-- big clickable phone (native app style) -->
-  <div style="padding: 0 20px;">
-    <div class="big-phone-cta">
-      <a href="tel:02080641046"><i class="fas fa-phone-alt"></i> 020 8064 1046</a>
-    </div>
-    <div style="text-align:center; margin-top: 6px; font-weight:600; color:#0b1a2b;">24/7 SERVICE</div>
+  <!-- steps how it works (graphic heavy) -->
+  <div class="steps-graphic">
+    <div style="font-size:2.2rem; font-weight:800; color:#f5b01b;">⚡ how it works</div>
+    <div class="step-row-graphic"><div class="step-marker">1</div><div class="step-text-graphic"><strong>Call us 24/7</strong><p>Speak direct – call centre always open</p></div></div>
+    <div class="step-row-graphic"><div class="step-marker">2</div><div class="step-text-graphic"><strong>Arrange callout</strong><p>Plumber dispatched within 45-60 min</p></div></div>
+    <div class="step-row-graphic"><div class="step-marker">3</div><div class="step-text-graphic"><strong>Job done</strong><p>Diagnose, repair, detailed report</p></div></div>
   </div>
 
-  <!-- stats grid from reference -->
-  <div style="padding: 10px 20px 0;">
-    <div class="stats-modern">
-      <div class="stat-item"><div class="stat-number">25k+</div><div class="stat-label">jobs done</div></div>
-      <div class="stat-item"><div class="stat-number">45-60m</div><div class="stat-label">arrival time</div></div>
-      <div class="stat-item"><div class="stat-number">London</div><div class="stat-label">local plumber</div></div>
-      <div class="stat-item"><div class="stat-number">24 hr</div><div class="stat-label">emergency</div></div>
-    </div>
+  <!-- FAQ section -->
+  <div class="faq-premium">
+    <div style="font-size:2rem; font-weight:800; color:#0b1a2b;">faq <i class="fas fa-circle" style="color:#f5b01b; font-size:1.2rem;"></i></div>
+    <div class="faq-row"><div class="faq-q">Plumbing emergency? <i class="fas fa-chevron-circle-down"></i></div><div class="faq-a">Major leaks, gas smell, overflowing toilet – 24/7 response.</div></div>
+    <div class="faq-row"><div class="faq-q">Response time? <i class="fas fa-chevron-circle-down"></i></div><div class="faq-a">Within 45-60 minutes across London.</div></div>
+    <div class="faq-row"><div class="faq-q">Qualified & insured? <i class="fas fa-chevron-circle-down"></i></div><div class="faq-a">All plumbers certified and insured. Full peace of mind.</div></div>
+    <div class="faq-row"><div class="faq-q">Emergency pricing? <i class="fas fa-chevron-circle-down"></i></div><div class="faq-a">From £69 callout, then hourly. Weekend/night rates start £89.</div></div>
   </div>
 
-  <!-- navy description block (day/night) -->
-  <div style="padding: 0 20px;">
-    <div class="desc-block">
-      <h2><i class="fas fa-bolt"></i> Day or Night, We’ve Got You</h2>
-      <p>Plumbing emergencies don’t wait — neither do we. Serving all London 24/7, our expert plumbers arrive within 45–60 minutes to stop leaks, clear blockages, and fix issues fast.</p>
-      <p style="margin-bottom:0;"><i class="fas fa-check-circle gold"></i> 25,000+ jobs • two decades of trust</p>
+  <!-- footer with contact + address (exact as image) -->
+  <div class="footer-luxury">
+    <div class="footer-phone-big"><i class="fas fa-phone-alt"></i> 020 8064 1046</div>
+    <div style="margin: 30px 0 20px; font-size:1.2rem; font-weight:200; border-left: 6px solid #f5b01b; padding-left: 16px;">
+      PLUMBING · HEATING · DRAINAGE · ELECTRICS
     </div>
-  </div>
-
-  <!-- Our Services (3 cards) -->
-  <div style="padding: 0 20px;">
-    <h2 style="color:#0b1a2b; font-size:1.8rem; font-weight:700;">Our Services</h2>
-    <div class="services-grid">
-      <div class="service-card"><h3><i class="fas fa-water"></i> Leak Detection & Repair</h3><p>Advanced diagnostic tools to locate and repair leaks in pipes, boilers, heating — prevent water damage.</p></div>
-      <div class="service-card"><h3><i class="fas fa-poop"></i> Drain Cleaning & Unblocking</h3><p>Blocked toilet, sink, bath? We clear tough clogs fast, no damage to pipes.</p></div>
-      <div class="service-card"><h3><i class="fas fa-burn"></i> Boiler & Heating Repair</h3><p>Gas engineers arrive fast, fix on the spot. No heating? We’ll restore warmth.</p></div>
+    <div style="display:flex; flex-direction: column; gap: 5px; font-size:1rem; color:#bed6f0;">
+      <span><i class="fas fa-map-pin gold"></i> 144 Ladbroke Grove, London W10 5NE</span>
+      <span><i class="fas fa-building gold"></i> Company 14228927 · VAT 435285292</span>
+      <span><i class="fas fa-id-card gold"></i> LONDON EMERGENCY PLUMBING 24/7</span>
+    </div>
+    <div style="margin-top:30px; text-align:center; background: #f5b01b20; border-radius: 60px; padding: 12px; font-weight:600;">
+      ⭐ 4.8 based on 200+ reviews · AVAILABLE NOW
     </div>
   </div>
-
-  <!-- Customer reviews (3) -->
-  <div style="padding: 0 20px;">
-    <div class="reviews-section">
-      <h2>⭐ Customer Reviews</h2>
-      <div class="review-row">
-        <div class="review-card"><div class="name">Rauri M.</div><div class="location">Paddington</div><div class="quote">“Very happy with service. Came out late at night and fixed my bathroom leak.”</div></div>
-        <div class="review-card"><div class="name">Emily</div><div class="location">Central London</div><div class="quote">“Idris unblocked drains efficiently, always professional.”</div></div>
-        <div class="review-card"><div class="name">Harry M.</div><div class="location">Enfield</div><div class="quote">“Saved the day on Sunday. Boiler fixed same day.”</div></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- How it works (steps) -->
-  <div style="padding: 0 20px;">
-    <div class="steps">
-      <h3>⚡ This is How it Works!</h3>
-      <div class="step-item"><div class="step-num">1</div><div class="step-desc"><strong>Call us 24/7</strong><p>Speak directly — call centre open 24/7, emergencies or appointments.</p></div></div>
-      <div class="step-item"><div class="step-num">2</div><div class="step-desc"><strong>Arrange a Callout</strong><p>Plumber dispatched within 45-60 minutes.</p></div></div>
-      <div class="step-item"><div class="step-num">3</div><div class="step-desc"><strong>Job Done</strong><p>Diagnose, repair efficiently. Report provided.</p></div></div>
-    </div>
-  </div>
-
-  <!-- FAQ condensed (4 important) -->
-  <div style="padding: 0 20px;">
-    <div class="faq-block">
-      <div class="faq-item"><div class="faq-question">What is a plumbing emergency? <i class="fas fa-chevron-down"></i></div><div class="faq-answer">Major leaks, gas smell, overflowing toilet — we respond 24/7.</div></div>
-      <div class="faq-item"><div class="faq-question">How quick? <i class="fas fa-chevron-down"></i></div><div class="faq-answer">Within 45–60 minutes across London.</div></div>
-      <div class="faq-item"><div class="faq-question">Fully qualified? <i class="fas fa-chevron-down"></i></div><div class="faq-answer">Yes, all plumbers are insured and certified.</div></div>
-      <div class="faq-item"><div class="faq-question">Emergency pricing? <i class="fas fa-chevron-down"></i></div><div class="faq-answer">From £69 callout, hourly rates depend on job.</div></div>
-    </div>
-  </div>
-
-  <!-- footer with exact 020 number and address -->
-  <div class="footer-app">
-    <div class="phone-big"><i class="fas fa-phone-alt gold"></i> 020 8064 1046</div>
-    <div style="font-size:1.1rem; font-weight:600; margin-bottom:30px;">24/7 PLUMBING · HEATING · DRAINAGE</div>
-    <div class="address">📍 144 Ladbroke Grove, London, W10 5NE</div>
-    <div class="vat"><span>Company 14228927</span><span>VAT 435285292</span></div>
-    <div style="margin-top:16px; color:#9fb6cf;"><i class="fas fa-clock"></i> 24/7 emergency · LEP London</div>
-  </div>
-
-  <!-- small copyright / native hint -->
-  <div style="padding: 12px 20px; background:#f5f9ff; text-align:center; font-size:0.75rem; color:#4f6580;">
-    ⚡ LONDON EMERGENCY PLUMBING — 24/7 AVAILABLE NOW
-  </div>
+  <!-- tiny native home bar -->
+  <div style="width:140px; height:5px; background:#ccc; border-radius:20px; margin: 16px auto 10px;"></div>
 </div>
 </body>
 </html>
