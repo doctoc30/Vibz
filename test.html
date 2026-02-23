@@ -3,352 +3,311 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>LEP · London Emergency Plumbing · native app</title>
-  <!-- Font + Icons (custom graphic style) -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <title>LEP · native minimal app</title>
+  <!-- Inter font for clean iOS/macOS feel -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap">
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Inter', -apple-system, 'Helvetica Neue', sans-serif;
     }
 
     body {
-      background: #0a141f; /* deep navy base */
+      background: #0b1a2b; /* deep navy from branding */
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      padding: 8px;
+      font-family: 'Inter', -apple-system, 'Helvetica Neue', sans-serif;
+      padding: 12px;
     }
 
-    /* phone-mock container – super premium, huge border radius, glossy */
-    .app-screen {
-      max-width: 390px;  /* like iPhone 15 native width */
+    /* ===== NATIVE APP CONTAINER – exactly like App Store screen ===== */
+    .ios-app {
+      max-width: 390px;            /* iPhone 15 width */
       width: 100%;
-      background: #ffffff;
-      border-radius: 48px;
-      box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.6), 0 0 0 8px rgba(245, 176, 27, 0.1), inset 0 0 0 1px rgba(255,255,255,0.5);
+      background-color: #ffffff;
+      border-radius: 44px;          /* large continuous corner */
+      box-shadow: 
+        0 30px 60px -20px rgba(0,0,0,0.6),
+        0 0 0 6px rgba(245, 176, 27, 0.2),
+        0 0 0 2px #ffffff40;        /* subtle outer gloss */
       overflow: hidden;
       position: relative;
       backdrop-filter: blur(2px);
       transition: all 0.2s ease;
     }
 
-    /* dynamic status bar (custom graphic) */
-    .status-bar {
-      background: #0b1a2b; /* exact navy from image */
-      padding: 12px 24px 6px 24px;
-      display: flex;
-      justify-content: space-between;
-      color: #f5b01b;
-      font-weight: 600;
-      font-size: 0.85rem;
-      letter-spacing: 0.2px;
-      border-bottom: 2px solid #f5b01b;
-    }
-    .status-bar i {
-      color: #f5b01b;
-      margin-right: 4px;
-    }
-    .status-bar .time {
-      background: #1f344a;
-      padding: 2px 14px;
-      border-radius: 40px;
-      color: white;
-    }
-
-    /* custom header with LEP logo + 24/7 graphic */
-    .lep-header-graphic {
+    /* status bar – minimal, dynamic island style */
+    .status-bar-minimal {
       background: #0b1a2b;
-      padding: 8px 20px 16px 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      border-bottom-left-radius: 32px;
-      border-bottom-right-radius: 32px;
-      box-shadow: 0 10px 0 #0a1a27, 0 20px 25px -8px rgba(0,0,0,0.4);
-      position: relative;
-      z-index: 5;
-    }
-    .lep-header-graphic::after {
-      content: '';
-      position: absolute;
-      bottom: -8px;
-      left: 20px;
-      right: 20px;
-      height: 4px;
-      background: #f5b01b;
-      border-radius: 20px;
-      opacity: 0.5;
-    }
-    .row-brand {
+      padding: 12px 24px 8px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      color: #f5b01b;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+      border-bottom: 1px solid #f5b01b30;
     }
-    .lep-big {
-      font-size: 3rem;
+    .status-left i {
+      margin-right: 4px;
+      color: #f5b01b;
+    }
+    .time-badge {
+      background: #1e3449;
+      padding: 4px 16px;
+      border-radius: 40px;
+      color: white;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    /* ----- DOCK (CUSTOM GRAPHIC) ----- */
+    .app-dock {
+      background: #0b1a2b;
+      padding: 12px 20px 16px 20px;
+      display: flex;
+      align-items: flex-end;
+      gap: 16px;
+      border-bottom: 2px solid #f5b01b;
+      box-shadow: inset 0 -4px 0 #10212f;
+    }
+    .dock-icon-lep {
+      font-size: 3.2rem;
       font-weight: 900;
       color: white;
       letter-spacing: -2px;
       line-height: 1;
       text-shadow: 3px 3px 0 #f5b01b;
+      background: transparent;
     }
-    .chip-247 {
+    .dock-badge-247 {
       background: #f5b01b;
-      padding: 8px 20px;
-      border-radius: 60px;
+      border-radius: 40px;
+      padding: 8px 24px;
       color: #0b1a2b;
       font-weight: 800;
-      font-size: 1.1rem;
-      box-shadow: 0 4px 0 #996f10;
+      font-size: 1.3rem;
+      box-shadow: 0 5px 0 #9e741a, 0 10px 12px -8px black;
+      margin-bottom: 4px;
     }
-    .service-flags {
+    .dock-icons-row {
       display: flex;
       gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 6px;
+      margin-left: auto;
+      align-items: center;
+      color: #f5b01b;
     }
-    .flag {
-      background: rgba(255,255,255,0.1);
-      backdrop-filter: blur(2px);
-      border: 1px solid #f5b01b40;
-      padding: 6px 18px;
-      border-radius: 60px;
+    .dock-icons-row i {
+      background: #233c56;
+      padding: 10px;
+      border-radius: 30px;
+      font-size: 1.2rem;
       color: white;
-      font-weight: 600;
-      font-size: 0.9rem;
+      box-shadow: 0 2px 0 #0b1a2b;
     }
 
-    /* hero with glow rating */
-    .hero-glow {
-      background: linear-gradient(145deg, #ffffff 0%, #f8fafd 100%);
-      margin: 12px 16px 0 16px;
-      border-radius: 32px;
-      padding: 22px 18px;
-      box-shadow: 0 15px 25px -12px rgba(0,0,0,0.2), inset 0 1px 4px white;
-      border: 1px solid rgba(245,176,27,0.3);
-      position: relative;
-      z-index: 6;
+    /* main content – minimal & airy */
+    .content-area {
+      padding: 16px 20px 24px 20px;
+      background: #ffffff;
     }
-    .rating-orb {
+
+    /* tiny rating chip – minimal, yet strong */
+    .rating-mini {
       display: inline-flex;
       align-items: center;
-      background: #0b1a2b;
+      background: #f2f6fc;
       border-radius: 60px;
-      padding: 5px 18px 5px 10px;
-      gap: 8px;
-      border: 2px solid #f5b01b;
-    }
-    .rating-orb i {
-      color: #f5b01b;
-      font-size: 1.2rem;
-    }
-    .rating-orb span {
-      color: white;
-      font-weight: 800;
-      font-size: 1.1rem;
-    }
-    .big-headline {
-      font-size: 2.5rem;
-      font-weight: 800;
-      line-height: 1;
-      margin-top: 16px;
+      padding: 6px 16px 6px 12px;
+      gap: 6px;
+      font-weight: 700;
       color: #0b1a2b;
+      border: 1px solid #f5b01b40;
+      margin-bottom: 16px;
     }
-    .big-headline .gold-stroke {
+    .rating-mini i {
       color: #f5b01b;
-      text-shadow: 2px 2px 0 #0b1a2b20;
-      display: block;
-    }
-    .fast-tag {
-      background: #feeed6;
-      border-radius: 40px;
-      padding: 8px 20px;
-      font-weight: 600;
-      color: #0b1a2b;
-      display: inline-block;
-      margin: 16px 0 8px;
-      border-left: 5px solid #f5b01b;
+      font-size: 1rem;
     }
 
-    /* primary cta (huge & glossy) */
-    .phone-cta-gold {
-      background: linear-gradient(145deg, #f5b01b, #e09c10);
-      margin: 8px 16px;
-      border-radius: 48px;
-      padding: 6px;
-      box-shadow: 0 20px 25px -10px #f5b01b80, 0 8px 0 #a06d0e, 0 0 0 2px white;
+    /* headline minimal – huge weight */
+    .headline-minimal {
+      font-size: 2.8rem;
+      font-weight: 800;
+      line-height: 1;
+      color: #0b1a2b;
+      margin-bottom: 10px;
     }
-    .phone-cta-gold a {
+    .headline-minimal span {
+      color: #f5b01b;
+      display: block;
+    }
+
+    .service-mini-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 18px 0 10px;
+    }
+    .service-mini-tags span {
+      background: #eef3f9;
+      border-radius: 60px;
+      padding: 4px 18px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #0b1a2b;
+      letter-spacing: 0.3px;
+    }
+
+    /* ----- PHONE BUTTON (MINIMAL BUT GRAPHIC) ----- */
+    .phone-minimal-block {
+      background: #0b1a2b;
+      border-radius: 80px;
+      padding: 6px;
+      margin: 22px 0 14px;
+      box-shadow: 0 8px 0 #0a121e, 0 15px 25px -10px #0b1a2b;
+    }
+    .phone-minimal-block a {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 14px;
-      background: #0b1a2b;
-      border-radius: 44px;
-      padding: 22px 10px;
+      background: #f5b01b;
+      border-radius: 80px;
+      padding: 18px 12px;
       text-decoration: none;
+      font-weight: 800;
+      font-size: 2rem;
+      color: #0b1a2b;
+      transition: 0.1s;
+      border: 2px solid white;
+    }
+    .phone-minimal-block a i {
+      color: #0b1a2b;
       font-size: 2.2rem;
-      font-weight: 900;
-      color: white;
-      letter-spacing: -1px;
-      border: 2px solid #f5b01b;
-    }
-    .phone-cta-gold a i {
-      color: #f5b01b;
-      font-size: 2.5rem;
-      filter: drop-shadow(0 2px 2px black);
-    }
-    .sub-247 {
-      text-align: center;
-      font-weight: 700;
-      color: #0b1a2b;
-      background: #f5b01b;
-      width: fit-content;
-      margin: 8px auto 20px;
-      padding: 8px 38px;
-      border-radius: 60px;
-      font-size: 1.1rem;
-      box-shadow: inset 0 -2px 0 #966f1a;
     }
 
-    /* graphic stats card (like modern widget) */
-    .stats-graphic {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin: 20px 16px;
-    }
-    .stat-tile {
-      background: white;
-      border-radius: 28px;
-      padding: 16px 0;
-      flex: 1 0 40%;
-      box-shadow: 0 6px 0 #cad5e2, 0 15px 20px -10px #0b1a2b40;
-      border: 1px solid #ffffff;
-      text-align: center;
-    }
-    .stat-tile .num {
-      font-size: 2.2rem;
-      font-weight: 900;
-      color: #0b1a2b;
-    }
-    .stat-tile .label {
-      color: #f5b01b;
-      font-weight: 800;
-      letter-spacing: 0.5px;
-      background: #0b1a2b;
-      display: inline-block;
-      padding: 3px 20px;
-      border-radius: 40px;
-      font-size: 0.85rem;
-    }
-
-    /* service cards with icons + graphics */
-    .service-cards-premium {
-      margin: 30px 16px;
-    }
-    .section-title-custom {
-      font-size: 1.9rem;
-      font-weight: 800;
-      color: #0b1a2b;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .section-title-custom i {
-      color: #f5b01b;
-      font-size: 2.4rem;
-      background: #0b1a2b;
-      border-radius: 60px;
-      padding: 12px;
-    }
-    .card-gold-edge {
-      background: white;
-      border-radius: 36px;
-      padding: 24px;
-      margin-bottom: 20px;
-      box-shadow: 0 20px 30px -12px #091e30, 0 4px 0 #f5b01b, 0 0 0 1px #ffffff inset;
-      border: 1px solid #f5b01b60;
-    }
-    .card-gold-edge h3 {
-      font-size: 1.7rem;
-      font-weight: 800;
-      color: #0b1a2b;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .card-gold-edge h3 i {
-      background: #f5b01b;
-      border-radius: 60px;
-      padding: 12px;
-      color: #0b1a2b;
-      font-size: 1.6rem;
-    }
-    .card-gold-edge p {
-      color: #314d6b;
-      font-size: 1.05rem;
-      margin-left: 58px;
-      font-weight: 500;
-      border-left: 3px solid #f5b01b;
-      padding-left: 18px;
-    }
-
-    /* review bubble cluster */
-    .review-cluster {
-      background: #0b1a2b;
-      border-radius: 48px 48px 28px 28px;
-      padding: 30px 16px;
-      margin: 30px 0;
-      background-image: radial-gradient(circle at 10% 20%, #f5b01b20 0%, transparent 30%);
-    }
-    .review-grid {
+    /* stats grid – minimal cards */
+    .stats-minimal-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 14px;
+      gap: 10px;
+      margin: 20px 0 16px;
     }
-    .review-bubble {
-      background: white;
-      border-radius: 36px 36px 36px 8px;
-      padding: 20px 14px;
-      box-shadow: 8px 8px 0 #f5b01b;
+    .stat-mini {
+      background: #f2f6fc;
+      border-radius: 28px;
+      padding: 18px 8px;
+      text-align: center;
+      border: 1px solid white;
+      box-shadow: 0 2px 0 #cbd5e2, 0 8px 12px -10px #0b1a2b40;
     }
-    .review-bubble .name {
+    .stat-mini .number {
+      font-size: 2rem;
       font-weight: 800;
       color: #0b1a2b;
-      font-size: 1.2rem;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      line-height: 1;
     }
-    .review-bubble .location {
+    .stat-mini .label {
+      font-size: 0.8rem;
+      font-weight: 600;
       color: #f5b01b;
-      font-weight: 700;
-      font-size: 0.9rem;
-      margin: 5px 0 10px;
+      background: #0b1a2b;
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 40px;
+      margin-top: 4px;
     }
 
-    /* steps with graphic progress */
-    .steps-graphic {
-      background: linear-gradient(125deg, #0b1a2b, #102433);
-      border-radius: 48px;
-      padding: 30px 20px;
-      margin: 20px 16px;
-      border: 3px solid #f5b01b;
-      box-shadow: 0 20px 0 #050e17;
+    /* thin divider */
+    .divider-gold {
+      height: 2px;
+      background: #f5b01b;
+      width: 80px;
+      margin: 24px 0 18px;
+      border-radius: 10px;
     }
-    .step-row-graphic {
+
+    /* service row – minimal card with icon */
+    .service-row-mini {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .service-icon-bg {
+      background: #0b1a2b;
+      border-radius: 34px;
+      width: 64px;
+      height: 64px;
       display: flex;
       align-items: center;
+      justify-content: center;
+      color: #f5b01b;
+      font-size: 2rem;
+      box-shadow: 0 5px 0 #f5b01b, 0 10px 15px -12px black;
+    }
+    .service-row-mini h3 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #0b1a2b;
+    }
+    .service-row-mini p {
+      color: #2f4a6b;
+      font-weight: 500;
+      font-size: 0.95rem;
+      margin-top: 2px;
+    }
+
+    /* review tiles minimal */
+    .review-strip {
+      display: flex;
+      gap: 14px;
+      overflow-x: auto;
+      padding: 8px 2px 24px;
+      scrollbar-width: none;
+    }
+    .review-tile-mini {
+      background: #f2f6fc;
+      border-radius: 30px;
+      padding: 20px 18px;
+      min-width: 240px;
+      border-left: 6px solid #f5b01b;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+    }
+    .review-tile-mini .name {
+      font-weight: 800;
+      color: #0b1a2b;
+      display: flex;
+      gap: 6px;
+      font-size: 1.2rem;
+    }
+    .review-tile-mini .location {
+      color: #f5b01b;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin: 4px 0 10px;
+    }
+
+    /* how it works minimal steps */
+    .steps-minimal {
+      background: #0b1a2b;
+      border-radius: 48px;
+      padding: 32px 24px;
+      margin: 30px 0 20px;
+      color: white;
+    }
+    .step-item-mini {
+      display: flex;
       gap: 18px;
       margin-bottom: 28px;
+      align-items: center;
     }
-    .step-marker {
+    .step-num-gold {
       background: #f5b01b;
       width: 58px;
       height: 58px;
@@ -356,233 +315,243 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2rem;
-      font-weight: 900;
+      font-size: 2.2rem;
+      font-weight: 800;
       color: #0b1a2b;
-      border: 4px solid white;
-      box-shadow: 0 6px 0 #8f6913;
+      border: 3px solid white;
     }
-    .step-text-graphic strong {
+    .step-text-mini strong {
+      font-size: 1.4rem;
+      font-weight: 700;
       color: white;
-      font-size: 1.5rem;
-      display: block;
     }
-    .step-text-graphic p {
-      color: #c0d2e5;
+    .step-text-mini p {
+      color: #b4ceec;
     }
 
-    /* FAQ with gold toggles (interactive only visually) */
-    .faq-premium {
-      background: #eef3f9;
-      border-radius: 42px;
-      margin: 30px 16px;
-      padding: 24px;
+    /* FAQ minimal */
+    .faq-mini {
+      margin: 20px 0 28px;
     }
-    .faq-row {
-      border-bottom: 2px solid #f5b01b70;
+    .faq-row-mini {
+      border-bottom: 1px solid #e0e9f2;
       padding: 16px 0;
     }
-    .faq-q {
-      font-weight: 800;
-      color: #0b1a2b;
+    .faq-q-mini {
       display: flex;
       justify-content: space-between;
+      font-weight: 700;
+      color: #0b1a2b;
     }
-    .faq-q i {
+    .faq-q-mini i {
       color: #f5b01b;
       background: #0b1a2b;
-      border-radius: 60px;
-      padding: 5px;
+      border-radius: 30px;
+      padding: 4px;
     }
-    .faq-a {
-      color: #2f4763;
-      padding-top: 8px;
+    .faq-a-mini {
+      color: #325173;
       font-size: 0.95rem;
+      padding-top: 8px;
     }
 
-    /* footer super detailed */
-    .footer-luxury {
-      background: #0b1a2b;
-      border-top: 8px solid #f5b01b;
-      border-radius: 48px 48px 0 0;
-      padding: 40px 24px 30px;
-      color: white;
-      margin-top: 40px;
-      position: relative;
-    }
-    .footer-luxury::before {
-      content: '⏤ ⏤ ⏤ ⏤ ⏤';
-      letter-spacing: 6px;
-      color: #f5b01b;
-      font-size: 1.8rem;
-      text-align: center;
-      display: block;
-      opacity: 0.5;
-      margin-bottom: 20px;
-    }
-    .footer-phone-big {
-      font-size: 2.6rem;
-      font-weight: 900;
+    /* ----- CUSTOM DOCK (BOTTOM) – like macOS / iPadOS dock ----- */
+    .bottom-dock {
+      background: #0b1a2be0;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      margin: 8px 16px 20px 16px;
+      border-radius: 48px;
+      padding: 10px 16px;
       display: flex;
       align-items: center;
-      gap: 14px;
-      background: #1d334c;
-      padding: 14px 24px;
-      border-radius: 120px;
-      width: fit-content;
-      border: 3px solid #f5b01b;
+      justify-content: space-between;
+      border: 1px solid #f5b01b80;
+      box-shadow: 0 10px 30px -5px black;
     }
-    .footer-phone-big i {
-      color: #f5b01b;
-      font-size: 2.4rem;
+    .dock-app-icon {
+      background: #f5b01b;
+      border-radius: 30px;
+      width: 52px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 1.8rem;
+      color: #0b1a2b;
+      box-shadow: 0 6px 0 #8c6513;
+    }
+    .dock-app-icon.small {
+      background: #28435f;
+      color: white;
+      font-size: 1.2rem;
+      box-shadow: none;
+    }
+    .dock-divider {
+      width: 2px;
+      height: 32px;
+      background: #f5b01b60;
+      border-radius: 2px;
     }
 
-    /* extra custom graphics (tiny icons) */
-    .graphic-dots {
-      display: flex;
-      gap: 5px;
-      justify-content: center;
-      margin: 18px 0;
-    }
-    .dot-gold {
-      width: 10px;
-      height: 10px;
-      background: #f5b01b;
-      border-radius: 10px;
-    }
-    .dot-navy {
-      width: 10px;
-      height: 10px;
+    /* footer minimal / address */
+    .footer-minimal-address {
       background: #0b1a2b;
-      border-radius: 10px;
+      border-radius: 40px 40px 0 0;
+      padding: 36px 24px 20px;
+      color: white;
+      margin-top: 30px;
+      border-top: 4px solid #f5b01b;
     }
-    .badge-60min {
-      background: #f5b01b;
-      color: #0b1a2b;
+    .footer-minimal-address .phone-big {
+      font-size: 2.2rem;
       font-weight: 800;
-      padding: 6px 30px;
-      border-radius: 80px;
-      transform: rotate(-2deg);
-      display: inline-block;
-      margin: 10px 0;
-      box-shadow: 0 4px 0 #a07012;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #1e3650;
+      border-radius: 60px;
+      padding: 10px 24px;
+      width: fit-content;
+      border: 2px solid #f5b01b;
+    }
+    .footer-minimal-address .phone-big i {
+      color: #f5b01b;
+    }
+    .address-line {
+      margin-top: 30px;
+      font-size: 1.1rem;
+      color: #b7d0ea;
     }
   </style>
 </head>
 <body>
-<div class="app-screen">
-  <!-- dynamic status bar graphic -->
-  <div class="status-bar">
-    <div><i class="fas fa-signal"></i> <i class="fas fa-wifi"></i> LEP</div>
-    <div class="time">24:7 <i class="fas fa-clock"></i></div>
-    <div><i class="fas fa-battery-full"></i> 100%</div>
-  </div>
-
-  <!-- big header with LEP and 24/7 chip (exact image branding) -->
-  <div class="lep-header-graphic">
-    <div class="row-brand">
-      <div class="lep-big">LEP</div>
-      <div class="chip-247">24/7</div>
+  <div class="ios-app">
+    <!-- minimal dynamic status bar -->
+    <div class="status-bar-minimal">
+      <div class="status-left"><i class="fas fa-signal"></i> <i class="fas fa-wifi"></i></div>
+      <div class="time-badge">24/7 · LEP</div>
+      <div><i class="fas fa-battery-three-quarters"></i></div>
     </div>
-    <div class="service-flags">
-      <span class="flag"><i class="fas fa-wrench"></i> PLUMBING</span>
-      <span class="flag"><i class="fas fa-temperature-high"></i> HEATING</span>
-      <span class="flag"><i class="fas fa-water"></i> DRAINAGE</span>
-      <span class="flag"><i class="fas fa-bolt"></i> ELECTRICS</span>
+
+    <!-- TOP DOCK / custom graphic header (minimal but strong) -->
+    <div class="app-dock">
+      <div class="dock-icon-lep">LEP</div>
+      <div class="dock-badge-247">24/7</div>
+      <div class="dock-icons-row">
+        <i class="fas fa-wrench"></i>
+        <i class="fas fa-bolt"></i>
+        <i class="fas fa-droplet"></i>
+      </div>
     </div>
-  </div>
 
-  <!-- hero with rating and 4.8 graphic -->
-  <div class="hero-glow">
-    <div class="rating-orb">
-      <i class="fas fa-star"></i> <span>4.8</span> <span style="color:#a5b9d0; font-weight:400;">(200+ reviews)</span>
+    <!-- main content area -->
+    <div class="content-area">
+      <!-- rating chip -->
+      <div class="rating-mini">
+        <i class="fas fa-star"></i> 4.8 <span style="color:#536e88; font-weight:400; margin-left:4px;">(200+ reviews)</span>
+      </div>
+
+      <!-- minimal headline -->
+      <div class="headline-minimal">
+        24/7 <span>Plumbing</span> in your area
+      </div>
+
+      <!-- service tags (plumbing, heating, drainage, electrics) -->
+      <div class="service-mini-tags">
+        <span>PLUMBING</span><span>HEATING</span><span>DRAINAGE</span><span>ELECTRICS</span>
+      </div>
+
+      <!-- minimal descriptive line -->
+      <div style="font-size:1rem; color:#2f4a6b; margin: 8px 0 0; font-weight:500;">
+        <i class="fas fa-bolt" style="color:#f5b01b;"></i> Things go wrong. We make them right — fast.
+      </div>
+
+      <!-- phone block (minimal but with weight) -->
+      <div class="phone-minimal-block">
+        <a href="#"><i class="fas fa-phone-alt"></i> 020 8064 1046</a>
+      </div>
+      <div style="text-align:center; font-size:0.9rem; font-weight:600; color:#0b1a2b;">24/7 emergency · call now</div>
+
+      <!-- stats grid -->
+      <div class="stats-minimal-grid">
+        <div class="stat-mini"><div class="number">25k+</div><div class="label">jobs done</div></div>
+        <div class="stat-mini"><div class="number">45-60m</div><div class="label">arrival</div></div>
+        <div class="stat-mini"><div class="number">London</div><div class="label">local</div></div>
+        <div class="stat-mini"><div class="number">24hr</div><div class="label">emergency</div></div>
+      </div>
+
+      <!-- gold divider -->
+      <div class="divider-gold"></div>
+
+      <!-- services (minimal, with custom graphic icons) -->
+      <div style="margin: 16px 0 8px;">
+        <div class="service-row-mini">
+          <div class="service-icon-bg"><i class="fas fa-eye"></i></div>
+          <div><h3>Leak detection</h3><p>Advanced tools, fast repair – stop water damage.</p></div>
+        </div>
+        <div class="service-row-mini">
+          <div class="service-icon-bg"><i class="fas fa-poop"></i></div>
+          <div><h3>Drain unblocking</h3><p>Sinks, toilets, showers – cleared fast, no damage.</p></div>
+        </div>
+        <div class="service-row-mini">
+          <div class="service-icon-bg"><i class="fas fa-temperature-high"></i></div>
+          <div><h3>Boiler & heating</h3><p>Gas engineers, fixed in one visit. 24/7.</p></div>
+        </div>
+      </div>
+
+      <!-- review strip (minimal tiles) -->
+      <div style="margin: 30px 0 10px;">
+        <h2 style="font-size:1.8rem; font-weight:800; color:#0b1a2b; margin-bottom:12px;">⭐ reviews</h2>
+      </div>
+      <div class="review-strip">
+        <div class="review-tile-mini"><div class="name"><i class="fas fa-circle" style="color:#f5b01b; font-size:0.8rem;"></i> Rauri M.</div><div class="location">Paddington</div>“Fixed bathroom leak late night, very happy”</div>
+        <div class="review-tile-mini"><div class="name"><i class="fas fa-circle" style="color:#f5b01b;"></i> Emily</div><div class="location">Central London</div>“Idris unblocked drains – professional & fast”</div>
+        <div class="review-tile-mini"><div class="name"><i class="fas fa-circle" style="color:#f5b01b;"></i> Harry M.</div><div class="location">Enfield</div>“Boiler fixed on Sunday, saved the day”</div>
+      </div>
+
+      <!-- steps (how it works) minimal yet graphic -->
+      <div class="steps-minimal">
+        <div style="font-size:2rem; font-weight:800; color:#f5b01b; margin-bottom:24px;">⚡ how it works</div>
+        <div class="step-item-mini"><div class="step-num-gold">1</div><div class="step-text-mini"><strong>Call 24/7</strong><p>Speak to us – call centre always open</p></div></div>
+        <div class="step-item-mini"><div class="step-num-gold">2</div><div class="step-text-mini"><strong>Callout 45-60min</strong><p>Plumber dispatched fast</p></div></div>
+        <div class="step-item-mini"><div class="step-num-gold">3</div><div class="step-text-mini"><strong>Job done</strong><p>Diagnose, repair, report</p></div></div>
+      </div>
+
+      <!-- FAQ minimal -->
+      <div class="faq-mini">
+        <div class="faq-row-mini"><div class="faq-q-mini">Plumbing emergency? <i class="fas fa-chevron-down"></i></div><div class="faq-a-mini">Major leaks, gas smell – we respond 24/7.</div></div>
+        <div class="faq-row-mini"><div class="faq-q-mini">Response time? <i class="fas fa-chevron-down"></i></div><div class="faq-a-mini">Within 45-60 minutes across London.</div></div>
+        <div class="faq-row-mini"><div class="faq-q-mini">Qualified? <i class="fas fa-chevron-down"></i></div><div class="faq-a-mini">Fully insured, certified plumbers.</div></div>
+      </div>
+    </div> <!-- end content area -->
+
+    <!-- BOTTOM DOCK – custom graphic, like macOS / iPadOS dock with app icons -->
+    <div class="bottom-dock">
+      <div class="dock-app-icon">LEP</div>
+      <div class="dock-app-icon small"><i class="fas fa-phone"></i></div>
+      <div class="dock-app-icon small"><i class="fas fa-wrench"></i></div>
+      <div class="dock-divider"></div>
+      <div class="dock-app-icon small"><i class="fas fa-star"></i></div>
+      <div class="dock-app-icon small"><i class="fas fa-map-pin"></i></div>
+      <div class="dock-app-icon small"><i class="fas fa-clock"></i></div>
     </div>
-    <div class="big-headline">
-      24/7 <span class="gold-stroke">Plumbing Services</span> in Your Area
+
+    <!-- footer with address (exact as image) -->
+    <div class="footer-minimal-address">
+      <div class="phone-big"><i class="fas fa-phone-alt"></i> 020 8064 1046</div>
+      <div class="address-line"><i class="fas fa-location-dot" style="color:#f5b01b;"></i> 144 Ladbroke Grove, London W10 5NE</div>
+      <div style="display:flex; gap: 20px; margin-top: 24px; font-size:0.9rem; color:#99b5d3;">
+        <span>Company 14228927</span><span>VAT 435285292</span>
+      </div>
+      <div style="margin-top: 24px; font-weight:500; background:#1e3650; border-radius:60px; padding:10px; text-align:center; color:#f5b01b;">
+        ⏰ 24/7 AVAILABLE NOW · LONDON EMERGENCY PLUMBING
+      </div>
     </div>
-    <div class="fast-tag"><i class="fas fa-bolt"></i> Things go wrong. We make them right — fast.</div>
-    <div style="display: flex; gap: 10px; margin: 15px 0 5px;"><i class="fas fa-check-circle" style="color:#f5b01b;"></i><span style="font-weight:500;">24/7 help: blocked drains, leaks, electrics</span></div>
-  </div>
 
-  <!-- primary phone CTA with 3D effect -->
-  <div class="phone-cta-gold">
-    <a href="#"><i class="fas fa-phone-alt"></i> 020 8064 1046</a>
-  </div>
-  <div class="sub-247"><i class="fas fa-clock"></i> 24/7 SERVICE · CALL NOW</div>
-
-  <!-- stats graphic tiles -->
-  <div class="stats-graphic">
-    <div class="stat-tile"><div class="num">25k+</div><div class="label">JOBS DONE</div></div>
-    <div class="stat-tile"><div class="num">45-60m</div><div class="label">ARRIVAL</div></div>
-    <div class="stat-tile"><div class="num">LONDON</div><div class="label">LOCAL</div></div>
-    <div class="stat-tile"><div class="num">24HR</div><div class="label">EMERGENCY</div></div>
-  </div>
-
-  <!-- badge "arrive in 60min" graphic -->
-  <div style="text-align: center;">
-    <span class="badge-60min"><i class="fas fa-stopwatch"></i> at your doorstep in 60min</span>
-  </div>
-
-  <!-- navy block with description -->
-  <div style="background: #0b1a2b; border-radius: 32px; margin: 24px 16px; padding: 26px; border: 2px solid #f5b01b;">
-    <h2 style="color:white; font-size:2rem;"><i class="fas fa-moon" style="color:#f5b01b;"></i> Day or night</h2>
-    <p style="color:#d1e0f0; font-size:1.1rem; margin-top: 8px;">London’s 24/7 plumbing has you covered. Emergencies don’t wait — we arrive in 45-60 mins, fix leaks, boilers, drains.</p>
-    <div class="graphic-dots"><span class="dot-gold"></span><span class="dot-navy"></span><span class="dot-gold"></span><span class="dot-navy"></span><span class="dot-gold"></span></div>
-  </div>
-
-  <!-- services cards with custom icons -->
-  <div class="service-cards-premium">
-    <div class="section-title-custom"><i class="fas fa-tools"></i> our services</div>
-    <div class="card-gold-edge"><h3><i class="fas fa-search"></i> Leak detection</h3><p>Advanced diagnostic tools – find & repair leaks in pipes, boilers, heating. Stop water damage fast.</p></div>
-    <div class="card-gold-edge"><h3><i class="fas fa-drain"></i> Drain unblocking</h3><p>Blocked toilet, sink, or shower? Cleared fast, no pipe damage, 24/7.</p></div>
-    <div class="card-gold-edge"><h3><i class="fas fa-fire"></i> Boiler & heating</h3><p>Gas engineers, same visit fix. No hot water? we restore warmth quickly.</p></div>
-  </div>
-
-  <!-- review cluster graphic 3 items (two columns) -->
-  <div class="review-cluster">
-    <div style="font-size:2rem; font-weight:800; color:white; margin-bottom:20px;"><i class="fas fa-quote-right" style="color:#f5b01b;"></i> customer love</div>
-    <div class="review-grid">
-      <div class="review-bubble"><div class="name"><i class="fas fa-user-circle"></i> Rauri M.</div><div class="location">PADDINGTON</div>“fixed my bathroom leak late night – very happy”</div>
-      <div class="review-bubble"><div class="name"><i class="fas fa-user-circle"></i> Emily</div><div class="location">CENTRAL LDN</div>“Idris unblocked drains, professional & fast”</div>
-      <div class="review-bubble"><div class="name"><i class="fas fa-user-circle"></i> Harry M.</div><div class="location">ENFIELD</div>“Boiler broke Sunday – fixed same day, saved us”</div>
-      <div class="review-bubble"><div class="name"><i class="fas fa-user-circle"></i> S. Khan</div><div class="location">SOUTH KENS</div>“arrived in 40 mins, leak sorted. 10/10”</div>
-    </div>
-  </div>
-
-  <!-- steps how it works (graphic heavy) -->
-  <div class="steps-graphic">
-    <div style="font-size:2.2rem; font-weight:800; color:#f5b01b;">⚡ how it works</div>
-    <div class="step-row-graphic"><div class="step-marker">1</div><div class="step-text-graphic"><strong>Call us 24/7</strong><p>Speak direct – call centre always open</p></div></div>
-    <div class="step-row-graphic"><div class="step-marker">2</div><div class="step-text-graphic"><strong>Arrange callout</strong><p>Plumber dispatched within 45-60 min</p></div></div>
-    <div class="step-row-graphic"><div class="step-marker">3</div><div class="step-text-graphic"><strong>Job done</strong><p>Diagnose, repair, detailed report</p></div></div>
-  </div>
-
-  <!-- FAQ section -->
-  <div class="faq-premium">
-    <div style="font-size:2rem; font-weight:800; color:#0b1a2b;">faq <i class="fas fa-circle" style="color:#f5b01b; font-size:1.2rem;"></i></div>
-    <div class="faq-row"><div class="faq-q">Plumbing emergency? <i class="fas fa-chevron-circle-down"></i></div><div class="faq-a">Major leaks, gas smell, overflowing toilet – 24/7 response.</div></div>
-    <div class="faq-row"><div class="faq-q">Response time? <i class="fas fa-chevron-circle-down"></i></div><div class="faq-a">Within 45-60 minutes across London.</div></div>
-    <div class="faq-row"><div class="faq-q">Qualified & insured? <i class="fas fa-chevron-circle-down"></i></div><div class="faq-a">All plumbers certified and insured. Full peace of mind.</div></div>
-    <div class="faq-row"><div class="faq-q">Emergency pricing? <i class="fas fa-chevron-circle-down"></i></div><div class="faq-a">From £69 callout, then hourly. Weekend/night rates start £89.</div></div>
-  </div>
-
-  <!-- footer with contact + address (exact as image) -->
-  <div class="footer-luxury">
-    <div class="footer-phone-big"><i class="fas fa-phone-alt"></i> 020 8064 1046</div>
-    <div style="margin: 30px 0 20px; font-size:1.2rem; font-weight:200; border-left: 6px solid #f5b01b; padding-left: 16px;">
-      PLUMBING · HEATING · DRAINAGE · ELECTRICS
-    </div>
-    <div style="display:flex; flex-direction: column; gap: 5px; font-size:1rem; color:#bed6f0;">
-      <span><i class="fas fa-map-pin gold"></i> 144 Ladbroke Grove, London W10 5NE</span>
-      <span><i class="fas fa-building gold"></i> Company 14228927 · VAT 435285292</span>
-      <span><i class="fas fa-id-card gold"></i> LONDON EMERGENCY PLUMBING 24/7</span>
-    </div>
-    <div style="margin-top:30px; text-align:center; background: #f5b01b20; border-radius: 60px; padding: 12px; font-weight:600;">
-      ⭐ 4.8 based on 200+ reviews · AVAILABLE NOW
-    </div>
-  </div>
-  <!-- tiny native home bar -->
-  <div style="width:140px; height:5px; background:#ccc; border-radius:20px; margin: 16px auto 10px;"></div>
-</div>
+    <!-- home bar (tiny) -->
+    <div style="width:140px; height:5px; background:#ddd; border-radius:20px; margin: 12px auto 16px;"></div>
+  </div> <!-- end ios-app -->
 </body>
 </html>
