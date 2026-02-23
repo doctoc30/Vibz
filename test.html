@@ -1,557 +1,497 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>LEP · native minimal app</title>
-  <!-- Inter font for clean iOS/macOS feel -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>24hr Emergency Plumber · native app</title>
+    <!-- style mimics iOS/Android native app design, exact brand colors from provided images -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
 
-    body {
-      background: #0b1a2b; /* deep navy from branding */
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      font-family: 'Inter', -apple-system, 'Helvetica Neue', sans-serif;
-      padding: 12px;
-    }
+        body {
+            background-color: #0b1b2b; /* deep navy from the top image (header/dark) */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            padding: 0 0 30px 0;
+        }
 
-    /* ===== NATIVE APP CONTAINER – exactly like App Store screen ===== */
-    .ios-app {
-      max-width: 390px;            /* iPhone 15 width */
-      width: 100%;
-      background-color: #ffffff;
-      border-radius: 44px;          /* large continuous corner */
-      box-shadow: 
-        0 30px 60px -20px rgba(0,0,0,0.6),
-        0 0 0 6px rgba(245, 176, 27, 0.2),
-        0 0 0 2px #ffffff40;        /* subtle outer gloss */
-      overflow: hidden;
-      position: relative;
-      backdrop-filter: blur(2px);
-      transition: all 0.2s ease;
-    }
+        /* native app card / container — simulates app screen */
+        .app-screen {
+            max-width: 450px;
+            width: 100%;
+            background-color: #ffffff;
+            border-radius: 36px 36px 24px 24px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+            margin: 16px 12px;
+            border: 1px solid rgba(255, 206, 8, 0.2);
+        }
 
-    /* status bar – minimal, dynamic island style */
-    .status-bar-minimal {
-      background: #0b1a2b;
-      padding: 12px 24px 8px 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      color: #f5b01b;
-      font-size: 0.85rem;
-      font-weight: 600;
-      letter-spacing: 0.2px;
-      border-bottom: 1px solid #f5b01b30;
-    }
-    .status-left i {
-      margin-right: 4px;
-      color: #f5b01b;
-    }
-    .time-badge {
-      background: #1e3449;
-      padding: 4px 16px;
-      border-radius: 40px;
-      color: white;
-      font-weight: 600;
-      font-size: 0.9rem;
-    }
+        /* iOS like status bar (optional but native feeling) */
+        .status-bar {
+            background-color: #0b1b2b; /* exact header color */
+            padding: 12px 20px 8px 20px;
+            display: flex;
+            justify-content: space-between;
+            color: #f5c842; /* soft gold from star / branding */
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+            border-bottom: 1px solid #25384b;
+        }
+        .status-bar time {
+            opacity: 0.9;
+        }
+        .status-bar .signal {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
 
-    /* ----- DOCK (CUSTOM GRAPHIC) ----- */
-    .app-dock {
-      background: #0b1a2b;
-      padding: 12px 20px 16px 20px;
-      display: flex;
-      align-items: flex-end;
-      gap: 16px;
-      border-bottom: 2px solid #f5b01b;
-      box-shadow: inset 0 -4px 0 #10212f;
-    }
-    .dock-icon-lep {
-      font-size: 3.2rem;
-      font-weight: 900;
-      color: white;
-      letter-spacing: -2px;
-      line-height: 1;
-      text-shadow: 3px 3px 0 #f5b01b;
-      background: transparent;
-    }
-    .dock-badge-247 {
-      background: #f5b01b;
-      border-radius: 40px;
-      padding: 8px 24px;
-      color: #0b1a2b;
-      font-weight: 800;
-      font-size: 1.3rem;
-      box-shadow: 0 5px 0 #9e741a, 0 10px 12px -8px black;
-      margin-bottom: 4px;
-    }
-    .dock-icons-row {
-      display: flex;
-      gap: 8px;
-      margin-left: auto;
-      align-items: center;
-      color: #f5b01b;
-    }
-    .dock-icons-row i {
-      background: #233c56;
-      padding: 10px;
-      border-radius: 30px;
-      font-size: 1.2rem;
-      color: white;
-      box-shadow: 0 2px 0 #0b1a2b;
-    }
+        /* BRAND HEADER — exactly matching "EMERGENCY PLUMBER 24HR" from image */
+        .brand-header {
+            background-color: #0b1b2b;      /* exact dark background */
+            padding: 24px 22px 22px 22px;
+            text-align: center;
+            border-bottom: 3px solid #f5b81b; /* golden line (exact accent) */
+        }
 
-    /* main content – minimal & airy */
-    .content-area {
-      padding: 16px 20px 24px 20px;
-      background: #ffffff;
-    }
+        .brand-header h1 {
+            color: #ffffff;
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            line-height: 1.1;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
 
-    /* tiny rating chip – minimal, yet strong */
-    .rating-mini {
-      display: inline-flex;
-      align-items: center;
-      background: #f2f6fc;
-      border-radius: 60px;
-      padding: 6px 16px 6px 12px;
-      gap: 6px;
-      font-weight: 700;
-      color: #0b1a2b;
-      border: 1px solid #f5b01b40;
-      margin-bottom: 16px;
-    }
-    .rating-mini i {
-      color: #f5b01b;
-      font-size: 1rem;
-    }
+        .brand-header .service-tag {
+            color: #f5b81b;                 /* exact gold */
+            font-size: 18px;
+            font-weight: 700;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 8px 0 4px;
+        }
 
-    /* headline minimal – huge weight */
-    .headline-minimal {
-      font-size: 2.8rem;
-      font-weight: 800;
-      line-height: 1;
-      color: #0b1a2b;
-      margin-bottom: 10px;
-    }
-    .headline-minimal span {
-      color: #f5b01b;
-      display: block;
-    }
+        .brand-header .service-tag span {
+            background-color: #f5b81b;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
 
-    .service-mini-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin: 18px 0 10px;
-    }
-    .service-mini-tags span {
-      background: #eef3f9;
-      border-radius: 60px;
-      padding: 4px 18px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: #0b1a2b;
-      letter-spacing: 0.3px;
-    }
+        .brand-header .sub-location {
+            color: #a0b8cc;
+            font-size: 17px;
+            font-weight: 500;
+            margin-top: 8px;
+            letter-spacing: 0.3px;
+        }
 
-    /* ----- PHONE BUTTON (MINIMAL BUT GRAPHIC) ----- */
-    .phone-minimal-block {
-      background: #0b1a2b;
-      border-radius: 80px;
-      padding: 6px;
-      margin: 22px 0 14px;
-      box-shadow: 0 8px 0 #0a121e, 0 15px 25px -10px #0b1a2b;
-    }
-    .phone-minimal-block a {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 14px;
-      background: #f5b01b;
-      border-radius: 80px;
-      padding: 18px 12px;
-      text-decoration: none;
-      font-weight: 800;
-      font-size: 2rem;
-      color: #0b1a2b;
-      transition: 0.1s;
-      border: 2px solid white;
-    }
-    .phone-minimal-block a i {
-      color: #0b1a2b;
-      font-size: 2.2rem;
-    }
+        .brand-header .sub-location strong {
+            color: #f5c842;
+            font-weight: 700;
+        }
 
-    /* stats grid – minimal cards */
-    .stats-minimal-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin: 20px 0 16px;
-    }
-    .stat-mini {
-      background: #f2f6fc;
-      border-radius: 28px;
-      padding: 18px 8px;
-      text-align: center;
-      border: 1px solid white;
-      box-shadow: 0 2px 0 #cbd5e2, 0 8px 12px -10px #0b1a2b40;
-    }
-    .stat-mini .number {
-      font-size: 2rem;
-      font-weight: 800;
-      color: #0b1a2b;
-      line-height: 1;
-    }
-    .stat-mini .label {
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: #f5b01b;
-      background: #0b1a2b;
-      display: inline-block;
-      padding: 4px 14px;
-      border-radius: 40px;
-      margin-top: 4px;
-    }
+        /* rating chip – google reviews style, from actual website */
+        .rating-row {
+            background-color: #1e2f3e;
+            margin: 16px 22px 8px 22px;
+            padding: 12px 16px;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: white;
+            border: 1px solid #3e525f;
+        }
 
-    /* thin divider */
-    .divider-gold {
-      height: 2px;
-      background: #f5b01b;
-      width: 80px;
-      margin: 24px 0 18px;
-      border-radius: 10px;
-    }
+        .stars {
+            color: #f5b81b;
+            font-size: 20px;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .stars span {
+            font-size: 15px;
+            margin-left: 8px;
+            color: #ccddee;
+            font-weight: 400;
+        }
 
-    /* service row – minimal card with icon */
-    .service-row-mini {
-      display: flex;
-      align-items: flex-start;
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-    .service-icon-bg {
-      background: #0b1a2b;
-      border-radius: 34px;
-      width: 64px;
-      height: 64px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #f5b01b;
-      font-size: 2rem;
-      box-shadow: 0 5px 0 #f5b01b, 0 10px 15px -12px black;
-    }
-    .service-row-mini h3 {
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: #0b1a2b;
-    }
-    .service-row-mini p {
-      color: #2f4a6b;
-      font-weight: 500;
-      font-size: 0.95rem;
-      margin-top: 2px;
-    }
+        .reviews-count {
+            background-color: #f5b81b;
+            color: #0b1b2b;
+            font-weight: 800;
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 15px;
+        }
 
-    /* review tiles minimal */
-    .review-strip {
-      display: flex;
-      gap: 14px;
-      overflow-x: auto;
-      padding: 8px 2px 24px;
-      scrollbar-width: none;
-    }
-    .review-tile-mini {
-      background: #f2f6fc;
-      border-radius: 30px;
-      padding: 20px 18px;
-      min-width: 240px;
-      border-left: 6px solid #f5b01b;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.02);
-    }
-    .review-tile-mini .name {
-      font-weight: 800;
-      color: #0b1a2b;
-      display: flex;
-      gap: 6px;
-      font-size: 1.2rem;
-    }
-    .review-tile-mini .location {
-      color: #f5b01b;
-      font-weight: 600;
-      font-size: 0.9rem;
-      margin: 4px 0 10px;
-    }
+        /* features grid – exact 3 points with brand icons */
+        .features-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2px;
+            background-color: #e9edf2;
+            padding: 18px 12px 10px 12px;
+            margin: 8px 0 0;
+        }
 
-    /* how it works minimal steps */
-    .steps-minimal {
-      background: #0b1a2b;
-      border-radius: 48px;
-      padding: 32px 24px;
-      margin: 30px 0 20px;
-      color: white;
-    }
-    .step-item-mini {
-      display: flex;
-      gap: 18px;
-      margin-bottom: 28px;
-      align-items: center;
-    }
-    .step-num-gold {
-      background: #f5b01b;
-      width: 58px;
-      height: 58px;
-      border-radius: 29px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2.2rem;
-      font-weight: 800;
-      color: #0b1a2b;
-      border: 3px solid white;
-    }
-    .step-text-mini strong {
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: white;
-    }
-    .step-text-mini p {
-      color: #b4ceec;
-    }
+        .feature-card {
+            flex: 1 1 30%;
+            background: white;
+            border-radius: 24px;
+            padding: 18px 6px 14px 6px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.02);
+            border-bottom: 3px solid #f5b81b60;
+        }
 
-    /* FAQ minimal */
-    .faq-mini {
-      margin: 20px 0 28px;
-    }
-    .faq-row-mini {
-      border-bottom: 1px solid #e0e9f2;
-      padding: 16px 0;
-    }
-    .faq-q-mini {
-      display: flex;
-      justify-content: space-between;
-      font-weight: 700;
-      color: #0b1a2b;
-    }
-    .faq-q-mini i {
-      color: #f5b01b;
-      background: #0b1a2b;
-      border-radius: 30px;
-      padding: 4px;
-    }
-    .faq-a-mini {
-      color: #325173;
-      font-size: 0.95rem;
-      padding-top: 8px;
-    }
+        .feature-card .emoji-big {
+            font-size: 34px;
+            margin-bottom: 8px;
+            display: block;
+        }
 
-    /* ----- CUSTOM DOCK (BOTTOM) – like macOS / iPadOS dock ----- */
-    .bottom-dock {
-      background: #0b1a2be0;
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      margin: 8px 16px 20px 16px;
-      border-radius: 48px;
-      padding: 10px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border: 1px solid #f5b01b80;
-      box-shadow: 0 10px 30px -5px black;
-    }
-    .dock-app-icon {
-      background: #f5b01b;
-      border-radius: 30px;
-      width: 52px;
-      height: 52px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 900;
-      font-size: 1.8rem;
-      color: #0b1a2b;
-      box-shadow: 0 6px 0 #8c6513;
-    }
-    .dock-app-icon.small {
-      background: #28435f;
-      color: white;
-      font-size: 1.2rem;
-      box-shadow: none;
-    }
-    .dock-divider {
-      width: 2px;
-      height: 32px;
-      background: #f5b01b60;
-      border-radius: 2px;
-    }
+        .feature-card h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0b1b2b;
+            margin-bottom: 4px;
+        }
 
-    /* footer minimal / address */
-    .footer-minimal-address {
-      background: #0b1a2b;
-      border-radius: 40px 40px 0 0;
-      padding: 36px 24px 20px;
-      color: white;
-      margin-top: 30px;
-      border-top: 4px solid #f5b01b;
-    }
-    .footer-minimal-address .phone-big {
-      font-size: 2.2rem;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      background: #1e3650;
-      border-radius: 60px;
-      padding: 10px 24px;
-      width: fit-content;
-      border: 2px solid #f5b01b;
-    }
-    .footer-minimal-address .phone-big i {
-      color: #f5b01b;
-    }
-    .address-line {
-      margin-top: 30px;
-      font-size: 1.1rem;
-      color: #b7d0ea;
-    }
-  </style>
+        .feature-card p {
+            font-size: 13px;
+            color: #3f5060;
+            line-height: 1.3;
+            padding: 0 4px;
+        }
+
+        /* about section — matches original copy with brand colors */
+        .about-wrap {
+            background-color: #f8fafd;
+            padding: 24px 20px 18px;
+            border-top: 1px solid #dce5ec;
+        }
+
+        .about-title {
+            color: #0b1b2b;
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .about-title span {
+            background-color: #f5b81b;
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+        }
+
+        .about-text {
+            color: #1f364a;
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 28px;
+            font-weight: 400;
+            background: #ffffffd6;
+            padding: 18px 18px;
+            border-radius: 28px;
+            border: 1px solid #f5b81b40;
+            box-shadow: 0 8px 14px -8px rgba(0,32,64,0.1);
+        }
+
+        /* value props with checkmark (list from original site) */
+        .value-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px 8px;
+            margin-bottom: 28px;
+        }
+
+        .badge-item {
+            background-color: #0b1b2b;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 60px;
+            font-size: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-left: 4px solid #f5b81b;
+        }
+        .badge-item::before {
+            content: "✓";
+            color: #f5b81b;
+            font-weight: 800;
+            font-size: 20px;
+        }
+
+        /* three columns guarantee / trust / skilled (exact copy) */
+        .trust-strip {
+            display: flex;
+            gap: 12px;
+            margin: 24px 0 18px;
+            flex-wrap: wrap;
+        }
+
+        .trust-card {
+            background: white;
+            flex: 1 1 28%;
+            border-radius: 28px;
+            padding: 20px 6px 16px;
+            text-align: center;
+            border: 1px solid #f5b81b60;
+            box-shadow: 0 8px 0 #0b1b2b;
+        }
+
+        .trust-card h4 {
+            font-weight: 800;
+            font-size: 18px;
+            color: #0b1b2b;
+            margin-bottom: 8px;
+        }
+
+        .trust-card p {
+            color: #2f4a62;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .trust-card .icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        /* CTA free quote — bottom app like button */
+        .cta-quote {
+            background-color: #f5b81b;
+            border-radius: 60px;
+            padding: 20px 28px;
+            margin: 18px 20px 8px 20px;
+            text-align: center;
+            box-shadow: 0 10px 0 #b8820b, 0 8px 20px rgba(0,0,0,0.2);
+            transition: 0.1s ease;
+        }
+
+        .cta-quote:active {
+            transform: translateY(5px);
+            box-shadow: 0 5px 0 #b8820b, 0 8px 18px rgba(0,0,0,0.15);
+        }
+
+        .cta-quote a {
+            color: #0b1b2b;
+            text-decoration: none;
+            font-weight: 900;
+            font-size: 24px;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .cta-quote a span {
+            font-size: 32px;
+        }
+
+        /* guarantee small line */
+        .guarantee-note {
+            text-align: center;
+            color: #4e6b80;
+            font-size: 15px;
+            margin: 10px 20px 20px;
+            padding: 8px 16px;
+            background: #eef3f9;
+            border-radius: 40px;
+            font-weight: 500;
+        }
+
+        /* tab bar / home indicator – pure native */
+        .home-bar {
+            text-align: center;
+            padding: 16px 0 8px;
+            color: #a1b3c4;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+            border-top: 1px solid #dbe1e8;
+            background: #f5f8fc;
+        }
+
+        .home-bar .line {
+            width: 140px;
+            height: 5px;
+            background: #bbcbd8;
+            border-radius: 40px;
+            margin: 8px auto 4px;
+        }
+
+        /* emergency badge floating style (24hr) */
+        .emergency-pill {
+            background-color: #f5b81b20;
+            border: 1.5px solid #f5b81b;
+            border-radius: 60px;
+            padding: 12px 22px;
+            margin: 0 20px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            backdrop-filter: blur(2px);
+        }
+
+        .emergency-pill span {
+            background-color: #f5b81b;
+            color: #0b1b2b;
+            font-weight: 900;
+            padding: 5px 18px;
+            border-radius: 60px;
+            font-size: 20px;
+        }
+
+        .emergency-pill small {
+            color: #0b1b2b;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 15px;
+        }
+
+        /* 100% exact brand colors used: #0b1b2b (dark), #f5b81b / #f5c842 (gold) */
+    </style>
 </head>
 <body>
-  <div class="ios-app">
-    <!-- minimal dynamic status bar -->
-    <div class="status-bar-minimal">
-      <div class="status-left"><i class="fas fa-signal"></i> <i class="fas fa-wifi"></i></div>
-      <div class="time-badge">24/7 · LEP</div>
-      <div><i class="fas fa-battery-three-quarters"></i></div>
-    </div>
-
-    <!-- TOP DOCK / custom graphic header (minimal but strong) -->
-    <div class="app-dock">
-      <div class="dock-icon-lep">LEP</div>
-      <div class="dock-badge-247">24/7</div>
-      <div class="dock-icons-row">
-        <i class="fas fa-wrench"></i>
-        <i class="fas fa-bolt"></i>
-        <i class="fas fa-droplet"></i>
-      </div>
-    </div>
-
-    <!-- main content area -->
-    <div class="content-area">
-      <!-- rating chip -->
-      <div class="rating-mini">
-        <i class="fas fa-star"></i> 4.8 <span style="color:#536e88; font-weight:400; margin-left:4px;">(200+ reviews)</span>
-      </div>
-
-      <!-- minimal headline -->
-      <div class="headline-minimal">
-        24/7 <span>Plumbing</span> in your area
-      </div>
-
-      <!-- service tags (plumbing, heating, drainage, electrics) -->
-      <div class="service-mini-tags">
-        <span>PLUMBING</span><span>HEATING</span><span>DRAINAGE</span><span>ELECTRICS</span>
-      </div>
-
-      <!-- minimal descriptive line -->
-      <div style="font-size:1rem; color:#2f4a6b; margin: 8px 0 0; font-weight:500;">
-        <i class="fas fa-bolt" style="color:#f5b01b;"></i> Things go wrong. We make them right — fast.
-      </div>
-
-      <!-- phone block (minimal but with weight) -->
-      <div class="phone-minimal-block">
-        <a href="#"><i class="fas fa-phone-alt"></i> 020 8064 1046</a>
-      </div>
-      <div style="text-align:center; font-size:0.9rem; font-weight:600; color:#0b1a2b;">24/7 emergency · call now</div>
-
-      <!-- stats grid -->
-      <div class="stats-minimal-grid">
-        <div class="stat-mini"><div class="number">25k+</div><div class="label">jobs done</div></div>
-        <div class="stat-mini"><div class="number">45-60m</div><div class="label">arrival</div></div>
-        <div class="stat-mini"><div class="number">London</div><div class="label">local</div></div>
-        <div class="stat-mini"><div class="number">24hr</div><div class="label">emergency</div></div>
-      </div>
-
-      <!-- gold divider -->
-      <div class="divider-gold"></div>
-
-      <!-- services (minimal, with custom graphic icons) -->
-      <div style="margin: 16px 0 8px;">
-        <div class="service-row-mini">
-          <div class="service-icon-bg"><i class="fas fa-eye"></i></div>
-          <div><h3>Leak detection</h3><p>Advanced tools, fast repair – stop water damage.</p></div>
+    <div class="app-screen">
+        <!-- native status bar simulation -->
+        <div class="status-bar">
+            <time>22:09</time>
+            <div class="signal">
+                <span>📶</span> <span>📶</span> <span>🔋</span>
+            </div>
         </div>
-        <div class="service-row-mini">
-          <div class="service-icon-bg"><i class="fas fa-poop"></i></div>
-          <div><h3>Drain unblocking</h3><p>Sinks, toilets, showers – cleared fast, no damage.</p></div>
+
+        <!-- main header exactly from IMG_1270.png: "EMERGENCY PLUMBER 24HR" with location -->
+        <div class="brand-header">
+            <h1>EMERGENCY<br>PLUMBER 24HR</h1>
+            <div class="service-tag">
+                <span></span> 24hr EMERGENCY <span></span>
+            </div>
+            <div class="sub-location">
+                <strong>Service in · London · SE</strong> <br> South East London & Greenwich
+            </div>
         </div>
-        <div class="service-row-mini">
-          <div class="service-icon-bg"><i class="fas fa-temperature-high"></i></div>
-          <div><h3>Boiler & heating</h3><p>Gas engineers, fixed in one visit. 24/7.</p></div>
+
+        <!-- Google reviews chip (exact copy from live site) -->
+        <div class="rating-row">
+            <div class="stars">
+                ★★★★★ <span>Google Reviews</span>
+            </div>
+            <div class="reviews-count">4.9</div>
         </div>
-      </div>
 
-      <!-- review strip (minimal tiles) -->
-      <div style="margin: 30px 0 10px;">
-        <h2 style="font-size:1.8rem; font-weight:800; color:#0b1a2b; margin-bottom:12px;">⭐ reviews</h2>
-      </div>
-      <div class="review-strip">
-        <div class="review-tile-mini"><div class="name"><i class="fas fa-circle" style="color:#f5b01b; font-size:0.8rem;"></i> Rauri M.</div><div class="location">Paddington</div>“Fixed bathroom leak late night, very happy”</div>
-        <div class="review-tile-mini"><div class="name"><i class="fas fa-circle" style="color:#f5b01b;"></i> Emily</div><div class="location">Central London</div>“Idris unblocked drains – professional & fast”</div>
-        <div class="review-tile-mini"><div class="name"><i class="fas fa-circle" style="color:#f5b01b;"></i> Harry M.</div><div class="location">Enfield</div>“Boiler fixed on Sunday, saved the day”</div>
-      </div>
+        <!-- fast response, no hidden, qualified team (exact wording from IMG_1271) -->
+        <div class="features-grid">
+            <div class="feature-card">
+                <span class="emoji-big">⚡</span>
+                <h3>Fast Response</h3>
+                <p>Around‑the‑clock service for any emergency</p>
+            </div>
+            <div class="feature-card">
+                <span class="emoji-big">💰</span>
+                <h3>No Hidden Costs</h3>
+                <p>Transparent pricing, breakdown from start</p>
+            </div>
+            <div class="feature-card">
+                <span class="emoji-big">👨‍🔧</span>
+                <h3>Qualified Team</h3>
+                <p>Experienced, Gas Safe registered plumbers</p>
+            </div>
+        </div>
 
-      <!-- steps (how it works) minimal yet graphic -->
-      <div class="steps-minimal">
-        <div style="font-size:2rem; font-weight:800; color:#f5b01b; margin-bottom:24px;">⚡ how it works</div>
-        <div class="step-item-mini"><div class="step-num-gold">1</div><div class="step-text-mini"><strong>Call 24/7</strong><p>Speak to us – call centre always open</p></div></div>
-        <div class="step-item-mini"><div class="step-num-gold">2</div><div class="step-text-mini"><strong>Callout 45-60min</strong><p>Plumber dispatched fast</p></div></div>
-        <div class="step-item-mini"><div class="step-num-gold">3</div><div class="step-text-mini"><strong>Job done</strong><p>Diagnose, repair, report</p></div></div>
-      </div>
+        <!-- About section + copy from original website -->
+        <div class="about-wrap">
+            <div class="about-title">
+                <span></span> ABOUT US
+            </div>
+            <div class="about-text">
+                Plumbing need not be a messy affair. At 24hr emergency plumber we strive to respond to any need — be it an emergency or not, small or large — and to be clean and prompt in your hour of need.
+            </div>
 
-      <!-- FAQ minimal -->
-      <div class="faq-mini">
-        <div class="faq-row-mini"><div class="faq-q-mini">Plumbing emergency? <i class="fas fa-chevron-down"></i></div><div class="faq-a-mini">Major leaks, gas smell – we respond 24/7.</div></div>
-        <div class="faq-row-mini"><div class="faq-q-mini">Response time? <i class="fas fa-chevron-down"></i></div><div class="faq-a-mini">Within 45-60 minutes across London.</div></div>
-        <div class="faq-row-mini"><div class="faq-q-mini">Qualified? <i class="fas fa-chevron-down"></i></div><div class="faq-a-mini">Fully insured, certified plumbers.</div></div>
-      </div>
-    </div> <!-- end content area -->
+            <!-- bullet list: Highly Reviewed, Clean & Responsible, High Standards, Committed to Quality -->
+            <div class="value-badges">
+                <div class="badge-item">Highly Reviewed</div>
+                <div class="badge-item">Clean & Responsible</div>
+                <div class="badge-item">High Standards</div>
+                <div class="badge-item">Quality Commitment</div>
+            </div>
 
-    <!-- BOTTOM DOCK – custom graphic, like macOS / iPadOS dock with app icons -->
-    <div class="bottom-dock">
-      <div class="dock-app-icon">LEP</div>
-      <div class="dock-app-icon small"><i class="fas fa-phone"></i></div>
-      <div class="dock-app-icon small"><i class="fas fa-wrench"></i></div>
-      <div class="dock-divider"></div>
-      <div class="dock-app-icon small"><i class="fas fa-star"></i></div>
-      <div class="dock-app-icon small"><i class="fas fa-map-pin"></i></div>
-      <div class="dock-app-icon small"><i class="fas fa-clock"></i></div>
+            <!-- trust / skilled / guarantee (exact copy from website) -->
+            <div class="trust-strip">
+                <div class="trust-card">
+                    <div class="icon">🛡️</div>
+                    <h4>Guarantee</h4>
+                    <p>6‑month labour • 12‑month parts. High quality assured.</p>
+                </div>
+                <div class="trust-card">
+                    <div class="icon">⚡</div>
+                    <h4>Trust</h4>
+                    <p>Rapid response in Greenwich & all London.</p>
+                </div>
+                <div class="trust-card">
+                    <div class="icon">🔧</div>
+                    <h4>Skilled</h4>
+                    <p>Highly trained, collaborative pros.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Free Quotes CTA (matches live site) -->
+        <div class="emergency-pill">
+            <span>24HR</span> <small>emergency? we're here</small>
+        </div>
+
+        <div class="cta-quote">
+            <a href="#">
+                <span>📞</span> FREE QUOTES <span>➤</span>
+            </a>
+        </div>
+
+        <!-- extra guarantee note from original -->
+        <div class="guarantee-note">
+            ⭐ No callout fee · 24/7 availability · Parts guaranteed
+        </div>
+
+        <!-- native app home bar -->
+        <div class="home-bar">
+            <div class="line"></div>
+            Emergency 24hr • native app
+        </div>
     </div>
 
-    <!-- footer with address (exact as image) -->
-    <div class="footer-minimal-address">
-      <div class="phone-big"><i class="fas fa-phone-alt"></i> 020 8064 1046</div>
-      <div class="address-line"><i class="fas fa-location-dot" style="color:#f5b01b;"></i> 144 Ladbroke Grove, London W10 5NE</div>
-      <div style="display:flex; gap: 20px; margin-top: 24px; font-size:0.9rem; color:#99b5d3;">
-        <span>Company 14228927</span><span>VAT 435285292</span>
-      </div>
-      <div style="margin-top: 24px; font-weight:500; background:#1e3650; border-radius:60px; padding:10px; text-align:center; color:#f5b01b;">
-        ⏰ 24/7 AVAILABLE NOW · LONDON EMERGENCY PLUMBING
-      </div>
+    <!-- small outside caption: brand consistency -->
+    <div style="color:#f5b81b80; font-size:12px; margin-top:4px; text-align:center; max-width:400px; padding:0 12px;">
+        <span style="background-color:#0b1b2b; padding:4px 18px; border-radius:60px;">brand colors: #0b1b2b · #f5b81b</span>
     </div>
-
-    <!-- home bar (tiny) -->
-    <div style="width:140px; height:5px; background:#ddd; border-radius:20px; margin: 12px auto 16px;"></div>
-  </div> <!-- end ios-app -->
 </body>
 </html>
