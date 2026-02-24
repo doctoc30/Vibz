@@ -1116,7 +1116,7 @@
 
 
 
-    <script>
+<script>
 // =========================================================================
 //  CONFIGURATION - COMPLETELY FILLED IN (NO MORE {...} PLACEHOLDERS)
 // =========================================================================
@@ -1642,7 +1642,7 @@ let orderData = {
 };
 
 // =========================================================================
-//  LOAD FROM INDEX.HTML (from first script)
+//  LOAD FROM INDEX.HTML - FIXED VERSION (Clears stale help requests)
 // =========================================================================
 function loadOrderFromIndex() {
     try {
@@ -1670,17 +1670,21 @@ function loadOrderFromIndex() {
             console.log('✅ Loaded services:', orderData.services.length);
         }
         
+        // Load help requests - ensure it's an array
         const savedHelp = sessionStorage.getItem('helpRequests') || 
                         localStorage.getItem('helpRequests');
-        if (savedHelp) {
+        if (savedHelp && savedHelp !== 'undefined' && savedHelp !== 'null') {
             orderData.helpRequests = JSON.parse(savedHelp);
             console.log('✅ Loaded help requests:', orderData.helpRequests.length);
+        } else {
+            orderData.helpRequests = [];
         }
         
         orderData.pageCount = TIER_CONFIG[orderData.tier].pages;
         
     } catch (e) {
         console.warn('Using defaults', e);
+        orderData.helpRequests = [];
     }
     
     setTimeout(() => {
@@ -1706,7 +1710,6 @@ function getFilteredServices() {
         premium: isPremium ? premiumServices : []
     };
 }
-
 
 // =========================================================================
 //  RENDER FUNCTIONS
@@ -1853,7 +1856,7 @@ function renderDynamicFeatures() {
 }
 
 // =========================================================================
-//  RENDER ASSET COLLECTION - COMPLETELY FIXED VERSION (Help buttons start OFF)
+//  RENDER ASSET COLLECTION - FIXED VERSION (Help buttons start OFF)
 // =========================================================================
 function renderAssetCollection() {
     const container = document.getElementById('assetCollectionContainer');
@@ -1880,7 +1883,7 @@ function renderAssetCollection() {
     // Create a map of help requests - EMPTY by default
     const helpMap = {};
     
-    // Only populate if there are actual help requests (should be empty on first load)
+    // Only populate if there are actual help requests
     if (orderData.helpRequests && orderData.helpRequests.length > 0) {
         orderData.helpRequests.forEach(h => { 
             if (h && h.feature) {
@@ -1950,7 +1953,7 @@ function renderAssetCollection() {
         
         const helpButtonId = `help_btn_${service.name.replace(/\s+/g, '_')}`;
         
-        // IMPORTANT: Check if this specific feature has help requested - defaults to false
+        // Check if this specific feature has help requested - defaults to false
         const isHelpRequested = helpMap[service.name] === true;
         
         // Determine button appearance - starts normal, changes only if clicked
@@ -2011,9 +2014,6 @@ function renderReview() {
     document.getElementById('confirmationEmailDisplay').innerText = email;
 }
 
-
-
-        
 // =========================================================================
 //  ENHANCED PAGE RENDER with file upload fixes
 // =========================================================================
@@ -2725,7 +2725,7 @@ window.toggleSkipSeo = function(pageId) {
 };
 
 // =========================================================================
-//  REQUEST FEATURE HELP - FIXED TO NOT AUTO-ACTIVATE
+//  REQUEST FEATURE HELP - FIXED (Only activates when clicked)
 // =========================================================================
 window.requestFeatureHelp = function(featureName) {
     const existing = orderData.helpRequests.find(h => h.feature === featureName);
@@ -2859,7 +2859,6 @@ window.onload = function() {
     
     const logoToggle = document.getElementById('noLogoToggle');
     if (logoToggle) {
-        // Remove old event listener and add new one that uses toggleNoLogo
         logoToggle.removeEventListener('click', function() {
             const cb = document.getElementById('noLogoCheckbox');
             if (cb) cb.checked = !cb.checked;
