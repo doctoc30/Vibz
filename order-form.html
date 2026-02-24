@@ -1707,6 +1707,7 @@ function getFilteredServices() {
     };
 }
 
+
 // =========================================================================
 //  RENDER FUNCTIONS
 // =========================================================================
@@ -1800,7 +1801,14 @@ function renderDynamicFeatures() {
     }
     
     const helpMap = {};
-    orderData.helpRequests.forEach(h => { helpMap[h.feature] = true; });
+    // Only populate helpMap if there are actual help requests
+    if (orderData.helpRequests && orderData.helpRequests.length > 0) {
+        orderData.helpRequests.forEach(h => { 
+            if (h && h.feature) {
+                helpMap[h.feature] = true; 
+            }
+        });
+    }
     
     let itemsHtml = '';
     
@@ -1845,7 +1853,7 @@ function renderDynamicFeatures() {
 }
 
 // =========================================================================
-//  RENDER ASSET COLLECTION - FEATURE DETAILS PAGE (FIXED HELP BUTTONS)
+//  RENDER ASSET COLLECTION - COMPLETELY FIXED VERSION (Help buttons start OFF)
 // =========================================================================
 function renderAssetCollection() {
     const container = document.getElementById('assetCollectionContainer');
@@ -1868,8 +1876,18 @@ function renderAssetCollection() {
     }
     
     let html = '';
+    
+    // Create a map of help requests - EMPTY by default
     const helpMap = {};
-    orderData.helpRequests.forEach(h => { helpMap[h.feature] = true; });
+    
+    // Only populate if there are actual help requests (should be empty on first load)
+    if (orderData.helpRequests && orderData.helpRequests.length > 0) {
+        orderData.helpRequests.forEach(h => { 
+            if (h && h.feature) {
+                helpMap[h.feature] = true; 
+            }
+        });
+    }
     
     allFilteredServices.forEach(service => {
         const assetConfig = FEATURE_ASSETS[service.name] || { fields: [] };
@@ -1931,9 +1949,11 @@ function renderAssetCollection() {
         });
         
         const helpButtonId = `help_btn_${service.name.replace(/\s+/g, '_')}`;
-        const isHelpRequested = helpMap[service.name] || false;
         
-        // Determine button appearance based on whether help was requested
+        // IMPORTANT: Check if this specific feature has help requested - defaults to false
+        const isHelpRequested = helpMap[service.name] === true;
+        
+        // Determine button appearance - starts normal, changes only if clicked
         let buttonClass = 'vibz-btn small outline-help';
         let buttonText = 'I need help with this';
         let buttonDisabled = false;
@@ -1957,7 +1977,7 @@ function renderAssetCollection() {
                 <div class="feature-asset-fields">
                     ${fieldsHtml || '<p class="text-muted">No additional information needed for this feature.</p>'}
                     <div style="display: flex; justify-content: flex-end; margin-top: 16px;">
-                        <button type="button" class="${buttonClass}" id="${helpButtonId}" onclick="requestFeatureHelp('${service.name}')" ${buttonDisabled ? 'disabled' : ''}>
+                        <button type="button" class="${buttonClass}" id="${helpButtonId}" onclick="requestFeatureHelp('${service.name.replace(/'/g, "\\'")}')" ${buttonDisabled ? 'disabled' : ''}>
                             <i class="fas fa-question-circle"></i> ${buttonText}
                         </button>
                     </div>
@@ -1991,6 +2011,9 @@ function renderReview() {
     document.getElementById('confirmationEmailDisplay').innerText = email;
 }
 
+
+
+        
 // =========================================================================
 //  ENHANCED PAGE RENDER with file upload fixes
 // =========================================================================
