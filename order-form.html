@@ -992,6 +992,8 @@
         <div style="font-weight: 600; color: var(--primary);">Submitting your order...</div>
     </div>
 
+
+
     <script>
 // =========================================================================
 //  CONFIGURATION - COMPLETELY FILLED IN (NO MORE {...} PLACEHOLDERS)
@@ -1584,8 +1586,9 @@ function getFilteredServices() {
 }
 
 // =========================================================================
-//  RENDER FUNCTIONS (keep ALL your existing render functions)
+//  RENDER FUNCTIONS
 // =========================================================================
+
 function renderPlanCard() {
     const container = document.getElementById('planSummaryContainer');
     if (!container) return;
@@ -1719,6 +1722,9 @@ function renderDynamicFeatures() {
     container.innerHTML = html;
 }
 
+// =========================================================================
+//  RENDER ASSET COLLECTION - FEATURE DETAILS PAGE
+// =========================================================================
 function renderAssetCollection() {
     const container = document.getElementById('assetCollectionContainer');
     if (!container) return;
@@ -1755,12 +1761,13 @@ function renderAssetCollection() {
                     <div class="field-row">
                         <div class="field-label">${field.label}:</div>
                         <div>
-                            <div class="file-upload-small" onclick="document.getElementById('${fieldId}').click()">
+                            <div class="file-upload-small feature-upload-box" onclick="document.getElementById('${fieldId}').click()">
                                 <i class="fas fa-cloud-upload-alt"></i>
-                                <span>Click to upload</span>
-                                <small>${field.help || 'PNG, JPG, PDF'}</small>
+                                <span class="upload-text">Click to upload</span>
+                                <small class="upload-hint">${field.help || 'PNG, JPG, PDF'}</small>
+                                <div class="upload-success-badge" style="display: none;">✓</div>
                             </div>
-                            <input type="file" id="${fieldId}" accept="${field.accept || '.png,.jpg,.jpeg'}" ${field.multiple ? 'multiple' : ''} style="display: none;">
+                            <input type="file" id="${fieldId}" accept="${field.accept || '.png,.jpg,.jpeg'}" ${field.multiple ? 'multiple' : ''} style="display: none;" onchange="handleFeatureFileSelect(this)">
                         </div>
                     </div>
                 `;
@@ -1992,7 +1999,7 @@ function renderPageCards() {
 }
 
 // =========================================================================
-//  FILE UPLOAD HANDLERS (NEW - makes uploads work)
+//  FILE UPLOAD HANDLERS
 // =========================================================================
 function setupFileUploadHandlers() {
     document.querySelectorAll('.file-upload-box').forEach(box => {
@@ -2055,10 +2062,61 @@ function handleFileSelected(e) {
     }
 }
 
+// =========================================================================
+//  FEATURE FILE UPLOAD HANDLER
+// =========================================================================
+function handleFeatureFileSelect(input) {
+    const uploadBox = input.closest('.field-row').querySelector('.feature-upload-box');
+    if (!uploadBox) return;
+    
+    const icon = uploadBox.querySelector('i');
+    const text = uploadBox.querySelector('.upload-text');
+    const hint = uploadBox.querySelector('.upload-hint');
+    const successBadge = uploadBox.querySelector('.upload-success-badge');
+    
+    if (input.files && input.files.length > 0) {
+        const file = input.files[0];
+        const fileName = file.name.length > 20 ? file.name.substring(0, 17) + '...' : file.name;
+        
+        icon.className = 'fas fa-check-circle';
+        icon.style.color = '#4CAF50';
+        text.textContent = fileName;
+        hint.textContent = 'Click to change';
+        uploadBox.classList.add('has-file');
+        if (successBadge) successBadge.style.display = 'block';
+    } else {
+        icon.className = 'fas fa-cloud-upload-alt';
+        icon.style.color = '';
+        text.textContent = 'Click to upload';
+        hint.textContent = 'PNG, JPG, PDF';
+        uploadBox.classList.remove('has-file');
+        if (successBadge) successBadge.style.display = 'none';
+    }
+}
+
 function handleLogoSelected(e) {
     const input = e.target;
     const trigger = document.getElementById('logoUploadTrigger');
     if (!trigger) return;
+    
+    // Uncheck the AI toggle if a file is uploaded
+    const noLogoCheckbox = document.getElementById('noLogoCheckbox');
+    if (noLogoCheckbox && noLogoCheckbox.checked) {
+        noLogoCheckbox.checked = false;
+        // Reset the toggle appearance
+        const toggle = document.getElementById('noLogoToggle');
+        const icon = document.getElementById('noLogoIcon');
+        const text = document.getElementById('noLogoToggleText');
+        if (toggle) {
+            toggle.style.background = 'rgba(255,107,0,0.04)';
+            toggle.style.borderColor = '#F0F0F0';
+        }
+        if (icon) icon.style.color = '#666';
+        if (text) {
+            text.style.fontWeight = '600';
+            text.style.color = '#121212';
+        }
+    }
     
     if (input.files && input.files.length > 0) {
         const file = input.files[0];
@@ -2538,6 +2596,53 @@ window.requestFeatureHelp = function(featureName) {
 };
 
 // =========================================================================
+//  TOGGLE NO LOGO BUTTON - WITH VISUAL FEEDBACK
+// =========================================================================
+function toggleNoLogo() {
+    const checkbox = document.getElementById('noLogoCheckbox');
+    const toggle = document.getElementById('noLogoToggle');
+    const icon = document.getElementById('noLogoIcon');
+    const text = document.getElementById('noLogoToggleText');
+    
+    // Toggle checkbox state
+    checkbox.checked = !checkbox.checked;
+    
+    // Update visual feedback
+    if (checkbox.checked) {
+        toggle.style.background = 'rgba(255, 107, 0, 0.1)';
+        toggle.style.borderColor = '#FF6B00';
+        icon.style.color = '#FF6B00';
+        icon.className = 'fas fa-magic';
+        text.style.fontWeight = '700';
+        text.style.color = '#FF6B00';
+        
+        // Clear any uploaded logo file if this is checked
+        const logoInput = document.getElementById('logoFile');
+        if (logoInput) {
+            logoInput.value = '';
+            // Reset logo upload trigger display
+            const trigger = document.getElementById('logoUploadTrigger');
+            if (trigger) {
+                trigger.innerHTML = `
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Click to upload your logo</p>
+                    <small>PNG, JPG, SVG • Max 5MB</small>
+                `;
+            }
+        }
+    } else {
+        toggle.style.background = 'rgba(255,107,0,0.04)';
+        toggle.style.borderColor = '#F0F0F0';
+        icon.style.color = '#666';
+        icon.className = 'fas fa-magic';
+        text.style.fontWeight = '600';
+        text.style.color = '#121212';
+    }
+    
+    console.log('🔘 No logo toggle: ' + (checkbox.checked ? 'ON (AI will create)' : 'OFF'));
+}
+
+// =========================================================================
 //  INITIALIZE
 // =========================================================================
 window.onload = function() {
@@ -2584,6 +2689,8 @@ window.onload = function() {
     console.log('✅ VIBZ Order Form initialized with file upload support');
     console.log('🔗 Web App URL:', 'https://script.google.com/macros/s/AKfycbytYDK0CNurTph8DvZA7161zSu_w_SM3vCgOqOftG9sQFbALPQ9mVY9-s2BnigZObna/exec');
 };
+
     </script>
+
 </body>
 </html>
