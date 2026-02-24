@@ -1115,7 +1115,8 @@
     </div>
 
 
-<script>
+
+    <script>
 // =========================================================================
 //  CONFIGURATION - COMPLETELY FILLED IN (NO MORE {...} PLACEHOLDERS)
 // =========================================================================
@@ -1844,7 +1845,7 @@ function renderDynamicFeatures() {
 }
 
 // =========================================================================
-//  RENDER ASSET COLLECTION - FEATURE DETAILS PAGE
+//  RENDER ASSET COLLECTION - FEATURE DETAILS PAGE (FIXED HELP BUTTONS)
 // =========================================================================
 function renderAssetCollection() {
     const container = document.getElementById('assetCollectionContainer');
@@ -1930,7 +1931,18 @@ function renderAssetCollection() {
         });
         
         const helpButtonId = `help_btn_${service.name.replace(/\s+/g, '_')}`;
-        const isHelpRequested = helpMap[service.name];
+        const isHelpRequested = helpMap[service.name] || false;
+        
+        // Determine button appearance based on whether help was requested
+        let buttonClass = 'vibz-btn small outline-help';
+        let buttonText = 'I need help with this';
+        let buttonDisabled = false;
+        
+        if (isHelpRequested) {
+            buttonClass = 'vibz-btn small outline-help requested';
+            buttonText = '✓ Help Requested';
+            buttonDisabled = true;
+        }
         
         html += `
             <div class="feature-asset-section" id="asset-${service.name.replace(/\s+/g, '-')}">
@@ -1945,8 +1957,8 @@ function renderAssetCollection() {
                 <div class="feature-asset-fields">
                     ${fieldsHtml || '<p class="text-muted">No additional information needed for this feature.</p>'}
                     <div style="display: flex; justify-content: flex-end; margin-top: 16px;">
-                        <button type="button" class="vibz-btn small outline-help" id="${helpButtonId}" onclick="requestFeatureHelp('${service.name}')" ${isHelpRequested ? 'disabled' : ''}>
-                            <i class="fas fa-question-circle"></i> ${isHelpRequested ? 'Help Requested' : 'I need help with this'}
+                        <button type="button" class="${buttonClass}" id="${helpButtonId}" onclick="requestFeatureHelp('${service.name}')" ${buttonDisabled ? 'disabled' : ''}>
+                            <i class="fas fa-question-circle"></i> ${buttonText}
                         </button>
                     </div>
                 </div>
@@ -2344,7 +2356,7 @@ async function collectAllUploads() {
 }
 
 // =========================================================================
-//  BUSINESS INFO - UPDATED WITH WEBSITE THEME COLOR
+//  BUSINESS INFO - WITH THEME COLOR
 // =========================================================================
 function saveBusinessInfo() {
     orderData.business = {
@@ -2354,8 +2366,6 @@ function saveBusinessInfo() {
         phone: document.getElementById('contactPhone')?.value?.trim() || '',
         noLogo: document.getElementById('noLogoCheckbox')?.checked || false,
         hasLogo: document.getElementById('logoFile')?.files.length > 0 || false,
-        
-        // NEW: Website theme color
         themeColor: document.getElementById('themeColor')?.value?.trim() || ''
     };
 }
@@ -2692,7 +2702,7 @@ window.toggleSkipSeo = function(pageId) {
 };
 
 // =========================================================================
-//  REQUEST FEATURE HELP
+//  REQUEST FEATURE HELP - FIXED TO NOT AUTO-ACTIVATE
 // =========================================================================
 window.requestFeatureHelp = function(featureName) {
     const existing = orderData.helpRequests.find(h => h.feature === featureName);
@@ -2701,26 +2711,44 @@ window.requestFeatureHelp = function(featureName) {
         return;
     }
     
+    // Add to help requests
     orderData.helpRequests.push({
         feature: featureName,
         timestamp: new Date().toISOString()
     });
     
+    // Save to storage
     sessionStorage.setItem('helpRequests', JSON.stringify(orderData.helpRequests));
     localStorage.setItem('helpRequests', JSON.stringify(orderData.helpRequests));
     
+    // Update UI
     alert(`✅ Help requested for "${featureName}"`);
     
-    const btnId = `help_btn_${featureName.replace(/\s+/g, '_')}`;
-    const btn = document.getElementById(btnId);
+    // Update the button
+    const btn = document.getElementById(`help_btn_${featureName.replace(/\s+/g, '_')}`);
     if (btn) {
         btn.disabled = true;
+        btn.classList.add('requested');
         btn.innerHTML = '<i class="fas fa-check"></i> Help Requested';
     }
+    
+    // Update the badge
+    const section = document.getElementById(`asset-${featureName.replace(/\s+/g, '-')}`);
+    if (section) {
+        const titleDiv = section.querySelector('.feature-asset-title');
+        if (titleDiv && !titleDiv.querySelector('.help-request-badge')) {
+            const badge = document.createElement('span');
+            badge.className = 'help-request-badge';
+            badge.innerHTML = '<i class="fas fa-question-circle"></i> Help requested';
+            titleDiv.appendChild(badge);
+        }
+    }
+    
+    console.log('📝 Help requested for:', featureName);
 };
 
 // =========================================================================
-//  TOGGLE NO LOGO BUTTON - WITH VISUAL FEEDBACK (FIXED)
+//  TOGGLE NO LOGO BUTTON - WITH VISUAL FEEDBACK
 // =========================================================================
 function toggleNoLogo() {
     const checkbox = document.getElementById('noLogoCheckbox');
@@ -2767,7 +2795,7 @@ function toggleNoLogo() {
 }
 
 // =========================================================================
-//  THEME COLOR PREVIEW - NEW FUNCTION
+//  THEME COLOR PREVIEW
 // =========================================================================
 document.addEventListener('DOMContentLoaded', function() {
     const themeColorInput = document.getElementById('themeColor');
@@ -2844,5 +2872,6 @@ window.onload = function() {
 };
 
     </script>
+
 </body>
 </html>
