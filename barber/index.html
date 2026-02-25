@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -119,8 +119,9 @@
             -webkit-overflow-scrolling: touch;
         }
 
-        /* ===== PERFECT VERTICAL CENTERING - FIXED ===== */
-        .hero-centered { 
+        /* ===== PERFECT VERTICAL CENTERING - CONSISTENT FOR ALL STEPS ===== */
+        .hero-centered, 
+        .hero-balanced { 
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -130,27 +131,31 @@
             text-align: center; 
             transition: 0.4s ease; 
             margin-top: 0;
-        }
-
-        .hero-balanced { 
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 65vh;
-            width: 100%;
-            text-align: center; 
-            transition: 0.4s ease; 
             padding-bottom: 20px;
-            margin-top: 0;
         }
 
-        @media (max-height: 800px) {
-            .hero-centered { min-height: 70vh; }
-            .hero-balanced { min-height: 60vh; }
+        @media (max-height: 900px) {
+            .hero-centered,
+            .hero-balanced { 
+                min-height: 70vh; 
+            }
         }
 
-        /* ===== HERO SECTION STYLES - LARGER FONT ===== */
+        @media (max-height: 700px) {
+            .hero-centered,
+            .hero-balanced { 
+                min-height: 65vh; 
+            }
+        }
+
+        @media (max-height: 600px) {
+            .hero-centered,
+            .hero-balanced { 
+                min-height: 60vh; 
+            }
+        }
+
+        /* ===== HERO SECTION STYLES ===== */
         .step-header {
             width: 100%;
             max-width: 800px;
@@ -441,7 +446,7 @@
         .concept-info h3 { font-weight: 900; color: var(--primary); text-transform: uppercase; margin-bottom: 4px; }
         .concept-info p { font-size: 0.85rem; color: var(--gray); font-weight: 600; line-height: 1.4; }
 
-        /* ===== PRICING CARDS - BOTH STANDARD AND PREMIUM SHOWING ===== */
+        /* ===== PRICING CARDS ===== */
         .pricing-cards-container {
             display: flex;
             flex-direction: column;
@@ -474,12 +479,6 @@
             
             .pricing-card .feature-list {
                 flex: 1;
-            }
-            
-            #step-8 {
-                width: 100%;
-                max-width: 1100px;
-                margin: 0 auto;
             }
         }
 
@@ -795,7 +794,7 @@
             margin-bottom: 12px;
         }
 
-        /* Fix for Continue button being hidden */
+        /* Fix for Continue button */
         #step-8 .vibz-btn.back-btn {
             margin-top: 30px;
             margin-bottom: 40px;
@@ -806,53 +805,14 @@
             .step-header h1 {
                 font-size: 2.8rem;
             }
-            .hero-centered { min-height: 70vh; }
-            .hero-balanced { min-height: 60vh; }
         }
 
         @media (max-width: 480px) {
             .step-header h1 {
                 font-size: 2.2rem;
             }
-            .hero-centered { min-height: 65vh; }
-            .hero-balanced { min-height: 55vh; }
         }
-
-        
-
-        /* ===== PERFECT VERTICAL CENTERING - CONSISTENT FOR ALL STEPS ===== */
-.hero-centered, 
-.hero-balanced { 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 75vh;  /* SAME VALUE FOR BOTH CLASSES */
-    width: 100%;
-    text-align: center; 
-    transition: 0.4s ease; 
-    margin-top: 0;
-    padding-bottom: 20px;
-}
-
-@media (max-height: 800px) {
-    .hero-centered,
-    .hero-balanced { 
-        min-height: 70vh; 
-    }
-}
-
-@media (max-height: 600px) {
-    .hero-centered,
-    .hero-balanced { 
-        min-height: 60vh; 
-    }
-}
-
     </style>
-
-
-    
 </head>
 <body>
 
@@ -1488,11 +1448,13 @@
         
         let html = '';
 
+        // FORCE SHOW BOTH CARDS regardless of planType for testing
+        // In production, this will work based on selections.planType
+        
         if (selections.planType === PLAN_CONFIG.outright.name) {
-            const stdSels = selections.services.filter(s => s.tier === 'standard');
-            const premSels = selections.services.filter(s => s.tier === 'premium');
-            
+            // OUTRIGHT CARDS
             html += `
+                <!-- STANDARD OUTRIGHT CARD -->
                 <div class="pricing-card">
                     <div class="pricing-header">
                         <div class="plan-type standard-type">${TIER_CONFIG.standard.name}</div>
@@ -1515,6 +1477,7 @@
                     </button>
                 </div>
                 
+                <!-- PREMIUM OUTRIGHT CARD -->
                 <div class="pricing-card recommended">
                     <div class="plan-recommended-badge">👍 RECOMMENDED</div>
                     <div class="pricing-header">
@@ -1540,23 +1503,13 @@
                 </div>
             `;
             
-            if (premSels.length > 0) {
-                html += `
-                    <div style="background:rgba(33,150,243,0.08); border-radius:16px; padding:16px; margin-top:16px; border-left:4px solid var(--premium);">
-                        <i class="fas fa-crown" style="color:var(--premium); margin-right:8px;"></i>
-                        <strong style="color:var(--premium);">Premium includes ALL your selected Standard features</strong>
-                        <p style="font-size:0.8rem; color:var(--gray); margin-top:6px;">
-                            You've selected ${stdSels.length} Standard ${stdSels.length === 1 ? 'feature' : 'features'}. These are automatically included when you choose Premium.
-                        </p>
-                    </div>
-                `;
-            }
-            
         } else {
+            // MONTHLY LICENSE CARDS (default)
             const stdSels = selections.services.filter(s => s.tier === 'standard');
             const premSels = selections.services.filter(s => s.tier === 'premium');
             
             html += `
+                <!-- STANDARD MONTHLY CARD -->
                 <div class="pricing-card">
                     <div class="pricing-header">
                         <div class="plan-type standard-type">${TIER_CONFIG.standard.name} — MONTHLY LICENSE</div>
@@ -1598,9 +1551,8 @@
                         Early cancellation does not waive the remaining contract balance.
                     </div>
                 </div>
-            `;
-            
-            html += `
+                
+                <!-- PREMIUM MONTHLY CARD -->
                 <div class="pricing-card recommended">
                     <div class="plan-recommended-badge">👍 RECOMMENDED</div>
                     <div class="pricing-header">
@@ -1647,9 +1599,10 @@
                 </div>
             `;
             
+            // Add premium features message if any premium features selected
             if (premSels.length > 0) {
                 html += `
-                    <div style="background:rgba(33,150,243,0.08); border-radius:16px; padding:16px; margin-top:16px; border-left:4px solid var(--premium);">
+                    <div style="background:rgba(33,150,243,0.08); border-radius:16px; padding:16px; margin-top:16px; border-left:4px solid var(--premium); width:100%; max-width:500px; margin-left:auto; margin-right:auto;">
                         <i class="fas fa-crown" style="color:var(--premium); margin-right:8px;"></i>
                         <strong style="color:var(--premium);">Premium includes ALL your selected Standard features</strong>
                         <p style="font-size:0.8rem; color:var(--gray); margin-top:6px;">
@@ -1780,5 +1733,3 @@
 
 </body>
 </html>
-
-
