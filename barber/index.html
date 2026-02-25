@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="="en">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -119,9 +119,8 @@
             -webkit-overflow-scrolling: touch;
         }
 
-        /* ===== PERFECT VERTICAL CENTERING - CONSISTENT FOR ALL STEPS ===== */
-        .hero-centered, 
-        .hero-balanced { 
+        /* ===== FIXED VERTICAL CENTERING - STANDARD CARD NOW VISIBLE ===== */
+        .hero-centered { 
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -134,23 +133,33 @@
             padding-bottom: 20px;
         }
 
+        .hero-balanced { 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start; /* Changed from center to flex-start */
+            width: 100%;
+            text-align: center; 
+            transition: 0.4s ease; 
+            padding: 30px 0 120px; /* Added padding to clear dock */
+            margin-top: 0;
+            min-height: auto; /* Removed fixed height to allow scrolling */
+        }
+
         @media (max-height: 900px) {
-            .hero-centered,
-            .hero-balanced { 
+            .hero-centered { 
                 min-height: 70vh; 
             }
         }
 
         @media (max-height: 700px) {
-            .hero-centered,
-            .hero-balanced { 
+            .hero-centered { 
                 min-height: 65vh; 
             }
         }
 
         @media (max-height: 600px) {
-            .hero-centered,
-            .hero-balanced { 
+            .hero-centered { 
                 min-height: 60vh; 
             }
         }
@@ -451,7 +460,7 @@
             display: flex;
             flex-direction: column;
             gap: 24px;
-            margin-bottom: 80px;
+            margin-bottom: 40px;
             max-width: 500px;
             margin-left: auto;
             margin-right: auto;
@@ -465,7 +474,7 @@
                 max-width: 1100px;
                 gap: 40px;
                 align-items: stretch;
-                margin-bottom: 100px;
+                margin-bottom: 60px;
             }
             
             .pricing-card {
@@ -794,10 +803,17 @@
             margin-bottom: 12px;
         }
 
-        /* Fix for Continue button */
+        /* Fix for step-8 to ensure scrolling works */
+        #step-8 {
+            overflow-y: visible;
+            padding-bottom: 20px;
+        }
+
+        /* Ensure Edit Features button is visible */
         #step-8 .vibz-btn.back-btn {
-            margin-top: 30px;
-            margin-bottom: 40px;
+            margin: 20px auto 30px;
+            position: relative;
+            z-index: 10;
         }
 
         /* Responsive adjustments */
@@ -908,7 +924,7 @@
                 <div class="form-screen" id="step-8">
                     <div class="pricing-cards-container" id="pricing-cards-display"></div>
                     <div id="selected-features-summary" style="margin-top: 24px; width:100%;"></div>
-                    <button class="vibz-btn back-btn" onclick="goToStep(7)" style="margin: 30px auto 60px;">Edit Features</button>
+                    <button class="vibz-btn back-btn" onclick="goToStep(7)" style="margin: 20px auto 30px;">Edit Features</button>
                     <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
                 </div>
 
@@ -1448,13 +1464,11 @@
         
         let html = '';
 
-        // FORCE SHOW BOTH CARDS regardless of planType for testing
-        // In production, this will work based on selections.planType
-        
         if (selections.planType === PLAN_CONFIG.outright.name) {
-            // OUTRIGHT CARDS
+            const stdSels = selections.services.filter(s => s.tier === 'standard');
+            const premSels = selections.services.filter(s => s.tier === 'premium');
+            
             html += `
-                <!-- STANDARD OUTRIGHT CARD -->
                 <div class="pricing-card">
                     <div class="pricing-header">
                         <div class="plan-type standard-type">${TIER_CONFIG.standard.name}</div>
@@ -1477,7 +1491,6 @@
                     </button>
                 </div>
                 
-                <!-- PREMIUM OUTRIGHT CARD -->
                 <div class="pricing-card recommended">
                     <div class="plan-recommended-badge">👍 RECOMMENDED</div>
                     <div class="pricing-header">
@@ -1503,13 +1516,23 @@
                 </div>
             `;
             
+            if (premSels.length > 0) {
+                html += `
+                    <div style="background:rgba(33,150,243,0.08); border-radius:16px; padding:16px; margin-top:16px; border-left:4px solid var(--premium);">
+                        <i class="fas fa-crown" style="color:var(--premium); margin-right:8px;"></i>
+                        <strong style="color:var(--premium);">Premium includes ALL your selected Standard features</strong>
+                        <p style="font-size:0.8rem; color:var(--gray); margin-top:6px;">
+                            You've selected ${stdSels.length} Standard ${stdSels.length === 1 ? 'feature' : 'features'}. These are automatically included when you choose Premium.
+                        </p>
+                    </div>
+                `;
+            }
+            
         } else {
-            // MONTHLY LICENSE CARDS (default)
             const stdSels = selections.services.filter(s => s.tier === 'standard');
             const premSels = selections.services.filter(s => s.tier === 'premium');
             
             html += `
-                <!-- STANDARD MONTHLY CARD -->
                 <div class="pricing-card">
                     <div class="pricing-header">
                         <div class="plan-type standard-type">${TIER_CONFIG.standard.name} — MONTHLY LICENSE</div>
@@ -1551,8 +1574,9 @@
                         Early cancellation does not waive the remaining contract balance.
                     </div>
                 </div>
-                
-                <!-- PREMIUM MONTHLY CARD -->
+            `;
+            
+            html += `
                 <div class="pricing-card recommended">
                     <div class="plan-recommended-badge">👍 RECOMMENDED</div>
                     <div class="pricing-header">
@@ -1599,10 +1623,9 @@
                 </div>
             `;
             
-            // Add premium features message if any premium features selected
             if (premSels.length > 0) {
                 html += `
-                    <div style="background:rgba(33,150,243,0.08); border-radius:16px; padding:16px; margin-top:16px; border-left:4px solid var(--premium); width:100%; max-width:500px; margin-left:auto; margin-right:auto;">
+                    <div style="background:rgba(33,150,243,0.08); border-radius:16px; padding:16px; margin-top:16px; border-left:4px solid var(--premium);">
                         <i class="fas fa-crown" style="color:var(--premium); margin-right:8px;"></i>
                         <strong style="color:var(--premium);">Premium includes ALL your selected Standard features</strong>
                         <p style="font-size:0.8rem; color:var(--gray); margin-top:6px;">
