@@ -119,13 +119,13 @@
             -webkit-overflow-scrolling: touch;
         }
 
-        /* ===== PERFECT VERTICAL CENTERING - RESTORED ===== */
+        /* ===== PERFECT VERTICAL CENTERING - FIXED ===== */
         .hero-centered { 
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 80vh;
+            min-height: 75vh;
             width: 100%;
             text-align: center; 
             transition: 0.4s ease; 
@@ -137,7 +137,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 70vh;
+            min-height: 65vh;
             width: 100%;
             text-align: center; 
             transition: 0.4s ease; 
@@ -146,18 +146,18 @@
         }
 
         @media (max-height: 800px) {
-            .hero-centered { min-height: 75vh; }
-            .hero-balanced { min-height: 65vh; }
+            .hero-centered { min-height: 70vh; }
+            .hero-balanced { min-height: 60vh; }
         }
 
-        /* ===== HERO SECTION STYLES - RESTORED LARGER FONT ===== */
+        /* ===== HERO SECTION STYLES - LARGER FONT ===== */
         .step-header {
             width: 100%;
             max-width: 800px;
             margin-left: auto;
             margin-right: auto;
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
 
         .step-header h1 {
@@ -441,19 +441,19 @@
         .concept-info h3 { font-weight: 900; color: var(--primary); text-transform: uppercase; margin-bottom: 4px; }
         .concept-info p { font-size: 0.85rem; color: var(--gray); font-weight: 600; line-height: 1.4; }
 
-        /* ===== PRICING CARDS - FIXED SIDE BY SIDE ON DESKTOP ===== */
+        /* ===== PRICING CARDS - BOTH STANDARD AND PREMIUM SHOWING ===== */
         .pricing-cards-container {
             display: flex;
             flex-direction: column;
             gap: 24px;
-            margin-bottom: 80px; /* Increased to clear dock */
+            margin-bottom: 80px;
             max-width: 500px;
             margin-left: auto;
             margin-right: auto;
             width: 100%;
         }
 
-        /* Desktop side-by-side layout - FIXED */
+        /* Desktop side-by-side layout */
         @media (min-width: 1000px) {
             .pricing-cards-container {
                 flex-direction: row;
@@ -667,7 +667,7 @@
             background: #fff;
             border-radius: 24px;
             padding: 24px;
-            margin: 24px auto 100px; /* Added bottom margin to clear dock */
+            margin: 24px auto 100px;
             border: 2px solid var(--border);
             text-align: left;
             max-width: 500px;
@@ -806,12 +806,16 @@
             .step-header h1 {
                 font-size: 2.8rem;
             }
+            .hero-centered { min-height: 70vh; }
+            .hero-balanced { min-height: 60vh; }
         }
 
         @media (max-width: 480px) {
             .step-header h1 {
                 font-size: 2.2rem;
             }
+            .hero-centered { min-height: 65vh; }
+            .hero-balanced { min-height: 55vh; }
         }
     </style>
 </head>
@@ -1454,8 +1458,7 @@
             const premSels = selections.services.filter(s => s.tier === 'premium');
             
             html += `
-                <div class="pricing-card recommended">
-                    <div class="plan-recommended-badge">👍 OWN IT</div>
+                <div class="pricing-card">
                     <div class="pricing-header">
                         <div class="plan-type standard-type">${TIER_CONFIG.standard.name}</div>
                         <div class="price-value">£${PRICING_CONFIG.outright.standard.toLocaleString()}</div>
@@ -1477,7 +1480,8 @@
                     </button>
                 </div>
                 
-                <div class="pricing-card">
+                <div class="pricing-card recommended">
+                    <div class="plan-recommended-badge">👍 RECOMMENDED</div>
                     <div class="pricing-header">
                         <div class="plan-type premium-type">${TIER_CONFIG.premium.name}</div>
                         <div class="price-value">£${PRICING_CONFIG.outright.premium.toLocaleString()}</div>
@@ -1498,6 +1502,7 @@
                     <button class="payment-button premium" onclick="saveOrderToStorage('Buy Outright', 'premium'); window.open('${STRIPE_LINKS.outright.premium}', '_blank')">
                         <i class="fas fa-crown"></i> Premium (One Time) - £${PRICING_CONFIG.outright.premium}
                     </button>
+                </div>
             `;
             
             if (premSels.length > 0) {
@@ -1512,15 +1517,12 @@
                 `;
             }
             
-            html += `</div>`;
-            
         } else {
             const stdSels = selections.services.filter(s => s.tier === 'standard');
             const premSels = selections.services.filter(s => s.tier === 'premium');
             
             html += `
-                <div class="pricing-card recommended">
-                    <div class="plan-recommended-badge">👍 STANDARD</div>
+                <div class="pricing-card">
                     <div class="pricing-header">
                         <div class="plan-type standard-type">${TIER_CONFIG.standard.name} — MONTHLY LICENSE</div>
                         <div class="price-row">
@@ -1564,7 +1566,8 @@
             `;
             
             html += `
-                <div class="pricing-card">
+                <div class="pricing-card recommended">
+                    <div class="plan-recommended-badge">👍 RECOMMENDED</div>
                     <div class="pricing-header">
                         <div class="plan-type premium-type">${TIER_CONFIG.premium.name} — MONTHLY LICENSE</div>
                         <div class="price-row">
@@ -1606,6 +1609,7 @@
                         <strong>12-month minimum term.</strong> Monthly management (£${PRICING_CONFIG.monthly.premium}/mo) starts after website delivery. 
                         Early cancellation does not waive the remaining contract balance.
                     </div>
+                </div>
             `;
             
             if (premSels.length > 0) {
@@ -1619,8 +1623,6 @@
                     </div>
                 `;
             }
-            
-            html += `</div>`;
         }
 
         container.innerHTML = html;
