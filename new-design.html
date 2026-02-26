@@ -7,6 +7,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
+    <!-- PWA Manifest for App-Like Experience -->
+    <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22VIBZ%22%2C%22short_name%22%3A%22VIBZ%22%2C%22start_url%22%3A%22%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23FFF2EB%22%2C%22theme_color%22%3A%22%23FF6B00%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2250%22%20fill%3D%22%23FF6B00%22%2F%3E%3Ctext%20x%3D%2250%22%20y%3D%2270%22%20font-size%3D%2260%22%20text-anchor%3D%22middle%22%20fill%3D%22%23FFFFFF%22%20font-family%3D%22Arial%22%20font-weight%3D%22bold%22%3EV%3C%2Ftext%3E%3C%2Fsvg%3E%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D">
+    
+    <!-- iOS Specific Meta Tags for Full-Screen -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="VIBZ">
+    <meta name="format-detection" content="telephone=no">
+    
     <style>
         :root {
             --primary: #FF6B00;
@@ -33,6 +42,20 @@
             /* Changed to allow scrolling */
             overflow-x: hidden;
             overflow-y: auto;
+        }
+
+        /* Fullscreen mode styles */
+        :-webkit-full-screen #app-container {
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        :-webkit-full-screen .app-dock {
+            bottom: calc(25px + env(safe-area-inset-bottom));
+        }
+        
+        :-webkit-full-screen header {
+            padding-top: calc(env(safe-area-inset-top) + 20px);
         }
 
         /* ==== 1. BOLD LOGO BOOT SEQUENCE ==== */
@@ -126,13 +149,16 @@
 
         .cat-item {
             font-size: 1.6rem; font-weight: 800; color: var(--text);
-            text-decoration: none; width: 85%; text-align: center;
-            padding: 18px; background: white; border-radius: 20px;
-            margin-bottom: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-            border: 1px solid rgba(255, 107, 0, 0.05);
+            text-decoration: none; width: auto; min-width: 280px; max-width: 450px; text-align: center;
+            padding: 16px 32px; background: white; border-radius: 60px;
+            margin-bottom: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            border: 1px solid rgba(255, 107, 0, 0.1);
             cursor: pointer;
             transition: background 0.1s ease, border 0.1s ease, box-shadow 0.1s ease;
             -webkit-tap-highlight-color: transparent;
+            display: inline-block;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         /* ✦✦✦ HIGHLIGHT ON CLICK — ONLY CHANGE ✦✦✦ */
@@ -150,6 +176,17 @@
             cursor: pointer;
         }
 
+        /* Fullscreen toggle button */
+        #fullscreen-btn {
+            width: 40px; height: 40px; background: rgba(255, 107, 0, 0.1);
+            color: var(--primary); border-radius: 12px; display: flex;
+            align-items: center; justify-content: center; font-size: 1.2rem;
+            cursor: pointer; margin-right: 10px; border: none;
+            transition: background 0.2s ease;
+        }
+        
+        #fullscreen-btn:hover { background: rgba(255, 107, 0, 0.2); }
+
         /* ==== APP SHELL ==== */
         #app-container {
             min-height: 100vh; display: flex; flex-direction: column;
@@ -161,6 +198,10 @@
             display: flex; justify-content: space-between; align-items: center;
             background: var(--primary-light);
             position: sticky; top: 0; z-index: 800;
+        }
+
+        .header-left {
+            display: flex; align-items: center; gap: 10px;
         }
 
         .header-spacer {
@@ -282,23 +323,39 @@
             cursor: pointer;
         }
 
-
-        .cat-item {
-    font-size: 1.6rem; font-weight: 800; color: var(--text);
-    text-decoration: none; width: auto; min-width: 280px; max-width: 450px; text-align: center;
-    padding: 16px 32px; background: white; border-radius: 60px;
-    margin-bottom: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.04);
-    border: 1px solid rgba(255, 107, 0, 0.1);
-    cursor: pointer;
-    transition: background 0.1s ease, border 0.1s ease, box-shadow 0.1s ease;
-    -webkit-tap-highlight-color: transparent;
-    display: inline-block;
-    margin-left: auto;
-    margin-right: auto;
-}
+        /* Install PWA prompt */
+        #install-prompt {
+            position: fixed; bottom: 120px; left: 20px; right: 20px;
+            background: white; border-radius: 30px; padding: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2); z-index: 2000;
+            display: none; align-items: center; gap: 15px;
+            border: 2px solid var(--primary);
+            animation: slideUp 0.3s ease;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        #install-prompt .prompt-content {
+            flex: 1;
+        }
+        
+        #install-prompt h4 {
+            color: var(--primary); margin-bottom: 5px;
+        }
+        
+        #install-prompt button {
+            background: var(--primary); color: white; border: none;
+            padding: 12px 20px; border-radius: 25px; font-weight: bold;
+            cursor: pointer; white-space: nowrap;
+        }
+        
+        #install-prompt .close-prompt {
+            color: #999; cursor: pointer; font-size: 1.2rem;
+        }
     </style>
-
-    
 </head>
 <body>
 
@@ -334,7 +391,12 @@
 
     <div id="app-container">
         <header>
-            <div class="app-logo">VIBZ<span>.</span></div>
+            <div class="header-left">
+                <div id="fullscreen-btn" onclick="toggleFullScreen()" title="Enter Fullscreen">
+                    <i class="fa-solid fa-expand"></i>
+                </div>
+                <div class="app-logo">VIBZ<span>.</span></div>
+            </div>
             <i class="fa-solid fa-circle-user" style="font-size: 1.8rem; color: #ddd;"></i>
         </header>
         <div class="header-spacer"></div>
@@ -384,6 +446,16 @@
             <div class="dock-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i><span>Menu</span></div>
         </nav>
     </div>
+    
+    <!-- Install PWA Prompt -->
+    <div id="install-prompt">
+        <div class="prompt-content">
+            <h4>Install VIBZ App</h4>
+            <p style="font-size: 0.9rem; color: #666;">Get full-screen experience like a native app</p>
+        </div>
+        <button id="install-btn">Install</button>
+        <i class="fa-solid fa-xmark close-prompt" onclick="hideInstallPrompt()"></i>
+    </div>
 
     <script>
         const nicheData = {
@@ -399,8 +471,95 @@
                 document.getElementById('app-loader').style.transform = 'translateY(-100%)';
                 document.getElementById('app-container').style.opacity = '1';
                 startTypewriter();
+                checkInstallPrompt();
             }, 3000);
         });
+
+        // Fullscreen API
+        function toggleFullScreen() {
+            const elem = document.documentElement;
+            const fullscreenBtn = document.getElementById('fullscreen-btn').querySelector('i');
+            
+            if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
+                // Enter fullscreen
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                } else if (elem.webkitRequestFullscreen) { /* Safari */
+                    elem.webkitRequestFullscreen();
+                } else if (elem.msRequestFullscreen) { /* IE/Edge */
+                    elem.msRequestFullscreen();
+                }
+                fullscreenBtn.className = 'fa-solid fa-compress';
+            } else {
+                // Exit fullscreen
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) { /* Safari */
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) { /* IE/Edge */
+                    document.msExitFullscreen();
+                }
+                fullscreenBtn.className = 'fa-solid fa-expand';
+            }
+        }
+
+        // Update fullscreen button icon when fullscreen changes
+        document.addEventListener('fullscreenchange', updateFullscreenIcon);
+        document.addEventListener('webkitfullscreenchange', updateFullscreenIcon);
+        document.addEventListener('msfullscreenchange', updateFullscreenIcon);
+        
+        function updateFullscreenIcon() {
+            const fullscreenBtn = document.getElementById('fullscreen-btn').querySelector('i');
+            if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
+                fullscreenBtn.className = 'fa-solid fa-compress';
+            } else {
+                fullscreenBtn.className = 'fa-solid fa-expand';
+            }
+        }
+
+        // PWA Installation
+        let deferredPrompt;
+        const installPrompt = document.getElementById('install-prompt');
+        const installBtn = document.getElementById('install-btn');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Prevent the mini-infobar from appearing on mobile
+            e.preventDefault();
+            // Stash the event so it can be triggered later
+            deferredPrompt = e;
+            // Show the install prompt
+            setTimeout(() => {
+                installPrompt.style.display = 'flex';
+            }, 5000);
+        });
+
+        installBtn.addEventListener('click', async () => {
+            if (!deferredPrompt) {
+                return;
+            }
+            // Show the install prompt
+            deferredPrompt.prompt();
+            // Wait for the user to respond to the prompt
+            const { outcome } = await deferredPrompt.userChoice;
+            console.log(`User response to the install prompt: ${outcome}`);
+            // We've used the prompt, and can't use it again, throw it away
+            deferredPrompt = null;
+            // Hide the install prompt
+            installPrompt.style.display = 'none';
+        });
+
+        function hideInstallPrompt() {
+            installPrompt.style.display = 'none';
+        }
+
+        function checkInstallPrompt() {
+            // Check if already installed as PWA
+            if (window.matchMedia('(display-mode: standalone)').matches || 
+                window.navigator.standalone === true) {
+                // Already in standalone mode, hide install prompt
+                installPrompt.style.display = 'none';
+            }
+        }
 
         function toggleMenu() { document.getElementById('app-menu-layer').classList.toggle('active'); }
         function toggleCategories() { document.getElementById('category-layer').classList.toggle('active'); }
@@ -481,6 +640,11 @@
                     window.location.href = "https://www.vibz.co.uk/funnel.html?niche=" + encodeURIComponent(val);
                 }
             }, 800);
+        }
+
+        // Check for standalone mode on iOS
+        if (window.navigator.standalone) {
+            document.body.classList.add('ios-standalone');
         }
     </script>
 </body>
