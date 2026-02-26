@@ -7,18 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
-    <!-- CRITICAL: iOS Full-Screen Meta Tags -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="VIBZ">
-    <meta name="format-detection" content="telephone=no">
-    
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22VIBZ%22%2C%22short_name%22%3A%22VIBZ%22%2C%22start_url%22%3A%22%2F%3Fsource%3Dhomescreen%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23FFF2EB%22%2C%22theme_color%22%3A%22%23FF6B00%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2250%22%20fill%3D%22%23FF6B00%22%2F%3E%3Ctext%20x%3D%2250%22%20y%3D%2270%22%20font-size%3D%2260%22%20text-anchor%3D%22middle%22%20fill%3D%22%23FFFFFF%22%20font-family%3D%22Arial%22%20font-weight%3D%22bold%22%3EV%3C%2Ftext%3E%3C%2Fsvg%3E%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D">
-    
-    <!-- iOS Splash Screens (Optional but recommended) -->
-    <link rel="apple-touch-startup-image" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='750' height='1334' viewBox='0 0 750 1334'%3E%3Crect width='750' height='1334' fill='%23FFF2EB'/%3E%3Ctext x='375' y='667' font-size='80' text-anchor='middle' fill='%23FF6B00' font-family='Arial' font-weight='bold' dy='.3em'%3EVIBZ%3C/text%3E%3C/svg%3E">
-    
     <style>
         :root {
             --primary: #FF6B00;
@@ -28,7 +16,6 @@
             --card-bg: rgba(255, 255, 255, 0.9);
             --safe-top: env(safe-area-inset-top);
             --safe-bottom: env(safe-area-inset-bottom);
-            --app-height: 100vh;
         }
 
         * {
@@ -37,48 +24,15 @@
             font-family: 'Inter', sans-serif;
         }
 
-        /* CRITICAL: iOS URL Bar Hiding Technique */
         body, html {
             height: 100%;
             background-color: var(--primary-light);
             color: var(--text);
             /* STOP SCROLL REFRESH: Prevents pull-to-refresh logic */
             overscroll-behavior-y: contain;
-            /* iOS URL bar hiding */
+            /* Changed to allow scrolling */
             overflow-x: hidden;
-            overflow-y: scroll;
-            -webkit-overflow-scrolling: touch;
-            position: relative;
-        }
-
-        /* iOS standalone mode adjustments */
-        @media all and (display-mode: standalone) {
-            body {
-                padding-top: env(safe-area-inset-top);
-                padding-bottom: env(safe-area-inset-bottom);
-            }
-            
-            header {
-                padding-top: calc(env(safe-area-inset-top) + 20px) !important;
-            }
-            
-            #fullscreen-btn {
-                display: none; /* Hide fullscreen button when in standalone mode */
-            }
-        }
-
-        /* Fullscreen mode styles */
-        :-webkit-full-screen #app-container {
-            height: 100vh;
             overflow-y: auto;
-        }
-        
-        :-webkit-full-screen .app-dock {
-            bottom: calc(25px + env(safe-area-inset-bottom));
-        }
-        
-        :-webkit-full-screen header {
-            padding-top: calc(env(safe-area-inset-top) + 20px);
         }
 
         /* ==== 1. BOLD LOGO BOOT SEQUENCE ==== */
@@ -199,34 +153,26 @@
             cursor: pointer;
         }
 
-        /* Fullscreen toggle button */
-        #fullscreen-btn {
-            width: 40px; height: 40px; background: rgba(255, 107, 0, 0.1);
-            color: var(--primary); border-radius: 12px; display: flex;
-            align-items: center; justify-content: center; font-size: 1.2rem;
-            cursor: pointer; margin-right: 10px; border: none;
-            transition: background 0.2s ease;
-        }
-        
-        #fullscreen-btn:hover { background: rgba(255, 107, 0, 0.2); }
-
         /* ==== APP SHELL ==== */
         #app-container {
             min-height: 100vh; display: flex; flex-direction: column;
             opacity: 0; transition: opacity 0.5s ease-in;
-            position: relative;
-            z-index: 1;
         }
 
+        /* ========== HEADER HIDE ON SCROLL (FULL SCREEN VIEW) ========== */
         header {
             padding: calc(var(--safe-top) + 20px) 25px 15px;
             display: flex; justify-content: space-between; align-items: center;
             background: var(--primary-light);
-            position: sticky; top: 0; z-index: 800;
+            position: sticky; 
+            top: 0; 
+            z-index: 800;
+            transition: transform 0.3s ease;
         }
 
-        .header-left {
-            display: flex; align-items: center; gap: 10px;
+        /* when scrolling down, header disappears (full screen content) */
+        header.hide-on-scroll {
+            transform: translateY(-100%);
         }
 
         .header-spacer {
@@ -239,7 +185,15 @@
         .app-logo span { color: #000000; }
 
         .content-scroll {
-            flex: 1; padding: 0 25px 160px; /* Increased bottom padding to clear dock */
+            flex: 1; 
+            padding: 0 25px 0px; /* bottom padding moved to dock spacer */
+            /* extra spacer at the end ensures content is not hidden behind dock */
+        }
+
+        /* bottom spacer to avoid gap: dock sits flush with bottom */
+        .dock-spacer {
+            height: 110px; /* enough to clear thinner dock */
+            width: 100%;
         }
 
         @media (min-width: 768px) {
@@ -248,7 +202,7 @@
                 flex-direction: column;
                 align-items: center;
                 padding-top: 10vh;
-                padding-bottom: 180px;
+                padding-bottom: 0;
             }
             .hero-area {
                 width: 100%;
@@ -328,79 +282,44 @@
         .app-tile h3 { font-size: 1rem; font-weight: 900; line-height: 1.2; text-align: center; }
         .full-tile { grid-column: span 2; flex-direction: row; justify-content: center; }
 
+        /* ========== THINNER DOCK, NO BOTTOM GAP ========== */
         .app-dock {
-            position: fixed; bottom: 25px; left: 20px; right: 20px;
-            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px);
-            height: 80px; border-radius: 40px; display: flex; justify-content: space-around;
-            align-items: center; box-shadow: 0 15px 35px rgba(0,0,0,0.1); z-index: 1000;
+            position: fixed; 
+            bottom: 0;               /* flush with bottom edge, no gap */
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.85); 
+            backdrop-filter: blur(20px);
+            height: 70px;             /* thinner than original 80px */
+            border-radius: 0;          /* flat bottom edge, but keep slight rounding? make it 0 to avoid gap */
+            display: flex; 
+            justify-content: space-around;
+            align-items: center; 
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.05); /* subtle shadow */
+            z-index: 1000;
+            padding-bottom: env(safe-area-inset-bottom); /* respect safe area but no extra gap */
         }
 
-        .dock-btn { display: flex; flex-direction: column; align-items: center; color: #A0A0A0; text-decoration: none; gap: 4px; }
+        .dock-btn { display: flex; flex-direction: column; align-items: center; color: #A0A0A0; text-decoration: none; gap: 2px; }
         .dock-btn.active { color: var(--primary); }
-        .dock-btn i { font-size: 1.5rem; }
-        .dock-btn span { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; }
+        .dock-btn i { font-size: 1.4rem; } /* slightly smaller */
+        .dock-btn span { font-size: 0.6rem; font-weight: 800; text-transform: uppercase; }
 
         .dock-center {
-            width: 65px; height: 65px; background: var(--primary); border-radius: 50%;
+            width: 60px; height: 60px; background: var(--primary); border-radius: 50%;
             display: flex; align-items: center; justify-content: center; color: #fff;
-            font-size: 1.8rem; margin-top: -50px; border: 6px solid var(--primary-light);
-            box-shadow: 0 10px 20px rgba(255, 107, 0, 0.3);
+            font-size: 1.6rem; margin-top: -30px; /* lift up */
+            border: 5px solid var(--primary-light);
+            box-shadow: 0 8px 18px rgba(255, 107, 0, 0.3);
             cursor: pointer;
         }
 
-        /* Install PWA prompt */
-        #install-prompt {
-            position: fixed; bottom: 120px; left: 20px; right: 20px;
-            background: white; border-radius: 30px; padding: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2); z-index: 2000;
-            display: none; align-items: center; gap: 15px;
-            border: 2px solid var(--primary);
-            animation: slideUp 0.3s ease;
-        }
-        
-        @keyframes slideUp {
-            from { transform: translateY(100px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        
-        #install-prompt .prompt-content {
-            flex: 1;
-        }
-        
-        #install-prompt h4 {
-            color: var(--primary); margin-bottom: 5px;
-        }
-        
-        #install-prompt button {
-            background: var(--primary); color: white; border: none;
-            padding: 12px 20px; border-radius: 25px; font-weight: bold;
-            cursor: pointer; white-space: nowrap;
-        }
-        
-        #install-prompt .close-prompt {
-            color: #999; cursor: pointer; font-size: 1.2rem;
+        /* remove any extra spacing below dock */
+        body {
+            padding-bottom: 0;
+            margin-bottom: 0;
         }
 
-        /* iOS Add to Home Screen instruction */
-        #ios-instruction {
-            position: fixed; bottom: 120px; left: 20px; right: 20px;
-            background: white; border-radius: 30px; padding: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2); z-index: 2000;
-            display: none;
-            border: 2px solid var(--primary);
-            animation: slideUp 0.3s ease;
-        }
-        
-        #ios-instruction .close-prompt {
-            position: absolute; top: 15px; right: 15px;
-            color: #999; cursor: pointer; font-size: 1.2rem;
-        }
-        
-        .ios-share-icon {
-            display: inline-block; width: 24px; height: 24px;
-            background: #666; color: white; border-radius: 6px;
-            text-align: center; line-height: 24px; margin: 0 2px;
-        }
     </style>
 </head>
 <body>
@@ -436,13 +355,8 @@
     </div>
 
     <div id="app-container">
-        <header>
-            <div class="header-left">
-                <div id="fullscreen-btn" onclick="toggleFullScreen()" title="Enter Fullscreen">
-                    <i class="fa-solid fa-expand"></i>
-                </div>
-                <div class="app-logo">VIBZ<span>.</span></div>
-            </div>
+        <header id="main-header">
+            <div class="app-logo">VIBZ<span>.</span></div>
             <i class="fa-solid fa-circle-user" style="font-size: 1.8rem; color: #ddd;"></i>
         </header>
         <div class="header-spacer"></div>
@@ -482,8 +396,11 @@
                     </div>
                 </div>
             </div>
+            <!-- spacer to prevent content from being hidden behind fixed dock -->
+            <div class="dock-spacer"></div>
         </main>
 
+        <!-- THINNER DOCK (height 70px) flush with bottom -->
         <nav class="app-dock">
             <a href="#" class="dock-btn active"><i class="fa-solid fa-house-chimney"></i><span>Home</span></a>
             <a href="https://www.vibz.co.uk/barber/concepts.html" class="dock-btn"><i class="fa-solid fa-compass"></i><span>Library</span></a>
@@ -491,32 +408,6 @@
             <a href="#" class="dock-btn"><i class="fa-solid fa-briefcase"></i><span>Portal</span></a>
             <div class="dock-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i><span>Menu</span></div>
         </nav>
-    </div>
-    
-    <!-- Install PWA Prompt (for Android) -->
-    <div id="install-prompt">
-        <div class="prompt-content">
-            <h4>Install VIBZ App</h4>
-            <p style="font-size: 0.9rem; color: #666;">Get full-screen experience like a native app</p>
-        </div>
-        <button id="install-btn">Install</button>
-        <i class="fa-solid fa-xmark close-prompt" onclick="hideInstallPrompt()"></i>
-    </div>
-    
-    <!-- iOS Specific Instruction -->
-    <div id="ios-instruction">
-        <i class="fa-solid fa-xmark close-prompt" onclick="hideIOSInstruction()"></i>
-        <div style="padding: 20px; text-align: center;">
-            <i class="fa-solid fa-square-arrow-up-right" style="font-size: 3rem; color: var(--primary; margin-bottom: 15px;"></i>
-            <h3 style="color: var(--primary; margin-bottom: 10px;">Install on iPhone</h3>
-            <p style="margin-bottom: 15px;">For full-screen experience without URL bar:</p>
-            <div style="background: #f5f5f5; padding: 15px; border-radius: 15px;">
-                <p>1. Tap <span class="ios-share-icon"><i class="fa-solid fa-square-arrow-up"></i></span> Share</p>
-                <p>2. Scroll down & tap <strong>"Add to Home Screen"</strong></p>
-                <p>3. Tap "Add" in top right</p>
-            </div>
-            <button onclick="hideIOSInstruction()" style="background: var(--primary; color: white; border: none; padding: 12px 30px; border-radius: 25px; margin-top: 15px; font-weight: bold; cursor: pointer;">Got it</button>
-        </div>
     </div>
 
     <script>
@@ -528,128 +419,13 @@
             "Retail & Creative": ["Boutiques", "E-commerce Stores", "Photographers", "Artists", "Florists", "Pet Shops"]
         };
 
-        // iOS Detection
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-        const isInStandaloneMode = () => (window.matchMedia('(display-mode: standalone)').matches) || (window.navigator.standalone) || false;
-
         window.addEventListener('load', () => {
             setTimeout(() => {
                 document.getElementById('app-loader').style.transform = 'translateY(-100%)';
                 document.getElementById('app-container').style.opacity = '1';
                 startTypewriter();
-                checkInstallPrompt();
-                
-                // Scroll to hide URL bar on iOS
-                if (isIOS && !isInStandaloneMode()) {
-                    setTimeout(() => {
-                        window.scrollTo(0, 1);
-                    }, 500);
-                    
-                    // Show iOS instruction after 3 seconds
-                    setTimeout(() => {
-                        if (!isInStandaloneMode()) {
-                            document.getElementById('ios-instruction').style.display = 'block';
-                        }
-                    }, 3000);
-                }
             }, 3000);
         });
-
-        // Fullscreen API
-        function toggleFullScreen() {
-            const elem = document.documentElement;
-            const fullscreenBtn = document.getElementById('fullscreen-btn').querySelector('i');
-            
-            if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
-                // Enter fullscreen
-                if (elem.requestFullscreen) {
-                    elem.requestFullscreen();
-                } else if (elem.webkitRequestFullscreen) { /* Safari */
-                    elem.webkitRequestFullscreen();
-                } else if (elem.msRequestFullscreen) { /* IE/Edge */
-                    elem.msRequestFullscreen();
-                }
-                fullscreenBtn.className = 'fa-solid fa-compress';
-            } else {
-                // Exit fullscreen
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                } else if (document.webkitExitFullscreen) { /* Safari */
-                    document.webkitExitFullscreen();
-                } else if (document.msExitFullscreen) { /* IE/Edge */
-                    document.msExitFullscreen();
-                }
-                fullscreenBtn.className = 'fa-solid fa-expand';
-            }
-        }
-
-        // Update fullscreen button icon when fullscreen changes
-        document.addEventListener('fullscreenchange', updateFullscreenIcon);
-        document.addEventListener('webkitfullscreenchange', updateFullscreenIcon);
-        document.addEventListener('msfullscreenchange', updateFullscreenIcon);
-        
-        function updateFullscreenIcon() {
-            const fullscreenBtn = document.getElementById('fullscreen-btn').querySelector('i');
-            if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
-                fullscreenBtn.className = 'fa-solid fa-compress';
-            } else {
-                fullscreenBtn.className = 'fa-solid fa-expand';
-            }
-        }
-
-        // PWA Installation
-        let deferredPrompt;
-        const installPrompt = document.getElementById('install-prompt');
-        const installBtn = document.getElementById('install-btn');
-
-        window.addEventListener('beforeinstallprompt', (e) => {
-            // Prevent the mini-infobar from appearing on mobile
-            e.preventDefault();
-            // Stash the event so it can be triggered later
-            deferredPrompt = e;
-            // Show the install prompt (only for non-iOS)
-            if (!isIOS) {
-                setTimeout(() => {
-                    if (!isInStandaloneMode()) {
-                        installPrompt.style.display = 'flex';
-                    }
-                }, 5000);
-            }
-        });
-
-        installBtn.addEventListener('click', async () => {
-            if (!deferredPrompt) {
-                return;
-            }
-            // Show the install prompt
-            deferredPrompt.prompt();
-            // Wait for the user to respond to the prompt
-            const { outcome } = await deferredPrompt.userChoice;
-            console.log(`User response to the install prompt: ${outcome}`);
-            // We've used the prompt, and can't use it again, throw it away
-            deferredPrompt = null;
-            // Hide the install prompt
-            installPrompt.style.display = 'none';
-        });
-
-        function hideInstallPrompt() {
-            installPrompt.style.display = 'none';
-        }
-        
-        function hideIOSInstruction() {
-            document.getElementById('ios-instruction').style.display = 'none';
-        }
-
-        function checkInstallPrompt() {
-            // Check if already installed as PWA
-            if (isInStandaloneMode()) {
-                // Already in standalone mode, hide all prompts
-                if (installPrompt) installPrompt.style.display = 'none';
-                if (document.getElementById('ios-instruction')) {
-                    document.getElementById('ios-instruction').style.display = 'none';
-                }
-            }
-        }
 
         function toggleMenu() { document.getElementById('app-menu-layer').classList.toggle('active'); }
         function toggleCategories() { document.getElementById('category-layer').classList.toggle('active'); }
@@ -732,17 +508,31 @@
             }, 800);
         }
 
-        // iOS specific: hide URL bar on scroll
-        if (isIOS) {
-            window.addEventListener('scroll', () => {
-                window.scrollTo(0, 1);
-            });
+        // ========== HEADER HIDE ON SCROLL ==========
+        const header = document.getElementById('main-header');
+        let lastScrollY = window.scrollY;
+        let ticking = false;
+
+        function updateHeaderOnScroll() {
+            const currentScrollY = window.scrollY;
+            // Scroll down -> hide header (add class). Scroll up -> show header (remove class)
+            if (currentScrollY > lastScrollY && currentScrollY > 50) {
+                // scrolling down past threshold
+                header.classList.add('hide-on-scroll');
+            } else {
+                // scrolling up
+                header.classList.remove('hide-on-scroll');
+            }
+            lastScrollY = currentScrollY;
+            ticking = false;
         }
 
-        // Check for standalone mode on iOS
-        if (window.navigator.standalone) {
-            document.body.classList.add('ios-standalone');
-        }
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                window.requestAnimationFrame(updateHeaderOnScroll);
+                ticking = true;
+            }
+        });
     </script>
 </body>
 </html>
