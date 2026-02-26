@@ -3,25 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>VIBZ | Barber Solutions</title>
+    <title>VIBZ | Premium Web Solutions</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        /* STYLES - EXACTLY AS PROVIDED */
         :root {
             --primary: #FF6B00;
             --primary-light: #FFF5EE;
             --bg: #FFFFFF;
             --text: #121212;
-            --gray: #666;
-            --border: rgba(255, 107, 0, 0.1);
+            --card-bg: rgba(255, 255, 255, 0.9);
             --safe-top: env(safe-area-inset-top);
             --safe-bottom: env(safe-area-inset-bottom);
-            --standard: #4CAF50;
-            --premium: #2196F3;
-            --help: #9C27B0;
-            --help-light: #F3E5F5;
         }
 
         * {
@@ -34,1744 +28,272 @@
             height: 100%;
             background-color: var(--primary-light);
             color: var(--text);
-            /* Removed overflow: hidden to allow scrolling naturally */
             overflow-x: hidden;
-            overflow-y: auto;
+            overflow-y: auto; /* Allow natural scrolling */
         }
 
-        #app-container {
-            min-height: 100vh; 
-            display: flex; 
-            flex-direction: column;
-            position: relative;
+        /* ==== LOADER ==== */
+        #app-loader {
+            position: fixed; inset: 0; background: #FFF2EB; z-index: 10000;
+            display: flex; align-items: center; justify-content: center;
+            transition: transform 0.8s cubic-bezier(0.9, 0, 0.1, 1);
         }
 
-        header {
-            padding: calc(var(--safe-top) + 20px) 25px 10px;
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
-            background: var(--primary-light);
-            position: relative;
-            z-index: 10;
+        .loader-content {
+            display: flex; flex-direction: column; align-items: center;
+            text-align: center; line-height: 1;
         }
+        
+        .loader-content span { color: #000000; }
 
-        .header-logo { 
-            font-size: 1.8rem; 
-            font-weight: 900; 
-            letter-spacing: -1.5px; 
-            color: var(--primary); 
-        }
-        .header-logo span { color: #000000; }
+        .layer-1 { font-size: 7rem; font-weight: 900; color: var(--primary); letter-spacing: -5px; animation: slideFromRight 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .layer-2 { font-size: 2.5rem; font-weight: 900; color: #000; letter-spacing: -1.5px; margin-top: 5px; opacity: 0; animation: slideFromLeft 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards; }
+        .layer-3 { font-size: 2.5rem; font-weight: 900; color: var(--primary); letter-spacing: -1.5px; opacity: 0; animation: slideFromTop 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.8s forwards; }
 
+        @keyframes slideFromRight { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes slideFromLeft { from { transform: translateX(-100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes slideFromTop { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* ==== MENU LAYERS ==== */
         #app-menu-layer {
             position: fixed; inset: 0; background: var(--primary-light);
-            z-index: 3000; display: flex; flex-direction: column;
+            z-index: 9500; display: flex; flex-direction: column;
             padding: calc(var(--safe-top) + 20px) 25px;
             transform: translateY(100%); transition: transform 0.6s cubic-bezier(0.32, 0.72, 0, 1);
         }
         #app-menu-layer.active { transform: translateY(0); }
+        .menu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .menu-links { display: flex; flex-direction: column; gap: 20px; flex: 1; justify-content: center; align-items: center; text-align: center; }
+        .menu-item { font-size: 4.5rem; font-weight: 900; color: var(--text); text-decoration: none; letter-spacing: -3px; line-height: 1; opacity: 0; transform: translateY(30px); transition: 0.5s cubic-bezier(0.32, 0.72, 0, 1); }
+        #app-menu-layer.active .menu-item { opacity: 1; transform: translateY(0); }
+        .menu-item:nth-child(1) { transition-delay: 0.1s; }
+        .menu-item:nth-child(2) { transition-delay: 0.2s; }
+        .menu-item:nth-child(3) { transition-delay: 0.3s; }
+        .menu-item:nth-child(4) { transition-delay: 0.4s; }
+        .menu-footer { margin-top: auto; padding-bottom: calc(var(--safe-bottom) + 20px); font-weight: 800; font-size: 0.8rem; letter-spacing: 1px; color: #bbb; text-align: center; }
 
-        .menu-header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 20px;
+        /* ==== CATEGORY LAYER ==== */
+        #category-layer {
+            position: fixed; inset: 0; background: rgba(255, 245, 238, 0.98);
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            z-index: 9000; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; gap: 15px;
+            transform: translateY(100%); transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
         }
+        #category-layer.active { transform: translateY(0); }
+        .cat-item { font-size: 1.6rem; font-weight: 800; color: var(--text); text-decoration: none; width: auto; min-width: 280px; max-width: 450px; text-align: center; padding: 16px 32px; background: white; border-radius: 60px; margin-bottom: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid rgba(255, 107, 0, 0.1); cursor: pointer; transition: 0.1s; display: inline-block; margin: 0 auto; }
+        .cat-item.click-highlight { background: var(--primary) !important; color: white !important; border: 1px solid var(--primary) !important; box-shadow: 0 12px 25px rgba(255, 107, 0, 0.35) !important; }
+        .close-btn { width: 60px; height: 60px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; box-shadow: 0 10px 20px rgba(255, 107, 0, 0.2); cursor: pointer; }
 
-        .menu-logo {
-            font-size: 2rem; font-weight: 900; letter-spacing: -1.5px; color: var(--primary);
-        }
-        .menu-logo span { color: #000000; }
+        /* ==== APP SHELL ==== */
+        #app-container { min-height: 100vh; display: flex; flex-direction: column; opacity: 0; transition: opacity 0.5s ease-in; position: relative; }
 
-        .menu-links {
-            display: flex; flex-direction: column; 
-            gap: 20px;
-            flex: 1;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-        }
-
-        .menu-item {
-            font-size: 4.5rem; font-weight: 900; color: var(--text);
-            text-decoration: none; letter-spacing: -3px; line-height: 1;
-            opacity: 0; transform: translateY(30px);
-            transition: 0.5s cubic-bezier(0.32, 0.72, 0, 1);
-        }
-        #app-menu-layer.active .menu-item { 
-            opacity: 1; transform: translateY(0); 
-        }
-        #app-menu-layer.active .menu-item:nth-child(1) { transition-delay: 0.1s; }
-        #app-menu-layer.active .menu-item:nth-child(2) { transition-delay: 0.2s; }
-        #app-menu-layer.active .menu-item:nth-child(3) { transition-delay: 0.3s; }
-        #app-menu-layer.active .menu-item:nth-child(4) { transition-delay: 0.4s; }
-
-        .menu-footer {
-            margin-top: auto; 
-            font-weight: 800; font-size: 0.8rem; letter-spacing: 1px; color: #bbb;
-            text-align: center;
-            padding-bottom: 20px;
-        }
-
-        @media (min-width: 768px) {
-            .menu-item { font-size: 6rem; }
-            .menu-footer { font-size: 1.2rem; }
-        }
-
-        .content-scroll {
-            flex: 1; 
-            overflow-y: visible; 
-            padding: 0 20px 180px; /* Increased bottom padding for dock */
-            scroll-behavior: smooth;
+        /* ===== TRULY NON-STATIC HEADER (SCROLLS WITH PAGE) ===== */
+        header {
+            padding: calc(var(--safe-top) + 20px) 25px 15px;
             display: flex; 
-            flex-direction: column;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        /* ===== PERFECT VERTICAL CENTERING ===== */
-        .hero-centered, 
-        .hero-balanced { 
-            display: flex;
-            flex-direction: column;
+            justify-content: space-between; 
             align-items: center;
-            justify-content: center;
-            min-height: 70vh;
+            background: transparent; /* Changed to transparent so it blends with body */
             width: 100%;
-            text-align: center; 
-            transition: 0.4s ease; 
-            margin-top: 0;
-            padding: 20px 0 0;
-        }
-
-        @media (max-height: 900px) {
-            .hero-centered,
-            .hero-balanced { 
-                min-height: 65vh; 
-            }
-        }
-
-        @media (max-height: 800px) {
-            .hero-centered,
-            .hero-balanced { 
-                min-height: 60vh; 
-            }
-        }
-
-        @media (max-height: 700px) {
-            .hero-centered,
-            .hero-balanced { 
-                min-height: 55vh; 
-            }
-        }
-
-        /* Special handling for step-8 (pricing cards) */
-        #step-8 .hero-balanced {
-            justify-content: flex-start;
-            min-height: auto;
-            padding-top: 30px;
-            padding-bottom: 40px;
-        }
-
-        /* Ensure both pricing cards are fully visible */
-        #step-8 {
-            overflow-y: visible !important;
-        }
-
-        #step-8 .form-screen.active {
-            min-height: auto !important;
-            padding-bottom: 40px;
-        }
-
-        .step-header {
-            width: 100%;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .step-header h1 {
-            font-size: 3.8rem;
-            font-weight: 900;
-            line-height: 0.9;
-            letter-spacing: -3px;
-            color: var(--primary);
-            margin-bottom: 5px;
-            width: 100%;
-        }
-        
-        .step-header p { 
-            color: var(--gray); 
-            margin-bottom: 35px; 
-            font-weight: 500; 
-            font-size: 1.2rem;
-        }
-
-        .vibz-input {
-            width: 100%; 
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
-            padding: 15px; 
-            border-radius: 24px; 
-            border: 2px solid var(--border);
-            background: #fff; 
-            font-size: 1.2rem; 
-            font-weight: 700; 
-            margin-bottom: 15px;
-            outline: none; 
-            box-shadow: 0 20px 40px rgba(255, 107, 0, 0.15);
-            text-align: center;
-            display: block;
-        }
-
-        .vibz-input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 20px 40px rgba(255, 107, 0, 0.25);
-        }
-
-        .vibz-btn {
-            width: 100%; 
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
-            padding: 15px 18px; 
-            border-radius: 18px; 
-            border: 1px solid var(--border);
-            background: #fff; 
-            color: var(--text); 
-            font-size: 1.2rem; 
-            font-weight: 800;
-            margin-bottom: 12px; 
-            cursor: pointer; 
-            transition: all 0.2s ease; 
-            text-align: center;
-            box-shadow: 0 20px 40px rgba(255, 107, 0, 0.15);
-            text-decoration: none; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 8px;
-        }
-
-        .vibz-btn span.btn-desc { 
-            font-size: 0.85rem; 
-            font-weight: 700; 
-            color: var(--primary); 
-            line-height: 1.4; 
-            max-width: 90%; 
-        }
-
-        .vibz-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 25px 50px rgba(255, 107, 0, 0.2);
-        }
-
-        .vibz-btn:active { 
-            transform: scale(0.97); 
-        }
-        
-        .vibz-btn.primary { 
-            background: var(--primary); 
-            color: #fff; 
-            border: none; 
-            box-shadow: 0 20px 40px rgba(255, 107, 0, 0.25);
-        }
-        
-        .vibz-btn.back-btn { 
-            background: transparent; 
-            border: none; 
-            color: #999; 
-            margin-top: 10px; 
-            box-shadow: none; 
-            font-weight: 700; 
-            max-width: 300px;
-        }
-
-        .vibz-btn.back-btn:hover {
-            transform: none;
-            box-shadow: none;
-            color: var(--primary);
-        }
-
-        .vibz-btn.category-highlight {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-            transform: scale(0.98);
-            box-shadow: 0 8px 20px rgba(255,107,0,0.25);
-        }
-        .vibz-btn.category-highlight span.btn-desc {
-            color: white;
-        }
-
-        a.vibz-btn {
-            text-decoration: none;
-            color: var(--text);
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
-            display: flex;
-        }
-        a.vibz-btn.primary {
-            color: white;
-        }
-
-        .form-screen {
-            display: none;
-            width: 100%;
-            animation: none;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .form-screen.active {
-            display: flex;
-            animation: fadeInUp 0.4s ease-out forwards;
-        }
-
-        #main-content-wrapper {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .services-grid { 
-            display: grid; 
-            grid-template-columns: 1fr; 
-            gap: 12px; 
-            text-align: left; 
-            margin-bottom: 30px; 
-            width: 100%;
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .service-card {
-            background: #fff; 
-            border: 2px solid var(--border); 
-            border-radius: 20px;
-            padding: 18px; 
-            cursor: pointer; 
-            transition: all 0.2s ease;
-            position: relative;
-            box-shadow: 0 10px 25px rgba(255, 107, 0, 0.05);
-        }
-
-        .service-card:hover {
-            border-color: var(--primary);
-            background: rgba(255, 107, 0, 0.02);
-        }
-
-        .service-card.selected {
-            border-width: 2px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.05);
-        }
-
-        .service-card.selected.standard { 
-            border-color: var(--standard); 
-            background: rgba(76,175,80,0.04);
-        }
-
-        .service-card.selected.premium { 
-            border-color: var(--premium); 
-            background: rgba(33,150,243,0.04);
-        }
-
-        .service-card.selected::after {
-            content: '✓';
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            font-size: 1.2rem;
-            font-weight: 900;
-            color: var(--primary);
-        }
-
-        .service-card.selected.standard::after {
-            color: var(--standard);
-        }
-
-        .service-card.selected.premium::after {
-            color: var(--premium);
-        }
-
-        .tier-pill { 
-            font-size: 0.65rem; 
-            font-weight: 900; 
-            padding: 4px 10px; 
-            border-radius: 8px; 
-            display: inline-block; 
-            margin-bottom: 8px; 
-        }
-
-        @keyframes fadeInUp { 
-            from { 
-                opacity: 0; 
-                transform: translateY(15px); 
-            } 
-            to { 
-                opacity: 1; 
-                transform: translateY(0); 
-            } 
-        }
-
-        /* ===== DOCK STYLES - EXACTLY MATCHING REFERENCE PAGE ===== */
-        .app-dock {
-            position: fixed; 
-            bottom: 0;  /* Flush with bottom exactly like reference */
+            position: absolute; /* Position at the top of the container */
+            top: 0;
             left: 0;
-            right: 0;
-            background: rgba(255, 255, 255, 0.85); 
-            backdrop-filter: blur(20px);
-            height: 70px;  /* Thinner dock */
-            display: flex; 
-            justify-content: space-around;
-            align-items: center; 
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
-            z-index: 1000;
-            padding-bottom: env(safe-area-inset-bottom); /* Respect safe area */
+            z-index: 800;
         }
 
-        .dock-btn { 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            color: #A0A0A0; 
-            text-decoration: none; 
-            gap: 2px; 
-            background: none; 
-            border: none; 
-            cursor: pointer;
+        /* Spacer ensures hero doesn't start under absolute header */
+        .header-spacer {
+            height: 80px; 
+            width: 100%;
         }
+
+        .app-logo { font-size: 1.8rem; font-weight: 900; letter-spacing: -1.5px; color: var(--primary); }
+        .app-logo span { color: #000000; }
+
+        .content-scroll { flex: 1; padding: 0 25px; }
+
+        .hero-area { text-align: center; padding: 60px 0 40px; }
+        .hero-area h1 { font-size: 3.8rem; font-weight: 900; line-height: 0.9; letter-spacing: -3px; margin-bottom: 5px; color: var(--primary); }
+
+        .typewriter-container { font-size: 3.8rem; font-weight: 900; color: #000000; line-height: 0.9; letter-spacing: -3px; margin-bottom: 35px; text-transform: capitalize; min-height: 4.2rem; }
+
+        .search-container { background: #fff; border-radius: 24px; padding: 10px; display: flex; align-items: center; box-shadow: 0 20px 40px rgba(255, 107, 0, 0.15); max-width: 500px; margin: 0 auto 80px; }
+        .search-container input { flex: 1; border: none; outline: none; padding: 15px; font-size: 1.2rem; font-weight: 700; }
+        .search-icon-btn { width: 55px; height: 55px; background: var(--primary); border-radius: 18px; display: flex; align-items: center; justify-content: center; color: #fff; cursor: pointer; border: none; }
+
+        .section-header { font-size: 0.8rem; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: var(--primary); margin-bottom: 20px; display: block; text-align: center; }
+
+        .app-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; max-width: 600px; margin: 0 auto; }
+        .app-tile { background: var(--card-bg); padding: 25px 15px; border-radius: 30px; border: 1px solid rgba(255, 107, 0, 0.1); display: flex; flex-direction: column; align-items: center; gap: 12px; transition: 0.3s; cursor: pointer; }
+        .app-tile:active { transform: scale(0.94); background: #fff; }
+        .tile-icon { width: 50px; height: 50px; background: var(--primary); color: white; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; box-shadow: 0 8px 15px rgba(255, 107, 0, 0.2); }
+        .app-tile h3 { font-size: 1rem; font-weight: 900; line-height: 1.2; text-align: center; }
+        .full-tile { grid-column: span 2; flex-direction: row; justify-content: center; }
+
+        .app-dock {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px);
+            height: 70px; display: flex; justify-content: space-around; align-items: center; 
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.05); z-index: 1000; padding-bottom: env(safe-area-inset-bottom);
+        }
+        .dock-btn { display: flex; flex-direction: column; align-items: center; color: #A0A0A0; text-decoration: none; gap: 2px; }
         .dock-btn.active { color: var(--primary); }
         .dock-btn i { font-size: 1.4rem; }
         .dock-btn span { font-size: 0.6rem; font-weight: 800; text-transform: uppercase; }
-
-        .dock-center {
-            width: 60px; 
-            height: 60px; 
-            background: var(--primary); 
-            border-radius: 50%;
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            color: #fff;
-            font-size: 1.6rem; 
-            margin-top: -30px;  /* Lift up effect */
-            border: 5px solid var(--primary-light);
-            box-shadow: 0 8px 18px rgba(255, 107, 0, 0.3);
-            cursor: pointer;
-        }
-
-        .concept-preview {
-            background: #fff; border-radius: 30px; overflow: hidden; margin-bottom: 20px;
-            border: 2px solid var(--border); text-align: left; animation: fadeInUp 0.4s ease;
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
-            box-shadow: 0 20px 40px rgba(255, 107, 0, 0.15);
-        }
-        .concept-preview img { width: 100%; height: 220px; object-fit: cover; background: #f0f0f0; }
-        .concept-info { padding: 20px; }
-        .concept-info h3 { font-weight: 900; color: var(--primary); text-transform: uppercase; margin-bottom: 4px; }
-        .concept-info p { font-size: 0.85rem; color: var(--gray); font-weight: 600; line-height: 1.4; }
-
-        /* ===== PRICING CARDS ===== */
-        .pricing-cards-container {
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-            margin-bottom: 30px;
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
-            width: 100%;
-        }
-
-        @media (min-width: 1000px) {
-            .pricing-cards-container {
-                flex-direction: row;
-                max-width: 1100px;
-                gap: 40px;
-                align-items: stretch;
-                margin-bottom: 40px;
-            }
-            
-            .pricing-card {
-                flex: 1;
-                min-width: 0;
-                max-width: 500px;
-                display: flex;
-                flex-direction: column;
-                margin: 0 auto;
-            }
-            
-            .pricing-card .feature-list {
-                flex: 1;
-            }
-        }
-
-        .pricing-card {
-            background: #fff;
-            border-radius: 30px;
-            padding: 28px 24px;
-            border: 2px solid var(--border);
-            position: relative;
-            transition: transform 0.2s ease;
-            text-align: left;
-            box-shadow: 0 20px 40px rgba(255, 107, 0, 0.1);
-            width: 100%;
-            margin-bottom: 20px;
-        }
-
-        .pricing-card.recommended {
-            border-color: var(--primary);
-            background: linear-gradient(to bottom, #fff, rgba(255,107,0,0.02));
-            transform: scale(1.02);
-            z-index: 1;
-        }
-
-        .plan-recommended-badge {
-            position: absolute;
-            top: -12px;
-            left: 20px;
-            background: var(--primary);
-            color: white;
-            padding: 6px 16px;
-            border-radius: 30px;
-            font-size: 0.75rem;
-            font-weight: 800;
-            letter-spacing: 0.5px;
-        }
-
-        .pricing-header {
-            margin-bottom: 20px;
-            border-bottom: 2px solid rgba(0,0,0,0.05);
-            padding-bottom: 16px;
-        }
-
-        .plan-type {
-            font-size: 0.8rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: var(--gray);
-            margin-bottom: 6px;
-        }
-
-        .plan-type.standard-type { color: var(--standard); }
-        .plan-type.premium-type { color: var(--premium); }
-
-        .price-row {
-            display: flex;
-            align-items: baseline;
-            flex-wrap: wrap;
-            gap: 8px 16px;
-            margin: 12px 0 4px;
-        }
-
-        .price-item {
-            display: flex;
-            align-items: baseline;
-            gap: 4px;
-        }
-
-        .price-label {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--gray);
-        }
-
-        .price-value {
-            font-size: 1.8rem;
-            font-weight: 900;
-            line-height: 1;
-        }
-
-        .price-value.small {
-            font-size: 1.4rem;
-        }
-
-        .price-period {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--gray);
-        }
-
-        .plan-desc {
-            font-size: 0.85rem;
-            color: var(--gray);
-            font-weight: 500;
-            margin-top: 8px;
-        }
-
-        .feature-list {
-            margin: 20px 0;
-            padding: 0;
-            list-style: none;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px 16px;
-        }
-
-        @media (max-width: 480px) {
-            .feature-list {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .feature-list li {
-            display: flex;
-            align-items: flex-start;
-            gap: 8px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            color: var(--text);
-            line-height: 1.4;
-        }
-
-        .feature-list li i {
-            color: var(--primary);
-            font-size: 0.8rem;
-            margin-top: 3px;
-            min-width: 16px;
-        }
-
-        .feature-list li i.fa-check { color: var(--standard); }
-        .feature-list li i.fa-crown { color: var(--premium); }
-
-        .terms-box {
-            background: #f8f9fa;
-            border-radius: 16px;
-            padding: 16px;
-            margin: 16px 0 8px;
-            border-left: 4px solid var(--primary);
-            font-size: 0.8rem;
-        }
-
-        .terms-box i {
-            color: var(--primary);
-            margin-right: 6px;
-        }
-
-        .terms-box strong {
-            color: var(--text);
-        }
-
-        .terms-box p {
-            color: var(--gray);
-            margin-top: 6px;
-            line-height: 1.5;
-        }
-
-        .payment-button {
-            width: 100%;
-            border: none;
-            border-radius: 60px;
-            padding: 18px;
-            font-size: 1rem;
-            font-weight: 800;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            margin-top: 16px;
-        }
-
-        .payment-button.secondary {
-            background: var(--standard);
-        }
-
-        .payment-button.premium {
-            background: var(--premium);
-        }
-
-        .payment-button.outright {
-            background: #000;
-        }
-
-        .selected-features-summary {
-            background: #fff;
-            border-radius: 24px;
-            padding: 24px;
-            margin: 24px auto 40px;
-            border: 2px solid var(--border);
-            text-align: left;
-            max-width: 500px;
-            width: 100%;
-        }
-
-        .selected-features-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-top: 16px;
-        }
-
-        @media (max-width: 480px) {
-            .selected-features-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .selected-category {
-            background: #f9f9f9;
-            border-radius: 16px;
-            padding: 16px;
-        }
-
-        .selected-category h4 {
-            font-size: 0.85rem;
-            font-weight: 900;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .selected-category.standard h4 { color: var(--standard); }
-        .selected-category.premium h4 { color: var(--premium); }
-
-        .selected-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            padding: 6px 0;
-            border-bottom: 1px solid #eee;
-        }
-
-        .selected-item:last-child {
-            border-bottom: none;
-        }
-
-        .selected-item i.fa-check-circle { color: var(--standard); }
-        .selected-item i.fa-crown { color: var(--premium); }
-
-        .help-request-badge {
-            background: var(--help-light);
-            color: var(--help);
-            padding: 2px 10px;
-            border-radius: 40px;
-            font-size: 0.7rem;
-            font-weight: 800;
-            margin-left: 8px;
-        }
-
-        .important-clarity {
-            background: #FFF3E0;
-            border-radius: 16px;
-            padding: 18px;
-            margin-top: 16px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--primary);
-            border-left: 4px solid var(--primary);
-            line-height: 1.5;
-            text-align: left;
-        }
-
-        .important-clarity i {
-            margin-right: 8px;
-        }
-
-        .plan-indicator {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin: 20px 0;
-        }
-
-        .indicator-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #ddd;
-            transition: background 0.3s ease;
-        }
-
-        .indicator-dot.active {
-            background: var(--primary);
-        }
-
-        .indicator-dot.standard {
-            background: var(--standard);
-        }
-
-        .indicator-dot.premium {
-            background: var(--premium);
-        }
-
-        .clear-selections {
-            color: var(--primary);
-            font-size: 0.8rem;
-            font-weight: 700;
-            text-decoration: underline;
-            cursor: pointer;
-            margin-top: 12px;
-            display: inline-block;
-        }
-
-        .build-fee-title {
-            font-weight: 800;
-            font-size: 0.9rem;
-            color: var(--primary);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 12px;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .step-header h1 {
-                font-size: 2.8rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .step-header h1 {
-                font-size: 2.2rem;
-            }
-        }
+        .dock-center { width: 60px; height: 60px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1.6rem; margin-top: -30px; border: 5px solid var(--primary-light); box-shadow: 0 8px 18px rgba(255, 107, 0, 0.3); cursor: pointer; }
     </style>
 </head>
 <body>
 
-<!-- EXACT MENU FROM HOMEPAGE -->
-<div id="app-menu-layer">
-    <div class="menu-header">
-        <div class="menu-logo">VIBZ<span>.</span></div>
-        <div class="close-btn" style="margin-top:0; border:none; background:none; font-size:1.8rem; cursor:pointer; color:#666;" onclick="toggleMenu()"><i class="fa-solid fa-xmark"></i></div>
-    </div>
-    <div class="menu-links">
-        <a href="https://www.vibz.co.uk/new-design.html" class="menu-item" onclick="toggleMenu()">Home</a>
-        <a href="https://www.vibz.co.uk/barber/concepts.html" class="menu-item" onclick="toggleMenu()">Explore</a>
-        <a href="#" class="menu-item" onclick="toggleMenu()">Portal</a>
-        <a href="#" class="menu-item" onclick="toggleMenu()">Support</a>
-    </div>
-    <div class="menu-footer">VIBZ COLLECTIVE © 2026</div>
-</div>
-
-<div id="app-container">
-    <header>
-        <div class="header-logo">VIBZ<span>.</span></div>
-        <i class="fa-solid fa-circle-user" style="font-size: 1.8rem; color: #ddd;"></i>
-    </header>
-
-    <main class="content-scroll">
-        <div id="main-content-wrapper" class="hero-centered">
-            
-            <div class="step-header">
-                <h1 id="dynamic-title">Build your barber brand.</h1>
-                <p id="dynamic-subtitle"></p>
-            </div>
-
-            <form id="funnelForm" onsubmit="return false;" style="width:100%; display:flex; flex-direction:column; align-items:center;">
-                
-                <div class="form-screen active" id="step-0">
-                    <button class="vibz-btn primary" onclick="startReady()">I'm Ready to Start</button>
-                    <a href="https://www.vibz.co.uk/barber/concepts.html?returnTo=index&step=5" class="vibz-btn">Exploring Designs First</a>
-                </div>
-
-                <div class="form-screen" id="step-1">
-                    <input type="text" class="vibz-input" id="businessInput" placeholder="Enter shop name...">
-                    <button class="vibz-btn primary" onclick="handleStep1()">Continue <i class="fa-solid fa-arrow-right"></i></button>
-                    <button class="vibz-btn back-btn" onclick="goToStep(0)">Go Back</button>
-                </div>
-
-                <div class="form-screen" id="step-2">
-                    <button class="vibz-btn" onclick="next()">New Website</button>
-                    <button class="vibz-btn" onclick="next()">Redesign Existing</button>
-                    <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
-                </div>
-
-                <div class="form-screen" id="step-3">
-                    <button class="vibz-btn" onclick="goToStep(4)">I Have a Design Code</button>
-                    <a href="https://www.vibz.co.uk/barber/concepts.html?returnTo=index&step=5" class="vibz-btn primary">Browse Concept Library</a>
-                    <button class="vibz-btn" onclick="next()">Request Custom Design</button>
-                    <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
-                </div>
-
-                <div class="form-screen" id="step-4">
-                    <div id="code-entry-area" style="width:100%; display:flex; flex-direction:column; align-items:center;">
-                        <input type="text" class="vibz-input" id="designCode" placeholder="e.g. Barber 446">
-                        <button class="vibz-btn primary" onclick="verifyDesign()">Verify Design</button>
-                    </div>
-                    <div id="concept-display-area" style="display:none; width:100%;"></div>
-                    <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
-                </div>
-
-                <div class="form-screen" id="step-5">
-                    <button class="vibz-btn" onclick="setPlanType('Buy Outright'); highlightCategoryButton(this)">
-                        <strong>Buy Outright</strong>
-                        <span class="btn-desc">You own the full website files. Hosting and monthly management is your responsibility.</span>
-                    </button>
-                    <button class="vibz-btn" onclick="setPlanType('Monthly License'); highlightCategoryButton(this)">
-                        <strong>Monthly License</strong>
-                        <span class="btn-desc">We build and manage everything. Website is licensed, not owned. Includes 12 months support.</span>
-                    </button>
-                    <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
-                </div>
-
-                <div class="form-screen" id="step-6">
-                    <button class="vibz-btn" onclick="setUrgency('Start ASAP'); highlightCategoryButton(this)"><i class="fas fa-bolt"></i> Start ASAP</button>
-                    <button class="vibz-btn" onclick="setUrgency('I\'m flexible, no rush'); highlightCategoryButton(this)"><i class="fas fa-clock"></i> I'm flexible, no rush</button>
-                    <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
-                </div>
-
-                <div class="form-screen" id="step-7">
-                    <div class="services-grid" id="master-service-grid"></div>
-                    <div class="plan-indicator" id="plan-indicator"></div>
-                    <button class="vibz-btn primary" onclick="next()">See Pricing</button>
-                    <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
-                </div>
-
-                <div class="form-screen" id="step-8">
-                    <div class="pricing-cards-container" id="pricing-cards-display"></div>
-                    <div id="selected-features-summary" style="margin-top: 24px; width:100%;"></div>
-                    <button class="vibz-btn back-btn" onclick="goToStep(7)" style="margin: 20px auto 30px;">Edit Features</button>
-                    <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
-                </div>
-
-                <div class="form-screen" id="step-9" style="display: none;">
-                    <input type="text" class="vibz-input" placeholder="Full Name">
-                    <input type="email" class="vibz-input" placeholder="Email Address">
-                    <button class="vibz-btn primary" onclick="alert('Inquiry Sent! Our team will contact you to start your project.')">Submit Project</button>
-                    <button class="vibz-btn back-btn" onclick="goToStep(8)">Go Back</button>
-                </div>
-
-            </form>
+    <div id="app-loader">
+        <div class="loader-content">
+            <div class="layer-1">VIBZ<span>.</span></div>
+            <div class="layer-2">The Vibe-Coding</div>
+            <div class="layer-3">Web Design & Marketing Agency.</div>
         </div>
-    </main>
+    </div>
 
-    <nav class="app-dock">
-        <a href="https://www.vibz.co.uk/barber/index.html" class="dock-btn active"><i class="fa-solid fa-house-chimney"></i><span>Home</span></a>
-        <a href="https://www.vibz.co.uk/barber/concepts.html?returnTo=index&step=5" class="dock-btn"><i class="fa-solid fa-compass"></i><span>Library</span></a>
-        <div class="dock-center" onclick="next()"><i class="fa-solid fa-bolt"></i></div>
-        <a href="#" class="dock-btn"><i class="fa-solid fa-briefcase"></i><span>Portal</span></a>
-        <button class="dock-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i><span>Menu</span></button>
-    </nav>
-</div>
+    <div id="app-menu-layer">
+        <div class="menu-header">
+            <div class="app-logo">VIBZ<span>.</span></div>
+            <div class="close-btn" onclick="toggleMenu()"><i class="fa-solid fa-xmark"></i></div>
+        </div>
+        <div class="menu-links">
+            <a href="#" class="menu-item" onclick="toggleMenu()">Home</a>
+            <a href="https://www.vibz.co.uk/barber/concepts.html" class="menu-item">Explore</a>
+            <a href="#" class="menu-item">Portal</a>
+            <a href="#" class="menu-item">Support</a>
+        </div>
+        <div class="menu-footer">VIBZ COLLECTIVE © 2026</div>
+    </div>
 
-<script>
-    // =========================================================================
-    // CONFIGURATION
-    // =========================================================================
-    const FEATURE_CONFIG = {
-        standard: [
-            "Professional Logo / Text Logo",
-            "Services & Pricing Section",
-            "Gallery (Haircuts / Before & After)",
-            "WhatsApp Chat Button",
-            "Click-to-Call Button",
-            "Contact Form",
-            "Customer Reviews Section",
-            "Google Maps Location",
-            "Book Now CTA Buttons",
-            "Promo Banner / First-Time Visitor Offer"
-        ],
-        premium: [
-            "Full Branding (colors, fonts, favicon, overall visual identity)",
-            "Staff / Barber Profiles",
-            "Online Booking Integration",
-            "Stripe Payment Links",
-            "Digital Gift Cards",
-            "Waitlist System",
-            "Exit-Intent Popup",
-            "Promo Popup (offer modal)",
-            "Sticky CTA Bar (Book / Call / WhatsApp)",
-            "WhatsApp Quick Message (pre-written)",
-            "Email Signup Form",
-            "First-Time Visitor Offer Section",
-            "Countdown Timer (limited offers)",
-            "Google Reviews Embed (live feed from Google Business)",
-            "Interactive Reviews (filterable/animated testimonials)",
-            "Testimonials Slider (text/images for client reviews)",
-            "Blog / News Section",
-            "Customer Database (email/phone capture)",
-            "Mobile Text CTA (tap-to-message SMS)",
-            "Promotions / Offers Page",
-            "Simple Business Dashboard",
-            "Lead Source Tracking",
-            "Loyalty / VIP Members Section",
-            "Custom Page Layouts / Sections",
-            "Multi-Location Pages",
-            "Appointment Reminders / Notifications",
-            "Gift Card & Loyalty Program Tracker",
-            "Service Analytics Dashboard",
-            "Social Proof Widgets (badges, awards, “Top Barber”)",
-            "Custom Call-to-Action Widgets (multiple CTAs per page)",
-            "Scroll Animations (fade-in, slide-in, interactive on-scroll effects)",
-            "Back-to-Top Button",
-            "Chatbot Integration (Tawk.to or similar)",
-            "App-Like Website Design (mobile-first, smooth transitions, native app feel)",
-            "Animated Stats / Counters Section (clients served, haircuts done, awards)"
-        ]
-    };
+    <div id="category-layer">
+        <h2 id="cat-title" style="color: var(--primary); margin-bottom: 20px; font-weight: 900; letter-spacing: -1px;">Niche Selection</h2>
+        <div id="cat-list" style="width: 100%; display: flex; flex-direction: column; align-items: center; overflow-y: auto; max-height: 60vh;"></div>
+        <div class="close-btn" onclick="toggleCategories()"><i class="fa-solid fa-xmark"></i></div>
+    </div>
 
-    const MANAGEMENT_SERVICES = [
-        "Monthly content updates",
-        "Security monitoring",
-        "Performance optimization",
-        "Daily backups",
-        "Uptime monitoring",
-        "Analytics reporting"
-    ];
-
-    const PRICING_CONFIG = {
-        outright: { standard: 1500, premium: 3000 },
-        monthly: { standard: 125, premium: 225, buildFee: { standard: 500, premium: 650 } }
-    };
-
-    const STRIPE_LINKS = {
-        outright: {
-            standard: 'https://buy.stripe.com/test_4gMfZidpQ709gTQ4HtgMw0b',
-            premium: 'https://buy.stripe.com/test_4gM3cw0D42JTavs1vhgMw0c'
-        },
-        monthly: {
-            standard: 'https://buy.stripe.com/test_dRmdRa2Lcckt9ro2zlgMw0a',
-            premium: 'https://buy.stripe.com/test_3cI14odpQdox7jg7TFgMw09'
-        }
-    };
-
-    const PLAN_CONFIG = {
-        outright: { name: 'Buy Outright', shortName: 'OWN IT' },
-        monthly: { name: 'Monthly License', shortName: 'LICENSE' }
-    };
-
-    const TIER_CONFIG = {
-        standard: {
-            name: 'STANDARD',
-            color: '#4CAF50',
-            bgColor: '#E8F5E9',
-            icon: 'fa-check-circle'
-        },
-        premium: {
-            name: 'PREMIUM',
-            color: '#2196F3',
-            bgColor: '#E3F2FD',
-            icon: 'fa-crown'
-        }
-    };
-
-    // =========================================================================
-    // STATE MANAGEMENT
-    // =========================================================================
-    let helpRequests = [];
-    let currentStep = 0;
-    let selections = { 
-        businessName: '', 
-        services: [], 
-        planType: '', 
-        designCode: '', 
-        urgency: '',
-        fromConceptLibrary: false,
-        recommendedPlan: ''
-    };
-
-    const standardFeatures = FEATURE_CONFIG.standard;
-    const premiumFeatures = FEATURE_CONFIG.premium;
-    const monthlyManagementServices = MANAGEMENT_SERVICES;
-
-    // =========================================================================
-    // UI FUNCTIONS
-    // =========================================================================
-    function toggleMenu() {
-        const menu = document.getElementById('app-menu-layer');
-        menu.classList.toggle('active');
-    }
-
-    function highlightCategoryButton(clickedBtn) {
-        const parentStep = clickedBtn.closest('.form-screen');
-        if (parentStep) {
-            const allButtons = parentStep.querySelectorAll('.vibz-btn:not(.back-btn)');
-            allButtons.forEach(btn => {
-                btn.classList.remove('category-highlight');
-            });
-        }
-        if (!clickedBtn.classList.contains('back-btn')) {
-            clickedBtn.classList.add('category-highlight');
-        }
-    }
-
-    function startReady() { 
-        currentStep = 1; 
-        updateUI(); 
-    }
-
-    function handleStep1() {
-        const input = document.getElementById('businessInput').value.trim();
-        if(input) { 
-            selections.businessName = input;
-            sessionStorage.setItem('barberShopName', input);
-            localStorage.setItem('barberShopName', input);
-            next(); 
-        } else {
-            alert("Please enter a shop name");
-        }
-    }
-
-    function verifyDesign() {
-        const input = document.getElementById('designCode').value.trim().toLowerCase();
-        const display = document.getElementById('concept-display-area');
-        const entry = document.getElementById('code-entry-area');
-        let conceptNum = input.match(/\d+/);
-        if(conceptNum && conceptNum[0] <= 446) {
-            const codeString = `barber-${conceptNum[0]}`;
-            selections.designCode = codeString.toUpperCase();
-            sessionStorage.setItem('selectedBarberCode', codeString.toUpperCase());
-            localStorage.setItem('selectedBarberCode', codeString.toUpperCase());
-            entry.style.display = 'none'; 
-            display.style.display = 'block';
-            display.innerHTML = `<div class="concept-preview"><img src="https://raw.githubusercontent.com/doctoc30/Vibz/main/images/${codeString}.jpg" onerror="this.src='https://via.placeholder.com/400x220'"><div class="concept-info"><h3>${selections.designCode}</h3><p>Selected for ${selections.businessName || 'your shop'}.</p></div></div><button class="vibz-btn primary" onclick="next()">Confirm & Continue</button><button class="vibz-btn back-btn" onclick="resetCodeEntry()">Different Code</button>`;
-        } else { 
-            alert("Enter a valid design code (e.g., Barber 446)"); 
-        }
-    }
-
-    function resetCodeEntry() { 
-        document.getElementById('code-entry-area').style.display = 'block'; 
-        document.getElementById('concept-display-area').style.display = 'none'; 
-    }
-    
-    function setPlanType(val) { 
-        selections.planType = val;
-        selections.services = [];
-        helpRequests = [];
-        saveOrderToStorage(val, selections.recommendedPlan || 'standard');
-        next(); 
-    }
-    
-    function setUrgency(val) { 
-        selections.urgency = val;
-        sessionStorage.setItem('vibz_urgency', val);
-        next(); 
-    }
-
-    function next() { 
-        if(currentStep < 8) { 
-            currentStep++; 
-            updateUI(); 
-        } 
-    }
-    
-    function prev() { 
-        if(currentStep > 0) { 
-            currentStep--; 
-            updateUI(); 
-        } 
-    }
-    
-    function goToStep(s) { 
-        currentStep = s; 
-        updateUI(); 
-    }
-
-    function saveOrderToStorage(planType, tier) {
-        sessionStorage.setItem('vibz_planType', planType);
-        sessionStorage.setItem('selectedPlanType', planType);
-        localStorage.setItem('selectedPlanType', planType);
+    <div id="app-container">
+        <header id="main-header">
+            <div class="app-logo">VIBZ<span>.</span></div>
+            <i class="fa-solid fa-circle-user" style="font-size: 1.8rem; color: #ddd;"></i>
+        </header>
         
-        sessionStorage.setItem('vibz_tier', tier);
-        localStorage.setItem('vibz_tier', tier);
-        
-        if (selections.businessName) {
-            sessionStorage.setItem('barberShopName', selections.businessName);
-            localStorage.setItem('barberShopName', selections.businessName);
-        }
-        
-        if (selections.designCode) {
-            sessionStorage.setItem('selectedBarberCode', selections.designCode);
-            localStorage.setItem('selectedBarberCode', selections.designCode);
-        }
-        
-        if (selections.services && selections.services.length > 0) {
-            sessionStorage.setItem('selectedServices', JSON.stringify(selections.services));
-            localStorage.setItem('selectedServices', JSON.stringify(selections.services));
-        }
-        
-        if (selections.urgency) {
-            sessionStorage.setItem('vibz_urgency', selections.urgency);
-        }
-    }
+        <div class="header-spacer"></div>
 
-    function loadOrderFromStorage() {
-        selections.planType = sessionStorage.getItem('vibz_planType') || 
-                             sessionStorage.getItem('selectedPlanType') || 
-                             localStorage.getItem('selectedPlanType') || '';
-        
-        const savedTier = sessionStorage.getItem('vibz_tier') || localStorage.getItem('vibz_tier') || '';
-        if (savedTier) {
-            selections.recommendedPlan = savedTier;
-        }
-        
-        selections.businessName = sessionStorage.getItem('barberShopName') || 
-                                 localStorage.getItem('barberShopName') || '';
-        
-        selections.designCode = sessionStorage.getItem('selectedBarberCode') || 
-                               localStorage.getItem('selectedBarberCode') || '';
-        
-        try {
-            const savedServices = sessionStorage.getItem('selectedServices') || 
-                                localStorage.getItem('selectedServices');
-            if (savedServices && savedServices !== 'undefined' && savedServices !== 'null') {
-                selections.services = JSON.parse(savedServices);
-            }
-        } catch (e) {}
-        
-        try {
-            const savedHelp = sessionStorage.getItem('helpRequests') || 
-                            localStorage.getItem('helpRequests');
-            if (savedHelp && savedHelp !== 'undefined' && savedHelp !== 'null') {
-                helpRequests = JSON.parse(savedHelp);
-            }
-        } catch (e) {}
-        
-        selections.urgency = sessionStorage.getItem('vibz_urgency') || '';
-    }
-
-    function checkForConceptLibraryReturn() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const selectedCode = urlParams.get('selectedCode');
-        const returnStep = urlParams.get('step');
-        
-        if (selectedCode) {
-            let formattedCode = selectedCode.toUpperCase();
-            if (!formattedCode.startsWith('BARBER-')) {
-                formattedCode = `BARBER-${formattedCode.replace(/[^0-9]/g, '')}`;
-            }
-            
-            selections.designCode = formattedCode;
-            selections.fromConceptLibrary = true;
-            sessionStorage.setItem('selectedBarberCode', formattedCode);
-            localStorage.setItem('selectedBarberCode', formattedCode);
-            
-            const designCodeInput = document.getElementById('designCode');
-            if (designCodeInput) {
-                designCodeInput.value = formattedCode;
-            }
-            
-            alert(`✅ Design code ${formattedCode} selected!`);
-            
-            if (returnStep) {
-                currentStep = parseInt(returnStep);
-            } else {
-                currentStep = 5;
-            }
-            
-            updateUI();
-        }
-    }
-
-    function initServiceList() {
-        const grid = document.getElementById('master-service-grid');
-        if (!grid) return;
-        grid.innerHTML = '';
-        
-        const isOutright = selections.planType === PLAN_CONFIG.outright.name;
-        const actionText = isOutright ? 'One-time setup' : 'Select this feature';
-        
-        standardFeatures.forEach(s => grid.innerHTML += `
-            <div class="service-card ${selections.services.find(item => item.name === s && item.tier === 'standard') ? 'selected standard' : ''}" onclick="toggleService('${s.replace(/'/g, "\\'")}', 'standard', this)">
-                <span class="tier-pill" style="background:${TIER_CONFIG.standard.bgColor}; color:${TIER_CONFIG.standard.color};">${TIER_CONFIG.standard.name}</span>
-                <div style="font-weight:700; font-size:0.95rem;">${s}</div>
-                <div style="font-size:0.7rem; color:var(--gray); font-weight:600; margin-top:4px;">
-                    <i class="fas fa-check"></i> ${actionText}
+        <main class="content-scroll">
+            <div class="hero-area">
+                <h1>We Build Websites For:</h1>
+                <div class="typewriter-container"><span id="typewriter"></span></div>
+                <div class="search-container">
+                    <input type="text" id="mainSearch" placeholder="Search any industry..." onkeypress="if(event.key==='Enter') triggerFlow()">
+                    <button class="search-icon-btn" onclick="triggerFlow()"><i class="fa-solid fa-magnifying-glass"></i></button>
                 </div>
             </div>
-        `);
-        
-        premiumFeatures.forEach(s => grid.innerHTML += `
-            <div class="service-card ${selections.services.find(item => item.name === s && item.tier === 'premium') ? 'selected premium' : ''}" onclick="toggleService('${s.replace(/'/g, "\\'")}', 'premium', this)">
-                <span class="tier-pill" style="background:${TIER_CONFIG.premium.bgColor}; color:${TIER_CONFIG.premium.color};">${TIER_CONFIG.premium.name}</span>
-                <div style="font-weight:700; font-size:0.95rem;">${s}</div>
-                <div style="font-size:0.7rem; color:var(--gray); font-weight:600; margin-top:4px;">
-                    <i class="fas fa-crown"></i> ${actionText}
+
+            <span class="section-header">Or Select From Popular Categories</span>
+            <div class="app-grid">
+                <div class="app-tile" onclick="openNiche('Health & Wellness')">
+                    <div class="tile-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+                    <h3>Health & Wellness</h3>
+                </div>
+                <div class="app-tile" onclick="openNiche('Home & Trades')">
+                    <div class="tile-icon"><i class="fa-solid fa-hammer"></i></div>
+                    <h3>Home & Trades</h3>
+                </div>
+                <div class="app-tile" onclick="openNiche('Professional')">
+                    <div class="tile-icon"><i class="fa-solid fa-briefcase"></i></div>
+                    <h3>Professional Services</h3>
+                </div>
+                <div class="app-tile" onclick="openNiche('Food & Drink')">
+                    <div class="tile-icon"><i class="fa-solid fa-utensils"></i></div>
+                    <h3>Food & Drink</h3>
+                </div>
+                <div class="app-tile full-tile" onclick="openNiche('Retail & Creative')">
+                    <div class="tile-icon"><i class="fa-solid fa-bag-shopping"></i></div>
+                    <div style="margin-left: 15px;">
+                        <h3>Retail & Creative Industries</h3>
+                    </div>
                 </div>
             </div>
-        `);
-        
-        if (!isOutright) {
-            grid.innerHTML += `
-                <div style="background:#FFF9E6; border:2px solid #FFE0B2; border-radius:16px; padding:16px; margin-top:16px; text-align:left;">
-                    <div style="display:flex; align-items:center; gap:12px;">
-                        <i class="fas fa-sync" style="color:var(--primary); font-size:1.2rem;"></i>
-                        <div>
-                            <div style="font-weight:800; color:var(--primary);">✨ ${PLAN_CONFIG.monthly.shortName} Includes</div>
-                            <div style="font-size:0.8rem; color:var(--gray); margin-top:4px;">
-                                ${monthlyManagementServices.join(' • ')}
-                            </div>
-                            <div style="font-size:0.8rem; color:var(--primary); font-weight:700; margin-top:8px;">
-                                Website is licensed, not owned • Files remain our property
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-        
-        updatePlanIndicator();
-    }
+            <div style="height: 120px;"></div> </main>
 
-    function toggleService(name, tier, el) {
-        el.classList.toggle('selected'); 
-        el.classList.toggle(tier);
-        
-        const index = selections.services.findIndex(item => item.name === name && item.tier === tier);
-        
-        if (index > -1) {
-            selections.services.splice(index, 1);
-        } else {
-            selections.services.push({ name, tier });
-        }
-        
-        updateRecommendedPlan();
-    }
+        <nav class="app-dock">
+            <a href="#" class="dock-btn active"><i class="fa-solid fa-house-chimney"></i><span>Home</span></a>
+            <a href="https://www.vibz.co.uk/barber/concepts.html" class="dock-btn"><i class="fa-solid fa-compass"></i><span>Library</span></a>
+            <div class="dock-center" onclick="triggerFlow()"><i class="fa-solid fa-bolt"></i></div>
+            <a href="#" class="dock-btn"><i class="fa-solid fa-briefcase"></i><span>Portal</span></a>
+            <div class="dock-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i><span>Menu</span></div>
+        </nav>
+    </div>
 
-    function updateRecommendedPlan() {
-        const premSels = selections.services.filter(s => s.tier === 'premium').length;
-        const stdSels = selections.services.filter(s => s.tier === 'standard').length;
-        
-        if (premSels > 3 || stdSels > 8) {
-            selections.recommendedPlan = 'premium';
-        } else {
-            selections.recommendedPlan = 'standard';
-        }
-        
-        updatePlanIndicator();
-    }
-
-    function updatePlanIndicator() {
-        const indicator = document.getElementById('plan-indicator');
-        if (!indicator) return;
-        
-        const premSels = selections.services.filter(s => s.tier === 'premium').length;
-        const stdSels = selections.services.filter(s => s.tier === 'standard').length;
-        
-        let html = `
-            <div style="display:flex; align-items:center; gap:20px; justify-content:center;">
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <div class="indicator-dot ${selections.recommendedPlan === 'standard' ? 'standard active' : 'standard'}"></div>
-                    <span style="font-size:0.9rem; font-weight:700;">${stdSels} ${TIER_CONFIG.standard.name}</span>
-                </div>
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <div class="indicator-dot ${selections.recommendedPlan === 'premium' ? 'premium active' : 'premium'}"></div>
-                    <span style="font-size:0.9rem; font-weight:700;">${premSels} ${TIER_CONFIG.premium.name}</span>
-                </div>
-            </div>
-        `;
-        
-        indicator.innerHTML = html;
-    }
-
-    function renderSelectedFeaturesSummary() {
-        const container = document.getElementById('selected-features-summary');
-        if (!container) return;
-        
-        const stdSels = selections.services.filter(s => s.tier === 'standard');
-        const premSels = selections.services.filter(s => s.tier === 'premium');
-        
-        if (selections.services.length === 0) {
-            container.innerHTML = `
-                <div style="background:white; border-radius:24px; padding:24px; border:2px solid var(--border); text-align:center;">
-                    <i class="fas fa-info-circle" style="font-size:2rem; color:var(--gray); margin-bottom:12px;"></i>
-                    <h3 style="font-size:1.1rem; font-weight:900; margin-bottom:8px;">No Features Selected</h3>
-                    <p style="color:var(--gray); font-size:0.9rem; margin-bottom:16px;">Go back and select the features you want included in your website</p>
-                    <button class="vibz-btn primary" onclick="goToStep(7)" style="max-width:200px; margin:0 auto; padding:14px;">
-                        <i class="fas fa-plus"></i> Select Features
-                    </button>
-                </div>
-            `;
-            return;
-        }
-        
-        const helpMap = {};
-        helpRequests.forEach(h => { helpMap[h.feature] = true; });
-        
-        let html = `
-            <div class="selected-features-summary">
-                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
-                    <div style="display:flex; align-items:center; gap:12px;">
-                        <i class="fas fa-check-circle" style="color:var(--standard); font-size:1.4rem;"></i>
-                        <h3 style="font-size:1.2rem; font-weight:900;">Your Selected Features</h3>
-                    </div>
-                    ${helpRequests.length > 0 ? `
-                        <span style="background:var(--help); color:white; padding:4px 12px; border-radius:40px; font-size:0.75rem; font-weight:800;">
-                            <i class="fas fa-question-circle"></i> ${helpRequests.length} help
-                        </span>
-                    ` : ''}
-                </div>
-                
-                <div class="selected-features-grid">
-        `;
-        
-        if (stdSels.length > 0) {
-            html += `
-                <div class="selected-category standard">
-                    <h4><i class="fas fa-check-circle"></i> ${TIER_CONFIG.standard.name} (${stdSels.length})</h4>
-                    ${stdSels.map(s => `
-                        <div class="selected-item">
-                            <i class="fas fa-check-circle"></i>
-                            <span>${s.name}</span>
-                            ${helpMap[s.name] ? `<span class="help-request-badge">Help</span>` : ''}
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-        }
-        
-        if (premSels.length > 0) {
-            html += `
-                <div class="selected-category premium">
-                    <h4><i class="fas fa-crown"></i> ${TIER_CONFIG.premium.name} (${premSels.length})</h4>
-                    ${premSels.map(s => `
-                        <div class="selected-item">
-                            <i class="fas fa-crown"></i>
-                            <span>${s.name}</span>
-                            ${helpMap[s.name] ? `<span class="help-request-badge">Help</span>` : ''}
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-        }
-        
-        html += `
-                </div>
-        `;
-        
-        if (premSels.length > 0) {
-            html += `
-                <div style="background:rgba(33,150,243,0.08); border-radius:16px; padding:16px; margin-top:20px; border-left:4px solid var(--premium);">
-                    <i class="fas fa-crown" style="color:var(--premium); margin-right:8px;"></i>
-                    <strong style="color:var(--premium);">Premium includes ALL your selected Standard features</strong>
-                    <p style="font-size:0.8rem; color:var(--gray); margin-top:6px;">
-                        You've selected ${stdSels.length} Standard ${stdSels.length === 1 ? 'feature' : 'features'}. These are automatically included when you choose Premium.
-                    </p>
-                </div>
-            `;
-        }
-        
-        html += `
-                <div style="text-align:center; margin-top:20px;">
-                    <span class="clear-selections" onclick="clearSelections()">
-                        <i class="fas fa-times"></i> Clear all selections
-                    </span>
-                </div>
-            </div>
-        `;
-        
-        container.innerHTML = html;
-    }
-
-    function renderPricingCards() {
-        const container = document.getElementById('pricing-cards-display');
-        if (!container) return;
-        
-        let html = '';
-
-        if (selections.planType === PLAN_CONFIG.outright.name) {
-            const stdSels = selections.services.filter(s => s.tier === 'standard');
-            const premSels = selections.services.filter(s => s.tier === 'premium');
-            
-            html += `
-                <div class="pricing-card">
-                    <div class="pricing-header">
-                        <div class="plan-type standard-type">${TIER_CONFIG.standard.name}</div>
-                        <div class="price-value">£${PRICING_CONFIG.outright.standard.toLocaleString()}</div>
-                        <div class="price-period">one-time</div>
-                        <div class="plan-desc">You own the full website files. Hosting and updates are your responsibility.</div>
-                    </div>
-                    <ul class="feature-list">
-                        <li><i class="fas fa-file"></i> Up to 5 pages</li>
-                        <li><i class="fas fa-pencil"></i> Up to 5 revisions per page</li>
-                        <li><i class="fas fa-calendar"></i> Delivery 15-20 days</li>
-                        <li><i class="fas fa-mobile-alt"></i> Mobile responsive</li>
-                        <li><i class="fas fa-check-circle"></i> Complete website files</li>
-                        <li><i class="fas fa-check-circle"></i> Full ownership & copyright</li>
-                        <li><i class="fas fa-check-circle"></i> No recurring license fees</li>
-                        <li><i class="fas fa-check-circle"></i> 1 month post-launch support</li>
-                    </ul>
-                    <button class="payment-button secondary" onclick="saveOrderToStorage('Buy Outright', 'standard'); window.open('${STRIPE_LINKS.outright.standard}', '_blank')">
-                        <i class="fas fa-bolt"></i> Standard (One Time) - £${PRICING_CONFIG.outright.standard}
-                    </button>
-                </div>
-                
-                <div class="pricing-card recommended">
-                    <div class="plan-recommended-badge">👍 RECOMMENDED</div>
-                    <div class="pricing-header">
-                        <div class="plan-type premium-type">${TIER_CONFIG.premium.name}</div>
-                        <div class="price-value">£${PRICING_CONFIG.outright.premium.toLocaleString()}</div>
-                        <div class="price-period">one-time</div>
-                        <div class="plan-desc">You own the full website files. Hosting and updates are your responsibility.</div>
-                    </div>
-                    <ul class="feature-list">
-                        <li><i class="fas fa-file"></i> Up to 15 pages</li>
-                        <li><i class="fas fa-pencil"></i> Up to 10 revisions per page</li>
-                        <li><i class="fas fa-calendar"></i> Delivery 20-25 days</li>
-                        <li><i class="fas fa-mobile-alt"></i> Mobile responsive</li>
-                        <li><i class="fas fa-crown"></i> Complete website files</li>
-                        <li><i class="fas fa-crown"></i> Full ownership & copyright</li>
-                        <li><i class="fas fa-crown"></i> No recurring license fees</li>
-                        <li><i class="fas fa-crown"></i> 3 months post-launch support</li>
-                        <li><i class="fas fa-crown"></i> Premium feature set</li>
-                    </ul>
-                    <button class="payment-button premium" onclick="saveOrderToStorage('Buy Outright', 'premium'); window.open('${STRIPE_LINKS.outright.premium}', '_blank')">
-                        <i class="fas fa-crown"></i> Premium (One Time) - £${PRICING_CONFIG.outright.premium}
-                    </button>
-                </div>
-            `;
-            
-            if (premSels.length > 0) {
-                html += `
-                    <div style="background:rgba(33,150,243,0.08); border-radius:16px; padding:16px; margin-top:16px; border-left:4px solid var(--premium);">
-                        <i class="fas fa-crown" style="color:var(--premium); margin-right:8px;"></i>
-                        <strong style="color:var(--premium);">Premium includes ALL your selected Standard features</strong>
-                        <p style="font-size:0.8rem; color:var(--gray); margin-top:6px;">
-                            You've selected ${stdSels.length} Standard ${stdSels.length === 1 ? 'feature' : 'features'}. These are automatically included when you choose Premium.
-                        </p>
-                    </div>
-                `;
-            }
-            
-        } else {
-            const stdSels = selections.services.filter(s => s.tier === 'standard');
-            const premSels = selections.services.filter(s => s.tier === 'premium');
-            
-            html += `
-                <div class="pricing-card">
-                    <div class="pricing-header">
-                        <div class="plan-type standard-type">${TIER_CONFIG.standard.name} — MONTHLY LICENSE</div>
-                        <div class="price-row">
-                            <div class="price-item">
-                                <span class="price-label">Build fee:</span>
-                                <span class="price-value small">£${PRICING_CONFIG.monthly.buildFee.standard}</span>
-                                <span class="price-period">one-time</span>
-                            </div>
-                            <div class="price-item">
-                                <span class="price-label">then</span>
-                                <span class="price-value">£${PRICING_CONFIG.monthly.standard}</span>
-                                <span class="price-period">/month</span>
-                            </div>
-                        </div>
-                        <div class="plan-desc">
-                            12-month minimum term. Subscription renews monthly.
-                        </div>
-                    </div>
-                    
-                    <ul class="feature-list">
-                        <li><i class="fas fa-file"></i> Up to 5 pages</li>
-                        <li><i class="fas fa-pencil"></i> Up to 5 revisions per page</li>
-                        <li><i class="fas fa-calendar"></i> Delivery 15-20 days</li>
-                        <li><i class="fas fa-mobile-alt"></i> Mobile responsive</li>
-                        <li><i class="fas fa-check"></i> Monthly content updates</li>
-                        <li><i class="fas fa-check"></i> Security monitoring</li>
-                        <li><i class="fas fa-check"></i> Daily backups</li>
-                        <li><i class="fas fa-check"></i> 72h support response</li>
-                    </ul>
-                    
-                    <button class="payment-button secondary" onclick="saveOrderToStorage('Monthly License', 'standard'); window.open('${STRIPE_LINKS.monthly.standard}', '_blank')">
-                        <i class="fas fa-bolt"></i> Standard Build Fee - £${PRICING_CONFIG.monthly.buildFee.standard}
-                    </button>
-                    
-                    <div class="terms-box">
-                        <i class="fas fa-info-circle"></i>
-                        <strong>12-month minimum term.</strong> Monthly management (£${PRICING_CONFIG.monthly.standard}/mo) starts after website delivery. 
-                        Early cancellation does not waive the remaining contract balance.
-                    </div>
-                </div>
-            `;
-            
-            html += `
-                <div class="pricing-card recommended">
-                    <div class="plan-recommended-badge">👍 RECOMMENDED</div>
-                    <div class="pricing-header">
-                        <div class="plan-type premium-type">${TIER_CONFIG.premium.name} — MONTHLY LICENSE</div>
-                        <div class="price-row">
-                            <div class="price-item">
-                                <span class="price-label">Build fee:</span>
-                                <span class="price-value small">£${PRICING_CONFIG.monthly.buildFee.premium}</span>
-                                <span class="price-period">one-time</span>
-                            </div>
-                            <div class="price-item">
-                                <span class="price-label">then</span>
-                                <span class="price-value">£${PRICING_CONFIG.monthly.premium}</span>
-                                <span class="price-period">/month</span>
-                            </div>
-                        </div>
-                        <div class="plan-desc">
-                            12-month minimum term. Subscription renews monthly.
-                        </div>
-                    </div>
-                    
-                    <ul class="feature-list">
-                        <li><i class="fas fa-file"></i> Up to 15 pages</li>
-                        <li><i class="fas fa-pencil"></i> Up to 10 revisions per page</li>
-                        <li><i class="fas fa-calendar"></i> Delivery 20-25 days</li>
-                        <li><i class="fas fa-mobile-alt"></i> Mobile responsive</li>
-                        <li><i class="fas fa-crown"></i> Priority support (24h)</li>
-                        <li><i class="fas fa-crown"></i> Performance optimisation</li>
-                        <li><i class="fas fa-crown"></i> Booking/payment support</li>
-                        <li><i class="fas fa-crown"></i> Analytics review</li>
-                        <li><i class="fas fa-crown"></i> Ongoing optimisation</li>
-                        <li><i class="fas fa-crown"></i> Priority change requests</li>
-                    </ul>
-                    
-                    <button class="payment-button premium" onclick="saveOrderToStorage('Monthly License', 'premium'); window.open('${STRIPE_LINKS.monthly.premium}', '_blank')">
-                        <i class="fas fa-crown"></i> Premium Build Fee - £${PRICING_CONFIG.monthly.buildFee.premium}
-                    </button>
-                    
-                    <div class="terms-box">
-                        <i class="fas fa-info-circle"></i>
-                        <strong>12-month minimum term.</strong> Monthly management (£${PRICING_CONFIG.monthly.premium}/mo) starts after website delivery. 
-                        Early cancellation does not waive the remaining contract balance.
-                    </div>
-                </div>
-            `;
-            
-            if (premSels.length > 0) {
-                html += `
-                    <div style="background:rgba(33,150,243,0.08); border-radius:16px; padding:16px; margin-top:16px; border-left:4px solid var(--premium);">
-                        <i class="fas fa-crown" style="color:var(--premium); margin-right:8px;"></i>
-                        <strong style="color:var(--premium);">Premium includes ALL your selected Standard features</strong>
-                        <p style="font-size:0.8rem; color:var(--gray); margin-top:6px;">
-                            You've selected ${stdSels.length} Standard ${stdSels.length === 1 ? 'feature' : 'features'}. These are automatically included when you choose Premium.
-                        </p>
-                    </div>
-                `;
-            }
-        }
-
-        container.innerHTML = html;
-        renderSelectedFeaturesSummary();
-    }
-
-    function clearSelections() {
-        selections.services = [];
-        helpRequests = [];
-        updatePlanIndicator();
-        renderPricingCards();
-        
-        document.querySelectorAll('.service-card.selected').forEach(card => {
-            card.classList.remove('selected', 'standard', 'premium');
-        });
-    }
-
-    function resetHeader() {
-        const header = document.querySelector('header');
-        const logo = document.querySelector('.header-logo');
-        
-        header.style.transform = '';
-        header.style.position = '';
-        header.style.top = '';
-        header.style.left = '';
-        header.style.right = '';
-        header.style.zIndex = '';
-        
-        logo.style.opacity = '1';
-        logo.style.visibility = 'visible';
-        logo.style.transform = '';
-        logo.style.position = '';
-    }
-
-    function updateUI() {
-        resetHeader();
-        
-        document.querySelectorAll('.form-screen').forEach(s => {
-            s.classList.remove('active');
-            s.style.display = 'none';
-            s.style.opacity = '0';
-            s.style.transform = 'translateY(15px)';
-        });
-        
-        const currentScreen = document.getElementById(`step-${currentStep}`);
-        if (currentScreen) {
-            currentScreen.style.display = 'block';
-            
-            setTimeout(() => {
-                currentScreen.classList.add('active');
-                currentScreen.style.opacity = '1';
-                currentScreen.style.transform = 'translateY(0)';
-            }, 10);
-        }
-        
-        const titles = { 
-            0: "Build your barber brand.", 
-            1: "Shop Name?", 
-            2: "Status?", 
-            3: "Design Choice?", 
-            4: "Verification", 
-            5: "Choose Your Plan", 
-            6: "When do you want to start?", 
-            7: "Select Features", 
-            8: "Review & Continue", 
-            9: "Your Details" 
+    <script>
+        const nicheData = {
+            "Health & Wellness": ["Barbers", "Dentists", "Gyms & Studios", "Spas & Beauty", "Physiotherapists", "Yoga Instructors", "Therapists"],
+            "Home & Trades": ["Plumbers", "Electricians", "Landscapers", "Cleaners", "Roofers", "Carpenters", "Locksmiths"],
+            "Professional": ["Lawyers", "Accountants", "Real Estate", "Tutors", "Marketing Agencies", "Consultants"],
+            "Food & Drink": ["Restaurants", "Cafes & Coffee", "Bakeries", "Bars & Clubs", "Catering", "Takeaways"],
+            "Retail & Creative": ["Boutiques", "E-commerce Stores", "Photographers", "Artists", "Florists", "Pet Shops"]
         };
-        document.getElementById('dynamic-title').textContent = titles[currentStep];
-        document.getElementById('dynamic-subtitle').textContent = '';
-        
-        const mainContent = document.getElementById('main-content-wrapper');
-        if (currentStep === 0 || currentStep === 1) {
-            mainContent.className = "hero-centered";
-        } else {
-            mainContent.className = "hero-balanced";
-        }
-        
-        if(currentStep === 7) {
-            initServiceList();
-            updateRecommendedPlan();
-        }
-        if(currentStep === 8) {
-            renderPricingCards();
+
+        window.addEventListener('load', () => {
             setTimeout(() => {
-                document.querySelector('.content-scroll').scrollTop = 0;
-            }, 100);
-        }
-        
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        
-        const menu = document.getElementById('app-menu-layer');
-        if (menu.classList.contains('active')) {
-            menu.classList.remove('active');
-        }
-    }
+                document.getElementById('app-loader').style.transform = 'translateY(-100%)';
+                document.getElementById('app-container').style.opacity = '1';
+                startTypewriter();
+            }, 2500);
+        });
 
-    window.onload = function() {
-        loadOrderFromStorage();
-        checkForConceptLibraryReturn();
-        
-        const urlParams = new URLSearchParams(window.location.search);
-        
-        if(urlParams.get('step') === '5') {
-            selections.designCode = sessionStorage.getItem('selectedBarberCode') || 'LIBRARY DESIGN';
-            selections.fromConceptLibrary = true;
-            currentStep = 5;
-            
-            const savedShopName = sessionStorage.getItem('barberShopName');
-            if (savedShopName && !selections.businessName) {
-                selections.businessName = savedShopName;
+        function toggleMenu() { document.getElementById('app-menu-layer').classList.toggle('active'); }
+        function toggleCategories() { document.getElementById('category-layer').classList.toggle('active'); }
+
+        function openNiche(sector) {
+            const list = document.getElementById('cat-list');
+            const title = document.getElementById('cat-title');
+            title.textContent = sector;
+            list.innerHTML = "";
+            nicheData[sector].forEach(niche => {
+                const div = document.createElement('div');
+                div.className = "cat-item";
+                div.textContent = niche;
+                div.onclick = () => {
+                    document.getElementById('mainSearch').value = niche;
+                    toggleCategories();
+                    triggerFlow(niche);
+                };
+                list.appendChild(div);
+            });
+            toggleCategories();
+        }
+
+        const words = ["barbers", "dentists", "plumbers", "lawyers", "gym owners", "chefs"];
+        let wordIndex = 0; let charIndex = 0; let isDeleting = false;
+        const typewriterEl = document.getElementById('typewriter');
+
+        function startTypewriter() {
+            const currentWord = words[wordIndex % words.length];
+            if (!isDeleting && charIndex < currentWord.length) {
+                typewriterEl.textContent += currentWord.charAt(charIndex++);
+            } else if (isDeleting && charIndex > 0) {
+                typewriterEl.textContent = currentWord.substring(0, charIndex - 1);
+                charIndex--;
+            } else {
+                isDeleting = !isDeleting;
+                if (!isDeleting) wordIndex++;
             }
+            setTimeout(startTypewriter, isDeleting && charIndex === 0 ? 1200 : (isDeleting ? 40 : 80));
         }
-        
-        updateUI();
-    };
 
-    document.addEventListener('touchmove', function(e) {
-        if (e.target.classList.contains('content-scroll')) {
-            e.stopPropagation();
+        function triggerFlow(overrideNiche = null) { 
+            const val = overrideNiche ? overrideNiche.toLowerCase() : document.getElementById('mainSearch').value.trim().toLowerCase();
+            const loaderIcon = document.querySelector('.search-icon-btn i');
+            if (!val) return;
+            loaderIcon.className = 'fa-solid fa-spinner fa-spin';
+            setTimeout(() => { 
+                window.location.href = val.includes('barber') ? "https://www.vibz.co.uk/barber/index.html" : "https://www.vibz.co.uk/funnel.html?niche=" + encodeURIComponent(val);
+            }, 800);
         }
-    }, { passive: false });
-</script>
-
+    </script>
 </body>
 </html>
