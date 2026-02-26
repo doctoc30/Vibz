@@ -28,7 +28,7 @@
             height: 100%;
             background-color: var(--primary-light);
             color: var(--text);
-            overscroll-behavior-y: contain;
+            /* Removed overscroll-behavior-y: contain to allow natural scrolling behavior */
             overflow-x: hidden;
             overflow-y: auto;
         }
@@ -155,32 +155,32 @@
             opacity: 0; transition: opacity 0.5s ease-in;
         }
 
-        /* ===== HEADER WITH SCROLL HIDE - FIXED POSITION ===== */
+        /* ===== UPDATED HEADER: NON-STATIC (SCROLLS AWAY) ===== */
         header {
             padding: calc(var(--safe-top) + 20px) 25px 15px;
             display: flex; 
             justify-content: space-between; 
             align-items: center;
             background: var(--primary-light);
-            position: fixed;
+            position: fixed; /* Keep fixed to allow the 'slide' effect */
             top: 0;
             left: 0;
             right: 0;
             z-index: 800;
             transform: translateY(0);
-            transition: transform 0.2s ease;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             will-change: transform;
         }
 
-        /* Hidden state - slides completely out of view */
+        /* Hidden state - moves it up out of view */
         header.hidden {
             transform: translateY(-100%);
         }
 
-        /* Simple spacer to push content below fixed header - NO DIVIDER */
         .header-spacer {
-            height: 100px; /* Will be updated by JS */
+            height: 100px; /* Base height, updated by JS */
             width: 100%;
+            flex-shrink: 0;
         }
 
         .app-logo { 
@@ -196,7 +196,6 @@
             padding: 0 25px 0px;
         }
 
-        /* bottom spacer to clear dock */
         .dock-spacer {
             height: 90px;
             width: 100%;
@@ -207,35 +206,12 @@
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                padding-top: 0;
-                padding-bottom: 0;
             }
-            .hero-area {
-                width: 100%;
-                max-width: 800px;
-                padding: 0;
-                margin-bottom: 40px;
-            }
-            .search-container {
-                max-width: 600px !important;
-                width: 100%;
-            }
-            .app-grid {
-                max-width: 600px !important;
-                width: 100%;
-                grid-template-columns: 1fr 1fr !important;
-                gap: 20px;
-            }
-            .app-tile.full-tile {
-                grid-column: span 1 !important;
-                flex-direction: column !important;
-                text-align: center;
-            }
+            .hero-area { width: 100%; max-width: 800px; }
+            .search-container { max-width: 600px !important; width: 100%; }
+            .app-grid { max-width: 600px !important; width: 100%; grid-template-columns: 1fr 1fr !important; gap: 20px; }
+            .app-tile.full-tile { grid-column: span 1 !important; flex-direction: column !important; text-align: center; }
             .app-tile.full-tile div { margin-left: 0 !important; }
-            
-            .header-spacer {
-                height: 120px;
-            }
         }
 
         .hero-area { text-align: center; padding: 60px 0 40px; }
@@ -292,12 +268,9 @@
         .app-tile h3 { font-size: 1rem; font-weight: 900; line-height: 1.2; text-align: center; }
         .full-tile { grid-column: span 2; flex-direction: row; justify-content: center; }
 
-        /* ===== THINNER DOCK - FLUSH BOTTOM ===== */
         .app-dock {
             position: fixed; 
-            bottom: 0;
-            left: 0;
-            right: 0;
+            bottom: 0; left: 0; right: 0;
             background: rgba(255, 255, 255, 0.85); 
             backdrop-filter: blur(20px);
             height: 70px;
@@ -362,13 +335,11 @@
     </div>
 
     <div id="app-container">
-        <!-- Header with logo - this entire element hides on scroll -->
         <header id="main-header">
             <div class="app-logo">VIBZ<span>.</span></div>
             <i class="fa-solid fa-circle-user" style="font-size: 1.8rem; color: #ddd;"></i>
         </header>
         
-        <!-- Simple spacer to push content below fixed header - NO DIVIDER -->
         <div class="header-spacer" id="header-spacer"></div>
 
         <main class="content-scroll">
@@ -442,12 +413,9 @@
         function highlightCatItem(element) {
             const allCatItems = document.querySelectorAll('.cat-item');
             allCatItems.forEach(el => el.classList.remove('click-highlight'));
-            
             if (element) {
                 element.classList.add('click-highlight');
-                setTimeout(() => {
-                    element.classList.remove('click-highlight');
-                }, 280);
+                setTimeout(() => element.classList.remove('click-highlight'), 280);
             }
         }
 
@@ -463,7 +431,6 @@
                 div.onclick = (e) => {
                     e.stopPropagation();
                     highlightCatItem(div);
-                    
                     setTimeout(() => {
                         document.getElementById('mainSearch').value = niche;
                         triggerFlow(niche);
@@ -495,27 +462,19 @@
         function triggerFlow(overrideNiche = null) { 
             const val = overrideNiche ? overrideNiche.toLowerCase() : document.getElementById('mainSearch').value.trim().toLowerCase();
             const loaderIcon = document.querySelector('.search-icon-btn i');
-            
             if (!val) return;
-
             loaderIcon.className = 'fa-solid fa-spinner fa-spin';
-            
             const isBarber = val.includes('barber') || val.includes('hair') || val.includes('shave');
-
             setTimeout(() => { 
-                if (isBarber) {
-                    window.location.href = "https://www.vibz.co.uk/barber/index.html";
-                } else {
-                    window.location.href = "https://www.vibz.co.uk/funnel.html?niche=" + encodeURIComponent(val);
-                }
+                window.location.href = isBarber ? "https://www.vibz.co.uk/barber/index.html" : "https://www.vibz.co.uk/funnel.html?niche=" + encodeURIComponent(val);
             }, 800);
         }
 
-        // ===== HEADER HIDE ON SCROLL - SIMPLIFIED AND RELIABLE =====
+        // ===== UPDATED SCROLL LOGIC: NON-STATIC HEADER =====
         const header = document.getElementById('main-header');
         const headerSpacer = document.getElementById('header-spacer');
         let lastScrollY = window.scrollY;
-        let ticking2 = false;
+        let ticking = false;
 
         function updateHeaderHeight() {
             const height = header.offsetHeight;
@@ -524,38 +483,36 @@
 
         function onScroll() {
             const currentScrollY = window.scrollY;
-            
-            // SCROLL DOWN - hide header
-            if (currentScrollY > lastScrollY && currentScrollY > 20) {
-                header.classList.add('hidden');
-            } 
-            // SCROLL UP - show header
-            else if (currentScrollY < lastScrollY) {
-                header.classList.remove('hidden');
+            const scrollDelta = currentScrollY - lastScrollY;
+
+            // Threshold: Only trigger if scrolled more than 5px to avoid sensitivity issues
+            if (Math.abs(scrollDelta) > 5) {
+                if (currentScrollY > lastScrollY && currentScrollY > 100) {
+                    // Scrolling DOWN - hide header
+                    header.classList.add('hidden');
+                } else if (currentScrollY < lastScrollY) {
+                    // Scrolling UP - show header
+                    header.classList.remove('hidden');
+                }
             }
             
-            // Always show header at very top
-            if (currentScrollY <= 5) {
+            // Safety: Always show at the very top
+            if (currentScrollY <= 10) {
                 header.classList.remove('hidden');
             }
             
             lastScrollY = currentScrollY;
-            ticking2 = false;
+            ticking = false;
         }
 
         window.addEventListener('scroll', () => {
-            if (!ticking2) {
+            if (!ticking) {
                 window.requestAnimationFrame(onScroll);
-                ticking2 = true;
+                ticking = true;
             }
         });
 
-        // Update header height on load and resize
-        window.addEventListener('load', updateHeaderHeight);
         window.addEventListener('resize', updateHeaderHeight);
-        window.addEventListener('orientationchange', () => {
-            setTimeout(updateHeaderHeight, 100);
-        });
     </script>
 </body>
 </html>
