@@ -168,10 +168,8 @@
             right: 0;
             z-index: 800;
             transform: translateY(0);
-            transition: transform 0.3s ease;
+            transition: transform 0.2s ease;
             will-change: transform;
-            /* Ensure header has a background that covers content behind */
-            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
         }
 
         /* Hidden state - slides completely out of view */
@@ -179,9 +177,9 @@
             transform: translateY(-100%);
         }
 
-        /* Spacer to push content below fixed header */
+        /* Simple spacer to push content below fixed header - NO DIVIDER */
         .header-spacer {
-            height: 100px; /* Match header height */
+            height: 100px; /* Will be updated by JS */
             width: 100%;
         }
 
@@ -190,7 +188,6 @@
             font-weight: 900; 
             letter-spacing: -1.5px; 
             color: var(--primary);
-            /* Logo is inside header, so it hides with header */
         }
         .app-logo span { color: #000000; }
 
@@ -332,15 +329,6 @@
             box-shadow: 0 8px 18px rgba(255, 107, 0, 0.3);
             cursor: pointer;
         }
-
-        /* Remove the old header-spacer styling since we're using a div for spacing */
-        .header-spacer-line {
-            width: 60%; 
-            height: 2px; 
-            margin: 0 auto;
-            background: radial-gradient(circle, var(--primary) 0%, rgba(255, 107, 0, 0) 90%);
-            opacity: 0.6;
-        }
     </style>
 </head>
 <body>
@@ -380,11 +368,8 @@
             <i class="fa-solid fa-circle-user" style="font-size: 1.8rem; color: #ddd;"></i>
         </header>
         
-        <!-- Spacer to push content below fixed header (prevents content jump) -->
-        <div class="header-spacer"></div>
-        
-        <!-- Decorative line (was header-spacer but renamed) -->
-        <div class="header-spacer-line"></div>
+        <!-- Simple spacer to push content below fixed header - NO DIVIDER -->
+        <div class="header-spacer" id="header-spacer"></div>
 
         <main class="content-scroll">
             <div class="hero-area">
@@ -526,50 +511,48 @@
             }, 800);
         }
 
-        // ===== HEADER HIDE ON SCROLL - FIXED VERSION =====
+        // ===== HEADER HIDE ON SCROLL - SIMPLIFIED AND RELIABLE =====
         const header = document.getElementById('main-header');
-        let lastScrollTop = 0;
-        let scrollThreshold = 10;
-        let ticking = false;
+        const headerSpacer = document.getElementById('header-spacer');
+        let lastScrollY = window.scrollY;
+        let ticking2 = false;
 
-        function updateHeaderOnScroll() {
-            const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+        function updateHeaderHeight() {
+            const height = header.offsetHeight;
+            headerSpacer.style.height = height + 'px';
+        }
+
+        function onScroll() {
+            const currentScrollY = window.scrollY;
             
-            // Scrolling down & past threshold -> hide header (including logo)
-            if (currentScroll > lastScrollTop && currentScroll > scrollThreshold) {
+            // SCROLL DOWN - hide header
+            if (currentScrollY > lastScrollY && currentScrollY > 20) {
                 header.classList.add('hidden');
             } 
-            // Scrolling up -> show header
-            else if (currentScroll < lastScrollTop) {
+            // SCROLL UP - show header
+            else if (currentScrollY < lastScrollY) {
                 header.classList.remove('hidden');
             }
             
-            // Always show header at the very top
-            if (currentScroll <= 5) {
+            // Always show header at very top
+            if (currentScrollY <= 5) {
                 header.classList.remove('hidden');
             }
             
-            lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
-            ticking = false;
+            lastScrollY = currentScrollY;
+            ticking2 = false;
         }
 
         window.addEventListener('scroll', () => {
-            if (!ticking) {
-                window.requestAnimationFrame(updateHeaderOnScroll);
-                ticking = true;
+            if (!ticking2) {
+                window.requestAnimationFrame(onScroll);
+                ticking2 = true;
             }
         });
 
-        // Update header height spacer dynamically
-        function updateHeaderHeight() {
-            const headerHeight = header.offsetHeight;
-            document.querySelector('.header-spacer').style.height = headerHeight + 'px';
-        }
-        
+        // Update header height on load and resize
         window.addEventListener('load', updateHeaderHeight);
         window.addEventListener('resize', updateHeaderHeight);
-        
-        // Also update on orientation change
         window.addEventListener('orientationchange', () => {
             setTimeout(updateHeaderHeight, 100);
         });
