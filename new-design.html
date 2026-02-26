@@ -16,6 +16,7 @@
             --card-bg: rgba(255, 255, 255, 0.9);
             --safe-top: env(safe-area-inset-top);
             --safe-bottom: env(safe-area-inset-bottom);
+            --header-height: 100px;
         }
 
         * {
@@ -28,14 +29,12 @@
             height: 100%;
             background-color: var(--primary-light);
             color: var(--text);
-            /* STOP SCROLL REFRESH: Prevents pull-to-refresh logic */
             overscroll-behavior-y: contain;
-            /* Changed to allow scrolling */
             overflow-x: hidden;
             overflow-y: auto;
         }
 
-        /* ==== 1. BOLD LOGO BOOT SEQUENCE ==== */
+        /* ==== LOADER ==== */
         #app-loader {
             position: fixed; inset: 0; background: #FFF2EB; z-index: 10000;
             display: flex; align-items: center; justify-content: center;
@@ -66,7 +65,7 @@
         @keyframes slideFromLeft { from { transform: translateX(-100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         @keyframes slideFromTop { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        /* ==== APP MENU LAYER - UPDATED FOR MOBILE CENTERING & SIZE ==== */
+        /* ==== MENU LAYERS ==== */
         #app-menu-layer {
             position: fixed; inset: 0; background: var(--primary-light);
             z-index: 9500; display: flex; flex-direction: column;
@@ -107,13 +106,12 @@
             text-align: center;
         }
 
-        /* TABLET ADJUSTMENTS */
         @media (min-width: 768px) {
             .menu-item { font-size: 6rem; }
             .menu-footer { font-size: 1.2rem; }
         }
 
-        /* ==== CATEGORY LAYERS ==== */
+        /* ==== CATEGORY LAYER ==== */
         #category-layer {
             position: fixed; inset: 0; background: rgba(255, 245, 238, 0.98);
             backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
@@ -138,7 +136,6 @@
             margin-right: auto;
         }
 
-        /* ✦✦✦ HIGHLIGHT ON CLICK — ONLY CHANGE ✦✦✦ */
         .cat-item.click-highlight {
             background: var(--primary) !important;
             color: white !important;
@@ -159,26 +156,37 @@
             opacity: 0; transition: opacity 0.5s ease-in;
         }
 
-        /* ========== HEADER HIDE ON SCROLL (FULL SCREEN VIEW) ========== */
+        /* ===== HEADER WITH SCROLL HIDE ===== */
         header {
             padding: calc(var(--safe-top) + 20px) 25px 15px;
             display: flex; justify-content: space-between; align-items: center;
             background: var(--primary-light);
-            position: sticky; 
-            top: 0; 
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
             z-index: 800;
+            transform: translateY(0);
             transition: transform 0.3s ease;
+            will-change: transform;
         }
 
-        /* when scrolling down, header disappears (full screen content) */
-        header.hide-on-scroll {
+        header.hidden {
             transform: translateY(-100%);
         }
 
+        /* Add spacer to push content below fixed header */
         .header-spacer {
-            width: 60%; height: 2px; margin: 0 auto;
+            width: 60%; 
+            height: 2px; 
+            margin: 0 auto;
             background: radial-gradient(circle, var(--primary) 0%, rgba(255, 107, 0, 0) 90%);
             opacity: 0.6;
+        }
+
+        /* Content wrapper to account for fixed header */
+        .content-wrapper {
+            margin-top: var(--header-height);
         }
 
         .app-logo { font-size: 1.8rem; font-weight: 900; letter-spacing: -1.5px; color: var(--primary); }
@@ -186,13 +194,12 @@
 
         .content-scroll {
             flex: 1; 
-            padding: 0 25px 0px; /* bottom padding moved to dock spacer */
-            /* extra spacer at the end ensures content is not hidden behind dock */
+            padding: 20px 25px 0px;
         }
 
-        /* bottom spacer to avoid gap: dock sits flush with bottom */
+        /* bottom spacer to clear dock */
         .dock-spacer {
-            height: 110px; /* enough to clear thinner dock */
+            height: 90px;
             width: 100%;
         }
 
@@ -226,6 +233,10 @@
                 text-align: center;
             }
             .app-tile.full-tile div { margin-left: 0 !important; }
+            
+            :root {
+                --header-height: 120px;
+            }
         }
 
         .hero-area { text-align: center; padding: 60px 0 40px; }
@@ -282,44 +293,43 @@
         .app-tile h3 { font-size: 1rem; font-weight: 900; line-height: 1.2; text-align: center; }
         .full-tile { grid-column: span 2; flex-direction: row; justify-content: center; }
 
-        /* ========== THINNER DOCK, NO BOTTOM GAP ========== */
+        /* ===== THINNER DOCK - FLUSH BOTTOM ===== */
         .app-dock {
             position: fixed; 
-            bottom: 0;               /* flush with bottom edge, no gap */
+            bottom: 0;
             left: 0;
             right: 0;
             background: rgba(255, 255, 255, 0.85); 
             backdrop-filter: blur(20px);
-            height: 70px;             /* thinner than original 80px */
-            border-radius: 0;          /* flat bottom edge, but keep slight rounding? make it 0 to avoid gap */
+            height: 70px;
             display: flex; 
             justify-content: space-around;
             align-items: center; 
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.05); /* subtle shadow */
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
             z-index: 1000;
-            padding-bottom: env(safe-area-inset-bottom); /* respect safe area but no extra gap */
+            padding-bottom: env(safe-area-inset-bottom);
         }
 
-        .dock-btn { display: flex; flex-direction: column; align-items: center; color: #A0A0A0; text-decoration: none; gap: 2px; }
+        .dock-btn { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            color: #A0A0A0; 
+            text-decoration: none; 
+            gap: 2px; 
+        }
         .dock-btn.active { color: var(--primary); }
-        .dock-btn i { font-size: 1.4rem; } /* slightly smaller */
+        .dock-btn i { font-size: 1.4rem; }
         .dock-btn span { font-size: 0.6rem; font-weight: 800; text-transform: uppercase; }
 
         .dock-center {
             width: 60px; height: 60px; background: var(--primary); border-radius: 50%;
             display: flex; align-items: center; justify-content: center; color: #fff;
-            font-size: 1.6rem; margin-top: -30px; /* lift up */
+            font-size: 1.6rem; margin-top: -30px;
             border: 5px solid var(--primary-light);
             box-shadow: 0 8px 18px rgba(255, 107, 0, 0.3);
             cursor: pointer;
         }
-
-        /* remove any extra spacing below dock */
-        body {
-            padding-bottom: 0;
-            margin-bottom: 0;
-        }
-
     </style>
 </head>
 <body>
@@ -348,9 +358,7 @@
 
     <div id="category-layer">
         <h2 id="cat-title" style="color: var(--primary); margin-bottom: 20px; font-weight: 900; letter-spacing: -1px;">Niche Selection</h2>
-        <div id="cat-list" style="width: 100%; display: flex; flex-direction: column; align-items: center; overflow-y: auto; max-height: 60vh;">
-            <!-- dynamic categories injected here -->
-        </div>
+        <div id="cat-list" style="width: 100%; display: flex; flex-direction: column; align-items: center; overflow-y: auto; max-height: 60vh;"></div>
         <div class="close-btn" onclick="toggleCategories()"><i class="fa-solid fa-xmark"></i></div>
     </div>
 
@@ -359,6 +367,9 @@
             <div class="app-logo">VIBZ<span>.</span></div>
             <i class="fa-solid fa-circle-user" style="font-size: 1.8rem; color: #ddd;"></i>
         </header>
+        
+        <!-- Spacer to push content below fixed header -->
+        <div style="height: 100px;"></div>
         <div class="header-spacer"></div>
 
         <main class="content-scroll">
@@ -396,11 +407,9 @@
                     </div>
                 </div>
             </div>
-            <!-- spacer to prevent content from being hidden behind fixed dock -->
             <div class="dock-spacer"></div>
         </main>
 
-        <!-- THINNER DOCK (height 70px) flush with bottom -->
         <nav class="app-dock">
             <a href="#" class="dock-btn active"><i class="fa-solid fa-house-chimney"></i><span>Home</span></a>
             <a href="https://www.vibz.co.uk/barber/concepts.html" class="dock-btn"><i class="fa-solid fa-compass"></i><span>Library</span></a>
@@ -430,16 +439,12 @@
         function toggleMenu() { document.getElementById('app-menu-layer').classList.toggle('active'); }
         function toggleCategories() { document.getElementById('category-layer').classList.toggle('active'); }
 
-        // ✦✦✦ HIGHLIGHT ON CLICK — ONLY ADDITION ✦✦✦
         function highlightCatItem(element) {
-            // remove any existing highlight from other items
             const allCatItems = document.querySelectorAll('.cat-item');
             allCatItems.forEach(el => el.classList.remove('click-highlight'));
             
-            // add highlight to clicked item
             if (element) {
                 element.classList.add('click-highlight');
-                // auto remove highlight after 250ms to mimic feedback but keep button state
                 setTimeout(() => {
                     element.classList.remove('click-highlight');
                 }, 280);
@@ -455,16 +460,14 @@
                 const div = document.createElement('div');
                 div.className = "cat-item";
                 div.textContent = niche;
-                // ✦ highlight on click — this is the exact requested behaviour ✦
                 div.onclick = (e) => {
-                    e.stopPropagation();  // avoid bubbling
-                    highlightCatItem(div); // 💥 visual tap highlight 💥
+                    e.stopPropagation();
+                    highlightCatItem(div);
                     
-                    // after a tiny flash, perform original action (set search & navigate)
                     setTimeout(() => {
                         document.getElementById('mainSearch').value = niche;
                         triggerFlow(niche);
-                    }, 80); // slight delay so highlight is perceptible
+                    }, 80);
                 };
                 list.appendChild(div);
             });
@@ -508,31 +511,42 @@
             }, 800);
         }
 
-        // ========== HEADER HIDE ON SCROLL ==========
+        // ===== HEADER HIDE ON SCROLL =====
         const header = document.getElementById('main-header');
-        let lastScrollY = window.scrollY;
-        let ticking = false;
-
-        function updateHeaderOnScroll() {
-            const currentScrollY = window.scrollY;
-            // Scroll down -> hide header (add class). Scroll up -> show header (remove class)
-            if (currentScrollY > lastScrollY && currentScrollY > 50) {
-                // scrolling down past threshold
-                header.classList.add('hide-on-scroll');
-            } else {
-                // scrolling up
-                header.classList.remove('hide-on-scroll');
-            }
-            lastScrollY = currentScrollY;
-            ticking = false;
-        }
+        let lastScrollTop = 0;
+        let scrollThreshold = 10; // Minimum scroll amount before hiding
+        let ticking2 = false;
 
         window.addEventListener('scroll', () => {
-            if (!ticking) {
-                window.requestAnimationFrame(updateHeaderOnScroll);
-                ticking = true;
+            if (!ticking2) {
+                window.requestAnimationFrame(() => {
+                    const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+                    
+                    // Determine scroll direction
+                    if (currentScroll > lastScrollTop && currentScroll > scrollThreshold) {
+                        // Scrolling DOWN - hide header
+                        header.classList.add('hidden');
+                    } else {
+                        // Scrolling UP - show header
+                        header.classList.remove('hidden');
+                    }
+                    
+                    lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+                    ticking2 = false;
+                });
+                
+                ticking2 = true;
             }
         });
+
+        // Update header height variable on resize
+        function updateHeaderHeight() {
+            const headerHeight = header.offsetHeight;
+            document.documentElement.style.setProperty('--header-height', headerHeight + 'px');
+        }
+        
+        window.addEventListener('load', updateHeaderHeight);
+        window.addEventListener('resize', updateHeaderHeight);
     </script>
 </body>
 </html>
