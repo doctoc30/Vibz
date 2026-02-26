@@ -155,11 +155,33 @@
             }
         }
 
-        /* Special handling for step-8 (pricing cards) - different layout but header still centered */
+        /* Special handling for step-8 (pricing cards) - FIXED TO SHOW BOTH CARDS */
         #step-8 .hero-balanced {
             justify-content: flex-start;
             min-height: auto;
             padding-top: 30px;
+            padding-bottom: 40px;
+        }
+
+        /* Ensure pricing cards are fully visible */
+        .pricing-cards-container {
+            margin-bottom: 40px !important;
+        }
+
+        .pricing-card {
+            margin-bottom: 20px;
+        }
+
+        /* Make sure both cards are visible */
+        #step-8 .form-screen.active {
+            display: block !important;
+            overflow: visible;
+        }
+
+        /* Ensure content is scrollable */
+        #step-8 {
+            overflow-y: visible !important;
+            padding-bottom: 30px;
         }
 
         #step-8 .step-header {
@@ -457,7 +479,7 @@
         .concept-info h3 { font-weight: 900; color: var(--primary); text-transform: uppercase; margin-bottom: 4px; }
         .concept-info p { font-size: 0.85rem; color: var(--gray); font-weight: 600; line-height: 1.4; }
 
-        /* ===== PRICING CARDS ===== */
+        /* ===== PRICING CARDS - FIXED TO ENSURE BOTH ARE VISIBLE ===== */
         .pricing-cards-container {
             display: flex;
             flex-direction: column;
@@ -502,6 +524,8 @@
             transition: transform 0.2s ease;
             text-align: left;
             box-shadow: 0 20px 40px rgba(255, 107, 0, 0.1);
+            width: 100%;
+            margin-bottom: 20px;
         }
 
         .pricing-card.recommended {
@@ -805,10 +829,25 @@
             margin-bottom: 12px;
         }
 
-        /* Fix for step-8 to ensure scrolling works */
+        /* Fix for step-8 to ensure scrolling works and both cards are visible */
         #step-8 {
-            overflow-y: visible;
+            overflow-y: visible !important;
             padding-bottom: 20px;
+            min-height: auto !important;
+        }
+
+        #step-8 .form-screen.active {
+            min-height: auto !important;
+            padding-bottom: 40px;
+        }
+
+        /* Ensure both pricing cards are fully visible */
+        .pricing-card:first-child {
+            margin-top: 10px;
+        }
+
+        .pricing-card:last-child {
+            margin-bottom: 30px;
         }
 
         /* Responsive adjustments */
@@ -1712,6 +1751,10 @@
         }
         if(currentStep === 8) {
             renderPricingCards();
+            // Ensure both cards are visible by scrolling to top
+            setTimeout(() => {
+                document.querySelector('.content-scroll').scrollTop = 0;
+            }, 100);
         }
         
         window.scrollTo({ top: 0, behavior: 'smooth' });
