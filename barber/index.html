@@ -34,7 +34,6 @@
             height: 100%;
             background-color: var(--primary-light);
             color: var(--text);
-            /* Removed overflow: hidden to allow scrolling naturally */
             overflow-x: hidden;
             overflow-y: auto;
         }
@@ -120,7 +119,7 @@
         .content-scroll {
             flex: 1; 
             overflow-y: visible; 
-            padding: 0 20px 180px; /* Increased bottom padding for dock */
+            padding: 0 20px 180px;
             scroll-behavior: smooth;
             display: flex; 
             flex-direction: column;
@@ -171,7 +170,6 @@
             padding-bottom: 40px;
         }
 
-        /* Ensure both pricing cards are fully visible */
         #step-8 {
             overflow-y: visible !important;
         }
@@ -422,21 +420,21 @@
             } 
         }
 
-        /* ===== DOCK STYLES - EXACTLY MATCHING REFERENCE PAGE ===== */
+        /* ===== DOCK STYLES ===== */
         .app-dock {
             position: fixed; 
-            bottom: 0;  /* Flush with bottom exactly like reference */
+            bottom: 0;
             left: 0;
             right: 0;
             background: rgba(255, 255, 255, 0.85); 
             backdrop-filter: blur(20px);
-            height: 70px;  /* Thinner dock */
+            height: 70px;
             display: flex; 
             justify-content: space-around;
             align-items: center; 
             box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
             z-index: 1000;
-            padding-bottom: env(safe-area-inset-bottom); /* Respect safe area */
+            padding-bottom: env(safe-area-inset-bottom);
         }
 
         .dock-btn { 
@@ -464,7 +462,7 @@
             justify-content: center; 
             color: #fff;
             font-size: 1.6rem; 
-            margin-top: -30px;  /* Lift up effect */
+            margin-top: -30px;
             border: 5px solid var(--primary-light);
             box-shadow: 0 8px 18px rgba(255, 107, 0, 0.3);
             cursor: pointer;
@@ -845,42 +843,54 @@
             }
         }
 
-        /* ===== FIX: CENTER FUNNEL ON DESKTOP, PRESERVE MOBILE ===== */
+        /* ===== FIXED DESKTOP CENTERING - PERFECT MIDDLE ===== */
         @media (min-width: 1024px) {
-            /* On large screens, push content up slightly toward header (remove excess top padding) */
+            /* Override any previous adjustments - make it perfectly centered */
             #main-content-wrapper.hero-centered,
             #main-content-wrapper.hero-balanced {
-                min-height: 50vh; /* reduce min-height so it sits higher */
-                margin-top: -5vh;  /* subtle lift toward header */
-                justify-content: flex-start; /* start from top */
-                padding-top: 2rem; 
-            }
-
-            /* but keep step-8 (pricing) as is – it already has its own handling */
-            #step-8 #main-content-wrapper.hero-balanced {
-                min-height: auto;
+                min-height: calc(100vh - 300px); /* Account for header and dock */
+                justify-content: center;
                 margin-top: 0;
-                justify-content: flex-start;
+                padding-top: 0;
+                transform: translateY(0);
+            }
+            
+            /* Adjust for the dock at bottom */
+            .content-scroll {
+                padding-bottom: 180px;
+            }
+            
+            /* Fine-tune for different screen heights */
+            @media (min-height: 800px) {
+                #main-content-wrapper.hero-centered,
+                #main-content-wrapper.hero-balanced {
+                    min-height: 60vh;
+                }
+            }
+            
+            @media (min-height: 1000px) {
+                #main-content-wrapper.hero-centered,
+                #main-content-wrapper.hero-balanced {
+                    min-height: 50vh;
+                }
             }
         }
 
-        /* For very tall desktops, ensure it's not too low */
-        @media (min-width: 1440px) and (min-height: 900px) {
-            #main-content-wrapper.hero-centered,
-            #main-content-wrapper.hero-balanced {
-                min-height: 40vh;
-                margin-top: 2vh;
-            }
-        }
-
-        /* preserve mobile behaviour exactly */
+        /* Preserve mobile exactly */
         @media (max-width: 1023px) {
             #main-content-wrapper.hero-centered,
             #main-content-wrapper.hero-balanced {
-                min-height: 70vh;  /* back to original mobile values */
-                margin-top: 0;
+                min-height: 70vh;
                 justify-content: center;
+                margin-top: 0;
+                padding-top: 20px;
             }
+        }
+
+        /* Step-8 special handling remains */
+        #step-8 #main-content-wrapper.hero-balanced {
+            justify-content: flex-start;
+            min-height: auto;
         }
     </style>
 </head>
