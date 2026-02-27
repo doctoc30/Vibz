@@ -545,17 +545,20 @@
                 font-size: 1.6rem;
             }
             
-            /* Ensure full portrait height on mobile */
             .concept-image-wrap {
                 height: 75vh;
             }
         }
 
-        /* Fix for very small devices */
         @media (max-width: 360px) {
             .concept-image-wrap {
                 height: 70vh;
             }
+        }
+
+        /* Add smooth scroll margin for header */
+        .concepts-grid {
+            scroll-margin-top: 20px;
         }
     </style>
 </head>
@@ -620,10 +623,12 @@
         }));
 
         let currentPage = 1;
-        const itemsPerPage = 8; // Shows 8 items (2 rows of 4 on desktop, 8 full width on mobile)
+        const itemsPerPage = 8;
         let selectedCode = "";
         let lastScrollTop = 0;
         const dock = document.getElementById('appDock');
+        const conceptsGrid = document.getElementById('conceptsGrid');
+        const heroSection = document.querySelector('.hero-section');
 
         function renderConcepts() {
             const grid = document.getElementById('conceptsGrid');
@@ -647,6 +652,15 @@
                 `;
             });
             renderPagination();
+            
+            // Scroll to top of concepts grid (not the very top of page)
+            setTimeout(() => {
+                const gridPosition = conceptsGrid.getBoundingClientRect().top + window.pageYOffset - 120; // Offset for header
+                window.scrollTo({
+                    top: gridPosition,
+                    behavior: 'smooth'
+                });
+            }, 100);
         }
 
         function renderPagination() {
@@ -672,7 +686,6 @@
         function changePage(p) {
             currentPage = p;
             renderConcepts();
-            scrollToTop();
         }
 
         function scrollToTop() { 
