@@ -626,29 +626,8 @@
         const itemsPerPage = 8;
         let selectedCode = "";
         let lastScrollTop = 0;
-        let isPageChanging = false;
         const dock = document.getElementById('appDock');
         const conceptsGrid = document.getElementById('conceptsGrid');
-
-        function scrollToGridTop() {
-            // First, disable smooth scrolling temporarily for an instant jump
-            document.documentElement.style.scrollBehavior = 'auto';
-            document.body.style.scrollBehavior = 'auto';
-            
-            // Calculate scroll position (grid top minus header offset)
-            const gridRect = conceptsGrid.getBoundingClientRect();
-            const gridTop = gridRect.top + window.pageYOffset;
-            const scrollToPosition = Math.max(0, gridTop - 120);
-            
-            // Scroll immediately
-            window.scrollTo(0, scrollToPosition);
-            
-            // Re-enable smooth scrolling after the jump
-            setTimeout(() => {
-                document.documentElement.style.scrollBehavior = 'smooth';
-                document.body.style.scrollBehavior = 'smooth';
-            }, 50);
-        }
 
         function renderConcepts() {
             const grid = document.getElementById('conceptsGrid');
@@ -673,12 +652,6 @@
             });
             
             renderPagination();
-            
-            // Reset scroll position if we are moving through pages
-            if (isPageChanging) {
-                scrollToGridTop();
-                isPageChanging = false;
-            }
         }
 
         function renderPagination() {
@@ -701,10 +674,21 @@
             `;
         }
 
+        // HARD FIX: This function now forces an instant jump to top
         function changePage(p) {
             if (p === currentPage) return;
-            isPageChanging = true;
+            
+            // 1. Instantly jump to top (bypassing smooth scroll)
+            window.scrollTo({
+                top: 0,
+                left: 0,
+                behavior: 'instant' 
+            });
+
+            // 2. Set the new page number
             currentPage = p;
+
+            // 3. Render the new content
             renderConcepts();
         }
 
@@ -751,14 +735,8 @@
         }
 
         window.onload = function() {
-            document.documentElement.style.scrollBehavior = 'auto';
-            document.body.style.scrollBehavior = 'auto';
             renderConcepts();
             window.scrollTo(0, 0);
-            setTimeout(() => {
-                document.documentElement.style.scrollBehavior = 'smooth';
-                document.body.style.scrollBehavior = 'smooth';
-            }, 100);
         };
     </script>
 </body>
