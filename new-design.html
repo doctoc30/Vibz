@@ -72,18 +72,117 @@
         .menu-item:nth-child(4) { transition-delay: 0.4s; }
         .menu-footer { margin-top: auto; padding-bottom: calc(var(--safe-bottom) + 20px); font-weight: 800; font-size: 0.8rem; letter-spacing: 1px; color: #bbb; text-align: center; }
 
-        /* ==== CATEGORY LAYER ==== */
+        /* ==== CATEGORY LAYER - ENHANCED FOR DESKTOP GRID ==== */
         #category-layer {
             position: fixed; inset: 0; background: rgba(255, 245, 238, 0.98);
             backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
             z-index: 9000; display: flex; flex-direction: column;
             align-items: center; justify-content: center; gap: 15px;
             transform: translateY(100%); transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+            padding: 20px;
         }
         #category-layer.active { transform: translateY(0); }
-        .cat-item { font-size: 1.6rem; font-weight: 800; color: var(--text); text-decoration: none; width: auto; min-width: 280px; max-width: 450px; text-align: center; padding: 16px 32px; background: white; border-radius: 60px; margin-bottom: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid rgba(255, 107, 0, 0.1); cursor: pointer; transition: 0.1s; display: inline-block; margin: 0 auto; }
-        .cat-item.click-highlight { background: var(--primary) !important; color: white !important; border: 1px solid var(--primary) !important; box-shadow: 0 12px 25px rgba(255, 107, 0, 0.35) !important; }
-        .close-btn { width: 60px; height: 60px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; box-shadow: 0 10px 20px rgba(255, 107, 0, 0.2); cursor: pointer; }
+        
+        /* Title styling */
+        #cat-title { 
+            color: var(--primary); 
+            margin-bottom: 20px; 
+            font-weight: 900; 
+            letter-spacing: -1px;
+            font-size: 2.2rem;
+            text-align: center;
+        }
+        
+        /* Category list container: mobile = column, desktop = grid */
+        #cat-list { 
+            width: 100%; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            overflow-y: auto; 
+            max-height: 60vh;
+            gap: 10px;
+            padding: 10px;
+        }
+        
+        /* Desktop grid layout for categories */
+        @media (min-width: 768px) {
+            #cat-list {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);  /* 2 columns on desktop */
+                gap: 15px;
+                max-width: 800px;
+                width: 90%;
+                align-items: stretch;
+            }
+            
+            /* Adjust cat-item for grid layout */
+            #cat-list .cat-item {
+                width: 100%;
+                min-width: auto;        /* remove min-width constraint */
+                max-width: none;         /* allow full width in grid cell */
+                margin: 0;               /* remove auto margin */
+                height: 100%;            /* make all items same height */
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                padding: 20px 16px;      /* slightly adjusted padding */
+                font-size: 1.3rem;        /* slightly smaller for grid */
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+        
+        /* For larger screens, we can go to 3 columns if there are many items */
+        @media (min-width: 1200px) {
+            #cat-list {
+                grid-template-columns: repeat(3, 1fr);
+                max-width: 1000px;
+            }
+        }
+        
+        .cat-item { 
+            font-size: 1.6rem; 
+            font-weight: 800; 
+            color: var(--text); 
+            text-decoration: none; 
+            width: auto; 
+            min-width: 280px; 
+            max-width: 450px; 
+            text-align: center; 
+            padding: 16px 32px; 
+            background: white; 
+            border-radius: 60px; 
+            margin-bottom: 8px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04); 
+            border: 1px solid rgba(255, 107, 0, 0.1); 
+            cursor: pointer; 
+            transition: 0.1s; 
+            display: inline-block; 
+            margin: 0 auto; 
+        }
+        .cat-item.click-highlight { 
+            background: var(--primary) !important; 
+            color: white !important; 
+            border: 1px solid var(--primary) !important; 
+            box-shadow: 0 12px 25px rgba(255, 107, 0, 0.35) !important; 
+        }
+        .close-btn { 
+            width: 60px; 
+            height: 60px; 
+            background: var(--primary); 
+            color: white; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 1.5rem; 
+            box-shadow: 0 10px 20px rgba(255, 107, 0, 0.2); 
+            cursor: pointer; 
+            margin-top: 20px;
+        }
 
         /* ==== APP SHELL ==== */
         #app-container { min-height: 100vh; display: flex; flex-direction: column; opacity: 0; transition: opacity 0.5s ease-in; position: relative; }
@@ -314,7 +413,6 @@
             top: 10px;
         }
 
-        /* Make icons match hero text brand color #FF6B00 exactly */
         .social-icons a img {
             width: 48px;
             height: 48px;
@@ -360,7 +458,6 @@
             z-index: 1000; 
             padding-bottom: env(safe-area-inset-bottom);
             border-top: 1px solid rgba(255,107,0,0.1);
-            /* Default mobile: full width */
             width: 100%;
             margin: 0 auto;
         }
@@ -371,17 +468,16 @@
                 width: 90%;
                 left: 5%;
                 right: 5%;
-                border-radius: 40px 40px 0 0;       /* slightly rounded top corners for a floating look */
-                height: 65px;                         /* thinner height (was 75px) */
+                border-radius: 40px 40px 0 0;
+                height: 65px;
                 box-shadow: 0 -5px 20px rgba(0,0,0,0.08);
                 border-left: 1px solid rgba(255,107,0,0.1);
                 border-right: 1px solid rgba(255,107,0,0.1);
             }
-            /* optional: make center button slightly smaller to match thinner dock */
             .dock-center {
                 width: 55px;
                 height: 55px;
-                margin-top: -30px;   /* adjust vertical overlap */
+                margin-top: -30px;
                 font-size: 1.5rem;
             }
             .dock-btn i {
@@ -462,8 +558,8 @@
     </div>
 
     <div id="category-layer">
-        <h2 id="cat-title" style="color: var(--primary); margin-bottom: 20px; font-weight: 900; letter-spacing: -1px;">Niche Selection</h2>
-        <div id="cat-list" style="width: 100%; display: flex; flex-direction: column; align-items: center; overflow-y: auto; max-height: 60vh;"></div>
+        <h2 id="cat-title">Niche Selection</h2>
+        <div id="cat-list"></div>
         <div class="close-btn" onclick="toggleCategories()"><i class="fa-solid fa-xmark"></i></div>
     </div>
 
@@ -487,7 +583,6 @@
 
             <span class="section-header">Or Select From Popular Categories</span>
             <div class="app-grid">
-                <!-- 4 icon tiles that become one line on desktop -->
                 <div class="app-tile" onclick="openNiche('Health & Wellness')">
                     <div class="tile-icon"><i class="fa-solid fa-heart-pulse"></i></div>
                     <h3>Health & Wellness</h3>
@@ -504,7 +599,6 @@
                     <div class="tile-icon"><i class="fa-solid fa-utensils"></i></div>
                     <h3>Food & Drink</h3>
                 </div>
-                <!-- full tile remains unchanged -->
                 <div class="app-tile full-tile" onclick="openNiche('Retail & Creative')">
                     <div class="tile-icon"><i class="fa-solid fa-bag-shopping"></i></div>
                     <div style="margin-left: 15px;">
@@ -513,7 +607,6 @@
                 </div>
             </div>
             
-            <!-- ===== FOOTER WITH SOCIAL ICONS ===== -->
             <footer>
                 <div class="footer-inner">
                     <div class="social-icons" aria-label="Social media links">
@@ -534,7 +627,6 @@
             </footer>
         </main>
 
-        <!-- DOCK WITH DESKTOP SPACING & THINNER PROFILE -->
         <nav class="app-dock">
             <a href="#" class="dock-btn active"><i class="fa-solid fa-house-chimney"></i><span>HOME</span></a>
             <a href="https://www.vibz.co.uk/barber/concepts.html" class="dock-btn"><i class="fa-solid fa-compass"></i><span>LIBRARY</span></a>
