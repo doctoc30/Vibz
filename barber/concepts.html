@@ -630,6 +630,19 @@
         const conceptsGrid = document.getElementById('conceptsGrid');
         const heroSection = document.querySelector('.hero-section');
 
+        // FIXED: New function to scroll to top of grid
+        function scrollToGridTop() {
+            // Get the position of the concepts grid
+            const gridPosition = conceptsGrid.getBoundingClientRect().top + window.pageYOffset;
+            // Subtract header height (100px) and a little extra for padding
+            const scrollToPosition = gridPosition - 120;
+            
+            window.scrollTo({
+                top: scrollToPosition,
+                behavior: 'smooth'
+            });
+        }
+
         function renderConcepts() {
             const grid = document.getElementById('conceptsGrid');
             grid.innerHTML = "";
@@ -653,15 +666,9 @@
             });
             renderPagination();
             
-            // Force scroll to the very top of the concepts grid
+            // FIXED: Always scroll to top of grid when rendering new page
             setTimeout(() => {
-                // Get the position of the concepts grid relative to the document
-                const gridTop = conceptsGrid.getBoundingClientRect().top + window.pageYOffset;
-                // Scroll to that position minus a small offset to account for header
-                window.scrollTo({
-                    top: gridTop - 100,
-                    behavior: 'smooth'
-                });
+                scrollToGridTop();
             }, 100);
         }
 
@@ -685,9 +692,11 @@
             `;
         }
 
+        // FIXED: Simplified change page function
         function changePage(p) {
             currentPage = p;
             renderConcepts();
+            // The scroll happens in renderConcepts now
         }
 
         function scrollToTop() { 
@@ -732,7 +741,13 @@
             window.location.href = "https://www.vibz.co.uk/barber/index.html?step=5"; 
         }
 
-        window.onload = renderConcepts;
+        window.onload = function() {
+            renderConcepts();
+            // FIXED: Scroll to top on initial load
+            setTimeout(() => {
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            }, 100);
+        };
     </script>
 </body>
 </html>
