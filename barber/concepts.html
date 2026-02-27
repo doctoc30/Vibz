@@ -674,22 +674,29 @@
             `;
         }
 
-        // HARD FIX: This function now forces an instant jump to top
+        // ULTRA-ROBUST FIX: Force scroll to top using the body element
         function changePage(p) {
             if (p === currentPage) return;
-            
-            // 1. Instantly jump to top (bypassing smooth scroll)
-            window.scrollTo({
-                top: 0,
-                left: 0,
-                behavior: 'instant' 
-            });
 
-            // 2. Set the new page number
+            // 1. Force the page to scroll to the very top immediately
+            // We use document.body and document.documentElement to cover all browsers
+            window.scrollTo(0, 0);
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+
+            // 2. Briefly disable smooth scrolling to ensure an instant snap
+            const originalScroll = document.documentElement.style.scrollBehavior;
+            document.documentElement.style.scrollBehavior = 'auto';
+
+            // 3. Update the data
             currentPage = p;
-
-            // 3. Render the new content
             renderConcepts();
+
+            // 4. Force one more scroll in case the render changed the height
+            setTimeout(() => {
+                window.scrollTo(0, 0);
+                document.documentElement.style.scrollBehavior = originalScroll;
+            }, 10);
         }
 
         function scrollToTop() { 
