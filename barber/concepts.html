@@ -626,25 +626,40 @@
         const itemsPerPage = 8;
         let selectedCode = "";
         let lastScrollTop = 0;
+        let isPageChanging = false;
         const dock = document.getElementById('appDock');
         const conceptsGrid = document.getElementById('conceptsGrid');
         const heroSection = document.querySelector('.hero-section');
 
-        // FIXED: New function to scroll to top of grid
+        // FIXED: More robust scroll to top function
         function scrollToGridTop() {
-            // Get the position of the concepts grid
-            const gridPosition = conceptsGrid.getBoundingClientRect().top + window.pageYOffset;
-            // Subtract header height (100px) and a little extra for padding
-            const scrollToPosition = gridPosition - 120;
+            // First, disable smooth scrolling temporarily for accurate position
+            document.documentElement.style.scrollBehavior = 'auto';
+            document.body.style.scrollBehavior = 'auto';
             
-            window.scrollTo({
-                top: scrollToPosition,
-                behavior: 'smooth'
-            });
+            // Get the grid's position
+            const gridRect = conceptsGrid.getBoundingClientRect();
+            const gridTop = gridRect.top + window.pageYOffset;
+            
+            // Calculate scroll position (grid top minus header offset)
+            const scrollToPosition = Math.max(0, gridTop - 100);
+            
+            // Scroll immediately
+            window.scrollTo(0, scrollToPosition);
+            
+            // Re-enable smooth scrolling after a tiny delay
+            setTimeout(() => {
+                document.documentElement.style.scrollBehavior = 'smooth';
+                document.body.style.scrollBehavior = 'smooth';
+            }, 50);
         }
 
         function renderConcepts() {
             const grid = document.getElementById('conceptsGrid');
+            
+            // Store the current scroll position before clearing
+            const wasAtBottom = (window.innerHeight + window.pageYOffset) >= document.body.offsetHeight - 100;
+            
             grid.innerHTML = "";
             const start = (currentPage - 1) * itemsPerPage;
             const end = start + itemsPerPage;
@@ -664,12 +679,23 @@
                     </div>
                 `;
             });
+            
             renderPagination();
             
-            // FIXED: Always scroll to top of grid when rendering new page
-            setTimeout(() => {
-                scrollToGridTop();
-            }, 100);
+            // FIXED: Only scroll if we're changing pages
+            if (isPageChanging) {
+                // Use multiple timeouts to ensure scroll happens after render
+                setTimeout(() => {
+                    scrollToGridTop();
+                    
+                    // Double-check after images might have loaded
+                    setTimeout(() => {
+                        scrollToGridTop();
+                    }, 200);
+                }, 50);
+                
+                isPageChanging = false;
+            }
         }
 
         function renderPagination() {
@@ -692,11 +718,12 @@
             `;
         }
 
-        // FIXED: Simplified change page function
+        // FIXED: Set flag before changing page
         function changePage(p) {
+            if (p === currentPage) return;
+            isPageChanging = true;
             currentPage = p;
             renderConcepts();
-            // The scroll happens in renderConcepts now
         }
 
         function scrollToTop() { 
@@ -742,10 +769,19 @@
         }
 
         window.onload = function() {
+            // Disable smooth scroll for initial positioning
+            document.documentElement.style.scrollBehavior = 'auto';
+            document.body.style.scrollBehavior = 'auto';
+            
             renderConcepts();
-            // FIXED: Scroll to top on initial load
+            
+            // Ensure we start at the very top
+            window.scrollTo(0, 0);
+            
+            // Re-enable smooth scrolling
             setTimeout(() => {
-                window.scrollTo({top: 0, behavior: 'smooth'});
+                document.documentElement.style.scrollBehavior = 'smooth';
+                document.body.style.scrollBehavior = 'smooth';
             }, 100);
         };
     </script>
