@@ -35,7 +35,6 @@
 
         body {
             position: relative;
-            padding-bottom: 0; /* Remove fixed padding */
         }
 
         header {
@@ -62,7 +61,7 @@
         }
 
         .content-container { 
-            padding: 0 15px 100px; /* Increased bottom padding for dock */
+            padding: 0 15px 100px;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -80,12 +79,13 @@
             color: var(--primary);
         }
 
-        /* ===== DESKTOP GRID LAYOUT - 4 COLUMNS ===== */
+        /* ===== RESPONSIVE GRID ===== */
         .concepts-grid { 
             display: grid; 
-            grid-template-columns: 1fr; /* Mobile: 1 column */
+            grid-template-columns: 1fr; /* Mobile: full width images */
             gap: 30px; 
             margin-bottom: 40px;
+            width: 100%;
         }
 
         @media (min-width: 768px) {
@@ -104,11 +104,9 @@
 
         @media (min-width: 1400px) {
             .concepts-grid {
-                grid-template-columns: repeat(4, 1fr); /* Keep 4 columns on larger screens */
                 max-width: 1400px;
                 margin-left: auto;
                 margin-right: auto;
-                width: 100%;
             }
         }
 
@@ -129,24 +127,38 @@
             box-shadow: 0 20px 50px rgba(255,107,0,0.15);
         }
 
+        /* ===== IMAGE SIZING - FULL PORTRAIT ON MOBILE ===== */
         .concept-image-wrap { 
             width: 100%; 
-            height: 300px; /* Fixed height for consistency */
+            height: 75vh; /* Full portrait height on mobile - matches original */
             position: relative; 
             background: #eee; 
             overflow: hidden;
         }
 
+        @media (min-width: 768px) {
+            .concept-image-wrap {
+                height: 350px; /* Tablet: fixed height */
+            }
+        }
+
         @media (min-width: 1024px) {
             .concept-image-wrap {
-                height: 280px; /* Slightly smaller on desktop */
+                height: 320px; /* Desktop: slightly smaller for grid */
+            }
+        }
+
+        @media (min-width: 1400px) {
+            .concept-image-wrap {
+                height: 380px; /* Larger screens */
             }
         }
 
         .concept-image-wrap img { 
             width: 100%; 
             height: 100%; 
-            object-fit: cover;
+            object-fit: cover; /* Ensures images cover the area properly */
+            object-position: center;
             transition: transform 0.5s ease;
         }
 
@@ -230,7 +242,7 @@
             visibility: visible; 
         }
 
-        /* ===== MOBILE-OPTIMIZED PAGINATION ===== */
+        /* ===== PAGINATION ===== */
         .pagination { 
             display: flex; 
             flex-direction: column;
@@ -303,7 +315,7 @@
             width: auto;
         }
 
-        /* ===== FOOTER WITH SOCIAL ICONS ===== */
+        /* ===== FOOTER ===== */
         footer {
             margin-top: 20px;
             padding: 40px 25px 30px;
@@ -397,7 +409,6 @@
             margin: 0 auto;
         }
         
-        /* Desktop dock styling - exact match */
         @media (min-width: 768px) {
             .app-dock {
                 width: 90%;
@@ -475,7 +486,6 @@
             transform: scale(1.05); 
         }
 
-        /* Dock hide on scroll - but keep interactive */
         .app-dock.dock-hidden {
             transform: translateY(100%);
         }
@@ -534,11 +544,18 @@
                 height: 60px;
                 font-size: 1.6rem;
             }
+            
+            /* Ensure full portrait height on mobile */
+            .concept-image-wrap {
+                height: 75vh;
+            }
         }
 
-        /* Ensure images load properly */
-        .concept-image-wrap img[src=""] {
-            display: none;
+        /* Fix for very small devices */
+        @media (max-width: 360px) {
+            .concept-image-wrap {
+                height: 70vh;
+            }
         }
     </style>
 </head>
@@ -557,10 +574,8 @@
         <section class="hero-section"><h1>Design<br>Codes<span>.</span></h1></section>
         <div class="concepts-grid" id="conceptsGrid"></div>
         
-        <!-- ===== MOBILE-OPTIMIZED PAGINATION ===== -->
         <div class="pagination" id="paginationControls"></div>
         
-        <!-- ===== FOOTER WITH ROTATING SOCIAL ICONS ===== -->
         <footer>
             <div class="footer-inner">
                 <div class="social-icons" aria-label="Social media links">
@@ -581,7 +596,6 @@
         </footer>
     </main>
 
-    <!-- ===== DOCK - EXACT SAME AS PREVIOUS PAGES ===== -->
     <nav class="app-dock" id="appDock">
         <a href="https://www.vibz.co.uk/barber/index.html" class="dock-btn"><i class="fa-solid fa-house-chimney"></i><span>HOME</span></a>
         <a href="#" class="dock-btn active"><i class="fa-solid fa-compass"></i><span>LIBRARY</span></a>
@@ -606,7 +620,7 @@
         }));
 
         let currentPage = 1;
-        const itemsPerPage = 8; // 8 items = 2 rows of 4 on desktop
+        const itemsPerPage = 8; // Shows 8 items (2 rows of 4 on desktop, 8 full width on mobile)
         let selectedCode = "";
         let lastScrollTop = 0;
         const dock = document.getElementById('appDock');
@@ -665,7 +679,6 @@
             window.scrollTo({top: 0, behavior: 'smooth'}); 
         }
 
-        // Handle scroll to hide/show dock and show back to top button
         window.addEventListener('scroll', function() {
             const btn = document.getElementById('backToTop');
             if (document.body.scrollTop > 400 || document.documentElement.scrollTop > 400) {
@@ -674,7 +687,6 @@
                 btn.classList.remove('show');
             }
             
-            // Dock hide/show on scroll
             const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
             
             if (scrollTop > 100 && scrollTop > lastScrollTop) {
