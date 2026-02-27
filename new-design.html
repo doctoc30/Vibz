@@ -189,7 +189,7 @@
             text-align: center; 
         }
 
-        /* 🟢 UPDATED GRID: 4 icons in one row on desktop, preserve mobile (2x2) */
+        /* Grid for tiles: 4 icons in one row on desktop, preserve mobile 2x2 */
         .app-grid { 
             display: grid; 
             grid-template-columns: 1fr 1fr;  /* default mobile: 2 columns */
@@ -319,11 +319,9 @@
             width: 48px;
             height: 48px;
             filter: brightness(0) saturate(100%) invert(47%) sepia(81%) saturate(2458%) hue-rotate(360deg) brightness(102%) contrast(106%);
-            /* This filter converts black to exact #FF6B00 - matching hero text */
             transition: transform 0.4s ease;
         }
 
-        /* Pause animation on hover and add subtle effect */
         .social-icons a:hover {
             animation-play-state: paused;
             transform: scale(1.15) translateY(-3px);
@@ -333,13 +331,11 @@
             filter: brightness(0) saturate(100%) invert(47%) sepia(81%) saturate(2458%) hue-rotate(360deg) brightness(102%) contrast(106%) drop-shadow(0 5px 8px rgba(255,107,0,0.3));
         }
 
-        /* Coin spin animation */
         @keyframes coin-spin {
             0% { transform: rotateY(0deg); }
             100% { transform: rotateY(360deg); }
         }
 
-        /* Copyright text */
         .copyright {
             font-weight: 600;
             letter-spacing: 0.5px;
@@ -348,6 +344,7 @@
             margin-top: 10px;
         }
 
+        /* ===== DOCK STYLES – MODIFIED FOR DESKTOP ===== */
         .app-dock {
             position: fixed; 
             bottom: 0; 
@@ -363,6 +360,36 @@
             z-index: 1000; 
             padding-bottom: env(safe-area-inset-bottom);
             border-top: 1px solid rgba(255,107,0,0.1);
+            /* Default mobile: full width */
+            width: 100%;
+            margin: 0 auto;
+        }
+        
+        /* Desktop: thinner dock with space on both edges */
+        @media (min-width: 768px) {
+            .app-dock {
+                width: 90%;
+                left: 5%;
+                right: 5%;
+                border-radius: 40px 40px 0 0;       /* slightly rounded top corners for a floating look */
+                height: 65px;                         /* thinner height (was 75px) */
+                box-shadow: 0 -5px 20px rgba(0,0,0,0.08);
+                border-left: 1px solid rgba(255,107,0,0.1);
+                border-right: 1px solid rgba(255,107,0,0.1);
+            }
+            /* optional: make center button slightly smaller to match thinner dock */
+            .dock-center {
+                width: 55px;
+                height: 55px;
+                margin-top: -30px;   /* adjust vertical overlap */
+                font-size: 1.5rem;
+            }
+            .dock-btn i {
+                font-size: 1.3rem;
+            }
+            .dock-btn span {
+                font-size: 0.6rem;
+            }
         }
         
         .dock-btn { 
@@ -460,7 +487,7 @@
 
             <span class="section-header">Or Select From Popular Categories</span>
             <div class="app-grid">
-                <!-- 4 icon tiles that will become one line on desktop -->
+                <!-- 4 icon tiles that become one line on desktop -->
                 <div class="app-tile" onclick="openNiche('Health & Wellness')">
                     <div class="tile-icon"><i class="fa-solid fa-heart-pulse"></i></div>
                     <h3>Health & Wellness</h3>
@@ -486,26 +513,20 @@
                 </div>
             </div>
             
-            <!-- ===== FOOTER WITH SOCIAL ICONS - EXACT BRAND ORANGE #FF6B00 ===== -->
+            <!-- ===== FOOTER WITH SOCIAL ICONS ===== -->
             <footer>
                 <div class="footer-inner">
-                    <!-- Social Icons with Coin Spin Animation - Exact Brand Orange #FF6B00 -->
                     <div class="social-icons" aria-label="Social media links">
-                        <!-- X (Twitter) -->
                         <a href="https://x.com/vibzcouk" target="_blank" aria-label="X / Twitter">
                             <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/x.svg" alt="X / Twitter">
                         </a>
-                        <!-- Facebook -->
                         <a href="https://facebook.com/vibzcouk" target="_blank" aria-label="Facebook">
                             <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/facebook.svg" alt="Facebook">
                         </a>
-                        <!-- Instagram -->
                         <a href="https://www.instagram.com/vibzcouk" target="_blank" aria-label="Instagram">
                             <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/instagram.svg" alt="Instagram">
                         </a>
                     </div>
-                    
-                    <!-- Copyright Text -->
                     <div class="copyright">
                         <p>&copy; 2025 VIBZ Collective. All rights reserved.</p>
                     </div>
@@ -513,6 +534,7 @@
             </footer>
         </main>
 
+        <!-- DOCK WITH DESKTOP SPACING & THINNER PROFILE -->
         <nav class="app-dock">
             <a href="#" class="dock-btn active"><i class="fa-solid fa-house-chimney"></i><span>HOME</span></a>
             <a href="https://www.vibz.co.uk/barber/concepts.html" class="dock-btn"><i class="fa-solid fa-compass"></i><span>LIBRARY</span></a>
@@ -561,43 +583,27 @@
             toggleCategories();
         }
 
-        // =========================================================================
-        // 100+ LOCAL NICHES FOR TYPEWRITER - RANDOM ROTATION
-        // =========================================================================
         const typewriterWords = [
-            // Trades & Home Services (20)
             "plumbers", "electricians", "carpenters", "painters", "roofers", 
             "landscapers", "gardeners", "cleaners", "handymen", "locksmiths",
             "tilers", "plasterers", "builders", "welders", "glaziers",
             "flooring specialists", "fencers", "pest control", "hvac technicians", "kitchen fitters",
-            
-            // Health & Wellness (20)
             "dentists", "hygienists", "orthodontists", "physiotherapists", "chiropractors",
             "osteopaths", "podiatrists", "optometrists", "audiologists", "pharmacists",
             "gyms", "fitness trainers", "yoga instructors", "pilates teachers", "personal trainers",
             "nutritionists", "dietitians", "massage therapists", "acupuncturists", "counsellors",
-            
-            // Beauty & Personal Care (15)
             "barbers", "hairdressers", "beauticians", "estheticians", "nail technicians",
             "makeup artists", "spa therapists", "tanning salons", "lash technicians", "brow artists",
             "tattoo artists", "piercers", "salons", "barbershops", "beauty clinics",
-            
-            // Professional Services (15)
             "lawyers", "solicitors", "barristers", "accountants", "bookkeepers",
             "financial advisors", "mortgage brokers", "insurance agents", "estate agents", "realtors",
             "surveyors", "architects", "engineers", "consultants", "translators",
-            
-            // Food & Drink (15)
             "restaurants", "cafes", "coffee shops", "bakeries", "pubs",
             "bars", "clubs", "caterers", "food trucks", "takeaways",
             "chefs", "bakers", "butchers", "fishmongers", "delicatessens",
-            
-            // Retail & Creative (15)
             "boutiques", "fashion designers", "tailors", "dressmakers", "jewelers",
             "florists", "gift shops", "antique dealers", "art galleries", "framers",
             "photographers", "videographers", "graphic designers", "web designers", "illustrators",
-            
-            // Pet Services & Automotive (10)
             "veterinarians", "dog walkers", "pet groomers", "pet sitters", "trainers",
             "mechanics", "garages", "mot testers", "car detailers", "valeters"
         ];
@@ -610,57 +616,33 @@
         const typewriterEl = document.getElementById('typewriter');
 
         function startTypewriter() {
-            // Clear any existing interval
-            if (typewriterInterval) {
-                clearInterval(typewriterInterval);
-            }
-            
-            // Start with a random word
+            if (typewriterInterval) clearInterval(typewriterInterval);
             wordIndex = Math.floor(Math.random() * typewriterWords.length);
             
             function updateTypewriter() {
                 if (isWaiting) return;
-                
                 const currentWord = typewriterWords[wordIndex];
-                
                 if (!isDeleting) {
-                    // Typing
                     typewriterEl.textContent = currentWord.substring(0, charIndex + 1);
                     charIndex++;
-                    
-                    // If word is complete
                     if (charIndex === currentWord.length) {
                         isWaiting = true;
-                        setTimeout(() => {
-                            isDeleting = true;
-                            isWaiting = false;
-                        }, 2000);
+                        setTimeout(() => { isDeleting = true; isWaiting = false; }, 2000);
                     }
                 } else {
-                    // Deleting
                     typewriterEl.textContent = currentWord.substring(0, charIndex - 1);
                     charIndex--;
-                    
-                    // If word is fully deleted
                     if (charIndex === 0) {
                         isDeleting = false;
-                        
-                        // Pick a RANDOM next word
                         let newIndex;
-                        do {
-                            newIndex = Math.floor(Math.random() * typewriterWords.length);
-                        } while (newIndex === wordIndex && typewriterWords.length > 1);
-                        
+                        do { newIndex = Math.floor(Math.random() * typewriterWords.length); } 
+                        while (newIndex === wordIndex && typewriterWords.length > 1);
                         wordIndex = newIndex;
-                        
                         isWaiting = true;
-                        setTimeout(() => {
-                            isWaiting = false;
-                        }, 300);
+                        setTimeout(() => { isWaiting = false; }, 300);
                     }
                 }
             }
-            
             typewriterInterval = setInterval(updateTypewriter, 80);
         }
 
