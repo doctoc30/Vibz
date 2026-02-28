@@ -1332,7 +1332,7 @@ const FEATURE_ASSETS = {
     "Digital Gift Cards": {
         fields: [
             { type: 'text', label: 'Gift card values available (comma separated, e.g., 25, 50, 100)' },
-            { type: 'text', label: 'Custom message option for buyer' },
+            { type: 'textarea', label: 'Custom message option for buyer' },
             { type: 'text', label: 'Expiry period (e.g., "12 months")' },
             { type: 'textarea', label: 'Terms and conditions' }
         ]
@@ -2271,7 +2271,7 @@ function handleLogoSelected(e) {
 }
 
 // =========================================================================
-//  FILE COLLECTION FOR GOOGLE DRIVE
+//  FILE COLLECTION FOR GOOGLE DRIVE - FIXED VERSION FOR LOGO UPLOADS
 // =========================================================================
 function readFileAsBase64(file, type, metadata = {}) {
     return new Promise((resolve, reject) => {
@@ -2279,50 +2279,109 @@ function readFileAsBase64(file, type, metadata = {}) {
         reader.onload = function(e) {
             const base64Data = e.target.result.split(',')[1];
             
+            // Determine folder type for Google Drive
             let driveFolderType = type;
-            if (type === 'page') {
-                driveFolderType = file.type.includes('video') ? 'video' : 'image';
+            let targetFolder = 'Other Files';
+            
+            if (type === 'logo') {
+                driveFolderType = 'logo';
+                targetFolder = 'Logos';
+            } else if (type === 'page') {
+                driveFolderType = file.type.includes('video') ? 'page_video' : 'page_image';
+                targetFolder = 'Page Images';
+            } else if (type === 'branding') {
+                driveFolderType = 'branding';
+                targetFolder = 'Branding Assets';
             }
             
-            orderData.files.push({
+            // Create a comprehensive file object with all metadata
+            const fileObject = {
                 fileName: file.name,
                 mimeType: file.type,
                 fileBase64: base64Data,
                 fileType: driveFolderType,
-                metadata: metadata,
-                fileSize: file.size
-            });
+                fileSize: file.size,
+                uploadTimestamp: new Date().toISOString(),
+                targetFolder: targetFolder, // Specific folder for Google Drive
+                
+                // Enhanced metadata for better organization
+                metadata: {
+                    ...metadata,
+                    source: type,
+                    originalName: file.name,
+                    uploadType: type,
+                    isLogo: type === 'logo',
+                    folder: targetFolder
+                }
+            };
+            
+            // Add specific fields based on type for easier filtering
+            if (type === 'logo') {
+                fileObject.isLogo = true;
+                fileObject.priority = 'high';
+                fileObject.businessName = document.getElementById('businessName')?.value || 'Unknown Business';
+            } else if (type === 'page') {
+                fileObject.pageNumber = metadata.pageNumber || 'unknown';
+                fileObject.placement = metadata.placement || 'not specified';
+            } else if (type === 'branding') {
+                fileObject.featureName = metadata.featureName || 'unknown';
+                fileObject.fieldLabel = metadata.fieldLabel || 'unknown';
+            }
+            
+            orderData.files.push(fileObject);
+            
+            console.log(`📁 File added to upload queue: ${file.name} (${type}) - Target: ${targetFolder}`);
+            console.log(`   Total files in queue: ${orderData.files.length}`);
             resolve();
         };
-        reader.onerror = reject;
+        reader.onerror = (error) => {
+            console.error('❌ Error reading file:', error);
+            reject(error);
+        };
         reader.readAsDataURL(file);
     });
 }
 
 async function collectAllUploads() {
+    // Reset files array
     orderData.files = [];
+    console.log('📁 Starting file collection...');
     
+    // 1. Collect Logo file (if uploaded)
     const logoInput = document.getElementById('logoFile');
-    if (logoInput && logoInput.files.length > 0) {
-        await readFileAsBase64(logoInput.files[0], 'logo');
+    const noLogoCheckbox = document.getElementById('noLogoCheckbox');
+    
+    if (logoInput && logoInput.files && logoInput.files.length > 0) {
+        console.log('🎨 Processing logo upload:', logoInput.files[0].name);
+        await readFileAsBase64(logoInput.files[0], 'logo', {
+            businessName: document.getElementById('businessName')?.value || 'Unknown',
+            noLogoRequested: noLogoCheckbox?.checked || false
+        });
+    } else {
+        console.log('ℹ️ No logo file uploaded');
     }
     
+    // 2. Collect Page files
+    console.log('📄 Collecting page files...');
     for (let page = 1; page <= orderData.pageCount; page++) {
         for (let fileNum = 1; fileNum <= 3; fileNum++) {
             const fileInput = document.getElementById(`page_${page}_file${fileNum}`);
             const placementSelect = document.getElementById(`page_${page}_place${fileNum}`);
             
-            if (fileInput && fileInput.files.length > 0) {
+            if (fileInput && fileInput.files && fileInput.files.length > 0) {
+                console.log(`   Page ${page}, File ${fileNum}: ${fileInput.files[0].name}`);
                 await readFileAsBase64(fileInput.files[0], 'page', {
                     pageNumber: page,
                     fileNumber: fileNum,
-                    placement: placementSelect ? placementSelect.value : '',
+                    placement: placementSelect ? placementSelect.value : 'not specified',
                     pageName: document.getElementById(`page_name_${page}`)?.value || `Page ${page}`
                 });
             }
         }
     }
     
+    // 3. Collect Feature/Branding files
+    console.log('🎯 Collecting feature files...');
     const filtered = getFilteredServices();
     const allFilteredServices = [...filtered.standard, ...filtered.premium];
     
@@ -2335,15 +2394,18 @@ async function collectAllUploads() {
                     const fieldId = `feature_${service.name.replace(/\s+/g, '_')}_${index}`;
                     const fileInput = document.getElementById(fieldId);
                     
-                    if (fileInput && fileInput.files) {
+                    if (fileInput && fileInput.files && fileInput.files.length > 0) {
                         if (field.multiple) {
                             for (let i = 0; i < fileInput.files.length; i++) {
+                                console.log(`   Feature "${service.name}" - ${field.label}: ${fileInput.files[i].name}`);
                                 await readFileAsBase64(fileInput.files[i], 'branding', {
                                     featureName: service.name,
-                                    fieldLabel: field.label
+                                    fieldLabel: field.label,
+                                    fileIndex: i
                                 });
                             }
-                        } else if (fileInput.files.length > 0) {
+                        } else {
+                            console.log(`   Feature "${service.name}" - ${field.label}: ${fileInput.files[0].name}`);
                             await readFileAsBase64(fileInput.files[0], 'branding', {
                                 featureName: service.name,
                                 fieldLabel: field.label
@@ -2355,7 +2417,19 @@ async function collectAllUploads() {
         }
     }
     
-    console.log(`✅ Collected ${orderData.files.length} files for Google Drive`);
+    console.log(`✅ Collection complete: ${orderData.files.length} files ready for Google Drive`);
+    
+    // Log summary of files by type
+    const logoCount = orderData.files.filter(f => f.fileType === 'logo').length;
+    const pageCount = orderData.files.filter(f => f.fileType === 'page' || f.fileType.includes('page')).length;
+    const brandingCount = orderData.files.filter(f => f.fileType === 'branding').length;
+    
+    console.log('📊 File Summary:', {
+        logos: logoCount,
+        pageFiles: pageCount,
+        brandingFiles: brandingCount,
+        total: orderData.files.length
+    });
 }
 
 // =========================================================================
@@ -2371,6 +2445,13 @@ function saveBusinessInfo() {
         hasLogo: document.getElementById('logoFile')?.files.length > 0 || false,
         themeColor: document.getElementById('themeColor')?.value?.trim() || ''
     };
+    
+    console.log('💼 Business info saved:', {
+        name: orderData.business.name,
+        email: orderData.business.email,
+        hasLogo: orderData.business.hasLogo,
+        noLogoRequested: orderData.business.noLogo
+    });
 }
 
 // =========================================================================
@@ -2455,6 +2536,8 @@ function collectAllFormData() {
                     if (field.type === 'file') {
                         if (element.files && element.files.length > 0) {
                             console.log(`  ✅ File field ${field.label} has ${element.files.length} file(s)`);
+                            // Store file names but not the actual files (they're in orderData.files)
+                            serviceData[field.label] = Array.from(element.files).map(f => f.name);
                         } else {
                             console.log(`  ⚠️ File field ${field.label} is empty`);
                         }
@@ -2482,7 +2565,8 @@ function collectAllFormData() {
     
     console.log("📦 Final assetData:", assetData);
     
-    return {
+    // Create the final payload
+    const payload = {
         orderId: 'VIBZ-' + Date.now().toString().slice(-6),
         timestamp: new Date().toISOString(),
         formType: 'vibz_order_form',
@@ -2503,8 +2587,31 @@ function collectAllFormData() {
             gdpr: document.getElementById('consentGDPR')?.checked || false,
             final: document.getElementById('finalConsentCheckbox')?.checked || false
         },
-        files: orderData.files
+        files: orderData.files,
+        
+        // File summary for easy reference
+        fileSummary: {
+            totalFiles: orderData.files.length,
+            logos: orderData.files.filter(f => f.fileType === 'logo').length,
+            pageImages: orderData.files.filter(f => f.fileType === 'page' || f.fileType.includes('page')).length,
+            brandingFiles: orderData.files.filter(f => f.fileType === 'branding').length,
+            byFolder: orderData.files.reduce((acc, file) => {
+                const folder = file.targetFolder || 'Other';
+                acc[folder] = (acc[folder] || 0) + 1;
+                return acc;
+            }, {})
+        }
     };
+    
+    console.log('📦 FINAL PAYLOAD SUMMARY:', {
+        orderId: payload.orderId,
+        business: payload.business.email,
+        totalFiles: payload.files.length,
+        logos: payload.fileSummary.logos,
+        folders: payload.fileSummary.byFolder
+    });
+    
+    return payload;
 }
         
 
@@ -2555,7 +2662,9 @@ function setupFormSubmission() {
             console.log('📦 FINAL PAYLOAD:', {
                 orderId: orderPayload.orderId,
                 files: orderPayload.files.length,
-                email: orderPayload.business.email
+                email: orderPayload.business.email,
+                hasLogo: orderPayload.business.hasLogo,
+                logoCount: orderPayload.fileSummary.logos
             });
 
             // 4️⃣ Send to Google Apps Script
@@ -2580,7 +2689,7 @@ function setupFormSubmission() {
 
             // 6️⃣ WhatsApp notification
             window.open(
-                `https://wa.me/447706345874?text=New order from ${encodeURIComponent(orderPayload.business.name)}`,
+                `https://wa.me/447706345874?text=New order from ${encodeURIComponent(orderPayload.business.name)} with ${orderPayload.files.length} files including ${orderPayload.fileSummary.logos} logo(s)`,
                 '_blank'
             );
 
@@ -2859,7 +2968,6 @@ window.onload = function() {
     updateProgress();
     
     console.log('✅ VIBZ Order Form initialized with file upload support');
-    // UPDATED: Console log now uses the same URL as the submission function
     console.log('🔗 Web App URL:', 'https://script.google.com/macros/s/AKfycbytYDK0CNurTph8DvZA7161zSu_w_SM3vCgOqOftG9sQFbALPQ9mVY9-s2BnigZObna/exec');
 };
 
