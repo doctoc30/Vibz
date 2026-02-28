@@ -554,7 +554,6 @@
             margin-top: 10px;
         }
         .file-upload-box {
-            position: relative;
             background: white;
             border: 2px dashed var(--border);
             border-radius: 16px;
@@ -657,22 +656,16 @@
         }
 
         .ai-toggle {
-            cursor: pointer;
-            transition: all 0.2s ease;
-            user-select: none;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 16px 20px;
             background: rgba(255,107,0,0.04);
             border: 2px solid var(--border);
             border-radius: 20px;
+            padding: 16px 20px;
             margin-top: 16px;
-        }
-
-        .ai-toggle:hover {
-            background: rgba(255,107,0,0.08) !important;
-            border-color: #FF6B00 !important;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            font-weight: 600;
         }
 
         .gdpr-consent {
@@ -798,52 +791,77 @@
             font-size: 12px;
             font-weight: bold;
         }
-
-        .feature-upload-box {
+        
+        .file-upload-box {
             position: relative;
         }
 
-        .feature-upload-box.has-file {
-            border-color: #4CAF50;
-            background: rgba(76, 175, 80, 0.02);
-        }
 
-        .upload-success-badge {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: #4CAF50;
-            color: white;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: bold;
-        }
+        .feature-upload-box {
+    position: relative;
+}
 
-        /* Help button default state */
-        .vibz-btn.small.outline-help {
-            background: white;
-            border: 2px solid #9C27B0;
-            color: #9C27B0;
-            transition: all 0.2s ease;
-        }
+.feature-upload-box.has-file {
+    border-color: #4CAF50;
+    background: rgba(76, 175, 80, 0.02);
+}
 
-        .vibz-btn.small.outline-help:hover {
-            background: #F3E5F5;
-            transform: translateY(-2px);
-        }
+.upload-success-badge {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: #4CAF50;
+    color: white;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
 
-        .vibz-btn.small.outline-help:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            background: #F3E5F5;
-            transform: none;
-        }
+
+    /* AI Toggle Button Styles */
+.ai-toggle {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.ai-toggle:hover {
+    background: rgba(255, 107, 0, 0.08) !important;
+    border-color: #FF6B00 !important;
+}
+
+.ai-toggle:active {
+    transform: scale(0.98);
+}
+
+/* Help button default state */
+.vibz-btn.small.outline-help {
+    background: white;
+    border: 2px solid #9C27B0;
+    color: #9C27B0;
+    transition: all 0.2s ease;
+}
+
+.vibz-btn.small.outline-help:hover {
+    background: #F3E5F5;
+    transform: translateY(-2px);
+}
+
+.vibz-btn.small.outline-help:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #F3E5F5;
+    transform: none;
+}
+}
     </style>
+
+
+    
 </head>
 <body>
 
@@ -938,7 +956,7 @@
             <small>PNG, JPG, SVG • Max 5MB</small>
             <input type="file" id="logoFile" accept=".png,.jpg,.jpeg,.svg" style="display: none;">
         </div>
-        <div class="ai-toggle" id="noLogoToggle" onclick="toggleNoLogo()">
+        <div class="ai-toggle" id="noLogoToggle" onclick="toggleNoLogo()" style="cursor: pointer; display: flex; align-items: center; gap: 12px; padding: 16px 20px; background: rgba(255,107,0,0.04); border: 2px solid #F0F0F0; border-radius: 20px; margin-top: 16px; transition: all 0.2s ease;">
             <i class="fas fa-magic" id="noLogoIcon" style="font-size: 1.2rem; color: #666;"></i>
             <span id="noLogoToggleText" style="font-weight: 600; color: #121212; flex: 1;">I don't have a logo — create one for me</span>
             <input type="checkbox" id="noLogoCheckbox" style="display: none;">
@@ -1095,6 +1113,8 @@
         <div class="loading-spinner"></div>
         <div style="font-weight: 600; color: var(--primary);">Submitting your order...</div>
     </div>
+
+
 
 <script>
 // =========================================================================
@@ -2271,7 +2291,7 @@ function handleLogoSelected(e) {
 }
 
 // =========================================================================
-//  FILE COLLECTION FOR GOOGLE DRIVE - FIXED VERSION FOR LOGO UPLOADS
+//  FILE COLLECTION FOR GOOGLE DRIVE
 // =========================================================================
 function readFileAsBase64(file, type, metadata = {}) {
     return new Promise((resolve, reject) => {
@@ -2279,109 +2299,50 @@ function readFileAsBase64(file, type, metadata = {}) {
         reader.onload = function(e) {
             const base64Data = e.target.result.split(',')[1];
             
-            // Determine folder type for Google Drive
             let driveFolderType = type;
-            let targetFolder = 'Other Files';
-            
-            if (type === 'logo') {
-                driveFolderType = 'logo';
-                targetFolder = 'Logos';
-            } else if (type === 'page') {
-                driveFolderType = file.type.includes('video') ? 'page_video' : 'page_image';
-                targetFolder = 'Page Images';
-            } else if (type === 'branding') {
-                driveFolderType = 'branding';
-                targetFolder = 'Branding Assets';
+            if (type === 'page') {
+                driveFolderType = file.type.includes('video') ? 'video' : 'image';
             }
             
-            // Create a comprehensive file object with all metadata
-            const fileObject = {
+            orderData.files.push({
                 fileName: file.name,
                 mimeType: file.type,
                 fileBase64: base64Data,
                 fileType: driveFolderType,
-                fileSize: file.size,
-                uploadTimestamp: new Date().toISOString(),
-                targetFolder: targetFolder, // Specific folder for Google Drive
-                
-                // Enhanced metadata for better organization
-                metadata: {
-                    ...metadata,
-                    source: type,
-                    originalName: file.name,
-                    uploadType: type,
-                    isLogo: type === 'logo',
-                    folder: targetFolder
-                }
-            };
-            
-            // Add specific fields based on type for easier filtering
-            if (type === 'logo') {
-                fileObject.isLogo = true;
-                fileObject.priority = 'high';
-                fileObject.businessName = document.getElementById('businessName')?.value || 'Unknown Business';
-            } else if (type === 'page') {
-                fileObject.pageNumber = metadata.pageNumber || 'unknown';
-                fileObject.placement = metadata.placement || 'not specified';
-            } else if (type === 'branding') {
-                fileObject.featureName = metadata.featureName || 'unknown';
-                fileObject.fieldLabel = metadata.fieldLabel || 'unknown';
-            }
-            
-            orderData.files.push(fileObject);
-            
-            console.log(`📁 File added to upload queue: ${file.name} (${type}) - Target: ${targetFolder}`);
-            console.log(`   Total files in queue: ${orderData.files.length}`);
+                metadata: metadata,
+                fileSize: file.size
+            });
             resolve();
         };
-        reader.onerror = (error) => {
-            console.error('❌ Error reading file:', error);
-            reject(error);
-        };
+        reader.onerror = reject;
         reader.readAsDataURL(file);
     });
 }
 
 async function collectAllUploads() {
-    // Reset files array
     orderData.files = [];
-    console.log('📁 Starting file collection...');
     
-    // 1. Collect Logo file (if uploaded)
     const logoInput = document.getElementById('logoFile');
-    const noLogoCheckbox = document.getElementById('noLogoCheckbox');
-    
-    if (logoInput && logoInput.files && logoInput.files.length > 0) {
-        console.log('🎨 Processing logo upload:', logoInput.files[0].name);
-        await readFileAsBase64(logoInput.files[0], 'logo', {
-            businessName: document.getElementById('businessName')?.value || 'Unknown',
-            noLogoRequested: noLogoCheckbox?.checked || false
-        });
-    } else {
-        console.log('ℹ️ No logo file uploaded');
+    if (logoInput && logoInput.files.length > 0) {
+        await readFileAsBase64(logoInput.files[0], 'logo');
     }
     
-    // 2. Collect Page files
-    console.log('📄 Collecting page files...');
     for (let page = 1; page <= orderData.pageCount; page++) {
         for (let fileNum = 1; fileNum <= 3; fileNum++) {
             const fileInput = document.getElementById(`page_${page}_file${fileNum}`);
             const placementSelect = document.getElementById(`page_${page}_place${fileNum}`);
             
-            if (fileInput && fileInput.files && fileInput.files.length > 0) {
-                console.log(`   Page ${page}, File ${fileNum}: ${fileInput.files[0].name}`);
+            if (fileInput && fileInput.files.length > 0) {
                 await readFileAsBase64(fileInput.files[0], 'page', {
                     pageNumber: page,
                     fileNumber: fileNum,
-                    placement: placementSelect ? placementSelect.value : 'not specified',
+                    placement: placementSelect ? placementSelect.value : '',
                     pageName: document.getElementById(`page_name_${page}`)?.value || `Page ${page}`
                 });
             }
         }
     }
     
-    // 3. Collect Feature/Branding files
-    console.log('🎯 Collecting feature files...');
     const filtered = getFilteredServices();
     const allFilteredServices = [...filtered.standard, ...filtered.premium];
     
@@ -2394,18 +2355,15 @@ async function collectAllUploads() {
                     const fieldId = `feature_${service.name.replace(/\s+/g, '_')}_${index}`;
                     const fileInput = document.getElementById(fieldId);
                     
-                    if (fileInput && fileInput.files && fileInput.files.length > 0) {
+                    if (fileInput && fileInput.files) {
                         if (field.multiple) {
                             for (let i = 0; i < fileInput.files.length; i++) {
-                                console.log(`   Feature "${service.name}" - ${field.label}: ${fileInput.files[i].name}`);
                                 await readFileAsBase64(fileInput.files[i], 'branding', {
                                     featureName: service.name,
-                                    fieldLabel: field.label,
-                                    fileIndex: i
+                                    fieldLabel: field.label
                                 });
                             }
-                        } else {
-                            console.log(`   Feature "${service.name}" - ${field.label}: ${fileInput.files[0].name}`);
+                        } else if (fileInput.files.length > 0) {
                             await readFileAsBase64(fileInput.files[0], 'branding', {
                                 featureName: service.name,
                                 fieldLabel: field.label
@@ -2417,19 +2375,7 @@ async function collectAllUploads() {
         }
     }
     
-    console.log(`✅ Collection complete: ${orderData.files.length} files ready for Google Drive`);
-    
-    // Log summary of files by type
-    const logoCount = orderData.files.filter(f => f.fileType === 'logo').length;
-    const pageCount = orderData.files.filter(f => f.fileType === 'page' || f.fileType.includes('page')).length;
-    const brandingCount = orderData.files.filter(f => f.fileType === 'branding').length;
-    
-    console.log('📊 File Summary:', {
-        logos: logoCount,
-        pageFiles: pageCount,
-        brandingFiles: brandingCount,
-        total: orderData.files.length
-    });
+    console.log(`✅ Collected ${orderData.files.length} files for Google Drive`);
 }
 
 // =========================================================================
@@ -2445,13 +2391,6 @@ function saveBusinessInfo() {
         hasLogo: document.getElementById('logoFile')?.files.length > 0 || false,
         themeColor: document.getElementById('themeColor')?.value?.trim() || ''
     };
-    
-    console.log('💼 Business info saved:', {
-        name: orderData.business.name,
-        email: orderData.business.email,
-        hasLogo: orderData.business.hasLogo,
-        noLogoRequested: orderData.business.noLogo
-    });
 }
 
 // =========================================================================
@@ -2536,8 +2475,6 @@ function collectAllFormData() {
                     if (field.type === 'file') {
                         if (element.files && element.files.length > 0) {
                             console.log(`  ✅ File field ${field.label} has ${element.files.length} file(s)`);
-                            // Store file names but not the actual files (they're in orderData.files)
-                            serviceData[field.label] = Array.from(element.files).map(f => f.name);
                         } else {
                             console.log(`  ⚠️ File field ${field.label} is empty`);
                         }
@@ -2565,8 +2502,7 @@ function collectAllFormData() {
     
     console.log("📦 Final assetData:", assetData);
     
-    // Create the final payload
-    const payload = {
+    return {
         orderId: 'VIBZ-' + Date.now().toString().slice(-6),
         timestamp: new Date().toISOString(),
         formType: 'vibz_order_form',
@@ -2587,124 +2523,110 @@ function collectAllFormData() {
             gdpr: document.getElementById('consentGDPR')?.checked || false,
             final: document.getElementById('finalConsentCheckbox')?.checked || false
         },
-        files: orderData.files,
-        
-        // File summary for easy reference
-        fileSummary: {
-            totalFiles: orderData.files.length,
-            logos: orderData.files.filter(f => f.fileType === 'logo').length,
-            pageImages: orderData.files.filter(f => f.fileType === 'page' || f.fileType.includes('page')).length,
-            brandingFiles: orderData.files.filter(f => f.fileType === 'branding').length,
-            byFolder: orderData.files.reduce((acc, file) => {
-                const folder = file.targetFolder || 'Other';
-                acc[folder] = (acc[folder] || 0) + 1;
-                return acc;
-            }, {})
-        }
+        files: orderData.files
     };
-    
-    console.log('📦 FINAL PAYLOAD SUMMARY:', {
-        orderId: payload.orderId,
-        business: payload.business.email,
-        totalFiles: payload.files.length,
-        logos: payload.fileSummary.logos,
-        folders: payload.fileSummary.byFolder
-    });
-    
-    return payload;
 }
         
 
 // =========================================================================
-//  FINAL FORM SUBMISSION — ORDER FORM ONLY
+//  FIXED FORM SUBMISSION TO GOOGLE APPS SCRIPT WITH PROPER ERROR HANDLING
 // =========================================================================
 function setupFormSubmission() {
     const form = document.getElementById('vibzOrderForm');
-    if (!form) {
-        console.error('❌ vibzOrderForm not found');
-        return;
-    }
-
-    form.addEventListener('submit', async function (e) {
+    
+    form.addEventListener('submit', async function(e) {
         e.preventDefault();
-
-        // --- Consent checks ---
+        
         const finalCheck = document.getElementById('finalConsentCheckbox');
         const gdprCheck = document.getElementById('consentGDPR');
-
-        if (!finalCheck?.checked || !gdprCheck?.checked) {
+        
+        if (!finalCheck || !finalCheck.checked || !gdprCheck || !gdprCheck.checked) {
             alert('Please agree to the GDPR terms and confirm your consent.');
             return;
         }
-
-        // --- Email check ---
-        const emailEl = document.getElementById('contactEmail');
-        if (!emailEl || !emailEl.value) {
+        
+        const email = document.getElementById('contactEmail');
+        if (!email || !email.value) {
             alert('Please enter your contact email.');
             return;
         }
-
+        
         const submitBtn = document.getElementById('submitOrderBtn');
         submitBtn.disabled = true;
         document.getElementById('loadingOverlay').style.display = 'flex';
-
+        
         try {
-            // 1️⃣ Save business info
+            // Step 1: Save business info
             saveBusinessInfo();
-
-            // 2️⃣ Collect & upload files
-            console.log('📁 Uploading files...');
+            
+            // Step 2: Collect all files
+            console.log('📁 Collecting files for Google Drive...');
             await collectAllUploads();
-
-            // 3️⃣ Collect full order payload
-            const orderPayload = collectAllFormData();
-
-            console.log('📦 FINAL PAYLOAD:', {
-                orderId: orderPayload.orderId,
-                files: orderPayload.files.length,
-                email: orderPayload.business.email,
-                hasLogo: orderPayload.business.hasLogo,
-                logoCount: orderPayload.fileSummary.logos
+            
+            // Step 3: Collect all form data
+            const completeOrderData = collectAllFormData();
+            
+            console.log('📦 Submitting to Apps Script:', {
+                orderId: completeOrderData.orderId,
+                files: completeOrderData.files.length,
+                business: completeOrderData.business.email
             });
 
-            // 4️⃣ Send to Google Apps Script
-            const WEB_APP_URL =
-                'https://script.google.com/macros/s/AKfycbytYDK0CNurTph8DvZA7161zSu_w_SM3vCgOqOftG9sQFbALPQ9mVY9-s2BnigZObna/exec';
+            // Step 4: Send to Google Apps Script
+            const webAppUrl = 'https://script.google.com/macros/s/AKfycbytYDK0CNurTph8DvZA7161zSu_w_SM3vCgOqOftG9sQFbALPQ9mVY9-s2BnigZObna/exec';
 
-            await fetch(WEB_APP_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(orderPayload)
+            console.log("📤 SENDING DATA SUMMARY:", {
+                orderId: completeOrderData.orderId,
+                business: completeOrderData.business?.email,
+                files: completeOrderData.files.length,
+                dataSize: JSON.stringify(completeOrderData).length + " bytes"
             });
 
-            // 5️⃣ Success UI
+            try {
+                const response = await fetch(webAppUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(completeOrderData)
+                });
+                
+                console.log('✅ Request sent successfully (no-cors mode)');
+                
+                // Small delay to ensure request completes
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+            } catch (error) {
+                console.error('❌ Fetch error:', error);
+                throw error;
+            }
+            
+            // Step 5: Show success
             document.getElementById('loadingOverlay').style.display = 'none';
             document.getElementById('orderFormCard').style.display = 'none';
             document.querySelector('.progress').style.display = 'none';
             document.getElementById('successScreen').style.display = 'block';
-
-            document.getElementById('confirmationEmailDisplay').innerText =
-                orderPayload.business.email;
-
-            // 6️⃣ WhatsApp notification
-            window.open(
-                `https://wa.me/447706345874?text=New order from ${encodeURIComponent(orderPayload.business.name)} with ${orderPayload.files.length} files including ${orderPayload.fileSummary.logos} logo(s)`,
-                '_blank'
-            );
-
-            // 7️⃣ Cleanup
-            sessionStorage.removeItem('selectedServices');
-            sessionStorage.removeItem('helpRequests');
-
-        } catch (err) {
-            console.error('❌ SUBMISSION FAILED:', err);
-            alert('Submission failed. Open DevTools (F12) → Console.');
-            submitBtn.disabled = false;
+            document.getElementById('confirmationEmailDisplay').innerText = completeOrderData.business.email;
+            
+            // Step 6: Open WhatsApp notification
+            window.open(`https://wa.me/447706345874?text=New order from ${encodeURIComponent(completeOrderData.business.name)}`, '_blank');
+            
+            // Step 7: Clear stored data
+            try {
+                sessionStorage.removeItem('selectedServices');
+                sessionStorage.removeItem('helpRequests');
+            } catch (e) {}
+            
+        } catch (error) {
+            console.error('❌ Submission error:', error);
             document.getElementById('loadingOverlay').style.display = 'none';
+            submitBtn.disabled = false;
+            alert('Error: ' + error.message + '\n\nPlease check the console (F12) for more details and contact support.');
         }
     });
 }
+
 // =========================================================================
 //  NAVIGATION
 // =========================================================================
