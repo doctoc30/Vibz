@@ -8,7 +8,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        /* STYLES - EXACTLY AS PROVIDED, WITH PRICING GRID FIX */
+        /* STYLES - EXACTLY AS PROVIDED */
         :root {
             --primary: #FF6B00;
             --primary-light: #FFF5EE;
@@ -182,10 +182,6 @@
 
         #step-8 {
             overflow-y: visible !important;
-            display: flex !important;
-            flex-direction: column !important;
-            align-items: center !important;
-            width: 100% !important;
         }
 
         #step-8 .form-screen.active {
@@ -334,6 +330,7 @@
             display: none;
             width: 100%;
             animation: none;
+            display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
@@ -539,18 +536,17 @@
 
 
 
-        /* ===== PRICING CARDS - GUARANTEED FIX WITH HIGHEST SPECIFICITY ===== */
-        #step-8 .pricing-cards-container {
-            display: flex !important;
-            flex-direction: column !important;
-            gap: 28px !important;
-            margin: 0 auto 40px !important;
-            width: 100% !important;
-            max-width: 540px !important;
-            padding: 0 12px !important;
+                /* ===== PRICING CARDS - FIXED FOR DESKTOP SIDE BY SIDE ===== */
+        .pricing-cards-container {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            margin: 0 auto 30px;
+            width: 100%;
+            max-width: 500px; /* Mobile constraint */
         }
 
-        #step-8 .pricing-card {
+        .pricing-card {
             background: #fff;
             border-radius: 30px;
             padding: 28px 24px;
@@ -560,54 +556,52 @@
             text-align: left;
             box-shadow: 0 20px 40px rgba(255, 107, 0, 0.1);
             display: flex;
-            flex-direction: column;
-            width: 100% !important;
+            flex-direction: column; /* Allows internal alignment */
         }
 
-        #step-8 .pricing-card.recommended {
+        .pricing-card.recommended {
             border-color: var(--primary);
             background: linear-gradient(to bottom, #fff, rgba(255,107,0,0.02));
             z-index: 1;
         }
 
-        /* DESKTOP - FORCE GRID WITH HIGHEST SPECIFICITY */
+        /* Desktop & Tablet: 768px and above */
         @media (min-width: 768px) {
-            #step-8 .pricing-cards-container {
-                display: grid !important;
-                grid-template-columns: 1fr 1fr !important;
-                max-width: 980px !important;
-                gap: 28px !important;
-                align-items: stretch !important;
-                padding: 0 20px !important;
-                margin: 0 auto 50px !important;
+            .pricing-cards-container {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr); /* Forced side-by-side */
+                max-width: 900px; /* Adjust based on your preference */
+                gap: 20px;
+                align-items: stretch; /* Cards stay equal height */
+                margin: 0 auto 40px;
             }
             
-            #step-8 .pricing-card {
-                margin: 0 !important;
-                width: 100% !important;
-                max-width: none !important;
+            .pricing-card {
+                max-width: none;
+                width: 100%;
+                margin: 0;
             }
 
-            #step-8 .pricing-card.recommended {
-                transform: scale(1.04);
+            .pricing-card.recommended {
+                transform: scale(1.03); /* Subtle pop on desktop */
             }
 
-            #step-8 .pricing-card .feature-list {
-                flex-grow: 1;
+            /* This ensures the payment buttons align at the bottom */
+            .pricing-card .feature-list {
+                flex-grow: 1; 
             }
         }
 
-        /* Extra wide screens */
-        @media (min-width: 1200px) {
-            #step-8 .pricing-cards-container {
-                max-width: 1100px !important;
-                gap: 32px !important;
-            }
-
-            #step-8 .pricing-card.recommended {
-                transform: scale(1.06);
+        /* Mobile specific cleanup */
+        @media (max-width: 767px) {
+            .pricing-card.recommended {
+                margin: 10px 0;
+                transform: scale(1.02);
             }
         }
+
+
+        
 
         .plan-recommended-badge {
             position: absolute;
@@ -1048,9 +1042,8 @@
                     <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
                 </div>
 
-                <!-- STEP 8 - PRICING CARDS -->
                 <div class="form-screen" id="step-8">
-                    <div id="pricing-cards-display"></div>
+                    <div class="pricing-cards-container" id="pricing-cards-display"></div>
                     <div id="selected-features-summary" style="margin-top: 24px; width:100%;"></div>
                     <button class="vibz-btn back-btn" onclick="goToStep(7)" style="margin: 20px auto 30px;">Edit Features</button>
                     <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
@@ -1586,15 +1579,12 @@
         container.innerHTML = html;
     }
 
-    // =========================================================================
-    // ULTIMATE SIMPLE RENDERPRICINGCARDS - GUARANTEED TO WORK
-    // =========================================================================
     function renderPricingCards() {
         const container = document.getElementById('pricing-cards-display');
         if (!container) return;
         
-        let html = '<div class="pricing-cards-container">';
-        
+        let html = '';
+
         if (selections.planType === PLAN_CONFIG.outright.name) {
             html += `
                 <div class="pricing-card">
@@ -1643,6 +1633,7 @@
                     </button>
                 </div>
             `;
+            
         } else {
             html += `
                 <div class="pricing-card">
@@ -1733,13 +1724,8 @@
                 </div>
             `;
         }
-        
-        html += '</div>';
+
         container.innerHTML = html;
-        
-        // Force browser to re-render
-        void container.offsetHeight;
-        
         renderSelectedFeaturesSummary();
     }
 
@@ -1771,25 +1757,24 @@
         logo.style.position = '';
     }
 
-    // =========================================================================
-    // FIXED UPDATEUI FUNCTION - THIS WAS THE PROBLEM!
-    // =========================================================================
     function updateUI() {
         resetHeader();
         
-        // First hide all screens
         document.querySelectorAll('.form-screen').forEach(s => {
             s.classList.remove('active');
             s.style.display = 'none';
+            s.style.opacity = '0';
+            s.style.transform = 'translateY(15px)';
         });
         
-        // Show current screen
         const currentScreen = document.getElementById(`step-${currentStep}`);
         if (currentScreen) {
-            currentScreen.style.display = 'flex'; // CHANGED from 'block' to 'flex'
+            currentScreen.style.display = 'block';
             
             setTimeout(() => {
                 currentScreen.classList.add('active');
+                currentScreen.style.opacity = '1';
+                currentScreen.style.transform = 'translateY(0)';
             }, 10);
         }
         
@@ -1852,13 +1837,6 @@
         }
         
         updateUI();
-        
-        // Extra guarantee: re-render on resize
-        window.addEventListener('resize', function() {
-            if (currentStep === 8) {
-                setTimeout(renderPricingCards, 50);
-            }
-        });
     };
 
     document.addEventListener('touchmove', function(e) {
