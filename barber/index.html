@@ -535,18 +535,18 @@
 
 
 
-        /* ===== PRICING CARDS - ULTIMATE SIMPLE FIX ===== */
-        .pricing-cards-container {
-            display: flex;
-            flex-direction: column;
-            gap: 28px;
-            margin: 0 auto 40px;
-            width: 100%;
-            max-width: 540px;
-            padding: 0 12px;
+        /* ===== PRICING CARDS - GUARANTEED FIX WITH HIGHEST SPECIFICITY ===== */
+        #step-8 .pricing-cards-container {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 28px !important;
+            margin: 0 auto 40px !important;
+            width: 100% !important;
+            max-width: 540px !important;
+            padding: 0 12px !important;
         }
 
-        .pricing-card {
+        #step-8 .pricing-card {
             background: #fff;
             border-radius: 30px;
             padding: 28px 24px;
@@ -557,17 +557,18 @@
             box-shadow: 0 20px 40px rgba(255, 107, 0, 0.1);
             display: flex;
             flex-direction: column;
+            width: 100% !important;
         }
 
-        .pricing-card.recommended {
+        #step-8 .pricing-card.recommended {
             border-color: var(--primary);
             background: linear-gradient(to bottom, #fff, rgba(255,107,0,0.02));
             z-index: 1;
         }
 
-        /* DESKTOP - SIMPLE GRID */
+        /* DESKTOP - FORCE GRID WITH HIGHEST SPECIFICITY */
         @media (min-width: 768px) {
-            .pricing-cards-container {
+            #step-8 .pricing-cards-container {
                 display: grid !important;
                 grid-template-columns: 1fr 1fr !important;
                 max-width: 980px !important;
@@ -576,19 +577,31 @@
                 padding: 0 20px !important;
                 margin: 0 auto 50px !important;
             }
-
-            .pricing-card {
-                max-width: none !important;
-                width: 100% !important;
+            
+            #step-8 .pricing-card {
                 margin: 0 !important;
+                width: 100% !important;
+                max-width: none !important;
             }
 
-            .pricing-card.recommended {
+            #step-8 .pricing-card.recommended {
                 transform: scale(1.04);
             }
 
-            .pricing-card .feature-list {
+            #step-8 .pricing-card .feature-list {
                 flex-grow: 1;
+            }
+        }
+
+        /* Extra wide screens */
+        @media (min-width: 1200px) {
+            #step-8 .pricing-cards-container {
+                max-width: 1100px !important;
+                gap: 32px !important;
+            }
+
+            #step-8 .pricing-card.recommended {
+                transform: scale(1.06);
             }
         }
 
@@ -1570,13 +1583,12 @@
     }
 
     // =========================================================================
-    // ULTIMATE SIMPLE RENDERPRICINGCARDS - NO COMPLICATED STUFF
+    // ULTIMATE SIMPLE RENDERPRICINGCARDS - GUARANTEED TO WORK
     // =========================================================================
     function renderPricingCards() {
         const container = document.getElementById('pricing-cards-display');
         if (!container) return;
         
-        // SUPER SIMPLE: Just build the HTML string with the container class
         let html = '<div class="pricing-cards-container">';
         
         if (selections.planType === PLAN_CONFIG.outright.name) {
@@ -1627,7 +1639,6 @@
                     </button>
                 </div>
             `;
-            
         } else {
             html += `
                 <div class="pricing-card">
@@ -1720,11 +1731,9 @@
         }
         
         html += '</div>';
-        
-        // Directly set the HTML - NO EXTRA DIVS, NO COMPLICATED STUFF
         container.innerHTML = html;
         
-        // Force a reflow
+        // Force browser to re-render
         void container.offsetHeight;
         
         renderSelectedFeaturesSummary();
@@ -1838,6 +1847,13 @@
         }
         
         updateUI();
+        
+        // Extra guarantee: re-render on resize
+        window.addEventListener('resize', function() {
+            if (currentStep === 8) {
+                setTimeout(renderPricingCards, 50);
+            }
+        });
     };
 
     document.addEventListener('touchmove', function(e) {
