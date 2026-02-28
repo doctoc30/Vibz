@@ -535,86 +535,62 @@
 
 
 
-  /* ===== PRICING CARDS - FIXED FOR DESKTOP SIDE BY SIDE ===== */
-.pricing-cards-container {
-    display: flex;
-    flex-direction: column;
-    gap: 28px;
-    margin: 0 auto 40px;
-    width: 100%;
-    max-width: 540px;           /* ← mobile default (single column feels good) */
-    padding: 0 12px;
-}
+        /* ===== PRICING CARDS - ULTIMATE SIMPLE FIX ===== */
+        .pricing-cards-container {
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+            margin: 0 auto 40px;
+            width: 100%;
+            max-width: 540px;
+            padding: 0 12px;
+        }
 
-.pricing-card {
-    background: #fff;
-    border-radius: 30px;
-    padding: 28px 24px;
-    border: 2px solid var(--border);
-    position: relative;
-    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    text-align: left;
-    box-shadow: 0 20px 40px rgba(255, 107, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-}
+        .pricing-card {
+            background: #fff;
+            border-radius: 30px;
+            padding: 28px 24px;
+            border: 2px solid var(--border);
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            text-align: left;
+            box-shadow: 0 20px 40px rgba(255, 107, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
 
-.pricing-card.recommended {
-    border-color: var(--primary);
-    background: linear-gradient(to bottom, #fff, rgba(255,107,0,0.02));
-    z-index: 1;
-}
+        .pricing-card.recommended {
+            border-color: var(--primary);
+            background: linear-gradient(to bottom, #fff, rgba(255,107,0,0.02));
+            z-index: 1;
+        }
 
-/* ── Tablet & Desktop ─────────────────────────────────────── */
-@media (min-width: 768px) {
-    .pricing-cards-container {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        max-width: 980px;           /* ← wider = better use of space */
-        gap: 28px;
-        align-items: stretch;
-        padding: 0 20px;
-        margin: 0 auto 50px;
-    }
+        /* DESKTOP - SIMPLE GRID */
+        @media (min-width: 768px) {
+            .pricing-cards-container {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr !important;
+                max-width: 980px !important;
+                gap: 28px !important;
+                align-items: stretch !important;
+                padding: 0 20px !important;
+                margin: 0 auto 50px !important;
+            }
 
-    .pricing-card {
-        max-width: none;
-        width: 100%;
-        margin: 0;
-    }
+            .pricing-card {
+                max-width: none !important;
+                width: 100% !important;
+                margin: 0 !important;
+            }
 
-    .pricing-card.recommended {
-        transform: scale(1.04);
-        box-shadow: 0 30px 60px rgba(255, 107, 0, 0.18);
-    }
+            .pricing-card.recommended {
+                transform: scale(1.04);
+            }
 
-    .pricing-card .feature-list {
-        flex-grow: 1;
-    }
-}
-
-/* Extra wide screens – optional centering + slight scaling */
-@media (min-width: 1200px) {
-    .pricing-cards-container {
-        max-width: 1100px;
-        gap: 32px;
-    }
-
-    .pricing-card.recommended {
-        transform: scale(1.06);
-    }
-}
-
-/* Mobile – subtle visual separation */
-@media (max-width: 767px) {
-    .pricing-card.recommended {
-        margin: 16px 0;
-        transform: scale(1.015);
-    }
-}
-
-
-        
+            .pricing-card .feature-list {
+                flex-grow: 1;
+            }
+        }
 
         .plan-recommended-badge {
             position: absolute;
@@ -1055,6 +1031,7 @@
                     <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
                 </div>
 
+                <!-- STEP 8 - PRICING CARDS -->
                 <div class="form-screen" id="step-8">
                     <div id="pricing-cards-display"></div>
                     <div id="selected-features-summary" style="margin-top: 24px; width:100%;"></div>
@@ -1593,30 +1570,15 @@
     }
 
     // =========================================================================
-    // AGGRESSIVELY FIXED RENDERPRICINGCARDS FUNCTION
+    // ULTIMATE SIMPLE RENDERPRICINGCARDS - NO COMPLICATED STUFF
     // =========================================================================
     function renderPricingCards() {
         const container = document.getElementById('pricing-cards-display');
         if (!container) return;
         
-        // Clear container completely
-        container.innerHTML = '';
+        // SUPER SIMPLE: Just build the HTML string with the container class
+        let html = '<div class="pricing-cards-container">';
         
-        // Remove any inline styles that might interfere
-        container.style.display = '';
-        container.style.flexDirection = '';
-        
-        // Create fresh grid container with explicit class
-        const gridContainer = document.createElement('div');
-        gridContainer.className = 'pricing-cards-container';
-        
-        // Force inline styles as backup (will be overridden by CSS but ensures display)
-        gridContainer.style.display = 'flex';
-        gridContainer.style.flexDirection = 'column';
-        gridContainer.style.width = '100%';
-        
-        let html = '';
-
         if (selections.planType === PLAN_CONFIG.outright.name) {
             html += `
                 <div class="pricing-card">
@@ -1756,18 +1718,14 @@
                 </div>
             `;
         }
-
-        // Set the HTML inside the grid container
-        gridContainer.innerHTML = html;
         
-        // Append the grid container to the main container
-        container.appendChild(gridContainer);
+        html += '</div>';
         
-        // Force a reflow to ensure CSS applies
+        // Directly set the HTML - NO EXTRA DIVS, NO COMPLICATED STUFF
+        container.innerHTML = html;
+        
+        // Force a reflow
         void container.offsetHeight;
-        
-        // Log for debugging (remove in production)
-        console.log('Pricing cards rendered, screen width:', window.innerWidth);
         
         renderSelectedFeaturesSummary();
     }
@@ -1880,14 +1838,6 @@
         }
         
         updateUI();
-        
-        // Add resize listener to verify grid on window resize
-        window.addEventListener('resize', function() {
-            if (currentStep === 8) {
-                // Small delay to ensure DOM is ready
-                setTimeout(renderPricingCards, 50);
-            }
-        });
     };
 
     document.addEventListener('touchmove', function(e) {
