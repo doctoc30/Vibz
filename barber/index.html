@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -8,7 +8,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        /* STYLES - EXACTLY AS PROVIDED */
+        /* STYLES - EXACTLY AS PROVIDED, WITH PRICING GRID FIX */
         :root {
             --primary: #FF6B00;
             --primary-light: #FFF5EE;
@@ -330,7 +330,6 @@
             display: none;
             width: 100%;
             animation: none;
-            display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
@@ -534,6 +533,8 @@
         .concept-info h3 { font-weight: 900; color: var(--primary); text-transform: uppercase; margin-bottom: 4px; }
         .concept-info p { font-size: 0.85rem; color: var(--gray); font-weight: 600; line-height: 1.4; }
 
+
+
         /* ===== PRICING CARDS - FIXED FOR DESKTOP SIDE BY SIDE ===== */
         .pricing-cards-container {
             display: flex;
@@ -566,18 +567,18 @@
         /* Desktop & Tablet: 768px and above */
         @media (min-width: 768px) {
             .pricing-cards-container {
-                display: grid !important;
+                display: grid !important; /* Force grid */
                 grid-template-columns: repeat(2, 1fr) !important; /* Forced side-by-side */
-                max-width: 1000px !important; 
-                gap: 20px;
-                align-items: stretch; /* Cards stay equal height */
-                margin: 0 auto 40px;
+                max-width: 900px !important; /* Adjust based on your preference */
+                gap: 20px !important;
+                align-items: stretch !important; /* Cards stay equal height */
+                margin: 0 auto 40px !important;
             }
             
             .pricing-card {
-                max-width: none;
-                width: 100%;
-                margin: 0;
+                max-width: none !important;
+                width: 100% !important;
+                margin: 0 !important;
             }
 
             .pricing-card.recommended {
@@ -597,6 +598,9 @@
                 transform: scale(1.02);
             }
         }
+
+
+        
 
         .plan-recommended-badge {
             position: absolute;
@@ -1038,7 +1042,7 @@
                 </div>
 
                 <div class="form-screen" id="step-8">
-                    <div class="pricing-cards-container" id="pricing-cards-display"></div>
+                    <div id="pricing-cards-display"></div>
                     <div id="selected-features-summary" style="margin-top: 24px; width:100%;"></div>
                     <button class="vibz-btn back-btn" onclick="goToStep(7)" style="margin: 20px auto 30px;">Edit Features</button>
                     <button class="vibz-btn back-btn" onclick="prev()">Go Back</button>
@@ -1574,9 +1578,28 @@
         container.innerHTML = html;
     }
 
+    // =========================================================================
+    // AGGRESSIVELY FIXED RENDERPRICINGCARDS FUNCTION
+    // =========================================================================
     function renderPricingCards() {
         const container = document.getElementById('pricing-cards-display');
         if (!container) return;
+        
+        // Clear container completely
+        container.innerHTML = '';
+        
+        // Remove any inline styles that might interfere
+        container.style.display = '';
+        container.style.flexDirection = '';
+        
+        // Create fresh grid container with explicit class
+        const gridContainer = document.createElement('div');
+        gridContainer.className = 'pricing-cards-container';
+        
+        // Force inline styles as backup (will be overridden by CSS but ensures display)
+        gridContainer.style.display = 'flex';
+        gridContainer.style.flexDirection = 'column';
+        gridContainer.style.width = '100%';
         
         let html = '';
 
@@ -1720,7 +1743,18 @@
             `;
         }
 
-        container.innerHTML = html;
+        // Set the HTML inside the grid container
+        gridContainer.innerHTML = html;
+        
+        // Append the grid container to the main container
+        container.appendChild(gridContainer);
+        
+        // Force a reflow to ensure CSS applies
+        void container.offsetHeight;
+        
+        // Log for debugging (remove in production)
+        console.log('Pricing cards rendered, screen width:', window.innerWidth);
+        
         renderSelectedFeaturesSummary();
     }
 
@@ -1832,6 +1866,14 @@
         }
         
         updateUI();
+        
+        // Add resize listener to verify grid on window resize
+        window.addEventListener('resize', function() {
+            if (currentStep === 8) {
+                // Small delay to ensure DOM is ready
+                setTimeout(renderPricingCards, 50);
+            }
+        });
     };
 
     document.addEventListener('touchmove', function(e) {
