@@ -1,1 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>VIBZ | Client Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #FF6B00;
+            --primary-light: #FFF5EE;
+            --bg: #FFFFFF;
+            --text: #121212;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --safe-top: env(safe-area-inset-top);
+            --safe-bottom: env(safe-area-inset-bottom);
+        }
 
+        * {
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body, html {
+            height: 100%;
+            background-color: var(--primary-light);
+            color: var(--text);
+        }
+
+        /* ==== HEADER ==== */
+        header {
+            padding: calc(var(--safe-top) + 30px) 25px 20px;
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            background: transparent;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 800;
+        }
+
+        .app-logo { 
+            font-size: 2.2rem;
+            font-weight: 900; 
+            letter-spacing: -1.5px; 
+            color: var(--primary); 
+            text-decoration: none;
+        }
+        .app-logo span { color: #000000; }
+
+        .back-home {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1rem;
+            padding: 12px 20px;
+            background: white;
+            border-radius: 40px;
+            border: 1px solid rgba(255,107,0,0.1);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-home:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .back-home i {
+            font-size: 1rem;
+        }
+
+        /* ==== MAIN CONTENT ==== */
+        .main-content {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 120px 25px 40px;
+        }
+
+        .login-container {
+            max-width: 450px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .welcome-text {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .welcome-text h1 {
+            font-size: 3.2rem;
+            font-weight: 900;
+            line-height: 0.9;
+            letter-spacing: -3px;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .welcome-text p {
+            color: var(--text);
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .login-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 40px 30px;
+            box-shadow: 0 20px 40px rgba(255, 107, 0, 0.15);
+            border: 1px solid rgba(255, 107, 0, 0.1);
+        }
+
+        .error-message {
+            background: #FFEBEE;
+            color: #D32F2F;
+            padding: 15px 20px;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border-left: 4px solid #D32F2F;
+            display: none;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 800;
+            margin-bottom: 10px;
+            color: var(--text);
+            font-size: 0.95rem;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 18px;
+            color: var(--primary);
+            font-size: 1.2rem;
+            opacity: 0.7;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 16px 20px 16px 50px;
+            border-radius: 30px;
+            border: 2px solid rgba(255, 107, 0, 0.1);
+            font-size: 1rem;
+            font-weight: 500;
+            background: white;
+            transition: all 0.2s ease;
+        }
+
+        .input-wrapper input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(255, 107, 0, 0.1);
+        }
+
+        .input-wrapper input::placeholder {
+            color: #999;
+            font-weight: 400;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 18px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 40px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .login-btn:hover {
+            background: #e06000;
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(255, 107, 0, 0.3);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.7;
+            transform: none;
+            cursor: not-allowed;
+        }
+
+        .help-links {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+            font-size: 0.9rem;
+        }
+
+        .help-links a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 600;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .help-links a:hover {
+            opacity: 1;
+            color: var(--primary);
+        }
+
+        .demo-credentials {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255, 107, 0, 0.04);
+            border-radius: 20px;
+            border: 1px dashed rgba(255, 107, 0, 0.3);
+            text-align: center;
+        }
+
+        .demo-credentials p {
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .demo-credentials code {
+            background: white;
+            padding: 8px 15px;
+            border-radius: 40px;
+            font-weight: 600;
+            color: var(--text);
+            border: 1px solid rgba(255,107,0,0.1);
+        }
+
+        /* ==== FOOTER ==== */
+        .login-footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #999;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="https://www.vibz.co.uk" class="app-logo">VIBZ<span>.</span></a>
+        <a href="https://www.vibz.co.uk" class="back-home"><i class="fa-solid fa-arrow-left"></i> Back to Home</a>
+    </header>
+
+    <div class="main-content">
+        <div class="login-container">
+            <div class="welcome-text">
+                <h1>Client Portal</h1>
+                <p>Access your project dashboard</p>
+            </div>
+
+            <div class="login-card">
+                <div id="errorMsg" class="error-message">
+                    <i class="fa-solid fa-circle-exclamation"></i> 
+                    <span id="errorText"></span>
+                </div>
+
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <div class="input-wrapper">
+                        <i class="fa-regular fa-envelope"></i>
+                        <input type="email" id="email" placeholder="your@email.com" autocomplete="email">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="password" placeholder="Enter your password" autocomplete="current-password">
+                    </div>
+                </div>
+
+                <button class="login-btn" onclick="login()" id="loginBtn">
+                    <span>Sign In</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+
+                <div class="help-links">
+                    <a href="#" onclick="showDemoCredentials(); return false;">Demo Login</a>
+                    <a href="mailto:support@vibz.co.uk?subject=Portal%20Access">Need Help?</a>
+                </div>
+
+                <div id="demoCredentials" class="demo-credentials" style="display: none;">
+                    <p><i class="fa-solid fa-key"></i> Demo Credentials</p>
+                    <code>test@client.com</code><br>
+                    <code style="margin-top: 8px; display: inline-block;">password123</code>
+                </div>
+            </div>
+
+            <div class="login-footer">
+                <p>© 2026 VIBZ Collective. All rights reserved.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMsg');
+            const errorText = document.getElementById('errorText');
+            errorDiv.style.display = 'block';
+            errorText.innerText = message;
+            
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        function showDemoCredentials() {
+            const demoDiv = document.getElementById('demoCredentials');
+            demoDiv.style.display = demoDiv.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function login() {
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const loginBtn = document.getElementById('loginBtn');
+
+            if (!email || !password) {
+                showError('Please enter both email and password');
+                return;
+            }
+
+            // Simple email validation
+            if (!email.includes('@') || !email.includes('.')) {
+                showError('Please enter a valid email address');
+                return;
+            }
+
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Signing In...';
+
+            google.script.run
+                .withSuccessHandler(function(result) {
+                    if (result.success) {
+                        window.location.href = result.url;
+                    } else {
+                        loginBtn.disabled = false;
+                        loginBtn.innerHTML = '<span>Sign In</span><i class="fa-solid fa-arrow-right"></i>';
+                        showError(result.error || 'Invalid email or password');
+                    }
+                })
+                .withFailureHandler(function(error) {
+                    loginBtn.disabled = false;
+                    loginBtn.innerHTML = '<span>Sign In</span><i class="fa-solid fa-arrow-right"></i>';
+                    showError('Connection error. Please try again.');
+                })
+                .processLogin(email, password);
+        }
+
+        // Allow Enter key to submit
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                login();
+            }
+        });
+    </script>
+</body>
+</html>
