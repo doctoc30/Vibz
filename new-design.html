@@ -483,10 +483,30 @@
             padding: 25px 20px;
         }
 
-        /* ===== PROCESS SECTION - FULLY TRANSPARENT, NO WHITE FRAME ===== */
+        /* ===== PROCESS SECTION - VIDEO LIKE EXPLAINER EXPERIENCE ===== */
         .process-section {
-            margin: 60px 0;
+            margin: 80px 0;
             position: relative;
+            min-height: 400px;
+        }
+
+        /* Animated background elements for video feel */
+        .process-section::before {
+            content: '';
+            position: absolute;
+            top: -30px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            opacity: 0.3;
+            animation: scanLine 3s ease-in-out infinite;
+        }
+
+        @keyframes scanLine {
+            0% { transform: translateX(-100%); }
+            50% { transform: translateX(100%); }
+            100% { transform: translateX(200%); }
         }
 
         .process-grid {
@@ -495,16 +515,33 @@
             gap: 20px;
             max-width: 1200px;
             margin: 0 auto;
-            perspective: 1200px;
+            position: relative;
+            perspective: 2000px;
         }
 
-        /* ===== VIDEO-LIKE CARD EXPERIENCE ===== */
+        /* Floating particles for video atmosphere */
+        .process-grid::after {
+            content: '⚡⚡⚡';
+            position: absolute;
+            top: -20px;
+            right: 10%;
+            font-size: 2rem;
+            color: var(--primary);
+            opacity: 0.2;
+            animation: sparkle 2s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 0.1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(1.2); }
+        }
+
+        /* ===== VIDEO CARDS - MOVING STORYTELLING ===== */
         .process-card {
-            background: transparent !important;   /* fully transparent background */
-            border: 1px solid rgba(255, 107, 0, 0.15);  /* subtle orange border, no white */
-            backdrop-filter: blur(2px);           /* very subtle blur to hint transparency */
-            -webkit-backdrop-filter: blur(2px);
-            padding: 25px 15px;
+            background: transparent;
+            border: none;
+            padding: 30px 15px;
             border-radius: 30px;
             display: flex;
             flex-direction: column;
@@ -512,104 +549,187 @@
             gap: 15px;
             position: relative;
             cursor: pointer;
-            transition: all 0.3s ease;
-            opacity: 0;                           /* hidden until animation triggers */
-            transform: scale(0.7) translateY(30px);
-            animation: cardPopIn 0.5s cubic-bezier(0.21, 1.11, 0.38, 1.2) forwards;
-            box-shadow: 0 10px 20px -10px rgba(255, 107, 0, 0.1); /* soft orange glow */
             color: var(--text);
-            will-change: transform, opacity;
+            transform-style: preserve-3d;
+            opacity: 0;
+            animation: videoIntro 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.2) forwards;
+            box-shadow: 0 15px 35px -15px rgba(255, 107, 0, 0.2);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 107, 0, 0.1);
         }
 
-        /* staggered animation delays - creates video like flow */
+        /* Staggered video timing - each card enters like a scene */
         .process-card:nth-child(1) { animation-delay: 0.1s; }
-        .process-card:nth-child(2) { animation-delay: 0.4s; }
-        .process-card:nth-child(3) { animation-delay: 0.7s; }
-        .process-card:nth-child(4) { animation-delay: 1.0s; }
-        .process-card:nth-child(5) { animation-delay: 1.3s; }
+        .process-card:nth-child(2) { animation-delay: 0.7s; }
+        .process-card:nth-child(3) { animation-delay: 1.3s; }
+        .process-card:nth-child(4) { animation-delay: 1.9s; }
+        .process-card:nth-child(5) { animation-delay: 2.5s; }
 
-        @keyframes cardPopIn {
+        @keyframes videoIntro {
             0% {
                 opacity: 0;
-                transform: scale(0.5) translateY(50px);
+                transform: translateY(60px) rotateX(-15deg) scale(0.7);
+                filter: blur(10px);
             }
-            50% {
-                opacity: 0.9;
-                transform: scale(1.02) translateY(-5px);
+            30% {
+                opacity: 0.8;
+                transform: translateY(-10px) rotateX(5deg) scale(1.02);
+                filter: blur(0);
+            }
+            60% {
+                transform: translateY(5px) rotateX(-2deg) scale(0.99);
             }
             100% {
                 opacity: 1;
-                transform: scale(1) translateY(0);
+                transform: translateY(0) rotateX(0) scale(1);
+                filter: blur(0);
             }
         }
 
-        /* continuous subtle float to keep video-like liveliness */
+        /* Continuous video-like motion */
         .process-card {
-            animation: cardPopIn 0.5s cubic-bezier(0.21, 1.11, 0.38, 1.2) forwards,
-                       floatSoft 4s ease-in-out infinite;
-            animation-delay: var(--delay, 0s), 2s; /* float starts after pop-in */
+            animation: videoIntro 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.2) forwards,
+                       videoFloat 4s ease-in-out infinite;
+            animation-delay: var(--delay, 0s), 3s;
         }
 
-        @keyframes floatSoft {
-            0%, 100% { transform: translateY(0) scale(1); }
-            50% { transform: translateY(-5px) scale(1.01); }
-        }
-
-        .process-card:hover {
-            border-color: var(--primary);
-            box-shadow: 0 20px 30px -10px rgba(255, 107, 0, 0.25);
-            transform: scale(1.02) translateY(-5px);
-            background: rgba(255, 255, 255, 0.02) !important; /* almost invisible */
+        @keyframes videoFloat {
+            0%, 100% { 
+                transform: translateY(0) rotateX(0) scale(1);
+                box-shadow: 0 15px 35px -15px rgba(255, 107, 0, 0.2);
+            }
+            25% { 
+                transform: translateY(-6px) rotateX(2deg) scale(1.02);
+                box-shadow: 0 25px 40px -12px rgba(255, 107, 0, 0.3);
+            }
+            50% { 
+                transform: translateY(0) rotateX(-1deg) scale(1);
+                box-shadow: 0 15px 35px -15px rgba(255, 107, 0, 0.2);
+            }
+            75% { 
+                transform: translateY(-3px) rotateX(1deg) scale(1.01);
+                box-shadow: 0 20px 38px -13px rgba(255, 107, 0, 0.25);
+            }
         }
 
         .process-number {
-            font-size: 3rem;
+            font-size: 4rem;
             font-weight: 900;
-            color: rgba(255, 107, 0, 0.2);
+            color: rgba(255, 107, 0, 0.15);
             position: absolute;
-            top: 10px;
+            top: 5px;
             right: 15px;
             line-height: 1;
-            transition: color 0.2s;
+            transition: all 0.3s ease;
+            animation: numberPulse 3s ease-in-out infinite;
         }
 
-        .process-card:hover .process-number {
-            color: rgba(255, 107, 0, 0.3);
+        @keyframes numberPulse {
+            0%, 100% { opacity: 0.15; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(1.1); }
         }
 
         .process-card .tile-icon {
-            background: rgba(255, 107, 0, 0.15);
+            background: rgba(255, 107, 0, 0.1);
             color: var(--primary);
-            box-shadow: 0 8px 16px rgba(255, 107, 0, 0.1);
-            backdrop-filter: blur(4px);
+            box-shadow: 0 8px 20px rgba(255, 107, 0, 0.15);
             border: 1px solid rgba(255, 107, 0, 0.2);
+            animation: iconPop 2s ease-in-out infinite;
+            transform-origin: center;
+        }
+
+        @keyframes iconPop {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
         }
 
         .process-card h3 {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             font-weight: 900;
             line-height: 1.3;
             text-align: center;
             color: var(--text);
+            animation: textGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes textGlow {
+            0%, 100% { text-shadow: 0 0 5px rgba(255, 107, 0, 0.1); }
+            50% { text-shadow: 0 0 15px rgba(255, 107, 0, 0.3); }
         }
 
         .process-card p {
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             color: var(--text);
-            opacity: 0.8;
+            opacity: 0.9;
             text-align: center;
             margin: 5px 0;
+            animation: slideText 3s ease-in-out infinite;
+        }
+
+        @keyframes slideText {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(3px); }
+            75% { transform: translateX(-3px); }
         }
 
         .process-time {
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             font-weight: 700;
             color: var(--primary);
             background: rgba(255, 107, 0, 0.1);
-            padding: 4px 12px;
+            padding: 6px 16px;
             border-radius: 40px;
-            backdrop-filter: blur(2px);
-            border: 1px solid rgba(255, 107, 0, 0.15);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 107, 0, 0.2);
+            animation: timePulse 2.5s ease-in-out infinite;
+        }
+
+        @keyframes timePulse {
+            0%, 100% { background: rgba(255, 107, 0, 0.1); }
+            50% { background: rgba(255, 107, 0, 0.2); }
+        }
+
+        /* Progress line between cards */
+        .process-grid {
+            position: relative;
+        }
+
+        .process-grid::before {
+            content: '';
+            position: absolute;
+            top: 30%;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                var(--primary) 20%, 
+                var(--primary) 80%, 
+                transparent);
+            opacity: 0.15;
+            z-index: -1;
+            transform: translateY(-50%);
+            animation: progressPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes progressPulse {
+            0%, 100% { opacity: 0.15; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .process-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            .process-grid::before {
+                display: none;
+            }
+            .process-card {
+                animation-delay: 0s !important;
+            }
         }
 
         /* ===== FAQ SECTION ===== */
@@ -730,13 +850,6 @@
         }
 
         @media (max-width: 768px) {
-            .process-grid {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-            .process-card {
-                animation-delay: 0s !important; /* simpler on mobile */
-            }
             .faq-grid {
                 grid-template-columns: 1fr;
             }
@@ -1011,7 +1124,7 @@
                 </div>
             </div>
 
-            <!-- Process Section - Fully Transparent, No White Frame -->
+            <!-- Process Section - Video Like Explainer Experience -->
             <div class="process-section">
                 <span class="section-header">Our Simple Process</span>
                 <div class="process-grid">
