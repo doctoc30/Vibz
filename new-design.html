@@ -3,754 +3,513 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>VIBZ | Premium Web Solutions</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <title>VIBZ | App Experience</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <style>
+        /* ===== APP VARIABLES ===== */
         :root {
             --primary: #FF6B00;
             --primary-light: #FFF5EE;
+            --primary-dark: #E05E00;
             --bg: #FFFFFF;
+            --surface: #FFFFFF;
             --text: #121212;
-            --card-bg: rgba(255, 255, 255, 0.9);
+            --text-secondary: #666666;
+            --border: rgba(255, 107, 0, 0.1);
+            --shadow-sm: 0 4px 12px rgba(255, 107, 0, 0.08);
+            --shadow-md: 0 8px 24px rgba(255, 107, 0, 0.12);
+            --shadow-lg: 0 16px 32px rgba(255, 107, 0, 0.16);
             --safe-top: env(safe-area-inset-top);
             --safe-bottom: env(safe-area-inset-bottom);
+            --app-radius: 24px;
+            --card-radius: 20px;
         }
 
+        /* ===== RESET ===== */
         * {
-            margin: 0; padding: 0; box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
             font-family: 'Inter', sans-serif;
         }
 
-        body, html {
-            height: 100%;
-            background-color: var(--primary-light);
+        body {
+            background: var(--primary-light);
             color: var(--text);
             overflow-x: hidden;
-            overflow-y: auto;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* ==== LOADER ==== */
-        #app-loader {
-            position: fixed; inset: 0; background: #FFF2EB; z-index: 10000;
-            display: flex; align-items: center; justify-content: center;
-            transition: transform 0.8s cubic-bezier(0.9, 0, 0.1, 1);
+        /* ===== APP CONTAINER ===== */
+        #app {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--primary-light);
+            position: relative;
+            height: 100vh;
+            overflow: hidden;
         }
 
-        .loader-content {
-            display: flex; flex-direction: column; align-items: center;
-            text-align: center; line-height: 1;
-        }
-        
-        .loader-content span { color: #000000; }
-
-        .layer-1 { font-size: 7rem; font-weight: 900; color: var(--primary); letter-spacing: -5px; animation: slideFromRight 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .layer-2 { font-size: 2.5rem; font-weight: 900; color: #000; letter-spacing: -1.5px; margin-top: 5px; opacity: 0; animation: slideFromLeft 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards; }
-        .layer-3 { font-size: 2.5rem; font-weight: 900; color: var(--primary); letter-spacing: -1.5px; opacity: 0; animation: slideFromTop 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.8s forwards; }
-
-        @keyframes slideFromRight { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        @keyframes slideFromLeft { from { transform: translateX(-100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        @keyframes slideFromTop { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-        /* ==== MENU LAYERS ==== */
-        #app-menu-layer {
-            position: fixed; inset: 0; background: var(--primary-light);
-            z-index: 9500; display: flex; flex-direction: column;
-            padding: calc(var(--safe-top) + 20px) 25px;
-            transform: translateY(100%); transition: transform 0.6s cubic-bezier(0.32, 0.72, 0, 1);
-        }
-        #app-menu-layer.active { transform: translateY(0); }
-        .menu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .menu-links { display: flex; flex-direction: column; gap: 20px; flex: 1; justify-content: center; align-items: center; text-align: center; }
-        .menu-item { font-size: 4.5rem; font-weight: 900; color: var(--text); text-decoration: none; letter-spacing: -3px; line-height: 1; opacity: 0; transform: translateY(30px); transition: 0.5s cubic-bezier(0.32, 0.72, 0, 1); }
-        #app-menu-layer.active .menu-item { opacity: 1; transform: translateY(0); }
-        .menu-item:nth-child(1) { transition-delay: 0.1s; }
-        .menu-item:nth-child(2) { transition-delay: 0.2s; }
-        .menu-item:nth-child(3) { transition-delay: 0.3s; }
-        .menu-item:nth-child(4) { transition-delay: 0.4s; }
-        .menu-footer { margin-top: auto; padding-bottom: calc(var(--safe-bottom) + 20px); font-weight: 800; font-size: 0.8rem; letter-spacing: 1px; color: #bbb; text-align: center; }
-
-        /* ==== CATEGORY LAYER ==== */
-        #category-layer {
-            position: fixed; inset: 0; background: rgba(255, 245, 238, 0.98);
-            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            z-index: 9000; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; gap: 15px;
-            transform: translateY(100%); transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
-            padding: 20px;
-        }
-        #category-layer.active { transform: translateY(0); }
-        
-        #cat-title { 
-            color: var(--primary); 
-            margin-bottom: 20px; 
-            font-weight: 900; 
-            letter-spacing: -1px;
-            font-size: 2.2rem;
-            text-align: center;
-        }
-        
-        #cat-list { 
-            width: 100%; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            overflow-y: auto; 
-            max-height: 60vh;
-            gap: 10px;
-            padding: 10px;
-        }
-        
-        @media (min-width: 768px) {
-            #cat-list {
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                gap: 15px;
-                max-width: 800px;
-                width: 90%;
-                align-items: stretch;
-            }
-            
-            #cat-list .cat-item {
-                width: 100%;
-                min-width: auto;
-                max-width: none;
-                margin: 0;
-                height: 100%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                text-align: center;
-                padding: 20px 16px;
-                font-size: 1.3rem;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-        }
-        
-        @media (min-width: 1200px) {
-            #cat-list {
-                grid-template-columns: repeat(3, 1fr);
-                max-width: 1000px;
-            }
-        }
-        
-        .cat-item { 
-            font-size: 1.6rem; 
-            font-weight: 800; 
-            color: var(--text); 
-            text-decoration: none; 
-            width: auto; 
-            min-width: 280px; 
-            max-width: 450px; 
-            text-align: center; 
-            padding: 16px 32px; 
-            background: white; 
-            border-radius: 60px; 
-            margin-bottom: 8px; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.04); 
-            border: 1px solid rgba(255, 107, 0, 0.1); 
-            cursor: pointer; 
-            transition: 0.1s; 
-            display: inline-block; 
-            margin: 0 auto; 
-        }
-        .cat-item.click-highlight { 
-            background: var(--primary) !important; 
-            color: white !important; 
-            border: 1px solid var(--primary) !important; 
-            box-shadow: 0 12px 25px rgba(255, 107, 0, 0.35) !important; 
-        }
-        .close-btn { 
-            width: 60px; 
-            height: 60px; 
-            background: var(--primary); 
-            color: white; 
-            border-radius: 50%; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-size: 1.5rem; 
-            box-shadow: 0 10px 20px rgba(255, 107, 0, 0.2); 
-            cursor: pointer; 
-            margin-top: 20px;
-        }
-
-        /* ==== APP SHELL ==== */
-        #app-container { min-height: 100vh; display: flex; flex-direction: column; opacity: 0; transition: opacity 0.5s ease-in; position: relative; }
-
-        /* ===== HEADER ===== */
-        header {
-            padding: calc(var(--safe-top) + 30px) 25px 20px;
-            display: flex; 
-            justify-content: space-between; 
+        /* ===== APP HEADER ===== */
+        .app-header {
+            padding: calc(var(--safe-top) + 16px) 20px 12px;
+            display: flex;
+            justify-content: space-between;
             align-items: center;
             background: transparent;
-            width: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 800;
+            position: relative;
+            z-index: 100;
         }
 
-        .header-spacer {
-            height: 100px;
-            width: 100%;
+        .app-logo {
+            font-size: 2rem;
+            font-weight: 900;
+            letter-spacing: -1.5px;
+            color: var(--primary);
         }
 
-        .app-logo { 
-            font-size: 2.2rem;
-            font-weight: 900; 
-            letter-spacing: -1.5px; 
-            color: var(--primary); 
-        }
-        .app-logo span { color: #000000; }
-
-        .content-scroll { 
-            flex: 1; 
-            padding: 0 25px 100px;
+        .app-logo span {
+            color: var(--text);
         }
 
-        /* ===== TABLET OPTIMISATION ===== */
-        .hero-area { 
-            text-align: center; 
-            padding: 60px 0 50px;
-        }
-
-        @media (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) {
-            .header-spacer { height: 140px; }
-            .hero-area { padding: 80px 0 50px; margin-top: 20px; }
-            .hero-area h1 { font-size: 3.8rem; margin-bottom: 25px; }
-            .typewriter-container { font-size: 3.8rem; margin-bottom: 45px; }
-            .search-container { margin: 0 auto 50px; max-width: 600px; transform: scale(1.02); }
-            .section-header { margin-bottom: 35px; font-size: 1rem; letter-spacing: 3px; }
-            .app-grid { margin-bottom: 40px; }
-            footer { margin-top: 80px; }
-        }
-
-        .hero-area h1 { 
-            font-size: 3.2rem; 
-            font-weight: 900; 
-            line-height: 0.9; 
-            letter-spacing: -3px; 
-            margin-bottom: 20px;
-            color: var(--primary); 
-        }
-
-        .typewriter-container { 
-            font-size: 3.2rem; 
-            font-weight: 900; 
-            color: #000000; 
-            line-height: 0.9; 
-            letter-spacing: -3px; 
-            margin-bottom: 50px;
-            text-transform: capitalize; 
-            min-height: 4.2rem; 
-        }
-
-        .search-container { 
-            background: #fff; 
-            border-radius: 24px; 
-            padding: 10px; 
-            display: flex; 
-            align-items: center; 
-            box-shadow: 0 20px 40px rgba(255, 107, 0, 0.15); 
-            max-width: 500px; 
-            margin: 0 auto 80px;
-        }
-
-        .search-container input { 
-            flex: 1; 
-            border: none; 
-            outline: none; 
-            padding: 15px; 
-            font-size: 1.2rem; 
-            font-weight: 700; 
-        }
-
-        .search-icon-btn { 
-            width: 55px; 
-            height: 55px; 
-            background: var(--primary); 
-            border-radius: 18px;
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            color: #fff; 
-            cursor: pointer; 
-            border: none; 
-        }
-
-        .client-portal-btn {
+        .header-actions {
             display: flex;
             align-items: center;
-            gap: 10px;
-            background: #fff;
-            padding: 10px 20px 10px 15px;
-            border-radius: 24px;
+            gap: 12px;
+        }
+
+        .menu-btn {
+            width: 48px;
+            height: 48px;
+            background: white;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid var(--border);
+        }
+
+        .menu-btn:hover {
+            transform: scale(0.96);
+            background: var(--primary);
+            color: white;
+        }
+
+        .portal-btn {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
             text-decoration: none;
             color: var(--text);
-            font-weight: 700;
-            font-size: 1rem;
-            border: none;
-            box-shadow: 0 20px 40px rgba(255, 107, 0, 0.15);
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: var(--shadow-sm);
             transition: all 0.2s ease;
-            height: 55px;
         }
 
-        .client-portal-btn i {
-            font-size: 1.3rem;
+        .portal-btn i {
             color: var(--primary);
-            transition: all 0.2s ease;
+            font-size: 1.1rem;
         }
 
-        .client-portal-btn:hover {
+        .portal-btn:hover {
             background: var(--primary);
             color: white;
             transform: translateY(-2px);
-            box-shadow: 0 25px 50px rgba(255,107,0,0.25);
         }
 
-        .client-portal-btn:hover i {
+        .portal-btn:hover i {
             color: white;
         }
 
-        @media (max-width: 768px) {
-            .client-portal-btn span {
-                display: none;
-            }
-            .client-portal-btn {
-                padding: 10px;
-                border-radius: 24px;
-                aspect-ratio: 1;
-                width: 55px;
-                justify-content: center;
-            }
-            .client-portal-btn i {
-                font-size: 1.5rem;
-                margin: 0;
-            }
+        /* ===== MAIN CONTENT (SCROLLABLE) ===== */
+        .app-content {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 0 20px 20px;
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
         }
 
-        .section-header { 
-            font-size: 0.85rem; 
-            font-weight: 900; 
-            text-transform: uppercase; 
-            letter-spacing: 2px; 
-            color: var(--primary); 
-            margin-bottom: 35px;
-            display: block; 
-            text-align: center; 
+        /* ===== HERO SECTION ===== */
+        .hero-section {
+            padding: 20px 0 30px;
+            text-align: center;
         }
 
-        /* ===== ANIMATED ICON TILES ===== */
-        .app-grid { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            max-width: 600px;
-            margin: 0 auto 50px;
+        .hero-title {
+            font-size: 2.8rem;
+            font-weight: 900;
+            line-height: 1;
+            letter-spacing: -2px;
+            color: var(--primary);
+            margin-bottom: 16px;
         }
 
-        @media (min-width: 768px) {
-            .app-grid {
-                grid-template-columns: repeat(4, 1fr);
-                max-width: 800px;
-            }
-            .app-tile.full-tile {
-                grid-column: span 4;
-                flex-direction: row;
-                justify-content: center;
-            }
+        .hero-title span {
+            color: var(--text);
         }
 
-        .app-tile { 
-            background: var(--card-bg); 
-            padding: 30px 15px;
-            border-radius: 30px; 
-            border: 1px solid rgba(255, 107, 0, 0.1); 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            gap: 15px;
-            transition: all 0.2s ease; 
+        .typewriter-container {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: var(--text);
+            line-height: 1.2;
+            letter-spacing: -1px;
+            margin-bottom: 30px;
+            min-height: 3rem;
+        }
+
+        /* ===== SEARCH CARD ===== */
+        .search-card {
+            background: white;
+            border-radius: var(--app-radius);
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+            margin: 0 0 30px;
+        }
+
+        .search-card input {
+            flex: 1;
+            border: none;
+            outline: none;
+            padding: 16px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            background: transparent;
+        }
+
+        .search-card input::placeholder {
+            color: #999;
+            font-weight: 400;
+        }
+
+        .search-btn {
+            width: 54px;
+            height: 54px;
+            background: var(--primary);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.3rem;
+            border: none;
             cursor: pointer;
+            transition: all 0.2s ease;
         }
 
-        .app-tile:hover { 
-            transform: translateY(-3px); 
-            box-shadow: 0 15px 30px rgba(255,107,0,0.1);
+        .search-btn:hover {
+            background: var(--primary-dark);
+            transform: scale(0.96);
+        }
+
+        /* ===== SECTION HEADER ===== */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 16px;
+            padding: 0 4px;
+        }
+
+        .section-header h2 {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--text);
+        }
+
+        .section-header span {
+            color: var(--primary);
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* ===== CATEGORY GRID ===== */
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+
+        .category-card {
+            background: white;
+            border-radius: var(--card-radius);
+            padding: 16px 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .category-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
             border-color: var(--primary);
         }
 
-        .app-tile:active { 
-            transform: scale(0.96); 
-            background: #fff; 
+        .category-card:active {
+            transform: scale(0.96);
         }
 
-        .tile-icon { 
-            width: 55px; 
-            height: 55px; 
-            background: var(--primary); 
-            color: white; 
-            border-radius: 15px;
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-size: 1.3rem; 
-            box-shadow: 0 10px 20px rgba(255, 107, 0, 0.2); 
-        }
-
-        .fa-heart-pulse {
-            animation: heartbeat 1.5s ease-in-out infinite;
-        }
-        @keyframes heartbeat {
-            0% { transform: scale(1); }
-            14% { transform: scale(1.3); }
-            28% { transform: scale(1); }
-            42% { transform: scale(1.3); }
-            70% { transform: scale(1); }
-        }
-
-        .fa-hammer {
-            animation: hammerHit 1.2s ease-in-out infinite;
-            transform-origin: bottom center;
-        }
-        @keyframes hammerHit {
-            0% { transform: rotate(0deg) translateY(0); }
-            10% { transform: rotate(30deg) translateY(-3px); }
-            20% { transform: rotate(-20deg) translateY(0); }
-            30% { transform: rotate(0deg) translateY(0); }
-            40% { transform: rotate(0deg) translateY(0); }
-            100% { transform: rotate(0deg) translateY(0); }
-        }
-
-        .fa-briefcase {
-            animation: bounce 2s ease infinite;
-        }
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
-        }
-
-        .fa-utensils {
-            animation: utensilsMove 2.5s ease-in-out infinite;
-            display: inline-block;
-        }
-        @keyframes utensilsMove {
-            0% { transform: rotate(0deg) scale(1); }
-            25% { transform: rotate(-15deg) scale(1.1); }
-            50% { transform: rotate(15deg) scale(0.9); }
-            75% { transform: rotate(-5deg) scale(1.05); }
-            100% { transform: rotate(0deg) scale(1); }
-        }
-
-        .fa-bag-shopping {
-            animation: swing 3s ease-in-out infinite;
-            transform-origin: top center;
-        }
-        @keyframes swing {
-            0%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(15deg); }
-            75% { transform: rotate(-15deg); }
-        }
-
-        .app-tile h3 { 
-            font-size: 1.1rem; 
-            font-weight: 900; 
-            line-height: 1.3; 
-            text-align: center; 
-        }
-
-        .full-tile { 
-            grid-column: span 2; 
-            flex-direction: row; 
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--primary-light);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
             justify-content: center;
-            padding: 25px 20px;
-        }
-
-        /* ===== 3D PROCESS CARDS ===== */
-        .process-section {
-            max-width: 1200px;
-            margin: 80px auto;
-            padding: 0 20px;
-        }
-
-        .process-title {
-            text-align: center;
-            margin-bottom: 60px;
-        }
-
-        .process-title h2 {
-            font-size: 3rem;
-            font-weight: 900;
             color: var(--primary);
-            letter-spacing: -2px;
-            margin-bottom: 15px;
+            font-size: 1.3rem;
+            transition: all 0.2s ease;
         }
 
-        .process-title p {
-            font-size: 1.2rem;
+        .category-card:hover .card-icon {
+            background: var(--primary);
+            color: white;
+        }
+
+        .category-card span {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-align: center;
             color: var(--text);
-            opacity: 0.8;
-            max-width: 600px;
-            margin: 0 auto;
+        }
+
+        .full-card {
+            grid-column: span 4;
+            flex-direction: row;
+            padding: 16px 20px;
+            gap: 16px;
+        }
+
+        .full-card .card-icon {
+            width: 56px;
+            height: 56px;
+            font-size: 1.5rem;
+        }
+
+        .full-card span {
+            font-size: 1rem;
+        }
+
+        /* ===== PROCESS SECTION ===== */
+        .process-section {
+            margin-bottom: 40px;
         }
 
         .process-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-            perspective: 1000px;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
         }
 
         .process-card {
             background: white;
-            border-radius: 30px;
-            padding: 40px 30px;
+            border-radius: var(--card-radius);
+            padding: 16px 8px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
             position: relative;
-            transform-style: preserve-3d;
-            transform: rotateY(0deg) rotateX(0deg);
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 
-                0 30px 40px -20px rgba(255, 107, 0, 0.3),
-                -5px -5px 15px rgba(255, 255, 255, 0.8),
-                5px 5px 15px rgba(255, 107, 0, 0.1);
-            border: 1px solid rgba(255, 107, 0, 0.1);
-            opacity: 0;
-            transform: translateY(50px) rotateY(10deg);
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s ease;
+            animation: cardAppear 0.5s ease backwards;
         }
 
-        .process-card.visible {
-            opacity: 1;
-            transform: translateY(0) rotateY(0deg);
+        @keyframes cardAppear {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .process-card:hover {
-            transform: translateY(-10px) rotateY(5deg) rotateX(5deg);
-            box-shadow: 
-                0 40px 60px -20px var(--primary),
-                -10px -10px 20px rgba(255, 255, 255, 0.9),
-                10px 10px 20px rgba(255, 107, 0, 0.2);
-        }
+        .process-card:nth-child(1) { animation-delay: 0.1s; }
+        .process-card:nth-child(2) { animation-delay: 0.2s; }
+        .process-card:nth-child(3) { animation-delay: 0.3s; }
+        .process-card:nth-child(4) { animation-delay: 0.4s; }
+        .process-card:nth-child(5) { animation-delay: 0.5s; }
 
-        .card-number {
-            font-size: 8rem;
+        .process-number {
+            font-size: 3rem;
             font-weight: 900;
             color: rgba(255, 107, 0, 0.1);
             position: absolute;
-            top: 10px;
-            right: 20px;
+            top: 8px;
+            right: 12px;
             line-height: 1;
-            transform: translateZ(20px);
-            text-shadow: 
-                2px 2px 0 var(--primary),
-                4px 4px 0 rgba(255, 107, 0, 0.3),
-                6px 6px 0 rgba(255, 107, 0, 0.2);
-            transition: all 0.3s ease;
         }
 
-        .process-card:hover .card-number {
-            transform: translateZ(40px) scale(1.1);
-            color: rgba(255, 107, 0, 0.15);
-        }
-
-        .card-icon {
-            width: 80px;
-            height: 80px;
-            background: var(--primary);
-            color: white;
-            border-radius: 20px;
+        .process-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--primary-light);
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
-            margin-bottom: 25px;
-            box-shadow: 0 15px 25px rgba(255, 107, 0, 0.3);
-            transform: translateZ(30px);
-            transition: all 0.3s ease;
-        }
-
-        .process-card:hover .card-icon {
-            transform: translateZ(50px) scale(1.1);
-        }
-
-        .card-content {
-            transform: translateZ(20px);
-        }
-
-        .card-content h3 {
-            font-size: 1.8rem;
-            font-weight: 900;
-            color: var(--text);
-            margin-bottom: 15px;
-            letter-spacing: -0.5px;
-        }
-
-        .card-content p {
-            color: var(--text);
-            opacity: 0.7;
-            line-height: 1.6;
-            font-size: 1rem;
-        }
-
-        .card-step {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 8px 20px;
-            background: var(--primary-light);
             color: var(--primary);
-            font-weight: 700;
-            border-radius: 40px;
+            font-size: 1.3rem;
+            margin-bottom: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .process-card:hover .process-icon {
+            background: var(--primary);
+            color: white;
+            transform: rotate(5deg);
+        }
+
+        .process-card h3 {
             font-size: 0.9rem;
-            transform: translateZ(15px);
-            border: 1px solid rgba(255, 107, 0, 0.2);
+            font-weight: 800;
+            margin-bottom: 4px;
         }
 
-        /* ===== EMAIL SUBSCRIBER FORM ===== */
-        .subscribe-section {
-            max-width: 800px;
-            margin: 60px auto;
-            padding: 0 20px;
+        .process-card p {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            line-height: 1.3;
         }
 
-        .subscribe-tile {
-            background: var(--card-bg);
+        .process-time {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 4px 8px;
+            background: var(--primary-light);
             border-radius: 30px;
-            padding: 50px 40px;
-            border: 1px solid rgba(255, 107, 0, 0.1);
-            box-shadow: 0 20px 40px rgba(255, 107, 0, 0.1);
-            text-align: center;
-            backdrop-filter: blur(10px);
-        }
-
-        .subscribe-tile h3 {
-            font-size: 2rem;
-            font-weight: 900;
+            font-size: 0.6rem;
+            font-weight: 700;
             color: var(--primary);
-            margin-bottom: 15px;
-            letter-spacing: -1px;
         }
 
-        .subscribe-tile p {
+        /* ===== SUBSCRIBE CARD ===== */
+        .subscribe-card {
+            background: white;
+            border-radius: var(--app-radius);
+            padding: 24px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-md);
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .subscribe-content h3 {
+            font-size: 1.2rem;
+            font-weight: 900;
             color: var(--text);
-            opacity: 0.8;
-            margin-bottom: 30px;
-            font-size: 1.1rem;
+            margin-bottom: 4px;
+        }
+
+        .subscribe-content p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
         }
 
         .subscribe-form {
             display: flex;
-            gap: 15px;
-            max-width: 500px;
-            margin: 0 auto;
+            gap: 8px;
+            min-width: 300px;
         }
 
-        .subscribe-input {
+        .subscribe-form input {
             flex: 1;
-            padding: 18px 25px;
-            border-radius: 60px;
-            border: 2px solid rgba(255, 107, 0, 0.2);
-            font-size: 1rem;
+            padding: 12px 16px;
+            border-radius: 40px;
+            border: 1px solid var(--border);
+            font-size: 0.9rem;
             font-weight: 500;
-            background: white;
-            transition: all 0.3s ease;
+            outline: none;
+            transition: all 0.2s ease;
         }
 
-        .subscribe-input:focus {
-            outline: none;
+        .subscribe-form input:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(255, 107, 0, 0.1);
+            box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.1);
         }
 
         .subscribe-btn {
             background: var(--primary);
             color: white;
             border: none;
-            border-radius: 60px;
-            padding: 0 35px;
-            font-weight: 800;
-            font-size: 1rem;
+            border-radius: 40px;
+            padding: 0 24px;
+            font-weight: 700;
+            font-size: 0.9rem;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             white-space: nowrap;
-            box-shadow: 0 10px 20px rgba(255, 107, 0, 0.3);
         }
 
         .subscribe-btn:hover {
-            background: #e06000;
+            background: var(--primary-dark);
             transform: translateY(-2px);
-            box-shadow: 0 15px 30px rgba(255, 107, 0, 0.4);
-        }
-
-        @media (max-width: 768px) {
-            .subscribe-form {
-                flex-direction: column;
-            }
-            .subscribe-btn {
-                padding: 18px;
-            }
+            box-shadow: var(--shadow-md);
         }
 
         /* ===== FAQ SECTION ===== */
         .faq-section {
-            max-width: 800px;
-            margin: 60px auto 40px;
-            padding: 0 20px;
-        }
-
-        .faq-title {
-            text-align: center;
             margin-bottom: 40px;
         }
 
-        .faq-title h2 {
-            font-size: 2.5rem;
-            font-weight: 900;
-            color: var(--primary);
-            letter-spacing: -1px;
-            margin-bottom: 10px;
-        }
-
-        .faq-title p {
-            color: var(--text);
-            opacity: 0.7;
-            font-size: 1.1rem;
-        }
-
         .faq-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
         }
 
-        .faq-item {
+        .faq-card {
             background: white;
-            border-radius: 20px;
-            border: 1px solid rgba(255, 107, 0, 0.1);
-            overflow: hidden;
-            transition: all 0.3s ease;
+            border-radius: var(--card-radius);
+            padding: 16px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
 
-        .faq-item:hover {
+        .faq-card:hover {
             border-color: var(--primary);
-            box-shadow: 0 10px 20px rgba(255, 107, 0, 0.1);
+            box-shadow: var(--shadow-md);
         }
 
         .faq-question {
-            padding: 20px 25px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            cursor: pointer;
             font-weight: 700;
-            font-size: 1.1rem;
+            font-size: 0.9rem;
             color: var(--text);
-            transition: all 0.3s ease;
         }
 
         .faq-question i {
@@ -758,609 +517,644 @@
             transition: transform 0.3s ease;
         }
 
-        .faq-item.active .faq-question i {
+        .faq-card.active .faq-question i {
             transform: rotate(180deg);
         }
 
         .faq-answer {
             max-height: 0;
-            padding: 0 25px;
             overflow: hidden;
             transition: all 0.3s ease;
-            color: var(--text);
-            opacity: 0.8;
-            line-height: 1.6;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
         }
 
-        .faq-item.active .faq-answer {
-            max-height: 200px;
-            padding: 0 25px 20px;
+        .faq-card.active .faq-answer {
+            max-height: 100px;
+            margin-top: 12px;
         }
 
         /* ===== FOOTER ===== */
-        footer {
-            margin-top: 60px;
-            padding: 40px 25px 100px;
-            background: transparent;
+        .app-footer {
+            padding: 30px 0 20px;
             text-align: center;
-            border-top: 1px solid rgba(255, 107, 0, 0.1);
+            border-top: 1px solid var(--border);
         }
 
-        .footer-inner {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            color: rgba(0, 0, 0, 0.6);
-            font-size: 0.95rem;
-            gap: 25px;
-        }
-
-        .social-icons {
-            max-width: 400px;
-            width: 100%;
-            margin: 15px auto 0;
-            justify-content: center;
-            align-items: center;
-            display: flex !important;
-            flex-wrap: nowrap;
-            gap: 50px;
-        }
-
-        .social-icons a {
-            width: 70px;
-            height: 70px;
+        .social-links {
             display: flex;
             justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .social-link {
+            width: 56px;
+            height: 56px;
+            display: flex;
             align-items: center;
-            animation: coin-spin 6s linear infinite;
-            transform-style: preserve-3d;
-            perspective: 1000px;
-            margin: 0;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            background: transparent;
+            justify-content: center;
+            background: white;
             border-radius: 50%;
-            position: relative;
-            top: 10px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
         }
 
-        .social-icons a img {
-            width: 48px;
-            height: 48px;
+        .social-link img {
+            width: 28px;
+            height: 28px;
             filter: brightness(0) saturate(100%) invert(47%) sepia(81%) saturate(2458%) hue-rotate(360deg) brightness(102%) contrast(106%);
-            transition: transform 0.4s ease;
+            transition: all 0.3s ease;
         }
 
-        .social-icons a:hover {
-            animation-play-state: paused;
-            transform: scale(1.15) translateY(-3px);
+        .social-link:hover {
+            background: var(--primary);
+            transform: translateY(-4px) scale(1.1);
         }
 
-        .social-icons a:hover img {
-            filter: brightness(0) saturate(100%) invert(47%) sepia(81%) saturate(2458%) hue-rotate(360deg) brightness(102%) contrast(106%) drop-shadow(0 5px 8px rgba(255,107,0,0.3));
-        }
-
-        @keyframes coin-spin {
-            0% { transform: rotateY(0deg); }
-            100% { transform: rotateY(360deg); }
+        .social-link:hover img {
+            filter: brightness(0) invert(1);
         }
 
         .copyright {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
             font-weight: 600;
-            letter-spacing: 0.5px;
+        }
+
+        /* ===== APP DOCK ===== */
+        .app-dock {
+            position: sticky;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            height: 70px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid var(--border);
+            padding-bottom: var(--safe-bottom);
+            z-index: 1000;
+        }
+
+        .dock-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: #999;
+            text-decoration: none;
+            font-size: 0.7rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .dock-item i {
+            font-size: 1.3rem;
+        }
+
+        .dock-item.active {
+            color: var(--primary);
+        }
+
+        .dock-item:hover {
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .dock-center {
+            width: 56px;
+            height: 56px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin-top: -20px;
+            box-shadow: var(--shadow-lg);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .dock-center:hover {
+            transform: scale(1.1) rotate(90deg);
+            background: var(--primary-dark);
+        }
+
+        /* ===== MENU LAYER ===== */
+        .menu-layer {
+            position: fixed;
+            inset: 0;
+            background: white;
+            z-index: 10000;
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+            padding: calc(var(--safe-top) + 20px) 25px;
+        }
+
+        .menu-layer.active {
+            transform: translateY(0);
+        }
+
+        .menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .menu-close {
+            width: 48px;
+            height: 48px;
+            background: var(--primary-light);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .menu-items {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .menu-item {
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--text);
+            text-decoration: none;
+            letter-spacing: -2px;
+            line-height: 1;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.4s ease;
+        }
+
+        .menu-layer.active .menu-item {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .menu-layer.active .menu-item:nth-child(1) { transition-delay: 0.1s; }
+        .menu-layer.active .menu-item:nth-child(2) { transition-delay: 0.15s; }
+        .menu-layer.active .menu-item:nth-child(3) { transition-delay: 0.2s; }
+        .menu-layer.active .menu-item:nth-child(4) { transition-delay: 0.25s; }
+
+        .menu-item:hover {
+            color: var(--primary);
+        }
+
+        .menu-footer {
+            position: absolute;
+            bottom: calc(var(--safe-bottom) + 20px);
+            left: 25px;
+            color: #bbb;
+            font-weight: 700;
+            font-size: 0.8rem;
+        }
+
+        /* ===== LOADER ===== */
+        .app-loader {
+            position: fixed;
+            inset: 0;
+            background: var(--primary-light);
+            z-index: 20000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.8s cubic-bezier(0.9, 0, 0.1, 1);
+        }
+
+        .loader-content {
+            text-align: center;
+        }
+
+        .loader-line {
+            font-size: 5rem;
+            font-weight: 900;
+            color: var(--primary);
+            letter-spacing: -3px;
+            animation: loaderAnim 1.5s ease infinite;
+        }
+
+        .loader-line span {
+            color: var(--text);
+        }
+
+        .loader-sub {
+            font-size: 1.5rem;
+            font-weight: 900;
             color: var(--text);
             opacity: 0.7;
             margin-top: 10px;
         }
 
-        /* ===== DOCK STYLES ===== */
-        .app-dock {
-            position: fixed; 
-            bottom: 0; 
-            left: 0; 
-            right: 0;
-            background: var(--primary);
-            backdrop-filter: blur(20px);
-            height: 75px; 
-            display: flex; 
-            justify-content: space-around; 
-            align-items: center; 
-            box-shadow: 0 -5px 25px rgba(0,0,0,0.05); 
-            z-index: 1000; 
-            padding-bottom: env(safe-area-inset-bottom);
-            border-top: 1px solid rgba(255,107,0,0.1);
-            width: 100%;
-            margin: 0 auto;
-        }
-        
-        @media (min-width: 768px) {
-            .app-dock {
-                width: 90%;
-                left: 5%;
-                right: 5%;
-                border-radius: 40px 40px 0 0;
-                height: 65px;
-                box-shadow: 0 -5px 20px rgba(0,0,0,0.08);
-                border-left: 1px solid rgba(255,255,255,0.2);
-                border-right: 1px solid rgba(255,255,255,0.2);
-            }
-            .dock-center {
-                width: 55px;
-                height: 55px;
-                margin-top: -30px;
-                font-size: 1.5rem;
-                background: white;
-                color: var(--primary);
-            }
-            .dock-btn i {
-                font-size: 1.3rem;
-            }
-            .dock-btn span {
-                font-size: 0.6rem;
-            }
-        }
-        
-        .dock-btn { 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            color: rgba(255,255,255,0.7); 
-            text-decoration: none; 
-            gap: 4px; 
-            transition: all 0.2s ease;
-        }
-        
-        .dock-btn:hover {
-            color: white;
-            transform: translateY(-2px);
-        }
-        
-        .dock-btn.active { 
-            color: white; 
-        }
-        
-        .dock-btn i { 
-            font-size: 1.5rem; 
-        }
-        
-        .dock-btn span { 
-            font-size: 0.65rem; 
-            font-weight: 800; 
-            text-transform: uppercase; 
-        }
-        
-        .dock-center { 
-            width: 65px; 
-            height: 65px; 
-            background: white; 
-            color: var(--primary);
-            border-radius: 50%; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-size: 1.8rem; 
-            margin-top: -35px; 
-            border: 5px solid var(--primary-light); 
-            box-shadow: 0 8px 20px rgba(255, 107, 0, 0.4); 
-            cursor: pointer;
-            transition: transform 0.2s;
-            font-weight: 900;
-        }
-        
-        .dock-center:hover { 
-            transform: scale(1.05); 
-            background: var(--primary-light);
-            color: var(--primary);
+        @keyframes loaderAnim {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
         }
 
-        /* Scroll animation observer */
-        .fade-in {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.8s ease, transform 0.8s ease;
+        /* ===== UTILITY CLASSES ===== */
+        .hide { display: none; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .hero-title { font-size: 2.4rem; }
+            .typewriter-container { font-size: 1.8rem; }
+            .process-grid { grid-template-columns: 1fr; gap: 12px; }
+            .faq-grid { grid-template-columns: 1fr; }
+            .subscribe-card { flex-direction: column; text-align: center; }
+            .subscribe-form { width: 100%; }
+            .category-grid { grid-template-columns: repeat(2, 1fr); }
+            .full-card { grid-column: span 2; }
         }
 
-        .fade-in.visible {
-            opacity: 1;
-            transform: translateY(0);
+        /* Animated icons */
+        .fa-heart-pulse { animation: heartbeat 1.5s ease-in-out infinite; }
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            14% { transform: scale(1.2); }
+            28% { transform: scale(1); }
+            42% { transform: scale(1.2); }
+        }
+
+        .fa-hammer { animation: hammerHit 1.2s ease-in-out infinite; transform-origin: bottom center; }
+        @keyframes hammerHit {
+            0% { transform: rotate(0deg); }
+            10% { transform: rotate(25deg); }
+            20% { transform: rotate(-15deg); }
+            30% { transform: rotate(0deg); }
+        }
+
+        .fa-briefcase { animation: bounce 2s ease infinite; }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .fa-utensils { animation: wiggle 2.5s ease-in-out infinite; }
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-10deg); }
+            75% { transform: rotate(10deg); }
+        }
+
+        .fa-bag-shopping { animation: swing 3s ease-in-out infinite; transform-origin: top; }
+        @keyframes swing {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(10deg); }
+            75% { transform: rotate(-10deg); }
         }
     </style>
-    
 </head>
 <body>
-
-    <div id="app-loader">
+    <!-- Loader -->
+    <div class="app-loader" id="loader">
         <div class="loader-content">
-            <div class="layer-1">VIBZ<span>.</span></div>
-            <div class="layer-2">The Vibe-Coding</div>
-            <div class="layer-3">Web Design & Marketing Agency.</div>
+            <div class="loader-line">VIBZ<span>.</span></div>
+            <div class="loader-sub">App Experience</div>
         </div>
     </div>
 
-    <div id="app-menu-layer">
+    <!-- Menu Layer -->
+    <div class="menu-layer" id="menuLayer">
         <div class="menu-header">
             <div class="app-logo">VIBZ<span>.</span></div>
-            <div class="close-btn" onclick="toggleMenu()"><i class="fa-solid fa-xmark"></i></div>
+            <div class="menu-close" onclick="toggleMenu()">
+                <i class="fa-solid fa-xmark"></i>
+            </div>
         </div>
-        <div class="menu-links">
-            <a href="#" class="menu-item" onclick="toggleMenu()">Home</a>
-            <a href="https://www.vibz.co.uk/barber/concepts.html" class="menu-item">Explore</a>
+        <div class="menu-items">
+            <a href="#" class="menu-item">Home</a>
+            <a href="#" class="menu-item">Explore</a>
             <a href="#" class="menu-item">Portal</a>
             <a href="#" class="menu-item">Support</a>
         </div>
         <div class="menu-footer">VIBZ COLLECTIVE © 2026</div>
     </div>
 
-    <div id="category-layer">
-        <h2 id="cat-title">Niche Selection</h2>
-        <div id="cat-list"></div>
-        <div class="close-btn" onclick="toggleCategories()"><i class="fa-solid fa-xmark"></i></div>
-    </div>
-
-
-    <div id="app-container">
-    <header id="main-header">
-        <div class="app-logo">VIBZ<span>.</span></div>
-        <a href="https://script.google.com/macros/s/AKfycbwvwZVqT3-v7ONffxSXK_Xywla8AZ204A7Y96vMcP8-1Fx5eAksJAxnLBQ8TRTp1vLN/exec" class="client-portal-btn">
-            <i class="fa-regular fa-circle-user"></i>
-            <span>Client Portal</span>
-        </a>
-    </header>
-    
-        <div class="header-spacer"></div>
-
-        <main class="content-scroll">
-            <div class="hero-area">
-                <h1>We Build Websites For:</h1>
-                <div class="typewriter-container"><span id="typewriter"></span></div>
-                <div class="search-container">
-                    <input type="text" id="mainSearch" placeholder="Search any industry..." onkeypress="if(event.key==='Enter') triggerFlow()">
-                    <button class="search-icon-btn" onclick="triggerFlow()"><i class="fa-solid fa-magnifying-glass"></i></button>
+    <!-- Main App -->
+    <div id="app">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="app-logo">VIBZ<span>.</span></div>
+            <div class="header-actions">
+                <a href="#" class="portal-btn">
+                    <i class="fa-regular fa-circle-user"></i>
+                    <span>Portal</span>
+                </a>
+                <div class="menu-btn" onclick="toggleMenu()">
+                    <i class="fa-solid fa-bars"></i>
                 </div>
             </div>
+        </header>
 
-            <span class="section-header">Or Select From Popular Categories</span>
-            <div class="app-grid">
-                <div class="app-tile" onclick="openNiche('Health & Wellness')">
-                    <div class="tile-icon"><i class="fa-solid fa-heart-pulse"></i></div>
-                    <h3>Health & Wellness</h3>
-                </div>
-                <div class="app-tile" onclick="openNiche('Home & Trades')">
-                    <div class="tile-icon"><i class="fa-solid fa-hammer"></i></div>
-                    <h3>Home & Trades</h3>
-                </div>
-                <div class="app-tile" onclick="openNiche('Professional')">
-                    <div class="tile-icon"><i class="fa-solid fa-briefcase"></i></div>
-                    <h3>Professional Services</h3>
-                </div>
-                <div class="app-tile" onclick="openNiche('Food & Drink')">
-                    <div class="tile-icon"><i class="fa-solid fa-utensils"></i></div>
-                    <h3>Food & Drink</h3>
-                </div>
-                <div class="app-tile full-tile" onclick="openNiche('Retail & Creative')">
-                    <div class="tile-icon"><i class="fa-solid fa-bag-shopping"></i></div>
-                    <div style="margin-left: 15px;">
-                        <h3>Retail & Creative Industries</h3>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 3D Process Cards Section -->
-            <div class="process-section">
-                <div class="process-title fade-in">
-                    <h2>Our Simple Process</h2>
-                    <p>From concept to launch in 5 easy steps</p>
+        <!-- Scrollable Content -->
+        <main class="app-content">
+            <!-- Hero -->
+            <div class="hero-section">
+                <h1 class="hero-title">We Build<span> Websites For:</span></h1>
+                <div class="typewriter-container">
+                    <span id="typewriter"></span>
                 </div>
                 
-                <div class="process-grid">
-                    <div class="process-card fade-in" style="transition-delay: 0.1s;">
-                        <div class="card-number">1</div>
-                        <div class="card-icon">
-                            <i class="fa-regular fa-comments"></i>
-                        </div>
-                        <div class="card-content">
-                            <h3>Discovery Call</h3>
-                            <p>We learn about your business, goals, and vision for your website.</p>
-                            <span class="card-step">30 min call</span>
-                        </div>
-                    </div>
-
-                    <div class="process-card fade-in" style="transition-delay: 0.2s;">
-                        <div class="card-number">2</div>
-                        <div class="card-icon">
-                            <i class="fa-regular fa-pen-to-square"></i>
-                        </div>
-                        <div class="card-content">
-                            <h3>Design & Plan</h3>
-                            <p>We create wireframes and design concepts for your approval.</p>
-                            <span class="card-step">2-3 days</span>
-                        </div>
-                    </div>
-
-                    <div class="process-card fade-in" style="transition-delay: 0.3s;">
-                        <div class="card-number">3</div>
-                        <div class="card-icon">
-                            <i class="fa-solid fa-code"></i>
-                        </div>
-                        <div class="card-content">
-                            <h3>Development</h3>
-                            <p>We build your website with clean, responsive code.</p>
-                            <span class="card-step">5-10 days</span>
-                        </div>
-                    </div>
-
-                    <div class="process-card fade-in" style="transition-delay: 0.4s;">
-                        <div class="card-number">4</div>
-                        <div class="card-icon">
-                            <i class="fa-regular fa-eye"></i>
-                        </div>
-                        <div class="card-content">
-                            <h3>Review & Revise</h3>
-                            <p>You review the site and request changes (revisions included).</p>
-                            <span class="card-step">3-5 days</span>
-                        </div>
-                    </div>
-
-                    <div class="process-card fade-in" style="transition-delay: 0.5s;">
-                        <div class="card-number">5</div>
-                        <div class="card-icon">
-                            <i class="fa-solid fa-rocket"></i>
-                        </div>
-                        <div class="card-content">
-                            <h3>Launch & Grow</h3>
-                            <p>Your website goes live! We provide ongoing support.</p>
-                            <span class="card-step">Launch day</span>
-                        </div>
-                    </div>
+                <!-- Search Card -->
+                <div class="search-card">
+                    <input type="text" id="searchInput" placeholder="Search any industry...">
+                    <button class="search-btn" onclick="triggerSearch()">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
                 </div>
             </div>
 
-            <!-- Email Subscriber Form -->
-            <div class="subscribe-section fade-in">
-                <div class="subscribe-tile">
-                    <h3>Stay in the Loop</h3>
-                    <p>Get weekly tips, industry news, and special offers</p>
-                    <form class="subscribe-form" onsubmit="event.preventDefault(); alert('Thanks for subscribing!');">
-                        <input type="email" class="subscribe-input" placeholder="Enter your email" required>
-                        <button type="submit" class="subscribe-btn">Subscribe</button>
-                    </form>
-                </div>
-            </div>
-
-            <!-- FAQ Section -->
-            <div class="faq-section fade-in">
-                <div class="faq-title">
-                    <h2>Frequently Asked Questions</h2>
-                    <p>Everything you need to know about working with us</p>
-                </div>
-                
-                <div class="faq-grid">
-                    <div class="faq-item">
-                        <div class="faq-question" onclick="toggleFaq(this)">
-                            <span>How long does it take to build a website?</span>
-                            <i class="fa-solid fa-chevron-down"></i>
-                        </div>
-                        <div class="faq-answer">
-                            Typically 15-25 days depending on the package. Standard takes 15-20 days, Premium takes 20-25 days.
-                        </div>
-                    </div>
-
-                    <div class="faq-item">
-                        <div class="faq-question" onclick="toggleFaq(this)">
-                            <span>Do I need to provide content?</span>
-                            <i class="fa-solid fa-chevron-down"></i>
-                        </div>
-                        <div class="faq-answer">
-                            Yes, you'll need to provide page descriptions and images. We can help create content if needed.
-                        </div>
-                    </div>
-
-                    <div class="faq-item">
-                        <div class="faq-question" onclick="toggleFaq(this)">
-                            <span>What happens after the 12-month contract?</span>
-                            <i class="fa-solid fa-chevron-down"></i>
-                        </div>
-                        <div class="faq-answer">
-                            You can continue month-to-month at the same rate or cancel with 30 days notice. The website remains our property.
-                        </div>
-                    </div>
-
-                    <div class="faq-item">
-                        <div class="faq-question" onclick="toggleFaq(this)">
-                            <span>Can I upgrade my package later?</span>
-                            <i class="fa-solid fa-chevron-down"></i>
-                        </div>
-                        <div class="faq-answer">
-                            Yes, you can upgrade from Standard to Premium at any time. We'll adjust your monthly fee accordingly.
-                        </div>
-                    </div>
-
-                    <div class="faq-item">
-                        <div class="faq-question" onclick="toggleFaq(this)">
-                            <span>Do you offer refunds?</span>
-                            <i class="fa-solid fa-chevron-down"></i>
-                        </div>
-                        <div class="faq-answer">
-                            Due to the custom nature of our work, we don't offer refunds after work has begun. This is outlined in our contract.
-                        </div>
-                    </div>
-
-                    <div class="faq-item">
-                        <div class="faq-question" onclick="toggleFaq(this)">
-                            <span>What support do you provide?</span>
-                            <i class="fa-solid fa-chevron-down"></i>
-                        </div>
-                        <div class="faq-answer">
-                            Monthly clients get ongoing support, updates, and hosting. One-time clients get 1-3 months of post-launch support.
-                        </div>
-                    </div>
-                </div>
+            <!-- Categories -->
+            <div class="section-header">
+                <h2>Popular Categories</h2>
+                <span>View all</span>
             </div>
             
-            <footer>
-                <div class="footer-inner">
-                    <div class="social-icons" aria-label="Social media links">
-                        <a href="https://x.com/vibzcouk" target="_blank" aria-label="X / Twitter">
-                            <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/x.svg" alt="X / Twitter">
-                        </a>
-                        <a href="https://facebook.com/vibzcouk" target="_blank" aria-label="Facebook">
-                            <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/facebook.svg" alt="Facebook">
-                        </a>
-                        <a href="https://www.instagram.com/vibzcouk" target="_blank" aria-label="Instagram">
-                            <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/instagram.svg" alt="Instagram">
-                        </a>
+            <div class="category-grid">
+                <div class="category-card" onclick="selectCategory('Health & Wellness')">
+                    <div class="card-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+                    <span>Health & Wellness</span>
+                </div>
+                <div class="category-card" onclick="selectCategory('Home & Trades')">
+                    <div class="card-icon"><i class="fa-solid fa-hammer"></i></div>
+                    <span>Home & Trades</span>
+                </div>
+                <div class="category-card" onclick="selectCategory('Professional')">
+                    <div class="card-icon"><i class="fa-solid fa-briefcase"></i></div>
+                    <span>Professional</span>
+                </div>
+                <div class="category-card" onclick="selectCategory('Food & Drink')">
+                    <div class="card-icon"><i class="fa-solid fa-utensils"></i></div>
+                    <span>Food & Drink</span>
+                </div>
+                <div class="category-card full-card" onclick="selectCategory('Retail & Creative')">
+                    <div class="card-icon"><i class="fa-solid fa-bag-shopping"></i></div>
+                    <span>Retail & Creative Industries</span>
+                </div>
+            </div>
+
+            <!-- Process -->
+            <div class="section-header">
+                <h2>How It Works</h2>
+                <span>5 simple steps</span>
+            </div>
+
+            <div class="process-grid">
+                <div class="process-card">
+                    <div class="process-number">1</div>
+                    <div class="process-icon"><i class="fa-regular fa-comments"></i></div>
+                    <h3>Discovery</h3>
+                    <p>30min call</p>
+                    <span class="process-time">Day 1</span>
+                </div>
+                <div class="process-card">
+                    <div class="process-number">2</div>
+                    <div class="process-icon"><i class="fa-regular fa-pen-to-square"></i></div>
+                    <h3>Design</h3>
+                    <p>2-3 days</p>
+                    <span class="process-time">Week 1</span>
+                </div>
+                <div class="process-card">
+                    <div class="process-number">3</div>
+                    <div class="process-icon"><i class="fa-solid fa-code"></i></div>
+                    <h3>Develop</h3>
+                    <p>5-10 days</p>
+                    <span class="process-time">Week 2</span>
+                </div>
+                <div class="process-card">
+                    <div class="process-number">4</div>
+                    <div class="process-icon"><i class="fa-regular fa-eye"></i></div>
+                    <h3>Review</h3>
+                    <p>3-5 days</p>
+                    <span class="process-time">Week 3</span>
+                </div>
+                <div class="process-card">
+                    <div class="process-number">5</div>
+                    <div class="process-icon"><i class="fa-solid fa-rocket"></i></div>
+                    <h3>Launch</h3>
+                    <p>Go live</p>
+                    <span class="process-time">Week 3-4</span>
+                </div>
+            </div>
+
+            <!-- Subscribe Card -->
+            <div class="subscribe-card">
+                <div class="subscribe-content">
+                    <h3>Stay updated</h3>
+                    <p>Weekly tips & industry news</p>
+                </div>
+                <form class="subscribe-form" onsubmit="event.preventDefault(); subscribe()">
+                    <input type="email" placeholder="Enter your email" id="subscribeEmail">
+                    <button type="submit" class="subscribe-btn">Subscribe</button>
+                </form>
+            </div>
+
+            <!-- FAQ -->
+            <div class="section-header">
+                <h2>FAQ</h2>
+                <span>Got questions?</span>
+            </div>
+
+            <div class="faq-grid">
+                <div class="faq-card" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        <span>How long does it take?</span>
+                        <i class="fa-solid fa-chevron-down"></i>
                     </div>
-                    <div class="copyright">
-                        <p>&copy; 2025 VIBZ Collective. All rights reserved.</p>
+                    <div class="faq-answer">
+                        15-25 days depending on package. Standard: 15-20 days, Premium: 20-25 days.
                     </div>
+                </div>
+                <div class="faq-card" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        <span>Do I need content?</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Yes, you provide page descriptions & images. We can help create content.
+                    </div>
+                </div>
+                <div class="faq-card" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        <span>What's the contract?</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        12-month minimum for monthly plans. One-time purchases are final.
+                    </div>
+                </div>
+                <div class="faq-card" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        <span>Can I upgrade?</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Yes, upgrade from Standard to Premium anytime. Prorated fees apply.
+                    </div>
+                </div>
+                <div class="faq-card" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        <span>Refund policy?</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        No refunds after work begins. This is outlined in our contract.
+                    </div>
+                </div>
+                <div class="faq-card" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        <span>What support?</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Monthly clients get ongoing support. One-time gets 1-3 months.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <footer class="app-footer">
+                <div class="social-links">
+                    <a href="#" class="social-link">
+                        <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/x.svg" alt="X">
+                    </a>
+                    <a href="#" class="social-link">
+                        <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/facebook.svg" alt="FB">
+                    </a>
+                    <a href="#" class="social-link">
+                        <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/instagram.svg" alt="IG">
+                    </a>
+                </div>
+                <div class="copyright">
+                    © 2026 VIBZ Collective. All rights reserved.
                 </div>
             </footer>
         </main>
 
+        <!-- Dock -->
         <nav class="app-dock">
-            <a href="#" class="dock-btn active"><i class="fa-solid fa-house-chimney"></i><span>HOME</span></a>
-            <a href="https://www.vibz.co.uk/barber/concepts.html" class="dock-btn"><i class="fa-solid fa-compass"></i><span>LIBRARY</span></a>
-            <div class="dock-center" onclick="triggerFlow()"><i class="fa-solid fa-bolt"></i></div>
-            <a href="#" class="dock-btn"><i class="fa-solid fa-briefcase"></i><span>PORTAL</span></a>
-            <div class="dock-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i><span>MENU</span></div>
+            <a href="#" class="dock-item active">
+                <i class="fa-solid fa-house"></i>
+                <span>Home</span>
+            </a>
+            <a href="#" class="dock-item">
+                <i class="fa-solid fa-compass"></i>
+                <span>Explore</span>
+            </a>
+            <div class="dock-center" onclick="triggerSearch()">
+                <i class="fa-solid fa-bolt"></i>
+            </div>
+            <a href="#" class="dock-item">
+                <i class="fa-solid fa-briefcase"></i>
+                <span>Portal</span>
+            </a>
+            <div class="dock-item" onclick="toggleMenu()">
+                <i class="fa-solid fa-bars"></i>
+                <span>Menu</span>
+            </div>
         </nav>
     </div>
 
     <script>
-        const nicheData = {
-            "Health & Wellness": ["Barbers", "Dentists", "Gyms & Studios", "Spas & Beauty", "Physiotherapists", "Yoga Instructors", "Therapists"],
-            "Home & Trades": ["Plumbers", "Electricians", "Landscapers", "Cleaners", "Roofers", "Carpenters", "Locksmiths"],
-            "Professional": ["Lawyers", "Accountants", "Real Estate", "Tutors", "Marketing Agencies", "Consultants"],
-            "Food & Drink": ["Restaurants", "Cafes & Coffee", "Bakeries", "Bars & Clubs", "Catering", "Takeaways"],
-            "Retail & Creative": ["Boutiques", "E-commerce Stores", "Photographers", "Artists", "Florists", "Pet Shops"]
-        };
-
+        // App initialization
         window.addEventListener('load', () => {
             setTimeout(() => {
-                document.getElementById('app-loader').style.transform = 'translateY(-100%)';
-                document.getElementById('app-container').style.opacity = '1';
+                document.getElementById('loader').style.transform = 'translateY(-100%)';
                 startTypewriter();
-                setupScrollAnimation();
-            }, 2500);
+            }, 2000);
         });
 
-        function setupScrollAnimation() {
-            const fadeElements = document.querySelectorAll('.fade-in');
-            
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                    }
-                });
-            }, { threshold: 0.2 });
-            
-            fadeElements.forEach(element => {
-                observer.observe(element);
-            });
-        }
-
-        function toggleMenu() { document.getElementById('app-menu-layer').classList.toggle('active'); }
-        function toggleCategories() { document.getElementById('category-layer').classList.toggle('active'); }
-
-        function openNiche(sector) {
-            const list = document.getElementById('cat-list');
-            const title = document.getElementById('cat-title');
-            title.textContent = sector;
-            list.innerHTML = "";
-            nicheData[sector].forEach(niche => {
-                const div = document.createElement('div');
-                div.className = "cat-item";
-                div.textContent = niche;
-                div.onclick = () => {
-                    document.getElementById('mainSearch').value = niche;
-                    toggleCategories();
-                    triggerFlow(niche);
-                };
-                list.appendChild(div);
-            });
-            toggleCategories();
-        }
-
-        const typewriterWords = [
-            "plumbers", "electricians", "carpenters", "painters", "roofers", 
-            "landscapers", "gardeners", "cleaners", "handymen", "locksmiths",
-            "tilers", "plasterers", "builders", "welders", "glaziers",
-            "flooring specialists", "fencers", "pest control", "hvac technicians", "kitchen fitters",
-            "dentists", "hygienists", "orthodontists", "physiotherapists", "chiropractors",
-            "osteopaths", "podiatrists", "optometrists", "audiologists", "pharmacists",
-            "gyms", "fitness trainers", "yoga instructors", "pilates teachers", "personal trainers",
-            "nutritionists", "dietitians", "massage therapists", "acupuncturists", "counsellors",
-            "barbers", "hairdressers", "beauticians", "estheticians", "nail technicians",
-            "makeup artists", "spa therapists", "tanning salons", "lash technicians", "brow artists",
-            "tattoo artists", "piercers", "salons", "barbershops", "beauty clinics",
-            "lawyers", "solicitors", "barristers", "accountants", "bookkeepers",
-            "financial advisors", "mortgage brokers", "insurance agents", "estate agents", "realtors",
-            "surveyors", "architects", "engineers", "consultants", "translators",
-            "restaurants", "cafes", "coffee shops", "bakeries", "pubs",
-            "bars", "clubs", "caterers", "food trucks", "takeaways",
-            "chefs", "bakers", "butchers", "fishmongers", "delicatessens",
-            "boutiques", "fashion designers", "tailors", "dressmakers", "jewelers",
-            "florists", "gift shops", "antique dealers", "art galleries", "framers",
-            "photographers", "videographers", "graphic designers", "web designers", "illustrators",
-            "veterinarians", "dog walkers", "pet groomers", "pet sitters", "trainers",
-            "mechanics", "garages", "mot testers", "car detailers", "valeters"
+        // Typewriter effect
+        const words = [
+            "plumbers", "electricians", "carpenters", "dentists", "barbers",
+            "restaurants", "photographers", "trainers", "cleaners", "lawyers",
+            "veterinarians", "bakers", "artists", "tutors", "mechanics"
         ];
 
-        let typewriterInterval;
         let wordIndex = 0;
         let charIndex = 0;
         let isDeleting = false;
-        let isWaiting = false;
-        const typewriterEl = document.getElementById('typewriter');
+        let typewriterEl = document.getElementById('typewriter');
 
         function startTypewriter() {
-            if (typewriterInterval) clearInterval(typewriterInterval);
-            wordIndex = Math.floor(Math.random() * typewriterWords.length);
-            
-            function updateTypewriter() {
-                if (isWaiting) return;
-                const currentWord = typewriterWords[wordIndex];
-                if (!isDeleting) {
-                    typewriterEl.textContent = currentWord.substring(0, charIndex + 1);
-                    charIndex++;
-                    if (charIndex === currentWord.length) {
-                        isWaiting = true;
-                        setTimeout(() => { isDeleting = true; isWaiting = false; }, 2000);
-                    }
-                } else {
+            function update() {
+                const currentWord = words[wordIndex];
+                if (isDeleting) {
                     typewriterEl.textContent = currentWord.substring(0, charIndex - 1);
                     charIndex--;
                     if (charIndex === 0) {
                         isDeleting = false;
-                        let newIndex;
-                        do { newIndex = Math.floor(Math.random() * typewriterWords.length); } 
-                        while (newIndex === wordIndex && typewriterWords.length > 1);
-                        wordIndex = newIndex;
-                        isWaiting = true;
-                        setTimeout(() => { isWaiting = false; }, 300);
+                        wordIndex = (wordIndex + 1) % words.length;
+                    }
+                } else {
+                    typewriterEl.textContent = currentWord.substring(0, charIndex + 1);
+                    charIndex++;
+                    if (charIndex === currentWord.length) {
+                        isDeleting = true;
+                        setTimeout(update, 2000);
+                        return;
                     }
                 }
+                setTimeout(update, isDeleting ? 50 : 100);
             }
-            typewriterInterval = setInterval(updateTypewriter, 80);
+            update();
         }
 
-        function triggerFlow(overrideNiche = null) { 
-            const val = overrideNiche ? overrideNiche.toLowerCase() : document.getElementById('mainSearch').value.trim().toLowerCase();
-            const loaderIcon = document.querySelector('.search-icon-btn i');
-            if (!val) return;
-            loaderIcon.className = 'fa-solid fa-spinner fa-spin';
-            setTimeout(() => { 
-                window.location.href = val.includes('barber') ? "https://www.vibz.co.uk/barber/index.html" : "https://www.vibz.co.uk/funnel.html?niche=" + encodeURIComponent(val);
+        // App functions
+        function toggleMenu() {
+            document.getElementById('menuLayer').classList.toggle('active');
+        }
+
+        function selectCategory(category) {
+            document.getElementById('searchInput').value = category;
+            triggerSearch();
+        }
+
+        function triggerSearch() {
+            const search = document.getElementById('searchInput').value;
+            if (!search) return;
+            
+            const searchBtn = document.querySelector('.search-btn i');
+            searchBtn.className = 'fa-solid fa-spinner fa-spin';
+            
+            setTimeout(() => {
+                window.location.href = search.toLowerCase().includes('barber') 
+                    ? 'https://www.vibz.co.uk/barber/index.html' 
+                    : 'https://www.vibz.co.uk/funnel.html?niche=' + encodeURIComponent(search);
             }, 800);
         }
 
         function toggleFaq(element) {
-            const faqItem = element.closest('.faq-item');
-            faqItem.classList.toggle('active');
+            element.classList.toggle('active');
         }
+
+        function subscribe() {
+            const email = document.getElementById('subscribeEmail').value;
+            if (email) {
+                alert('Thanks for subscribing! Check your email for confirmation.');
+                document.getElementById('subscribeEmail').value = '';
+            } else {
+                alert('Please enter your email address');
+            }
+        }
+
+        // Handle Enter key
+        document.getElementById('searchInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') triggerSearch();
+        });
     </script>
 </body>
 </html>
