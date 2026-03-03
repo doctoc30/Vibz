@@ -201,7 +201,6 @@
             width: 100%;
         }
 
-        /* ===== STATIC LOGO ===== */
         .app-logo { 
             font-size: 2.2rem;
             font-weight: 900; 
@@ -241,7 +240,6 @@
             color: var(--primary); 
         }
 
-        /* ===== BINGO ROTATOR STYLES ===== */
         .typewriter-container { 
             font-size: 3.2rem; 
             font-weight: 900; 
@@ -251,41 +249,6 @@
             margin-bottom: 50px;
             text-transform: capitalize; 
             min-height: 4.2rem; 
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            perspective: 1000px;
-        }
-
-        #typewriter {
-            display: inline-block;
-            background: #fff;
-            padding: 10px 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            border: 2px solid rgba(255, 107, 0, 0.1);
-            cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            animation: bingoRotate 3s infinite;
-            white-space: nowrap;
-        }
-
-        #typewriter:hover {
-            transform: scale(1.05);
-            border-color: var(--primary);
-            box-shadow: 0 15px 35px rgba(255,107,0,0.15);
-        }
-
-        #typewriter:active {
-            transform: scale(0.95);
-        }
-
-        @keyframes bingoRotate {
-            0% { transform: rotateX(0deg); opacity: 1; }
-            5% { transform: rotateX(-90deg); opacity: 0; }
-            10% { transform: rotateX(90deg); opacity: 0; }
-            15% { transform: rotateX(0deg); opacity: 1; }
-            100% { transform: rotateX(0deg); opacity: 1; }
         }
 
         /* ===== SEARCH BAR STYLE ===== */
@@ -358,20 +321,9 @@
         }
 
         @media (max-width: 768px) {
-            .client-portal-btn span {
-                display: none;
-            }
-            .client-portal-btn {
-                padding: 10px;
-                border-radius: 24px;
-                aspect-ratio: 1;
-                width: 55px;
-                justify-content: center;
-            }
-            .client-portal-btn i {
-                font-size: 1.5rem;
-                margin: 0;
-            }
+            .client-portal-btn span { display: none; }
+            .client-portal-btn { padding: 10px; border-radius: 24px; aspect-ratio: 1; width: 55px; justify-content: center; }
+            .client-portal-btn i { font-size: 1.5rem; margin: 0; }
         }
 
         .section-header { 
@@ -425,12 +377,23 @@
             border-color: var(--primary);
         }
 
-        .app-tile:active { 
-            transform: scale(0.96); 
-            background: #fff; 
+        /* ==== BINGO BOCK ON FULL TILE ==== */
+        .full-tile { 
+            grid-column: span 2; 
+            flex-direction: row; 
+            justify-content: center; 
+            padding: 25px 20px; 
+            perspective: 1000px;
         }
 
-        /* ===== ANIMATED ICONS ===== */
+        .full-tile h3 {
+            transition: transform 0.4s, opacity 0.4s;
+        }
+
+        .full-tile.bingo-out h3 { transform: rotateX(-90deg); opacity: 0; }
+        .full-tile.bingo-in h3 { transform: rotateX(90deg); opacity: 0; }
+        .full-tile.bingo-active h3 { transform: rotateX(0deg); opacity: 1; }
+
         .tile-icon { 
             width: 55px; 
             height: 55px; 
@@ -444,6 +407,7 @@
             box-shadow: 0 10px 20px rgba(255, 107, 0, 0.2); 
         }
 
+        /* PRESERVED ANIMATIONS */
         .fa-heart-pulse { animation: heartbeat 1.5s ease-in-out infinite; }
         @keyframes heartbeat { 0% { transform: scale(1); } 14% { transform: scale(1.3); } 28% { transform: scale(1); } 42% { transform: scale(1.3); } 70% { transform: scale(1); } }
 
@@ -454,13 +418,12 @@
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 
         .fa-utensils { animation: utensilsMove 2.5s ease-in-out infinite; display: inline-block; }
-        @keyframes utensilsMove { 0% { transform: rotate(0deg) scale(1); letter-spacing: normal; } 25% { transform: rotate(-15deg) scale(1.1); letter-spacing: 5px; } 50% { transform: rotate(15deg) scale(0.9); letter-spacing: -2px; } 75% { transform: rotate(-5deg) scale(1.05); letter-spacing: 3px; } 100% { transform: rotate(0deg) scale(1); letter-spacing: normal; } }
+        @keyframes utensilsMove { 0% { transform: rotate(0deg) scale(1); } 25% { transform: rotate(-15deg) scale(1.1); } 50% { transform: rotate(15deg) scale(0.9); } 100% { transform: rotate(0deg) scale(1); } }
 
         .fa-bag-shopping { animation: swing 3s ease-in-out infinite; transform-origin: top center; }
         @keyframes swing { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(15deg); } 75% { transform: rotate(-15deg); } }
 
         .app-tile h3 { font-size: 1.1rem; font-weight: 900; line-height: 1.3; text-align: center; }
-        .full-tile { grid-column: span 2; flex-direction: row; justify-content: center; padding: 25px 20px; }
 
         /* ===== FOOTER ===== */
         footer { margin-top: 60px; padding: 40px 25px 100px; background: transparent; text-align: center; border-top: 1px solid rgba(255, 107, 0, 0.1); }
@@ -527,9 +490,7 @@
         <main class="content-scroll">
             <div class="hero-area">
                 <h1>We Build Websites For:</h1>
-                <div class="typewriter-container">
-                    <span id="typewriter" onclick="bingoClick()">Plumbers</span>
-                </div>
+                <div class="typewriter-container"><span id="typewriter"></span></div>
                 
                 <div class="search-container">
                     <input type="text" id="mainSearch" placeholder="Search any industry..." onkeypress="if(event.key==='Enter') triggerFlow()">
@@ -555,10 +516,10 @@
                     <div class="tile-icon"><i class="fa-solid fa-utensils"></i></div>
                     <h3>Food & Drink</h3>
                 </div>
-                <div class="app-tile full-tile" onclick="openNiche('Retail & Creative')">
+                <div class="app-tile full-tile" id="bingo-tile" onclick="openNiche('Retail & Creative')">
                     <div class="tile-icon"><i class="fa-solid fa-bag-shopping"></i></div>
                     <div style="margin-left: 15px;">
-                        <h3>Retail & Creative Industries</h3>
+                        <h3 id="bingo-text">Retail & Creative Industries</h3>
                     </div>
                 </div>
             </div>
@@ -622,6 +583,7 @@
             setTimeout(() => {
                 document.getElementById('app-loader').style.transform = 'translateY(-100%)';
                 document.getElementById('app-container').style.opacity = '1';
+                startTypewriter();
                 startBingoRotator();
             }, 2500);
         });
@@ -648,22 +610,55 @@
             toggleCategories();
         }
 
-        let bingoIndex = 0;
-        const bingoEl = document.getElementById('typewriter');
+        // --- TYPEWRITER HERO ---
+        let wordIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        let isWaiting = false;
+        const typewriterEl = document.getElementById('typewriter');
+
+        function startTypewriter() {
+            function updateTypewriter() {
+                if (isWaiting) return;
+                const currentWord = typewriterWords[wordIndex];
+                if (!isDeleting) {
+                    typewriterEl.textContent = currentWord.substring(0, charIndex + 1);
+                    charIndex++;
+                    if (charIndex === currentWord.length) {
+                        isWaiting = true;
+                        setTimeout(() => { isDeleting = true; isWaiting = false; }, 2000);
+                    }
+                } else {
+                    typewriterEl.textContent = currentWord.substring(0, charIndex - 1);
+                    charIndex--;
+                    if (charIndex === 0) {
+                        isDeleting = false;
+                        wordIndex = Math.floor(Math.random() * typewriterWords.length);
+                        isWaiting = true;
+                        setTimeout(() => { isWaiting = false; }, 300);
+                    }
+                }
+            }
+            setInterval(updateTypewriter, 80);
+        }
+
+        // --- BINGO ROTATOR ON BOTTOM TILE ---
+        const bingoTile = document.getElementById('bingo-tile');
+        const bingoText = document.getElementById('bingo-text');
+        const creativeWords = ["Retail & Creative Industries", "E-commerce Solutions", "Artist Portfolios", "Fashion Boutiques", "Photography Studios", "Flower Shop Webs", "Pet Brand Design"];
+        let creativeIndex = 0;
 
         function startBingoRotator() {
             setInterval(() => {
-                bingoIndex = Math.floor(Math.random() * typewriterWords.length);
+                bingoTile.classList.add('bingo-out');
                 setTimeout(() => {
-                    bingoEl.textContent = typewriterWords[bingoIndex];
-                }, 300); 
-            }, 3000);
-        }
-
-        function bingoClick() {
-            const currentWord = bingoEl.textContent;
-            document.getElementById('mainSearch').value = currentWord;
-            triggerFlow(currentWord);
+                    creativeIndex = (creativeIndex + 1) % creativeWords.length;
+                    bingoText.textContent = creativeWords[creativeIndex];
+                    bingoTile.classList.remove('bingo-out');
+                    bingoTile.classList.add('bingo-in');
+                    setTimeout(() => bingoTile.classList.remove('bingo-in'), 400);
+                }, 400);
+            }, 3500);
         }
 
         function triggerFlow(overrideNiche = null) { 
