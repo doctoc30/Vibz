@@ -2396,13 +2396,8 @@ function saveBusinessInfo() {
 // =========================================================================
 //  COLLECT ALL FORM DATA
 // =========================================================================
-
-    function collectAllFormData() {
+function collectAllFormData() {
     console.log("🔍 COLLECTING FORM DATA...");
-    
-    // DEBUG LINES FOR EMAIL
-    console.log("📧 Email field value:", document.getElementById('contactEmail')?.value);
-    console.log("📧 Email field exists:", !!document.getElementById('contactEmail'));
     
     const filtered = getFilteredServices();
     const allFilteredServices = [...filtered.standard, ...filtered.premium];
@@ -2475,6 +2470,7 @@ function saveBusinessInfo() {
                 const fieldId = `feature_${service.name.replace(/\s+/g, '_')}_${index}`;
                 const element = document.getElementById(fieldId);
                 
+                // Log what we're collecting
                 if (element) {
                     if (field.type === 'file') {
                         if (element.files && element.files.length > 0) {
@@ -2530,11 +2526,10 @@ function saveBusinessInfo() {
         files: orderData.files
     };
 }
-    
+        
 
-    
 // =========================================================================
-//  FIXED FORM SUBMISSION TO GOOGLE APPS SCRIPT WITH IMAGE BEACON
+//  FIXED FORM SUBMISSION TO GOOGLE APPS SCRIPT WITH IMAGE BEACON (BYPASSES CORS)
 // =========================================================================
 function setupFormSubmission() {
     const form = document.getElementById('vibzOrderForm');
@@ -2577,7 +2572,7 @@ function setupFormSubmission() {
                 business: completeOrderData.business.email
             });
 
-            // Step 4: Send data using image beacon (unblockable)
+            // Step 4: Send to Google Apps Script using image beacon (unblockable)
             const webAppUrl = 'https://script.google.com/macros/s/AKfycbxTTSlY-wGoshiTvh6sARaen8w1aEycyOSuJdjJFxDO1tyEnvslImdVetiL9MKoXBg/exec?action=submit';
 
             console.log("📤 SENDING DATA SUMMARY:", {
@@ -2614,39 +2609,6 @@ function setupFormSubmission() {
         }
     });
 }
-            
-
-
-            // Step 5: Show success
-            document.getElementById('loadingOverlay').style.display = 'none';
-            document.getElementById('orderFormCard').style.display = 'none';
-            document.querySelector('.progress').style.display = 'none';
-            document.getElementById('successScreen').style.display = 'block';
-            document.getElementById('confirmationEmailDisplay').innerText = completeOrderData.business.email;
-            
-            // Step 6: Open WhatsApp notification
-            window.open(`https://wa.me/447706345874?text=New order from ${encodeURIComponent(completeOrderData.business.name)}`, '_blank');
-            
-            // Step 7: Clear stored data
-            try {
-                sessionStorage.removeItem('selectedServices');
-                sessionStorage.removeItem('helpRequests');
-            } catch (e) {}
-            
-        } catch (error) {
-            console.error('❌ Submission error:', error);
-            document.getElementById('loadingOverlay').style.display = 'none';
-            submitBtn.disabled = false;
-            alert('Error: ' + error.message + '\n\nPlease check the console (F12) for more details and contact support.');
-        }
-    });
-}
-
-// 
-
-
-            
-
 
 // =========================================================================
 //  NAVIGATION
@@ -2911,7 +2873,7 @@ window.onload = function() {
     updateProgress();
     
     console.log('✅ VIBZ Order Form initialized with file upload support');
-    console.log('🔗 Web App URL:', 'https://script.google.com/macros/s/AKfycbytYDK0CNurTph8DvZA7161zSu_w_SM3vCgOqOftG9sQFbALPQ9mVY9-s2BnigZObna/exec');
+    console.log('🔗 Web App URL:', 'https://script.google.com/macros/s/AKfycbxTTSlY-wGoshiTvh6sARaen8w1aEycyOSuJdjJFxDO1tyEnvslImdVetiL9MKoXBg/exec');
 };
 
     </script>
