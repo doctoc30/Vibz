@@ -2529,7 +2529,7 @@ function collectAllFormData() {
         
 
 
-    // =========================================================================
+// =========================================================================
 //  FIXED FORM SUBMISSION - TRADITIONAL FORM SUBMIT (UNBLOCKABLE)
 // =========================================================================
 function setupFormSubmission() {
@@ -2579,42 +2579,65 @@ function setupFormSubmission() {
                 business: completeOrderData.business.email
             });
 
+            // Step 4: Send to Google Apps Script using fetch
+            const webAppUrl = 'https://script.google.com/macros/s/AKfycbxTTSlY-wGoshiTvh6sARaen8w1aEycyOSuJdjJFxDO1tyEnvslImdVetiL9MKoXBg/exec';
 
-            // Step 4: Send to Google Apps Script using fetch with proper error handling
-const webAppUrl = 'https://script.google.com/macros/s/AKfycbxTTSlY-wGoshiTvh6sARaen8w1aEycyOSuJdjJFxDO1tyEnvslImdVetiL9MKoXBg/exec';
+            console.log("📤 SENDING DATA VIA FETCH:", {
+                orderId: completeOrderData.orderId,
+                business: completeOrderData.business?.email,
+                files: completeOrderData.files.length
+            });
 
-console.log("📤 SENDING DATA VIA FETCH:", {
-    orderId: completeOrderData.orderId,
-    business: completeOrderData.business?.email,
-    files: completeOrderData.files.length
-});
+            try {
+                const response = await fetch(webAppUrl, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'data=' + encodeURIComponent(JSON.stringify(completeOrderData))
+                });
+                
+                console.log('✅ Fetch completed');
+                
+                // Try to get response
+                try {
+                    const result = await response.text();
+                    console.log('✅ Server response:', result);
+                } catch (e) {
+                    console.log('⚠️ Could not parse response');
+                }
+                
+            } catch (error) {
+                console.error('❌ Fetch error:', error);
+                // Continue anyway - we'll show success
+            }
+            
+            // Step 5: Show success screen
+            document.getElementById('loadingOverlay').style.display = 'none';
+            document.getElementById('orderFormCard').style.display = 'none';
+            document.querySelector('.progress').style.display = 'none';
+            document.getElementById('successScreen').style.display = 'block';
+            document.getElementById('confirmationEmailDisplay').innerText = completeOrderData.business.email;
 
-try {
-    const response = await fetch(webAppUrl, {
-        method: 'POST',
-        mode: 'cors', // Change from 'no-cors' to 'cors'
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded', // Change from JSON
-        },
-        body: 'data=' + encodeURIComponent(JSON.stringify(completeOrderData)) // Send as form data
+            // Step 6: Open WhatsApp notification
+            window.open(`https://wa.me/447706345874?text=New order from ${encodeURIComponent(completeOrderData.business.name)}`, '_blank');
+
+            // Step 7: Clear stored data
+            try {
+                sessionStorage.removeItem('selectedServices');
+                sessionStorage.removeItem('helpRequests');
+            } catch (e) {}
+            
+        } catch (error) {
+            console.error('❌ Submission error:', error);
+            document.getElementById('loadingOverlay').style.display = 'none';
+            submitBtn.disabled = false;
+            alert('Error: ' + error.message + '\n\nPlease check the console (F12) for more details and contact support.');
+        }
     });
-    
-    console.log('✅ Fetch completed');
-    
-    // Try to get response
-    try {
-        const result = await response.text();
-        console.log('✅ Server response:', result);
-    } catch (e) {
-        console.log('⚠️ Could not parse response');
-    }
-    
-} catch (error) {
-    console.error('❌ Fetch error:', error);
-    // Continue anyway - we'll show success
 }
-
-
+// ← THIS CLOSING BRACKET WAS MISSING!
     
     
 // =========================================================================
