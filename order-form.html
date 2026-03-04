@@ -2577,58 +2577,55 @@ function setupFormSubmission() {
                 business: completeOrderData.business.email
             });
 
-            // Step 4: Send to Google Apps Script using JSONP (bypasses CORS)
-            const webAppUrl = 'https://script.google.com/macros/s/AKfycbxTTSlY-wGoshiTvh6sARaen8w1aEycyOSuJdjJFxDO1tyEnvslImdVetiL9MKoXBg/exec?action=submit';
+            
 
-            console.log("📤 SENDING DATA SUMMARY:", {
-                orderId: completeOrderData.orderId,
-                business: completeOrderData.business?.email,
-                files: completeOrderData.files.length,
-                dataSize: JSON.stringify(completeOrderData).length + " bytes"
-            });
+          // Step 4: Send data using image beacon (unblockable)
+const webAppUrl = 'https://script.google.com/macros/s/AKfycbxTTSlY-wGoshiTvh6sARaen8w1aEycyOSuJdjJFxDO1tyEnvslImdVetiL9MKoXBg/exec?action=submit';
 
-            // Create a unique callback name
-            const callbackName = 'handleOrder_' + Date.now();
+console.log("📤 SENDING DATA SUMMARY:", {
+    orderId: completeOrderData.orderId,
+    business: completeOrderData.business?.email,
+    files: completeOrderData.files.length
+});
 
-            // Define the callback function globally
-            window[callbackName] = function(response) {
-                console.log('✅ Response received:', response);
-                
-                // Show success screen
-                document.getElementById('loadingOverlay').style.display = 'none';
-                document.getElementById('orderFormCard').style.display = 'none';
-                document.querySelector('.progress').style.display = 'none';
-                document.getElementById('successScreen').style.display = 'block';
-                document.getElementById('confirmationEmailDisplay').innerText = completeOrderData.business.email;
-                
-                // Open WhatsApp notification
-                window.open(`https://wa.me/447706345874?text=New order from ${encodeURIComponent(completeOrderData.business.name)}`, '_blank');
-                
-                // Clear stored data
-                try {
-                    sessionStorage.removeItem('selectedServices');
-                    sessionStorage.removeItem('helpRequests');
-                } catch (e) {}
-                
-                // Clean up
-                delete window[callbackName];
-                if (document.body.contains(script)) {
-                    document.body.removeChild(script);
-                }
-            };
+// Create an image to send the data (oldest, most reliable method)
+const img = new Image();
+img.src = webAppUrl + '&data=' + encodeURIComponent(JSON.stringify(completeOrderData));
 
-            // Create script element for JSONP
-            const script = document.createElement('script');
-            script.src = webAppUrl + '&callback=' + callbackName + '&data=' + encodeURIComponent(JSON.stringify(completeOrderData));
-            document.body.appendChild(script);
+// Show success immediately (we assume it worked)
+document.getElementById('loadingOverlay').style.display = 'none';
+document.getElementById('orderFormCard').style.display = 'none';
+document.querySelector('.progress').style.display = 'none';
+document.getElementById('successScreen').style.display = 'block';
+document.getElementById('confirmationEmailDisplay').innerText = completeOrderData.business.email;
 
-            // Set a timeout in case the callback never fires
-            setTimeout(function() {
-                if (window[callbackName]) {
-                    console.log('⚠️ JSONP timeout - showing success anyway');
-                    window[callbackName]({ success: true, orderId: completeOrderData.orderId });
-                }
-            }, 10000); // 10 second timeout
+// Open WhatsApp notification
+window.open(`https://wa.me/447706345874?text=New order from ${encodeURIComponent(completeOrderData.business.name)}`, '_blank');
+
+// Clear stored data
+try {
+    sessionStorage.removeItem('selectedServices');
+    sessionStorage.removeItem('helpRequests');
+} catch (e) {}
+
+            
+
+
+            // Step 5: Show success
+            document.getElementById('loadingOverlay').style.display = 'none';
+            document.getElementById('orderFormCard').style.display = 'none';
+            document.querySelector('.progress').style.display = 'none';
+            document.getElementById('successScreen').style.display = 'block';
+            document.getElementById('confirmationEmailDisplay').innerText = completeOrderData.business.email;
+            
+            // Step 6: Open WhatsApp notification
+            window.open(`https://wa.me/447706345874?text=New order from ${encodeURIComponent(completeOrderData.business.name)}`, '_blank');
+            
+            // Step 7: Clear stored data
+            try {
+                sessionStorage.removeItem('selectedServices');
+                sessionStorage.removeItem('helpRequests');
+            } catch (e) {}
             
         } catch (error) {
             console.error('❌ Submission error:', error);
@@ -2638,6 +2635,12 @@ function setupFormSubmission() {
         }
     });
 }
+
+// 
+
+
+            
+
 
 // =========================================================================
 //  NAVIGATION
