@@ -2579,39 +2579,46 @@ function setupFormSubmission() {
                 business: completeOrderData.business.email
             });
 
-            // Step 4: Send to Google Apps Script using fetch
-            const webAppUrl = 'https://script.google.com/macros/s/AKfycbxTTSlY-wGoshiTvh6sARaen8w1aEycyOSuJdjJFxDO1tyEnvslImdVetiL9MKoXBg/exec';
 
-            console.log("📤 SENDING DATA VIA FETCH:", {
-                orderId: completeOrderData.orderId,
-                business: completeOrderData.business?.email,
-                files: completeOrderData.files.length
-            });
+            // Step 4: Send to Google Apps Script using FormData (avoids CORS issues)
+const webAppUrl = 'https://script.google.com/macros/s/AKfycbxTTSlY-wGoshiTvh6sARaen8w1aEycyOSuJdjJFxDO1tyEnvslImdVetiL9MKoXBg/exec';
 
-            try {
-                const response = await fetch(webAppUrl, {
-                    method: 'POST',
-                    mode: 'cors',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: 'data=' + encodeURIComponent(JSON.stringify(completeOrderData))
-                });
-                
-                console.log('✅ Fetch completed');
-                
-                // Try to get response
-                try {
-                    const result = await response.text();
-                    console.log('✅ Server response:', result);
-                } catch (e) {
-                    console.log('⚠️ Could not parse response');
-                }
-                
-            } catch (error) {
-                console.error('❌ Fetch error:', error);
-                // Continue anyway - we'll show success
-            }
+console.log("📤 SENDING DATA VIA FORMDATA:", {
+    orderId: completeOrderData.orderId,
+    business: completeOrderData.business?.email,
+    files: completeOrderData.files.length
+});
+
+// Create a form and submit it directly
+const form = document.createElement('form');
+form.method = 'POST';
+form.action = webAppUrl;
+form.style.display = 'none';
+
+// Add data as a hidden input
+const input = document.createElement('input');
+input.type = 'hidden';
+input.name = 'data';
+input.value = JSON.stringify(completeOrderData);
+form.appendChild(input);
+
+// Submit the form
+document.body.appendChild(form);
+form.submit();
+
+// Show success (the form submission will navigate away)
+setTimeout(() => {
+    document.getElementById('loadingOverlay').style.display = 'none';
+    document.getElementById('orderFormCard').style.display = 'none';
+    document.querySelector('.progress').style.display = 'none';
+    document.getElementById('successScreen').style.display = 'block';
+    document.getElementById('confirmationEmailDisplay').innerText = completeOrderData.business.email;
+}, 1000);
+
+
+
+
+            
             
             // Step 5: Show success screen
             document.getElementById('loadingOverlay').style.display = 'none';
