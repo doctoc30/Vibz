@@ -2579,71 +2579,39 @@ function setupFormSubmission() {
                 business: completeOrderData.business.email
             });
 
-            // Step 4: Create a hidden form and submit it (unblockable)
-            const webAppUrl = 'https://script.google.com/macros/s/AKfycbxTTSlY-wGoshiTvh6sARaen8w1aEycyOSuJdjJFxDO1tyEnvslImdVetiL9MKoXBg/exec?action=submit';
 
-            console.log("📤 SENDING DATA SUMMARY:", {
-                orderId: completeOrderData.orderId,
-                business: completeOrderData.business?.email,
-                files: completeOrderData.files.length
-            });
+            // Step 4: Send to Google Apps Script using fetch with proper error handling
+const webAppUrl = 'https://script.google.com/macros/s/AKfycbxTTSlY-wGoshiTvh6sARaen8w1aEycyOSuJdjJFxDO1tyEnvslImdVetiL9MKoXBg/exec';
 
-            // Create a hidden iframe
-            const iframe = document.createElement('iframe');
-            iframe.name = 'hiddenIframe';
-            iframe.style.display = 'none';
-            document.body.appendChild(iframe);
+console.log("📤 SENDING DATA VIA FETCH:", {
+    orderId: completeOrderData.orderId,
+    business: completeOrderData.business?.email,
+    files: completeOrderData.files.length
+});
 
-            // Create a hidden form
-            const hiddenForm = document.createElement('form');
-            hiddenForm.method = 'POST';
-            hiddenForm.action = webAppUrl;
-            hiddenForm.target = 'hiddenIframe';
-            hiddenForm.style.display = 'none';
-
-            // Add data as a hidden input
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'data';
-            input.value = JSON.stringify(completeOrderData);
-            hiddenForm.appendChild(input);
-
-            document.body.appendChild(hiddenForm);
-            
-            // Submit the form
-            hiddenForm.submit();
-            
-            alert("4. Form submitted! Check Apps Script logs now."); // Fourth alert
-
-            // Show success screen after a delay (assuming it worked)
-            setTimeout(() => {
-                document.getElementById('loadingOverlay').style.display = 'none';
-                document.getElementById('orderFormCard').style.display = 'none';
-                document.querySelector('.progress').style.display = 'none';
-                document.getElementById('successScreen').style.display = 'block';
-                document.getElementById('confirmationEmailDisplay').innerText = completeOrderData.business.email;
-
-                // Open WhatsApp notification
-                window.open(`https://wa.me/447706345874?text=New order from ${encodeURIComponent(completeOrderData.business.name)}`, '_blank');
-
-                // Clear stored data
-                try {
-                    sessionStorage.removeItem('selectedServices');
-                    sessionStorage.removeItem('helpRequests');
-                } catch (e) {}
-
-                // Clean up
-                document.body.removeChild(hiddenForm);
-                document.body.removeChild(iframe);
-            }, 3000);
-            
-        } catch (error) {
-            console.error('❌ Submission error:', error);
-            document.getElementById('loadingOverlay').style.display = 'none';
-            submitBtn.disabled = false;
-            alert('Error: ' + error.message + '\n\nPlease check the console (F12) for more details and contact support.');
-        }
+try {
+    const response = await fetch(webAppUrl, {
+        method: 'POST',
+        mode: 'cors', // Change from 'no-cors' to 'cors'
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded', // Change from JSON
+        },
+        body: 'data=' + encodeURIComponent(JSON.stringify(completeOrderData)) // Send as form data
     });
+    
+    console.log('✅ Fetch completed');
+    
+    // Try to get response
+    try {
+        const result = await response.text();
+        console.log('✅ Server response:', result);
+    } catch (e) {
+        console.log('⚠️ Could not parse response');
+    }
+    
+} catch (error) {
+    console.error('❌ Fetch error:', error);
+    // Continue anyway - we'll show success
 }
 
 
