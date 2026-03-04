@@ -2534,7 +2534,7 @@ function saveBusinessInfo() {
 
     
 // =========================================================================
-//  FIXED FORM SUBMISSION TO GOOGLE APPS SCRIPT WITH JSONP (BYPASSES CORS)
+//  FIXED FORM SUBMISSION TO GOOGLE APPS SCRIPT WITH IMAGE BEACON
 // =========================================================================
 function setupFormSubmission() {
     const form = document.getElementById('vibzOrderForm');
@@ -2577,37 +2577,43 @@ function setupFormSubmission() {
                 business: completeOrderData.business.email
             });
 
+            // Step 4: Send data using image beacon (unblockable)
+            const webAppUrl = 'https://script.google.com/macros/s/AKfycbxTTSlY-wGoshiTvh6sARaen8w1aEycyOSuJdjJFxDO1tyEnvslImdVetiL9MKoXBg/exec?action=submit';
+
+            console.log("📤 SENDING DATA SUMMARY:", {
+                orderId: completeOrderData.orderId,
+                business: completeOrderData.business?.email,
+                files: completeOrderData.files.length
+            });
+
+            // Create an image to send the data (oldest, most reliable method)
+            const img = new Image();
+            img.src = webAppUrl + '&data=' + encodeURIComponent(JSON.stringify(completeOrderData));
+
+            // Show success immediately (we assume it worked)
+            document.getElementById('loadingOverlay').style.display = 'none';
+            document.getElementById('orderFormCard').style.display = 'none';
+            document.querySelector('.progress').style.display = 'none';
+            document.getElementById('successScreen').style.display = 'block';
+            document.getElementById('confirmationEmailDisplay').innerText = completeOrderData.business.email;
+
+            // Open WhatsApp notification
+            window.open(`https://wa.me/447706345874?text=New order from ${encodeURIComponent(completeOrderData.business.name)}`, '_blank');
+
+            // Clear stored data
+            try {
+                sessionStorage.removeItem('selectedServices');
+                sessionStorage.removeItem('helpRequests');
+            } catch (e) {}
             
-
-          // Step 4: Send data using image beacon (unblockable)
-const webAppUrl = 'https://script.google.com/macros/s/AKfycbxTTSlY-wGoshiTvh6sARaen8w1aEycyOSuJdjJFxDO1tyEnvslImdVetiL9MKoXBg/exec?action=submit';
-
-console.log("📤 SENDING DATA SUMMARY:", {
-    orderId: completeOrderData.orderId,
-    business: completeOrderData.business?.email,
-    files: completeOrderData.files.length
-});
-
-// Create an image to send the data (oldest, most reliable method)
-const img = new Image();
-img.src = webAppUrl + '&data=' + encodeURIComponent(JSON.stringify(completeOrderData));
-
-// Show success immediately (we assume it worked)
-document.getElementById('loadingOverlay').style.display = 'none';
-document.getElementById('orderFormCard').style.display = 'none';
-document.querySelector('.progress').style.display = 'none';
-document.getElementById('successScreen').style.display = 'block';
-document.getElementById('confirmationEmailDisplay').innerText = completeOrderData.business.email;
-
-// Open WhatsApp notification
-window.open(`https://wa.me/447706345874?text=New order from ${encodeURIComponent(completeOrderData.business.name)}`, '_blank');
-
-// Clear stored data
-try {
-    sessionStorage.removeItem('selectedServices');
-    sessionStorage.removeItem('helpRequests');
-} catch (e) {}
-
+        } catch (error) {
+            console.error('❌ Submission error:', error);
+            document.getElementById('loadingOverlay').style.display = 'none';
+            submitBtn.disabled = false;
+            alert('Error: ' + error.message + '\n\nPlease check the console (F12) for more details and contact support.');
+        }
+    });
+}
             
 
 
