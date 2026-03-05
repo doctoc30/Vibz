@@ -2529,8 +2529,9 @@ function collectAllFormData() {
         
 
 
-// =========================================================================
-//  FIXED FORM SUBMISSION - CLEAN VERSION
+
+    // =========================================================================
+//  FIXED FORM SUBMISSION - USING FETCH API
 // =========================================================================
 function setupFormSubmission() {
     alert("1. Form submission handler is running!"); // First alert
@@ -2586,31 +2587,26 @@ function setupFormSubmission() {
                 business: completeOrderData.business.email
             });
 
-            // Step 4: Send to Google Apps Script using FormData
+            // Step 4: Send to Google Apps Script using FETCH (more reliable)
             const webAppUrl = 'https://script.google.com/macros/s/AKfycbxTTSlY-wGoshiTvh6sARaen8w1aEycyOSuJdjJFxDO1tyEnvslImdVetiL9MKoXBg/exec';
 
-            console.log("📤 SENDING DATA VIA FORMDATA:", {
+            console.log("📤 SENDING DATA VIA FETCH:", {
                 orderId: completeOrderData.orderId,
                 business: completeOrderData.business?.email,
                 files: completeOrderData.files.length
             });
 
-            // Create a form and submit it directly
-            const hiddenForm = document.createElement('form');
-            hiddenForm.method = 'POST';
-            hiddenForm.action = webAppUrl;
-            hiddenForm.style.display = 'none';
-
-            // Add data as a hidden input
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'data';
-            input.value = JSON.stringify(completeOrderData);
-            hiddenForm.appendChild(input);
-
-            // Submit the form
-            document.body.appendChild(hiddenForm);
-            hiddenForm.submit();
+            // Use fetch instead of form submit
+            const response = await fetch(webAppUrl, {
+                method: 'POST',
+                mode: 'no-cors', // Important for Apps Script
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(completeOrderData)
+            });
+            
+            console.log("✅ Fetch request sent");
 
             // Show success screen after a short delay
             setTimeout(() => {
@@ -2628,9 +2624,6 @@ function setupFormSubmission() {
                     sessionStorage.removeItem('selectedServices');
                     sessionStorage.removeItem('helpRequests');
                 } catch (e) {}
-                
-                // Clean up
-                document.body.removeChild(hiddenForm);
             }, 2000);
             
         } catch (error) {
@@ -2641,8 +2634,7 @@ function setupFormSubmission() {
         }
     });
 }
-    
-    
+
 // =========================================================================
 //  NAVIGATION
 // =========================================================================
