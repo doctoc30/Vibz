@@ -2528,10 +2528,8 @@ function collectAllFormData() {
 }
         
 
-
-
-    // =========================================================================
-//  FIXED FORM SUBMISSION - USING FETCH API
+// =========================================================================
+//  FIXED FORM SUBMISSION - USING FETCH API - WITH STRONG EMAIL VALIDATION
 // =========================================================================
 function setupFormSubmission() {
     alert("1. Form submission handler is running!"); // First alert
@@ -2549,12 +2547,41 @@ function setupFormSubmission() {
             return;
         }
         
-        const email = document.getElementById('contactEmail');
-        if (!email || !email.value) {
-            alert('Please enter your contact email.');
+        // ===== STRONG EMAIL VALIDATION =====
+        const emailField = document.getElementById('contactEmail');
+        
+        // Check if field exists
+        if (!emailField) {
+            alert('ERROR: Email field not found on form!');
+            console.error("❌ CRITICAL: Element with id 'contactEmail' not found in DOM");
             return;
         }
         
+        // Get trimmed value
+        const emailValue = emailField.value.trim();
+        
+        // Check if empty
+        if (!emailValue) {
+            alert('Please enter your contact email.');
+            console.log("❌ Email field is empty");
+            emailField.focus(); // Put cursor in the field
+            emailField.style.borderColor = 'red'; // Highlight in red
+            return;
+        }
+        
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(emailValue)) {
+            alert('Please enter a valid email address (e.g., name@domain.com)');
+            console.log("❌ Invalid email format:", emailValue);
+            emailField.focus();
+            emailField.style.borderColor = 'red';
+            return;
+        }
+        
+        // Email is valid - reset any red styling
+        emailField.style.borderColor = '';
+        console.log("✅ Email is valid:", emailValue);
         alert("2. Email is valid, proceeding with form submission..."); // Second alert
         
         const submitBtn = document.getElementById('submitOrderBtn');
@@ -2573,6 +2600,13 @@ function setupFormSubmission() {
             
             // Step 3: Collect all form data
             const completeOrderData = collectAllFormData();
+
+            // Double-check email is in the collected data
+            if (!completeOrderData.business || !completeOrderData.business.email) {
+                console.error("❌ Email missing from completeOrderData after collection!");
+                console.log("completeOrderData.business:", completeOrderData.business);
+                throw new Error("Email was lost during data collection");
+            }
 
             // 🔍 DEBUG LINES - Check what data is being sent
             console.log("🔍 DEBUG - Complete order data:", completeOrderData);
@@ -2634,6 +2668,10 @@ function setupFormSubmission() {
         }
     });
 }
+
+
+    
+
 
 // =========================================================================
 //  NAVIGATION
