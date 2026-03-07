@@ -15,21 +15,41 @@
         .font-huge { font-family: 'Archivo Black', sans-serif; text-transform: uppercase; letter-spacing: -0.05em; line-height: 0.8; }
         
         .glass-panel { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(10px); }
-        .btn-elite { background: #fff; color: #000; padding: 18px 36px; font-family: 'Archivo Black'; font-size: 11px; letter-spacing: 2px; transition: 0.4s cubic-bezier(0.19, 1, 0.22, 1); text-align: center; }
+        .btn-elite { background: #fff; color: #000; padding: 18px 36px; font-family: 'Archivo Black'; font-size: 11px; letter-spacing: 2px; transition: 0.4s cubic-bezier(0.19, 1, 0.22, 1); text-align: center; display: inline-block; }
         .btn-elite:hover { background: var(--accent); color: #fff; transform: translateY(-5px); box-shadow: 0 20px 40px rgba(255,62,62,0.2); }
 
+        /* mobile menu */
         #mobile-menu { position: fixed; inset: 0; background: rgba(0,0,0,0.95); backdrop-filter: blur(20px); z-index: 600; display: none; flex-direction: column; align-items: center; justify-content: center; }
         .menu-link { font-family: 'Archivo Black'; font-size: 4rem; text-transform: uppercase; color: white; transition: 0.3s; line-height: 1; }
         
-        /* The Scroll Bob Target Class */
-        .bob-up { opacity: 0; transform: translateY(40px); }
+        /* desktop nav (hidden on mobile, visible on md+) */
+        #desktop-nav { display: none; }
+        @media (min-width: 768px) {
+            #desktop-nav { display: flex; gap: 2.5rem; align-items: center; }
+            .desktop-link { font-family: 'Archivo Black'; font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; color: white; opacity: 0.7; transition: 0.2s; }
+            .desktop-link:hover { opacity: 1; color: var(--accent); }
+        }
 
+        .bob-up { opacity: 0; transform: translateY(40px); }
         .gallery-img { filter: grayscale(1); transition: 0.8s cubic-bezier(0.19, 1, 0.22, 1); }
         .gallery-img:hover { filter: grayscale(0); transform: scale(1.05); }
+
+        /* chatbot widget */
+        #chatbot-widget { position: fixed; bottom: 30px; right: 30px; z-index: 400; width: 70px; height: 70px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 10px 30px rgba(255,62,62,0.5); transition: 0.2s; }
+        #chatbot-widget:hover { transform: scale(1.1); }
+        #chatbot-panel { position: fixed; bottom: 120px; right: 30px; width: 320px; background: #111; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; backdrop-filter: blur(20px); z-index: 450; display: none; overflow: hidden; }
+        .chat-header { background: var(--accent); padding: 15px 20px; font-family: 'Archivo Black'; text-transform: uppercase; }
+        .chat-msg { background: #1a1a1a; margin: 10px; padding: 10px 15px; border-radius: 18px; max-width: 80%; font-size: 0.9rem; }
+        .chat-msg.bot { background: #2a2a2a; border-bottom-left-radius: 5px; align-self: flex-start; }
+        .chat-msg.user { background: var(--accent); color: black; margin-left: auto; border-bottom-right-radius: 5px; }
+
+        /* price list grid */
+        .price-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px dashed rgba(255,255,255,0.1); }
     </style>
 </head>
 <body>
 
+<!-- mobile menu -->
 <div id="mobile-menu">
     <button id="close-menu" class="absolute top-10 right-10 text-white"><i data-lucide="x" class="w-10 h-10"></i></button>
     <nav class="flex flex-col gap-8 text-center">
@@ -37,22 +57,52 @@
         <a href="#process" class="menu-link">Process</a>
         <a href="#gallery" class="menu-link">Gallery</a>
         <a href="#vault" class="menu-link">The Vault</a>
+        <a href="#about" class="menu-link">About</a>
+        <a href="#price" class="menu-link">Price</a>
+        <a href="#contact" class="menu-link">Contact</a>
     </nav>
 </div>
 
-<div id="intro" class="fixed inset-0 bg-black z-[1000] flex flex-col items-center justify-center">
-    <div id="intro-bar" class="w-0 h-[1px] bg-red-600 mb-4"></div>
-    <h1 class="font-huge text-3xl md:text-4xl tracking-[1em] opacity-0 pl-[1em]" id="intro-logo">VIBZ</h1>
+<!-- chatbot widget -->
+<div id="chatbot-widget">
+    <i data-lucide="message-circle" class="w-8 h-8 text-white"></i>
+</div>
+<div id="chatbot-panel">
+    <div class="chat-header flex justify-between items-center">
+        <span>VIBZ assistant</span>
+        <i data-lucide="x" id="close-chat" class="w-5 h-5 cursor-pointer"></i>
+    </div>
+    <div class="p-4 h-80 overflow-y-auto flex flex-col gap-2" id="chat-messages">
+        <div class="chat-msg bot">Welcome to VIBZ. How can we assist?</div>
+        <div class="chat-msg bot">Book a VIP appointment or ask about memberships.</div>
+    </div>
+    <div class="flex p-3 border-t border-white/10">
+        <input type="text" placeholder="Type..." class="bg-black/50 text-white flex-1 p-2 outline-none rounded-l">
+        <button class="bg-red-600 px-4 rounded-r" id="send-chat"><i data-lucide="send" class="w-4 h-4"></i></button>
+    </div>
 </div>
 
 <header class="fixed top-0 w-full z-[500] p-6 md:p-10 flex justify-between items-center mix-blend-difference">
     <div class="font-huge text-2xl md:text-3xl">V<span class="text-red-600">.</span></div>
-    <button id="menu-btn" class="w-10 h-10 md:w-12 md:h-12 glass-panel rounded-full flex items-center justify-center hover:bg-white hover:text-black transition">
+    
+    <!-- desktop navigation (visible on md+) -->
+    <nav id="desktop-nav">
+        <a href="#process" class="desktop-link">Process</a>
+        <a href="#gallery" class="desktop-link">Gallery</a>
+        <a href="#vault" class="desktop-link">Vault</a>
+        <a href="#about" class="desktop-link">About</a>
+        <a href="#price" class="desktop-link">Price</a>
+        <a href="#contact" class="desktop-link">Contact</a>
+    </nav>
+
+    <!-- mobile menu button (hidden on md+) -->
+    <button id="menu-btn" class="w-10 h-10 md:w-12 md:h-12 glass-panel rounded-full flex items-center justify-center hover:bg-white hover:text-black transition md:hidden">
         <i data-lucide="align-right" class="w-5 h-5"></i>
     </button>
 </header>
 
 <main id="main-content" class="opacity-0">
+    <!-- hero -->
     <section class="min-h-screen relative flex items-center px-6 md:px-24 py-20 overflow-hidden">
         <div class="z-10 w-full max-w-6xl bob-up">
             <h4 class="text-red-600 font-bold tracking-[0.3em] md:tracking-[0.5em] mb-4 md:mb-6 text-[10px] md:text-xs uppercase">Private Studio • London</h4>
@@ -64,6 +114,7 @@
         </div>
     </section>
 
+    <!-- process section (original) -->
     <section id="process" class="py-32 px-6 md:px-24 bg-zinc-950">
         <h2 class="font-huge text-5xl md:text-7xl mb-20 text-center bob-up">THE SYSTEM</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
@@ -85,6 +136,7 @@
         </div>
     </section>
 
+    <!-- gallery (original) -->
     <section id="gallery" class="py-32 px-4">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div class="overflow-hidden aspect-square bob-up"><img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?q=80" class="gallery-img w-full h-full object-cover"></div>
@@ -94,6 +146,78 @@
         </div>
     </section>
 
+    <!-- ABOUT US section (new) -->
+    <section id="about" class="py-24 md:py-32 px-6 md:px-24 bg-black/40">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <div class="bob-up">
+                <h2 class="font-huge text-5xl md:text-7xl mb-6">ABOUT <span class="text-red-600">US</span></h2>
+                <p class="text-lg opacity-80 mb-6 leading-relaxed">VIBZ isn't just a barbershop — it's a sanctuary for the modern connoisseur. Founded in London's Mayfair district, we fuse traditional craftsmanship with brutalist aesthetics.</p>
+                <p class="opacity-60">Our master barbers are trained in the art of precision geometry, using custom-forged tools and a meticulous four-step process. Every client receives a 90-minute private session, complete with champagne and a hand-finish.</p>
+            </div>
+            <div class="relative group bob-up">
+                <img src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80" class="w-full grayscale aspect-[4/5] object-cover rounded-sm">
+                <div class="absolute inset-0 bg-red-600/10 group-hover:opacity-0 transition"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRICE LIST section (new) -->
+    <section id="price" class="py-24 px-6 md:px-24 bg-zinc-950">
+        <h2 class="font-huge text-5xl md:text-7xl mb-16 text-center bob-up">THE PRICE</h2>
+        <div class="max-w-2xl mx-auto glass-panel p-8 md:p-12 bob-up">
+            <div class="price-item">
+                <span class="font-huge text-lg">Signature Cut</span>
+                <span class="font-mono text-red-600">£95</span>
+            </div>
+            <div class="price-item">
+                <span class="font-huge text-lg">Hot Towel Shave</span>
+                <span class="font-mono text-red-600">£65</span>
+            </div>
+            <div class="price-item">
+                <span class="font-huge text-lg">Beard Sculpt</span>
+                <span class="font-mono text-red-600">£45</span>
+            </div>
+            <div class="price-item">
+                <span class="font-huge text-lg">VIP Treatment (2h)</span>
+                <span class="font-mono text-red-600">£210</span>
+            </div>
+            <div class="price-item border-0">
+                <span class="font-huge text-lg">The Vault Membership</span>
+                <span class="font-mono text-red-600">£150/mo</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT FORM section (new) -->
+    <section id="contact" class="py-24 px-6 md:px-24">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+            <div class="bob-up">
+                <h2 class="font-huge text-5xl md:text-6xl mb-6">RESERVE<span class="text-red-600">.</span></h2>
+                <p class="opacity-70 mb-8">Flagship studio at 29 Kingly St, London W1B. Open Tuesday–Saturday.</p>
+                <div class="flex gap-4 flex-wrap">
+                    <div class="glass-panel px-6 py-4"><i data-lucide="phone" class="inline w-4 mr-2"></i>+44 20 7946 0138</div>
+                    <div class="glass-panel px-6 py-4"><i data-lucide="mail" class="inline w-4 mr-2"></i>flagship@vibz.com</div>
+                </div>
+            </div>
+            <form class="glass-panel p-8 space-y-6 bob-up" id="contactForm">
+                <div>
+                    <label class="text-xs opacity-50 uppercase tracking-widest">Name</label>
+                    <input type="text" class="w-full bg-transparent border border-white/10 p-3 mt-2 focus:border-red-600 outline-none">
+                </div>
+                <div>
+                    <label class="text-xs opacity-50 uppercase tracking-widest">Email</label>
+                    <input type="email" class="w-full bg-transparent border border-white/10 p-3 mt-2 focus:border-red-600 outline-none">
+                </div>
+                <div>
+                    <label class="text-xs opacity-50 uppercase tracking-widest">Message</label>
+                    <textarea rows="4" class="w-full bg-transparent border border-white/10 p-3 mt-2 focus:border-red-600 outline-none"></textarea>
+                </div>
+                <button type="submit" class="btn-elite w-full">SEND ENQUIRY</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- legacy block (original) -->
     <section class="py-24 md:py-40 px-6 md:px-24">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div class="relative group bob-up">
@@ -107,6 +231,7 @@
         </div>
     </section>
 
+    <!-- vault section (original) -->
     <section id="vault" class="py-24 md:py-40 px-6 md:px-24 bg-red-600 text-black">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center bob-up">
             <h2 class="font-huge text-6xl md:text-9xl">THE VAULT</h2>
@@ -117,6 +242,7 @@
         </div>
     </section>
 
+    <!-- map (original) -->
     <section class="h-[400px] border-y border-white/5 bob-up">
         <iframe class="w-full h-full grayscale invert contrast-125 opacity-40" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2482.9080215701965!2d-0.1415132!3d51.5148634!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x487604d49f67647d%3A0x7d6092025774a382!2sKingly%20St%2C%20London!5e0!3m2!1sen!2suk!4v1700000000000" loading="lazy"></iframe>
     </section>
@@ -135,15 +261,16 @@
     lucide.createIcons();
     gsap.registerPlugin(ScrollTrigger);
 
-    // MENU
+    // MENU (mobile only)
     const menuBtn = document.getElementById('menu-btn');
     const closeMenu = document.getElementById('close-menu');
     const mobileMenu = document.getElementById('mobile-menu');
-
-    menuBtn.addEventListener('click', () => {
-        mobileMenu.style.display = 'flex';
-        gsap.fromTo(mobileMenu, { opacity: 0 }, { opacity: 1, duration: 0.5 });
-    });
+    if(menuBtn) {
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.style.display = 'flex';
+            gsap.fromTo(mobileMenu, { opacity: 0 }, { opacity: 1, duration: 0.5 });
+        });
+    }
     closeMenu.addEventListener('click', () => {
         gsap.to(mobileMenu, { opacity: 0, duration: 0.5, onComplete: () => mobileMenu.style.display = 'none' });
     });
@@ -169,6 +296,37 @@
             ease: "power4.out"
         });
     });
+
+    // CHATBOT widget
+    const chatWidget = document.getElementById('chatbot-widget');
+    const chatPanel = document.getElementById('chatbot-panel');
+    const closeChat = document.getElementById('close-chat');
+    chatWidget.addEventListener('click', (e) => {
+        if(chatPanel.style.display === 'none' || chatPanel.style.display === '') {
+            chatPanel.style.display = 'block';
+        } else {
+            chatPanel.style.display = 'none';
+        }
+    });
+    closeChat.addEventListener('click', () => {
+        chatPanel.style.display = 'none';
+    });
+
+    // dummy send
+    document.getElementById('send-chat')?.addEventListener('click', () => {
+        const input = document.querySelector('#chatbot-panel input');
+        if(input.value.trim() === '') return;
+        const msgs = document.getElementById('chat-messages');
+        msgs.innerHTML += `<div class="chat-msg user">${input.value}</div>`;
+        input.value = '';
+        setTimeout(() => {
+            msgs.innerHTML += `<div class="chat-msg bot">A member will reply shortly. VIP concierge?</div>`;
+            msgs.scrollTop = msgs.scrollHeight;
+        }, 400);
+    });
+
+    // contact form prevent default
+    document.getElementById('contactForm')?.addEventListener('submit', (e) => e.preventDefault());
 </script>
 </body>
 </html>
