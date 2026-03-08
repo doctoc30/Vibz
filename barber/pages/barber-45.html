@@ -3,17 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elite Barbers | Traditional Craft</title>
+    <title>Elite Barbers · scroll animations</title>
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome Icons (proper barber icons) -->
+    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- AOS (Animate on Scroll) Library for vertical slide-up -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <style>
         body {
             font-family: 'Montserrat', sans-serif;
             background-color: #0f0b0a;
             color: #e2dcd5;
+            scroll-behavior: smooth;
         }
         h1, h2, h3, .serif-head {
             font-family: 'Cormorant Garamond', serif;
@@ -21,23 +24,14 @@
             letter-spacing: 0.02em;
         }
         /* Barber textures and details */
-        .bg-wood {
-            background-image: repeating-linear-gradient(45deg, #2c1e1a 0px, #2c1e1a 2px, #3f2e28 2px, #3f2e28 8px);
-        }
         .leather-card {
             background: #1f1613;
             border: 1px solid #b48b5a;
             box-shadow: 0 10px 25px -10px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,215,140,0.1);
             border-radius: 8px;
         }
-        .gold-border {
-            border: 1px solid #b48b5a;
-        }
         .barber-stripe {
             background: repeating-linear-gradient(45deg, #b48b5a, #b48b5a 8px, #2c1e1a 8px, #2c1e1a 16px);
-        }
-        .nav-link {
-            position: relative;
         }
         .nav-link::after {
             content: '';
@@ -62,6 +56,35 @@
             border-color: #b48b5a;
             transform: translateY(-2px);
         }
+        /* Floating book button — static at bottom */
+        .floating-book-btn {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #b48b5a;
+            color: black;
+            padding: 16px 40px;
+            border-radius: 50px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-size: 1rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 0 2px rgba(180,139,90,0.3);
+            z-index: 999;
+            transition: all 0.2s;
+            border: 1px solid #dbb47a;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+        .floating-book-btn:hover {
+            background: #c9a16e;
+            padding: 16px 44px;
+            box-shadow: 0 15px 35px rgba(180,139,90,0.4);
+        }
+        /* before-after slider */
         .before-after-slider {
             position: relative;
             height: 300px;
@@ -69,9 +92,6 @@
             border-radius: 16px;
             overflow: hidden;
             border: 1px solid #b48b5a;
-        }
-        .slider-bg {
-            background: linear-gradient(135deg, #2c1e1a 0%, #4a3c33 100%);
         }
         input[type=range] {
             -webkit-appearance: none;
@@ -104,14 +124,14 @@
             background: #1f1613;
             border: 2px solid #b48b5a;
         }
-        .fa, .fas, .far {
-            color: #b48b5a;
+        [data-aos] {
+            transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
     </style>
 </head>
-<body class="antialiased">
+<body>
 
-    <!-- STICKY NAV - Barber Shop Style -->
+    <!-- STICKY NAV (no booking button) -->
     <header class="sticky top-0 z-50 bg-[#0f0b0a] border-b border-[#b48b5a] bg-opacity-95 backdrop-blur-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
             <div class="flex justify-between items-center h-20">
@@ -123,18 +143,13 @@
 
                 <!-- Desktop Nav -->
                 <div class="hidden md:flex items-center space-x-8">
-                    <a href="#services" class="nav-link text-sm uppercase tracking-wider hover:text-[#b48b5a]">Services</a>
-                    <a href="#artisans" class="nav-link text-sm uppercase tracking-wider hover:text-[#b48b5a]">Artisans</a>
-                    <a href="#gallery" class="nav-link text-sm uppercase tracking-wider hover:text-[#b48b5a]">Gallery</a>
-                    <a href="#contact" class="nav-link text-sm uppercase tracking-wider hover:text-[#b48b5a]">Contact</a>
+                    <a href="#services" class="nav-link relative text-sm uppercase tracking-wider hover:text-[#b48b5a]">Services</a>
+                    <a href="#artisans" class="nav-link relative text-sm uppercase tracking-wider hover:text-[#b48b5a]">Artisans</a>
+                    <a href="#gallery" class="nav-link relative text-sm uppercase tracking-wider hover:text-[#b48b5a]">Gallery</a>
+                    <a href="#contact" class="nav-link relative text-sm uppercase tracking-wider hover:text-[#b48b5a]">Contact</a>
                 </div>
 
-                <!-- Book Button -->
-                <button id="book-btn" class="bg-[#b48b5a] hover:bg-[#c9a16e] text-black px-6 py-2.5 text-sm font-semibold uppercase tracking-wider transition flex items-center gap-2">
-                    <i class="fas fa-calendar-alt"></i> Book Now
-                </button>
-
-                <!-- Mobile Menu Button -->
+                <!-- Mobile Menu Button (no booking button) -->
                 <button id="hamburger" class="md:hidden text-[#b48b5a] text-2xl">
                     <i class="fas fa-bars"></i>
                 </button>
@@ -150,11 +165,14 @@
         </div>
     </header>
 
-    <!-- HERO - Barber Pole Design (but stylized) -->
+    <!-- FLOATING BOOK BUTTON (static at bottom) -->
+    <div id="floatingBookBtn" class="floating-book-btn">
+        <i class="fas fa-calendar-alt"></i> BOOK NOW <i class="fas fa-scissors"></i>
+    </div>
+
+    <!-- HERO SECTION (no animation needed for first view) -->
     <section class="relative bg-[#0f0b0a] pt-12 pb-16 overflow-hidden">
-        <!-- Background Stripe -->
         <div class="absolute top-0 left-0 w-full h-1 barber-stripe"></div>
-        
         <div class="max-w-7xl mx-auto px-4 sm:px-6 relative">
             <div class="grid md:grid-cols-2 gap-12 items-center">
                 <!-- Left Content -->
@@ -170,9 +188,6 @@
                         Where traditional barbering meets modern precision. Hot towels, straight razors, and honest conversation.
                     </p>
                     <div class="flex gap-4 mt-8">
-                        <button id="hero-book" class="bg-[#b48b5a] text-black px-8 py-3 font-semibold uppercase tracking-wider text-sm hover:bg-[#c9a16e] flex items-center gap-2">
-                            <i class="fas fa-scissors"></i> Book Your Cut
-                        </button>
                         <a href="#services" class="border border-[#b48b5a] px-8 py-3 uppercase tracking-wider text-sm hover:bg-[#b48b5a] hover:text-black transition flex items-center gap-2">
                             <i class="fas fa-eye"></i> Explore
                         </a>
@@ -185,25 +200,20 @@
                     </div>
                 </div>
 
-                <!-- Right Side - Barber Pole Graphic (stylized, not animated pole) -->
+                <!-- Right Side - Barber Pole Graphic -->
                 <div class="hidden md:block relative">
                     <div class="relative h-[500px] w-full">
-                        <!-- Classic Barber Pole Interpretation -->
                         <div class="absolute right-0 top-0 w-64 h-64">
                             <div class="relative w-40 h-40 mx-auto">
-                                <!-- Spiral design -->
                                 <div class="absolute inset-0 rounded-full border-4 border-[#b48b5a]"></div>
                                 <div class="absolute inset-4 rounded-full border-2 border-[#b48b5a] border-dashed"></div>
                                 <div class="absolute inset-8 bg-[#b48b5a] rounded-full opacity-20"></div>
                                 <i class="fas fa-cut absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-6xl text-[#b48b5a]"></i>
                             </div>
-                            <div class="absolute -bottom-10 left-0 w-full h-32 bg-gradient-to-t from-[#b48b5a]/20 to-transparent"></div>
                         </div>
-                        <!-- Barber Tools Collage -->
                         <div class="absolute bottom-0 left-0 space-y-4">
                             <i class="fas fa-razor text-4xl text-[#b48b5a] opacity-50"></i>
                             <i class="fas fa-scissors text-5xl text-[#b48b5a] opacity-40 ml-8"></i>
-                            <i class="fas fa-brush text-3xl text-[#b48b5a] opacity-60"></i>
                         </div>
                     </div>
                 </div>
@@ -211,8 +221,8 @@
         </div>
     </section>
 
-    <!-- QUICK BOOKING BAR -->
-    <section class="max-w-5xl mx-auto px-4 -mt-8 relative z-10">
+    <!-- QUICK BOOKING BAR (AOS vertical slide) -->
+    <section data-aos="fade-up" data-aos-duration="900" class="max-w-5xl mx-auto px-4 -mt-8 relative z-10">
         <div class="leather-card p-6">
             <form class="flex flex-wrap gap-4 items-end">
                 <div class="flex-1 min-w-[200px]">
@@ -239,32 +249,29 @@
         </div>
     </section>
 
-    <!-- SERVICES SECTION -->
+    <!-- SERVICES (AOS) -->
     <section id="services" class="max-w-7xl mx-auto px-4 py-24">
-        <div class="text-center mb-12">
+        <div data-aos="fade-up" data-aos-duration="900" class="text-center mb-12">
             <i class="fas fa-cut text-3xl text-[#b48b5a] mb-3"></i>
             <h2 class="text-4xl md:text-5xl serif-head text-white mb-3">The Craft</h2>
             <div class="w-24 h-px bg-[#b48b5a] mx-auto"></div>
         </div>
 
         <div class="grid md:grid-cols-3 gap-6">
-            <!-- Service 1 -->
-            <div class="service-card p-8">
+            <div data-aos="fade-up" data-aos-duration="900" data-aos-delay="100" class="service-card p-8">
                 <i class="fas fa-cut text-4xl text-[#b48b5a] mb-4"></i>
                 <h3 class="text-2xl serif-head text-white mb-2">Classic Haircut</h3>
                 <p class="text-[#b48b5a] text-xl mb-3">$30</p>
                 <p class="text-gray-400 text-sm">Precision scissors, hot towel finish, and a whiskey optional.</p>
                 <span class="inline-block mt-4 text-xs bg-[#b48b5a] text-black px-3 py-1 rounded-full font-semibold">TRENDING</span>
             </div>
-            <!-- Service 2 -->
-            <div class="service-card p-8">
+            <div data-aos="fade-up" data-aos-duration="900" data-aos-delay="200" class="service-card p-8">
                 <i class="fas fa-razor text-4xl text-[#b48b5a] mb-4"></i>
                 <h3 class="text-2xl serif-head text-white mb-2">Hot Towel Shave</h3>
                 <p class="text-[#b48b5a] text-xl mb-3">$25</p>
                 <p class="text-gray-400 text-sm">Traditional straight razor shave with heated towels and balm.</p>
             </div>
-            <!-- Service 3 -->
-            <div class="service-card p-8">
+            <div data-aos="fade-up" data-aos-duration="900" data-aos-delay="300" class="service-card p-8">
                 <i class="fas fa-spa text-4xl text-[#b48b5a] mb-4"></i>
                 <h3 class="text-2xl serif-head text-white mb-2">The Full Package</h3>
                 <p class="text-[#b48b5a] text-xl mb-3">$50</p>
@@ -273,8 +280,8 @@
             </div>
         </div>
 
-        <!-- Price List -->
-        <div class="mt-12 leather-card p-6 max-w-2xl mx-auto">
+        <!-- Price List (AOS) -->
+        <div data-aos="fade-up" data-aos-duration="900" class="mt-12 leather-card p-6 max-w-2xl mx-auto">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                 <div><span class="text-[#b48b5a] block">Haircut</span>$30</div>
                 <div><span class="text-[#b48b5a] block">Shave</span>$25</div>
@@ -284,8 +291,8 @@
         </div>
     </section>
 
-    <!-- PHILOSOPHY -->
-    <section class="bg-[#1a1310] py-20 border-y border-[#b48b5a]">
+    <!-- PHILOSOPHY (AOS) -->
+    <section data-aos="fade-up" data-aos-duration="1000" class="bg-[#1a1310] py-20 border-y border-[#b48b5a]">
         <div class="max-w-4xl mx-auto px-4 text-center">
             <i class="fas fa-quote-right text-5xl text-[#b48b5a] opacity-30 mb-4"></i>
             <p class="text-3xl md:text-4xl serif-head text-white leading-relaxed">
@@ -294,49 +301,43 @@
         </div>
     </section>
 
-    <!-- ARTISANS -->
+    <!-- ARTISANS (AOS) -->
     <section id="artisans" class="max-w-7xl mx-auto px-4 py-24">
-        <div class="text-center mb-12">
+        <div data-aos="fade-up" class="text-center mb-12">
             <i class="fas fa-users text-3xl text-[#b48b5a] mb-3"></i>
             <h2 class="text-4xl md:text-5xl serif-head text-white mb-3">The Artisans</h2>
             <div class="w-24 h-px bg-[#b48b5a] mx-auto"></div>
         </div>
 
         <div class="grid md:grid-cols-3 gap-8">
-            <!-- Barber 1 -->
-            <div class="text-center">
+            <div data-aos="fade-up" data-aos-delay="100" class="text-center">
                 <div class="w-32 h-32 rounded-full border-2 border-[#b48b5a] mx-auto mb-4 flex items-center justify-center bg-[#1a1310]">
                     <i class="fas fa-user-tie text-6xl text-[#b48b5a]"></i>
                 </div>
                 <h3 class="text-2xl serif-head text-white">John Alexander</h3>
                 <p class="text-[#b48b5a]">Master Barber · 15 yrs</p>
-                <p class="text-gray-400 text-sm mt-2">Specialist in classic cuts and hot towel rituals.</p>
                 <div class="flex justify-center gap-3 mt-3">
                     <i class="fab fa-instagram text-[#b48b5a] hover:text-white"></i>
                     <i class="fab fa-twitter text-[#b48b5a] hover:text-white"></i>
                 </div>
             </div>
-            <!-- Barber 2 -->
-            <div class="text-center">
+            <div data-aos="fade-up" data-aos-delay="200" class="text-center">
                 <div class="w-32 h-32 rounded-full border-2 border-[#b48b5a] mx-auto mb-4 flex items-center justify-center bg-[#1a1310]">
                     <i class="fas fa-user-tie text-6xl text-[#b48b5a]"></i>
                 </div>
                 <h3 class="text-2xl serif-head text-white">Marco Rossi</h3>
                 <p class="text-[#b48b5a]">Beard Architect · 12 yrs</p>
-                <p class="text-gray-400 text-sm mt-2">Beard sculpting and modern fades specialist.</p>
                 <div class="flex justify-center gap-3 mt-3">
                     <i class="fab fa-instagram text-[#b48b5a] hover:text-white"></i>
                     <i class="fab fa-twitter text-[#b48b5a] hover:text-white"></i>
                 </div>
             </div>
-            <!-- Barber 3 -->
-            <div class="text-center">
+            <div data-aos="fade-up" data-aos-delay="300" class="text-center">
                 <div class="w-32 h-32 rounded-full border-2 border-[#b48b5a] mx-auto mb-4 flex items-center justify-center bg-[#1a1310]">
                     <i class="fas fa-user-tie text-6xl text-[#b48b5a]"></i>
                 </div>
                 <h3 class="text-2xl serif-head text-white">Dmitri Volkov</h3>
                 <p class="text-[#b48b5a]">Style Director · 10 yrs</p>
-                <p class="text-gray-400 text-sm mt-2">Contemporary styles and precision cutting.</p>
                 <div class="flex justify-center gap-3 mt-3">
                     <i class="fab fa-instagram text-[#b48b5a] hover:text-white"></i>
                     <i class="fab fa-twitter text-[#b48b5a] hover:text-white"></i>
@@ -345,92 +346,51 @@
         </div>
     </section>
 
-    <!-- PRODUCTS (with proper barber product icons) -->
+    <!-- PRODUCTS (AOS) -->
     <section id="products" class="max-w-7xl mx-auto px-4 pb-24">
-        <div class="text-center mb-12">
+        <div data-aos="fade-up" class="text-center mb-12">
             <i class="fas fa-oil-can text-3xl text-[#b48b5a] mb-3"></i>
             <h2 class="text-4xl md:text-5xl serif-head text-white mb-3">The Apothecary</h2>
             <div class="w-24 h-px bg-[#b48b5a] mx-auto"></div>
         </div>
 
         <div class="grid grid-cols-3 md:grid-cols-6 gap-4">
-            <div class="service-card p-4 text-center">
-                <i class="fas fa-oil-can text-3xl text-[#b48b5a] mb-2"></i>
-                <span class="block text-sm">Beard Oil</span>
-                <span class="text-[#b48b5a]">$15</span>
-            </div>
-            <div class="service-card p-4 text-center">
-                <i class="fas fa-jar text-3xl text-[#b48b5a] mb-2"></i>
-                <span class="block text-sm">Pomade</span>
-                <span class="text-[#b48b5a]">$20</span>
-            </div>
-            <div class="service-card p-4 text-center">
-                <i class="fas fa-bottle-water text-3xl text-[#b48b5a] mb-2"></i>
-                <span class="block text-sm">Shampoo</span>
-                <span class="text-[#b48b5a]">$10</span>
-            </div>
-            <div class="service-card p-4 text-center">
-                <i class="fas fa-bottle-droplet text-3xl text-[#b48b5a] mb-2"></i>
-                <span class="block text-sm">Conditioner</span>
-                <span class="text-[#b48b5a]">$12</span>
-            </div>
-            <div class="service-card p-4 text-center">
-                <i class="fas fa-razor text-3xl text-[#b48b5a] mb-2"></i>
-                <span class="block text-sm">Razor Set</span>
-                <span class="text-[#b48b5a]">$25</span>
-            </div>
-            <div class="service-card p-4 text-center">
-                <i class="fas fa-brush text-3xl text-[#b48b5a] mb-2"></i>
-                <span class="block text-sm">Brush</span>
-                <span class="text-[#b48b5a]">$8</span>
-            </div>
+            <div data-aos="fade-up" data-aos-delay="50" class="service-card p-4 text-center"><i class="fas fa-oil-can text-3xl text-[#b48b5a] mb-2"></i><span class="block text-sm">Beard Oil</span><span class="text-[#b48b5a]">$15</span></div>
+            <div data-aos="fade-up" data-aos-delay="100" class="service-card p-4 text-center"><i class="fas fa-jar text-3xl text-[#b48b5a] mb-2"></i><span class="block text-sm">Pomade</span><span class="text-[#b48b5a]">$20</span></div>
+            <div data-aos="fade-up" data-aos-delay="150" class="service-card p-4 text-center"><i class="fas fa-bottle-water text-3xl text-[#b48b5a] mb-2"></i><span class="block text-sm">Shampoo</span><span class="text-[#b48b5a]">$10</span></div>
+            <div data-aos="fade-up" data-aos-delay="200" class="service-card p-4 text-center"><i class="fas fa-bottle-droplet text-3xl text-[#b48b5a] mb-2"></i><span class="block text-sm">Conditioner</span><span class="text-[#b48b5a]">$12</span></div>
+            <div data-aos="fade-up" data-aos-delay="250" class="service-card p-4 text-center"><i class="fas fa-razor text-3xl text-[#b48b5a] mb-2"></i><span class="block text-sm">Razor Set</span><span class="text-[#b48b5a]">$25</span></div>
+            <div data-aos="fade-up" data-aos-delay="300" class="service-card p-4 text-center"><i class="fas fa-brush text-3xl text-[#b48b5a] mb-2"></i><span class="block text-sm">Brush</span><span class="text-[#b48b5a]">$8</span></div>
         </div>
     </section>
 
-    <!-- GALLERY - Barber Shop Style Grid -->
+    <!-- GALLERY (AOS) -->
     <section id="gallery" class="max-w-7xl mx-auto px-4 pb-24">
-        <div class="text-center mb-12">
+        <div data-aos="fade-up" class="text-center mb-12">
             <i class="fas fa-images text-3xl text-[#b48b5a] mb-3"></i>
             <h2 class="text-4xl md:text-5xl serif-head text-white mb-3">The Gallery</h2>
             <div class="w-24 h-px bg-[#b48b5a] mx-auto"></div>
         </div>
 
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div class="aspect-square bg-[#1a1310] border border-[#4a3c33] rounded flex items-center justify-center">
-                <i class="fas fa-chair text-5xl text-[#b48b5a] opacity-60"></i>
-            </div>
-            <div class="aspect-square bg-[#1a1310] border border-[#4a3c33] rounded flex items-center justify-center">
-                <i class="fas fa-razor text-5xl text-[#b48b5a] opacity-60"></i>
-            </div>
-            <div class="aspect-square bg-[#1a1310] border border-[#4a3c33] rounded flex items-center justify-center">
-                <i class="fas fa-scissors text-5xl text-[#b48b5a] opacity-60"></i>
-            </div>
-            <div class="aspect-square bg-[#1a1310] border border-[#4a3c33] rounded flex items-center justify-center">
-                <i class="fas fa-spa text-5xl text-[#b48b5a] opacity-60"></i>
-            </div>
-            <div class="aspect-square bg-[#1a1310] border border-[#4a3c33] rounded flex items-center justify-center">
-                <i class="fas fa-towel text-5xl text-[#b48b5a] opacity-60"></i>
-            </div>
-            <div class="aspect-square bg-[#1a1310] border border-[#4a3c33] rounded flex items-center justify-center">
-                <i class="fas fa-clock text-5xl text-[#b48b5a] opacity-60"></i>
-            </div>
-            <div class="aspect-square bg-[#1a1310] border border-[#4a3c33] rounded flex items-center justify-center">
-                <i class="fas fa-mug-hot text-5xl text-[#b48b5a] opacity-60"></i>
-            </div>
-            <div class="aspect-square bg-[#1a1310] border border-[#4a3c33] rounded flex items-center justify-center">
-                <i class="fas fa-crown text-5xl text-[#b48b5a] opacity-60"></i>
-            </div>
+            <div data-aos="fade-up" data-aos-delay="0" class="aspect-square bg-[#1a1310] border border-[#4a3c33] rounded flex items-center justify-center"><i class="fas fa-chair text-5xl text-[#b48b5a] opacity-60"></i></div>
+            <div data-aos="fade-up" data-aos-delay="50" class="aspect-square bg-[#1a1310] border border-[#4a3c33] rounded flex items-center justify-center"><i class="fas fa-razor text-5xl text-[#b48b5a] opacity-60"></i></div>
+            <div data-aos="fade-up" data-aos-delay="100" class="aspect-square bg-[#1a1310] border border-[#4a3c33] rounded flex items-center justify-center"><i class="fas fa-scissors text-5xl text-[#b48b5a] opacity-60"></i></div>
+            <div data-aos="fade-up" data-aos-delay="150" class="aspect-square bg-[#1a1310] border border-[#4a3c33] rounded flex items-center justify-center"><i class="fas fa-spa text-5xl text-[#b48b5a] opacity-60"></i></div>
+            <div data-aos="fade-up" data-aos-delay="200" class="aspect-square bg-[#1a1310] border border-[#4a3c33] rounded flex items-center justify-center"><i class="fas fa-towel text-5xl text-[#b48b5a] opacity-60"></i></div>
+            <div data-aos="fade-up" data-aos-delay="250" class="aspect-square bg-[#1a1310] border border-[#4a3c33] rounded flex items-center justify-center"><i class="fas fa-clock text-5xl text-[#b48b5a] opacity-60"></i></div>
+            <div data-aos="fade-up" data-aos-delay="300" class="aspect-square bg-[#1a1310] border border-[#4a3c33] rounded flex items-center justify-center"><i class="fas fa-mug-hot text-5xl text-[#b48b5a] opacity-60"></i></div>
+            <div data-aos="fade-up" data-aos-delay="350" class="aspect-square bg-[#1a1310] border border-[#4a3c33] rounded flex items-center justify-center"><i class="fas fa-crown text-5xl text-[#b48b5a] opacity-60"></i></div>
         </div>
     </section>
 
-    <!-- BEFORE & AFTER SLIDER (Barber Style) -->
+    <!-- BEFORE & AFTER (AOS) -->
     <section class="max-w-4xl mx-auto px-4 pb-24">
-        <div class="text-center mb-8">
+        <div data-aos="fade-up" class="text-center mb-8">
             <i class="fas fa-arrow-right-arrow-left text-3xl text-[#b48b5a] mb-3"></i>
             <h2 class="text-4xl serif-head text-white mb-3">Before · After</h2>
         </div>
-        
-        <div class="before-after-slider">
+        <div data-aos="fade-up" data-aos-duration="1000" class="before-after-slider">
             <div class="absolute inset-0 flex">
                 <div class="flex-1 border-r-2 border-[#b48b5a] flex items-center justify-center bg-[#2c1e1a]">
                     <i class="fas fa-user text-7xl text-[#b48b5a] opacity-40"></i>
@@ -445,84 +405,65 @@
         </div>
     </section>
 
-    <!-- VIDEO PLACEHOLDERS (Barber Themed) -->
+    <!-- VIDEOS (AOS) -->
     <section class="max-w-7xl mx-auto px-4 pb-24">
-        <div class="text-center mb-8">
+        <div data-aos="fade-up" class="text-center mb-8">
             <i class="fas fa-video text-3xl text-[#b48b5a] mb-3"></i>
             <h2 class="text-4xl serif-head text-white mb-3">Masterclasses</h2>
         </div>
         <div class="grid md:grid-cols-3 gap-4">
-            <div class="video-placeholder"><i class="fas fa-play-circle text-5xl text-[#b48b5a]"></i></div>
-            <div class="video-placeholder"><i class="fas fa-play-circle text-5xl text-[#b48b5a]"></i></div>
-            <div class="video-placeholder"><i class="fas fa-play-circle text-5xl text-[#b48b5a]"></i></div>
-            <div class="video-placeholder"><i class="fas fa-play-circle text-5xl text-[#b48b5a]"></i></div>
-            <div class="video-placeholder"><i class="fas fa-play-circle text-5xl text-[#b48b5a]"></i></div>
-            <div class="video-placeholder"><i class="fas fa-play-circle text-5xl text-[#b48b5a]"></i></div>
+            <div data-aos="fade-up" data-aos-delay="50" class="video-placeholder"><i class="fas fa-play-circle text-5xl text-[#b48b5a]"></i></div>
+            <div data-aos="fade-up" data-aos-delay="100" class="video-placeholder"><i class="fas fa-play-circle text-5xl text-[#b48b5a]"></i></div>
+            <div data-aos="fade-up" data-aos-delay="150" class="video-placeholder"><i class="fas fa-play-circle text-5xl text-[#b48b5a]"></i></div>
+            <div data-aos="fade-up" data-aos-delay="200" class="video-placeholder"><i class="fas fa-play-circle text-5xl text-[#b48b5a]"></i></div>
+            <div data-aos="fade-up" data-aos-delay="250" class="video-placeholder"><i class="fas fa-play-circle text-5xl text-[#b48b5a]"></i></div>
+            <div data-aos="fade-up" data-aos-delay="300" class="video-placeholder"><i class="fas fa-play-circle text-5xl text-[#b48b5a]"></i></div>
         </div>
     </section>
 
-    <!-- TESTIMONIALS -->
+    <!-- TESTIMONIALS (AOS) -->
     <section class="max-w-4xl mx-auto px-4 pb-24">
-        <div class="text-center mb-8">
+        <div data-aos="fade-up" class="text-center mb-8">
             <i class="fas fa-comment text-3xl text-[#b48b5a] mb-3"></i>
             <h2 class="text-4xl serif-head text-white mb-3">Testimonials</h2>
         </div>
-
-        <div class="leather-card p-8 relative overflow-hidden">
+        <div data-aos="fade-up" class="leather-card p-8 relative overflow-hidden">
             <div id="testimonial-slider" class="flex transition-transform duration-500">
-                <div class="min-w-full text-center">
-                    <i class="fas fa-quote-left text-3xl text-[#b48b5a] opacity-50 mb-4"></i>
-                    <p class="text-xl text-white">"Best hot towel shave I've ever had. True artisans."</p>
-                    <div class="text-[#b48b5a] text-xl my-2">★★★★★</div>
-                    <p class="text-gray-400">— James R.</p>
-                </div>
-                <div class="min-w-full text-center">
-                    <i class="fas fa-quote-left text-3xl text-[#b48b5a] opacity-50 mb-4"></i>
-                    <p class="text-xl text-white">"Finally found a barber who understands my beard."</p>
-                    <div class="text-[#b48b5a] text-xl my-2">★★★★★</div>
-                    <p class="text-gray-400">— Michael T.</p>
-                </div>
-                <div class="min-w-full text-center">
-                    <i class="fas fa-quote-left text-3xl text-[#b48b5a] opacity-50 mb-4"></i>
-                    <p class="text-xl text-white">"The atmosphere, the craftsmanship — unmatched."</p>
-                    <div class="text-[#b48b5a] text-xl my-2">★★★★★</div>
-                    <p class="text-gray-400">— David K.</p>
-                </div>
+                <div class="min-w-full text-center"><i class="fas fa-quote-left text-3xl text-[#b48b5a] opacity-50 mb-4"></i><p class="text-xl text-white">"Best hot towel shave I've ever had. True artisans."</p><div class="text-[#b48b5a] text-xl my-2">★★★★★</div><p class="text-gray-400">— James R.</p></div>
+                <div class="min-w-full text-center"><i class="fas fa-quote-left text-3xl text-[#b48b5a] opacity-50 mb-4"></i><p class="text-xl text-white">"Finally found a barber who understands my beard."</p><div class="text-[#b48b5a] text-xl my-2">★★★★★</div><p class="text-gray-400">— Michael T.</p></div>
+                <div class="min-w-full text-center"><i class="fas fa-quote-left text-3xl text-[#b48b5a] opacity-50 mb-4"></i><p class="text-xl text-white">"The atmosphere, the craftsmanship — unmatched."</p><div class="text-[#b48b5a] text-xl my-2">★★★★★</div><p class="text-gray-400">— David K.</p></div>
             </div>
         </div>
     </section>
 
-    <!-- FAQ -->
+    <!-- FAQ (AOS) -->
     <section class="max-w-3xl mx-auto px-4 pb-24">
-        <h2 class="text-4xl serif-head text-white text-center mb-8">FAQ</h2>
-        <details class="leather-card p-5 mb-3">
+        <h2 data-aos="fade-up" class="text-4xl serif-head text-white text-center mb-8">FAQ</h2>
+        <details data-aos="fade-up" class="leather-card p-5 mb-3">
             <summary class="cursor-pointer font-semibold flex items-center gap-2"><i class="fas fa-clock text-[#b48b5a]"></i> Hours of operation?</summary>
             <p class="mt-3 text-gray-400">Mon-Fri: 9am-6pm | Sat: 10am-4pm | Sun: Closed</p>
         </details>
-        <details class="leather-card p-5">
+        <details data-aos="fade-up" data-aos-delay="100" class="leather-card p-5">
             <summary class="cursor-pointer font-semibold flex items-center gap-2"><i class="fas fa-calendar-check text-[#b48b5a]"></i> How do I book?</summary>
-            <p class="mt-3 text-gray-400">Use the booking form above or click the "Book Now" button.</p>
+            <p class="mt-3 text-gray-400">Use the booking form above or click the "BOOK NOW" button at the bottom of the screen.</p>
         </details>
     </section>
 
-    <!-- CTA BANNER -->
-    <section class="bg-[#b48b5a] py-16">
+    <!-- CTA BANNER (AOS) -->
+    <section data-aos="fade-up" class="bg-[#b48b5a] py-16">
         <div class="max-w-4xl mx-auto text-center text-black">
             <h2 class="text-4xl md:text-5xl serif-head mb-4">Ready for a fresh cut?</h2>
-            <button id="cta-book" class="bg-black text-white px-10 py-4 text-lg font-semibold uppercase tracking-wider hover:bg-gray-900 transition flex items-center gap-3 mx-auto">
-                <i class="fas fa-scissors"></i> Book Now
-            </button>
         </div>
     </section>
 
-    <!-- PROMO BANNER -->
-    <section class="bg-[#2c1e1a] py-4 text-center border-y border-[#b48b5a]">
+    <!-- PROMO BANNER (AOS) -->
+    <section data-aos="fade-up" class="bg-[#2c1e1a] py-4 text-center border-y border-[#b48b5a]">
         <p class="text-[#b48b5a] text-lg font-semibold"><i class="fas fa-gift mr-2"></i> 20% OFF first visit — mention "ELITE"</p>
     </section>
 
-    <!-- OPENING HOURS + STATUS -->
+    <!-- OPENING HOURS (AOS) -->
     <section class="max-w-4xl mx-auto px-4 py-24">
-        <div class="text-center leather-card p-8">
+        <div data-aos="fade-up" class="text-center leather-card p-8">
             <i class="fas fa-store text-4xl text-[#b48b5a] mb-4"></i>
             <h2 class="text-3xl serif-head text-white mb-4">Opening Hours</h2>
             <p>Mon - Fri: 9:00 AM - 6:00 PM</p>
@@ -532,14 +473,14 @@
         </div>
     </section>
 
-    <!-- CONTACT + MAP -->
+    <!-- CONTACT (AOS) -->
     <section id="contact" class="max-w-7xl mx-auto px-4 pb-24">
         <div class="grid md:grid-cols-2 gap-8">
-            <div class="bg-[#1a1310] border border-[#b48b5a] rounded-xl h-96 flex items-center justify-center">
+            <div data-aos="fade-up" class="bg-[#1a1310] border border-[#b48b5a] rounded-xl h-96 flex items-center justify-center">
                 <i class="fas fa-map-location-dot text-8xl text-[#b48b5a] opacity-50"></i>
                 <p class="absolute text-sm text-gray-400 mt-24">123 Main St · City, State</p>
             </div>
-            <div>
+            <div data-aos="fade-up" data-aos-delay="100">
                 <h2 class="text-3xl serif-head text-white mb-6">Get in Touch</h2>
                 <a href="tel:+1234567890" class="block leather-card p-4 mb-3 hover:border-[#b48b5a] transition">
                     <i class="fas fa-phone-alt text-[#b48b5a] mr-3"></i> (123) 456-7890
@@ -547,88 +488,58 @@
                 <a href="#" class="block leather-card p-4 mb-6 hover:border-[#b48b5a] transition">
                     <i class="fab fa-whatsapp text-[#b48b5a] mr-3"></i> WhatsApp Us
                 </a>
-                <form>
-                    <input type="text" placeholder="Name" class="w-full mb-3 p-3 bg-[#2c1e1a] border border-[#4a3c33] rounded">
-                    <input type="email" placeholder="Email" class="w-full mb-3 p-3 bg-[#2c1e1a] border border-[#4a3c33] rounded">
-                    <textarea placeholder="Message" class="w-full mb-3 p-3 bg-[#2c1e1a] border border-[#4a3c33] rounded" rows="4"></textarea>
-                    <button class="bg-[#b48b5a] text-black px-6 py-3 font-semibold w-full hover:bg-[#c9a16e] flex items-center justify-center gap-2">
-                        <i class="fas fa-paper-plane"></i> Send Message
-                    </button>
-                </form>
+                <form><input type="text" placeholder="Name" class="w-full mb-3 p-3 bg-[#2c1e1a] border border-[#4a3c33] rounded"><input type="email" placeholder="Email" class="w-full mb-3 p-3 bg-[#2c1e1a] border border-[#4a3c33] rounded"><textarea placeholder="Message" class="w-full mb-3 p-3 bg-[#2c1e1a] border border-[#4a3c33] rounded" rows="4"></textarea><button class="bg-[#b48b5a] text-black px-6 py-3 font-semibold w-full hover:bg-[#c9a16e] flex items-center justify-center gap-2"><i class="fas fa-paper-plane"></i> Send Message</button></form>
             </div>
         </div>
     </section>
 
-    <!-- INSTAGRAM FEED -->
+    <!-- INSTAGRAM (AOS) -->
     <section class="max-w-7xl mx-auto px-4 pb-24">
-        <div class="flex items-center justify-center gap-2 mb-6">
+        <div data-aos="fade-up" class="flex items-center justify-center gap-2 mb-6">
             <i class="fab fa-instagram text-3xl text-[#b48b5a]"></i>
             <h2 class="text-2xl serif-head text-white">@elitebarbers</h2>
         </div>
         <div class="grid grid-cols-3 gap-2">
-            <div class="aspect-square bg-[#1a1310] border border-[#4a3c33] rounded flex items-center justify-center"><i class="fas fa-camera text-4xl text-[#b48b5a] opacity-40"></i></div>
-            <div class="aspect-square bg-[#1a1310] border border-[#4a3c33] rounded flex items-center justify-center"><i class="fas fa-camera text-4xl text-[#b48b5a] opacity-40"></i></div>
-            <div class="aspect-square bg-[#1a1310] border border-[#4a3c33] rounded flex items-center justify-center"><i class="fas fa-camera text-4xl text-[#b48b5a] opacity-40"></i></div>
+            <div data-aos="fade-up" data-aos-delay="0" class="aspect-square bg-[#1a1310] border border-[#4a3c33] rounded flex items-center justify-center"><i class="fas fa-camera text-4xl text-[#b48b5a] opacity-40"></i></div>
+            <div data-aos="fade-up" data-aos-delay="50" class="aspect-square bg-[#1a1310] border border-[#4a3c33] rounded flex items-center justify-center"><i class="fas fa-camera text-4xl text-[#b48b5a] opacity-40"></i></div>
+            <div data-aos="fade-up" data-aos-delay="100" class="aspect-square bg-[#1a1310] border border-[#4a3c33] rounded flex items-center justify-center"><i class="fas fa-camera text-4xl text-[#b48b5a] opacity-40"></i></div>
         </div>
     </section>
 
-    <!-- FOOTER -->
-    <footer class="border-t border-[#b48b5a] py-12 bg-[#0f0b0a]">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="text-center">
-                <div class="flex items-center justify-center gap-2 mb-4">
-                    <i class="fas fa-cut text-[#b48b5a]"></i>
-                    <span class="serif-head text-2xl text-white">ELITE·BARBERS</span>
-                </div>
-                <form class="max-w-md mx-auto flex gap-2 mb-6">
-                    <input type="email" placeholder="Email for newsletter" class="flex-1 p-3 bg-[#2c1e1a] border border-[#4a3c33] rounded">
-                    <button class="bg-[#b48b5a] text-black px-4 rounded hover:bg-[#c9a16e]"><i class="fas fa-arrow-right"></i></button>
-                </form>
-                <div class="flex justify-center gap-6 mb-6">
-                    <i class="fab fa-instagram text-2xl text-[#b48b5a] hover:text-white"></i>
-                    <i class="fab fa-facebook text-2xl text-[#b48b5a] hover:text-white"></i>
-                    <i class="fab fa-twitter text-2xl text-[#b48b5a] hover:text-white"></i>
-                </div>
-                <p class="text-gray-500 text-sm">© 2026 Elite Barbers · All rights reserved</p>
-            </div>
+    <!-- FOOTER (AOS) -->
+    <footer data-aos="fade-up" class="border-t border-[#b48b5a] py-12 bg-[#0f0b0a]">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <div class="flex items-center justify-center gap-2 mb-4"><i class="fas fa-cut text-[#b48b5a]"></i><span class="serif-head text-2xl text-white">ELITE·BARBERS</span></div>
+            <form class="max-w-md mx-auto flex gap-2 mb-6"><input type="email" placeholder="Email for newsletter" class="flex-1 p-3 bg-[#2c1e1a] border border-[#4a3c33] rounded"><button class="bg-[#b48b5a] text-black px-4 rounded hover:bg-[#c9a16e]"><i class="fas fa-arrow-right"></i></button></form>
+            <div class="flex justify-center gap-6 mb-6"><i class="fab fa-instagram text-2xl text-[#b48b5a] hover:text-white"></i><i class="fab fa-facebook text-2xl text-[#b48b5a] hover:text-white"></i><i class="fab fa-twitter text-2xl text-[#b48b5a] hover:text-white"></i></div>
+            <p class="text-gray-500 text-sm">© 2026 Elite Barbers · All rights reserved</p>
         </div>
     </footer>
 
     <!-- MODAL -->
-    <div id="modal" class="fixed inset-0 bg-black bg-opacity-90 hidden flex justify-center items-center z-50">
+    <div id="modal" class="fixed inset-0 bg-black bg-opacity-90 hidden flex justify-center items-center z-[1000]">
         <div class="modal-content p-8 rounded-xl max-w-md w-full">
             <h2 class="text-2xl serif-head text-white mb-4 flex items-center gap-2"><i class="fas fa-calendar-alt text-[#b48b5a]"></i> Book Appointment</h2>
-            <form>
-                <input type="text" placeholder="Full Name" class="w-full mb-3 p-3 bg-[#2c1e1a] border border-[#4a3c33] rounded">
-                <select class="w-full mb-3 p-3 bg-[#2c1e1a] border border-[#4a3c33] rounded">
-                    <option>Classic Haircut</option>
-                    <option>Hot Towel Shave</option>
-                    <option>Beard Trim</option>
-                    <option>Full Package</option>
-                </select>
-                <input type="date" class="w-full mb-3 p-3 bg-[#2c1e1a] border border-[#4a3c33] rounded">
-                <input type="time" class="w-full mb-4 p-3 bg-[#2c1e1a] border border-[#4a3c33] rounded">
-                <button type="submit" class="bg-[#b48b5a] text-black p-3 font-semibold w-full hover:bg-[#c9a16e] flex items-center justify-center gap-2">
-                    <i class="fas fa-paper-plane"></i> Confirm Booking
-                </button>
-            </form>
+            <form><input type="text" placeholder="Full Name" class="w-full mb-3 p-3 bg-[#2c1e1a] border border-[#4a3c33] rounded"><select class="w-full mb-3 p-3 bg-[#2c1e1a] border border-[#4a3c33] rounded"><option>Classic Haircut</option><option>Hot Towel Shave</option><option>Beard Trim</option><option>Full Package</option></select><input type="date" class="w-full mb-3 p-3 bg-[#2c1e1a] border border-[#4a3c33] rounded"><input type="time" class="w-full mb-4 p-3 bg-[#2c1e1a] border border-[#4a3c33] rounded"><button type="submit" class="bg-[#b48b5a] text-black p-3 font-semibold w-full hover:bg-[#c9a16e] flex items-center justify-center gap-2"><i class="fas fa-paper-plane"></i> Confirm Booking</button></form>
             <button id="close-modal" class="mt-4 text-gray-400 text-sm w-full">Close</button>
         </div>
     </div>
 
+    <!-- AOS & scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
+        AOS.init({ duration: 900, once: true, offset: 40 });
+
         // Mobile menu toggle
         document.getElementById('hamburger').addEventListener('click', () => {
             document.getElementById('mobile-menu').classList.toggle('hidden');
         });
 
-        // Modal
+        // Floating button modal trigger
         const modal = document.getElementById('modal');
-        const bookBtns = ['book-btn', 'hero-book', 'cta-book'];
-        bookBtns.forEach(id => {
-            const btn = document.getElementById(id);
-            if (btn) btn.addEventListener('click', () => modal.classList.remove('hidden'));
-        });
+        const floatingBtn = document.getElementById('floatingBookBtn');
+        floatingBtn.addEventListener('click', () => modal.classList.remove('hidden'));
+
         document.getElementById('close-modal').addEventListener('click', () => modal.classList.add('hidden'));
 
         // Testimonial slider
