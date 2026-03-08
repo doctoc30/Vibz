@@ -3,278 +3,652 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elite · barber</title>
-    <!-- Fonts & Tailwind (minimal) -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <title>Elite Barbers | Traditional Craft</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons (proper barber icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        body { font-family: 'Inter', sans-serif; background: #0a0c0f; }
-        h1, h2, h3, .brand-head { font-family: 'Playfair Display', serif; font-weight: 600; letter-spacing: -0.02em; }
-        .glass-card { background: rgba(18,22,28,0.8); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); border: 1px solid #2a2f36; }
-        .app-shadow { box-shadow: 0 12px 30px -8px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,215,0,0.1) inset; }
-        .status-badge { background: #1e252e; color: #c0a35c; border-left: 3px solid #c0a35c; }
-        .detail-card { background: #12161c; border-radius: 24px; border: 1px solid #262d36; transition: all 0.2s; }
-        .detail-card:hover { border-color: #c0a35c55; }
-        /* slider custom */
-        .ba-slider { position: relative; height: 260px; border-radius: 24px; overflow: hidden; background: #1a1f26; }
-        .ba-slider img { position: absolute; width: 100%; height: 100%; object-fit: cover; opacity: 0.5; filter: grayscale(0.8); }
-        .ba-slider .before { z-index: 2; clip-path: inset(0 50% 0 0); opacity: 1; filter: grayscale(0.2); }
-        .ba-slider input[type=range] { position: absolute; top:0; left:0; width:100%; height:100%; z-index:5; appearance:none; background:transparent; }
-        .ba-slider input[type=range]::-webkit-slider-thumb { appearance:none; width: 4px; height: 100%; background: #c0a35c; cursor: ew-resize; box-shadow: 0 0 0 2px #00000055; }
-        /* hide old barber‑pole / animation */
-        .barber-pole, .before-after, #hero .barber-pole { display: none; }
-        hr { border-color: #262d36; }
-        /* video placeholder style */
-        .video-place { background: #1a1f26; border-radius: 20px; aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; color: #5f6a7a; border: 1px solid #2e353f; }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #0f0b0a;
+            color: #e2dcd5;
+        }
+        h1, h2, h3, .serif-head {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+        /* Barber textures and details */
+        .bg-wood {
+            background-image: repeating-linear-gradient(45deg, #2c1e1a 0px, #2c1e1a 2px, #3f2e28 2px, #3f2e28 8px);
+        }
+        .leather-card {
+            background: #1f1613;
+            border: 1px solid #b48b5a;
+            box-shadow: 0 10px 25px -10px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,215,140,0.1);
+            border-radius: 8px;
+        }
+        .gold-border {
+            border: 1px solid #b48b5a;
+        }
+        .barber-stripe {
+            background: repeating-linear-gradient(45deg, #b48b5a, #b48b5a 8px, #2c1e1a 8px, #2c1e1a 16px);
+        }
+        .nav-link {
+            position: relative;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: #b48b5a;
+            transition: width 0.2s;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        .service-card {
+            background: #1a1310;
+            border: 1px solid #4a3c33;
+            transition: all 0.2s;
+            border-radius: 12px;
+        }
+        .service-card:hover {
+            border-color: #b48b5a;
+            transform: translateY(-2px);
+        }
+        .before-after-slider {
+            position: relative;
+            height: 300px;
+            background: #1a1310;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid #b48b5a;
+        }
+        .slider-bg {
+            background: linear-gradient(135deg, #2c1e1a 0%, #4a3c33 100%);
+        }
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 4px;
+            height: 100%;
+            background: #b48b5a;
+            cursor: ew-resize;
+            box-shadow: 0 0 0 2px #2c1e1a;
+        }
+        .video-placeholder {
+            background: #1a1310;
+            border: 1px solid #4a3c33;
+            border-radius: 12px;
+            aspect-ratio: 16/9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #b48b5a;
+        }
+        .modal-content {
+            background: #1f1613;
+            border: 2px solid #b48b5a;
+        }
+        .fa, .fas, .far {
+            color: #b48b5a;
+        }
     </style>
 </head>
-<body class="text-gray-300 antialiased">
+<body class="antialiased">
 
-    <!-- ========== STICKY NAV – CLEAN & BRANDED ========== -->
-    <header class="sticky top-0 z-50 glass-card border-x-0 border-t-0 border-b border-[#2e353f] backdrop-blur-xl">
-        <div class="max-w-6xl mx-auto px-5 py-3 flex justify-between items-center">
-            <a href="#" class="text-2xl brand-head tracking-wide text-white flex items-center gap-2">
-                <span class="w-1.5 h-6 bg-amber-500 rounded-full"></span>
-                ELITE<span class="text-amber-400/90 font-light">BARBER</span>
-            </a>
-            <!-- desktop menu – subtle -->
-            <div class="hidden md:flex items-center space-x-8 text-sm font-medium">
-                <a href="#services" class="hover:text-amber-400 transition">services</a>
-                <a href="#artisans" class="hover:text-amber-400 transition">artisans</a>
-                <a href="#gallery" class="hover:text-amber-400 transition">gallery</a>
-                <a href="#contact" class="hover:text-amber-400 transition">contact</a>
+    <!-- STICKY NAV - Barber Shop Style -->
+    <header class="sticky top-0 z-50 bg-[#0f0b0a] border-b border-[#b48b5a] bg-opacity-95 backdrop-blur-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <a href="#" class="flex items-center space-x-2">
+                    <i class="fas fa-cut text-2xl text-[#b48b5a]"></i>
+                    <span class="serif-head text-2xl tracking-wider text-white">ELITE<span class="text-[#b48b5a]">·BARBERS</span></span>
+                </a>
+
+                <!-- Desktop Nav -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#services" class="nav-link text-sm uppercase tracking-wider hover:text-[#b48b5a]">Services</a>
+                    <a href="#artisans" class="nav-link text-sm uppercase tracking-wider hover:text-[#b48b5a]">Artisans</a>
+                    <a href="#gallery" class="nav-link text-sm uppercase tracking-wider hover:text-[#b48b5a]">Gallery</a>
+                    <a href="#contact" class="nav-link text-sm uppercase tracking-wider hover:text-[#b48b5a]">Contact</a>
+                </div>
+
+                <!-- Book Button -->
+                <button id="book-btn" class="bg-[#b48b5a] hover:bg-[#c9a16e] text-black px-6 py-2.5 text-sm font-semibold uppercase tracking-wider transition flex items-center gap-2">
+                    <i class="fas fa-calendar-alt"></i> Book Now
+                </button>
+
+                <!-- Mobile Menu Button -->
+                <button id="hamburger" class="md:hidden text-[#b48b5a] text-2xl">
+                    <i class="fas fa-bars"></i>
+                </button>
             </div>
-            <button id="book-btn" class="bg-[#c0a35c] hover:bg-[#d4b570] text-black font-semibold px-5 py-2 rounded-full text-sm transition-all shadow-md">BOOK</button>
-            <button id="hamburger" class="md:hidden text-white text-2xl">☰</button>
         </div>
-        <!-- mobile menu -->
-        <div id="mobile-menu" class="hidden md:hidden bg-[#0f131a] border-t border-[#262d36] px-6 py-3 text-sm space-y-2">
-            <a href="#services" class="block py-1">services</a>
-            <a href="#artisans" class="block py-1">artisans</a>
-            <a href="#gallery" class="block py-1">gallery</a>
-            <a href="#contact" class="block py-1">contact</a>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-[#1a1310] border-t border-[#b48b5a] px-4 py-4">
+            <a href="#services" class="block py-2 hover:text-[#b48b5a]">Services</a>
+            <a href="#artisans" class="block py-2 hover:text-[#b48b5a]">Artisans</a>
+            <a href="#gallery" class="block py-2 hover:text-[#b48b5a]">Gallery</a>
+            <a href="#contact" class="block py-2 hover:text-[#b48b5a]">Contact</a>
         </div>
     </header>
 
-    <!-- ========== HERO – NO IMAGE, NO POLE, TYPO + BRAND ========= -->
-    <section class="pt-16 pb-12 bg-gradient-to-b from-[#0a0c0f] to-[#11161d]">
-        <div class="max-w-6xl mx-auto px-5 text-center">
-            <span class="inline-block px-3 py-1 rounded-full bg-[#1e262f] text-amber-400 text-xs tracking-wider mb-4">✧ PRECISION · HERITAGE · STYLE ✧</span>
-            <h1 class="text-5xl md:text-6xl text-white leading-tight">crafting confidence<br><span class="text-amber-400/90">since 2010</span></h1>
-            <p class="text-lg text-gray-400 max-w-xl mx-auto mt-4">high‑tech meets high‑craft in a modern sanctuary.</p>
-            <div class="flex gap-4 justify-center mt-8">
-                <button id="book-hero-btn" class="bg-[#c0a35c] text-black px-7 py-3 rounded-full font-semibold text-sm hover:bg-[#d4b570]">reserve your chair</button>
-                <a href="#services" class="border border-[#3a4350] px-7 py-3 rounded-full text-sm hover:border-amber-400 transition">explore</a>
-            </div>
-            <!-- quick stat badges instead of barber pole -->
-            <div class="flex flex-wrap gap-6 justify-center mt-12 text-sm">
-                <div class="bg-[#131a22] px-5 py-2 rounded-full border border-[#2e3845]">✂️ 15+ master barbers</div>
-                <div class="bg-[#131a22] px-5 py-2 rounded-full border border-[#2e3845]">⭐ 5.0 rating</div>
-                <div class="bg-[#131a22] px-5 py-2 rounded-full border border-[#2e3845]">⏳ waitlist · online</div>
+    <!-- HERO - Barber Pole Design (but stylized) -->
+    <section class="relative bg-[#0f0b0a] pt-12 pb-16 overflow-hidden">
+        <!-- Background Stripe -->
+        <div class="absolute top-0 left-0 w-full h-1 barber-stripe"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 relative">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <!-- Left Content -->
+                <div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <i class="fas fa-razor text-2xl text-[#b48b5a]"></i>
+                        <span class="text-sm uppercase tracking-[0.2em] text-[#b48b5a]">Est. 2010</span>
+                    </div>
+                    <h1 class="text-5xl md:text-7xl serif-head text-white leading-tight">
+                        Crafting<br>Confidence
+                    </h1>
+                    <p class="text-lg text-gray-400 mt-6 max-w-md">
+                        Where traditional barbering meets modern precision. Hot towels, straight razors, and honest conversation.
+                    </p>
+                    <div class="flex gap-4 mt-8">
+                        <button id="hero-book" class="bg-[#b48b5a] text-black px-8 py-3 font-semibold uppercase tracking-wider text-sm hover:bg-[#c9a16e] flex items-center gap-2">
+                            <i class="fas fa-scissors"></i> Book Your Cut
+                        </button>
+                        <a href="#services" class="border border-[#b48b5a] px-8 py-3 uppercase tracking-wider text-sm hover:bg-[#b48b5a] hover:text-black transition flex items-center gap-2">
+                            <i class="fas fa-eye"></i> Explore
+                        </a>
+                    </div>
+                    <!-- Heritage Badges -->
+                    <div class="flex gap-6 mt-12 text-sm">
+                        <div class="flex items-center gap-2"><i class="fas fa-star text-[#b48b5a]"></i> 5.0 Rating</div>
+                        <div class="flex items-center gap-2"><i class="fas fa-users text-[#b48b5a]"></i> 15+ Masters</div>
+                        <div class="flex items-center gap-2"><i class="fas fa-clock text-[#b48b5a]"></i> Walk-ins Welcome</div>
+                    </div>
+                </div>
+
+                <!-- Right Side - Barber Pole Graphic (stylized, not animated pole) -->
+                <div class="hidden md:block relative">
+                    <div class="relative h-[500px] w-full">
+                        <!-- Classic Barber Pole Interpretation -->
+                        <div class="absolute right-0 top-0 w-64 h-64">
+                            <div class="relative w-40 h-40 mx-auto">
+                                <!-- Spiral design -->
+                                <div class="absolute inset-0 rounded-full border-4 border-[#b48b5a]"></div>
+                                <div class="absolute inset-4 rounded-full border-2 border-[#b48b5a] border-dashed"></div>
+                                <div class="absolute inset-8 bg-[#b48b5a] rounded-full opacity-20"></div>
+                                <i class="fas fa-cut absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-6xl text-[#b48b5a]"></i>
+                            </div>
+                            <div class="absolute -bottom-10 left-0 w-full h-32 bg-gradient-to-t from-[#b48b5a]/20 to-transparent"></div>
+                        </div>
+                        <!-- Barber Tools Collage -->
+                        <div class="absolute bottom-0 left-0 space-y-4">
+                            <i class="fas fa-razor text-4xl text-[#b48b5a] opacity-50"></i>
+                            <i class="fas fa-scissors text-5xl text-[#b48b5a] opacity-40 ml-8"></i>
+                            <i class="fas fa-brush text-3xl text-[#b48b5a] opacity-60"></i>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- quick booking card (clean) -->
-    <section class="-mt-4 relative z-10 max-w-3xl mx-auto px-5">
-        <div class="glass-card rounded-3xl p-6 app-shadow border border-[#313b47]">
-            <h2 class="text-xl font-medium text-white mb-4">quick reservation</h2>
-            <form class="grid grid-cols-2 md:grid-cols-5 gap-3">
-                <select class="col-span-2 md:col-span-2 bg-[#1f2937] border border-[#3e4857] rounded-full px-4 py-3 text-sm">
-                    <option>choose service</option><option>haircut</option><option>shave</option><option>package</option>
-                </select>
-                <input type="text" placeholder="name" class="col-span-2 md:col-span-1 bg-[#1f2937] border border-[#3e4857] rounded-full px-4 py-3 text-sm">
-                <input type="date" class="col-span-1 md:col-span-1 bg-[#1f2937] border border-[#3e4857] rounded-full px-4 py-3 text-sm">
-                <button type="submit" class="col-span-2 md:col-span-1 bg-amber-400 text-black rounded-full font-semibold text-sm hover:bg-amber-300 transition">→ book</button>
+    <!-- QUICK BOOKING BAR -->
+    <section class="max-w-5xl mx-auto px-4 -mt-8 relative z-10">
+        <div class="leather-card p-6">
+            <form class="flex flex-wrap gap-4 items-end">
+                <div class="flex-1 min-w-[200px]">
+                    <label class="text-xs uppercase tracking-wider text-[#b48b5a] block mb-1"><i class="fas fa-cut mr-1"></i>Service</label>
+                    <select class="w-full bg-[#2c1e1a] border border-[#b48b5a] rounded px-4 py-3 text-white">
+                        <option>Classic Haircut</option>
+                        <option>Hot Towel Shave</option>
+                        <option>Beard Sculpt</option>
+                        <option>The Full Package</option>
+                    </select>
+                </div>
+                <div class="flex-1 min-w-[150px]">
+                    <label class="text-xs uppercase tracking-wider text-[#b48b5a] block mb-1"><i class="fas fa-user mr-1"></i>Name</label>
+                    <input type="text" placeholder="Your name" class="w-full bg-[#2c1e1a] border border-[#b48b5a] rounded px-4 py-3 text-white">
+                </div>
+                <div class="flex-1 min-w-[150px]">
+                    <label class="text-xs uppercase tracking-wider text-[#b48b5a] block mb-1"><i class="fas fa-calendar mr-1"></i>Date</label>
+                    <input type="date" class="w-full bg-[#2c1e1a] border border-[#b48b5a] rounded px-4 py-3 text-white">
+                </div>
+                <button type="submit" class="bg-[#b48b5a] text-black px-8 py-3 font-semibold uppercase tracking-wider hover:bg-[#c9a16e] transition flex items-center gap-2">
+                    <i class="fas fa-paper-plane"></i> Book
+                </button>
             </form>
         </div>
     </section>
 
-    <!-- ========== SERVICES – icon + minimal ========= -->
-    <section id="services" class="max-w-6xl mx-auto px-5 py-24">
-        <div class="flex items-center gap-3 mb-8"><span class="w-8 h-0.5 bg-amber-500/60"></span><h2 class="text-3xl brand-head text-white">signature services</h2></div>
+    <!-- SERVICES SECTION -->
+    <section id="services" class="max-w-7xl mx-auto px-4 py-24">
+        <div class="text-center mb-12">
+            <i class="fas fa-cut text-3xl text-[#b48b5a] mb-3"></i>
+            <h2 class="text-4xl md:text-5xl serif-head text-white mb-3">The Craft</h2>
+            <div class="w-24 h-px bg-[#b48b5a] mx-auto"></div>
+        </div>
+
         <div class="grid md:grid-cols-3 gap-6">
-            <div class="detail-card p-7 flex flex-col items-start">
-                <span class="text-5xl mb-4 opacity-80">✧</span>
-                <h3 class="text-2xl text-white mb-1">classic haircut</h3>
-                <p class="text-amber-400/80 font-medium text-lg mb-2">$30</p>
-                <span class="bg-amber-400/10 text-amber-400 text-xs px-3 py-1 rounded-full border border-amber-400/30">trending</span>
+            <!-- Service 1 -->
+            <div class="service-card p-8">
+                <i class="fas fa-cut text-4xl text-[#b48b5a] mb-4"></i>
+                <h3 class="text-2xl serif-head text-white mb-2">Classic Haircut</h3>
+                <p class="text-[#b48b5a] text-xl mb-3">$30</p>
+                <p class="text-gray-400 text-sm">Precision scissors, hot towel finish, and a whiskey optional.</p>
+                <span class="inline-block mt-4 text-xs bg-[#b48b5a] text-black px-3 py-1 rounded-full font-semibold">TRENDING</span>
             </div>
-            <div class="detail-card p-7">
-                <span class="text-5xl mb-4 opacity-80">⎔</span>
-                <h3 class="text-2xl text-white mb-1">hot towel shave</h3>
-                <p class="text-amber-400/80 font-medium text-lg">$25</p>
+            <!-- Service 2 -->
+            <div class="service-card p-8">
+                <i class="fas fa-razor text-4xl text-[#b48b5a] mb-4"></i>
+                <h3 class="text-2xl serif-head text-white mb-2">Hot Towel Shave</h3>
+                <p class="text-[#b48b5a] text-xl mb-3">$25</p>
+                <p class="text-gray-400 text-sm">Traditional straight razor shave with heated towels and balm.</p>
             </div>
-            <div class="detail-card p-7">
-                <span class="text-5xl mb-4 opacity-80">◈</span>
-                <h3 class="text-2xl text-white mb-1">full grooming</h3>
-                <p class="text-amber-400/80 font-medium text-lg">$50</p>
-                <span class="bg-amber-400/10 text-amber-400 text-xs px-3 py-1 rounded-full border border-amber-400/30 mt-2">premium</span>
+            <!-- Service 3 -->
+            <div class="service-card p-8">
+                <i class="fas fa-spa text-4xl text-[#b48b5a] mb-4"></i>
+                <h3 class="text-2xl serif-head text-white mb-2">The Full Package</h3>
+                <p class="text-[#b48b5a] text-xl mb-3">$50</p>
+                <p class="text-gray-400 text-sm">Haircut + shave + beard sculpt + deep conditioning.</p>
+                <span class="inline-block mt-4 text-xs bg-[#b48b5a] text-black px-3 py-1 rounded-full font-semibold">BEST VALUE</span>
+            </div>
+        </div>
+
+        <!-- Price List -->
+        <div class="mt-12 leather-card p-6 max-w-2xl mx-auto">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                <div><span class="text-[#b48b5a] block">Haircut</span>$30</div>
+                <div><span class="text-[#b48b5a] block">Shave</span>$25</div>
+                <div><span class="text-[#b48b5a] block">Beard Trim</span>$20</div>
+                <div><span class="text-[#b48b5a] block">Package</span>$50</div>
             </div>
         </div>
     </section>
 
-    <!-- price list minimal -->
-    <section class="max-w-2xl mx-auto px-5 mb-20">
-        <div class="detail-card p-8 flex flex-wrap justify-between gap-4 text-lg border border-[#2c3540]">
-            <span>Haircut <span class="text-amber-400 ml-2">$30</span></span><span>Shave <span class="text-amber-400">$25</span></span><span>Beard trim <span class="text-amber-400">$20</span></span><span>Package <span class="text-amber-400">$50</span></span>
+    <!-- PHILOSOPHY -->
+    <section class="bg-[#1a1310] py-20 border-y border-[#b48b5a]">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <i class="fas fa-quote-right text-5xl text-[#b48b5a] opacity-30 mb-4"></i>
+            <p class="text-3xl md:text-4xl serif-head text-white leading-relaxed">
+                "Modern vintage, industrial soul —<br>every cut tells a story."
+            </p>
         </div>
     </section>
 
-    <!-- about / philosophy (short) -->
-    <section id="about" class="max-w-4xl mx-auto px-5 text-center mb-24">
-        <p class="text-2xl md:text-3xl text-white/90 leading-relaxed brand-head font-light">“modern vintage, techno‑industrial,<br>crafted with precision.”</p>
-        <div class="w-20 h-0.5 bg-amber-500/40 mx-auto mt-8"></div>
-    </section>
+    <!-- ARTISANS -->
+    <section id="artisans" class="max-w-7xl mx-auto px-4 py-24">
+        <div class="text-center mb-12">
+            <i class="fas fa-users text-3xl text-[#b48b5a] mb-3"></i>
+            <h2 class="text-4xl md:text-5xl serif-head text-white mb-3">The Artisans</h2>
+            <div class="w-24 h-px bg-[#b48b5a] mx-auto"></div>
+        </div>
 
-    <!-- ========== ARTISANS (icons + no faces) ========= -->
-    <section id="artisans" class="max-w-6xl mx-auto px-5 py-16 bg-[#0e1219] rounded-[48px] border border-[#29313c]">
-        <h2 class="text-3xl brand-head text-white mb-10 text-center">the artisans</h2>
-        <div class="grid md:grid-cols-3 gap-6">
-            <div class="text-center p-6"><div class="w-24 h-24 rounded-full bg-[#252f3a] mx-auto mb-4 flex items-center justify-center text-5xl opacity-70">⌘</div><h3 class="text-xl text-white">John</h3><p class="text-sm text-amber-400/70">classic cuts</p></div>
-            <div class="text-center p-6"><div class="w-24 h-24 rounded-full bg-[#252f3a] mx-auto mb-4 flex items-center justify-center text-5xl opacity-70">⎇</div><h3 class="text-xl text-white">Jane</h3><p class="text-sm text-amber-400/70">beard architect</p></div>
-            <div class="text-center p-6"><div class="w-24 h-24 rounded-full bg-[#252f3a] mx-auto mb-4 flex items-center justify-center text-5xl opacity-70">⚙</div><h3 class="text-xl text-white">Mike</h3><p class="text-sm text-amber-400/70">modern styles</p></div>
+        <div class="grid md:grid-cols-3 gap-8">
+            <!-- Barber 1 -->
+            <div class="text-center">
+                <div class="w-32 h-32 rounded-full border-2 border-[#b48b5a] mx-auto mb-4 flex items-center justify-center bg-[#1a1310]">
+                    <i class="fas fa-user-tie text-6xl text-[#b48b5a]"></i>
+                </div>
+                <h3 class="text-2xl serif-head text-white">John Alexander</h3>
+                <p class="text-[#b48b5a]">Master Barber · 15 yrs</p>
+                <p class="text-gray-400 text-sm mt-2">Specialist in classic cuts and hot towel rituals.</p>
+                <div class="flex justify-center gap-3 mt-3">
+                    <i class="fab fa-instagram text-[#b48b5a] hover:text-white"></i>
+                    <i class="fab fa-twitter text-[#b48b5a] hover:text-white"></i>
+                </div>
+            </div>
+            <!-- Barber 2 -->
+            <div class="text-center">
+                <div class="w-32 h-32 rounded-full border-2 border-[#b48b5a] mx-auto mb-4 flex items-center justify-center bg-[#1a1310]">
+                    <i class="fas fa-user-tie text-6xl text-[#b48b5a]"></i>
+                </div>
+                <h3 class="text-2xl serif-head text-white">Marco Rossi</h3>
+                <p class="text-[#b48b5a]">Beard Architect · 12 yrs</p>
+                <p class="text-gray-400 text-sm mt-2">Beard sculpting and modern fades specialist.</p>
+                <div class="flex justify-center gap-3 mt-3">
+                    <i class="fab fa-instagram text-[#b48b5a] hover:text-white"></i>
+                    <i class="fab fa-twitter text-[#b48b5a] hover:text-white"></i>
+                </div>
+            </div>
+            <!-- Barber 3 -->
+            <div class="text-center">
+                <div class="w-32 h-32 rounded-full border-2 border-[#b48b5a] mx-auto mb-4 flex items-center justify-center bg-[#1a1310]">
+                    <i class="fas fa-user-tie text-6xl text-[#b48b5a]"></i>
+                </div>
+                <h3 class="text-2xl serif-head text-white">Dmitri Volkov</h3>
+                <p class="text-[#b48b5a]">Style Director · 10 yrs</p>
+                <p class="text-gray-400 text-sm mt-2">Contemporary styles and precision cutting.</p>
+                <div class="flex justify-center gap-3 mt-3">
+                    <i class="fab fa-instagram text-[#b48b5a] hover:text-white"></i>
+                    <i class="fab fa-twitter text-[#b48b5a] hover:text-white"></i>
+                </div>
+            </div>
         </div>
     </section>
 
-    <!-- ========== PRODUCTS – graphic icons only ========= -->
-    <section id="products" class="max-w-6xl mx-auto px-5 py-24">
-        <h2 class="text-3xl brand-head text-white mb-8">the apothecary</h2>
+    <!-- PRODUCTS (with proper barber product icons) -->
+    <section id="products" class="max-w-7xl mx-auto px-4 pb-24">
+        <div class="text-center mb-12">
+            <i class="fas fa-oil-can text-3xl text-[#b48b5a] mb-3"></i>
+            <h2 class="text-4xl md:text-5xl serif-head text-white mb-3">The Apothecary</h2>
+            <div class="w-24 h-px bg-[#b48b5a] mx-auto"></div>
+        </div>
+
         <div class="grid grid-cols-3 md:grid-cols-6 gap-4">
-            <div class="detail-card p-4 text-center"><span class="text-4xl block mb-1">🧴</span><span class="text-sm">beard oil</span><span class="text-amber-400 block">$15</span></div>
-            <div class="detail-card p-4 text-center"><span class="text-4xl block mb-1">⚱️</span><span class="text-sm">pomade</span><span class="text-amber-400">$20</span></div>
-            <div class="detail-card p-4 text-center"><span class="text-4xl block mb-1">🧪</span><span class="text-sm">shampoo</span><span class="text-amber-400">$10</span></div>
-            <div class="detail-card p-4 text-center"><span class="text-4xl block mb-1">🧼</span><span class="text-sm">conditioner</span><span class="text-amber-400">$12</span></div>
-            <div class="detail-card p-4 text-center"><span class="text-4xl block mb-1">🪒</span><span class="text-sm">razor</span><span class="text-amber-400">$25</span></div>
-            <div class="detail-card p-4 text-center"><span class="text-4xl block mb-1">🪥</span><span class="text-sm">brush</span><span class="text-amber-400">$8</span></div>
+            <div class="service-card p-4 text-center">
+                <i class="fas fa-oil-can text-3xl text-[#b48b5a] mb-2"></i>
+                <span class="block text-sm">Beard Oil</span>
+                <span class="text-[#b48b5a]">$15</span>
+            </div>
+            <div class="service-card p-4 text-center">
+                <i class="fas fa-jar text-3xl text-[#b48b5a] mb-2"></i>
+                <span class="block text-sm">Pomade</span>
+                <span class="text-[#b48b5a]">$20</span>
+            </div>
+            <div class="service-card p-4 text-center">
+                <i class="fas fa-bottle-water text-3xl text-[#b48b5a] mb-2"></i>
+                <span class="block text-sm">Shampoo</span>
+                <span class="text-[#b48b5a]">$10</span>
+            </div>
+            <div class="service-card p-4 text-center">
+                <i class="fas fa-bottle-droplet text-3xl text-[#b48b5a] mb-2"></i>
+                <span class="block text-sm">Conditioner</span>
+                <span class="text-[#b48b5a]">$12</span>
+            </div>
+            <div class="service-card p-4 text-center">
+                <i class="fas fa-razor text-3xl text-[#b48b5a] mb-2"></i>
+                <span class="block text-sm">Razor Set</span>
+                <span class="text-[#b48b5a]">$25</span>
+            </div>
+            <div class="service-card p-4 text-center">
+                <i class="fas fa-brush text-3xl text-[#b48b5a] mb-2"></i>
+                <span class="block text-sm">Brush</span>
+                <span class="text-[#b48b5a]">$8</span>
+            </div>
         </div>
     </section>
 
-    <!-- GALLERY – grid without actual images, just graphic tiles -->
-    <section id="gallery" class="max-w-6xl mx-auto px-5 pb-16">
-        <h2 class="text-3xl brand-head text-white mb-6">the gallery</h2>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 auto-rows-[140px]">
-            <div class="bg-[#1d2530] rounded-2xl flex items-center justify-center text-5xl border border-[#323e4c]">⌛</div>
-            <div class="bg-[#1d2530] rounded-2xl flex items-center justify-center text-5xl border border-[#323e4c]">✂️</div>
-            <div class="bg-[#1d2530] rounded-2xl flex items-center justify-center text-5xl border border-[#323e4c]">🪞</div>
-            <div class="bg-[#1d2530] rounded-2xl flex items-center justify-center text-5xl border border-[#323e4c]">⚜️</div>
-            <div class="bg-[#1d2530] rounded-2xl flex items-center justify-center text-5xl col-span-2 border border-[#323e4c]">💈</div>
-            <div class="bg-[#1d2530] rounded-2xl flex items-center justify-center text-5xl border border-[#323e4c]">🧔</div>
-            <div class="bg-[#1d2530] rounded-2xl flex items-center justify-center text-5xl border border-[#323e4c]">🔹</div>
+    <!-- GALLERY - Barber Shop Style Grid -->
+    <section id="gallery" class="max-w-7xl mx-auto px-4 pb-24">
+        <div class="text-center mb-12">
+            <i class="fas fa-images text-3xl text-[#b48b5a] mb-3"></i>
+            <h2 class="text-4xl md:text-5xl serif-head text-white mb-3">The Gallery</h2>
+            <div class="w-24 h-px bg-[#b48b5a] mx-auto"></div>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="aspect-square bg-[#1a1310] border border-[#4a3c33] rounded flex items-center justify-center">
+                <i class="fas fa-chair text-5xl text-[#b48b5a] opacity-60"></i>
+            </div>
+            <div class="aspect-square bg-[#1a1310] border border-[#4a3c33] rounded flex items-center justify-center">
+                <i class="fas fa-razor text-5xl text-[#b48b5a] opacity-60"></i>
+            </div>
+            <div class="aspect-square bg-[#1a1310] border border-[#4a3c33] rounded flex items-center justify-center">
+                <i class="fas fa-scissors text-5xl text-[#b48b5a] opacity-60"></i>
+            </div>
+            <div class="aspect-square bg-[#1a1310] border border-[#4a3c33] rounded flex items-center justify-center">
+                <i class="fas fa-spa text-5xl text-[#b48b5a] opacity-60"></i>
+            </div>
+            <div class="aspect-square bg-[#1a1310] border border-[#4a3c33] rounded flex items-center justify-center">
+                <i class="fas fa-towel text-5xl text-[#b48b5a] opacity-60"></i>
+            </div>
+            <div class="aspect-square bg-[#1a1310] border border-[#4a3c33] rounded flex items-center justify-center">
+                <i class="fas fa-clock text-5xl text-[#b48b5a] opacity-60"></i>
+            </div>
+            <div class="aspect-square bg-[#1a1310] border border-[#4a3c33] rounded flex items-center justify-center">
+                <i class="fas fa-mug-hot text-5xl text-[#b48b5a] opacity-60"></i>
+            </div>
+            <div class="aspect-square bg-[#1a1310] border border-[#4a3c33] rounded flex items-center justify-center">
+                <i class="fas fa-crown text-5xl text-[#b48b5a] opacity-60"></i>
+            </div>
         </div>
     </section>
 
-    <!-- BEFORE / AFTER SLIDER – using graphic symbols (no photos) -->
-    <section class="max-w-3xl mx-auto px-5 pb-24">
-        <h2 class="text-3xl brand-head text-white mb-6 text-center">before · after</h2>
-        <div class="ba-slider border border-[#3a4452]">
-            <div class="before flex items-center justify-center text-8xl bg-[#202a34] text-amber-400/70">⌛</div>
-            <div class="flex items-center justify-center text-8xl bg-[#16222e] text-gray-500">✧</div>
+    <!-- BEFORE & AFTER SLIDER (Barber Style) -->
+    <section class="max-w-4xl mx-auto px-4 pb-24">
+        <div class="text-center mb-8">
+            <i class="fas fa-arrow-right-arrow-left text-3xl text-[#b48b5a] mb-3"></i>
+            <h2 class="text-4xl serif-head text-white mb-3">Before · After</h2>
+        </div>
+        
+        <div class="before-after-slider">
+            <div class="absolute inset-0 flex">
+                <div class="flex-1 border-r-2 border-[#b48b5a] flex items-center justify-center bg-[#2c1e1a]">
+                    <i class="fas fa-user text-7xl text-[#b48b5a] opacity-40"></i>
+                    <span class="absolute bottom-4 left-4 text-sm text-[#b48b5a]">BEFORE</span>
+                </div>
+                <div class="flex-1 flex items-center justify-center bg-[#1a1310]">
+                    <i class="fas fa-user-check text-7xl text-[#b48b5a]"></i>
+                    <span class="absolute bottom-4 right-4 text-sm text-[#b48b5a]">AFTER</span>
+                </div>
+            </div>
             <input type="range" min="0" max="100" value="50">
         </div>
-        <p class="text-xs text-gray-500 text-center mt-3">slide to reveal transformation</p>
     </section>
 
-    <!-- 6 VIDEO GRID (placeholders, no actual video) -->
-    <section class="max-w-6xl mx-auto px-5 pb-24">
-        <h2 class="text-3xl brand-head text-white mb-6">masterclass</h2>
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-            <div class="video-place">▶</div><div class="video-place">▶</div><div class="video-place">▶</div>
-            <div class="video-place">▶</div><div class="video-place">▶</div><div class="video-place">▶</div>
+    <!-- VIDEO PLACEHOLDERS (Barber Themed) -->
+    <section class="max-w-7xl mx-auto px-4 pb-24">
+        <div class="text-center mb-8">
+            <i class="fas fa-video text-3xl text-[#b48b5a] mb-3"></i>
+            <h2 class="text-4xl serif-head text-white mb-3">Masterclasses</h2>
+        </div>
+        <div class="grid md:grid-cols-3 gap-4">
+            <div class="video-placeholder"><i class="fas fa-play-circle text-5xl text-[#b48b5a]"></i></div>
+            <div class="video-placeholder"><i class="fas fa-play-circle text-5xl text-[#b48b5a]"></i></div>
+            <div class="video-placeholder"><i class="fas fa-play-circle text-5xl text-[#b48b5a]"></i></div>
+            <div class="video-placeholder"><i class="fas fa-play-circle text-5xl text-[#b48b5a]"></i></div>
+            <div class="video-placeholder"><i class="fas fa-play-circle text-5xl text-[#b48b5a]"></i></div>
+            <div class="video-placeholder"><i class="fas fa-play-circle text-5xl text-[#b48b5a]"></i></div>
         </div>
     </section>
 
-    <!-- TESTIMONIALS slider with clean typography -->
-    <section id="testimonials" class="max-w-4xl mx-auto px-5 pb-24">
-        <h2 class="text-3xl brand-head text-white mb-8 text-center">kind words</h2>
-        <div class="relative overflow-hidden rounded-3xl detail-card p-10">
-            <div id="slider" class="flex transition-transform duration-500">
-                <div class="min-w-full text-center"><p class="text-xl text-white">"sharpest cut in town. immaculate."</p><span class="text-amber-400 text-2xl">★★★★★</span><p class="mt-2 text-gray-400">– alex r.</p></div>
-                <div class="min-w-full text-center"><p class="text-xl text-white">"the hot towel ritual is perfection."</p><span class="text-amber-400 text-2xl">★★★★★</span><p class="mt-2 text-gray-400">– marcus L.</p></div>
-                <div class="min-w-full text-center"><p class="text-xl text-white">"finally a place that understands beard."</p><span class="text-amber-400 text-2xl">★★★★★</span><p class="mt-2 text-gray-400">– d. choi</p></div>
+    <!-- TESTIMONIALS -->
+    <section class="max-w-4xl mx-auto px-4 pb-24">
+        <div class="text-center mb-8">
+            <i class="fas fa-comment text-3xl text-[#b48b5a] mb-3"></i>
+            <h2 class="text-4xl serif-head text-white mb-3">Testimonials</h2>
+        </div>
+
+        <div class="leather-card p-8 relative overflow-hidden">
+            <div id="testimonial-slider" class="flex transition-transform duration-500">
+                <div class="min-w-full text-center">
+                    <i class="fas fa-quote-left text-3xl text-[#b48b5a] opacity-50 mb-4"></i>
+                    <p class="text-xl text-white">"Best hot towel shave I've ever had. True artisans."</p>
+                    <div class="text-[#b48b5a] text-xl my-2">★★★★★</div>
+                    <p class="text-gray-400">— James R.</p>
+                </div>
+                <div class="min-w-full text-center">
+                    <i class="fas fa-quote-left text-3xl text-[#b48b5a] opacity-50 mb-4"></i>
+                    <p class="text-xl text-white">"Finally found a barber who understands my beard."</p>
+                    <div class="text-[#b48b5a] text-xl my-2">★★★★★</div>
+                    <p class="text-gray-400">— Michael T.</p>
+                </div>
+                <div class="min-w-full text-center">
+                    <i class="fas fa-quote-left text-3xl text-[#b48b5a] opacity-50 mb-4"></i>
+                    <p class="text-xl text-white">"The atmosphere, the craftsmanship — unmatched."</p>
+                    <div class="text-[#b48b5a] text-xl my-2">★★★★★</div>
+                    <p class="text-gray-400">— David K.</p>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- FAQ minimal, clean -->
-    <section class="max-w-3xl mx-auto px-5 pb-24">
-        <h2 class="text-3xl brand-head text-white mb-6">faq</h2>
-        <details class="detail-card p-5 mb-3"><summary class="cursor-pointer text-white font-medium">hours?</summary><p class="mt-3 text-gray-400 text-sm">mon–fri 9–6 · sat 10–4 · sun closed</p></details>
-        <details class="detail-card p-5"><summary class="cursor-pointer text-white font-medium">how to book?</summary><p class="mt-3 text-gray-400 text-sm">online form or book button above.</p></details>
+    <!-- FAQ -->
+    <section class="max-w-3xl mx-auto px-4 pb-24">
+        <h2 class="text-4xl serif-head text-white text-center mb-8">FAQ</h2>
+        <details class="leather-card p-5 mb-3">
+            <summary class="cursor-pointer font-semibold flex items-center gap-2"><i class="fas fa-clock text-[#b48b5a]"></i> Hours of operation?</summary>
+            <p class="mt-3 text-gray-400">Mon-Fri: 9am-6pm | Sat: 10am-4pm | Sun: Closed</p>
+        </details>
+        <details class="leather-card p-5">
+            <summary class="cursor-pointer font-semibold flex items-center gap-2"><i class="fas fa-calendar-check text-[#b48b5a]"></i> How do I book?</summary>
+            <p class="mt-3 text-gray-400">Use the booking form above or click the "Book Now" button.</p>
+        </details>
     </section>
 
-    <!-- CTA banner – clean amber -->
-    <section class="bg-[#c0a35c] py-14 text-center text-black">
-        <h2 class="text-4xl brand-head">ready for a fresh cut?</h2>
-        <button id="cta-book" class="mt-4 bg-black text-white px-8 py-4 rounded-full text-sm font-semibold hover:bg-[#1e1e1e]">book now</button>
+    <!-- CTA BANNER -->
+    <section class="bg-[#b48b5a] py-16">
+        <div class="max-w-4xl mx-auto text-center text-black">
+            <h2 class="text-4xl md:text-5xl serif-head mb-4">Ready for a fresh cut?</h2>
+            <button id="cta-book" class="bg-black text-white px-10 py-4 text-lg font-semibold uppercase tracking-wider hover:bg-gray-900 transition flex items-center gap-3 mx-auto">
+                <i class="fas fa-scissors"></i> Book Now
+            </button>
+        </div>
     </section>
 
-    <!-- promotion banner minimal -->
-    <section class="bg-[#1f2a35] py-4 text-center text-amber-300 text-lg font-medium">20% off first visit — walk‑ins welcome</section>
+    <!-- PROMO BANNER -->
+    <section class="bg-[#2c1e1a] py-4 text-center border-y border-[#b48b5a]">
+        <p class="text-[#b48b5a] text-lg font-semibold"><i class="fas fa-gift mr-2"></i> 20% OFF first visit — mention "ELITE"</p>
+    </section>
 
     <!-- OPENING HOURS + STATUS -->
-    <section id="hours" class="max-w-4xl mx-auto px-5 py-24 text-center">
-        <h2 class="text-3xl brand-head text-white mb-4">hours</h2>
-        <div class="detail-card p-8 inline-block mx-auto">
-            <p>mon–fri  9:00 – 18:00</p><p>sat 10:00 – 16:00</p><p>sun  closed</p>
-            <p id="status" class="mt-5 text-lg font-medium text-amber-400"></p>
+    <section class="max-w-4xl mx-auto px-4 py-24">
+        <div class="text-center leather-card p-8">
+            <i class="fas fa-store text-4xl text-[#b48b5a] mb-4"></i>
+            <h2 class="text-3xl serif-head text-white mb-4">Opening Hours</h2>
+            <p>Mon - Fri: 9:00 AM - 6:00 PM</p>
+            <p>Sat: 10:00 AM - 4:00 PM</p>
+            <p>Sun: Closed</p>
+            <p id="status" class="mt-6 text-xl font-semibold text-[#b48b5a]"></p>
         </div>
     </section>
 
-    <!-- CONTACT / LOCATION with map placeholder (graphic) & icon buttons -->
-    <section id="contact" class="max-w-6xl mx-auto px-5 pb-24">
-        <h2 class="text-3xl brand-head text-white mb-8">contact / location</h2>
+    <!-- CONTACT + MAP -->
+    <section id="contact" class="max-w-7xl mx-auto px-4 pb-24">
         <div class="grid md:grid-cols-2 gap-8">
-            <div class="bg-[#19212b] rounded-3xl h-64 flex items-center justify-center text-7xl border border-[#384452]">🗺️</div>
+            <div class="bg-[#1a1310] border border-[#b48b5a] rounded-xl h-96 flex items-center justify-center">
+                <i class="fas fa-map-location-dot text-8xl text-[#b48b5a] opacity-50"></i>
+                <p class="absolute text-sm text-gray-400 mt-24">123 Main St · City, State</p>
+            </div>
             <div>
-                <p class="text-xl text-white mb-2">123 main street · city, state</p>
-                <a href="tel:+1234567890" class="block w-full bg-[#2a3543] hover:bg-[#3a4759] text-white rounded-full py-3 text-center mb-3 border border-[#54657a]">📞 call</a>
-                <a href="#" class="block w-full bg-[#2a3543] hover:bg-[#3a4759] text-white rounded-full py-3 text-center mb-5 border border-[#54657a]">💬 whatsapp</a>
-                <form><input type="text" placeholder="name" class="w-full mb-3 p-3 bg-[#1b242f] border border-[#364150] rounded-full"><input type="email" placeholder="email" class="w-full mb-3 p-3 bg-[#1b242f] border border-[#364150] rounded-full"><textarea placeholder="message" class="w-full p-3 bg-[#1b242f] border border-[#364150] rounded-2xl"></textarea><button class="bg-amber-400 text-black px-6 py-3 rounded-full mt-2 w-full font-semibold">send</button></form>
+                <h2 class="text-3xl serif-head text-white mb-6">Get in Touch</h2>
+                <a href="tel:+1234567890" class="block leather-card p-4 mb-3 hover:border-[#b48b5a] transition">
+                    <i class="fas fa-phone-alt text-[#b48b5a] mr-3"></i> (123) 456-7890
+                </a>
+                <a href="#" class="block leather-card p-4 mb-6 hover:border-[#b48b5a] transition">
+                    <i class="fab fa-whatsapp text-[#b48b5a] mr-3"></i> WhatsApp Us
+                </a>
+                <form>
+                    <input type="text" placeholder="Name" class="w-full mb-3 p-3 bg-[#2c1e1a] border border-[#4a3c33] rounded">
+                    <input type="email" placeholder="Email" class="w-full mb-3 p-3 bg-[#2c1e1a] border border-[#4a3c33] rounded">
+                    <textarea placeholder="Message" class="w-full mb-3 p-3 bg-[#2c1e1a] border border-[#4a3c33] rounded" rows="4"></textarea>
+                    <button class="bg-[#b48b5a] text-black px-6 py-3 font-semibold w-full hover:bg-[#c9a16e] flex items-center justify-center gap-2">
+                        <i class="fas fa-paper-plane"></i> Send Message
+                    </button>
+                </form>
             </div>
         </div>
     </section>
 
-    <!-- instagram feed placeholder (icons) -->
-    <section class="max-w-6xl mx-auto px-5 pb-20">
-        <h2 class="text-2xl brand-head text-white mb-4">@elitebarber</h2>
+    <!-- INSTAGRAM FEED -->
+    <section class="max-w-7xl mx-auto px-4 pb-24">
+        <div class="flex items-center justify-center gap-2 mb-6">
+            <i class="fab fa-instagram text-3xl text-[#b48b5a]"></i>
+            <h2 class="text-2xl serif-head text-white">@elitebarbers</h2>
+        </div>
         <div class="grid grid-cols-3 gap-2">
-            <div class="aspect-square bg-[#1d2631] rounded-2xl flex items-center justify-center text-5xl">📸</div>
-            <div class="aspect-square bg-[#1d2631] rounded-2xl flex items-center justify-center text-5xl">📷</div>
-            <div class="aspect-square bg-[#1d2631] rounded-2xl flex items-center justify-center text-5xl">✨</div>
+            <div class="aspect-square bg-[#1a1310] border border-[#4a3c33] rounded flex items-center justify-center"><i class="fas fa-camera text-4xl text-[#b48b5a] opacity-40"></i></div>
+            <div class="aspect-square bg-[#1a1310] border border-[#4a3c33] rounded flex items-center justify-center"><i class="fas fa-camera text-4xl text-[#b48b5a] opacity-40"></i></div>
+            <div class="aspect-square bg-[#1a1310] border border-[#4a3c33] rounded flex items-center justify-center"><i class="fas fa-camera text-4xl text-[#b48b5a] opacity-40"></i></div>
         </div>
     </section>
 
-    <!-- FOOTER with newsletter (graphic) -->
-    <footer class="border-t border-[#2f3946] py-12 px-5 glass-card rounded-none">
-        <div class="max-w-4xl mx-auto text-center">
-            <h3 class="text-2xl text-white mb-4">subscribe to the chronicle</h3>
-            <form class="flex max-w-md mx-auto gap-2"><input type="email" placeholder="your email" class="flex-1 p-3 bg-[#1e2937] rounded-full border border-[#405368]"><button class="bg-amber-400 px-6 rounded-full text-black font-semibold">→</button></form>
-            <div class="flex justify-center gap-8 my-6 text-sm"><a href="#" class="hover:text-amber-400">twitter</a><a href="#" class="hover:text-amber-400">instagram</a><a href="#" class="hover:text-amber-400">facebook</a></div>
-            <p class="text-gray-500 text-xs">© 2026 elite barber · all rights reserved</p>
+    <!-- FOOTER -->
+    <footer class="border-t border-[#b48b5a] py-12 bg-[#0f0b0a]">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center">
+                <div class="flex items-center justify-center gap-2 mb-4">
+                    <i class="fas fa-cut text-[#b48b5a]"></i>
+                    <span class="serif-head text-2xl text-white">ELITE·BARBERS</span>
+                </div>
+                <form class="max-w-md mx-auto flex gap-2 mb-6">
+                    <input type="email" placeholder="Email for newsletter" class="flex-1 p-3 bg-[#2c1e1a] border border-[#4a3c33] rounded">
+                    <button class="bg-[#b48b5a] text-black px-4 rounded hover:bg-[#c9a16e]"><i class="fas fa-arrow-right"></i></button>
+                </form>
+                <div class="flex justify-center gap-6 mb-6">
+                    <i class="fab fa-instagram text-2xl text-[#b48b5a] hover:text-white"></i>
+                    <i class="fab fa-facebook text-2xl text-[#b48b5a] hover:text-white"></i>
+                    <i class="fab fa-twitter text-2xl text-[#b48b5a] hover:text-white"></i>
+                </div>
+                <p class="text-gray-500 text-sm">© 2026 Elite Barbers · All rights reserved</p>
+            </div>
         </div>
     </footer>
 
-    <!-- MODAL (minimal) -->
-    <div id="modal" class="fixed inset-0 bg-black/80 hidden flex justify-center items-center z-50"><div class="bg-[#141c26] p-8 rounded-3xl w-96 max-w-md border border-[#4f5f72]"><h2 class="text-2xl text-white mb-4">book</h2><form><input placeholder="name" class="w-full p-3 mb-3 bg-[#1e2a37] rounded-full"><select class="w-full p-3 mb-3 bg-[#1e2a37] rounded-full"><option>haircut</option></select><input type="date" class="w-full p-3 mb-3 bg-[#1e2a37] rounded-full"><button class="w-full bg-amber-400 text-black py-3 rounded-full font-semibold">confirm</button></form><button id="close-modal" class="mt-4 text-gray-400 text-sm">close</button></div></div>
+    <!-- MODAL -->
+    <div id="modal" class="fixed inset-0 bg-black bg-opacity-90 hidden flex justify-center items-center z-50">
+        <div class="modal-content p-8 rounded-xl max-w-md w-full">
+            <h2 class="text-2xl serif-head text-white mb-4 flex items-center gap-2"><i class="fas fa-calendar-alt text-[#b48b5a]"></i> Book Appointment</h2>
+            <form>
+                <input type="text" placeholder="Full Name" class="w-full mb-3 p-3 bg-[#2c1e1a] border border-[#4a3c33] rounded">
+                <select class="w-full mb-3 p-3 bg-[#2c1e1a] border border-[#4a3c33] rounded">
+                    <option>Classic Haircut</option>
+                    <option>Hot Towel Shave</option>
+                    <option>Beard Trim</option>
+                    <option>Full Package</option>
+                </select>
+                <input type="date" class="w-full mb-3 p-3 bg-[#2c1e1a] border border-[#4a3c33] rounded">
+                <input type="time" class="w-full mb-4 p-3 bg-[#2c1e1a] border border-[#4a3c33] rounded">
+                <button type="submit" class="bg-[#b48b5a] text-black p-3 font-semibold w-full hover:bg-[#c9a16e] flex items-center justify-center gap-2">
+                    <i class="fas fa-paper-plane"></i> Confirm Booking
+                </button>
+            </form>
+            <button id="close-modal" class="mt-4 text-gray-400 text-sm w-full">Close</button>
+        </div>
+    </div>
 
-    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <script>
-        AOS && AOS.init({ duration: 800 });   // AOS optional
-        // mobile
-        document.getElementById('hamburger').addEventListener('click', ()=>{
+        // Mobile menu toggle
+        document.getElementById('hamburger').addEventListener('click', () => {
             document.getElementById('mobile-menu').classList.toggle('hidden');
         });
-        // modal
-        const modal=document.getElementById('modal');
-        document.querySelectorAll('#book-btn, #book-hero-btn, #cta-book').forEach(btn=>btn.addEventListener('click', ()=>modal.classList.remove('hidden')));
-        document.getElementById('close-modal').addEventListener('click', ()=>modal.classList.add('hidden'));
-        // simple slider loop
-        const slider=document.getElementById('slider'); let idx=0;
-        setInterval(()=>{ idx=(idx+1)%3; slider.style.transform=`translateX(-${idx*100}%)`; },4200);
-        // open/closed status
-        const s=document.getElementById('status'); const d=new Date(); const day=d.getDay(), h=d.getHours();
-        if((day>=1&&day<=5&&h>=9&&h<18)||(day===6&&h>=10&&h<16)) { s.innerHTML='⚫ open now'; s.classList.add('text-amber-400'); } else { s.innerHTML='● currently closed'; s.classList.add('text-gray-500'); }
+
+        // Modal
+        const modal = document.getElementById('modal');
+        const bookBtns = ['book-btn', 'hero-book', 'cta-book'];
+        bookBtns.forEach(id => {
+            const btn = document.getElementById(id);
+            if (btn) btn.addEventListener('click', () => modal.classList.remove('hidden'));
+        });
+        document.getElementById('close-modal').addEventListener('click', () => modal.classList.add('hidden'));
+
+        // Testimonial slider
+        const slider = document.getElementById('testimonial-slider');
+        let idx = 0;
+        setInterval(() => {
+            idx = (idx + 1) % 3;
+            slider.style.transform = `translateX(-${idx * 100}%)`;
+        }, 5000);
+
+        // Open/closed status
+        const status = document.getElementById('status');
+        const now = new Date();
+        const day = now.getDay();
+        const hour = now.getHours();
+        if ((day >= 1 && day <= 5 && hour >= 9 && hour < 18) || (day === 6 && hour >= 10 && hour < 16)) {
+            status.innerHTML = '<i class="fas fa-door-open mr-2"></i> OPEN NOW';
+        } else {
+            status.innerHTML = '<i class="fas fa-door-closed mr-2"></i> CLOSED';
+        }
     </script>
 </body>
 </html>
