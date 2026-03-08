@@ -1,1 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noble | Heritage Barbershop</title>
+    <!-- Tailwind + AOS + Fonts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Fonts: Playfair Display (bold serif) + Lato / Montserrat (clean sans) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Lato:wght@300;400;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Font Awesome 6 (free) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --cream: #FDF8F2;        /* light cream background */
+            --light-brown: #D9C5B3;   /* light brown for cards */
+            --espresso: #4A3B2F;       /* deep espresso text/accents */
+            --warm-gold: #B9997A;       /* warm accent for buttons */
+        }
+        body {
+            background-color: var(--cream);
+            font-family: 'Lato', 'Montserrat', sans-serif;
+            color: var(--espresso);
+            overflow-x: hidden;
+        }
+        h1, h2, h3, .heading-serif {
+            font-family: 'Playfair Display', serif;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+        }
+        .btn-primary {
+            background-color: var(--espresso);
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 40px;
+            font-weight: 600;
+            transition: all 0.2s;
+            border: 1px solid var(--espresso);
+        }
+        .btn-primary:hover {
+            background-color: transparent;
+            color: var(--espresso);
+        }
+        .btn-outline {
+            border: 1px solid var(--espresso);
+            color: var(--espresso);
+            padding: 0.5rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .btn-outline:hover {
+            background-color: var(--espresso);
+            color: white;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(74, 59, 47, 0.1);
+        }
+        .trending-badge {
+            background-color: var(--warm-gold);
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            margin-left: 0.5rem;
+            display: inline-block;
+            font-weight: 600;
+        }
+        .barber-card {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 12px 30px rgba(74, 59, 47, 0.08);
+            transition: transform 0.2s;
+        }
+        .barber-card:hover {
+            transform: translateY(-6px);
+        }
+        .testimonial-slider {
+            scroll-behavior: smooth;
+        }
+        .status-open {
+            color: #2b7a4b;
+            font-weight: 600;
+            background: #e3f5e9;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            display: inline-block;
+        }
+        .status-closed {
+            color: #a13e3e;
+            background: #ffe6e6;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-weight: 600;
+        }
+        /* gallery hover */
+        .gallery-item {
+            overflow: hidden;
+            border-radius: 24px;
+            aspect-ratio: 1/1;
+        }
+        .gallery-item img {
+            transition: transform 0.4s;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+        /* calendar / booking placeholder */
+        .time-slot {
+            background: white;
+            border: 1px solid #e5d9cf;
+            border-radius: 30px;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .time-slot:hover {
+            background: var(--light-brown);
+            border-color: var(--espresso);
+        }
+        /* footer */
+        .footer-bg {
+            background: #e5d3c4;  /* warm light brown */
+        }
+    </style>
+</head>
+<body class="antialiased">
 
+    <!-- ====== NAVIGATION ====== -->
+    <nav class="w-full py-5 px-6 md:px-12 flex justify-between items-center bg-[#FDF8F2]/90 backdrop-blur-sm sticky top-0 z-50 border-b border-[#4A3B2F]/10">
+        <div class="text-3xl heading-serif text-[#4A3B2F] tracking-tight">NOBLE</div>
+        <div class="hidden md:flex space-x-10 text-sm font-medium items-center">
+            <a href="#services" class="hover:text-[#B9997A]">SERVICES</a>
+            <a href="#barbers" class="hover:text-[#B9997A]">BARBERS</a>
+            <a href="#gallery" class="hover:text-[#B9997A]">GALLERY</a>
+            <a href="#contact" class="hover:text-[#B9997A]">CONTACT</a>
+            <a href="#booking" class="btn-outline">BOOK NOW</a>
+        </div>
+        <button id="mobileMenuBtn" class="md:hidden p-2 focus:outline-none">
+            <i class="fas fa-bars text-2xl text-[#4A3B2F]"></i>
+        </button>
+    </nav>
+
+    <!-- mobile menu overlay (simple) -->
+    <div id="mobileMenu" class="hidden fixed inset-0 bg-[#FDF8F2] z-50 flex flex-col items-center justify-center space-y-8 text-2xl heading-serif">
+        <a href="#services" class="close-mobile">SERVICES</a>
+        <a href="#barbers" class="close-mobile">BARBERS</a>
+        <a href="#gallery" class="close-mobile">GALLERY</a>
+        <a href="#contact" class="close-mobile">CONTACT</a>
+        <a href="#booking" class="btn-primary close-mobile">BOOK NOW</a>
+        <button id="closeMobile" class="absolute top-6 right-6 text-3xl"><i class="fas fa-times"></i></button>
+    </div>
+
+    <!-- ====== HERO SECTION ====== -->
+    <section class="relative px-4 md:px-12 py-20 md:py-28 max-w-7xl mx-auto" data-aos="fade-in">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+                <span class="text-sm uppercase tracking-[0.3em] text-[#B9997A] font-semibold">Est. 1987</span>
+                <h1 class="text-5xl md:text-7xl my-6 heading-serif leading-[1.1]">Crafting Confidence <br><span class="text-[#B9997A]">Since 1987</span></h1>
+                <p class="text-lg md:text-xl text-[#4A3B2F]/80 max-w-lg">Where heritage meets modern grooming. Walk in for a cut, leave with a legacy.</p>
+                <div class="flex flex-wrap gap-5 mt-10">
+                    <a href="#booking" class="btn-primary text-lg px-8 py-4">✂️ Book Appointment</a>
+                    <a href="#services" class="btn-outline text-lg px-8 py-4">View Services</a>
+                </div>
+                <!-- soft imagery hint -->
+                <div class="flex mt-12 space-x-4 items-center">
+                    <div class="w-12 h-12 rounded-full bg-[#D9C5B3] flex items-center justify-center"><i class="fas fa-scissors text-[#4A3B2F]"></i></div>
+                    <div class="w-12 h-12 rounded-full bg-[#D9C5B3] flex items-center justify-center"><i class="fas fa-razor"></i></div>
+                    <div class="w-12 h-12 rounded-full bg-[#D9C5B3] flex items-center justify-center"><i class="fas fa-leaf"></i></div>
+                </div>
+            </div>
+            <div class="relative">
+                <!-- placeholder image: leather chair / barber image (simulated) -->
+                <div class="bg-[#D9C5B3] rounded-[3rem] shadow-2xl h-[480px] w-full overflow-hidden">
+                    <div class="w-full h-full bg-gradient-to-br from-[#b89b83] to-[#7a5f4b] flex items-center justify-center text-white text-opacity-40 text-8xl">
+                        <i class="fas fa-chair"></i>
+                    </div>
+                </div>
+                <!-- floating card -->
+                <div class="absolute -bottom-6 -left-6 bg-white p-5 rounded-3xl shadow-xl glass-card">
+                    <p class="font-bold">⭐️ 5.0 rating</p>
+                    <p class="text-sm">"Best fade in town"</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====== SERVICES SECTION (with pricing, categories, trending badge) ====== -->
+    <section id="services" class="py-24 px-6 bg-white" data-aos="fade-up">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center max-w-2xl mx-auto">
+                <h2 class="text-4xl md:text-5xl heading-serif mb-4">The Master's Menu</h2>
+                <p class="text-[#4A3B2F]/70">Precision cuts, classic shaves, and total grooming rituals.</p>
+            </div>
+
+            <!-- service categories -->
+            <div class="grid md:grid-cols-3 gap-8 mt-16">
+                <!-- Haircuts -->
+                <div class="bg-[#FDF8F2] p-8 rounded-3xl shadow-md border border-[#4A3B2F]/10">
+                    <h3 class="text-2xl heading-serif flex items-center gap-2"><i class="fas fa-cut text-[#B9997A]"></i> Haircuts</h3>
+                    <ul class="mt-6 space-y-4">
+                        <li class="flex justify-between items-center"><span>Classic Cut <span class="trending-badge">Trending</span></span> <span class="font-bold">$48</span></li>
+                        <li class="flex justify-between"><span>Skin Fade</span> <span class="font-bold">$55</span></li>
+                        <li class="flex justify-between"><span>Scissor Trim</span> <span class="font-bold">$42</span></li>
+                        <li class="flex justify-between"><span>Kids Cut</span> <span class="font-bold">$32</span></li>
+                    </ul>
+                </div>
+                <!-- Shaves -->
+                <div class="bg-[#FDF8F2] p-8 rounded-3xl shadow-md border border-[#4A3B2F]/10">
+                    <h3 class="text-2xl heading-serif flex items-center gap-2"><i class="fas fa-razor text-[#B9997A]"></i> Shaves</h3>
+                    <ul class="mt-6 space-y-4">
+                        <li class="flex justify-between"><span>Royal Hot Towel</span> <span class="font-bold">$40</span></li>
+                        <li class="flex justify-between"><span>Straight Razor <span class="trending-badge">Trending</span></span> <span class="font-bold">$52</span></li>
+                        <li class="flex justify-between"><span>Beard Sculpt</span> <span class="font-bold">$30</span></li>
+                    </ul>
+                </div>
+                <!-- Packages -->
+                <div class="bg-[#FDF8F2] p-8 rounded-3xl shadow-md border border-[#4A3B2F]/10">
+                    <h3 class="text-2xl heading-serif flex items-center gap-2"><i class="fas fa-spa text-[#B9997A]"></i> Grooming Packages</h3>
+                    <ul class="mt-6 space-y-4">
+                        <li class="flex justify-between"><span>The Noble <span class="trending-badge">Popular</span></span> <span class="font-bold">$120</span></li>
+                        <li class="flex justify-between"><span>Executive Cleanse</span> <span class="font-bold">$95</span></li>
+                        <li class="flex justify-between"><span>VIP Refresh</span> <span class="font-bold">$150</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====== ABOUT / PHILOSOPHY ====== -->
+    <section class="py-24 px-6 bg-[#FDF8F2]">
+        <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+            <div data-aos="fade-right">
+                <div class="bg-[#D9C5B3] h-96 rounded-[40px] shadow-2xl overflow-hidden flex items-center justify-center text-[#4A3B2F] text-8xl">
+                    <i class="fas fa-quote-right"></i>
+                </div>
+            </div>
+            <div data-aos="fade-left">
+                <span class="text-[#B9997A] tracking-widest text-sm">BARBER'S PHILOSOPHY</span>
+                <h2 class="text-4xl md:text-5xl heading-serif my-4">More Than a Cut, a Ritual</h2>
+                <p class="text-lg opacity-80 leading-relaxed">For three generations, Noble has stood for precision, integrity, and the art of conversation. Our chairs are heirlooms, our tools are extensions of the hand. We don't just style hair—we craft confidence that lasts well beyond the shop.</p>
+                <div class="flex mt-8 space-x-5">
+                    <span class="text-sm font-bold border-b-2 border-[#B9997A] pb-1">✂️ TRADITION</span>
+                    <span class="text-sm font-bold border-b-2 border-[#B9997A] pb-1">🧔 PRECISION</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====== BARBER PROFILES (interactive cards) ====== -->
+    <section id="barbers" class="py-24 px-6 bg-white">
+        <div class="max-w-6xl mx-auto text-center">
+            <h2 class="text-4xl md:text-5xl heading-serif mb-4">The Artisans</h2>
+            <p class="text-[#4A3B2F]/70 mb-16">Meet the masters behind the chair.</p>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Barber 1 -->
+                <div class="barber-card p-6 text-center" data-aos="zoom-in">
+                    <div class="w-32 h-32 mx-auto rounded-full bg-[#D9C5B3] flex items-center justify-center text-5xl"><i class="fas fa-user-tie"></i></div>
+                    <h3 class="text-2xl heading-serif mt-4">Dimitri Reyes</h3>
+                    <p class="text-[#B9997A] font-medium">Master Barber, 18yrs</p>
+                    <p class="text-sm mt-2 opacity-70">Specialty: Architectural fades</p>
+                    <div class="flex justify-center space-x-4 mt-4 text-xl">
+                        <a href="#" class="hover:text-[#B9997A]"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="hover:text-[#B9997A]"><i class="fab fa-x-twitter"></i></a>
+                        <a href="#" class="hover:text-[#B9997A]"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+                <!-- Barber 2 -->
+                <div class="barber-card p-6 text-center" data-aos="zoom-in" data-aos-delay="100">
+                    <div class="w-32 h-32 mx-auto rounded-full bg-[#D9C5B3] flex items-center justify-center text-5xl"><i class="fas fa-user"></i></div>
+                    <h3 class="text-2xl heading-serif mt-4">Lena Chen</h3>
+                    <p class="text-[#B9997A] font-medium">Straight-razor specialist</p>
+                    <p class="text-sm mt-2 opacity-70">Precision shaves & skin care</p>
+                    <div class="flex justify-center space-x-4 mt-4 text-xl">
+                        <a href="#" class="hover:text-[#B9997A]"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="hover:text-[#B9997A]"><i class="fab fa-x-twitter"></i></a>
+                    </div>
+                </div>
+                <!-- Barber 3 -->
+                <div class="barber-card p-6 text-center" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="w-32 h-32 mx-auto rounded-full bg-[#D9C5B3] flex items-center justify-center text-5xl"><i class="fas fa-user-graduate"></i></div>
+                    <h3 class="text-2xl heading-serif mt-4">Marcus Webb</h3>
+                    <p class="text-[#B9997A] font-medium">Traditionalist, 25yrs</p>
+                    <p class="text-sm mt-2 opacity-70">Classic cuts & hot towel</p>
+                    <div class="flex justify-center space-x-4 mt-4 text-xl">
+                        <a href="#" class="hover:text-[#B9997A]"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="hover:text-[#B9997A]"><i class="fab fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====== BOOKING INTEGRATION (functional-looking widget) ====== -->
+    <section id="booking" class="py-24 px-6 bg-[#FDF8F2]">
+        <div class="max-w-4xl mx-auto glass-card p-10 rounded-[40px] shadow-xl">
+            <h2 class="text-4xl heading-serif text-center mb-8">Secure your chair</h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <label class="block font-medium mb-2">Select service *</label>
+                    <select class="w-full p-3 rounded-full border border-[#4A3B2F]/20 bg-white">
+                        <option>Classic Cut</option>
+                        <option>Skin Fade</option>
+                        <option>Royal Shave</option>
+                        <option>The Noble Package</option>
+                    </select>
+                    <label class="block font-medium mt-5 mb-2">Preferred barber</label>
+                    <select class="w-full p-3 rounded-full border border-[#4A3B2F]/20">
+                        <option>Any artisan</option>
+                        <option>Dimitri</option>
+                        <option>Lena</option>
+                        <option>Marcus</option>
+                    </select>
+                    <label class="block font-medium mt-5 mb-2">Date</label>
+                    <input type="date" class="w-full p-3 rounded-full border border-[#4A3B2F]/20" value="2026-03-15">
+                </div>
+                <div>
+                    <label class="block font-medium mb-2">Available time slots</label>
+                    <div class="grid grid-cols-3 gap-2 mt-2">
+                        <span class="time-slot text-center">9:00</span>
+                        <span class="time-slot text-center">10:30</span>
+                        <span class="time-slot text-center bg-[#D9C5B3]">11:00</span>
+                        <span class="time-slot text-center">1:00</span>
+                        <span class="time-slot text-center">2:30</span>
+                        <span class="time-slot text-center">4:00</span>
+                    </div>
+                    <label class="block font-medium mt-6 mb-2">Your name</label>
+                    <input type="text" placeholder="Full name" class="w-full p-3 rounded-full border border-[#4A3B2F]/20">
+                    <button class="btn-primary w-full mt-8 py-4 text-lg">Complete Booking</button>
+                </div>
+            </div>
+            <p class="text-center text-sm mt-6 opacity-60">Demo — functional UI preview</p>
+        </div>
+    </section>
+
+    <!-- ====== GALLERY (fresh cuts) ====== -->
+    <section id="gallery" class="py-24 px-6">
+        <h2 class="text-4xl heading-serif text-center mb-4">Fresh Cuts</h2>
+        <p class="text-center mb-12">Portraits from the chair</p>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-6xl mx-auto">
+            <div class="gallery-item bg-[#D9C5B3] flex items-center justify-center"><i class="fas fa-camera text-5xl text-white/50"></i></div>
+            <div class="gallery-item bg-[#b89b83] flex items-center justify-center"><i class="fas fa-user text-5xl text-white/50"></i></div>
+            <div class="gallery-item bg-[#c7ad93] flex items-center justify-center"><i class="fas fa-scissors text-5xl text-white/50"></i></div>
+            <div class="gallery-item bg-[#a8866b] flex items-center justify-center"><i class="fas fa-spray-can text-5xl text-white/50"></i></div>
+        </div>
+    </section>
+
+    <!-- ====== TESTIMONIAL SLIDER ====== -->
+    <section class="py-20 bg-white">
+        <div class="max-w-4xl mx-auto px-6">
+            <h2 class="text-4xl heading-serif text-center">What clients say</h2>
+            <div class="flex overflow-x-auto testimonial-slider space-x-6 mt-12 pb-6">
+                <div class="min-w-[280px] p-8 rounded-3xl bg-[#FDF8F2] shadow-md flex-shrink-0">
+                    <div class="flex text-[#B9997A]">★★★★★</div>
+                    <p class="mt-3 italic">"Dimitri gave me the best fade of my life. The atmosphere is timeless."</p>
+                    <p class="mt-4 font-bold">— Alex R.</p>
+                </div>
+                <div class="min-w-[280px] p-8 rounded-3xl bg-[#FDF8F2] shadow-md flex-shrink-0">
+                    <div class="flex text-[#B9997A]">★★★★★</div>
+                    <p class="mt-3 italic">"Lena’s straight razor shave is pure therapy. I come back every month."</p>
+                    <p class="mt-4 font-bold">— Marcus T.</p>
+                </div>
+                <div class="min-w-[280px] p-8 rounded-3xl bg-[#FDF8F2] shadow-md flex-shrink-0">
+                    <div class="flex text-[#B9997A]">★★★★★</div>
+                    <p class="mt-3 italic">"A true gentleman's experience. The hot towel finish is unmatched."</p>
+                    <p class="mt-4 font-bold">— Jordan K.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====== CONTACT & LOCATION (with open/closed indicator + map placeholder) ====== -->
+    <section id="contact" class="py-24 px-6 bg-[#FDF8F2]">
+        <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-12">
+            <div>
+                <h2 class="text-4xl heading-serif mb-6">Visit the shop</h2>
+                <div class="w-full h-64 bg-[#D9C5B3] rounded-3xl flex items-center justify-center text-5xl shadow-inner mb-6">
+                    <i class="fas fa-map-pin"></i> <span class="text-sm ml-2">Google Maps placeholder</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <div><span class="font-bold">📍 124 Baker St, London</span></div>
+                    <div><span class="status-open"><i class="far fa-clock"></i> OPEN NOW</span></div>
+                </div>
+                <p class="mt-4"><i class="fas fa-phone-alt mr-2"></i> +44 20 7946 0138</p>
+                <p class="mt-2"><i class="fas fa-envelope mr-2"></i> hello@noblebarbers.com</p>
+            </div>
+            <div>
+                <h3 class="text-2xl heading-serif mb-4">Opening hours</h3>
+                <ul class="space-y-3 text-lg">
+                    <li class="flex justify-between border-b pb-2">Monday – Friday <span>9am – 8pm</span></li>
+                    <li class="flex justify-between border-b pb-2">Saturday <span>10am – 6pm</span></li>
+                    <li class="flex justify-between border-b pb-2 text-[#a13e3e]">Sunday <span>Closed</span></li>
+                </ul>
+                <div class="mt-8 p-6 bg-white rounded-3xl shadow-sm">
+                    <p class="font-semibold">✨ Walk‑ins welcome, but booking secures your spot.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====== FOOTER (newsletter + social) ====== -->
+    <footer class="footer-bg py-16 px-6">
+        <div class="max-w-6xl mx-auto grid md:grid-cols-3 gap-8">
+            <div>
+                <h3 class="text-3xl heading-serif">NOBLE</h3>
+                <p class="mt-4 text-sm opacity-80">Since 1987. Craftsmanship, conversation, confidence.</p>
+            </div>
+            <div>
+                <h4 class="font-bold mb-4">Subscribe to journal</h4>
+                <div class="flex">
+                    <input type="email" placeholder="Your email" class="p-3 rounded-l-full w-full border-0">
+                    <button class="bg-[#4A3B2F] text-white px-6 rounded-r-full">→</button>
+                </div>
+            </div>
+            <div class="flex space-x-5 text-2xl justify-start md:justify-end">
+                <a href="#" class="hover:text-[#B9997A]"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="hover:text-[#B9997A]"><i class="fab fa-x-twitter"></i></a>
+                <a href="#" class="hover:text-[#B9997A]"><i class="fab fa-youtube"></i></a>
+                <a href="#" class="hover:text-[#B9997A]"><i class="fab fa-tiktok"></i></a>
+            </div>
+        </div>
+        <div class="text-center text-sm mt-12 opacity-60">© Noble Barbershop 2026 — All rights reserved.</div>
+    </footer>
+
+    <!-- AOS and simple mobile toggle -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 900, once: true });
+        const menuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const closeBtn = document.getElementById('closeMobile');
+        function toggleMobile() { mobileMenu.classList.toggle('hidden'); }
+        menuBtn.addEventListener('click', toggleMobile);
+        if(closeBtn) closeBtn.addEventListener('click', toggleMobile);
+        document.querySelectorAll('.close-mobile').forEach(link => {
+            link.addEventListener('click', () => mobileMenu.classList.add('hidden'));
+        });
+
+        // dynamic open/closed based on time (example: always open weekdays)
+        const now = new Date();
+        const day = now.getDay(); // 0 sunday
+        const statusSpan = document.querySelector('.status-open');
+        if (day === 0) {
+            statusSpan.className = 'status-closed';
+            statusSpan.innerHTML = '<i class="far fa-clock"></i> CLOSED NOW';
+        }
+    </script>
+</body>
+</html>
