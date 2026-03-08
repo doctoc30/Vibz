@@ -1,1 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IRON EDGE • techno-industrial barber</title>
+    <!-- Tailwind + inter fonts (via CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&family=IBM+Plex+Serif:wght@300;500&display=swap" rel="stylesheet">
+    <!-- Font awesome for icons (hamburger, social etc) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* custom textures, glitch & HUD effects */
+        body { background: #0a0a0a; font-family: 'IBM Plex Serif', serif; }
+        h1, h2, h3, .nav-font, .hud-head { font-family: 'Rajdhani', sans-serif; font-weight: 700; letter-spacing: 0.03em; }
+        .chrome-border { border: 1px solid rgba(220, 220, 220, 0.15); box-shadow: 0 0 10px rgba(255,215,0,0.1); }
+        .brass-glow:hover { box-shadow: 0 0 15px #b5945f; transition: 0.2s; }
+        .damask-bg { background: repeating-linear-gradient(45deg, #2a2a2a 0px, #2a2a2a 2px, #3c3c3c 2px, #3c3c3c 6px); }
+        .glitch-hover:hover { filter: drop-shadow(0 0 6px #ffd966); transform: skewX(-1deg) scale(1.02); transition: all 0.15s; }
+        .hud-corner { position: relative; overflow: hidden; }
+        .hud-corner::after { content: ''; position: absolute; top: 0; right: 0; width: 30px; height: 30px; border-top: 2px solid #b5945f; border-right: 2px solid #b5945f; opacity: 0.6; }
+        .hud-corner::before { content: ''; position: absolute; bottom: 0; left: 0; width: 30px; height: 30px; border-bottom: 2px solid #b5945f; border-left: 2px solid #b5945f; opacity: 0.6; }
+        .leather-bg { background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60"><circle cx="10" cy="12" r="2" fill="%23333333" opacity="0.4"/><circle cx="42" cy="34" r="3" fill="%23444444" opacity="0.3"/></svg>'), radial-gradient(circle at 30% 30%, #1f1f1f, #0b0b0b); }
+        .barber-pole-animate { position: relative; width: 60px; height: 60px; overflow: hidden; }
+        .barber-pole-animate span { position: absolute; width: 200%; height: 8px; background: repeating-linear-gradient(90deg, #d4af37, #d4af37 8px, #333 8px, #333 16px); transform: rotate(-35deg); animation: roll 8s linear infinite; opacity: 0.4; }
+        @keyframes roll { 0% { left: -50%; } 100% { left: 0%; } }
+        .open-now { color: #7cb342; font-weight: 600; letter-spacing: 1px; }
+        .before-after-slider { display: flex; flex-wrap: wrap; background: #111; border-radius: 20px; overflow: hidden; border: 1px solid #3a3a3a; }
+        .ba-image { width: 50%; min-height: 200px; background-size: cover; background-position: center; filter: grayscale(0.8) contrast(1.2); transition: 0.2s; }
+        .ba-divider { width: 2px; background: #b5945f; box-shadow: 0 0 8px gold; }
+        .footer-float-wa { position: fixed; bottom: 20px; right: 20px; z-index: 50; background: #0e0e0e; border: 1px solid #d4af37; border-radius: 60px; padding: 12px 20px; backdrop-filter: blur(5px); }
+        @media (max-width: 640px) { .footer-float-wa { padding: 8px 14px; font-size: 14px; } }
+        input, select, textarea { background: #1c1c1c; border: 1px solid #3b3b3b; color: #ddd; border-radius: 0; padding: 10px; }
+        input:focus, select:focus { border-color: #b5945f; outline: none; box-shadow: 0 0 8px #b5945f40; }
+        .sticky-nav { backdrop-filter: blur(16px); background: rgba(5,5,5,0.7); border-bottom: 1px solid #b5945f30; }
+    </style>
+</head>
+<body class="text-gray-200 leather-bg">
 
+    <!-- FLOATING CLICK TO CALL / WHATSAPP (mobile prominent) -->
+    <div class="footer-float-wa flex gap-3 items-center md:hidden">
+        <a href="tel:+15550001234" class="text-white text-lg"><i class="fas fa-phone-alt text-[#d4af37] mr-1"></i> call</a>
+        <span class="text-[#555]">|</span>
+        <a href="#" class="text-white text-lg"><i class="fab fa-whatsapp text-[#25D366] mr-1"></i> chat</a>
+    </div>
+
+    <!-- STICKY NAVIGATION (mobile hamburger) -->
+    <nav class="sticky top-0 z-40 sticky-nav nav-font text-sm uppercase tracking-widest">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <div class="text-xl font-bold text-[#d4af37]">⍟ IRON EDGE ⍟</div>
+            <!-- desktop links -->
+            <div class="hidden md:flex space-x-8">
+                <a href="#" class="hover:text-[#d4af37] transition">services</a>
+                <a href="#" class="hover:text-[#d4af37] transition">arsenal</a>
+                <a href="#" class="hover:text-[#d4af37] transition">artisans</a>
+                <a href="#" class="hover:text-[#d4af37] transition">cuts</a>
+                <a href="#" class="hover:text-[#d4af37] transition">contact</a>
+            </div>
+            <!-- hamburger mobile -->
+            <div class="md:hidden dropdown">
+                <button id="menuBtn" class="text-2xl focus:outline-none"><i class="fas fa-bars text-[#d4af37]"></i></button>
+                <div id="mobileMenu" class="absolute right-6 top-16 w-48 bg-black/90 border border-[#d4af37] p-4 hidden flex-col space-y-3 text-right">
+                    <a href="#" class="block">services</a>
+                    <a href="#" class="block">arsenal</a>
+                    <a href="#" class="block">artisans</a>
+                    <a href="#" class="block">gallery</a>
+                    <a href="#" class="block">contact</a>
+                    <div class="flex justify-end gap-4 pt-2 text-xl">
+                        <i class="fab fa-instagram"></i> <i class="fab fa-x-twitter"></i> <i class="fab fa-tiktok"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO with looping video + barber pole animation -->
+    <section class="relative w-full h-[80vh] min-h-[500px] overflow-hidden">
+        <!-- abstract silent video loop (simulated with a playful moving gradient + shapes to respect "no humans" and vector style) -->
+        <div class="absolute inset-0 bg-black">
+            <div class="absolute inset-0 opacity-50" style="background: radial-gradient(circle at 70% 30%, #b5945f20, #000000 80%);"></div>
+            <!-- animated 3D barber pole in corner -->
+            <div class="absolute bottom-10 right-10 barber-pole-animate z-10"><span></span></div>
+            <!-- vectorized shop outline animation (CSS drawn) -->
+            <div class="absolute inset-0 flex items-center justify-center">
+                <div class="relative w-full max-w-4xl h-64 border border-[#d4af37]/30">
+                    <div class="absolute top-0 left-1/4 w-32 h-32 border-l-2 border-t-2 border-[#d4af37] animate-pulse"></div>
+                    <div class="absolute bottom-0 right-1/4 w-40 h-32 border-r-2 border-b-2 border-[#d4af37] animate-pulse"></div>
+                    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
+                        <h1 class="text-6xl md:text-8xl font-bold text-white/90 hud-head" style="text-shadow: 0 0 20px #b5945f;">THE CUTTING EDGE OF STYLE</h1>
+                        <p class="text-xl mt-4 font-light tracking-[.25em] text-[#ccc]">master artisans · precision tools</p>
+                        <button class="mt-10 bg-transparent border-2 border-[#d4af37] text-[#d4af37] px-12 py-4 text-xl font-semibold hover:bg-[#d4af37] hover:text-black transition">BOOK APPOINTMENT</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BOOKING FORM (card style) -->
+    <div class="max-w-6xl mx-auto px-4 -mt-20 relative z-30">
+        <div class="bg-black/80 border border-[#b5945f] p-8 backdrop-blur-md grid grid-cols-1 md:grid-cols-5 gap-4 items-end chrome-border">
+            <div><label class="text-xs hud-head">SERVICE</label><select class="w-full"><option>Executive Cut</option><option>Royal Shave</option><option>Beard Sculpt</option></select></div>
+            <div><label class="text-xs hud-head">BARBER</label><select class="w-full"><option>Jax (precision 100%)</option><option>Riven (texture)</option><option>Kael (beard)</option></select></div>
+            <div><label class="text-xs hud-head">DATE</label><input type="date" class="w-full" value="2025-04-10"></div>
+            <div><label class="text-xs hud-head">TIME</label><input type="time" class="w-full" value="15:00"></div>
+            <div><button class="w-full bg-[#d4af37] text-black py-3 font-bold hud-head tracking-wider brass-glow">CHECK AVAILABILITY</button></div>
+        </div>
+    </div>
+
+    <!-- SERVICES CARDS & PRICING -->
+    <section class="max-w-7xl mx-auto px-6 mt-28">
+        <h2 class="text-5xl hud-head border-b border-[#d4af37] pb-2 inline-block">SIGNATURE CRAFTS</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+            <!-- card 1 -->
+            <div class="border border-[#3a3a3a] p-8 hud-corner glitch-hover bg-black/40">
+                <i class="fas fa-cut text-5xl text-[#d4af37] mb-4"></i>
+                <h3 class="text-2xl hud-head">THE EXECUTIVE CUT</h3>
+                <p class="text-sm opacity-70 mt-2">precision shearing · hot towel · 45min</p>
+                <span class="text-[#d4af37] text-xl block mt-4">$65</span>
+                <span class="text-xs border border-[#b5945f] px-2 py-1">trending</span>
+            </div>
+            <div class="border border-[#3a3a3a] p-8 hud-corner glitch-hover bg-black/40">
+                <i class="fas fa-razor text-5xl text-[#d4af37] mb-4"></i>
+                <h3 class="text-2xl hud-head">THE ROYAL SHAVE</h3>
+                <p class="text-sm opacity-70 mt-2">straight razor · steam · 60min</p>
+                <span class="text-[#d4af37] text-xl block mt-4">$85</span>
+            </div>
+            <div class="border border-[#3a3a3a] p-8 hud-corner glitch-hover bg-black/40">
+                <i class="fas fa-spray-can-sparkles text-5xl text-[#d4af37] mb-4"></i>
+                <h3 class="text-2xl hud-head">THE BEARD SCULPT</h3>
+                <p class="text-sm opacity-70 mt-2">shaping · oil treatment</p>
+                <span class="text-[#d4af37] text-xl block mt-4">$45</span>
+            </div>
+        </div>
+
+        <!-- price list two column -->
+        <div class="mt-20 grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-[#b5945f] pt-12">
+            <div><h3 class="text-3xl hud-head">HAIRCUTS</h3>
+                <div class="flex justify-between mt-4"><span>clipper cut</span><span class="text-[#d4af37]">$45</span></div>
+                <div class="flex justify-between"><span>scissor cut</span><span class="text-[#d4af37]">$55</span></div>
+                <div class="flex justify-between"><span>kids cut</span><span class="text-[#d4af37]">$35</span></div>
+            </div>
+            <div><h3 class="text-3xl hud-head">SHAVES & PACKAGES</h3>
+                <div class="flex justify-between mt-4"><span>royal shave</span><span class="text-[#d4af37]">$85</span></div>
+                <div class="flex justify-between"><span>hair + shave</span><span class="text-[#d4af37]">$130</span> <span class="badge border px-2">trending</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRODUCT DISPLAY "THE ARSENAL" -->
+    <section class="max-w-7xl mx-auto px-6 mt-28">
+        <h2 class="text-4xl hud-head flex items-center gap-3"><i class="fas fa-gear"></i> THE ARSENAL</h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 mt-8">
+            <div class="border p-4 text-center glitch-hover"><i class="fas fa-flask text-4xl text-[#d4af37]"></i><p class="mt-2">pomade</p><span class="text-sm">$24</span><button class="block w-full border mt-2 text-xs py-1">add to cart</button></div>
+            <div class="border p-4 text-center glitch-hover"><i class="fas fa-oil-can text-4xl text-[#d4af37]"></i><p>beard oil</p><span class="text-sm">$32</span><button class="block w-full border mt-2 text-xs py-1">add to cart</button></div>
+            <div class="border p-4 text-center glitch-hover"><i class="fas fa-brush text-4xl text-[#d4af37]"></i><p>boar brush</p><span class="text-sm">$38</span><button class="block w-full border mt-2 text-xs py-1">inquire</button></div>
+            <div class="border p-4 text-center glitch-hover"><i class="fas fa-syringe text-4xl text-[#d4af37]"></i><p>styling clay</p><span class="text-sm">$28</span><button class="block w-full border mt-2 text-xs py-1">add to cart</button></div>
+            <div class="border p-4 text-center glitch-hover"><i class="fas fa-soap text-4xl text-[#d4af37]"></i><p>shave soap</p><span class="text-sm">$19</span><button class="block w-full border mt-2 text-xs py-1">add to cart</button></div>
+            <div class="border p-4 text-center glitch-hover"><i class="fas fa-spray-can text-4xl text-[#d4af37]"></i><p>tonic</p><span class="text-sm">$22</span><button class="block w-full border mt-2 text-xs py-1">inquire</button></div>
+        </div>
+    </section>
+
+    <!-- GALLERY: ASYMMETRIC GRID + BEFORE/AFTER SLIDER (interactive) -->
+    <section class="max-w-7xl mx-auto px-6 mt-28">
+        <h2 class="text-4xl hud-head">FRESH CUTS [macro textures]</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-6">
+            <div class="h-40 bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2240%22 fill=%22%23333333%22/><path d=%22M30 40 L70 40 L60 70 L40 70 Z%22 fill=%22%23b5945f%22 opacity=%220.5%22/></svg>')] bg-cover damask-bg"></div>
+            <div class="h-40 bg-[#2a2a2a] row-span-2" style="background: radial-gradient(circle, #3c3c3c, #1a1a1a);"></div>
+            <div class="h-40 bg-[#1f1f1f] flex items-center justify-center"><i class="fas fa-scissors text-6xl opacity-30"></i></div>
+            <div class="h-40 bg-[#1a1a1a] bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 50 50%22><path d=%22M10,10 Q30,5 40,20 L35,30 Q20,40 5,25 Z%22 fill=%22%23444444%22/></svg>')]"></div>
+            <div class="h-40 md:col-span-2 bg-black flex border border-[#d4af37]"></div>
+        </div>
+        <!-- before / after slider component -->
+        <div class="before-after-slider mt-16">
+            <div class="ba-image" style="background-image: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 200%22><rect width=%22200%22 height=%22200%22 fill=%22333333%22/><path d=%22M60,70 Q80,140 140,130%22 stroke=%22%23b5945f%22 stroke-width=%224%22 fill=%22none%22 stroke-dasharray=%225 5%22/></svg>');"></div>
+            <div class="ba-divider"></div>
+            <div class="ba-image" style="background-image: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 200%22><rect width=%22200%22 height=%22200%22 fill=%22222222%22/><path d=%22M60,120 Q90,65 140,100%22 stroke=%22%23d4af37%22 stroke-width=%226%22 fill=%22none%22/></svg>');"></div>
+        </div>
+    </section>
+
+    <!-- ARTISANS (faceless) + stats -->
+    <section class="max-w-7xl mx-auto px-6 mt-28">
+        <h2 class="text-4xl hud-head">⍟ THE ARTISANS ⍟</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+            <div class="border border-[#b5945f]/40 p-6 text-center glitch-hover bg-[#111]">
+                <div class="w-32 h-32 mx-auto rounded-full border-2 border-[#b5945f] flex items-center justify-center text-6xl opacity-70">⎔</div>
+                <h3 class="text-2xl mt-2">JAX</h3>
+                <p class="text-xs hud-head">SPECIALTY: PRECISION</p>
+                <div class="flex justify-between mt-4 text-sm"><span>✧ precision 100%</span><span>✧ speed 92%</span></div>
+                <div class="flex gap-4 justify-center mt-4 text-xl"><i class="fab fa-instagram"></i><i class="fab fa-linkedin"></i></div>
+            </div>
+            <div class="border border-[#b5945f]/40 p-6 text-center glitch-hover bg-[#111]">
+                <div class="w-32 h-32 mx-auto rounded-full border-2 border-[#b5945f] flex items-center justify-center text-6xl opacity-70">⛭</div>
+                <h3 class="text-2xl mt-2">RIVEN</h3>
+                <p class="text-xs hud-head">TEXTURE ARCHITECT</p>
+                <div class="flex justify-between mt-4 text-sm"><span>texture 98%</span><span>beard 96%</span></div>
+                <div class="flex gap-4 justify-center mt-4"><i class="fab fa-instagram"></i><i class="fab fa-x-twitter"></i></div>
+            </div>
+            <div class="border border-[#b5945f]/40 p-6 text-center glitch-hover bg-[#111]">
+                <div class="w-32 h-32 mx-auto rounded-full border-2 border-[#b5945f] flex items-center justify-center text-6xl opacity-70">⌘</div>
+                <h3 class="text-2xl mt-2">KAEL</h3>
+                <p class="text-xs hud-head">MASTER SHAVER</p>
+                <div class="flex justify-between mt-4 text-sm"><span>razor 100%</span><span>hot towel 99%</span></div>
+                <div class="flex gap-4 justify-center mt-4"><i class="fab fa-instagram"></i><i class="fab fa-tiktok"></i></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- REVIEWS & FAQ TOGGLE -->
+    <section class="max-w-7xl mx-auto px-6 mt-28 grid md:grid-cols-2 gap-16">
+        <!-- reviews slider minimalist -->
+        <div>
+            <h3 class="text-2xl hud-head">CLIENT FEED</h3>
+            <div class="border p-6 mt-4">
+                <p class="italic">“sharpest fade in the sector. feels like a cockpit.”</p>
+                <div class="flex text-[#d4af37] mt-2">★★★★★</div>
+                <span class="text-xs">— CYPHER (drone pilot)</span>
+            </div>
+            <div class="border p-6 mt-4">
+                <p>“the royal shave is meditation. hot towel data transfer.”</p>
+                <div class="flex text-[#d4af37] mt-2">★★★★★</div>
+                <span class="text-xs">— NOVA (architect)</span>
+            </div>
+        </div>
+        <!-- FAQ toggle dropdowns -->
+        <div>
+            <h3 class="text-2xl hud-head">// FAQ_</h3>
+            <div class="border-b border-[#b5945f] py-4">
+                <button class="flex justify-between w-full text-left" onclick="this.nextElementSibling.classList.toggle('hidden')">BOOK IN ADVANCE? <span class="text-[#d4af37]">+</span></button>
+                <div class="hidden mt-2 text-sm">always recommended, walk-ins accepted if slots open.</div>
+            </div>
+            <div class="border-b border-[#b5945f] py-4">
+                <button class="flex justify-between w-full text-left" onclick="this.nextElementSibling.classList.toggle('hidden')">CANCEL POLICY <span class="text-[#d4af37]">+</span></button>
+                <div class="hidden mt-2 text-sm">24h notice for full refund.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MID PAGE CTA DIVIDER -->
+    <div class="w-full my-24 py-16 text-center border-y border-[#b5945f]/30" style="background: #0c0c0c;">
+        <h2 class="text-6xl hud-head">/// VIEW GALLERY OR BOOK</h2>
+        <div class="flex gap-6 justify-center mt-6">
+            <button class="border border-[#d4af37] px-8 py-3">GALLERY</button>
+            <button class="bg-[#d4af37] text-black px-8 py-3">BOOK NOW</button>
+        </div>
+    </div>
+
+    <!-- OPENING HOURS + CONTACT + MAP EMBED (static) -->
+    <section class="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-8">
+        <div>
+            <h3 class="text-2xl hud-head">HOURS</h3>
+            <div class="mt-4 space-y-2">
+                <p>mon-fri: 10:00 – 20:00 <span class="open-now ml-2">● open now</span></p>
+                <p>sat: 11:00 – 18:00</p>
+                <p>sun: closed</p>
+            </div>
+            <p class="mt-6"><i class="fas fa-map-pin"></i> 3040 steel st, detroit</p>
+            <p class="mt-2"><i class="fas fa-phone"></i> <a href="tel:+15550001234" class="border-b border-dotted">+1 555 000 1234</a></p>
+        </div>
+        <div class="md:col-span-2 bg-[#1a1a1a] h-48 flex items-center justify-center border border-[#d4af37]">
+            <span class="opacity-40">⛭ [embedded vector map] ⛭</span>
+        </div>
+    </section>
+
+    <!-- CONTACT FORM & FOOTER -->
+    <footer class="mt-28 border-t border-[#b5945f]/50 pt-16 pb-10 px-6">
+        <div class="max-w-7xl mx-auto grid md:grid-cols-4 gap-10">
+            <div>
+                <h4 class="text-xl hud-head">INQUIRIES</h4>
+                <input placeholder="name" class="w-full mt-2"><input placeholder="email" class="w-full mt-2"><textarea placeholder="message" rows="2" class="w-full mt-2"></textarea>
+                <button class="bg-[#d4af37] text-black px-8 py-2 mt-2 w-full">SEND</button>
+            </div>
+            <div>
+                <h4>QUICK LINKS</h4>
+                <ul class="text-sm space-y-2 mt-4 opacity-70">
+                    <li>services</li><li>arsenal</li><li>artisans</li><li>gallery</li>
+                </ul>
+            </div>
+            <div>
+                <h4>NEWSLETTER</h4>
+                <div class="flex mt-4"><input placeholder="email" class="flex-1"><button class="bg-[#d4af37] text-black px-4">→</button></div>
+                <div class="flex gap-4 text-2xl mt-6"><i class="fab fa-instagram"></i><i class="fab fa-x-twitter"></i><i class="fab fa-tiktok"></i></div>
+            </div>
+            <div class="text-xs opacity-50"><p>© 2028 IRON EDGE // all rights reserved // made with industrial grade code.</p></div>
+        </div>
+        <!-- desktop floating buttons (click to call + whatsapp) hidden on mobile (we have fixed) -->
+        <div class="hidden md:flex fixed bottom-6 right-6 gap-4 z-50">
+            <a href="tel:+15550001234" class="bg-black border border-[#d4af37] px-6 py-3 rounded-full"><i class="fas fa-phone-alt mr-2"></i>call</a>
+            <a href="#" class="bg-black border border-[#25D366] px-6 py-3 rounded-full"><i class="fab fa-whatsapp mr-2 text-[#25D366]"></i>whatsapp</a>
+        </div>
+    </footer>
+
+    <!-- tiny script for mobile menu toggle + faq -->
+    <script>
+        document.getElementById('menuBtn')?.addEventListener('click',()=>{
+            document.getElementById('mobileMenu').classList.toggle('hidden');
+        });
+        // manual FAQ toggle (inline onclick works, but just in case)
+    </script>
+</body>
+</html>
