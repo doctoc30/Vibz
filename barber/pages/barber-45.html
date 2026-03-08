@@ -1,1 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elite Barber Shop</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+        }
+        h1, h2, h3, h4 {
+            font-family: 'Playfair Display', serif;
+        }
+        .barber-pole {
+            width: 50px;
+            height: 200px;
+            background: repeating-linear-gradient(
+                45deg,
+                #DC143C,
+                #DC143C 10px,
+                #FFFFFF 10px,
+                #FFFFFF 20px,
+                #00008B 20px,
+                #00008B 30px
+            );
+            background-size: 200% 200%;
+            animation: barberpole 5s linear infinite;
+            border-radius: 25px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+        @keyframes barberpole {
+            0% {
+                background-position: 0 0;
+            }
+            100% {
+                background-position: 0 60px;
+            }
+        }
+        /* Before After Slider */
+        .before-after {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            overflow: hidden;
+        }
+        .before-after img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .before {
+            z-index: 2;
+            clip-path: inset(0 50% 0 0);
+        }
+        input[type="range"] {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            z-index: 3;
+            appearance: none;
+            background: transparent;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 400px;
+            background: rgba(255,255,255,0.5);
+            cursor: ew-resize;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-300">
+    <!-- Sticky Navigation Bar -->
+    <header class="sticky top-0 bg-gray-800 shadow-md z-50">
+        <nav class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-red-600">Elite Barbers</a>
+            <div class="hidden md:flex space-x-4">
+                <a href="#hero" class="hover:text-red-600">Home</a>
+                <a href="#services" class="hover:text-red-600">Services</a>
+                <a href="#about" class="hover:text-red-600">About</a>
+                <a href="#artisans" class="hover:text-red-600">Artisans</a>
+                <a href="#gallery" class="hover:text-red-600">Gallery</a>
+                <a href="#products" class="hover:text-red-600">Products</a>
+                <a href="#testimonials" class="hover:text-red-600">Testimonials</a>
+                <a href="#contact" class="hover:text-red-600">Contact</a>
+            </div>
+            <button id="book-btn" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Book Appointment</button>
+            <!-- Hamburger Menu -->
+            <button id="hamburger" class="md:hidden text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+        </nav>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-gray-800 px-4 py-2">
+            <a href="#hero" class="block hover:text-red-600">Home</a>
+            <a href="#services" class="block hover:text-red-600">Services</a>
+            <a href="#about" class="block hover:text-red-600">About</a>
+            <a href="#artisans" class="block hover:text-red-600">Artisans</a>
+            <a href="#gallery" class="block hover:text-red-600">Gallery</a>
+            <a href="#products" class="block hover:text-red-600">Products</a>
+            <a href="#testimonials" class="block hover:text-red-600">Testimonials</a>
+            <a href="#contact" class="block hover:text-red-600">Contact</a>
+        </div>
+    </header>
 
+    <!-- Hero Section -->
+    <section id="hero" class="relative h-screen bg-cover bg-center" style="background-image: url('https://m.media-amazon.com/images/I/619mLK7iHIL._AC_UF894,1000_QL80_.jpg');">
+        <div class="absolute inset-0 bg-black opacity-50"></div>
+        <div class="container mx-auto px-4 h-full flex flex-col justify-center items-center text-center relative">
+            <div class="barber-pole mb-4"></div>
+            <h1 class="text-5xl font-bold text-white">Crafting Confidence Since 2010</h1>
+            <p class="text-xl mt-4">Experience the blend of high-tech and high-craft in our luxury barbershop.</p>
+            <button id="book-hero-btn" class="mt-6 bg-red-600 text-white px-6 py-3 rounded hover:bg-red-700">Book Now</button>
+        </div>
+    </section>
+
+    <!-- Booking Form Below Hero -->
+    <section class="bg-gray-800 py-8">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-4">Quick Booking</h2>
+            <form class="max-w-md mx-auto">
+                <select class="w-full p-2 mb-4 bg-gray-700 text-white rounded">
+                    <option>Select Service</option>
+                    <option>Haircut</option>
+                    <option>Shave</option>
+                    <option>Grooming Package</option>
+                </select>
+                <input type="text" placeholder="Name" class="w-full p-2 mb-4 bg-gray-700 text-white rounded">
+                <input type="date" class="w-full p-2 mb-4 bg-gray-700 text-white rounded">
+                <input type="time" class="w-full p-2 mb-4 bg-gray-700 text-white rounded">
+                <button type="submit" class="w-full bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Submit</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Divider -->
+    <hr class="border-gray-700">
+
+    <!-- Services Menu -->
+    <section id="services" class="py-16 bg-gray-900" data-aos="fade-up">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-8">Our Services</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Haircuts -->
+                <div class="bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-xl transition">
+                    <img src="https://thumbs.dreamstime.com/b/detailed-aerial-view-barber-tools-white-backdrop-scissors-clippers-razors-brushes-centrally-placed-top-down-332864377.jpg" alt="Haircut Tools" class="w-full h-48 object-cover rounded mb-4">
+                    <h3 class="text-2xl font-bold mb-2">Classic Haircut</h3>
+                    <p>$30</p>
+                    <span class="bg-red-600 text-white px-2 py-1 rounded text-sm">Trending</span>
+                </div>
+                <!-- Shaves -->
+                <div class="bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-xl transition">
+                    <img src="https://media.istockphoto.com/id/998715876/photo/mens-grooming-tools-barber-shop-equipment-and-supplies.jpg?s=1024x1024&w=is&k=20&c=cFtsQuzfSVMpQ0CwRFbAdvvEc41mM6IL97nK5ybbzj4=" alt="Shave Tools" class="w-full h-48 object-cover rounded mb-4">
+                    <h3 class="text-2xl font-bold mb-2">Hot Towel Shave</h3>
+                    <p>$25</p>
+                </div>
+                <!-- Grooming Packages -->
+                <div class="bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-xl transition">
+                    <img src="https://thumbs.dreamstime.com/b/close-up-essential-barber-tools-including-scissors-clippers-comb-dark-surface-showcasing-precision-instruments-367348889.jpg" alt="Grooming Tools" class="w-full h-48 object-cover rounded mb-4">
+                    <h3 class="text-2xl font-bold mb-2">Full Grooming Package</h3>
+                    <p>$50</p>
+                    <span class="bg-red-600 text-white px-2 py-1 rounded text-sm">Trending</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Price List Section -->
+    <section class="py-16 bg-gray-800" data-aos="fade-up">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-8">Price List</h2>
+            <ul class="list-disc pl-8 max-w-md mx-auto">
+                <li>Haircut: $30</li>
+                <li>Shave: $25</li>
+                <li>Beard Trim: $20</li>
+                <li>Package: $50</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Divider -->
+    <hr class="border-gray-700">
+
+    <!-- About Us / The Philosophy -->
+    <section id="about" class="py-16 bg-gray-900" data-aos="fade-up">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-8">The Philosophy</h2>
+            <p class="text-center max-w-2xl mx-auto">Our barbershop blends modern vintage with techno-industrial aesthetics, crafting confidence through precision and heritage.</p>
+        </div>
+    </section>
+
+    <!-- Barber Profiles / The Artisans -->
+    <section id="artisans" class="py-16 bg-gray-800" data-aos="fade-up">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-8">The Artisans</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-gray-900 p-6 rounded-lg shadow-lg hover:shadow-xl transition text-center">
+                    <div class="w-24 h-24 bg-gray-700 rounded-full mx-auto mb-4"></div> <!-- Placeholder no human -->
+                    <h3 class="text-2xl font-bold mb-2">John Doe</h3>
+                    <p>Specialty: Classic Cuts</p>
+                    <div class="flex justify-center space-x-4 mt-4">
+                        <a href="#" class="text-blue-400">Twitter</a>
+                        <a href="#" class="text-blue-600">Instagram</a>
+                    </div>
+                </div>
+                <div class="bg-gray-900 p-6 rounded-lg shadow-lg hover:shadow-xl transition text-center">
+                    <div class="w-24 h-24 bg-gray-700 rounded-full mx-auto mb-4"></div>
+                    <h3 class="text-2xl font-bold mb-2">Jane Smith</h3>
+                    <p>Specialty: Beard Grooming</p>
+                    <div class="flex justify-center space-x-4 mt-4">
+                        <a href="#" class="text-blue-400">Twitter</a>
+                        <a href="#" class="text-blue-600">Instagram</a>
+                    </div>
+                </div>
+                <div class="bg-gray-900 p-6 rounded-lg shadow-lg hover:shadow-xl transition text-center">
+                    <div class="w-24 h-24 bg-gray-700 rounded-full mx-auto mb-4"></div>
+                    <h3 class="text-2xl font-bold mb-2">Mike Johnson</h3>
+                    <p>Specialty: Modern Styles</p>
+                    <div class="flex justify-center space-x-4 mt-4">
+                        <a href="#" class="text-blue-400">Twitter</a>
+                        <a href="#" class="text-blue-600">Instagram</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Divider -->
+    <hr class="border-gray-700">
+
+    <!-- Products Display -->
+    <section id="products" class="py-16 bg-gray-900" data-aos="fade-up">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-8">Our Products</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+                <div class="bg-gray-800 p-4 rounded-lg shadow">
+                    <img src="https://assets.seobotai.com/cdn-cgi/image/quality=75,w=1536,h=1024/giftlist.com/6850509c5559d477e75a63f6-1750098174506.jpg" alt="Product 1" class="w-full h-48 object-cover rounded mb-4">
+                    <h3 class="text-xl">Beard Oil</h3>
+                    <p>$15</p>
+                </div>
+                <!-- Repeat for 6, using same image for demo -->
+                <div class="bg-gray-800 p-4 rounded-lg shadow">
+                    <img src="https://assets.seobotai.com/cdn-cgi/image/quality=75,w=1536,h=1024/giftlist.com/6850509c5559d477e75a63f6-1750098174506.jpg" alt="Product 2" class="w-full h-48 object-cover rounded mb-4">
+                    <h3 class="text-xl">Pomade</h3>
+                    <p>$20</p>
+                </div>
+                <div class="bg-gray-800 p-4 rounded-lg shadow">
+                    <img src="https://assets.seobotai.com/cdn-cgi/image/quality=75,w=1536,h=1024/giftlist.com/6850509c5559d477e75a63f6-1750098174506.jpg" alt="Product 3" class="w-full h-48 object-cover rounded mb-4">
+                    <h3 class="text-xl">Shampoo</h3>
+                    <p>$10</p>
+                </div>
+                <div class="bg-gray-800 p-4 rounded-lg shadow">
+                    <img src="https://assets.seobotai.com/cdn-cgi/image/quality=75,w=1536,h=1024/giftlist.com/6850509c5559d477e75a63f6-1750098174506.jpg" alt="Product 4" class="w-full h-48 object-cover rounded mb-4">
+                    <h3 class="text-xl">Conditioner</h3>
+                    <p>$12</p>
+                </div>
+                <div class="bg-gray-800 p-4 rounded-lg shadow">
+                    <img src="https://assets.seobotai.com/cdn-cgi/image/quality=75,w=1536,h=1024/giftlist.com/6850509c5559d477e75a63f6-1750098174506.jpg" alt="Product 5" class="w-full h-48 object-cover rounded mb-4">
+                    <h3 class="text-xl">Razor</h3>
+                    <p>$25</p>
+                </div>
+                <div class="bg-gray-800 p-4 rounded-lg shadow">
+                    <img src="https://assets.seobotai.com/cdn-cgi/image/quality=75,w=1536,h=1024/giftlist.com/6850509c5559d477e75a63f6-1750098174506.jpg" alt="Product 6" class="w-full h-48 object-cover rounded mb-4">
+                    <h3 class="text-xl">Brush</h3>
+                    <p>$8</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Image Gallery Grid / The Gallery -->
+    <section id="gallery" class="py-16 bg-gray-800" data-aos="fade-up">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-8">The Gallery</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 auto-rows-fr"> <!-- Funky grid -->
+                <img src="https://thumbs.dreamstime.com/b/barbershop-armchair-barber-shop-men-empty-chairs-retro-styled-hair-salon-interior-place-text-advertising-168397913.jpg" alt="Gallery 1" class="w-full h-full object-cover rounded col-span-1 md:col-span-2">
+                <img src="https://c8.alamy.com/comp/2XEX54T/the-interior-of-a-barber-shop-in-shoshone-idaho-usa-2XEX54T.jpg" alt="Gallery 2" class="w-full h-full object-cover rounded">
+                <img src="https://c8.alamy.com/comp/KDTD7D/inside-of-a-modern-barbers-shop-in-london-england-shows-a-mixture-KDTD7D.jpg" alt="Gallery 3" class="w-full h-full object-cover rounded">
+                <img src="https://nextluxury.com/wp-content/uploads/barber-shop-1.jpg" alt="Gallery 4" class="w-full h-full object-cover rounded col-span-1 md:col-span-2">
+                <img src="https://m.media-amazon.com/images/I/619mLK7iHIL._AC_UF894,1000_QL80_.jpg" alt="Gallery 5" class="w-full h-full object-cover rounded">
+                <img src="https://assets.isu.pub/document-structure/241007120008-6203bc8c63141110b084c8ca8c1a63e0/v1/44361a5620d803934c049f133dd27485.jpeg" alt="Gallery 6" class="w-full h-full object-cover rounded">
+            </div>
+        </div>
+    </section>
+
+    <!-- Before & After Slider -->
+    <section class="py-16 bg-gray-900" data-aos="fade-up">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-8">Before & After</h2>
+            <div class="before-after">
+                <img src="https://thumbs.dreamstime.com/b/detailed-aerial-view-barber-tools-white-backdrop-scissors-clippers-razors-brushes-centrally-placed-top-down-332864377.jpg" alt="Before" class="before">
+                <img src="https://media.istockphoto.com/id/998715876/photo/mens-grooming-tools-barber-shop-equipment-and-supplies.jpg?s=1024x1024&w=is&k=20&c=cFtsQuzfSVMpQ0CwRFbAdvvEc41mM6IL97nK5ybbzj4=" alt="After">
+                <input type="range" min="0" max="100" value="50" oninput="this.previousElementSibling.style.clipPath = 'inset(0 ' + (100 - this.value) + '% 0 0)'">
+            </div>
+        </div>
+    </section>
+
+    <!-- 6 Video Grid Players -->
+    <section class="py-16 bg-gray-800" data-aos="fade-up">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-8">Demonstration Videos</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <video controls loop muted class="w-full rounded">
+                    <source src="https://example.com/video1.mp4" type="video/mp4">
+                </video>
+                <video controls loop muted class="w-full rounded">
+                    <source src="https://example.com/video2.mp4" type="video/mp4">
+                </video>
+                <video controls loop muted class="w-full rounded">
+                    <source src="https://example.com/video3.mp4" type="video/mp4">
+                </video>
+                <video controls loop muted class="w-full rounded">
+                    <source src="https://example.com/video4.mp4" type="video/mp4">
+                </video>
+                <video controls loop muted class="w-full rounded">
+                    <source src="https://example.com/video5.mp4" type="video/mp4">
+                </video>
+                <video controls loop muted class="w-full rounded">
+                    <source src="https://example.com/video6.mp4" type="video/mp4">
+                </video>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Slider -->
+    <section id="testimonials" class="py-16 bg-gray-900" data-aos="fade-up">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-8">Testimonials</h2>
+            <div class="relative overflow-hidden">
+                <div id="slider" class="flex transition-transform duration-500">
+                    <div class="min-w-full text-center p-4">
+                        <p>"Great service!"</p>
+                        <div class="text-yellow-400">★★★★★</div>
+                        <p>- Customer 1</p>
+                    </div>
+                    <div class="min-w-full text-center p-4">
+                        <p>"Amazing experience."</p>
+                        <div class="text-yellow-400">★★★★★</div>
+                        <p>- Customer 2</p>
+                    </div>
+                    <div class="min-w-full text-center p-4">
+                        <p>"Highly recommend."</p>
+                        <div class="text-yellow-400">★★★★★</div>
+                        <p>- Customer 3</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Toggle Droplist -->
+    <section class="py-16 bg-gray-800" data-aos="fade-up">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-8">FAQ</h2>
+            <details class="mb-4">
+                <summary class="cursor-pointer text-xl">What are your hours?</summary>
+                <p>Mon-Fri 9AM-6PM, Sat 10AM-4PM, Sun Closed.</p>
+            </details>
+            <details class="mb-4">
+                <summary class="cursor-pointer text-xl">How to book?</summary>
+                <p>Use the form or button.</p>
+            </details>
+        </div>
+    </section>
+
+    <!-- Call-to-Action Section (Mid-Page) -->
+    <section class="py-16 bg-red-600 text-white text-center" data-aos="fade-up">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold mb-4">Ready for a Fresh Cut?</h2>
+            <button id="cta-book" class="bg-gray-900 text-white px-6 py-3 rounded hover:bg-gray-800">Book Now</button>
+        </div>
+    </section>
+
+    <!-- Offer / Promotion Banner -->
+    <section class="py-8 bg-yellow-600 text-center">
+        <p class="text-2xl font-bold">20% Off First Visit!</p>
+    </section>
+
+    <!-- Opening Hours Section -->
+    <section id="hours" class="py-16 bg-gray-900" data-aos="fade-up">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-8">Opening Hours</h2>
+            <div class="text-center">
+                <p>Mon - Fri: 9:00 AM - 6:00 PM</p>
+                <p>Sat: 10:00 AM - 4:00 PM</p>
+                <p>Sun: Closed</p>
+                <p id="status" class="mt-4 text-xl"></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact & Location -->
+    <section id="contact" class="py-16 bg-gray-800" data-aos="fade-up">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-8">Contact Us</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Google Maps Embed -->
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d193595.9147703055!2d-74.11976314309273!3d40.69740344223377!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c24fa5d33f083b%3A0xc80b8f06e177fe62!2sNew+York%2C+NY%2C+USA!5e0!3m2!1sen!2sin!4v1547826750209" width="100%" height="400" frameborder="0" style="border:0" allowfullscreen></iframe>
+                <div>
+                    <!-- Address Display Block -->
+                    <p class="text-xl mb-4">123 Main St, City, State 12345</p>
+                    <!-- Click-to-Call Button -->
+                    <a href="tel:+1234567890" class="block bg-blue-600 text-white px-4 py-2 rounded mb-4 hover:bg-blue-700">Call Us</a>
+                    <!-- WhatsApp / Message Button -->
+                    <a href="https://wa.me/1234567890" class="block bg-green-600 text-white px-4 py-2 rounded mb-4 hover:bg-green-700">WhatsApp</a>
+                    <!-- Contact Form -->
+                    <form>
+                        <input type="text" placeholder="Name" class="w-full p-2 mb-4 bg-gray-700 text-white rounded">
+                        <input type="email" placeholder="Email" class="w-full p-2 mb-4 bg-gray-700 text-white rounded">
+                        <textarea placeholder="Message" class="w-full p-2 mb-4 bg-gray-700 text-white rounded"></textarea>
+                        <button type="submit" class="w-full bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Send</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Instagram Feed Embed Placeholder -->
+    <section class="py-16 bg-gray-900" data-aos="fade-up">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-8">Instagram Feed</h2>
+            <div class="grid grid-cols-3 gap-4">
+                <img src="https://placehold.co/300x300" alt="Insta 1">
+                <img src="https://placehold.co/300x300" alt="Insta 2">
+                <img src="https://placehold.co/300x300" alt="Insta 3">
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 py-8">
+        <div class="container mx-auto px-4 text-center">
+            <h3 class="text-2xl font-bold mb-4">Subscribe to Newsletter</h3>
+            <form class="max-w-md mx-auto mb-4">
+                <input type="email" placeholder="Email" class="w-full p-2 bg-gray-700 text-white rounded mb-2">
+                <button type="submit" class="w-full bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Subscribe</button>
+            </form>
+            <div class="flex justify-center space-x-4 mb-4">
+                <a href="#" class="text-blue-400">Twitter</a>
+                <a href="#" class="text-blue-600">Facebook</a>
+                <a href="#" class="text-pink-600">Instagram</a>
+            </div>
+            <div class="space-x-4 mb-4">
+                <a href="#services">Services</a>
+                <a href="#about">About</a>
+                <a href="#contact">Contact</a>
+            </div>
+            <p>&copy; 2026 Elite Barbers. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Booking Modal -->
+    <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center z-50">
+        <div class="bg-gray-800 p-8 rounded-lg max-w-md w-full">
+            <h2 class="text-2xl font-bold mb-4">Book Appointment</h2>
+            <form>
+                <input type="text" placeholder="Name" class="w-full p-2 mb-4 bg-gray-700 text-white rounded">
+                <select class="w-full p-2 mb-4 bg-gray-700 text-white rounded">
+                    <option>Select Service</option>
+                    <option>Haircut</option>
+                    <option>Shave</option>
+                    <option>Grooming Package</option>
+                </select>
+                <input type="date" class="w-full p-2 mb-4 bg-gray-700 text-white rounded">
+                <input type="time" class="w-full p-2 mb-4 bg-gray-700 text-white rounded">
+                <button type="submit" class="w-full bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Book</button>
+            </form>
+            <button id="close-modal" class="mt-4 text-gray-400">Close</button>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+        AOS.init();
+
+        // Hamburger Menu
+        document.getElementById('hamburger').addEventListener('click', () => {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+
+        // Modal
+        const modal = document.getElementById('modal');
+        const bookBtns = [document.getElementById('book-btn'), document.getElementById('book-hero-btn'), document.getElementById('cta-book')];
+        bookBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                modal.classList.remove('hidden');
+            });
+        });
+        document.getElementById('close-modal').addEventListener('click', () => {
+            modal.classList.add('hidden');
+        });
+
+        // Testimonials Slider
+        const slider = document.getElementById('slider');
+        let index = 0;
+        setInterval(() => {
+            index = (index + 1) % 3;
+            slider.style.transform = `translateX(-${index * 100}%)`;
+        }, 5000);
+
+        // Open/Closed Status
+        const status = document.getElementById('status');
+        const now = new Date();
+        const day = now.getDay();
+        const hour = now.getHours();
+        if (day >= 1 && day <= 5 && hour >= 9 && hour < 18) {
+            status.textContent = 'We are Open';
+            status.classList.add('text-green-500');
+        } else if (day === 6 && hour >= 10 && hour < 16) {
+            status.textContent = 'We are Open';
+            status.classList.add('text-green-500');
+        } else {
+            status.textContent = 'We are Closed';
+            status.classList.add('text-red-500');
+        }
+    </script>
+</body>
+</html>
