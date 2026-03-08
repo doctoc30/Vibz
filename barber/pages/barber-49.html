@@ -1,1 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ØBSCURIUM · techno‑industrial barber</title>
+    <!-- Tailwind (light) + fonts + style extensions -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fonts: Playfair Display (bold serif) + Lato / Montserrat (sans) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Lato:wght@300;400;700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons (v6 free) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- AOS (scroll animations) -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <style>
+        /* ---- techno‑industrial / luxury dark theme ---- */
+        body {
+            background: #0b0c0e;
+            font-family: 'Lato', 'Montserrat', sans-serif;
+            color: #e0e0e0;
+            scroll-behavior: smooth;
+        }
+        h1, h2, h3, .heading-serif {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+        .techno-glass {
+            background: rgba(10, 12, 18, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(180, 180, 200, 0.15);
+            box-shadow: 0 20px 35px -10px rgba(0,0,0,0.8), inset 0 0 30px rgba(0, 255, 255, 0.02);
+        }
+        .leather-panel {
+            background: radial-gradient(circle at 20% 30%, #1a1c22, #0c0d12);
+            border: 1px solid #3e3b44;
+            box-shadow: 0 10px 20px -5px #00000080, inset 0 0 0 1px #5e5a6b30;
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        .leather-panel::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M20 20 L30 20 L25 30 Z" fill="none" stroke="%233f3b4b" stroke-width="0.3" opacity="0.2"/><circle cx="70" cy="70" r="2" fill="%233f3b4b" opacity="0.1"/></svg>');
+            opacity: 0.3;
+            pointer-events: none;
+        }
+        .damascus-border {
+            border: 2px solid #4d4a5a;
+            border-radius: 30px;
+            box-shadow: 0 0 0 1px #8a7f70, 0 0 15px #00ccff20;
+        }
+        /* hud elements */
+        .hud-tag {
+            font-family: 'Montserrat', sans-serif;
+            text-transform: uppercase;
+            font-weight: 500;
+            letter-spacing: 3px;
+            font-size: 0.7rem;
+            color: #87f7ff;
+            text-shadow: 0 0 8px cyan;
+        }
+        .trending-badge {
+            background: #2d2f3a;
+            border-left: 4px solid #d4af37;
+            color: #f0e68c;
+            font-weight: 700;
+            padding: 0.1rem 0.7rem;
+            font-size: 0.7rem;
+            border-radius: 0 12px 12px 0;
+        }
+        /* hover effects */
+        .hover-lift {
+            transition: transform 0.2s ease, box-shadow 0.2s;
+        }
+        .hover-lift:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 40px -15px black;
+        }
+        /* barber profile card (glass) */
+        .profile-card {
+            background: rgba(20, 22, 30, 0.8);
+            backdrop-filter: blur(8px);
+            border: 1px solid #5c5a6b50;
+            border-radius: 32px;
+            box-shadow: 0 20px 30px -10px black;
+            transition: 0.2s;
+        }
+        .profile-card:hover {
+            border-color: #ae9f8b;
+        }
+        /* before after slider (simple concept) */
+        .ba-container {
+            display: flex;
+            background: #222;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid #6b6779;
+        }
+        .ba-part {
+            flex: 1;
+            background-size: cover;
+            background-position: center;
+            min-height: 200px;
+            position: relative;
+        }
+        .ba-part span {
+            position: absolute;
+            bottom: 8px;
+            left: 16px;
+            background: #000000aa;
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            border: 1px solid #c7b59e;
+        }
+        /* hamburger menu (mobile) */
+        #mobile-menu {
+            transition: transform 0.3s ease-in-out;
+            transform: translateX(-100%);
+        }
+        #mobile-menu.open {
+            transform: translateX(0);
+        }
+        /* open/closed indicator */
+        .status-open {
+            color: #7effb2;
+            text-shadow: 0 0 5px #00ff80;
+        }
+        /* divider */
+        .divider-tech {
+            display: flex;
+            align-items: center;
+            color: #6e6e80;
+        }
+        .divider-tech::before, .divider-tech::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #b0a28f, transparent);
+        }
+        /* barber tools graphics (ai icons) */
+        .tool-icon {
+            filter: drop-shadow(0 0 6px #4488ff);
+        }
+        /* pile bar rolling animation (hero) */
+        .rolling-bar {
+            display: inline-block;
+            animation: roll 3s infinite ease-in-out;
+            transform-origin: center;
+        }
+        @keyframes roll {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(10deg) scale(1.1); }
+            100% { transform: rotate(0deg) scale(1); }
+        }
+        /* reveal animation via AOS will work, but extra custom */
+        iframe { border-radius: 20px; }
+        /* fake storefront hero */
+        .hero-storefront {
+            background: linear-gradient(125deg, #0b0c0e 20%, #1f232b 80%), url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200" opacity="0.2"><rect width="400" height="200" fill="%233d352b"/><rect x="30" y="40" width="80" height="120" fill="%235a4f42"/><circle cx="70" cy="110" r="8" fill="%23dbb87c"/><rect x="150" y="40" width="80" height="120" fill="%234a4035"/><rect x="270" y="40" width="80" height="120" fill="%233d352b"/></svg>');
+            background-repeat: repeat;
+            background-size: cover;
+            border-radius: 30px;
+        }
+    </style>
+</head>
+<body class="antialiased">
 
+    <!-- STICKY NAVIGATION BAR (with hamburger) -->
+    <nav class="sticky top-0 z-50 techno-glass py-3 px-6 md:px-12 flex justify-between items-center">
+        <div class="text-2xl heading-serif tracking-widest">ØBSCURIUM<span class="text-cyan-300 text-xl">⍟</span></div>
+        <div class="hidden md:flex gap-8 text-sm font-medium">
+            <a href="#gallery" class="hover:text-cyan-300 transition">Gallery</a>
+            <a href="#artisans" class="hover:text-cyan-300 transition">Artisans</a>
+            <a href="#philosophy" class="hover:text-cyan-300 transition">Philosophy</a>
+            <a href="#pricing" class="hover:text-cyan-300 transition">Pricing</a>
+            <a href="#contact" class="hover:text-cyan-300 transition">Contact</a>
+        </div>
+        <div class="flex items-center gap-3">
+            <a href="#" class="hidden md:inline-block bg-amber-800/70 border border-amber-600/80 rounded-full px-6 py-2 text-sm font-bold hover:bg-amber-700 transition shadow-lg">BOOK APPOINTMENT</a>
+            <!-- mobile hamburger icon -->
+            <button id="hamburger-btn" class="block md:hidden text-3xl focus:outline-none"><i class="fa-solid fa-bars"></i></button>
+        </div>
+    </nav>
+
+    <!-- HAMBURGER MENU (mobile) -->
+    <div id="mobile-menu" class="fixed top-0 left-0 w-64 h-full bg-black/90 backdrop-blur-xl z-[100] p-6 shadow-2xl border-r border-gray-700 transform transition-transform">
+        <button id="close-menu" class="text-white text-2xl mb-6"><i class="fa-solid fa-xmark"></i></button>
+        <div class="flex flex-col gap-4 text-lg">
+            <a href="#gallery">Gallery</a><a href="#artisans">Artisans</a><a href="#philosophy">Philosophy</a><a href="#pricing">Pricing</a><a href="#contact">Contact</a>
+            <hr class="border-gray-700">
+            <a href="#" class="bg-amber-800/70 text-center rounded-full py-2">BOOK NOW</a>
+        </div>
+    </div>
+
+    <!-- HERO SECTION with storefront animation + booking form droplist -->
+    <section class="relative px-4 md:px-16 pt-8 pb-12">
+        <div class="hero-storefront max-w-7xl mx-auto p-6 md:p-12 rounded-[40px] border border-amber-800/30" data-aos="fade-down">
+            <div class="grid md:grid-cols-2 gap-10 items-center">
+                <div>
+                    <div class="flex items-center gap-2 hud-tag"><span class="w-2 h-2 bg-cyan-400 rounded-full"></span> EST. 2025</div>
+                    <h1 class="text-5xl md:text-7xl font-black leading-tight mt-2">Crafting <span class="text-amber-300">Confidence</span><br>Since 2025</h1>
+                    <p class="text-gray-300 text-lg my-4 max-w-md">Industrial edge meets old‑world craft. Steel, leather, precision.</p>
+                    <a href="#" class="inline-block bg-transparent border-2 border-amber-600 rounded-full px-10 py-3 text-lg font-bold hover:bg-amber-900/40 transition shadow-2xl"><i class="fa-regular fa-calendar-check mr-2"></i>Book Appointment</a>
+                </div>
+                <div class="flex justify-center items-center">
+                    <!-- rolling bar animation + tools graphics -->
+                    <div class="relative w-48 h-48 flex items-center justify-center">
+                        <i class="fa-solid fa-scissors text-8xl text-slate-400 rolling-bar tool-icon"></i>
+                        <i class="fa-solid fa-razor absolute top-0 right-0 text-5xl text-amber-600 animate-pulse tool-icon"></i>
+                        <i class="fa-solid fa-oil-can absolute bottom-0 left-0 text-4xl text-blue-400/60 tool-icon"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- booking form with droplist (below hero) -->
+        <div class="max-w-4xl mx-auto mt-10 techno-glass rounded-3xl p-6 flex flex-wrap gap-4 items-center justify-between" data-aos="zoom-in">
+            <input type="text" placeholder="Your name" class="bg-black/50 border border-gray-700 rounded-full px-5 py-3 w-full md:w-auto flex-1">
+            <select class="bg-black/50 border border-gray-700 rounded-full px-5 py-3 flex-1">
+                <option>Select service</option><option>Haircut</option><option>Royal Shave</option><option>Beard sculpt</option>
+            </select>
+            <input type="date" class="bg-black/50 border border-gray-700 rounded-full px-5 py-3">
+            <button class="bg-amber-900 hover:bg-amber-800 rounded-full px-8 py-3 font-bold">BOOK</button>
+        </div>
+    </section>
+
+    <!-- mid-page CTA + divider  -->
+    <div class="divider-tech my-8 px-8" data-aos="fade"> <span class="mx-4 text-xs hud-tag">DIVISION Ø</span> </div>
+
+    <!-- SERVICES CARDS + PRICE LIST combined -->
+    <section id="pricing" class="max-w-7xl mx-auto px-4 py-12">
+        <h2 class="text-4xl heading-serif mb-8" data-aos="fade-up">THE <span class="text-amber-400">TARIFF</span> <span class="text-sm hud-tag ml-4">PREMIUM CUT</span></h2>
+        <div class="grid lg:grid-cols-3 gap-6">
+            <!-- service cards (blocks)  -->
+            <div class="leather-panel p-6 hover-lift" data-aos="flip-left">
+                <i class="fa-solid fa-cut fa-2x text-amber-500"></i>
+                <h3 class="text-2xl my-2 heading-serif">HAIRCUT</h3>
+                <p class="text-gray-400">precision scissors & clipper</p>
+                <div class="mt-4 text-3xl font-bold">$48<span class="text-sm text-gray-500 ml-1">+</span></div>
+                <span class="trending-badge -ml-6 mt-2 inline-block">TRENDING</span>
+            </div>
+            <div class="leather-panel p-6 hover-lift" data-aos="flip-left" data-aos-delay="50">
+                <i class="fa-solid fa-face-smile fa-2x text-amber-500"></i>
+                <h3 class="text-2xl my-2 heading-serif">ROYAL SHAVE</h3>
+                <p class="text-gray-400">hot towel / straight razor</p>
+                <div class="mt-4 text-3xl font-bold">$62</div>
+            </div>
+            <div class="leather-panel p-6 hover-lift" data-aos="flip-left" data-aos-delay="100">
+                <i class="fa-solid fa-spray-can-sparkles fa-2x text-amber-500"></i>
+                <h3 class="text-2xl my-2 heading-serif">BEARD SCULPT</h3>
+                <p class="text-gray-400">shaping & conditioning</p>
+                <div class="mt-4 text-3xl font-bold">$39</div>
+            </div>
+        </div>
+        <!-- price list section (detailed) -->
+        <div class="grid md:grid-cols-2 gap-8 mt-12 leather-panel p-8" data-aos="fade-up">
+            <div>
+                <h4 class="hud-tag mb-4">✣ THE CLASSICS</h4>
+                <div class="flex justify-between border-b border-gray-700 py-3"><span>Haircut (signature)</span> <span class="font-mono">$48</span></div>
+                <div class="flex justify-between border-b border-gray-700 py-3"><span>Hot Towel Shave</span> <span class="font-mono">$62</span></div>
+                <div class="flex justify-between border-b border-gray-700 py-3"><span>Beard Trim</span> <span class="font-mono">$32</span></div>
+                <div class="flex justify-between py-3"><span>Deluxe Package (cut + shave)</span> <span class="font-mono">$94</span></div>
+            </div>
+            <div>
+                <h4 class="hud-tag mb-4">✣ GROOMING PACKAGES</h4>
+                <div class="flex justify-between border-b border-gray-700 py-3"><span>The Artisan</span> <span class="font-mono">$120</span></div>
+                <div class="flex justify-between border-b border-gray-700 py-3"><span>VIP Obsidian</span> <span class="font-mono">$210</span></div>
+                <div class="flex justify-between py-3"><span>Membership club</span> <span class="font-mono">$80/mo</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Barber Profiles (The Artisans) + stats -->
+    <section id="artisans" class="max-w-7xl mx-auto px-4 py-16">
+        <h2 class="text-4xl heading-serif mb-10 flex items-center gap-3" data-aos="fade-right"><span class="w-2 h-8 bg-amber-600"></span> THE ARTISANS <span class="hud-tag text-xs">→ 3 blades</span></h2>
+        <div class="grid md:grid-cols-3 gap-6">
+            <div class="profile-card p-5 text-center hover-lift" data-aos="zoom-in-up">
+                <div class="w-32 h-32 mx-auto rounded-full bg-gradient-to-b from-stone-700 to-stone-900 flex items-center justify-center border-4 border-amber-800/60"><i class="fa-solid fa-user-astronaut text-6xl text-stone-400"></i></div>
+                <h3 class="text-2xl mt-3">DAMIAN Ø.</h3>
+                <p class="text-amber-400">master razor · 12yr</p>
+                <div class="flex gap-3 justify-center my-3"><i class="fa-brands fa-instagram hover:text-amber-500"></i><i class="fa-brands fa-x-twitter"></i></div>
+                <div class="border-t border-gray-700 pt-2 text-xs hud-tag">precision 98%</div>
+            </div>
+            <div class="profile-card p-5 text-center hover-lift" data-aos="zoom-in-up" data-aos-delay="80"><div class="w-32 h-32 mx-auto rounded-full bg-gradient-to-b from-stone-700 to-stone-900 flex items-center justify-center border-4 border-amber-800/60"><i class="fa-solid fa-robot text-6xl"></i></div><h3 class="text-2xl mt-3">KAI ZEN</h3><p class="text-amber-400">texture specialist</p><div class="flex gap-3 justify-center my-3"><i class="fa-brands fa-instagram"></i><i class="fa-brands fa-facebook"></i></div><div class="border-t border-gray-700 pt-2 text-xs hud-tag">texture 100%</div></div>
+            <div class="profile-card p-5 text-center hover-lift" data-aos="zoom-in-up" data-aos-delay="160"><div class="w-32 h-32 mx-auto rounded-full bg-gradient-to-b from-stone-700 to-stone-900 flex items-center justify-center border-4 border-amber-800/60"><i class="fa-solid fa-mask text-6xl"></i></div><h3 class="text-2xl mt-3">JEX VANE</h3><p class="text-amber-400">fade architect</p><div class="flex gap-3 justify-center my-3"><i class="fa-brands fa-instagram"></i><i class="fa-brands fa-tiktok"></i></div><div class="border-t border-gray-700 pt-2 text-xs hud-tag">fade ratio 9.2</div></div>
+        </div>
+    </section>
+
+    <!-- 6 Image Gallery Grid + Before & After Slider (Products 6 display) -->
+    <section id="gallery" class="max-w-7xl mx-auto px-4 py-12">
+        <h2 class="text-4xl heading-serif" data-aos="fade">THE GALLERY <span class="text-sm hud-tag">FRESH CUTS</span></h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mt-8">
+            <div class="bg-stone-800/80 h-36 rounded-3xl border border-amber-900/30 flex items-center justify-center"><i class="fa-solid fa-image text-4xl text-gray-600"></i></div>
+            <div class="bg-stone-800/80 h-36 rounded-3xl border border-amber-900/30 flex items-center justify-center"><i class="fa-solid fa-crop-simple text-4xl"></i></div>
+            <div class="bg-stone-800/80 h-36 rounded-3xl border border-amber-900/30 flex items-center justify-center"><i class="fa-solid fa-scissors text-4xl"></i></div>
+            <div class="bg-stone-800/80 h-36 rounded-3xl border border-amber-900/30 flex items-center justify-center"><i class="fa-solid fa-vest text-4xl"></i></div>
+            <div class="bg-stone-800/80 h-36 rounded-3xl border border-amber-900/30 flex items-center justify-center"><i class="fa-solid fa-spray-can text-4xl"></i></div>
+            <div class="bg-stone-800/80 h-36 rounded-3xl border border-amber-900/30 flex items-center justify-center"><i class="fa-solid fa-clock text-4xl"></i></div>
+        </div>
+        <!-- before & after slider concept -->
+        <div class="ba-container mt-10" data-aos="flip-up">
+            <div class="ba-part" style="background-image: linear-gradient(145deg, #3d352b, #1c1a17);"><span class="text-white">✧ BEFORE</span></div>
+            <div class="ba-part" style="background-image: linear-gradient(145deg, #4f443a, #2b251f);"><span class="text-white">✦ AFTER</span></div>
+        </div>
+    </section>
+
+    <!-- Philosophy / About Us + FAQ toggle droplist -->
+    <section id="philosophy" class="max-w-7xl mx-auto px-4 py-16">
+        <div class="grid md:grid-cols-2 gap-10 leather-panel p-8" data-aos="fade-up">
+            <div>
+                <h2 class="text-4xl heading-serif">THE PHILOSOPHY</h2>
+                <p class="mt-4 text-gray-300 text-lg">Where Damascus steel meets horsehair brush. We believe in the ritual of grooming — a moment of industrial silence, precision, and heritage. Every cut is architecture.</p>
+                <p class="text-gray-400 mt-4"><i class="fa-regular fa-compass"></i> heritage since 2025</p>
+            </div>
+            <div>
+                <h3 class="hud-tag">FAQ / DROPLIST</h3>
+                <div class="border border-gray-700 rounded-2xl p-4 mt-2">
+                    <details class="group"><summary class="cursor-pointer list-none flex justify-between">✧ How to book? <span class="group-open:rotate-180">⌄</span></summary><p class="mt-2 text-gray-400">Use the form above or click book.</p></details>
+                    <details class="mt-3"><summary class="cursor-pointer">✧ Walk-ins welcome?</summary><p class="text-gray-400">Yes, but priority to appointments.</p></details>
+                    <details class="mt-3"><summary class="cursor-pointer">✧ Hot towel included?</summary><p class="text-gray-400">In Royal Shave, always.</p></details>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products display 6 items -->
+    <section class="max-w-7xl mx-auto px-4 py-8">
+        <h3 class="text-2xl heading-serif">BARBER TOOLS / PRODUCTS</h3>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+            <div class="bg-stone-900/70 p-4 rounded-2xl border border-amber-800/40 flex flex-col items-center"><i class="fa-solid fa-oil-can text-5xl text-amber-600"></i><span class="mt-2">pomade</span></div>
+            <div class="bg-stone-900/70 p-4 rounded-2xl border border-amber-800/40 flex flex-col items-center"><i class="fa-solid fa-scissors text-5xl"></i><span>shears</span></div>
+            <div class="bg-stone-900/70 p-4 rounded-2xl border border-amber-800/40 flex flex-col items-center"><i class="fa-solid fa-brush text-5xl"></i><span>horsehair brush</span></div>
+            <div class="bg-stone-900/70 p-4 rounded-2xl border border-amber-800/40 flex flex-col items-center"><i class="fa-solid fa-razor text-5xl"></i><span>straight razor</span></div>
+            <div class="bg-stone-900/70 p-4 rounded-2xl border border-amber-800/40 flex flex-col items-center"><i class="fa-solid fa-towel text-5xl"></i><span>linen towels</span></div>
+            <div class="bg-stone-900/70 p-4 rounded-2xl border border-amber-800/40 flex flex-col items-center"><i class="fa-solid fa-fire text-5xl"></i><span>aftershave</span></div>
+        </div>
+    </section>
+
+    <!-- Customer reviews / star ratings + click-to-call + whatsapp -->
+    <section class="max-w-7xl mx-auto px-4 py-12 flex flex-wrap gap-6 items-start">
+        <div class="flex-1 min-w-[250px] leather-panel p-6" data-aos="fade-right">
+            <h4 class="hud-tag">TESTIMONIALS</h4>
+            <div class="flex items-center mt-2 gap-1 text-yellow-500 text-xl"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-alt"></i></div>
+            <p class="italic mt-2">"The most immersive barber experience — like a tech ritual."</p>
+            <p class="mt-2 font-bold">— RAZE</p>
+            <div class="border-t border-gray-700 my-4"></div>
+            <div class="flex gap-3 text-2xl"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><span class="text-sm ml-2">4.9 overall</span></div>
+        </div>
+        <div class="flex-1 min-w-[250px] techno-glass p-6 rounded-3xl flex flex-col gap-4">
+            <a href="tel:+15550009999" class="block bg-slate-800 p-3 rounded-full text-center"><i class="fa-solid fa-phone mr-2"></i>CLICK TO CALL</a>
+            <a href="#" class="block bg-emerald-900 p-3 rounded-full text-center"><i class="fa-brands fa-whatsapp mr-2"></i>WHATSAPP</a>
+        </div>
+    </section>
+
+    <!-- Contact & Location (map embed, hours, address, status) -->
+    <section id="contact" class="max-w-7xl mx-auto px-4 py-16">
+        <div class="grid md:grid-cols-2 gap-6">
+            <div>
+                <h2 class="text-3xl heading-serif">CONTACT / HOURS</h2>
+                <div class="mt-4 space-y-2">
+                    <p><i class="fa-regular fa-building mr-2"></i> 22 BLACKSTONE BLVD, INDUSTRIAL DISTRICT</p>
+                    <p><i class="fa-regular fa-clock mr-2"></i> MON–SAT: 10:00 – 20:00 <span class="status-open ml-2">● OPEN NOW</span></p>
+                    <p><i class="fa-regular fa-calendar mr-2"></i> SUN: 12:00 – 17:00</p>
+                    <div class="flex gap-4 mt-4"><i class="fa-brands fa-instagram fa-2x"></i><i class="fa-brands fa-x-twitter fa-2x"></i></div>
+                </div>
+                <!-- map embed placeholder -->
+                <div class="mt-6 bg-zinc-800 h-48 rounded-3xl border border-white/10 flex items-center justify-center text-gray-500"><i class="fa-solid fa-map-location-dot mr-2"></i>interactive map (iframes disabled)</div>
+            </div>
+            <!-- contact form -->
+            <div class="leather-panel p-6">
+                <h3 class="text-2xl">send a message</h3>
+                <input placeholder="email" class="w-full bg-black/40 border border-gray-700 rounded-full p-3 my-2"><br>
+                <textarea placeholder="inquiry" rows="2" class="w-full bg-black/40 border border-gray-700 rounded-2xl p-3"></textarea>
+                <button class="bg-amber-900 rounded-full px-6 py-2 mt-2">send</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER with quick links, newsletter, copyright -->
+    <footer class="techno-glass mt-12 px-6 py-10">
+        <div class="max-w-7xl mx-auto grid md:grid-cols-4 gap-6">
+            <div><h5 class="font-bold">ØBSCURIUM</h5><p class="text-sm text-gray-400">since 2025, steel & leather.</p></div>
+            <div class="flex flex-col gap-1"><a href="#" class="text-sm">Gallery</a><a href="#">Artisans</a><a href="#">Philosophy</a></div>
+            <div class="flex flex-col gap-1"><a href="#">Imprint</a><a href="#">Careers</a></div>
+            <div><p class="text-sm">newsletter</p><div class="flex"><input placeholder="email" class="bg-black p-2 rounded-l-xl w-full"><button class="bg-amber-800 px-4 rounded-r-xl">→</button></div></div>
+        </div>
+        <div class="text-center text-xs text-gray-600 mt-8">© 2025 — high‑craft techno terminal</div>
+    </footer>
+
+    <!-- AOS script + mobile menu js -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 800, once: false, offset: 100 });
+        const hamburger = document.getElementById('hamburger-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const closeMenu = document.getElementById('close-menu');
+        hamburger?.addEventListener('click', ()=> mobileMenu.classList.add('open'));
+        closeMenu?.addEventListener('click', ()=> mobileMenu.classList.remove('open'));
+        // close on any link click
+        mobileMenu?.querySelectorAll('a').forEach(link => link.addEventListener('click', ()=> mobileMenu.classList.remove('open')));
+    </script>
+    <!-- no human imagery used, only icons / objects -->
+</body>
+</html>
