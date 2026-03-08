@@ -1,1 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corner Barber · local shop</title>
+    <!-- Tailwind + AOS + Fonts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- friendly serif + sans combo -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --cream: #faf3e8;        // warm cream background
+            --light-brown: #d9b99b;   // light brown for accents
+            --medium-brown: #b48b6e;   // medium wood tone
+            --espresso: #3e2f24;       // deep brown for text
+        }
+        body {
+            background-color: var(--cream);
+            font-family: 'Inter', sans-serif;
+            color: var(--espresso);
+        }
+        h1, h2, h3, .heading-local {
+            font-family: 'Playfair Display', serif;
+            font-weight: 900;
+            letter-spacing: -0.01em;
+        }
+        .local-card {
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05), 0 8px 10px -6px rgba(0,0,0,0.02);
+            transition: all 0.2s;
+        }
+        .local-card:hover {
+            box-shadow: 0 20px 30px -10px rgba(0,0,0,0.15);
+        }
+        .btn-local {
+            background-color: var(--medium-brown);
+            color: white;
+            padding: 0.5rem 2rem;
+            border-radius: 40px;
+            font-weight: 600;
+            display: inline-block;
+            transition: background 0.2s;
+        }
+        .btn-local:hover {
+            background-color: var(--espresso);
+        }
+        .status-badge {
+            background: #d9b99b40;
+            padding: 0.2rem 1rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .open-true {
+            color: #1f6d47;
+            background: #e0f2e5;
+        }
+        .open-false {
+            color: #a14141;
+            background: #ffe6e6;
+        }
+        .icon-circle {
+            background: var(--light-brown);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        .shop-photo {
+            background-color: #cfa889; // placeholder
+            border-radius: 48px 48px 48px 16px;
+        }
+    </style>
+</head>
+<body>
 
+    <!-- simple local nav – no fixed, just clean -->
+    <nav class="w-full py-4 px-6 flex justify-between items-center bg-[#faf3e8] border-b border-[#3e2f24]/10">
+        <div class="text-3xl heading-local tracking-tight text-[#3e2f24]">📍CUT & CHAT</div>
+        <div class="hidden md:flex space-x-8 text-sm font-medium">
+            <a href="#services" class="hover:text-[#b48b6e]">Cuts</a>
+            <a href="#team" class="hover:text-[#b48b6e]">Team</a>
+            <a href="#booking" class="hover:text-[#b48b6e]">Book</a>
+            <a href="#shop" class="hover:text-[#b48b6e]">Shop</a>
+        </div>
+        <div class="md:hidden">
+            <button id="menuBtn"><i class="fas fa-bars text-2xl"></i></button>
+        </div>
+    </nav>
+
+    <!-- mobile menu overlay -->
+    <div id="mobileMenu" class="hidden fixed inset-0 bg-[#faf3e8] z-50 flex flex-col items-center justify-center space-y-6 text-2xl">
+        <a href="#services" class="close-mobile">Cuts</a>
+        <a href="#team" class="close-mobile">Team</a>
+        <a href="#booking" class="close-mobile">Book</a>
+        <a href="#shop" class="close-mobile">Shop</a>
+        <button id="closeMobileBtn" class="absolute top-6 right-6 text-3xl"><i class="fas fa-times"></i></button>
+    </div>
+
+    <!-- ===== HERO – small shop welcome ===== -->
+    <section class="max-w-6xl mx-auto px-6 py-12 md:py-20 grid md:grid-cols-2 gap-10 items-center">
+        <div data-aos="fade-right">
+            <span class="text-sm uppercase tracking-widest text-[#b48b6e] font-semibold">Est. 2012 · neighborhood spot</span>
+            <h1 class="text-5xl md:text-6xl my-4 heading-local leading-tight">Your corner <br>barbershop</h1>
+            <p class="text-lg text-[#3e2f24]/80 max-w-md">No appointment? No problem. Walk‑ins welcome, coffee always fresh. Real cuts, real people.</p>
+            <div class="flex flex-wrap gap-4 mt-8">
+                <a href="#booking" class="btn-local text-base px-8 py-3">📅 book online</a>
+                <a href="#services" class="border-2 border-[#b48b6e] text-[#3e2f24] px-8 py-3 rounded-full font-semibold hover:bg-[#b48b6e] hover:text-white transition">see prices</a>
+            </div>
+            <div class="flex items-center gap-4 mt-8">
+                <div class="icon-circle"><i class="fas fa-cut"></i></div>
+                <div class="icon-circle"><i class="fas fa-mug-hot"></i></div>
+                <div class="icon-circle"><i class="fas fa-smile"></i></div>
+                <span class="text-sm font-medium">+50 5-star reviews</span>
+            </div>
+        </div>
+        <div class="bg-[#d9b99b] shop-photo h-80 md:h-96 w-full flex items-center justify-center text-7xl text-white/50 shadow-xl" data-aos="fade-left">
+            <i class="fas fa-store-alt"></i>
+        </div>
+    </section>
+
+    <!-- ===== LOCAL SERVICES – simple price list ===== -->
+    <section id="services" class="py-20 px-6 bg-white">
+        <div class="max-w-5xl mx-auto">
+            <h2 class="text-4xl heading-local text-center">✂️ regular cuts, honest prices</h2>
+            <div class="grid md:grid-cols-2 gap-8 mt-16">
+                <!-- left column: haircuts -->
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center border-b border-[#d9b99b] pb-3">
+                        <span class="font-semibold text-lg">Men’s cut</span>
+                        <span class="font-bold text-xl">$28</span>
+                    </div>
+                    <div class="flex justify-between items-center border-b border-[#d9b99b] pb-3">
+                        <span class="font-semibold text-lg">Kids cut (under 12)</span>
+                        <span class="font-bold text-xl">$20</span>
+                    </div>
+                    <div class="flex justify-between items-center border-b border-[#d9b99b] pb-3">
+                        <span class="font-semibold text-lg">Beard trim</span>
+                        <span class="font-bold text-xl">$18</span>
+                    </div>
+                    <div class="flex justify-between items-center border-b border-[#d9b99b] pb-3">
+                        <span class="font-semibold text-lg">Buzz cut / clipper</span>
+                        <span class="font-bold text-xl">$22</span>
+                    </div>
+                </div>
+                <!-- right column: shaves & combos -->
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center border-b border-[#d9b99b] pb-3">
+                        <span class="font-semibold text-lg">Hot towel shave</span>
+                        <span class="font-bold text-xl">$32</span>
+                    </div>
+                    <div class="flex justify-between items-center border-b border-[#d9b99b] pb-3">
+                        <span class="font-semibold text-lg">Cut + beard combo</span>
+                        <span class="font-bold text-xl">$42</span>
+                    </div>
+                    <div class="flex justify-between items-center border-b border-[#d9b99b] pb-3">
+                        <span class="font-semibold text-lg">Senior (65+) cut</span>
+                        <span class="font-bold text-xl">$20</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="font-semibold text-lg">Line-up / shape-up</span>
+                        <span class="font-bold text-xl">$16</span>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-12"><span class="bg-[#faf3e8] px-6 py-2 rounded-full text-sm">✷ students & military 10% off (with ID) ✷</span></div>
+        </div>
+    </section>
+
+    <!-- ===== TEAM – two friendly barbers ===== -->
+    <section id="team" class="py-20 px-6 bg-[#faf3e8]">
+        <div class="max-w-5xl mx-auto">
+            <h2 class="text-4xl heading-local text-center mb-4">the folks behind the chairs</h2>
+            <p class="text-center mb-12">just two barbers who love what they do</p>
+            <div class="grid md:grid-cols-2 gap-10">
+                <!-- barber 1 -->
+                <div class="local-card p-8 flex flex-col items-center text-center" data-aos="fade-up">
+                    <div class="w-36 h-36 rounded-full bg-[#d9b99b] flex items-center justify-center text-6xl text-white/70"><i class="fas fa-user-check"></i></div>
+                    <h3 class="text-3xl heading-local mt-4">Mike "the shears"</h3>
+                    <p class="text-[#b48b6e] font-medium">15 yrs · fades & conversations</p>
+                    <p class="mt-3 text-sm">Loves classic rock and a perfect taper. “If the coffee’s hot, the cut’s good.”</p>
+                    <div class="flex mt-4 space-x-4 text-xl">
+                        <a href="#" class="hover:text-[#b48b6e]"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="hover:text-[#b48b6e]"><i class="fab fa-facebook"></i></a>
+                    </div>
+                </div>
+                <!-- barber 2 -->
+                <div class="local-card p-8 flex flex-col items-center text-center" data-aos="fade-up" data-aos-delay="100">
+                    <div class="w-36 h-36 rounded-full bg-[#b48b6e] flex items-center justify-center text-6xl text-white/70"><i class="fas fa-user-nurse"></i></div>
+                    <h3 class="text-3xl heading-local mt-4">Jessie "razor"</h3>
+                    <p class="text-[#b48b6e] font-medium">8 yrs · beard wizard</p>
+                    <p class="mt-3 text-sm">Straight‑razor specialist and plant mom. Ask her about the hot towel treatment.</p>
+                    <div class="flex mt-4 space-x-4 text-xl">
+                        <a href="#" class="hover:text-[#b48b6e]"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="hover:text-[#b48b6e]"><i class="fab fa-x-twitter"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== BOOKING – simple form (local style) ===== -->
+    <section id="booking" class="py-20 px-6 bg-white">
+        <div class="max-w-3xl mx-auto bg-[#faf3e8] p-10 rounded-[48px] shadow-sm border border-[#d9b99b]">
+            <h2 class="text-4xl heading-local text-center">book a chair</h2>
+            <p class="text-center mt-2">or just walk in — we’re flexible</p>
+            <div class="grid md:grid-cols-2 gap-6 mt-10">
+                <div>
+                    <label class="block text-sm font-semibold mb-1">name</label>
+                    <input type="text" placeholder="your name" class="w-full p-3 rounded-full border border-[#d9b99b] bg-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-1">service</label>
+                    <select class="w-full p-3 rounded-full border border-[#d9b99b] bg-white">
+                        <option>Men’s cut</option>
+                        <option>Beard trim</option>
+                        <option>Hot shave</option>
+                        <option>Cut + beard</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-1">date</label>
+                    <input type="date" class="w-full p-3 rounded-full border border-[#d9b99b]" value="2026-04-10">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-1">time</label>
+                    <select class="w-full p-3 rounded-full border border-[#d9b99b]">
+                        <option>10:00 AM</option>
+                        <option>11:30 AM</option>
+                        <option>1:00 PM</option>
+                        <option>2:30 PM</option>
+                        <option>4:00 PM</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn-local w-full mt-8 py-4 text-lg">confirm booking (demo)</button>
+            <p class="text-center text-xs mt-4 opacity-50">free cancellation up to 2h before</p>
+        </div>
+    </section>
+
+    <!-- ===== SHOP / GALLERY (local product shelf) ===== -->
+    <section id="shop" class="py-20 px-6 bg-[#faf3e8]">
+        <h2 class="text-4xl heading-local text-center mb-12">grab some goods</h2>
+        <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="bg-white p-5 rounded-3xl shadow-sm text-center">
+                <i class="fas fa-oil-can text-4xl text-[#b48b6e]"></i>
+                <p class="font-bold mt-2">beard oil</p>
+                <span class="text-sm">$14</span>
+            </div>
+            <div class="bg-white p-5 rounded-3xl shadow-sm text-center">
+                <i class="fas fa-cut text-4xl text-[#b48b6e]"></i>
+                <p class="font-bold mt-2">pomade</p>
+                <span class="text-sm">$16</span>
+            </div>
+            <div class="bg-white p-5 rounded-3xl shadow-sm text-center">
+                <i class="fas fa-cream text-4xl text-[#b48b6e]"></i>
+                <p class="font-bold mt-2">shaving cream</p>
+                <span class="text-sm">$12</span>
+            </div>
+            <div class="bg-white p-5 rounded-3xl shadow-sm text-center">
+                <i class="fas fa-comb text-4xl text-[#b48b6e]"></i>
+                <p class="font-bold mt-2">wood comb</p>
+                <span class="text-sm">$8</span>
+            </div>
+        </div>
+        <p class="text-center text-sm mt-10">✧ all products available in‑store ✧</p>
+    </section>
+
+    <!-- ===== TESTIMONIALS – small slider ===== -->
+    <section class="py-16 bg-white">
+        <div class="max-w-5xl mx-auto px-6">
+            <h2 class="text-3xl heading-local text-center mb-10">neighbors love us</h2>
+            <div class="flex overflow-x-auto gap-6 pb-4">
+                <div class="min-w-[260px] p-6 bg-[#faf3e8] rounded-3xl flex-shrink-0">
+                    <span class="text-[#b48b6e]">★★★★★</span>
+                    <p class="mt-2">"Best little shop in the neighborhood. Mike remembers how I like it every time."</p>
+                    <p class="mt-3 font-semibold">— Terrence</p>
+                </div>
+                <div class="min-w-[260px] p-6 bg-[#faf3e8] rounded-3xl flex-shrink-0">
+                    <span class="text-[#b48b6e]">★★★★★</span>
+                    <p class="mt-2">"Jessie fixed my patchy beard. Total magician. Plus the coffee is always hot."</p>
+                    <p class="mt-3 font-semibold">— Andre</p>
+                </div>
+                <div class="min-w-[260px] p-6 bg-[#faf3e8] rounded-3xl flex-shrink-0">
+                    <span class="text-[#b48b6e]">★★★★★</span>
+                    <p class="mt-2">"Brought my son for his first cut. They were so patient and kind. New regulars."</p>
+                    <p class="mt-3 font-semibold">— Lena</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== CONTACT & HOURS + MAP placeholder ===== -->
+    <section id="contact" class="py-20 px-6 bg-[#faf3e8]">
+        <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-start">
+            <div>
+                <h3 class="text-3xl heading-local mb-4">visit the corner</h3>
+                <div class="w-full h-56 bg-[#d9b99b] rounded-3xl flex items-center justify-center text-4xl text-white/60 mb-6"><i class="fas fa-map-marked-alt"></i> MAP</div>
+                <p class="flex gap-3"><i class="fas fa-location-dot text-[#b48b6e]"></i> 3427 N Clark St, Chicago</p>
+                <p class="flex gap-3 mt-2"><i class="fas fa-phone-alt text-[#b48b6e]"></i> (773) 555‑9876</p>
+                <p class="flex gap-3 mt-2"><i class="fas fa-envelope text-[#b48b6e]"></i> hello@cutandchat.com</p>
+                <div class="flex space-x-3 mt-6">
+                    <span class="status-badge open-true"><i class="far fa-clock"></i> Open today 9am–6pm</span>
+                    <span class="status-badge">walk‑ins welcome</span>
+                </div>
+            </div>
+            <div>
+                <h4 class="text-2xl heading-local mb-4">shop hours</h4>
+                <ul class="space-y-3">
+                    <li class="flex justify-between border-b border-[#d9b99b] pb-2">Tue–Fri <span>9:00 – 19:00</span></li>
+                    <li class="flex justify-between border-b border-[#d9b99b] pb-2">Saturday <span>9:00 – 17:00</span></li>
+                    <li class="flex justify-between border-b border-[#d9b99b] pb-2">Sunday <span>10:00 – 14:00</span></li>
+                    <li class="flex justify-between text-[#a14141]">Monday <span>closed</span></li>
+                </ul>
+                <div class="mt-8 bg-white p-5 rounded-3xl">
+                    <p class="font-medium">🚲 free street parking · 2 blocks from el stop</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER – simple ===== -->
+    <footer class="bg-[#3e2f24] text-white py-12 px-6">
+        <div class="max-w-5xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="text-3xl heading-local text-[#d9b99b]">CUT & CHAT</div>
+            <div class="flex space-x-6 text-2xl">
+                <a href="#" class="hover:text-[#d9b99b]"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="hover:text-[#d9b99b]"><i class="fab fa-facebook"></i></a>
+                <a href="#" class="hover:text-[#d9b99b]"><i class="fab fa-x-twitter"></i></a>
+            </div>
+            <div class="text-sm text-center md:text-right">
+                © 2026 · locally owned & operated
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 900 });
+        const menuBtn = document.getElementById('menuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const closeBtn = document.getElementById('closeMobileBtn');
+        if(menuBtn) {
+            menuBtn.addEventListener('click', ()=> mobileMenu.classList.remove('hidden'));
+        }
+        if(closeBtn) {
+            closeBtn.addEventListener('click', ()=> mobileMenu.classList.add('hidden'));
+        }
+        document.querySelectorAll('.close-mobile').forEach(el => {
+            el.addEventListener('click', ()=> mobileMenu.classList.add('hidden'));
+        });
+        // dynamic open/closed based on day (monday closed)
+        const today = new Date().getDay(); // 1 = monday
+        const statusSpan = document.querySelector('.open-true');
+        if(today === 1) { // monday
+            if(statusSpan) {
+                statusSpan.className = 'status-badge open-false';
+                statusSpan.innerHTML = '<i class="far fa-clock"></i> Closed today';
+            }
+        }
+    </script>
+</body>
+</html>
