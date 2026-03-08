@@ -7,110 +7,207 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700;900&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         :root { --cream: #FDFBF7; --gold: #C5A059; --dark: #0F0F0F; }
-        body { background-color: var(--cream); font-family: 'Inter', sans-serif; color: var(--dark); }
+        body { background-color: var(--cream); font-family: 'Inter', sans-serif; color: var(--dark); overflow-x: hidden; }
         
-        .heading-extreme {
+        h1, h2, .heading-extreme {
             font-family: 'Syncopate', sans-serif;
             font-weight: 900;
             text-transform: uppercase;
-            letter-spacing: -4px;
-            line-height: 0.85;
+            letter-spacing: -3px;
+            line-height: 0.9;
         }
-
-        /* Full Portrait Hero Logic */
-        .hero-viewport {
-            height: 100vh;
-            width: 100%;
+        .bold-font {
+            font-family: 'Syncopate', sans-serif;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+        .glass { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(12px); border: 1px solid rgba(0,0,0,0.05); }
+        
+        /* PORTRAIT HERO FIX */
+        .hero-portrait-container {
             position: relative;
+            width: 100%;
+            height: 100vh; /* Full screen height */
+            overflow: hidden;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            padding-top: 10vh;
-            overflow: hidden;
+            padding-top: 12vh;
         }
-
-        .hero-portrait-img {
+        .hero-bg-image {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Ensures image covers full area without distortion */
+            object-fit: cover;
             z-index: 1;
-            opacity: 0.9;
+            /* Optional: subtle 3D tilt effect preserved from your original code */
+            transform: perspective(1200px) rotateX(2deg);
         }
-
-        .hero-content {
+        .hero-text-overlay {
             position: relative;
             z-index: 10;
             text-align: center;
-            mix-blend-mode: multiply; /* Optional: adds to the elite aesthetic on cream background */
         }
 
-        /* Glass pill for Handcrafted Edge */
-        .floating-pill {
-            position: absolute;
-            bottom: 15vh;
-            z-index: 20;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            padding: 12px 24px;
-            border-radius: 9999px;
-            font-family: 'Syncopate', sans-serif;
-            font-weight: 700;
-            font-size: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-        }
-
-        .glass-nav {
-            background: rgba(253, 251, 247, 0.8);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(0,0,0,0.03);
-        }
+        .gold-border { border-color: var(--gold); }
+        .social-icon { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: white; border: 1px solid #ddd; transition: all 0.2s; }
+        .social-icon:hover { background: var(--gold); border-color: var(--gold); color: white; }
+        #mobileMenu { transition: opacity 0.2s; }
     </style>
 </head>
 <body>
 
-    <nav class="fixed w-full z-50 glass-nav px-6 py-5 flex justify-between items-center">
-        <div class="text-2xl heading-extreme">VENEER.</div>
-        <div class="space-y-1.5 cursor-pointer">
-            <div class="w-8 h-0.5 bg-black"></div>
-            <div class="w-8 h-0.5 bg-black"></div>
+    <nav class="fixed w-full z-50 glass px-6 md:px-10 py-4 flex justify-between items-center">
+        <div class="text-3xl heading-extreme tracking-[-3px]">VENEER.</div>
+        <div class="hidden md:flex space-x-10 text-sm bold-font items-center">
+            <a href="#about" class="hover:text-gold transition">ABOUT</a>
+            <a href="#services" class="hover:text-gold transition">SERVICES</a>
+            <a href="#booking" class="hover:text-gold transition">BOOK</a>
+            <a href="#gallery" class="hover:text-gold transition">GALLERY</a>
+            <a href="#contact" class="hover:text-gold transition">CONTACT</a>
+            <span class="w-px h-6 bg-black/20 mx-2"></span>
+            <a href="#booking" class="border border-black px-5 py-2 rounded-full text-xs hover:bg-black hover:text-white transition">APPOINTMENT</a>
         </div>
+        <button id="menuBtn" class="md:hidden p-2 space-y-1.5 focus:outline-none">
+            <div class="w-8 h-0.5 bg-black"></div>
+            <div class="w-8 h-0.5 bg-black"></div>
+        </button>
     </nav>
 
-    <section class="hero-viewport">
-        <div class="hero-content" data-aos="fade-down">
-            <h1 class="text-6xl md:text-[10rem] heading-extreme mb-4">EDGE<br>MASTERY</h1>
-            <p class="text-xs md:text-sm tracking-[.5em] font-bold opacity-60 uppercase">— SINCE 2026 · TOKYO —</p>
-        </div>
+    <div id="mobileMenu" class="fixed inset-0 bg-white z-40 hidden flex flex-col items-center justify-center space-y-8 text-4xl heading-extreme">
+        <a href="#about" onclick="toggleMenu()">ABOUT</a>
+        <a href="#services" onclick="toggleMenu()">SERVICES</a>
+        <a href="#booking" onclick="toggleMenu()">BOOK</a>
+        <a href="#contact" onclick="toggleMenu()">CONTACT</a>
+    </div>
 
+    <section class="hero-portrait-container">
+        <div class="hero-text-overlay" data-aos="fade-up">
+            <h1 class="text-7xl md:text-[12rem] mb-4 heading-extreme">EDGE<br>MASTERY</h1>
+            <p class="text-sm md:text-base bold-font mb-8 tracking-[.3em] text-stone-600">— SINCE 2026 · TOKYO —</p>
+        </div>
+        
         <img src="https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-41-image1.jpg" 
-             alt="Veneer Elite Storefront" 
-             class="hero-portrait-img"
+             class="hero-bg-image" 
+             alt="Elite Barber Front"
              data-aos="zoom-out" 
              data-aos-duration="2000">
 
-        <div class="floating-pill" data-aos="fade-up" data-aos-delay="500">
+        <div class="absolute bottom-10 z-20 bg-white/80 backdrop-blur-sm px-6 py-3 rounded-full text-xs bold-font shadow-lg" data-aos="fade-up" data-aos-delay="600">
             ✂️ HANDCRAFTED EDGE
         </div>
     </section>
 
-    <section class="py-32 px-10 bg-white">
-        <div class="max-w-4xl mx-auto" data-aos="fade-up">
-            <h2 class="text-5xl md:text-7xl heading-extreme mb-10">THE<br>PHILOSOPHY</h2>
-            <p class="text-2xl md:text-3xl font-light leading-relaxed text-stone-700">
-                We don't just cut hair; we curate identity. Using precise architectural methods and heritage tools, Veneer is the pinnacle of grooming.
-            </p>
+    <section id="about" class="max-w-6xl mx-auto px-6 py-28 scroll-mt-20">
+        <div class="grid md:grid-cols-2 gap-16 items-center">
+            <div data-aos="fade-right">
+                <h2 class="text-5xl mb-6 heading-extreme">THE<br>PHILOSOPHY</h2>
+                <p class="text-xl leading-relaxed opacity-80">We don't just cut hair; we curate identity. Using 3D scalp mapping and heritage techniques, Veneer is the pinnacle of 2026 grooming.</p>
+            </div>
+            <div id="booking" class="glass p-8 rounded-2xl shadow-xl border border-stone-200" data-aos="fade-left">
+                <h3 class="heading-extreme text-2xl mb-5">SECURE SESSION</h3>
+                <form class="space-y-4">
+                    <select class="w-full p-4 bg-transparent border-b border-black outline-none focus:border-gold">
+                        <option>Select Master Barber</option>
+                        <option>The Sculptor (lead)</option>
+                        <option>The Architect</option>
+                    </select>
+                    <input type="date" class="w-full p-4 bg-transparent border-b border-black outline-none focus:border-gold">
+                    <button class="w-full bg-black text-white py-4 bold-font hover:bg-gold transition text-lg">CONFIRM RESERVATION</button>
+                </form>
+            </div>
         </div>
     </section>
+
+    <section id="services" class="bg-black text-white py-32 px-6">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-5xl heading-extreme mb-16 text-center">SERVICES</h2>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="border border-stone-800 p-8 hover:bg-stone-900 transition" data-aos="fade-up">
+                    <span class="text-gold text-5xl font-black">01</span>
+                    <h4 class="text-3xl mt-6 mb-2 heading-extreme">ARCHITECTURAL</h4>
+                    <p class="opacity-60 mb-6">$85 — structural layers</p>
+                </div>
+                <div class="border border-stone-800 p-8 hover:bg-stone-900 transition" data-aos="fade-up" data-aos-delay="100">
+                    <span class="text-gold text-5xl font-black">02</span>
+                    <h4 class="text-3xl mt-6 mb-2 heading-extreme">OXYGEN SHAVE</h4>
+                    <p class="opacity-60 mb-6">$60 — nano-mist treatment</p>
+                </div>
+                <div class="border border-stone-800 p-8 hover:bg-stone-900 transition" data-aos="fade-up" data-aos-delay="200">
+                    <span class="text-gold text-5xl font-black">03</span>
+                    <h4 class="text-3xl mt-6 mb-2 heading-extreme">TOTAL REBUILD</h4>
+                    <p class="opacity-60 mb-6">$130 — cut, shave, hydrate</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-28 px-6">
+        <h2 class="text-center text-5xl heading-extreme mb-16">THE INVENTORY</h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-5 max-w-6xl mx-auto">
+            <div class="aspect-square bg-white flex flex-col items-center justify-center p-6 border border-stone-200 transition-all hover:shadow-2xl hover:border-gold group" data-aos="zoom-in">
+                <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="1.2">
+                    <rect x="6" y="2" width="12" height="20" rx="2"/>
+                </svg>
+                <p class="mt-4 bold-font text-xs">AERO-POMADE</p>
+                <p class="text-gold font-black">$42</p>
+            </div>
+            </div>
+    </section>
+
+    <section class="max-w-5xl mx-auto px-6 py-12">
+        <div class="relative w-full h-96 bg-stone-300 rounded-3xl overflow-hidden group">
+             <div class="absolute inset-0 grid grid-cols-2 transition-all duration-500 group-hover:grid-cols-[30%_70%]">
+                 <div class="bg-stone-400 flex items-center justify-center text-white heading-extreme">BEFORE</div>
+                 <div class="bg-stone-800 flex items-center justify-center text-white heading-extreme">AFTER</div>
+             </div>
+        </div>
+    </section>
+
+    <section class="bg-white py-24 px-6 border-y border-stone-200">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-4xl heading-extreme mb-8">FAQ</h2>
+            <details class="mb-5 border-b border-black pb-4 cursor-pointer">
+                <summary class="bold-font">DO YOU ACCEPT WALK-INS?</summary>
+                <p class="mt-3 opacity-70">By appointment only to ensure the "Hyper Elite" experience.</p>
+            </details>
+        </div>
+    </section>
+
+    <footer id="contact" class="bg-stone-100 py-20 px-6">
+        <div class="max-w-6xl mx-auto grid md:grid-cols-3 gap-12">
+            <div>
+                <h2 class="heading-extreme text-3xl mb-6">VENEER.</h2>
+                <p>123 Avant-Garde Blvd,<br>Tokyo, 2026</p>
+                <div class="flex space-x-4 mt-6">
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-tiktok"></i></a>
+                </div>
+            </div>
+            <div class="col-span-2">
+                <form class="grid grid-cols-2 gap-5">
+                    <input type="text" placeholder="Name" class="p-4 bg-transparent border border-stone-400 focus:border-black outline-none">
+                    <input type="email" placeholder="Email" class="p-4 bg-transparent border border-stone-400 focus:border-black outline-none">
+                    <textarea placeholder="Message" class="col-span-2 p-4 bg-transparent border border-stone-400 focus:border-black outline-none h-32"></textarea>
+                    <button class="bg-black text-white p-4 bold-font hover:bg-gold transition col-span-2 uppercase">Send Signal</button>
+                </form>
+            </div>
+        </div>
+    </footer>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         AOS.init({ duration: 1200, once: true });
+        const menuBtn = document.getElementById('menuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        function toggleMenu() { mobileMenu.classList.toggle('hidden'); }
+        menuBtn.addEventListener('click', toggleMenu);
     </script>
 </body>
 </html>
