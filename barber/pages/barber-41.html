@@ -7,14 +7,13 @@
     <!-- Tailwind + AOS + Fonts -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <!-- Fonts: Syncopate (extreme bold) + Inter; added Syne for extra weight option -->
+    <!-- Fonts: Syncopate (extreme bold) + Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700;900&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <!-- Font Awesome 6 (free) for social icons -->
+    <!-- Font Awesome 6 (free) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         :root { --cream: #FDFBF7; --gold: #C5A059; --dark: #0F0F0F; }
         body { background-color: var(--cream); font-family: 'Inter', sans-serif; color: var(--dark); overflow-x: hidden; }
-        /* bolder headings: use 900 weight + tighter spacing */
         h1, h2, .heading-extreme {
             font-family: 'Syncopate', sans-serif;
             font-weight: 900;
@@ -28,28 +27,33 @@
             letter-spacing: -1px;
         }
         .glass { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(12px); border: 1px solid rgba(0,0,0,0.05); }
-        /* traditional desktop menu */
-        .desktop-menu a { font-weight: 600; letter-spacing: 0.5px; transition: color 0.2s; }
-        /* fine gold details */
         .gold-border { border-color: var(--gold); }
         .btn-gold { background: var(--gold); color: black; font-weight: 800; }
         .btn-gold:hover { background: #b38f4a; }
-        /* inventory hover */
         .inventory-item:hover svg { transform: scale(1.1); stroke: var(--gold); }
-        /* social footer icons */
         .social-icon { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: white; border: 1px solid #ddd; transition: all 0.2s; }
         .social-icon:hover { background: var(--gold); border-color: var(--gold); color: white; }
-        /* mobile menu hidden by default */
         #mobileMenu { transition: opacity 0.2s; }
-        /* full bleed hero image — now pushed below fixed header */
-        .hero-fullbleed {
+
+        /* ----- STATIC HEADER (not fixed) ----- */
+        nav {
+            position: static;  /* not fixed, so it stays in normal flow */
+            width: 100%;
+            background: rgba(255,255,255,0.75);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        /* hero now comes directly after nav, no extra margin needed */
+        .hero-container {
             width: 100vw;
             position: relative;
             left: 50%;
             right: 50%;
             margin-left: -50vw;
             margin-right: -50vw;
-            margin-top: 0; /* reset */
+            height: 85vh;
+            max-height: 900px;
+            overflow: hidden;
         }
         .hero-image {
             width: 100%;
@@ -57,31 +61,23 @@
             object-fit: cover;
             display: block;
         }
-        .hero-container {
-            height: 85vh;
-            max-height: 900px;
-            overflow: hidden;
-            margin-top: 76px; /* height of fixed nav (~76px) to push down */
-        }
-        /* responsive: adjust margin for smaller screens if needed */
-        @media (max-width: 768px) {
-            .hero-container {
-                margin-top: 68px; /* nav height on mobile approx */
-            }
-        }
-        /* remove any previous 3d transforms that could interfere */
+        /* ensure no leftover 3D transforms */
         .hero-3d {
             transform: none;
         }
         .hero-3d:hover {
             transform: none;
         }
+        /* scroll margins adjusted because nav is not fixed */
+        .scroll-mt-20 {
+            scroll-margin-top: 2rem;
+        }
     </style>
 </head>
 <body>
 
-    <!-- ===== PREMIUM NAV ===== desktop traditional + mobile hamburger (fixed) -->
-    <nav class="fixed w-full z-50 glass px-6 md:px-10 py-4 flex justify-between items-center">
+    <!-- ===== STATIC HEADER (not fixed, sits above hero) ===== -->
+    <nav class="w-full z-50 glass px-6 md:px-10 py-4 flex justify-between items-center">
         <!-- left: logo (ultra bold) -->
         <div class="text-3xl heading-extreme tracking-[-3px]">VENEER.</div>
 
@@ -112,18 +108,18 @@
         <a href="#" class="text-sm border border-black px-6 py-3 rounded-full">IMMEDIATE BOOK</a>
     </div>
 
-    <!-- ===== HERO with FULL BLEED barber image (now below header) ===== -->
-    <section class="hero-fullbleed hero-container flex flex-col items-center justify-center relative">
+    <!-- ===== HERO with FULL BLEED barber image – now directly below static header, fully visible ===== -->
+    <section class="hero-container flex flex-col items-center justify-center relative">
         <!-- image full bleed -->
         <img src="https://raw.githubusercontent.com/doctoc30/Vibz/main/images/barber-41-image1.jpg" alt="Master barber at work" class="hero-image absolute inset-0 w-full h-full object-cover">
-        <!-- dark overlay for text readability (optional, keeps edge) -->
+        <!-- dark overlay for text readability -->
         <div class="absolute inset-0 bg-black/20"></div>
-        <!-- headline over image (same positioning as before but on image) -->
+        <!-- headline over image -->
         <div class="relative z-10 text-center text-white px-4" data-aos="fade-up">
             <h1 class="text-7xl md:text-9xl mb-4 heading-extreme drop-shadow-2xl">EDGE<br>MASTERY</h1>
             <p class="text-sm md:text-base bold-font mb-8 tracking-[.3em] text-white/90 drop-shadow-xl">— SINCE 2026 · TOKYO —</p>
         </div>
-        <!-- floating label remains but over image -->
+        <!-- floating label -->
         <div class="absolute bottom-6 left-6 z-10 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full text-xs bold-font shadow-lg">✂️ HANDCRAFTED EDGE</div>
     </section>
 
@@ -336,12 +332,10 @@
         
         menuBtn.addEventListener('click', toggleMenu);
 
-        // close mobile menu when link clicked
         document.querySelectorAll('#mobileMenu a').forEach(link => {
             link.addEventListener('click', toggleMenu);
         });
 
-        // small booking demo (date default)
         const today = new Date().toISOString().split('T')[0];
         const dateInput = document.querySelector('#demoBooking input[type="date"]');
         if (dateInput) dateInput.value = today;
