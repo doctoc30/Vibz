@@ -8,7 +8,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        /* STYLES - EXACTLY AS PROVIDED WITH FIXED FEATURE GRID */
+        /* STYLES - EXACTLY AS PROVIDED */
         :root {
             --primary: #FF6B00;
             --primary-light: #FFF5EE;
@@ -1092,14 +1092,14 @@
                     <button class="vibz-btn back-btn" onclick="goToStep(0)">Go Back</button>
                 </div>
 
-                <!-- STEP 2: COUNTRY SELECTOR - FIXED CLEAN VERSION -->
+                <!-- STEP 2: COUNTRY SELECTOR - FIXED - NO DUPLICATE, AUTO-UPDATE -->
                 <div class="form-screen" id="step-2">
                     <div class="step-header" style="margin-bottom: 15px;">
                         <h2 style="font-size: 2rem; font-weight: 900;">Where are you located?</h2>
                         <p style="color: var(--gray); font-size: 1rem;">We serve clients worldwide. Select your country to see prices in your local currency.</p>
                     </div>
                     
-                    <select class="vibz-input" id="countrySelect" style="text-align:left; margin-bottom: 10px;">
+                    <select class="vibz-input" id="countrySelect" style="text-align:left; margin-bottom: 10px;" onchange="updateCurrencyPreview()">
                         <option value="">-- Select your country --</option>
                         <option value="GB">🇬🇧 United Kingdom (GBP £)</option>
                         <option value="US">🇺🇸 United States (USD $)</option>
@@ -1131,7 +1131,7 @@
                     </select>
                     
                     <div id="currencyPreview" class="currency-preview" style="display: none;">
-                        <i class="fas fa-info-circle"></i> All prices will be shown in <strong id="selectedCurrency">EUR (€)</strong>
+                        <i class="fas fa-info-circle"></i> All prices will be shown in <strong id="selectedCurrency">GBP (£)</strong>
                     </div>
                     
                     <button class="vibz-btn primary" onclick="handleCountrySelect()">Continue</button>
@@ -1402,6 +1402,24 @@
     }
 
     // =========================================================================
+    // NEW FUNCTION: Update currency preview when dropdown changes
+    // =========================================================================
+    function updateCurrencyPreview() {
+        const select = document.getElementById('countrySelect');
+        const preview = document.getElementById('currencyPreview');
+        const currencySpan = document.getElementById('selectedCurrency');
+        
+        if (select.value) {
+            const currency = getCurrencyForCountry(select.value);
+            const symbol = getSymbol(currency);
+            currencySpan.innerText = currency + ' (' + symbol + ')';
+            preview.style.display = 'block';
+        } else {
+            preview.style.display = 'none';
+        }
+    }
+
+    // =========================================================================
     // UI FUNCTIONS
     // =========================================================================
     function toggleMenu() {
@@ -1442,7 +1460,7 @@
         }
     }
 
-    // Handle country selection - FIXED to show correct currency
+    // Handle country selection - FIXED to use current dropdown value
     function handleCountrySelect() {
         const select = document.getElementById('countrySelect');
         if (!select.value) {
@@ -1473,19 +1491,13 @@
         selections.country = select.value;
         selections.currency = getCurrencyForCountry(selections.country);
         
-        // Save to storage
+        // Save to storage - ALWAYS update these
         sessionStorage.setItem('customerCountry', selections.country);
         sessionStorage.setItem('customerCurrency', selections.currency);
         sessionStorage.setItem('exchangeRate', getExchangeRate(selections.currency));
         localStorage.setItem('customerCountry', selections.country);
         localStorage.setItem('customerCurrency', selections.currency);
         localStorage.setItem('exchangeRate', getExchangeRate(selections.currency));
-        
-        // Show preview with CORRECT currency (not hardcoded GBP)
-        const preview = document.getElementById('currencyPreview');
-        const currencySpan = document.getElementById('selectedCurrency');
-        currencySpan.innerText = selections.currency + ' (' + getSymbol(selections.currency) + ')';
-        preview.style.display = 'block';
         
         // Go to next step (step 3)
         currentStep = 3;
@@ -2146,6 +2158,22 @@
             }, 100);
         }
         
+        // If on step 2 and country already selected, update preview
+        if (currentStep === 2 && selections.country) {
+            const select = document.getElementById('countrySelect');
+            const preview = document.getElementById('currencyPreview');
+            const currencySpan = document.getElementById('selectedCurrency');
+            
+            // Set dropdown to saved country
+            if (select) {
+                select.value = selections.country;
+                if (selections.country) {
+                    currencySpan.innerText = selections.currency + ' (' + getSymbol(selections.currency) + ')';
+                    preview.style.display = 'block';
+                }
+            }
+        }
+        
         window.scrollTo({ top: 0, behavior: 'smooth' });
         
         const menu = document.getElementById('app-menu-layer');
@@ -2168,16 +2196,6 @@
             const savedShopName = sessionStorage.getItem('barberShopName');
             if (savedShopName && !selections.businessName) {
                 selections.businessName = savedShopName;
-            }
-        }
-        
-        // If country already selected, update currency preview
-        if (selections.country && selections.country !== 'GB') {
-            const preview = document.getElementById('currencyPreview');
-            const currencySpan = document.getElementById('selectedCurrency');
-            if (preview && currencySpan) {
-                currencySpan.innerText = selections.currency + ' (' + getSymbol(selections.currency) + ')';
-                preview.style.display = 'block';
             }
         }
         
