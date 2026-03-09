@@ -1092,16 +1092,13 @@
                     <button class="vibz-btn back-btn" onclick="goToStep(0)">Go Back</button>
                 </div>
 
-                <!-- STEP 2: COUNTRY SELECTOR - FIXED - NO DUPLICATE, AUTO-UPDATE -->
+                <!-- STEP 2: COUNTRY SELECTOR - FINAL FIXED VERSION - NO DUPLICATE, UK DEFAULT, AUTO-UPDATE -->
                 <div class="form-screen" id="step-2">
-                    <div class="step-header" style="margin-bottom: 15px;">
-                        <h2 style="font-size: 2rem; font-weight: 900;">Where are you located?</h2>
-                        <p style="color: var(--gray); font-size: 1rem;">We serve clients worldwide. Select your country to see prices in your local currency.</p>
-                    </div>
+                    <h2 style="font-size: 2rem; font-weight: 900; text-align: center; margin-bottom: 10px;">Where are you located?</h2>
+                    <p style="text-align: center; color: var(--gray); margin-bottom: 20px;">We serve clients worldwide. Select your country to see prices in your local currency.</p>
                     
                     <select class="vibz-input" id="countrySelect" style="text-align:left; margin-bottom: 10px;" onchange="updateCurrencyPreview()">
-                        <option value="">-- Select your country --</option>
-                        <option value="GB">🇬🇧 United Kingdom (GBP £)</option>
+                        <option value="GB" selected>🇬🇧 United Kingdom (GBP £)</option>
                         <option value="US">🇺🇸 United States (USD $)</option>
                         <option value="CA">🇨🇦 Canada (CAD $)</option>
                         <option value="AU">🇦🇺 Australia (AUD $)</option>
@@ -1130,7 +1127,7 @@
                         <option value="CZ">🇨🇿 Czech Republic (CZK Kč)</option>
                     </select>
                     
-                    <div id="currencyPreview" class="currency-preview" style="display: none;">
+                    <div id="currencyPreview" class="currency-preview" style="display: block;">
                         <i class="fas fa-info-circle"></i> All prices will be shown in <strong id="selectedCurrency">GBP (£)</strong>
                     </div>
                     
@@ -2158,22 +2155,6 @@
             }, 100);
         }
         
-        // If on step 2 and country already selected, update preview
-        if (currentStep === 2 && selections.country) {
-            const select = document.getElementById('countrySelect');
-            const preview = document.getElementById('currencyPreview');
-            const currencySpan = document.getElementById('selectedCurrency');
-            
-            // Set dropdown to saved country
-            if (select) {
-                select.value = selections.country;
-                if (selections.country) {
-                    currencySpan.innerText = selections.currency + ' (' + getSymbol(selections.currency) + ')';
-                    preview.style.display = 'block';
-                }
-            }
-        }
-        
         window.scrollTo({ top: 0, behavior: 'smooth' });
         
         const menu = document.getElementById('app-menu-layer');
@@ -2197,6 +2178,13 @@
             if (savedShopName && !selections.businessName) {
                 selections.businessName = savedShopName;
             }
+        }
+        
+        // Set UK as default country on page load
+        const countrySelect = document.getElementById('countrySelect');
+        if (countrySelect && !selections.country) {
+            countrySelect.value = 'GB';
+            updateCurrencyPreview();
         }
         
         updateUI();
