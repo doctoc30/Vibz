@@ -1060,6 +1060,35 @@
         }
 
         /* Tablet spacing refinements (already included in hero block) */
+        
+        /* Loading overlay styles */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -1112,7 +1141,7 @@
 
                 <!-- STEP 1.5: COUNTRY SELECTOR - FIXED - NO DUPLICATE, CENTERED PREVIEW -->
                 <div class="form-screen" id="step-1-5">
-                    <!-- REMOVED the h2 - now using dynamic-title from step-header -->
+                    <!-- REMOVED the duplicate description paragraph -->
                     
                     <select class="vibz-input" id="countrySelect" style="text-align:left; margin-bottom: 10px;" onchange="updateCurrencyPreview()">
                         <option value="GB" selected>🇬🇧 United Kingdom (GBP £)</option>
@@ -1818,6 +1847,36 @@
         container.innerHTML = html;
     }
 
+    // =========================================================================
+    // PAYMENT FUNCTION USING STRIPE LINKS (SAFE FOR GITHUB PAGES)
+    // =========================================================================
+    function payNow(tier, planType) {
+        saveOrderToStorage(planType, tier);
+        
+        const currency = selections.currency || 'GBP';
+        const country = selections.country || 'GB';
+        
+        // Get the right Payment Link
+        let stripeLink = '';
+        if (planType === 'outright') {
+            stripeLink = tier === 'standard' 
+                ? STRIPE_LINKS.outright.standard
+                : STRIPE_LINKS.outright.premium;
+        } else {
+            stripeLink = tier === 'standard'
+                ? STRIPE_LINKS.monthly.standard
+                : STRIPE_LINKS.monthly.premium;
+        }
+        
+        // Add currency and country as parameters for better UX
+        const url = new URL(stripeLink);
+        url.searchParams.append('prefilled_country', country);
+        url.searchParams.append('currency', currency.toLowerCase());
+        
+        // Open Stripe Payment Link
+        window.open(url.toString(), '_blank');
+    }
+
     function renderPricingCards() {
         const container = document.getElementById('pricing-cards-display');
         if (!container) return;
@@ -1843,7 +1902,7 @@
                         <li><i class="fas fa-check-circle"></i> No recurring license fees</li>
                         <li><i class="fas fa-check-circle"></i> 1 month post-launch support</li>
                     </ul>
-                    <button class="payment-button secondary" onclick="saveOrderToStorage('Buy Outright', 'standard'); window.open('${STRIPE_LINKS.outright.standard}', '_blank')">
+                    <button class="payment-button secondary" onclick="payNow('standard', 'outright')">
                         <i class="fas fa-bolt"></i> Standard (One Time) - £${PRICING_CONFIG.outright.standard}
                     </button>
                 </div>
@@ -1867,7 +1926,7 @@
                         <li><i class="fas fa-crown"></i> 3 months post-launch support</li>
                         <li><i class="fas fa-crown"></i> Premium feature set</li>
                     </ul>
-                    <button class="payment-button premium" onclick="saveOrderToStorage('Buy Outright', 'premium'); window.open('${STRIPE_LINKS.outright.premium}', '_blank')">
+                    <button class="payment-button premium" onclick="payNow('premium', 'outright')">
                         <i class="fas fa-crown"></i> Premium (One Time) - £${PRICING_CONFIG.outright.premium}
                     </button>
                 </div>
@@ -1906,7 +1965,7 @@
                         <li><i class="fas fa-check"></i> 72h support response</li>
                     </ul>
                     
-                    <button class="payment-button secondary" onclick="saveOrderToStorage('Monthly License', 'standard'); window.open('${STRIPE_LINKS.monthly.standard}', '_blank')">
+                    <button class="payment-button secondary" onclick="payNow('standard', 'monthly')">
                         <i class="fas fa-bolt"></i> Standard Build Fee - £${PRICING_CONFIG.monthly.buildFee.standard}
                     </button>
                     
@@ -1951,7 +2010,7 @@
                         <li><i class="fas fa-crown"></i> Priority change requests</li>
                     </ul>
                     
-                    <button class="payment-button premium" onclick="saveOrderToStorage('Monthly License', 'premium'); window.open('${STRIPE_LINKS.monthly.premium}', '_blank')">
+                    <button class="payment-button premium" onclick="payNow('premium', 'monthly')">
                         <i class="fas fa-crown"></i> Premium Build Fee - £${PRICING_CONFIG.monthly.buildFee.premium}
                     </button>
                     
