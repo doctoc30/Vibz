@@ -1877,9 +1877,38 @@
         window.open(url.toString(), '_blank');
     }
 
+    // =========================================================================
+    // UPDATED PRICING CARDS WITH CURRENCY CONVERSION
+    // =========================================================================
     function renderPricingCards() {
         const container = document.getElementById('pricing-cards-display');
         if (!container) return;
+        
+        // Get selected currency (default to GBP)
+        const currency = selections.currency || 'GBP';
+        const symbol = getSymbol(currency);
+        
+        // Exchange rates (base: GBP)
+        const exchangeRates = {
+            'GBP': 1.00, 'USD': 1.25, 'EUR': 1.15, 'CAD': 1.70,
+            'AUD': 1.90, 'INR': 104.50, 'JPY': 185.00, 'BRL': 6.20,
+            'MXN': 21.50, 'ZAR': 23.50, 'NGN': 1850.00, 'KES': 162.00,
+            'AED': 4.60, 'SAR': 4.70, 'SGD': 1.70, 'HKD': 9.80,
+            'CHF': 1.10, 'NOK': 13.20, 'SEK': 13.00, 'DKK': 8.60,
+            'PLN': 5.00, 'CZK': 28.50
+        };
+        
+        const rate = exchangeRates[currency] || 1.00;
+        
+        // Format price based on currency
+        function formatPrice(amount) {
+            const converted = amount * rate;
+            // No decimals for certain currencies
+            if (currency === 'JPY' || currency === 'NGN' || currency === 'KRW') {
+                return Math.round(converted).toLocaleString();
+            }
+            return converted.toFixed(2);
+        }
         
         let html = '';
 
@@ -1888,8 +1917,8 @@
                 <div class="pricing-card">
                     <div class="pricing-header">
                         <div class="plan-type standard-type">${TIER_CONFIG.standard.name}</div>
-                        <div class="price-value">£${PRICING_CONFIG.outright.standard.toLocaleString()}</div>
-                        <div class="price-period">one-time</div>
+                        <div class="price-value">${symbol}${formatPrice(PRICING_CONFIG.outright.standard)}</div>
+                        <div class="price-period">one-time (${currency})</div>
                         <div class="plan-desc">You own the full website files. Hosting and updates are your responsibility.</div>
                     </div>
                     <ul class="feature-list">
@@ -1903,7 +1932,7 @@
                         <li><i class="fas fa-check-circle"></i> 1 month post-launch support</li>
                     </ul>
                     <button class="payment-button secondary" onclick="payNow('standard', 'outright')">
-                        <i class="fas fa-bolt"></i> Standard (One Time) - £${PRICING_CONFIG.outright.standard}
+                        <i class="fas fa-bolt"></i> Standard (One Time) - ${symbol}${formatPrice(PRICING_CONFIG.outright.standard)}
                     </button>
                 </div>
                 
@@ -1911,8 +1940,8 @@
                     <div class="plan-recommended-badge">👍 RECOMMENDED</div>
                     <div class="pricing-header">
                         <div class="plan-type premium-type">${TIER_CONFIG.premium.name}</div>
-                        <div class="price-value">£${PRICING_CONFIG.outright.premium.toLocaleString()}</div>
-                        <div class="price-period">one-time</div>
+                        <div class="price-value">${symbol}${formatPrice(PRICING_CONFIG.outright.premium)}</div>
+                        <div class="price-period">one-time (${currency})</div>
                         <div class="plan-desc">You own the full website files. Hosting and updates are your responsibility.</div>
                     </div>
                     <ul class="feature-list">
@@ -1927,7 +1956,7 @@
                         <li><i class="fas fa-crown"></i> Premium feature set</li>
                     </ul>
                     <button class="payment-button premium" onclick="payNow('premium', 'outright')">
-                        <i class="fas fa-crown"></i> Premium (One Time) - £${PRICING_CONFIG.outright.premium}
+                        <i class="fas fa-crown"></i> Premium (One Time) - ${symbol}${formatPrice(PRICING_CONFIG.outright.premium)}
                     </button>
                 </div>
             `;
@@ -1940,12 +1969,12 @@
                         <div class="price-row">
                             <div class="price-item">
                                 <span class="price-label">Build fee:</span>
-                                <span class="price-value small">£${PRICING_CONFIG.monthly.buildFee.standard}</span>
+                                <span class="price-value small">${symbol}${formatPrice(PRICING_CONFIG.monthly.buildFee.standard)}</span>
                                 <span class="price-period">one-time</span>
                             </div>
                             <div class="price-item">
                                 <span class="price-label">then</span>
-                                <span class="price-value">£${PRICING_CONFIG.monthly.standard}</span>
+                                <span class="price-value">${symbol}${formatPrice(PRICING_CONFIG.monthly.standard)}</span>
                                 <span class="price-period">/month</span>
                             </div>
                         </div>
@@ -1966,12 +1995,12 @@
                     </ul>
                     
                     <button class="payment-button secondary" onclick="payNow('standard', 'monthly')">
-                        <i class="fas fa-bolt"></i> Standard Build Fee - £${PRICING_CONFIG.monthly.buildFee.standard}
+                        <i class="fas fa-bolt"></i> Standard Build Fee - ${symbol}${formatPrice(PRICING_CONFIG.monthly.buildFee.standard)}
                     </button>
                     
                     <div class="terms-box">
                         <i class="fas fa-info-circle"></i>
-                        <strong>12-month minimum term.</strong> Monthly management (£${PRICING_CONFIG.monthly.standard}/mo) starts after website delivery. 
+                        <strong>12-month minimum term.</strong> Monthly management (${symbol}${formatPrice(PRICING_CONFIG.monthly.standard)}/mo) starts after website delivery. 
                         Early cancellation does not waive the remaining contract balance.
                     </div>
                 </div>
@@ -1983,12 +2012,12 @@
                         <div class="price-row">
                             <div class="price-item">
                                 <span class="price-label">Build fee:</span>
-                                <span class="price-value small">£${PRICING_CONFIG.monthly.buildFee.premium}</span>
+                                <span class="price-value small">${symbol}${formatPrice(PRICING_CONFIG.monthly.buildFee.premium)}</span>
                                 <span class="price-period">one-time</span>
                             </div>
                             <div class="price-item">
                                 <span class="price-label">then</span>
-                                <span class="price-value">£${PRICING_CONFIG.monthly.premium}</span>
+                                <span class="price-value">${symbol}${formatPrice(PRICING_CONFIG.monthly.premium)}</span>
                                 <span class="price-period">/month</span>
                             </div>
                         </div>
@@ -2011,12 +2040,12 @@
                     </ul>
                     
                     <button class="payment-button premium" onclick="payNow('premium', 'monthly')">
-                        <i class="fas fa-crown"></i> Premium Build Fee - £${PRICING_CONFIG.monthly.buildFee.premium}
+                        <i class="fas fa-crown"></i> Premium Build Fee - ${symbol}${formatPrice(PRICING_CONFIG.monthly.buildFee.premium)}
                     </button>
                     
                     <div class="terms-box">
                         <i class="fas fa-info-circle"></i>
-                        <strong>12-month minimum term.</strong> Monthly management (£${PRICING_CONFIG.monthly.premium}/mo) starts after website delivery. 
+                        <strong>12-month minimum term.</strong> Monthly management (${symbol}${formatPrice(PRICING_CONFIG.monthly.premium)}/mo) starts after website delivery. 
                         Early cancellation does not waive the remaining contract balance.
                     </div>
                 </div>
