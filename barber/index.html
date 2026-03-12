@@ -1327,7 +1327,7 @@
     };
 
     // =========================================================================
-    // UPDATED STRIPE LINKS WITH WORKING MULTI-CURRENCY LINKS
+    // STRIPE LINKS WITH WORKING MULTI-CURRENCY LINKS
     // =========================================================================
     const STRIPE_LINKS = {
         outright: {
@@ -1851,30 +1851,30 @@
     }
 
     // =========================================================================
-    // PAYMENT FUNCTION USING STRIPE LINKS (SAFE FOR GITHUB PAGES)
+    // SIMPLIFIED PAYMENT FUNCTION - PASSES ONLY COUNTRY TO STRIPE
     // =========================================================================
     function payNow(tier, planType) {
         saveOrderToStorage(planType, tier);
         
-        const currency = selections.currency || 'GBP';
+        // Get the country selected on your website (e.g., 'CA' for Canada)
         const country = selections.country || 'GB';
         
-        // Get the right Payment Link
+        // Get the correct Stripe link from your configuration
         let stripeLink = '';
         if (planType === 'outright') {
             stripeLink = tier === 'standard' 
                 ? STRIPE_LINKS.outright.standard
-                : STRIPE_LINKS.outright.premium;
+                : STRIPE_LINKS.outright.premium; // This is your working Premium link
         } else {
             stripeLink = tier === 'standard'
                 ? STRIPE_LINKS.monthly.standard
                 : STRIPE_LINKS.monthly.premium;
         }
         
-        // Add currency and country as parameters for better UX
+        // Create the URL and add ONLY the country parameter
         const url = new URL(stripeLink);
         url.searchParams.append('prefilled_country', country);
-        url.searchParams.append('currency', currency.toLowerCase());
+        // REMOVED the currency parameter - Stripe will determine it from the country
         
         // Open Stripe Payment Link
         window.open(url.toString(), '_blank');
