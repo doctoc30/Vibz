@@ -6,10 +6,8 @@
     <title>VIBZ | Premium Web Solutions</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <!-- Three.js for 3D globe -->
+    <!-- Three.js for realistic globe -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <!-- OrbitControls for better interaction (optional) -->
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     
     <style>
         :root {
@@ -219,20 +217,20 @@
             padding: 0 25px 100px;
         }
 
-        /* ===== 3D SEE-THROUGH GLOBE SECTION ===== */
+        /* ===== REALISTIC GLOBE SECTION ===== */
         .globe-section {
             width: 100%;
             display: flex;
             justify-content: center;
             margin: 20px 0 20px;
             position: relative;
-            min-height: 450px;
+            min-height: 480px;
         }
         
         #globe-canvas-wrapper {
             width: 100%;
             max-width: 900px;
-            height: 450px;
+            height: 480px;
             margin: 0 auto;
             position: relative;
             cursor: pointer;
@@ -243,42 +241,45 @@
         
         .globe-branding {
             position: absolute;
-            bottom: 20px;
+            bottom: 25px;
             left: 0;
             right: 0;
             text-align: center;
             z-index: 20;
             pointer-events: none;
             font-weight: 900;
-            font-size: 1.8rem;
+            font-size: 2rem;
             color: var(--primary);
             text-shadow: 0 0 30px rgba(255,107,0,0.8);
             letter-spacing: 4px;
-            background: linear-gradient(90deg, transparent, rgba(255,107,0,0.15), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255,107,0,0.2), transparent);
             padding: 15px 0;
             backdrop-filter: blur(2px);
-            border-top: 1px solid rgba(255,107,0,0.2);
-            border-bottom: 1px solid rgba(255,107,0,0.2);
+            border-top: 2px solid rgba(255,107,0,0.3);
+            border-bottom: 2px solid rgba(255,107,0,0.3);
             text-transform: uppercase;
+            font-family: 'Inter', sans-serif;
         }
         
         .globe-branding i {
             margin: 0 20px;
             color: #FFD700;
             animation: twinkle 2s ease-in-out infinite;
-            font-size: 1.4rem;
+            font-size: 1.8rem;
         }
         
         .globe-branding .small {
             font-size: 1rem;
-            opacity: 0.8;
+            opacity: 0.9;
             display: block;
-            margin-top: 5px;
+            margin-top: 8px;
             letter-spacing: 6px;
+            color: #000;
+            text-shadow: 0 0 20px rgba(255,107,0,0.5);
         }
         
         @keyframes twinkle {
-            0%, 100% { opacity: 0.4; transform: scale(0.8); }
+            0%, 100% { opacity: 0.5; transform: scale(0.9); }
             50% { opacity: 1; transform: scale(1.3); }
         }
 
@@ -744,7 +745,7 @@
                 </div>
             </div>
             
-            <!-- SEE-THROUGH WIREFRAME GLOBE WITH REAL WORLD MAP -->
+            <!-- REALISTIC GLOBE WITH SHOOTING STAR DUST -->
             <div class="globe-section">
                 <div id="globe-canvas-wrapper">
                     <div class="globe-branding">
@@ -797,7 +798,7 @@
                 document.getElementById('app-loader').style.transform = 'translateY(-100%)';
                 document.getElementById('app-container').style.opacity = '1';
                 startTypewriter();
-                initSeeThroughGlobe(); // Initialize see-through wireframe globe
+                initRealisticGlobe(); // Initialize realistic globe with shooting stars
             }, 2500);
         });
 
@@ -896,285 +897,309 @@
             }, 800);
         }
 
-        // SEE-THROUGH WIREFRAME GLOBE WITH REAL WORLD MAP
-        function initSeeThroughGlobe() {
+        // REALISTIC GLOBE WITH SHOOTING STAR DUST - EXACT SOCIAL ICON COLOURS
+        function initRealisticGlobe() {
             const container = document.getElementById('globe-canvas-wrapper');
             if (!container) return;
 
             const width = container.clientWidth;
-            const height = 450;
+            const height = 480;
 
             // Scene with transparent background
             const scene = new THREE.Scene();
             scene.background = null;
 
             const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-            camera.position.set(0, 1, 12);
+            camera.position.set(0, 0.5, 13);
 
-            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
             renderer.setSize(width, height);
-            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             renderer.setClearColor(0x000000, 0);
             container.innerHTML = '';
             container.appendChild(renderer.domElement);
 
-            // Lighting for wireframe effect
+            // Lighting to match social icon appearance
             const ambientLight = new THREE.AmbientLight(0x404040);
             scene.add(ambientLight);
             
-            const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+            const dirLight = new THREE.DirectionalLight(0xffccaa, 1.2);
             dirLight.position.set(1, 1, 1);
             scene.add(dirLight);
             
-            const backLight = new THREE.PointLight(0xff6600, 0.3);
+            const backLight = new THREE.PointLight(0xFF6B00, 0.4);
             backLight.position.set(-2, 1, -3);
             scene.add(backLight);
-
-            // Create a high-resolution sphere for the map
-            const globeGeometry = new THREE.SphereGeometry(4, 128, 128);
             
-            // Load a real world map texture (equirectangular map)
-            // Using a canvas to create a high-contrast map with orange continents
+            const fillLight = new THREE.PointLight(0xffaa66, 0.3);
+            fillLight.position.set(2, 0, 2);
+            scene.add(fillLight);
+
+            // Load a high-quality earth texture
+            // Using a canvas to create a realistic map with VIBZ orange accents
             const canvas = document.createElement('canvas');
-            canvas.width = 2048;
-            canvas.height = 1024;
+            canvas.width = 4096;
+            canvas.height = 2048;
             const ctx = canvas.getContext('2d');
             
-            // Transparent background
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Base ocean - dark with orange tint
+            ctx.fillStyle = '#1a0f0a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            // Draw continent outlines and fill with semi-transparent orange
-            ctx.strokeStyle = '#FF6B00';
-            ctx.lineWidth = 4;
-            ctx.fillStyle = 'rgba(255, 107, 0, 0.25)';
+            // Draw continents with VIBZ orange (#FF6B00) at various opacities
+            ctx.fillStyle = '#FF6B00';
             
             // North America
+            ctx.globalAlpha = 0.7;
             ctx.beginPath();
-            ctx.moveTo(200, 200);
-            ctx.lineTo(400, 150);
-            ctx.lineTo(550, 200);
-            ctx.lineTo(600, 300);
-            ctx.lineTo(500, 400);
-            ctx.lineTo(350, 380);
-            ctx.lineTo(250, 350);
-            ctx.lineTo(180, 280);
+            ctx.moveTo(400, 400);
+            ctx.lineTo(800, 300);
+            ctx.lineTo(1100, 400);
+            ctx.lineTo(1200, 600);
+            ctx.lineTo(1000, 800);
+            ctx.lineTo(700, 850);
+            ctx.lineTo(500, 750);
+            ctx.lineTo(350, 600);
             ctx.closePath();
             ctx.fill();
-            ctx.stroke();
             
             // South America
             ctx.beginPath();
-            ctx.moveTo(650, 500);
-            ctx.lineTo(750, 450);
-            ctx.lineTo(850, 500);
-            ctx.lineTo(820, 650);
-            ctx.lineTo(700, 680);
-            ctx.lineTo(600, 600);
+            ctx.moveTo(1300, 1000);
+            ctx.lineTo(1500, 900);
+            ctx.lineTo(1700, 1000);
+            ctx.lineTo(1650, 1300);
+            ctx.lineTo(1400, 1350);
+            ctx.lineTo(1250, 1200);
             ctx.closePath();
             ctx.fill();
-            ctx.stroke();
             
             // Europe
             ctx.beginPath();
-            ctx.moveTo(950, 180);
-            ctx.lineTo(1050, 150);
-            ctx.lineTo(1150, 200);
-            ctx.lineTo(1120, 280);
-            ctx.lineTo(1020, 300);
-            ctx.lineTo(950, 250);
+            ctx.moveTo(1900, 350);
+            ctx.lineTo(2100, 300);
+            ctx.lineTo(2300, 400);
+            ctx.lineTo(2250, 550);
+            ctx.lineTo(2050, 600);
+            ctx.lineTo(1900, 500);
             ctx.closePath();
             ctx.fill();
-            ctx.stroke();
             
             // Africa
             ctx.beginPath();
-            ctx.moveTo(1000, 350);
-            ctx.lineTo(1150, 320);
-            ctx.lineTo(1250, 400);
-            ctx.lineTo(1200, 520);
-            ctx.lineTo(1050, 550);
-            ctx.lineTo(950, 480);
+            ctx.moveTo(2000, 700);
+            ctx.lineTo(2300, 650);
+            ctx.lineTo(2500, 800);
+            ctx.lineTo(2400, 1050);
+            ctx.lineTo(2100, 1100);
+            ctx.lineTo(1900, 950);
             ctx.closePath();
             ctx.fill();
-            ctx.stroke();
             
             // Asia
             ctx.beginPath();
-            ctx.moveTo(1300, 150);
-            ctx.lineTo(1550, 120);
-            ctx.lineTo(1750, 200);
-            ctx.lineTo(1800, 350);
-            ctx.lineTo(1650, 400);
-            ctx.lineTo(1450, 380);
-            ctx.lineTo(1350, 300);
-            ctx.lineTo(1250, 220);
+            ctx.moveTo(2600, 300);
+            ctx.lineTo(3100, 250);
+            ctx.lineTo(3500, 400);
+            ctx.lineTo(3600, 700);
+            ctx.lineTo(3300, 800);
+            ctx.lineTo(2900, 750);
+            ctx.lineTo(2700, 600);
+            ctx.lineTo(2500, 450);
             ctx.closePath();
             ctx.fill();
-            ctx.stroke();
             
             // Australia
             ctx.beginPath();
-            ctx.moveTo(1700, 650);
-            ctx.lineTo(1850, 620);
-            ctx.lineTo(1950, 700);
-            ctx.lineTo(1820, 780);
-            ctx.lineTo(1680, 750);
+            ctx.moveTo(3400, 1300);
+            ctx.lineTo(3700, 1250);
+            ctx.lineTo(3900, 1400);
+            ctx.lineTo(3650, 1550);
+            ctx.lineTo(3350, 1500);
             ctx.closePath();
             ctx.fill();
-            ctx.stroke();
             
-            // Add some extra islands/features
-            ctx.fillStyle = 'rgba(255, 107, 0, 0.2)';
-            ctx.strokeStyle = '#FF6B00';
-            ctx.lineWidth = 2;
+            // Add some islands and details
+            ctx.globalAlpha = 0.5;
+            ctx.fillStyle = '#FF6B00';
             
             // Japan
             ctx.beginPath();
-            ctx.arc(1620, 280, 40, 0, Math.PI*2);
+            ctx.arc(3250, 550, 80, 0, Math.PI*2);
             ctx.fill();
-            ctx.stroke();
             
             // UK
             ctx.beginPath();
-            ctx.arc(980, 170, 30, 0, Math.PI*2);
+            ctx.arc(1950, 400, 60, 0, Math.PI*2);
             ctx.fill();
-            ctx.stroke();
             
-            // Add VIBZ logo on the globe
+            // Indonesia
+            ctx.beginPath();
+            ctx.arc(3000, 1000, 100, 0, Math.PI*2);
+            ctx.fill();
+            
+            // Add VIBZ branding subtly
+            ctx.globalAlpha = 0.3;
+            ctx.font = 'bold 300px "Inter"';
             ctx.fillStyle = '#FF6B00';
-            ctx.font = 'bold 100px "Inter"';
-            ctx.fillText('VIBZ', 900, 700);
-            
-            // Add stars
-            ctx.fillStyle = '#FFD700';
-            for (let i = 0; i < 30; i++) {
-                ctx.beginPath();
-                ctx.arc(300 + i * 60, 800 + Math.sin(i) * 30, 5, 0, Math.PI*2);
-                ctx.fill();
-            }
+            ctx.fillText('VIBZ', 1800, 1200);
             
             const texture = new THREE.CanvasTexture(canvas);
+            texture.wrapS = THREE.RepeatWrapping;
+            texture.wrapT = THREE.ClampToEdgeWrapping;
             
-            // Create the main globe with transparent material
+            // Create the main globe
+            const globeGeometry = new THREE.SphereGeometry(4, 128, 128);
             const globeMaterial = new THREE.MeshPhongMaterial({
                 map: texture,
+                shininess: 15,
+                emissive: new THREE.Color(0x221100),
                 transparent: true,
-                opacity: 0.85,
-                shininess: 30,
-                emissive: new THREE.Color(0x331100),
-                side: THREE.DoubleSide
+                opacity: 0.95
             });
-            
             const globe = new THREE.Mesh(globeGeometry, globeMaterial);
             scene.add(globe);
 
-            // Add wireframe overlay (see-through effect like social icons)
-            const wireframeMaterial = new THREE.MeshBasicMaterial({
+            // Add a subtle atmospheric glow
+            const glowGeometry = new THREE.SphereGeometry(4.05, 64, 64);
+            const glowMaterial = new THREE.MeshBasicMaterial({
                 color: 0xFF6B00,
-                wireframe: true,
                 transparent: true,
-                opacity: 0.25
+                opacity: 0.1,
+                side: THREE.BackSide
             });
-            const wireframeGlobe = new THREE.Mesh(globeGeometry, wireframeMaterial);
-            scene.add(wireframeGlobe);
+            const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+            scene.add(glow);
 
-            // Add outer ring (like social icons style)
-            const ringGeometry = new THREE.TorusGeometry(4.2, 0.03, 16, 100);
-            const ringMaterial = new THREE.MeshStandardMaterial({ 
-                color: 0xFF6B00, 
+            // Add a ring like social icons
+            const ringGeometry = new THREE.TorusGeometry(4.3, 0.03, 16, 100);
+            const ringMaterial = new THREE.MeshStandardMaterial({
+                color: 0xFF6B00,
                 emissive: 0x331100,
                 transparent: true,
-                opacity: 0.4
+                opacity: 0.3
             });
             const ring = new THREE.Mesh(ringGeometry, ringMaterial);
             ring.rotation.x = Math.PI / 2;
             ring.rotation.z = 0.2;
             scene.add(ring);
 
-            // Add latitude/longitude lines (see-through)
-            const linesMaterial = new THREE.LineBasicMaterial({ color: 0xFF6B00, opacity: 0.15, transparent: true });
-            
-            // Add some longitude lines
-            for (let i = 0; i < 12; i++) {
-                const points = [];
-                const longitude = (i / 12) * Math.PI * 2;
-                for (let lat = -Math.PI/2; lat <= Math.PI/2; lat += 0.1) {
-                    const x = 4.1 * Math.cos(lat) * Math.cos(longitude);
-                    const y = 4.1 * Math.sin(lat);
-                    const z = 4.1 * Math.cos(lat) * Math.sin(longitude);
-                    points.push(new THREE.Vector3(x, y, z));
-                }
-                const lineGeo = new THREE.BufferGeometry().setFromPoints(points);
-                const line = new THREE.Line(lineGeo, linesMaterial);
-                scene.add(line);
-            }
-            
-            // Add latitude lines
-            for (let i = -5; i <= 5; i++) {
-                if (i === 0) continue;
-                const lat = (i / 6) * Math.PI;
-                const points = [];
-                for (let long = 0; long <= Math.PI * 2; long += 0.1) {
-                    const x = 4.1 * Math.cos(lat) * Math.cos(long);
-                    const y = 4.1 * Math.sin(lat);
-                    const z = 4.1 * Math.cos(lat) * Math.sin(long);
-                    points.push(new THREE.Vector3(x, y, z));
-                }
-                const lineGeo = new THREE.BufferGeometry().setFromPoints(points);
-                const line = new THREE.Line(lineGeo, linesMaterial);
-                scene.add(line);
-            }
-
-            // Add floating dots (representing cities/clients)
-            const dotPositions = [
-                { lat: 40.7, lng: -74.0 }, // NY
-                { lat: 51.5, lng: -0.1 }, // London
-                { lat: 35.7, lng: 139.7 }, // Tokyo
-                { lat: -33.9, lng: 151.2 }, // Sydney
-                { lat: 55.8, lng: -4.3 }, // Glasgow
-                { lat: 19.4, lng: -99.1 }, // Mexico City
-                { lat: -23.5, lng: -46.6 }, // Sao Paulo
-                { lat: 34.0, lng: -118.2 }, // LA
-                { lat: 41.9, lng: 12.5 }, // Rome
-                { lat: 48.9, lng: 2.3 }, // Paris
-                { lat: 55.8, lng: 37.6 }, // Moscow
-                { lat: 31.2, lng: 121.5 }, // Shanghai
-                { lat: 28.6, lng: 77.2 }, // Delhi
-                { lat: -26.2, lng: 28.0 }, // Joburg
-                { lat: -33.9, lng: 18.4 }, // Cape Town
-                { lat: 1.3, lng: 103.8 }, // Singapore
-                { lat: -1.3, lng: 36.8 }, // Nairobi
-                { lat: 14.6, lng: 120.9 }, // Manila
-                { lat: 45.5, lng: -73.6 }, // Montreal
-                { lat: 52.5, lng: 13.4 }, // Berlin
+            // COUNTRY PINS (exact social icon colour)
+            const pinPositions = [
+                { lat: 40.7, lng: -74.0, name: 'NY' },    // New York
+                { lat: 51.5, lng: -0.1, name: 'London' }, // London
+                { lat: 35.7, lng: 139.7, name: 'Tokyo' }, // Tokyo
+                { lat: -33.9, lng: 151.2, name: 'Sydney' }, // Sydney
+                { lat: 55.8, lng: -4.3, name: 'Glasgow' }, // Glasgow
+                { lat: 19.4, lng: -99.1, name: 'Mexico' }, // Mexico City
+                { lat: -23.5, lng: -46.6, name: 'Sao Paulo' }, // Sao Paulo
+                { lat: 34.0, lng: -118.2, name: 'LA' },    // Los Angeles
+                { lat: 41.9, lng: 12.5, name: 'Rome' },    // Rome
+                { lat: 48.9, lng: 2.3, name: 'Paris' },     // Paris
+                { lat: 55.8, lng: 37.6, name: 'Moscow' },   // Moscow
+                { lat: 31.2, lng: 121.5, name: 'Shanghai' }, // Shanghai
+                { lat: 28.6, lng: 77.2, name: 'Delhi' },    // Delhi
+                { lat: -26.2, lng: 28.0, name: 'Joburg' },  // Johannesburg
+                { lat: -33.9, lng: 18.4, name: 'Cape Town' }, // Cape Town
+                { lat: 1.3, lng: 103.8, name: 'Singapore' }, // Singapore
+                { lat: -1.3, lng: 36.8, name: 'Nairobi' },  // Nairobi
+                { lat: 14.6, lng: 120.9, name: 'Manila' },  // Manila
+                { lat: 45.5, lng: -73.6, name: 'Montreal' }, // Montreal
+                { lat: 52.5, lng: 13.4, name: 'Berlin' },   // Berlin
+                { lat: -34.6, lng: -58.4, name: 'Buenos Aires' }, // Buenos Aires
+                { lat: 30.0, lng: 31.2, name: 'Cairo' },    // Cairo
+                { lat: 6.5, lng: 3.4, name: 'Lagos' },      // Lagos
+                { lat: 25.2, lng: 55.3, name: 'Dubai' },    // Dubai
+                { lat: 19.0, lng: -70.7, name: 'DR' },      // Dominican Republic
             ];
 
-            const dotMaterial = new THREE.MeshStandardMaterial({ color: 0xFF6B00, emissive: 0x442200 });
-            
-            dotPositions.forEach(pos => {
+            const pins = [];
+            pinPositions.forEach((pos, i) => {
                 const phi = (90 - pos.lat) * Math.PI / 180;
                 const theta = pos.lng * Math.PI / 180;
-                const r = 4.1;
+                const r = 4.05;
 
                 const x = r * Math.sin(phi) * Math.cos(theta);
                 const y = r * Math.cos(phi);
                 const z = r * Math.sin(phi) * Math.sin(theta);
 
-                const dotGeo = new THREE.SphereGeometry(0.08, 6, 6);
-                const dot = new THREE.Mesh(dotGeo, dotMaterial);
-                dot.position.set(x, y, z);
-                scene.add(dot);
+                // Pin with exact social icon colour
+                const pinGeo = new THREE.SphereGeometry(0.08, 8, 8);
+                const pinMat = new THREE.MeshStandardMaterial({ 
+                    color: 0xFF6B00, 
+                    emissive: 0x442200,
+                    emissiveIntensity: 0.5
+                });
+                const pin = new THREE.Mesh(pinGeo, pinMat);
+                pin.position.set(x, y, z);
+                scene.add(pin);
+                pins.push(pin);
                 
-                // Add tiny glow
-                const glowGeo = new THREE.SphereGeometry(0.12, 4, 4);
-                const glowMat = new THREE.MeshBasicMaterial({ color: 0xFFAA00, transparent: true, opacity: 0.3 });
-                const glow = new THREE.Mesh(glowGeo, glowMat);
-                glow.position.set(x, y, z);
-                scene.add(glow);
+                // Add glow ring
+                const ringGeo = new THREE.TorusGeometry(0.12, 0.01, 6, 12);
+                const ringMat = new THREE.MeshStandardMaterial({ 
+                    color: 0xFF6B00, 
+                    emissive: 0x331100,
+                    transparent: true, 
+                    opacity: 0.6 
+                });
+                const glowRing = new THREE.Mesh(ringGeo, ringMat);
+                glowRing.position.set(x, y, z);
+                glowRing.rotation.x = Math.PI / 2;
+                scene.add(glowRing);
             });
 
-            // Animation variables
+            // SHOOTING STARS (constant stream)
+            const shootingStars = [];
+            const starCount = 12;
+            
+            for (let i = 0; i < starCount; i++) {
+                // Star head
+                const headGeo = new THREE.SphereGeometry(0.15, 8, 8);
+                const headMat = new THREE.MeshStandardMaterial({ 
+                    color: 0xFFD700, 
+                    emissive: 0xFF6B00,
+                    emissiveIntensity: 1.5
+                });
+                const head = new THREE.Mesh(headGeo, headMat);
+                head.visible = false;
+                
+                // Star trail (particles)
+                const trailParticles = [];
+                for (let j = 0; j < 8; j++) {
+                    const particleGeo = new THREE.SphereGeometry(0.05 + Math.random()*0.05, 4, 4);
+                    const particleMat = new THREE.MeshStandardMaterial({ 
+                        color: 0xFFAA00, 
+                        emissive: 0xFF6B00,
+                        transparent: true,
+                        opacity: 0.7
+                    });
+                    const particle = new THREE.Mesh(particleGeo, particleMat);
+                    particle.visible = false;
+                    trailParticles.push(particle);
+                    scene.add(particle);
+                }
+                
+                shootingStars.push({ head, trailParticles, active: false });
+                scene.add(head);
+            }
+
+            // Continent targets for shooting stars
+            const continentTargets = [
+                { lat: 40, lng: -100 }, // North America
+                { lat: -15, lng: -60 }, // South America
+                { lat: 50, lng: 10 },   // Europe
+                { lat: 10, lng: 20 },   // Africa
+                { lat: 40, lng: 100 },  // Asia
+                { lat: -25, lng: 135 }, // Australia
+                { lat: 30, lng: 30 },   // North Africa
+                { lat: 60, lng: -140 }, // Alaska/Canada
+                { lat: -30, lng: 150 }, // Fiji/Pacific
+                { lat: 20, lng: 75 },   // India
+            ];
+
             let clock = new THREE.Clock();
+            let activeStars = [];
 
             function animate() {
                 requestAnimationFrame(animate);
@@ -1184,8 +1209,92 @@
 
                 // Rotate globe on its axis
                 globe.rotation.y += 0.0012;
-                wireframeGlobe.rotation.y = globe.rotation.y;
+                glow.rotation.y = globe.rotation.y;
                 ring.rotation.y = globe.rotation.y;
+                
+                // Pins rotate with globe
+                pins.forEach(pin => {
+                    pin.rotation.y = globe.rotation.y;
+                });
+
+                // SHOOTING STARS - constantly generate new ones
+                if (Math.random() < 0.02 && activeStars.length < 3) { // 2% chance per frame, max 3 simultaneous
+                    const star = shootingStars.find(s => !s.active);
+                    if (star) {
+                        // Pick random start point (outside globe)
+                        const startAngle = Math.random() * Math.PI * 2;
+                        const startLat = (Math.random() - 0.5) * Math.PI;
+                        const startLng = Math.random() * Math.PI * 2;
+                        
+                        // Pick random continent target
+                        const target = continentTargets[Math.floor(Math.random() * continentTargets.length)];
+                        
+                        // Calculate positions
+                        const startRadius = 6.5;
+                        const startX = Math.cos(startLat) * Math.cos(startLng) * startRadius;
+                        const startY = Math.sin(startLat) * startRadius;
+                        const startZ = Math.cos(startLat) * Math.sin(startLng) * startRadius;
+                        
+                        const targetPhi = (90 - target.lat) * Math.PI / 180;
+                        const targetTheta = target.lng * Math.PI / 180;
+                        const targetRadius = 4.3;
+                        const targetX = targetRadius * Math.sin(targetPhi) * Math.cos(targetTheta);
+                        const targetY = targetRadius * Math.cos(targetPhi);
+                        const targetZ = targetRadius * Math.sin(targetPhi) * Math.sin(targetTheta);
+                        
+                        const startPos = new THREE.Vector3(startX, startY, startZ);
+                        const endPos = new THREE.Vector3(targetX, targetY, targetZ);
+                        
+                        star.head.position.copy(startPos);
+                        star.head.visible = true;
+                        
+                        // Initialize trail particles
+                        star.trailParticles.forEach((p, idx) => {
+                            p.visible = true;
+                            p.position.copy(startPos);
+                        });
+                        
+                        star.active = true;
+                        star.startPos = startPos;
+                        star.endPos = endPos;
+                        star.progress = 0;
+                        star.speed = 0.005 + Math.random() * 0.003;
+                        
+                        activeStars.push(star);
+                    }
+                }
+                
+                // Update active stars
+                activeStars = activeStars.filter(star => {
+                    star.progress += star.speed;
+                    
+                    if (star.progress >= 1) {
+                        // Star reached target - hide it
+                        star.head.visible = false;
+                        star.trailParticles.forEach(p => p.visible = false);
+                        star.active = false;
+                        return false;
+                    }
+                    
+                    // Update head position
+                    const currentPos = new THREE.Vector3().lerpVectors(star.startPos, star.endPos, star.progress);
+                    star.head.position.copy(currentPos);
+                    
+                    // Update trail particles
+                    star.trailParticles.forEach((particle, idx) => {
+                        const trailProgress = Math.max(0, star.progress - (idx + 1) * 0.03);
+                        if (trailProgress > 0) {
+                            const trailPos = new THREE.Vector3().lerpVectors(star.startPos, star.endPos, trailProgress);
+                            particle.position.copy(trailPos);
+                            particle.material.opacity = 0.7 * (1 - trailProgress);
+                            particle.scale.setScalar(1 - trailProgress * 0.5);
+                        } else {
+                            particle.visible = false;
+                        }
+                    });
+                    
+                    return true;
+                });
 
                 renderer.render(scene, camera);
             }
@@ -1195,7 +1304,7 @@
             // Resize handler
             window.addEventListener('resize', () => {
                 const newWidth = container.clientWidth;
-                const newHeight = 450;
+                const newHeight = 480;
                 camera.aspect = newWidth / newHeight;
                 camera.updateProjectionMatrix();
                 renderer.setSize(newWidth, newHeight);
