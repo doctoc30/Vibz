@@ -6,6 +6,8 @@
     <title>VIBZ | Premium Web Solutions</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Three.js for 3D globe -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     
     <style>
         :root {
@@ -215,243 +217,54 @@
             padding: 0 25px 100px;
         }
 
-        /* ===== GLOBE SECTION WITH SPIRAL STAR DUST ===== */
+        /* ===== 3D GLOBE SECTION ===== */
         .globe-section {
             width: 100%;
             display: flex;
             justify-content: center;
-            margin: 40px 0 20px;
+            margin: 20px 0 20px;
             position: relative;
             min-height: 400px;
         }
-
-        .globe-container {
-            position: relative;
+        
+        #globe-canvas-wrapper {
             width: 100%;
             max-width: 800px;
             height: 400px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        /* Transparent globe - same style as social icons */
-        .transparent-globe {
-            width: 280px;
-            height: 280px;
+            margin: 0 auto;
             position: relative;
-            animation: globe-spin 20s linear infinite;
-            transform-style: preserve-3d;
-            perspective: 1000px;
-            z-index: 5;
+            cursor: pointer;
+            border-radius: 20px;
+            overflow: hidden;
+            background: transparent;
         }
-
-        .globe-circle {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            border: 3px solid var(--primary);
-            box-shadow: 0 0 20px rgba(255, 107, 0, 0.3);
-            background: rgba(255, 107, 0, 0.05);
-            backdrop-filter: blur(2px);
-        }
-
-        /* Continent shapes (simplified) */
-        .continent {
-            position: absolute;
-            background: var(--primary);
-            opacity: 0.6;
-            border-radius: 50%;
-            filter: blur(2px);
-        }
-
-        .continent-1 { width: 50px; height: 35px; top: 60px; left: 70px; transform: rotate(15deg); }
-        .continent-2 { width: 65px; height: 45px; top: 120px; right: 60px; transform: rotate(-10deg); }
-        .continent-3 { width: 55px; height: 40px; bottom: 70px; left: 90px; transform: rotate(25deg); }
-        .continent-4 { width: 70px; height: 50px; bottom: 60px; right: 80px; transform: rotate(-5deg); }
-        .continent-5 { width: 40px; height: 30px; top: 140px; left: 140px; transform: rotate(45deg); }
-        .continent-6 { width: 45px; height: 35px; top: 50px; right: 120px; transform: rotate(-20deg); }
-
-        /* Latitude and longitude lines */
-        .latitude-line {
-            position: absolute;
-            width: 100%;
-            height: 2px;
-            background: rgba(255, 107, 0, 0.2);
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        .longitude-line {
-            position: absolute;
-            width: 2px;
-            height: 100%;
-            background: rgba(255, 107, 0, 0.2);
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        /* SPIRAL STAR DUST - outside the globe */
-        .spiral-dust {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            pointer-events: none;
-            z-index: 10;
-        }
-
-        .dust-particle {
-            position: absolute;
-            width: 6px;
-            height: 6px;
-            background: var(--primary);
-            border-radius: 50%;
-            filter: blur(2px);
-            box-shadow: 0 0 15px var(--primary);
-            opacity: 0;
-            animation: dustParticle 4s linear infinite;
-        }
-
-        /* Create multiple particles in a spiral pattern */
-        .dust-particle:nth-child(1) { --angle: 0deg; --distance: 180px; --delay: 0s; }
-        .dust-particle:nth-child(2) { --angle: 30deg; --distance: 190px; --delay: 0.3s; }
-        .dust-particle:nth-child(3) { --angle: 60deg; --distance: 200px; --delay: 0.6s; }
-        .dust-particle:nth-child(4) { --angle: 90deg; --distance: 180px; --delay: 0.9s; }
-        .dust-particle:nth-child(5) { --angle: 120deg; --distance: 210px; --delay: 1.2s; }
-        .dust-particle:nth-child(6) { --angle: 150deg; --distance: 170px; --delay: 1.5s; }
-        .dust-particle:nth-child(7) { --angle: 180deg; --distance: 220px; --delay: 1.8s; }
-        .dust-particle:nth-child(8) { --angle: 210deg; --distance: 190px; --delay: 2.1s; }
-        .dust-particle:nth-child(9) { --angle: 240deg; --distance: 200px; --delay: 2.4s; }
-        .dust-particle:nth-child(10) { --angle: 270deg; --distance: 180px; --delay: 2.7s; }
-        .dust-particle:nth-child(11) { --angle: 300deg; --distance: 210px; --delay: 3s; }
-        .dust-particle:nth-child(12) { --angle: 330deg; --distance: 190px; --delay: 3.3s; }
-        .dust-particle:nth-child(13) { --angle: 15deg; --distance: 220px; --delay: 3.6s; }
-        .dust-particle:nth-child(14) { --angle: 45deg; --distance: 170px; --delay: 3.9s; }
-        .dust-particle:nth-child(15) { --angle: 75deg; --distance: 200px; --delay: 4.2s; }
-        .dust-particle:nth-child(16) { --angle: 105deg; --distance: 190px; --delay: 4.5s; }
-        .dust-particle:nth-child(17) { --angle: 135deg; --distance: 210px; --delay: 4.8s; }
-        .dust-particle:nth-child(18) { --angle: 165deg; --distance: 180px; --delay: 5.1s; }
-        .dust-particle:nth-child(19) { --angle: 195deg; --distance: 200px; --delay: 5.4s; }
-        .dust-particle:nth-child(20) { --angle: 225deg; --distance: 190px; --delay: 5.7s; }
-        .dust-particle:nth-child(21) { --angle: 255deg; --distance: 220px; --delay: 6s; }
-        .dust-particle:nth-child(22) { --angle: 285deg; --distance: 170px; --delay: 6.3s; }
-        .dust-particle:nth-child(23) { --angle: 315deg; --distance: 200px; --delay: 6.6s; }
-        .dust-particle:nth-child(24) { --angle: 345deg; --distance: 190px; --delay: 6.9s; }
-
-        @keyframes dustParticle {
-            0% {
-                transform: translate(-50%, -50%) rotate(var(--angle)) translateX(var(--distance)) rotate(calc(-1 * var(--angle))) scale(0);
-                opacity: 0;
-            }
-            10% {
-                opacity: 1;
-                scale: 1;
-            }
-            30% {
-                opacity: 1;
-                scale: 1.5;
-            }
-            60% {
-                opacity: 0.8;
-                scale: 1;
-            }
-            100% {
-                transform: translate(-50%, -50%) rotate(calc(var(--angle) + 360deg)) translateX(calc(var(--distance) + 50px)) rotate(calc(-1 * var(--angle) - 360deg)) scale(0);
-                opacity: 0;
-            }
-        }
-
-        /* Second spiral layer - opposite direction */
-        .spiral-dust-2 {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            pointer-events: none;
-            z-index: 9;
-        }
-
-        .dust-particle-2 {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: #FFD700;
-            border-radius: 50%;
-            filter: blur(1px);
-            box-shadow: 0 0 10px #FFD700;
-            opacity: 0;
-            animation: dustParticle2 5s linear infinite;
-        }
-
-        .dust-particle-2:nth-child(1) { --angle: 45deg; --distance: 150px; --delay: 0s; }
-        .dust-particle-2:nth-child(2) { --angle: 135deg; --distance: 160px; --delay: 0.5s; }
-        .dust-particle-2:nth-child(3) { --angle: 225deg; --distance: 170px; --delay: 1s; }
-        .dust-particle-2:nth-child(4) { --angle: 315deg; --distance: 150px; --delay: 1.5s; }
-        .dust-particle-2:nth-child(5) { --angle: 90deg; --distance: 180px; --delay: 2s; }
-        .dust-particle-2:nth-child(6) { --angle: 180deg; --distance: 160px; --delay: 2.5s; }
-        .dust-particle-2:nth-child(7) { --angle: 270deg; --distance: 170px; --delay: 3s; }
-        .dust-particle-2:nth-child(8) { --angle: 0deg; --distance: 150px; --delay: 3.5s; }
-        .dust-particle-2:nth-child(9) { --angle: 60deg; --distance: 180px; --delay: 4s; }
-        .dust-particle-2:nth-child(10) { --angle: 150deg; --distance: 160px; --delay: 4.5s; }
-        .dust-particle-2:nth-child(11) { --angle: 240deg; --distance: 170px; --delay: 5s; }
-        .dust-particle-2:nth-child(12) { --angle: 330deg; --distance: 150px; --delay: 5.5s; }
-
-        @keyframes dustParticle2 {
-            0% {
-                transform: translate(-50%, -50%) rotate(var(--angle)) translateX(var(--distance)) rotate(calc(-1 * var(--angle))) scale(0);
-                opacity: 0;
-            }
-            15% {
-                opacity: 0.8;
-                scale: 0.8;
-            }
-            40% {
-                opacity: 1;
-                scale: 1.2;
-            }
-            70% {
-                opacity: 0.6;
-                scale: 0.8;
-            }
-            100% {
-                transform: translate(-50%, -50%) rotate(calc(var(--angle) - 360deg)) translateX(calc(var(--distance) + 80px)) rotate(calc(-1 * var(--angle) + 360deg)) scale(0);
-                opacity: 0;
-            }
-        }
-
-        /* Branding text */
+        
         .globe-branding {
             position: absolute;
-            bottom: -30px;
+            bottom: 10px;
             left: 0;
             right: 0;
             text-align: center;
-            font-weight: 900;
-            font-size: 1.2rem;
-            color: var(--primary);
-            text-transform: uppercase;
-            letter-spacing: 3px;
             z-index: 20;
+            pointer-events: none;
+            font-weight: 900;
+            font-size: 1.4rem;
+            color: var(--primary);
+            text-shadow: 0 0 20px rgba(255,107,0,0.5);
+            letter-spacing: 3px;
+            background: linear-gradient(90deg, transparent, rgba(255,107,0,0.2), transparent);
+            padding: 10px 0;
         }
-
+        
         .globe-branding i {
-            margin: 0 10px;
-            color: #000;
+            margin: 0 15px;
+            color: #FFD700;
             animation: twinkle 1.5s ease-in-out infinite;
         }
-
+        
         @keyframes twinkle {
             0%, 100% { opacity: 0.5; transform: scale(0.8); }
             50% { opacity: 1; transform: scale(1.2); }
-        }
-
-        @keyframes globe-spin {
-            0% { transform: rotateY(0deg) rotateX(10deg); }
-            100% { transform: rotateY(360deg) rotateX(10deg); }
         }
 
         /* ===== TABLET OPTIMISATION ===== */
@@ -916,74 +729,9 @@
                 </div>
             </div>
             
-            <!-- GLOBE SECTION WITH SPIRAL STAR DUST -->
+            <!-- 3D GLOBE SECTION WITH SHOOTING STARS -->
             <div class="globe-section">
-                <div class="globe-container">
-                    <!-- Transparent globe with continents -->
-                    <div class="transparent-globe">
-                        <div class="globe-circle"></div>
-                        <div class="latitude-line" style="top: 30%;"></div>
-                        <div class="latitude-line" style="top: 70%;"></div>
-                        <div class="longitude-line" style="left: 30%;"></div>
-                        <div class="longitude-line" style="left: 70%;"></div>
-                        
-                        <!-- Continent shapes -->
-                        <div class="continent continent-1"></div>
-                        <div class="continent continent-2"></div>
-                        <div class="continent continent-3"></div>
-                        <div class="continent continent-4"></div>
-                        <div class="continent continent-5"></div>
-                        <div class="continent continent-6"></div>
-                        
-                        <!-- VIBZ logo on globe -->
-                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: 900; font-size: 1.8rem; color: var(--primary); text-shadow: 0 0 20px var(--primary);">VIBZ</div>
-                    </div>
-                    
-                    <!-- Spiral star dust layer 1 (orange) -->
-                    <div class="spiral-dust">
-                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 0s;"></div>
-                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 0.3s;"></div>
-                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 0.6s;"></div>
-                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 0.9s;"></div>
-                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 1.2s;"></div>
-                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 1.5s;"></div>
-                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 1.8s;"></div>
-                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 2.1s;"></div>
-                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 2.4s;"></div>
-                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 2.7s;"></div>
-                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 3.0s;"></div>
-                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 3.3s;"></div>
-                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 3.6s;"></div>
-                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 3.9s;"></div>
-                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 4.2s;"></div>
-                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 4.5s;"></div>
-                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 4.8s;"></div>
-                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 5.1s;"></div>
-                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 5.4s;"></div>
-                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 5.7s;"></div>
-                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 6.0s;"></div>
-                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 6.3s;"></div>
-                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 6.6s;"></div>
-                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 6.9s;"></div>
-                    </div>
-                    
-                    <!-- Spiral star dust layer 2 (gold, opposite direction) -->
-                    <div class="spiral-dust-2">
-                        <div class="dust-particle-2" style="top: 50%; left: 50%; animation-delay: 0s;"></div>
-                        <div class="dust-particle-2" style="top: 50%; left: 50%; animation-delay: 0.5s;"></div>
-                        <div class="dust-particle-2" style="top: 50%; left: 50%; animation-delay: 1.0s;"></div>
-                        <div class="dust-particle-2" style="top: 50%; left: 50%; animation-delay: 1.5s;"></div>
-                        <div class="dust-particle-2" style="top: 50%; left: 50%; animation-delay: 2.0s;"></div>
-                        <div class="dust-particle-2" style="top: 50%; left: 50%; animation-delay: 2.5s;"></div>
-                        <div class="dust-particle-2" style="top: 50%; left: 50%; animation-delay: 3.0s;"></div>
-                        <div class="dust-particle-2" style="top: 50%; left: 50%; animation-delay: 3.5s;"></div>
-                        <div class="dust-particle-2" style="top: 50%; left: 50%; animation-delay: 4.0s;"></div>
-                        <div class="dust-particle-2" style="top: 50%; left: 50%; animation-delay: 4.5s;"></div>
-                        <div class="dust-particle-2" style="top: 50%; left: 50%; animation-delay: 5.0s;"></div>
-                        <div class="dust-particle-2" style="top: 50%; left: 50%; animation-delay: 5.5s;"></div>
-                    </div>
-                    
-                    <!-- Branding text -->
+                <div id="globe-canvas-wrapper">
                     <div class="globe-branding">
                         <i class="fa-solid fa-star"></i> WE SERVE CLIENTS WORLDWIDE <i class="fa-solid fa-star"></i>
                     </div>
@@ -1033,6 +781,7 @@
                 document.getElementById('app-loader').style.transform = 'translateY(-100%)';
                 document.getElementById('app-container').style.opacity = '1';
                 startTypewriter();
+                initRealisticGlobe(); // Initialize realistic 3D globe
             }, 2500);
         });
 
@@ -1129,6 +878,305 @@
             setTimeout(() => { 
                 window.location.href = val.includes('barber') ? "https://www.vibz.co.uk/barber/index.html" : "https://www.vibz.co.uk/funnel.html?niche=" + encodeURIComponent(val);
             }, 800);
+        }
+
+        // REALISTIC 3D GLOBE WITH SHOOTING STARS
+        function initRealisticGlobe() {
+            const container = document.getElementById('globe-canvas-wrapper');
+            if (!container) return;
+
+            const width = container.clientWidth;
+            const height = 400;
+
+            // Scene with transparent background
+            const scene = new THREE.Scene();
+            scene.background = null; // Transparent
+
+            const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+            camera.position.set(0, 0, 12);
+
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); // Alpha true for transparent
+            renderer.setSize(width, height);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setClearColor(0x000000, 0); // Transparent clear color
+            container.innerHTML = '';
+            container.appendChild(renderer.domElement);
+
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0x404060);
+            scene.add(ambientLight);
+            
+            const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+            dirLight.position.set(1, 1, 1);
+            scene.add(dirLight);
+            
+            const backLight = new THREE.PointLight(0xffaa66, 0.5);
+            backLight.position.set(-2, 0, -3);
+            scene.add(backLight);
+
+            // Create realistic earth texture using canvas (orange/branded theme)
+            const canvas = document.createElement('canvas');
+            canvas.width = 2048;
+            canvas.height = 1024;
+            const ctx = canvas.getContext('2d');
+            
+            // Base ocean color - dark orange/brown (branded)
+            ctx.fillStyle = '#331100';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw continent-like shapes in orange/brand colors
+            ctx.fillStyle = '#FF6B00';
+            ctx.globalAlpha = 0.8;
+            
+            // North America
+            ctx.beginPath();
+            ctx.arc(500, 300, 200, 0, Math.PI*2);
+            ctx.fill();
+            
+            // South America
+            ctx.beginPath();
+            ctx.arc(600, 600, 150, 0, Math.PI*2);
+            ctx.fill();
+            
+            // Europe
+            ctx.beginPath();
+            ctx.arc(1100, 250, 180, 0, Math.PI*2);
+            ctx.fill();
+            
+            // Africa
+            ctx.beginPath();
+            ctx.arc(1200, 500, 200, 0, Math.PI*2);
+            ctx.fill();
+            
+            // Asia
+            ctx.beginPath();
+            ctx.arc(1600, 300, 250, 0, Math.PI*2);
+            ctx.fill();
+            
+            // Australia
+            ctx.beginPath();
+            ctx.arc(1800, 700, 150, 0, Math.PI*2);
+            ctx.fill();
+            
+            // Antarctica
+            ctx.beginPath();
+            ctx.arc(1024, 900, 300, 0, Math.PI*2);
+            ctx.fill();
+            
+            // Add VIBZ branding on the globe
+            ctx.globalAlpha = 1;
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = 'bold 120px "Inter"';
+            ctx.fillText('VIBZ', 800, 500);
+            
+            ctx.font = 'bold 60px "Inter"';
+            ctx.fillStyle = '#FFD700';
+            ctx.fillText('✦', 1400, 400);
+            ctx.fillText('✦', 600, 700);
+            ctx.fillText('✦', 1000, 800);
+            
+            const texture = new THREE.CanvasTexture(canvas);
+            
+            const geometry = new THREE.SphereGeometry(4, 64, 64);
+            const material = new THREE.MeshPhongMaterial({ 
+                map: texture,
+                shininess: 5,
+                emissive: new THREE.Color(0x221100)
+            });
+            const globe = new THREE.Mesh(geometry, material);
+            scene.add(globe);
+
+            // Add a subtle atmosphere glow
+            const glowGeometry = new THREE.SphereGeometry(4.05, 64, 64);
+            const glowMaterial = new THREE.MeshBasicMaterial({ 
+                color: 0xFF6B00, 
+                transparent: true, 
+                opacity: 0.1,
+                side: THREE.BackSide
+            });
+            const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+            scene.add(glow);
+
+            // COUNTRY PINS (orange dots on major cities)
+            const pinPositions = [
+                { lat: 40.7, lng: -74.0, name: 'NY' },    // New York
+                { lat: 51.5, lng: -0.1, name: 'London' }, // London
+                { lat: 35.7, lng: 139.7, name: 'Tokyo' }, // Tokyo
+                { lat: -33.9, lng: 151.2, name: 'Sydney' }, // Sydney
+                { lat: 55.8, lng: -4.3, name: 'Glasgow' }, // Glasgow
+                { lat: 19.4, lng: -99.1, name: 'Mexico' }, // Mexico City
+                { lat: -23.5, lng: -46.6, name: 'Sao Paulo' }, // Sao Paulo
+                { lat: 34.0, lng: -118.2, name: 'LA' },    // Los Angeles
+                { lat: 41.9, lng: 12.5, name: 'Rome' },    // Rome
+                { lat: 48.9, lng: 2.3, name: 'Paris' },     // Paris
+                { lat: 55.8, lng: 37.6, name: 'Moscow' },   // Moscow
+                { lat: 31.2, lng: 121.5, name: 'Shanghai' }, // Shanghai
+                { lat: 28.6, lng: 77.2, name: 'Delhi' },    // Delhi
+                { lat: -26.2, lng: 28.0, name: 'Joburg' },  // Johannesburg
+                { lat: -33.9, lng: 18.4, name: 'Cape Town' } // Cape Town
+            ];
+
+            pinPositions.forEach(pos => {
+                const phi = (90 - pos.lat) * Math.PI / 180;
+                const theta = pos.lng * Math.PI / 180;
+                const r = 4.05;
+
+                const x = r * Math.sin(phi) * Math.cos(theta);
+                const y = r * Math.cos(phi);
+                const z = r * Math.sin(phi) * Math.sin(theta);
+
+                // Orange pin
+                const pinGeo = new THREE.SphereGeometry(0.08, 8, 8);
+                const pinMat = new THREE.MeshStandardMaterial({ color: 0xFF6B00, emissive: 0x442200 });
+                const pin = new THREE.Mesh(pinGeo, pinMat);
+                pin.position.set(x, y, z);
+                scene.add(pin);
+                
+                // Add a small glow ring
+                const ringGeo = new THREE.TorusGeometry(0.12, 0.01, 6, 12);
+                const ringMat = new THREE.MeshStandardMaterial({ color: 0xFFAA00, emissive: 0x331100 });
+                const ring = new THREE.Mesh(ringGeo, ringMat);
+                ring.position.set(x, y, z);
+                ring.rotation.x = Math.PI / 2;
+                scene.add(ring);
+            });
+
+            // SHOOTING STARS
+            const shootingStars = [];
+            const starCount = 8;
+            
+            for (let i = 0; i < starCount; i++) {
+                // Star head
+                const headGeo = new THREE.SphereGeometry(0.15, 6, 6);
+                const headMat = new THREE.MeshStandardMaterial({ color: 0xFFD700, emissive: 0xFF6B00 });
+                const head = new THREE.Mesh(headGeo, headMat);
+                head.visible = false;
+                
+                // Star trail (line)
+                const trailGeo = new THREE.BufferGeometry();
+                const trailMat = new THREE.LineBasicMaterial({ color: 0xFFAA00 });
+                const trail = new THREE.Line(trailGeo, trailMat);
+                trail.visible = false;
+                
+                shootingStars.push({ head, trail });
+                scene.add(head);
+                scene.add(trail);
+            }
+
+            let clock = new THREE.Clock();
+            let activeStarIndex = 0;
+            let starTimer = 0;
+
+            function animate() {
+                requestAnimationFrame(animate);
+
+                const delta = clock.getDelta();
+                const elapsed = performance.now() / 1000;
+
+                // Rotate globe on its axis (Y-axis rotation)
+                globe.rotation.y += 0.0015;
+                glow.rotation.y = globe.rotation.y;
+
+                // SHOOTING STARS (one at a time)
+                starTimer += delta;
+                
+                if (starTimer > 1.2) { // New star every 1.2 seconds
+                    starTimer = 0;
+                    
+                    // Hide previous star
+                    shootingStars.forEach(s => {
+                        s.head.visible = false;
+                        s.trail.visible = false;
+                    });
+                    
+                    // Activate current star
+                    const star = shootingStars[activeStarIndex % shootingStars.length];
+                    
+                    // Random start and end positions (outside globe)
+                    const startAngle = Math.random() * Math.PI * 2;
+                    const endAngle = startAngle + (Math.random() * 0.5 + 0.3);
+                    
+                    const radius = 6.5; // Outside globe
+                    const startX = Math.cos(startAngle) * radius;
+                    const startZ = Math.sin(startAngle) * radius;
+                    const startY = (Math.random() - 0.5) * 3;
+                    
+                    const endX = Math.cos(endAngle) * (radius - 1);
+                    const endZ = Math.sin(endAngle) * (radius - 1);
+                    const endY = startY + (Math.random() - 0.5) * 2;
+                    
+                    const startPos = new THREE.Vector3(startX, startY, startZ);
+                    const endPos = new THREE.Vector3(endX, endY, endZ);
+                    
+                    star.head.position.copy(startPos);
+                    star.head.visible = true;
+                    star.trail.visible = true;
+                    
+                    // Store animation data
+                    star.userData = {
+                        progress: 0,
+                        startPos: startPos,
+                        endPos: endPos,
+                        active: true
+                    };
+                    
+                    activeStarIndex++;
+                }
+                
+                // Update active shooting stars
+                shootingStars.forEach(star => {
+                    if (star.userData?.active) {
+                        star.userData.progress += delta * 0.8;
+                        
+                        if (star.userData.progress >= 1) {
+                            star.userData.active = false;
+                            star.head.visible = false;
+                            star.trail.visible = false;
+                        } else {
+                            // Update head position
+                            const currentPos = new THREE.Vector3().lerpVectors(
+                                star.userData.startPos, 
+                                star.userData.endPos, 
+                                star.userData.progress
+                            );
+                            star.head.position.copy(currentPos);
+                            
+                            // Update trail (line behind the head)
+                            const trailPoints = [];
+                            for (let i = 0; i < 5; i++) {
+                                const trailT = Math.max(0, star.userData.progress - i * 0.1);
+                                if (trailT >= 0) {
+                                    const trailPos = new THREE.Vector3().lerpVectors(
+                                        star.userData.startPos,
+                                        star.userData.endPos,
+                                        trailT
+                                    );
+                                    trailPoints.push(trailPos);
+                                }
+                            }
+                            
+                            if (trailPoints.length > 1) {
+                                const trailGeo = new THREE.BufferGeometry().setFromPoints(trailPoints);
+                                star.trail.geometry.dispose();
+                                star.trail.geometry = trailGeo;
+                            }
+                        }
+                    }
+                });
+
+                renderer.render(scene, camera);
+            }
+
+            animate();
+
+            // Resize handler
+            window.addEventListener('resize', () => {
+                const newWidth = container.clientWidth;
+                const newHeight = 400;
+                camera.aspect = newWidth / newHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(newWidth, newHeight);
+            });
         }
     </script>
 </body>
