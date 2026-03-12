@@ -6,8 +6,6 @@
     <title>VIBZ | Premium Web Solutions</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <!-- Three.js for globe -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     
     <style>
         :root {
@@ -203,7 +201,7 @@
             width: 100%;
         }
 
-        /* ===== STATIC LOGO - REVERTED ===== */
+        /* ===== STATIC LOGO ===== */
         .app-logo { 
             font-size: 2.2rem;
             font-weight: 900; 
@@ -217,54 +215,243 @@
             padding: 0 25px 100px;
         }
 
-        /* ===== GLOBE SECTION WITH BRANDING ===== */
+        /* ===== GLOBE SECTION WITH SPIRAL STAR DUST ===== */
         .globe-section {
             width: 100%;
             display: flex;
             justify-content: center;
             margin: 40px 0 20px;
             position: relative;
-            min-height: 380px;
+            min-height: 400px;
         }
-        #globe-canvas-wrapper {
-            width: 100%;
-            max-width: 900px;
-            height: 380px;
-            margin: 0 auto;
+
+        .globe-container {
             position: relative;
-            cursor: pointer;
-            border-radius: 20px;
-            overflow: hidden;
+            width: 100%;
+            max-width: 800px;
+            height: 400px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-        .glove-branding {
+
+        /* Transparent globe - same style as social icons */
+        .transparent-globe {
+            width: 280px;
+            height: 280px;
+            position: relative;
+            animation: globe-spin 20s linear infinite;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+            z-index: 5;
+        }
+
+        .globe-circle {
             position: absolute;
-            top: 10px;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid var(--primary);
+            box-shadow: 0 0 20px rgba(255, 107, 0, 0.3);
+            background: rgba(255, 107, 0, 0.05);
+            backdrop-filter: blur(2px);
+        }
+
+        /* Continent shapes (simplified) */
+        .continent {
+            position: absolute;
+            background: var(--primary);
+            opacity: 0.6;
+            border-radius: 50%;
+            filter: blur(2px);
+        }
+
+        .continent-1 { width: 50px; height: 35px; top: 60px; left: 70px; transform: rotate(15deg); }
+        .continent-2 { width: 65px; height: 45px; top: 120px; right: 60px; transform: rotate(-10deg); }
+        .continent-3 { width: 55px; height: 40px; bottom: 70px; left: 90px; transform: rotate(25deg); }
+        .continent-4 { width: 70px; height: 50px; bottom: 60px; right: 80px; transform: rotate(-5deg); }
+        .continent-5 { width: 40px; height: 30px; top: 140px; left: 140px; transform: rotate(45deg); }
+        .continent-6 { width: 45px; height: 35px; top: 50px; right: 120px; transform: rotate(-20deg); }
+
+        /* Latitude and longitude lines */
+        .latitude-line {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: rgba(255, 107, 0, 0.2);
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .longitude-line {
+            position: absolute;
+            width: 2px;
+            height: 100%;
+            background: rgba(255, 107, 0, 0.2);
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* SPIRAL STAR DUST - outside the globe */
+        .spiral-dust {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .dust-particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: var(--primary);
+            border-radius: 50%;
+            filter: blur(2px);
+            box-shadow: 0 0 15px var(--primary);
+            opacity: 0;
+            animation: dustParticle 4s linear infinite;
+        }
+
+        /* Create multiple particles in a spiral pattern */
+        .dust-particle:nth-child(1) { --angle: 0deg; --distance: 180px; --delay: 0s; }
+        .dust-particle:nth-child(2) { --angle: 30deg; --distance: 190px; --delay: 0.3s; }
+        .dust-particle:nth-child(3) { --angle: 60deg; --distance: 200px; --delay: 0.6s; }
+        .dust-particle:nth-child(4) { --angle: 90deg; --distance: 180px; --delay: 0.9s; }
+        .dust-particle:nth-child(5) { --angle: 120deg; --distance: 210px; --delay: 1.2s; }
+        .dust-particle:nth-child(6) { --angle: 150deg; --distance: 170px; --delay: 1.5s; }
+        .dust-particle:nth-child(7) { --angle: 180deg; --distance: 220px; --delay: 1.8s; }
+        .dust-particle:nth-child(8) { --angle: 210deg; --distance: 190px; --delay: 2.1s; }
+        .dust-particle:nth-child(9) { --angle: 240deg; --distance: 200px; --delay: 2.4s; }
+        .dust-particle:nth-child(10) { --angle: 270deg; --distance: 180px; --delay: 2.7s; }
+        .dust-particle:nth-child(11) { --angle: 300deg; --distance: 210px; --delay: 3s; }
+        .dust-particle:nth-child(12) { --angle: 330deg; --distance: 190px; --delay: 3.3s; }
+        .dust-particle:nth-child(13) { --angle: 15deg; --distance: 220px; --delay: 3.6s; }
+        .dust-particle:nth-child(14) { --angle: 45deg; --distance: 170px; --delay: 3.9s; }
+        .dust-particle:nth-child(15) { --angle: 75deg; --distance: 200px; --delay: 4.2s; }
+        .dust-particle:nth-child(16) { --angle: 105deg; --distance: 190px; --delay: 4.5s; }
+        .dust-particle:nth-child(17) { --angle: 135deg; --distance: 210px; --delay: 4.8s; }
+        .dust-particle:nth-child(18) { --angle: 165deg; --distance: 180px; --delay: 5.1s; }
+        .dust-particle:nth-child(19) { --angle: 195deg; --distance: 200px; --delay: 5.4s; }
+        .dust-particle:nth-child(20) { --angle: 225deg; --distance: 190px; --delay: 5.7s; }
+        .dust-particle:nth-child(21) { --angle: 255deg; --distance: 220px; --delay: 6s; }
+        .dust-particle:nth-child(22) { --angle: 285deg; --distance: 170px; --delay: 6.3s; }
+        .dust-particle:nth-child(23) { --angle: 315deg; --distance: 200px; --delay: 6.6s; }
+        .dust-particle:nth-child(24) { --angle: 345deg; --distance: 190px; --delay: 6.9s; }
+
+        @keyframes dustParticle {
+            0% {
+                transform: translate(-50%, -50%) rotate(var(--angle)) translateX(var(--distance)) rotate(calc(-1 * var(--angle))) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+                scale: 1;
+            }
+            30% {
+                opacity: 1;
+                scale: 1.5;
+            }
+            60% {
+                opacity: 0.8;
+                scale: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) rotate(calc(var(--angle) + 360deg)) translateX(calc(var(--distance) + 50px)) rotate(calc(-1 * var(--angle) - 360deg)) scale(0);
+                opacity: 0;
+            }
+        }
+
+        /* Second spiral layer - opposite direction */
+        .spiral-dust-2 {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 9;
+        }
+
+        .dust-particle-2 {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #FFD700;
+            border-radius: 50%;
+            filter: blur(1px);
+            box-shadow: 0 0 10px #FFD700;
+            opacity: 0;
+            animation: dustParticle2 5s linear infinite;
+        }
+
+        .dust-particle-2:nth-child(1) { --angle: 45deg; --distance: 150px; --delay: 0s; }
+        .dust-particle-2:nth-child(2) { --angle: 135deg; --distance: 160px; --delay: 0.5s; }
+        .dust-particle-2:nth-child(3) { --angle: 225deg; --distance: 170px; --delay: 1s; }
+        .dust-particle-2:nth-child(4) { --angle: 315deg; --distance: 150px; --delay: 1.5s; }
+        .dust-particle-2:nth-child(5) { --angle: 90deg; --distance: 180px; --delay: 2s; }
+        .dust-particle-2:nth-child(6) { --angle: 180deg; --distance: 160px; --delay: 2.5s; }
+        .dust-particle-2:nth-child(7) { --angle: 270deg; --distance: 170px; --delay: 3s; }
+        .dust-particle-2:nth-child(8) { --angle: 0deg; --distance: 150px; --delay: 3.5s; }
+        .dust-particle-2:nth-child(9) { --angle: 60deg; --distance: 180px; --delay: 4s; }
+        .dust-particle-2:nth-child(10) { --angle: 150deg; --distance: 160px; --delay: 4.5s; }
+        .dust-particle-2:nth-child(11) { --angle: 240deg; --distance: 170px; --delay: 5s; }
+        .dust-particle-2:nth-child(12) { --angle: 330deg; --distance: 150px; --delay: 5.5s; }
+
+        @keyframes dustParticle2 {
+            0% {
+                transform: translate(-50%, -50%) rotate(var(--angle)) translateX(var(--distance)) rotate(calc(-1 * var(--angle))) scale(0);
+                opacity: 0;
+            }
+            15% {
+                opacity: 0.8;
+                scale: 0.8;
+            }
+            40% {
+                opacity: 1;
+                scale: 1.2;
+            }
+            70% {
+                opacity: 0.6;
+                scale: 0.8;
+            }
+            100% {
+                transform: translate(-50%, -50%) rotate(calc(var(--angle) - 360deg)) translateX(calc(var(--distance) + 80px)) rotate(calc(-1 * var(--angle) + 360deg)) scale(0);
+                opacity: 0;
+            }
+        }
+
+        /* Branding text */
+        .globe-branding {
+            position: absolute;
+            bottom: -30px;
             left: 0;
             right: 0;
             text-align: center;
-            z-index: 10;
-            pointer-events: none;
-        }
-        .glove-branding-text {
-            background: rgba(255, 107, 0, 0.2);
-            backdrop-filter: blur(4px);
-            display: inline-block;
-            padding: 8px 24px;
-            border-radius: 50px;
-            color: var(--primary);
             font-weight: 900;
             font-size: 1.2rem;
-            letter-spacing: 2px;
-            border: 1px solid rgba(255, 107, 0, 0.3);
-            box-shadow: 0 4px 15px rgba(255, 107, 0, 0.2);
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            z-index: 20;
         }
-        .glove-branding-text i {
-            margin: 0 8px;
+
+        .globe-branding i {
+            margin: 0 10px;
             color: #000;
+            animation: twinkle 1.5s ease-in-out infinite;
         }
-        .glove-branding-text span {
-            color: #000;
-            font-weight: 700;
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.5; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        @keyframes globe-spin {
+            0% { transform: rotateY(0deg) rotateX(10deg); }
+            100% { transform: rotateY(360deg) rotateX(10deg); }
         }
 
         /* ===== TABLET OPTIMISATION ===== */
@@ -338,7 +525,7 @@
             border: none; 
         }
 
-        /* ===== CLIENT PORTAL BUTTON - MATCHING SEARCH BAR ===== */
+        /* ===== CLIENT PORTAL BUTTON ===== */
         .client-portal-btn {
             display: flex;
             align-items: center;
@@ -446,7 +633,6 @@
             background: #fff; 
         }
 
-        /* ===== ANIMATED ICONS - PRESERVED ===== */
         .tile-icon { 
             width: 55px; 
             height: 55px; 
@@ -460,78 +646,23 @@
             box-shadow: 0 10px 20px rgba(255, 107, 0, 0.2); 
         }
 
-        /* Heart pulse animation */
-        .fa-heart-pulse {
-            animation: heartbeat 1.5s ease-in-out infinite;
-        }
-        @keyframes heartbeat {
-            0% { transform: scale(1); }
-            14% { transform: scale(1.3); }
-            28% { transform: scale(1); }
-            42% { transform: scale(1.3); }
-            70% { transform: scale(1); }
-        }
+        .fa-heart-pulse { animation: heartbeat 1.5s ease-in-out infinite; }
+        @keyframes heartbeat { 0% { transform: scale(1); } 14% { transform: scale(1.3); } 28% { transform: scale(1); } 42% { transform: scale(1.3); } 70% { transform: scale(1); } }
 
-        /* Hammer hitting animation - FIXED */
-        .fa-hammer {
-            animation: hammerHit 1.2s ease-in-out infinite;
-            transform-origin: bottom center;
-        }
-        @keyframes hammerHit {
-            0% { transform: rotate(0deg) translateY(0); }
-            10% { transform: rotate(30deg) translateY(-3px); }
-            20% { transform: rotate(-20deg) translateY(0); }
-            30% { transform: rotate(0deg) translateY(0); }
-            40% { transform: rotate(0deg) translateY(0); }
-            100% { transform: rotate(0deg) translateY(0); }
-        }
+        .fa-hammer { animation: hammerHit 1.2s ease-in-out infinite; transform-origin: bottom center; }
+        @keyframes hammerHit { 0% { transform: rotate(0deg) translateY(0); } 10% { transform: rotate(30deg) translateY(-3px); } 20% { transform: rotate(-20deg) translateY(0); } 30% { transform: rotate(0deg) translateY(0); } 40% { transform: rotate(0deg) translateY(0); } 100% { transform: rotate(0deg) translateY(0); } }
 
-        /* Briefcase bounce */
-        .fa-briefcase {
-            animation: bounce 2s ease infinite;
-        }
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
-        }
+        .fa-briefcase { animation: bounce 2s ease infinite; }
+        @keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 
-        /* Utensils separating and coming together */
-        .fa-utensils {
-            animation: utensilsMove 2.5s ease-in-out infinite;
-            display: inline-block;
-        }
-        @keyframes utensilsMove {
-            0% { transform: rotate(0deg) scale(1); letter-spacing: normal; }
-            25% { transform: rotate(-15deg) scale(1.1); letter-spacing: 5px; }
-            50% { transform: rotate(15deg) scale(0.9); letter-spacing: -2px; }
-            75% { transform: rotate(-5deg) scale(1.05); letter-spacing: 3px; }
-            100% { transform: rotate(0deg) scale(1); letter-spacing: normal; }
-        }
+        .fa-utensils { animation: utensilsMove 2.5s ease-in-out infinite; display: inline-block; }
+        @keyframes utensilsMove { 0% { transform: rotate(0deg) scale(1); letter-spacing: normal; } 25% { transform: rotate(-15deg) scale(1.1); letter-spacing: 5px; } 50% { transform: rotate(15deg) scale(0.9); letter-spacing: -2px; } 75% { transform: rotate(-5deg) scale(1.05); letter-spacing: 3px; } 100% { transform: rotate(0deg) scale(1); letter-spacing: normal; } }
 
-        /* Shopping bag swing */
-        .fa-bag-shopping {
-            animation: swing 3s ease-in-out infinite;
-            transform-origin: top center;
-        }
-        @keyframes swing {
-            0%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(15deg); }
-            75% { transform: rotate(-15deg); }
-        }
+        .fa-bag-shopping { animation: swing 3s ease-in-out infinite; transform-origin: top center; }
+        @keyframes swing { 0%,100%{transform:rotate(0deg);}25%{transform:rotate(15deg);}75%{transform:rotate(-15deg);} }
 
-        .app-tile h3 { 
-            font-size: 1.1rem; 
-            font-weight: 900; 
-            line-height: 1.3; 
-            text-align: center; 
-        }
-
-        .full-tile { 
-            grid-column: span 2; 
-            flex-direction: row; 
-            justify-content: center;
-            padding: 25px 20px;
-        }
+        .app-tile h3 { font-size: 1.1rem; font-weight: 900; line-height: 1.3; text-align: center; }
+        .full-tile { grid-column: span 2; flex-direction: row; justify-content: center; padding: 25px 20px; }
 
         /* ===== FOOTER ===== */
         footer {
@@ -611,7 +742,7 @@
             margin-top: 10px;
         }
 
-        /* ===== DOCK STYLES - UPDATED TO BE THINNER ===== */
+        /* ===== DOCK STYLES ===== */
         .app-dock {
             position: fixed; 
             bottom: 0; 
@@ -738,16 +869,15 @@
         <div class="close-btn" onclick="toggleCategories()"><i class="fa-solid fa-xmark"></i></div>
     </div>
 
-
     <div id="app-container">
-    <header id="main-header">
-        <div class="app-logo">VIBZ<span>.</span></div>
-        <a href="https://script.google.com/macros/s/AKfycbxTTSlY-wGoshiTvh6sARaen8w1aEycyOSuJdjJFxDO1tyEnvslImdVetiL9MKoXBg/exec" class="client-portal-btn">
-            <i class="fa-regular fa-circle-user"></i>
-            <span>Client Portal</span>
-        </a>
-    </header>
-    
+        <header id="main-header">
+            <div class="app-logo">VIBZ<span>.</span></div>
+            <a href="https://script.google.com/macros/s/AKfycbxTTSlY-wGoshiTvh6sARaen8w1aEycyOSuJdjJFxDO1tyEnvslImdVetiL9MKoXBg/exec" class="client-portal-btn">
+                <i class="fa-regular fa-circle-user"></i>
+                <span>Client Portal</span>
+            </a>
+        </header>
+        
         <div class="header-spacer"></div>
 
         <main class="content-scroll">
@@ -786,16 +916,77 @@
                 </div>
             </div>
             
-            <!-- BRANDED ORANGE GLOBE SECTION WITH SHOOTING STARS -->
+            <!-- GLOBE SECTION WITH SPIRAL STAR DUST -->
             <div class="globe-section">
-                <div id="globe-canvas-wrapper">
-                    <div class="glove-branding">
-                        <div class="glove-branding-text">
-                            <i class="fa-solid fa-star"></i> WE SERVE CLIENTS WORLDWIDE <i class="fa-solid fa-star"></i>
-                            <span> • VIBZ GLOBAL</span>
-                        </div>
+                <div class="globe-container">
+                    <!-- Transparent globe with continents -->
+                    <div class="transparent-globe">
+                        <div class="globe-circle"></div>
+                        <div class="latitude-line" style="top: 30%;"></div>
+                        <div class="latitude-line" style="top: 70%;"></div>
+                        <div class="longitude-line" style="left: 30%;"></div>
+                        <div class="longitude-line" style="left: 70%;"></div>
+                        
+                        <!-- Continent shapes -->
+                        <div class="continent continent-1"></div>
+                        <div class="continent continent-2"></div>
+                        <div class="continent continent-3"></div>
+                        <div class="continent continent-4"></div>
+                        <div class="continent continent-5"></div>
+                        <div class="continent continent-6"></div>
+                        
+                        <!-- VIBZ logo on globe -->
+                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: 900; font-size: 1.8rem; color: var(--primary); text-shadow: 0 0 20px var(--primary);">VIBZ</div>
                     </div>
-                    <!-- canvas will be injected by Three.js -->
+                    
+                    <!-- Spiral star dust layer 1 (orange) -->
+                    <div class="spiral-dust">
+                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 0s;"></div>
+                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 0.3s;"></div>
+                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 0.6s;"></div>
+                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 0.9s;"></div>
+                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 1.2s;"></div>
+                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 1.5s;"></div>
+                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 1.8s;"></div>
+                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 2.1s;"></div>
+                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 2.4s;"></div>
+                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 2.7s;"></div>
+                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 3.0s;"></div>
+                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 3.3s;"></div>
+                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 3.6s;"></div>
+                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 3.9s;"></div>
+                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 4.2s;"></div>
+                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 4.5s;"></div>
+                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 4.8s;"></div>
+                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 5.1s;"></div>
+                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 5.4s;"></div>
+                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 5.7s;"></div>
+                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 6.0s;"></div>
+                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 6.3s;"></div>
+                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 6.6s;"></div>
+                        <div class="dust-particle" style="top: 50%; left: 50%; animation-delay: 6.9s;"></div>
+                    </div>
+                    
+                    <!-- Spiral star dust layer 2 (gold, opposite direction) -->
+                    <div class="spiral-dust-2">
+                        <div class="dust-particle-2" style="top: 50%; left: 50%; animation-delay: 0s;"></div>
+                        <div class="dust-particle-2" style="top: 50%; left: 50%; animation-delay: 0.5s;"></div>
+                        <div class="dust-particle-2" style="top: 50%; left: 50%; animation-delay: 1.0s;"></div>
+                        <div class="dust-particle-2" style="top: 50%; left: 50%; animation-delay: 1.5s;"></div>
+                        <div class="dust-particle-2" style="top: 50%; left: 50%; animation-delay: 2.0s;"></div>
+                        <div class="dust-particle-2" style="top: 50%; left: 50%; animation-delay: 2.5s;"></div>
+                        <div class="dust-particle-2" style="top: 50%; left: 50%; animation-delay: 3.0s;"></div>
+                        <div class="dust-particle-2" style="top: 50%; left: 50%; animation-delay: 3.5s;"></div>
+                        <div class="dust-particle-2" style="top: 50%; left: 50%; animation-delay: 4.0s;"></div>
+                        <div class="dust-particle-2" style="top: 50%; left: 50%; animation-delay: 4.5s;"></div>
+                        <div class="dust-particle-2" style="top: 50%; left: 50%; animation-delay: 5.0s;"></div>
+                        <div class="dust-particle-2" style="top: 50%; left: 50%; animation-delay: 5.5s;"></div>
+                    </div>
+                    
+                    <!-- Branding text -->
+                    <div class="globe-branding">
+                        <i class="fa-solid fa-star"></i> WE SERVE CLIENTS WORLDWIDE <i class="fa-solid fa-star"></i>
+                    </div>
                 </div>
             </div>
             
@@ -842,7 +1033,6 @@
                 document.getElementById('app-loader').style.transform = 'translateY(-100%)';
                 document.getElementById('app-container').style.opacity = '1';
                 startTypewriter();
-                initBrandedGlobe(); // Initialize branded orange globe with shooting stars
             }, 2500);
         });
 
@@ -939,329 +1129,6 @@
             setTimeout(() => { 
                 window.location.href = val.includes('barber') ? "https://www.vibz.co.uk/barber/index.html" : "https://www.vibz.co.uk/funnel.html?niche=" + encodeURIComponent(val);
             }, 800);
-        }
-
-        // BRANDED ORANGE GLOBE WITH SHOOTING STARS
-        function initBrandedGlobe() {
-            const container = document.getElementById('globe-canvas-wrapper');
-            if (!container) return;
-
-            const width = container.clientWidth;
-            const height = 380;
-
-            const scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x1a0f0a); // Dark orange-brown background
-
-            const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-            camera.position.set(0, 1, 14);
-
-            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
-            renderer.setSize(width, height);
-            renderer.setPixelRatio(window.devicePixelRatio);
-            renderer.shadowMap.enabled = false;
-            container.innerHTML = '';
-            container.appendChild(renderer.domElement);
-
-            // Lighting for orange theme
-            const ambientLight = new THREE.AmbientLight(0x442200);
-            scene.add(ambientLight);
-            
-            const dirLight = new THREE.DirectionalLight(0xffaa66, 1.2);
-            dirLight.position.set(1, 1, 1);
-            scene.add(dirLight);
-            
-            const backLight = new THREE.PointLight(0xff5500, 0.8);
-            backLight.position.set(-2, 1, -3);
-            scene.add(backLight);
-            
-            const orangeLight = new THREE.PointLight(0xff6600, 0.5);
-            orangeLight.position.set(2, 2, 2);
-            scene.add(orangeLight);
-
-            // Create BRANDED ORANGE GLOBE
-            const geometry = new THREE.SphereGeometry(4, 64, 64);
-            
-            // Create custom orange texture with VIBZ branding
-            const canvas = document.createElement('canvas');
-            canvas.width = 2048;
-            canvas.height = 1024;
-            const ctx = canvas.getContext('2d');
-            
-            // Orange base with gradient
-            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-            gradient.addColorStop(0, '#FF8C40');   // Light orange
-            gradient.addColorStop(0.3, '#FF6B00');  // Primary orange
-            gradient.addColorStop(0.6, '#CC5500');  // Dark orange
-            gradient.addColorStop(1, '#993D00');    // Brown-orange
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            // Add continent-like patterns in darker orange
-            ctx.fillStyle = '#CC5500';
-            ctx.globalAlpha = 0.7;
-            
-            // North America shape
-            ctx.beginPath();
-            ctx.arc(500, 300, 180, 0, Math.PI*2);
-            ctx.fill();
-            
-            // South America
-            ctx.beginPath();
-            ctx.arc(600, 600, 140, 0, Math.PI*2);
-            ctx.fill();
-            
-            // Europe/Africa
-            ctx.beginPath();
-            ctx.arc(1100, 250, 200, 0, Math.PI*2);
-            ctx.fill();
-            
-            // Africa lower
-            ctx.beginPath();
-            ctx.arc(1200, 500, 170, 0, Math.PI*2);
-            ctx.fill();
-            
-            // Asia
-            ctx.beginPath();
-            ctx.arc(1600, 300, 220, 0, Math.PI*2);
-            ctx.fill();
-            
-            // Australia
-            ctx.beginPath();
-            ctx.arc(1800, 700, 130, 0, Math.PI*2);
-            ctx.fill();
-            
-            // Add VIBZ branding over the globe
-            ctx.globalAlpha = 1;
-            ctx.fillStyle = '#FFFFFF';
-            ctx.font = 'bold 140px "Inter"';
-            ctx.fillText('VIBZ', 800, 500);
-            
-            ctx.font = 'bold 90px "Inter"';
-            ctx.fillStyle = '#FF6B00';
-            ctx.fillText('🌍', 1400, 700);
-            
-            ctx.font = 'bold 70px "Inter"';
-            ctx.fillStyle = '#000000';
-            ctx.fillText('web', 600, 800);
-            
-            // Add star patterns
-            ctx.fillStyle = '#FFD700';
-            for (let i = 0; i < 50; i++) {
-                ctx.beginPath();
-                ctx.arc(Math.random() * canvas.width, Math.random() * canvas.height, 3, 0, Math.PI*2);
-                ctx.fill();
-            }
-            
-            const texture = new THREE.CanvasTexture(canvas);
-            const material = new THREE.MeshPhongMaterial({ 
-                map: texture, 
-                shininess: 15,
-                emissive: new THREE.Color(0x331100)
-            });
-            const globe = new THREE.Mesh(geometry, material);
-            scene.add(globe);
-
-            // Add a glowing ring around the globe (VIBZ branded)
-            const ringGeometry = new THREE.TorusGeometry(4.2, 0.05, 16, 100);
-            const ringMaterial = new THREE.MeshStandardMaterial({ color: 0xFF6B00, emissive: 0x442200 });
-            const ring = new THREE.Mesh(ringGeometry, ringMaterial);
-            ring.rotation.x = Math.PI / 2;
-            ring.rotation.z = 0.3;
-            scene.add(ring);
-
-            // COUNTRY PINS (orange spheres)
-            const pinPositions = [
-                { lat: 40, lng: -100, name: 'USA' },    // USA
-                { lat: 35, lng: 135, name: 'Japan' },   // Japan
-                { lat: -25, lng: 135, name: 'Australia' }, // Australia
-                { lat: 55, lng: -5, name: 'UK' },       // UK
-                { lat: 20, lng: 78, name: 'India' },    // India
-                { lat: -15, lng: -50, name: 'Brazil' }, // Brazil
-                { lat: 30, lng: 30, name: 'Egypt' },    // Egypt
-                { lat: -30, lng: 150, name: 'Fiji' },   // Fiji
-                { lat: 45, lng: 10, name: 'Italy' },    // Italy
-                { lat: -35, lng: -60, name: 'Argentina' } // Argentina
-            ];
-
-            const pins = [];
-            pinPositions.forEach((pos, i) => {
-                const phi = (90 - pos.lat) * Math.PI / 180;
-                const theta = pos.lng * Math.PI / 180;
-                const r = 4.1;
-
-                const x = r * Math.sin(phi) * Math.cos(theta);
-                const y = r * Math.cos(phi);
-                const z = r * Math.sin(phi) * Math.sin(theta);
-
-                // Orange pin
-                const pinGeo = new THREE.SphereGeometry(0.15, 16, 16);
-                const pinMat = new THREE.MeshStandardMaterial({ color: 0xFF6B00, emissive: 0x552200 });
-                const pin = new THREE.Mesh(pinGeo, pinMat);
-                pin.position.set(x, y, z);
-                
-                // Glow ring around pin
-                const glowGeo = new THREE.TorusGeometry(0.22, 0.02, 8, 20);
-                const glowMat = new THREE.MeshStandardMaterial({ color: 0xFFAA00, emissive: 0x442200, transparent: true, opacity: 0.7 });
-                const glow = new THREE.Mesh(glowGeo, glowMat);
-                glow.rotation.x = Math.PI / 2;
-                glow.position.set(x, y, z);
-                
-                pins.push({ pin, glow });
-                scene.add(pin);
-                scene.add(glow);
-            });
-
-            // SHOOTING STARS (one at a time)
-            const starGroup = new THREE.Group();
-            const starCount = 20;
-            const stars = [];
-            
-            for (let i = 0; i < starCount; i++) {
-                // Create star trail (line)
-                const points = [];
-                for (let j = 0; j < 5; j++) {
-                    points.push(new THREE.Vector3(j * 0.2, 0, 0));
-                }
-                const lineGeo = new THREE.BufferGeometry().setFromPoints(points);
-                const lineMat = new THREE.LineBasicMaterial({ color: 0xFFAA00 });
-                const line = new THREE.Line(lineGeo, lineMat);
-                line.visible = false;
-                
-                // Star head (glowing sphere)
-                const headGeo = new THREE.SphereGeometry(0.1, 6, 6);
-                const headMat = new THREE.MeshStandardMaterial({ color: 0xFFD700, emissive: 0xFF6B00 });
-                const head = new THREE.Mesh(headGeo, headMat);
-                head.visible = false;
-                
-                stars.push({ line, head });
-                starGroup.add(line);
-                starGroup.add(head);
-            }
-            scene.add(starGroup);
-
-            // COUNTRY NAMES (3D text would be complex, using canvas sprites instead)
-            // But for simplicity, we'll use the branding text that's already there
-
-            let clock = new THREE.Clock();
-            let shootingStarIndex = 0;
-            let shootingStarActive = false;
-            let shootingStarTimer = 0;
-
-            function animate() {
-                requestAnimationFrame(animate);
-
-                const delta = clock.getDelta();
-                const elapsed = performance.now() / 1000;
-
-                // Rotate globe slowly
-                globe.rotation.y += 0.001;
-                ring.rotation.y = globe.rotation.y;
-                
-                // Rotate pins with globe
-                pins.forEach(item => {
-                    item.pin.rotation.y = globe.rotation.y;
-                    item.glow.rotation.y = globe.rotation.y;
-                });
-
-                // Pulsate pins
-                pins.forEach((item, idx) => {
-                    const scale = 1 + Math.sin(elapsed * 5 + idx) * 0.2;
-                    item.pin.scale.set(scale, scale, scale);
-                    item.glow.scale.set(scale * 1.3, scale * 1.3, scale * 1.3);
-                    item.glow.material.opacity = 0.5 + Math.sin(elapsed * 4 + idx) * 0.3;
-                });
-
-                // SHOOTING STARS ANIMATION (one at a time)
-                shootingStarTimer += delta;
-                
-                if (!shootingStarActive && shootingStarTimer > 1.5) {
-                    shootingStarActive = true;
-                    shootingStarTimer = 0;
-                    
-                    // Activate a random star
-                    const star = stars[shootingStarIndex % stars.length];
-                    const startPin = pins[Math.floor(Math.random() * pins.length)];
-                    const endPin = pins[Math.floor(Math.random() * pins.length)];
-                    
-                    if (star && startPin && endPin) {
-                        const startPos = startPin.pin.position.clone();
-                        const endPos = endPin.pin.position.clone();
-                        
-                        // Scale positions outward for shooting star effect
-                        startPos.normalize().multiplyScalar(5.5);
-                        endPos.normalize().multiplyScalar(5.5);
-                        
-                        star.line.visible = true;
-                        star.head.visible = true;
-                        
-                        // Store animation data
-                        star.userData = {
-                            progress: 0,
-                            startPos: startPos,
-                            endPos: endPos,
-                            active: true
-                        };
-                        
-                        // Position head at start
-                        star.head.position.copy(startPos);
-                        
-                        // Update line positions
-                        const points = [];
-                        for (let i = 0; i < 5; i++) {
-                            const t = i / 4;
-                            const pos = new THREE.Vector3().lerpVectors(startPos, endPos, t);
-                            points.push(pos);
-                        }
-                        star.line.geometry.dispose();
-                        star.line.geometry = new THREE.BufferGeometry().setFromPoints(points);
-                    }
-                    
-                    shootingStarIndex++;
-                }
-                
-                // Update active shooting stars
-                stars.forEach(star => {
-                    if (star.userData.active) {
-                        star.userData.progress += delta * 0.8; // Speed
-                        
-                        if (star.userData.progress >= 1) {
-                            star.userData.active = false;
-                            star.line.visible = false;
-                            star.head.visible = false;
-                            shootingStarActive = false;
-                        } else {
-                            const start = star.userData.startPos;
-                            const end = star.userData.endPos;
-                            const currentPos = new THREE.Vector3().lerpVectors(start, end, star.userData.progress);
-                            star.head.position.copy(currentPos);
-                            
-                            // Update line
-                            const points = [];
-                            for (let i = 0; i < 5; i++) {
-                                const t = (star.userData.progress - 0.2) + (i / 4) * 0.4;
-                                const clampedT = Math.max(0, Math.min(1, t));
-                                const pos = new THREE.Vector3().lerpVectors(start, end, clampedT);
-                                points.push(pos);
-                            }
-                            star.line.geometry.dispose();
-                            star.line.geometry = new THREE.BufferGeometry().setFromPoints(points);
-                        }
-                    }
-                });
-
-                renderer.render(scene, camera);
-            }
-
-            animate();
-
-            // Resize handler
-            window.addEventListener('resize', () => {
-                const newWidth = container.clientWidth;
-                const newHeight = 380;
-                camera.aspect = newWidth / newHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(newWidth, newHeight);
-            });
         }
     </script>
 </body>
