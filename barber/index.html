@@ -1309,16 +1309,16 @@
     };
 
     // =========================================================================
-    // UPDATED STRIPE LINKS WITH WORKING PREMIUM LINK
+    // UPDATED STRIPE LINKS WITH CORRECT MULTI-CURRENCY LINK
     // =========================================================================
     const STRIPE_LINKS = {
         outright: {
-            standard: 'https://buy.stripe.com/9B614oetUckt6fc7TFgMw04', // Standard link (needs multi-currency setup)
-            premium: 'https://buy.stripe.com/test_28E5kEdpQ7091YWc9VgMw0l' // ✅ WORKING PREMIUM LINK with multiple currencies!
+            standard: 'https://buy.stripe.com/test_28E7sM3Pg709avs3DpgMw0f', // ✅ +96 currencies link!
+            premium: 'https://buy.stripe.com/test_28E5kEdpQ7091YWc9VgMw0l' // Premium link
         },
         monthly: {
-            standard: 'https://buy.stripe.com/test_dRmdRa2Lcckt9ro2zlgMw0a',  // Still needs update
-            premium: 'https://buy.stripe.com/test_3cI14odpQdox7jg7TFgMw09'    // Still needs update
+            standard: 'https://buy.stripe.com/test_dRmdRa2Lcckt9ro2zlgMw0a',
+            premium: 'https://buy.stripe.com/test_3cI14odpQdox7jg7TFgMw09'
         }
     };
 
@@ -1881,12 +1881,14 @@
     }
 
     // =========================================================================
-    // SIMPLIFIED PAYMENT FUNCTION (DEBUG ALERT REMOVED)
+    // CRITICAL FIX: PAYMENT FUNCTION SENDS BOTH COUNTRY AND CURRENCY TO STRIPE
     // =========================================================================
     function payNow(tier, planType) {
         saveOrderToStorage(planType, tier);
         
+        // Get both country AND currency from selections
         const country = selections.country || 'GB';
+        const currency = selections.currency || 'GBP';
         
         let stripeLink = '';
         if (planType === 'outright') {
@@ -1900,11 +1902,19 @@
         }
         
         const url = new URL(stripeLink);
+        
+        // THIS IS CRITICAL - Send both parameters
         url.searchParams.append('prefilled_country', country);
+        url.searchParams.append('currency', currency.toLowerCase()); // Stripe needs lowercase currency codes
+        
+        console.log('🚀 Sending to Stripe:', url.toString());
         
         window.open(url.toString(), '_blank');
     }
 
+    // =========================================================================
+    // UPDATED PRICING CARDS WITH ALL YOUR CURRENCIES FROM SCREENSHOTS
+    // =========================================================================
     function renderPricingCards() {
         const container = document.getElementById('pricing-cards-display');
         if (!container) return;
@@ -1912,22 +1922,126 @@
         const currency = selections.currency || 'GBP';
         const symbol = getSymbol(currency);
         
+        // Complete exchange rates based on your Stripe screenshots (GBP 1500 base)
         const exchangeRates = {
-            'GBP': 1.00, 'USD': 1.25, 'EUR': 1.15, 'CAD': 1.70,
-            'AUD': 1.90, 'INR': 104.50, 'JPY': 185.00, 'BRL': 6.20,
-            'MXN': 21.50, 'ZAR': 23.50, 'NGN': 1850.00, 'KES': 162.00,
-            'AED': 4.60, 'SAR': 4.70, 'SGD': 1.70, 'HKD': 9.80,
-            'CHF': 1.10, 'NOK': 13.20, 'SEK': 13.00, 'DKK': 8.60,
-            'PLN': 5.00, 'CZK': 28.50
+            // Base
+            'GBP': 1.00,
+            
+            // From your screenshots - calculated from the amounts shown
+            'AED': 4.92818,      // AED 7,392.27
+            'AFN': 85.3753,      // AFN 128,062.95
+            'ALL': 111.08,       // ALL 166,620.00
+            'AMD': 506.153,      // AMD 759,229.50
+            'ANG': 3.60,         // ANG 5,400 (approx)
+            'AOA': 1,200,        // AOA 1,800,000 (approx)
+            'ARS': 1,200,        // ARS 1,800,000 (approx)
+            'AUD': 1.88488,      // A$ 2,827.32
+            'AWG': 2.40173,      // AWG 3,602.595
+            'AZN': 2.28052,      // AZN 3,420.78
+            'BAM': 2.26551,      // BAM 3,398.265
+            'BBD': 2.67008,      // BBD 4,005.12
+            'BDT': 164.418,      // BDT 246,627.00
+            'BGN': 1.95,         // BGN 2,925 (approx)
+            'BIF': 3,978.3,      // BIF 5,967,450
+            'BMD': 1.34175,      // BMD 2,012.625
+            'BND': 1.70833,      // BND 2,562.495
+            'BOB': 9.29825,      // BOB 13,947.375
+            'BRL': 6.92961,      // R$ 10,394.415
+            'BSD': 1.34175,      // BSD 2,012.625
+            'BWP': 18.7133,      // BWP 28,069.95
+            'BYN': 3.92163,      // BYN 5,882.445
+            'BZD': 2.6835,       // BZD 4,025.25
+            'CAD': 1.82212,      // CA$ 2,733.18
+            'CDF': 2,900,        // CDF 4,351,575 (approx)
+            'CHF': 1.0444,       // CHF 1,566.60
+            'CLP': 1,196.19,     // CLP 1,794,285
+            'CNY': 9.22365,      // CNY 13,835.475
+            'COP': 4,970.19,     // COP 7,455,285
+            'CRC': 632.092,      // CRC 948,138
+            'CVE': 127.818,      // CVE 191,727
+            'CZK': 28.1896,      // CZK 42,284.40
+            'DJF': 238.295,      // DJF 357,443
+            'DKK': 8.63339,      // DKK 12,950.085
+            'DOP': 81.4122,      // DOP 122,118.30
+            'DZD': 176.493,      // DZD 264,739.50
+            'EGP': 69.7557,      // EGP 104,633.55
+            'ETB': 211.383,      // ETB 317,074.50
+            'EUR': 1.15546,      // € 1,733.19
+            'FJD': 2.95325,      // FJD 4,429.875
+            'FKP': 0.998291,     // FKP 1,497.4365
+            'GEL': 3.6509,       // GEL 5,476.35
+            'GIP': 0.998291,     // GIP 1,497.4365
+            'GMD': 96.1646,      // GMD 144,246.90
+            'GNF': 11,719.7,     // GNF 17,579,550
+            'GTQ': 10.292,       // GTQ 15,438.00
+            'GYD': 280.772,      // GYD 421,158.00
+            'HKD': 10.4979,      // HK$ 15,746.85
+            'HNL': 35.5306,      // HNL 53,295.90
+            'HTG': 176.65,       // HTG 264,975.00
+            'HUF': 447.396,      // HUF 671,094.00
+            'IDR': 22,619.1,     // IDR 33,928,650
+            'INR': 123.198,      // ₹ 184,797.00
+            'ISK': 168.356,      // ISK 252,534.00
+            'JMD': 210.407,      // JMD 315,610.50
+            'JPY': 212.103,      // JPY 318,155
+            'KES': 173.252,      // KES 259,878.00
+            'KGS': 117.354,      // KGS 176,031.00
+            'KRW': 1,977.3,      // ₩ 2,965,950
+            'KYD': 1.11544,      // KYD 1,673.16
+            'LBP': 120,087,      // LBP 180,130,500
+            'LKR': 417.248,      // LKR 625,872.00
+            'LRD': 245.64,       // LRD 368,460.00
+            'MAD': 12.5242,      // MAD 18,786.30
+            'MDL': 23.0856,      // MDL 34,628.40
+            'MUR': 61.6596,      // MUR 92,489.40
+            'MXN': 23.649,       // MX$ 35,473.50
+            'MYR': 5.2657,       // MYR 7,898.55
+            'NGN': 1,954.35,     // NGN 2,931,525
+            'NOK': 12.9305,      // NOK 19,395.75
+            'NPR': 197.178,      // NPR 295,767.00
+            'NZD': 2.26285,      // NZ$ 3,394.275
+            'PHP': 79.1315,      // PHP 118,697.25
+            'PKR': 374.978,      // PKR 562,467.00
+            'PLN': 4.92704,      // PLN 7,390.56
+            'QAR': 4.89876,      // QAR 7,348.14
+            'RON': 5.88136,      // RON 8,822.04
+            'RSD': 135.654,      // RSD 203,481.00
+            'RUB': 105.652,      // RUB 158,478.00
+            'SAR': 5.03563,      // SAR 7,553.445
+            'SBD': 10.7277,      // SBD 16,091.55
+            'SEK': 12.3117,      // SEK 18,467.55
+            'SGD': 1.7091,       // SGD 2,563.65
+            'SHP': 1.00101,      // SHP 1,501.515
+            'SLE': 30.6202,      // SLE 45,930.30
+            'THB': 42.3478,      // THB 63,521.70
+            'TRY': 59.1383,      // TRY 88,707.45
+            'TTD': 9.05305,      // TTD 13,579.575
+            'TWD': 42.6415,      // NT$ 63,962.25
+            'UAH': 58.8747,      // UAH 88,312.05
+            'USD': 1.33951,      // US$ 2,009.265
+            'UYU': 58.0,         // UYU 87,000 (approx)
+            'UZS': 16,800,       // UZS 25,200,000 (approx)
+            'VES': 50.0,         // VES 75,000 (approx)
+            'VND': 35,197.2,     // ₫ 52,795,800
+            'XAF': 757.897,      // FCFA 1,136,846
+            'XCD': 3.60689,      // EC$ 5,410.335
+            'XOF': 757.771,      // FCFA 1,136,657
+            'XPF': 138.106,      // CFPF 207,159
+            'ZAR': 21.8279,      // ZAR 32,741.85
+            'ZMW': 36.0,         // ZMW 54,000 (approx)
         };
         
         const rate = exchangeRates[currency] || 1.00;
         
         function formatPrice(amount) {
             const converted = amount * rate;
-            if (currency === 'JPY' || currency === 'NGN' || currency === 'KRW') {
+            // No decimals for certain currencies
+            if (currency === 'JPY' || currency === 'KRW' || currency === 'VND' || 
+                currency === 'IDR' || currency === 'HUF' || currency === 'CLP' ||
+                currency === 'PYG' || currency === 'UGX' || currency === 'RWF') {
                 return Math.round(converted).toLocaleString();
             }
+            // For most currencies, show 2 decimals
             return converted.toFixed(2);
         }
         
@@ -1983,6 +2097,7 @@
             `;
             
         } else {
+            // Monthly plans HTML (unchanged)
             html += `
                 <div class="pricing-card">
                     <div class="pricing-header">
@@ -2105,9 +2220,6 @@
         logo.style.position = '';
     }
 
-    // =========================================================================
-    // UPDATED UPDATEUI (DEBUGGER REMOVED)
-    // =========================================================================
     function updateUI() {
         resetHeader();
         
