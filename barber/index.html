@@ -1076,25 +1076,6 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-
-        /* Debug panel styles */
-        #debug-info {
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            right: 10px;
-            background: rgba(0,0,0,0.9);
-            color: #00ff00;
-            padding: 15px;
-            border-radius: 10px;
-            z-index: 10000;
-            font-size: 14px;
-            font-family: monospace;
-            white-space: pre-wrap;
-            border: 2px solid #00ff00;
-            box-shadow: 0 0 20px rgba(0,255,0,0.3);
-            pointer-events: none;
-        }
     </style>
 </head>
 <body>
@@ -1900,7 +1881,7 @@
     }
 
     // =========================================================================
-    // SIMPLIFIED PAYMENT FUNCTION
+    // SIMPLIFIED PAYMENT FUNCTION (DEBUG ALERT REMOVED)
     // =========================================================================
     function payNow(tier, planType) {
         saveOrderToStorage(planType, tier);
@@ -1920,9 +1901,6 @@
         
         const url = new URL(stripeLink);
         url.searchParams.append('prefilled_country', country);
-        
-        // Debug alert
-        alert(`🌍 Sending to Stripe:\nCountry: ${country}\nURL: ${url.toString()}`);
         
         window.open(url.toString(), '_blank');
     }
@@ -2128,28 +2106,9 @@
     }
 
     // =========================================================================
-    // UPDATED UPDATEUI WITH VISUAL DEBUGGER
+    // UPDATED UPDATEUI (DEBUGGER REMOVED)
     // =========================================================================
     function updateUI() {
-        // Visual debugger
-        let debugDiv = document.getElementById('debug-info');
-        if (!debugDiv) {
-            debugDiv = document.createElement('div');
-            debugDiv.id = 'debug-info';
-            document.body.appendChild(debugDiv);
-        }
-        
-        debugDiv.innerHTML = `
-📱 DEBUG INFO
-─────────────
-Country: ${selections.country || 'GB'}
-Currency: ${selections.currency || 'GBP'}
-Business: ${selections.businessName || 'Not set'}
-Plan: ${selections.planType || 'Not set'}
-Step: ${currentStep}
-Premium Link: ${STRIPE_LINKS.outright.premium.substring(0, 30)}...
-        `;
-
         resetHeader();
         
         document.querySelectorAll('.form-screen').forEach(s => {
