@@ -1326,9 +1326,12 @@
         monthly: { standard: 125, premium: 225, buildFee: { standard: 500, premium: 650 } }
     };
 
+    // =========================================================================
+    // UPDATED STRIPE LINKS WITH CORRECT MULTI-CURRENCY LINK
+    // =========================================================================
     const STRIPE_LINKS = {
         outright: {
-            standard: 'https://buy.stripe.com/test_4gMfZidpQ709gTQ4HtgMw0b',
+            standard: 'https://buy.stripe.com/test_28E7sM3Pg709avs3DpgMw0f', // ✅ +96 currencies link!
             premium: 'https://buy.stripe.com/test_4gM3cw0D42JTavs1vhgMw0c'
         },
         monthly: {
@@ -1848,7 +1851,7 @@
     }
 
     // =========================================================================
-    // PAYMENT FUNCTION USING STRIPE LINKS (SAFE FOR GITHUB PAGES)
+    // UPDATED PAYMENT FUNCTION - SENDS BOTH COUNTRY AND CURRENCY TO STRIPE
     // =========================================================================
     function payNow(tier, planType) {
         saveOrderToStorage(planType, tier);
@@ -1868,10 +1871,10 @@
                 : STRIPE_LINKS.monthly.premium;
         }
         
-        // Add currency and country as parameters for better UX
+        // Add currency and country as parameters for Stripe
         const url = new URL(stripeLink);
         url.searchParams.append('prefilled_country', country);
-        url.searchParams.append('currency', currency.toLowerCase());
+        url.searchParams.append('currency', currency.toLowerCase()); // CRITICAL - tells Stripe which currency to show
         
         // Open Stripe Payment Link
         window.open(url.toString(), '_blank');
@@ -1888,14 +1891,17 @@
         const currency = selections.currency || 'GBP';
         const symbol = getSymbol(currency);
         
-        // Exchange rates (base: GBP)
+        // Exchange rates (base: GBP) - expanded to match your Stripe currencies
         const exchangeRates = {
-            'GBP': 1.00, 'USD': 1.25, 'EUR': 1.15, 'CAD': 1.70,
-            'AUD': 1.90, 'INR': 104.50, 'JPY': 185.00, 'BRL': 6.20,
-            'MXN': 21.50, 'ZAR': 23.50, 'NGN': 1850.00, 'KES': 162.00,
-            'AED': 4.60, 'SAR': 4.70, 'SGD': 1.70, 'HKD': 9.80,
-            'CHF': 1.10, 'NOK': 13.20, 'SEK': 13.00, 'DKK': 8.60,
-            'PLN': 5.00, 'CZK': 28.50
+            'GBP': 1.00, 'USD': 1.34, 'EUR': 1.16, 'CAD': 1.82,
+            'AUD': 1.88, 'INR': 123.20, 'JPY': 212.10, 'BRL': 6.93,
+            'MXN': 23.65, 'ZAR': 21.83, 'NGN': 1954.35, 'KES': 173.25,
+            'AED': 4.93, 'SAR': 5.04, 'SGD': 1.71, 'HKD': 10.50,
+            'CHF': 1.04, 'NOK': 12.93, 'SEK': 12.31, 'DKK': 8.63,
+            'PLN': 4.93, 'CZK': 28.19, 'RON': 5.88, 'RSD': 135.65,
+            'THB': 42.35, 'TRY': 59.14, 'TWD': 42.64, 'UAH': 58.87,
+            'VND': 35197.20, 'XAF': 757.90, 'XOF': 757.77, 'XPF': 138.11,
+            'CLP': 1196.19, 'COP': 4970.19, 'PEN': 5.00, 'UYU': 58.00
         };
         
         const rate = exchangeRates[currency] || 1.00;
@@ -1904,7 +1910,8 @@
         function formatPrice(amount) {
             const converted = amount * rate;
             // No decimals for certain currencies
-            if (currency === 'JPY' || currency === 'NGN' || currency === 'KRW') {
+            if (currency === 'JPY' || currency === 'KRW' || currency === 'VND' || 
+                currency === 'IDR' || currency === 'HUF' || currency === 'CLP') {
                 return Math.round(converted).toLocaleString();
             }
             return converted.toFixed(2);
