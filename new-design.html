@@ -465,7 +465,7 @@
             padding: 25px 20px;
         }
 
-        /* ===== VIDEO PLAYER - ACTUAL WORKING HTML5 VIDEO ===== */
+        /* ===== VIDEO PLAYER - YOUTUBE EMBED ===== */
         .video-player-section {
             max-width: 900px;
             margin: 0 auto 30px;
@@ -476,11 +476,20 @@
             background: #000;
         }
         
-        .playable-video {
+        .youtube-video-container {
+            position: relative;
             width: 100%;
             aspect-ratio: 16 / 9;
-            display: block;
             background: #FFF5EE;
+        }
+        
+        .youtube-video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
         }
         
         .video-controls-custom {
@@ -856,25 +865,24 @@
             
             <footer>
                 <div class="footer-inner">
-                    <!-- ACTUAL PLAYABLE HTML5 VIDEO WITH VOICEOVER -->
+                    <!-- YOUTUBE VIDEO PLAYER - Your specified video -->
                     <div class="video-player-section">
-                        <video id="explainerVideo" class="playable-video" poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Crect width='100%25' height='100%25' fill='%23FFF5EE'/%3E%3Ctext x='50%25' y='50%25' font-family='Syne' font-size='24' fill='%23FF6B00' text-anchor='middle' dy='.3em'%3EVIBZ Explainer%3C/text%3E%3C/svg%3E" controls>
-                            <source src="https://storage.googleapis.com/vibz-media/why-choose-vibz.mp4" type="video/mp4">
-                            <!-- Fallback: If video fails to load, show animated HTML/CSS version -->
-                            <div style="width:100%; height:100%; background:#FFF5EE; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:20px; font-family:'Syne', sans-serif;">
-                                <div style="font-size:3rem; color:#FF6B00;">▶</div>
-                                <div style="font-size:1.2rem; color:#121212;">Your browser does not support the video tag.</div>
-                                <div style="font-size:1rem; color:#666;">Click the play button below for audio explainer</div>
-                            </div>
-                        </video>
+                        <div class="youtube-video-container">
+                            <iframe src="https://www.youtube.com/embed/0szg3hNC0DE?si=Jg2rKdD-fB-4sWDo" 
+                                    title="YouTube video player" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                    allowfullscreen>
+                            </iframe>
+                        </div>
                         <div class="video-controls-custom">
-                            <button class="video-btn" id="playVideoBtn"><i class="fa-solid fa-play"></i></button>
-                            <button class="video-btn" id="restartVideoBtn"><i class="fa-solid fa-rotate-left"></i></button>
-                            <span class="video-timer" id="videoTimer">0:00 / 1:00</span>
+                            <a href="https://youtu.be/0szg3hNC0DE?feature=shared" target="_blank" class="video-btn" title="Watch on YouTube">
+                                <i class="fa-brands fa-youtube"></i>
+                            </a>
+                            <span class="video-timer">Watch on YouTube</span>
                         </div>
                     </div>
 
-                    <!-- NEW: Legal & Help dropdowns just above social icons -->
+                    <!-- Legal & Help dropdowns just above social icons -->
                     <div class="legal-help-row">
                         <!-- Legal dropdown -->
                         <div class="dropdown-container" id="legalDropdown">
@@ -943,7 +951,6 @@
                 document.getElementById('app-loader').style.transform = 'translateY(-100%)';
                 document.getElementById('app-container').style.opacity = '1';
                 startTypewriter();
-                initVideoControls();
             }, 2500);
         });
 
@@ -1040,161 +1047,6 @@
             setTimeout(() => { 
                 window.location.href = val.includes('barber') ? "https://www.vibz.co.uk/barber/index.html" : "https://www.vibz.co.uk/funnel.html?niche=" + encodeURIComponent(val);
             }, 800);
-        }
-        
-        // Video control functions
-        function initVideoControls() {
-            const video = document.getElementById('explainerVideo');
-            const playBtn = document.getElementById('playVideoBtn');
-            const restartBtn = document.getElementById('restartVideoBtn');
-            const timerEl = document.getElementById('videoTimer');
-            
-            if (!video) return;
-            
-            // Create audio context for voiceover if video fails
-            let voiceoverPlaying = false;
-            let voiceoverTimer = null;
-            
-            function formatTime(seconds) {
-                const mins = Math.floor(seconds / 60);
-                const secs = Math.floor(seconds % 60);
-                return mins + ':' + (secs < 10 ? '0' : '') + secs;
-            }
-            
-            // If video cannot play (no source), use speech synthesis as fallback
-            video.addEventListener('error', function() {
-                console.log('Video source not available, using speech synthesis fallback');
-                // Hide video controls, show custom message
-                video.style.display = 'none';
-                const container = document.querySelector('.video-player-section');
-                if (container) {
-                    const fallbackDiv = document.createElement('div');
-                    fallbackDiv.style.cssText = 'width:100%; aspect-ratio:16/9; background:#FFF5EE; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:15px;';
-                    fallbackDiv.innerHTML = `
-                        <div style="font-size:4rem; color:#FF6B00;"><i class="fa-solid fa-circle-play"></i></div>
-                        <div style="font-size:1.2rem; font-family:Syne; color:#121212;">Why Choose VIBZ?</div>
-                        <div style="font-size:0.9rem; color:#666; max-width:80%; text-align:center;">Click play to hear our story in a natural UK voice</div>
-                    `;
-                    container.insertBefore(fallbackDiv, video.nextSibling);
-                }
-            });
-            
-            // Play button functionality
-            playBtn.addEventListener('click', function() {
-                const icon = playBtn.querySelector('i');
-                if (icon.classList.contains('fa-play')) {
-                    // Try to play video
-                    if (video.paused) {
-                        video.play().catch(e => {
-                            // If video fails, start voiceover
-                            startVoiceover();
-                        });
-                    }
-                    icon.classList.remove('fa-play');
-                    icon.classList.add('fa-pause');
-                    
-                    // Update timer
-                    if (voiceoverTimer) clearInterval(voiceoverTimer);
-                    let seconds = 0;
-                    voiceoverTimer = setInterval(() => {
-                        seconds++;
-                        timerEl.textContent = formatTime(seconds) + ' / 1:00';
-                        if (seconds >= 60) {
-                            clearInterval(voiceoverTimer);
-                            icon.classList.remove('fa-pause');
-                            icon.classList.add('fa-play');
-                        }
-                    }, 1000);
-                } else {
-                    // Pause
-                    video.pause();
-                    if (voiceoverTimer) {
-                        clearInterval(voiceoverTimer);
-                        voiceoverTimer = null;
-                    }
-                    icon.classList.remove('fa-pause');
-                    icon.classList.add('fa-play');
-                    if (window.speechSynthesis) window.speechSynthesis.cancel();
-                }
-            });
-            
-            restartBtn.addEventListener('click', function() {
-                video.currentTime = 0;
-                video.pause();
-                if (window.speechSynthesis) window.speechSynthesis.cancel();
-                const icon = playBtn.querySelector('i');
-                icon.classList.remove('fa-pause');
-                icon.classList.add('fa-play');
-                timerEl.textContent = '0:00 / 1:00';
-                if (voiceoverTimer) {
-                    clearInterval(voiceoverTimer);
-                    voiceoverTimer = null;
-                }
-            });
-            
-            // Voiceover fallback function
-            function startVoiceover() {
-                if (voiceoverPlaying) return;
-                voiceoverPlaying = true;
-                
-                const synth = window.speechSynthesis;
-                const scripts = [
-                    "At VIBZ, we start with discovery. We learn about your business, your audience, and what makes you unique.",
-                    "Then we create a solid strategy. Clear wireframes and user flows that turn visitors into customers.",
-                    "Our design phase brings your brand to life. Beautiful, mobile-first visuals that capture attention.",
-                    "We build with clean code, fast loading speeds, and SEO optimisation right from the start.",
-                    "Finally, we launch and stay with you. Ongoing support means your website keeps performing."
-                ];
-                
-                let index = 0;
-                
-                function speakNext() {
-                    if (index >= scripts.length) {
-                        voiceoverPlaying = false;
-                        const icon = playBtn.querySelector('i');
-                        icon.classList.remove('fa-pause');
-                        icon.classList.add('fa-play');
-                        return;
-                    }
-                    
-                    const utterance = new SpeechSynthesisUtterance(scripts[index]);
-                    utterance.rate = 0.92;
-                    utterance.pitch = 1.1;
-                    utterance.lang = 'en-GB';
-                    
-                    // Try to get UK voice
-                    const voices = synth.getVoices();
-                    const ukVoice = voices.find(v => v.lang.includes('en-GB') && v.name.includes('Natural'));
-                    if (ukVoice) utterance.voice = ukVoice;
-                    
-                    utterance.onend = function() {
-                        index++;
-                        if (index < scripts.length) {
-                            speakNext();
-                        } else {
-                            voiceoverPlaying = false;
-                            const icon = playBtn.querySelector('i');
-                            icon.classList.remove('fa-pause');
-                            icon.classList.add('fa-play');
-                        }
-                    };
-                    
-                    synth.speak(utterance);
-                }
-                
-                speakNext();
-            }
-            
-            // Update timer from video if it plays
-            video.addEventListener('timeupdate', function() {
-                timerEl.textContent = formatTime(video.currentTime) + ' / 1:00';
-            });
-            
-            video.addEventListener('ended', function() {
-                const icon = playBtn.querySelector('i');
-                icon.classList.remove('fa-pause');
-                icon.classList.add('fa-play');
-            });
         }
 
         // Dropdown toggles (close when clicking outside)
