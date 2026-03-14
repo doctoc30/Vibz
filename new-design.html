@@ -524,10 +524,10 @@
             border: 1px solid rgba(255,107,0,0.2);
         }
 
-        /* ===== FIXED SUBSCRIPTION - arrow points at button, button always visible ===== */
+        /* ===== MAGICAL SUBSCRIPTION - swirling tail arrow points at button ===== */
         .footer-subscription {
             width: 100%;
-            max-width: 700px;
+            max-width: 750px;
             margin: 0 auto 30px;
             background: transparent;
             border: none;
@@ -545,31 +545,118 @@
             position: relative;
         }
 
-        /* magical arrow that appears and points at the button */
+        /* magical arrow container with swirling tail effect */
         .magical-arrow {
-            flex-shrink: 0;
-            width: 70px;
-            height: 70px;
-            background: transparent;
+            position: relative;
+            width: 80px;
+            height: 80px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: var(--primary);
-            font-size: 3rem;
-            animation: floatAndPoint 2.2s ease-in-out infinite;
-            filter: drop-shadow(0 8px 12px rgba(255,107,0,0.3));
-            transform-origin: center center;
-            position: relative;
-            left: 0;
-            transition: all 0.3s;
+            font-size: 3.2rem;
+            filter: drop-shadow(0 10px 15px rgba(255,107,0,0.4));
+            animation: subtleFloat 3s ease-in-out infinite;
         }
 
-        @keyframes floatAndPoint {
-            0% { transform: translateX(-5px) rotate(-5deg) scale(1); }
-            25% { transform: translateX(5px) rotate(5deg) scale(1.15); }
-            50% { transform: translateX(-5px) rotate(-5deg) scale(1); }
-            75% { transform: translateX(8px) rotate(8deg) scale(1.1); }
-            100% { transform: translateX(-5px) rotate(-5deg) scale(1); }
+        /* main arrow pointer */
+        .magical-arrow i {
+            position: relative;
+            z-index: 5;
+            transform: rotate(0deg);
+            animation: pointAtButton 2.2s ease-in-out infinite;
+            display: block;
+        }
+
+        /* swirling tail effect - multiple pseudo-elements and animated dots */
+        .magical-arrow::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 50%, var(--primary) 0%, transparent 70%);
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: swirlPulse 2.5s ease-out infinite;
+            z-index: 1;
+        }
+
+        .magical-arrow::after {
+            content: '';
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            background: conic-gradient(from 90deg at 50% 50%, transparent 0deg, var(--primary) 60deg, transparent 120deg, transparent 360deg);
+            opacity: 0.3;
+            animation: swirlRotate 3s linear infinite;
+            z-index: 2;
+            border-radius: 50%;
+        }
+
+        /* floating dots that create the swirling tail */
+        .swirl-dots {
+            position: absolute;
+            width: 180%;
+            height: 180%;
+            left: -40%;
+            top: -40%;
+            pointer-events: none;
+        }
+
+        .swirl-dots span {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            opacity: 0.6;
+            box-shadow: 0 0 10px var(--primary);
+            animation: dotSwirl 2s ease-in-out infinite;
+        }
+
+        .swirl-dots span:nth-child(1) { top: 20%; left: 10%; animation-delay: 0s; }
+        .swirl-dots span:nth-child(2) { top: 40%; left: 5%; animation-delay: 0.2s; width: 12px; height: 12px; opacity: 0.5; }
+        .swirl-dots span:nth-child(3) { top: 60%; left: 8%; animation-delay: 0.4s; width: 6px; height: 6px; }
+        .swirl-dots span:nth-child(4) { top: 75%; left: 15%; animation-delay: 0.6s; width: 10px; height: 10px; }
+        .swirl-dots span:nth-child(5) { top: 85%; left: 25%; animation-delay: 0.8s; }
+        .swirl-dots span:nth-child(6) { top: 80%; left: 40%; animation-delay: 1s; width: 14px; height: 14px; opacity: 0.7; }
+        .swirl-dots span:nth-child(7) { top: 70%; left: 55%; animation-delay: 1.2s; }
+        .swirl-dots span:nth-child(8) { top: 55%; left: 70%; animation-delay: 1.4s; width: 8px; height: 8px; }
+        .swirl-dots span:nth-child(9) { top: 35%; left: 80%; animation-delay: 1.6s; width: 12px; height: 12px; }
+        .swirl-dots span:nth-child(10) { top: 15%; left: 85%; animation-delay: 1.8s; }
+        .swirl-dots span:nth-child(11) { top: 5%; left: 70%; animation-delay: 2s; width: 6px; height: 6px; }
+        .swirl-dots span:nth-child(12) { top: 0%; left: 50%; animation-delay: 2.2s; }
+
+        @keyframes dotSwirl {
+            0% { transform: translate(0, 0) scale(1); opacity: 0.6; }
+            50% { transform: translate(20px, -20px) scale(1.5); opacity: 0.2; }
+            100% { transform: translate(40px, -40px) scale(0); opacity: 0; }
+        }
+
+        @keyframes swirlRotate {
+            0% { transform: rotate(0deg) scale(1); opacity: 0.3; }
+            50% { transform: rotate(180deg) scale(1.2); opacity: 0.5; }
+            100% { transform: rotate(360deg) scale(1); opacity: 0.3; }
+        }
+
+        @keyframes swirlPulse {
+            0% { transform: scale(1); opacity: 0.4; }
+            50% { transform: scale(1.5); opacity: 0.2; }
+            100% { transform: scale(1); opacity: 0.4; }
+        }
+
+        @keyframes pointAtButton {
+            0% { transform: translateX(-5px) rotate(-8deg); }
+            25% { transform: translateX(10px) rotate(8deg); }
+            50% { transform: translateX(-5px) rotate(-8deg); }
+            75% { transform: translateX(15px) rotate(10deg); }
+            100% { transform: translateX(-5px) rotate(-8deg); }
+        }
+
+        @keyframes subtleFloat {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0); }
         }
 
         .email-field {
@@ -579,7 +666,7 @@
             border: none !important;
             border-bottom: 2px solid rgba(255,107,0,0.3) !important;
             border-radius: 0 !important;
-            padding: 16px 8px 10px 8px;
+            padding: 16px 8px 12px 8px;
             font-size: 1.3rem;
             font-weight: 600;
             color: var(--text);
@@ -597,12 +684,12 @@
             font-size: 1.2rem;
         }
 
-        /* prominent button - exactly matching app-tile style */
+        /* prominent Let's Go button - exactly as in preview */
         .subscribe-action-btn {
             background: white;
-            border: 1px solid var(--primary);
-            border-radius: 40px;
-            padding: 18px 36px;
+            border: 2px solid var(--primary);
+            border-radius: 50px;
+            padding: 18px 38px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -610,14 +697,13 @@
             font-weight: 900;
             font-size: 1.5rem;
             color: var(--primary);
-            box-shadow: 0 15px 30px rgba(255,107,0,0.2);
+            box-shadow: 0 15px 30px rgba(255,107,0,0.25);
             cursor: pointer;
             transition: all 0.25s ease;
-            background: rgba(255,255,255,0.95);
+            background: rgba(255,255,255,0.98);
             backdrop-filter: blur(4px);
-            letter-spacing: -0.3px;
+            letter-spacing: -0.2px;
             white-space: nowrap;
-            border: 2px solid var(--primary);
             transform: scale(1);
         }
 
@@ -628,20 +714,15 @@
         }
 
         .subscribe-action-btn:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 25px 40px rgba(255,107,0,0.3);
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 25px 40px rgba(255,107,0,0.35);
             background: var(--primary);
             color: white;
-            border-color: var(--primary);
         }
 
         .subscribe-action-btn:hover i {
             transform: translateX(8px);
             color: white;
-        }
-
-        .subscribe-action-btn:active {
-            transform: scale(0.96);
         }
 
         /* ===== FOOTER ===== */
@@ -994,10 +1075,16 @@
                         </div>
                     </div>
 
-                    <!-- SUBSCRIPTION - magical arrow points at the prominent button, above socials -->
+                    <!-- SUBSCRIPTION - magical swirling tail arrow points at Let's Go button -->
                     <div class="footer-subscription">
                         <div class="subscribe-row">
-                            <span class="magical-arrow"><i class="fa-solid fa-arrow-pointer"></i></span>
+                            <div class="magical-arrow">
+                                <i class="fa-solid fa-arrow-pointer"></i>
+                                <div class="swirl-dots">
+                                    <span></span><span></span><span></span><span></span><span></span><span></span>
+                                    <span></span><span></span><span></span><span></span><span></span><span></span>
+                                </div>
+                            </div>
                             <input type="email" class="email-field" placeholder="Stay in the loop" value="Enter your email...">
                             <button class="subscribe-action-btn" onclick="alert('Subscribed (demo) — thank you!')">
                                 <span>Let's Go</span>
