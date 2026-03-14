@@ -672,6 +672,13 @@
             flex-wrap: wrap;
             animation: slideUpCookie 0.6s cubic-bezier(0.23, 1, 0.32, 1);
             border: 1px solid rgba(255,107,0,0.2);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .cookies-consent.hidden {
+            opacity: 0;
+            transform: translateX(-50%) translateY(20px);
+            pointer-events: none;
         }
 
         @keyframes slideUpCookie {
@@ -726,6 +733,7 @@
             font-weight: 700;
             border-bottom: 1px solid transparent;
             transition: border-color 0.2s;
+            cursor: pointer;
         }
 
         .cookies-text a:hover {
@@ -896,6 +904,7 @@
             font-weight: 600;
             font-size: 0.95rem;
             transition: background 0.1s;
+            cursor: pointer;
         }
         .dropdown-menu a i {
             color: var(--primary);
@@ -1187,11 +1196,11 @@
                                 <i class="fa-solid fa-scale-balanced"></i> Legal <i class="fa-solid fa-chevron-down" style="font-size:0.8rem;"></i>
                             </button>
                             <div class="dropdown-menu" id="legalMenu">
-                                <a href="#" onclick="alert('Privacy Policy - would open full policy')"><i class="fa-regular fa-file-lines"></i> Privacy Policy</a>
-                                <a href="#" onclick="alert('Terms & Conditions - would open full terms')"><i class="fa-regular fa-file-contract"></i> Terms & Conditions</a>
-                                <a href="#" onclick="alert('Cookie Policy - would open cookie policy')"><i class="fa-regular fa-cookie"></i> Cookie Policy</a>
-                                <a href="#" onclick="document.getElementById('cookiesConsent').style.display='flex'"><i class="fa-regular fa-sliders"></i> Cookie Preferences</a>
-                                <a href="#" onclick="alert('Accessibility Statement - would open accessibility info')"><i class="fa-regular fa-eye"></i> Accessibility Statement</a>
+                                <a href="#" onclick="alert('Privacy Policy - would open full policy'); return false;"><i class="fa-regular fa-file-lines"></i> Privacy Policy</a>
+                                <a href="#" onclick="alert('Terms & Conditions - would open full terms'); return false;"><i class="fa-regular fa-file-contract"></i> Terms & Conditions</a>
+                                <a href="#" onclick="alert('Cookie Policy - would open cookie policy'); return false;"><i class="fa-regular fa-cookie"></i> Cookie Policy</a>
+                                <a href="#" onclick="showCookieBanner(); return false;"><i class="fa-regular fa-sliders"></i> Cookie Preferences</a>
+                                <a href="#" onclick="alert('Accessibility Statement - would open accessibility info'); return false;"><i class="fa-regular fa-eye"></i> Accessibility Statement</a>
                             </div>
                         </div>
                         <!-- Help dropdown (unchanged) -->
@@ -1202,7 +1211,7 @@
                             <div class="dropdown-menu" id="helpMenu">
                                 <a href="#"><i class="fa-regular fa-map"></i> Location</a>
                                 <a href="#"><i class="fa-regular fa-flag"></i> India | Location Selector</a>
-                                <a href="#"><i class="fa-regular fa-sliders"></i> Cookie settings</a>
+                                <a href="#" onclick="showCookieBanner(); return false;"><i class="fa-regular fa-sliders"></i> Cookie settings</a>
                             </div>
                         </div>
                     </div>
@@ -1247,13 +1256,13 @@
             </div>
         </div>
         <div class="cookies-buttons">
-            <button class="cookie-btn settings" onclick="alert('Cookie settings panel would open with category toggles')">
+            <button class="cookie-btn settings" onclick="alert('Cookie settings panel would open with category toggles'); return false;">
                 <i class="fa-solid fa-sliders"></i> Settings
             </button>
-            <button class="cookie-btn decline" onclick="hideCookiesBanner()">
+            <button class="cookie-btn decline" onclick="handleCookieChoice('declined')">
                 Decline
             </button>
-            <button class="cookie-btn accept" onclick="hideCookiesBanner()">
+            <button class="cookie-btn accept" onclick="handleCookieChoice('accepted')">
                 Accept <i class="fa-solid fa-check"></i>
             </button>
         </div>
@@ -1275,6 +1284,9 @@
                 startTypewriter();
                 initVideoControls();
             }, 2500);
+            
+            // Check if user has already made a cookie choice
+            checkCookieConsent();
         });
 
         function toggleMenu() { document.getElementById('app-menu-layer').classList.toggle('active'); }
@@ -1542,9 +1554,45 @@
             }
         });
 
-        // Hide cookies banner
-        function hideCookiesBanner() {
-            document.getElementById('cookiesConsent').style.display = 'none';
+        // COOKIE CONSENT FUNCTIONS - FIXED: Now remembers user choice
+        function checkCookieConsent() {
+            const consent = localStorage.getItem('vibzCookieConsent');
+            if (consent === 'accepted' || consent === 'declined') {
+                // User already made a choice, hide the banner
+                document.getElementById('cookiesConsent').style.display = 'none';
+            }
+        }
+
+        function handleCookieChoice(choice) {
+            // Store the user's choice in localStorage
+            localStorage.setItem('vibzCookieConsent', choice);
+            
+            // Hide the banner with animation
+            const banner = document.getElementById('cookiesConsent');
+            banner.classList.add('hidden');
+            
+            // After animation, set display to none
+            setTimeout(() => {
+                banner.style.display = 'none';
+            }, 300);
+            
+            // Here you would also enable/disable cookies based on choice
+            if (choice === 'accepted') {
+                console.log('Cookies accepted - enable analytics, marketing etc.');
+                // Enable analytics scripts, etc.
+            } else {
+                console.log('Cookies declined - only essential cookies');
+                // Disable non-essential cookies
+            }
+        }
+
+        function showCookieBanner() {
+            const banner = document.getElementById('cookiesConsent');
+            banner.style.display = 'flex';
+            // Remove hidden class to show with animation
+            setTimeout(() => {
+                banner.classList.remove('hidden');
+            }, 10);
         }
     </script>
 </body>
